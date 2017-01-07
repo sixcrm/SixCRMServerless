@@ -1,0 +1,35 @@
+{
+  "name": "sixcrm transaction api",
+  "version": "1.0.0",
+  "description": "Backend Processing Lambda Endpoints",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.7.13",
+    "crypto": "0.0.3",
+    "js-yaml": "^3.7.0",
+    "jsonschema": "^1.1.1",
+    "jsonwebtoken": "^7.2.1",
+    "post_validator": "^1.0.0",
+    "request": "^2.79.0",
+    "underscore": "^1.8.3",
+    "uuid": "^3.0.1",
+    "validator": "^6.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-json-schema": "^1.4.0",
+    "mocha": "^3.2.0",
+    "serverless": "^1.4.0",
+    "supertest": "^2.0.1"
+  },
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/**/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TimothyDalbey/sixcrmtransactionapi.git"
+  },
+  "author": "Timothy Dalbey",
+  "license": "ISC",
+  "homepage": "https://github.com/TimothyDalbey/sixcrmtransactionapi#readme"
+}

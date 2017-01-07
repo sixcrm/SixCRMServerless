@@ -1,0 +1,14 @@
+{
+	"body":{
+		"orderId": "---",
+		"paySource":"CREDITCARD",
+		"cardNumber":"0000000000000000",
+		"cardMonth":"02",
+		"cardYear":"2020",
+		"cardSecurityCode":"123",
+		"product1_id":"21",
+		"firstName":"Timothy",
+		"lastName":"Dalbey",
+		"emailAddress":"timothy.dalbey@crmblackbox.com"
+	}
+}
