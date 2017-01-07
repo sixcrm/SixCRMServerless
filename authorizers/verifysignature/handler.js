@@ -8,28 +8,19 @@ module.exports.verifysignature = (event, context, callback) => {
 	
 	validateToken(event.authorizationToken, (error, data) => {
 		
-		if(_.isError(error)){
-			callback("Error: Invalid token");
-		}
-		
-		if(_.isString(data)){
+		console.log(data);
+		if(!_.isError(error) && _.isString(data)){
 		
 			switch (data.toLowerCase()) {
 				case 'allow':
 					callback(null, generatePolicy('user', 'Allow', event.methodArn));
 					break;
-				case 'deny':
-					callback(null, generatePolicy('user', 'Deny', event.methodArn));
-					break;
-				case 'unauthorized':
-					callback("Unauthorized");
-					break;
 				
 			}
 		}
 		
-		callback("Error: Invalid token");
-	
+		callback(null, generatePolicy('user', 'Deny', event.methodArn));
+		
 	});
 		
 };
@@ -39,6 +30,10 @@ var validateToken = function(token, callback){
 	token = token.split(':');
 	
 	if(_.isArray(token) && token.length == 3){
+		
+		if(!isRecentRequest(token[1])){
+			callback(null, 'deny');
+		}
 		
 		retrieveSecretByAccessKey(token[0], (error, data) => {
 			
@@ -51,7 +46,9 @@ var validateToken = function(token, callback){
 				var correct_signature = createSignature(data, token[1]);
 		
 				if(token[2] == correct_signature){
+					
 					callback(null, 'allow');
+					
 				}		
 				
 			}
@@ -66,6 +63,15 @@ var validateToken = function(token, callback){
 		
 	}
 	
+}
+
+var isRecentRequest = function(request_time){
+	var current_time = new Date().getTime();
+	console.log(current_time+' - '+request_time);
+	if(current_time - request_time > (60 * 5 * 1000)){
+		return false;
+	}
+	return true;
 }
 
 var retrieveSecretByAccessKey = function(access_key, callback){

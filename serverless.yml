@@ -2,9 +2,7 @@ service: sixtransaction
 package:
   exclude:
     - .git/**
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
+    
 # frameworkVersion: "=X.X.X"
 
 provider:
@@ -22,6 +20,8 @@ functions:
     handler: authorizers/verifysignature/handler.verifysignature
     environment:
       dynamo_table: access_keys
+  verifyjwt:
+    handler: authorizers/verifyjwt/handler.verifyjwt
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
     events:
@@ -34,17 +34,20 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
+      #these need to come from config files
       dynamo_table: access_keys
       site_secret_jwt_key: abc123
-#  createlead:
-#    handler: endpoints/createlead/handler.createlead
-#    events:
-#      - http:
-#         path: lead/create
-#         method: post
-#         cors: true
-    #environment:
-      #dynamo_table: ${self:dynamo_config.table}
+  createlead:
+    handler: endpoints/createlead/handler.createlead
+    events:
+      - http:
+         path: lead/create
+         method: post
+         cors: true
+         authorizer:
+           name: verifyjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
 #  createorder:
 #    handler: endpoints/createorder/handler.createorder
 #    events:
@@ -72,19 +75,6 @@ functions:
 #         cors: true
     #environment:
       #user_secret_key: ${file(./config/${opt:stage}/site.yml):user_secret_key}
-#  getcampaigns:
-#      handler: endpoints/getcampaigns/handler.getcampaigns
-#      events:
-#        - http:
-#           path: campaigns/get
-#           method: post
-#           cors: true
-#      environment:
-#          konnektive_loginId: ${file(./config/${opt:stage}/konnektive.yml):konnektive_loginId}
-#          konnektive_password: ${file(./config/${opt:stage}/konnektive.yml):konnektive_password}
-#          konnektive_base: ${file(./config/${opt:stage}/konnektive.yml):konnektive_base}
-#          site_secret_key: ${file(./config/${opt:stage}/site.yml):site_secret_key}
-
 resources:  
   Resources:
     DynamoDbTable:

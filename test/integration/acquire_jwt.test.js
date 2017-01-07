@@ -15,15 +15,15 @@ try {
 var endpoint = config.endpoint;
 
 describe('JWT Acquisition Integration Test', function() {
-  describe('Acquire JWT', function() {
+  describe('Happy Path', function() {
     it('should acquire a JWT', function (done) {
     	
     	var request_time = new Date().getTime();
 		var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
     	var authorization_string = config.access_key+':'+request_time+':'+signature;
-
-		request = request(endpoint);
-    	request.get('token/acquire/')
+		console.log(authorization_string);
+		var this_request = request(endpoint);
+    	this_request.get('token/acquire/')
 			.set('Content-Type', 'application/json')
 			.set('Authorization', authorization_string)
 			.expect(200)
@@ -40,5 +40,104 @@ describe('JWT Acquisition Integration Test', function() {
 				done();
 			}, done);
 		});
+	});
+	describe('Broken Path(s)', function() {
+		it('should fail signature validation due to bad signature', function (done) {
+
+			var request_time = new Date().getTime();
+			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex')+'1';
+			var authorization_string = config.access_key+':'+request_time+':'+signature;
+
+			var this_request = request(endpoint);
+			this_request.get('token/acquire/')
+				.set('Content-Type', 'application/json')
+				.set('Authorization', authorization_string)
+				.expect(500)
+				.expect('Content-Type', 'application/json')
+				.end(function(err, response){
+					assert.isObject(response.body);
+					assert.property(response.body, "Message");
+					assert.equal(response.body.Message, "User is not authorized to access this resource");
+					done();
+				}, done);
+		});
+		it('should fail signature validation due to bad access_key', function (done) {
+		
+			var request_time = new Date().getTime();
+			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
+			var authorization_string = 'abc123:'+request_time+':'+signature;
+
+			var this_request = request(endpoint);
+			this_request.get('token/acquire/')
+				.set('Content-Type', 'application/json')
+				.set('Authorization', authorization_string)
+				.expect(500)
+				.expect('Content-Type', 'application/json')
+				.end(function(err, response){
+					assert.isObject(response.body);
+					assert.property(response.body, "Message");
+					assert.equal(response.body.Message, "User is not authorized to access this resource");
+					done();
+				}, done);
+		});
+		
+		it('should fail signature validation due to bad expired timestamp', function (done) {
+	
+			var request_time = 123;
+			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
+			var authorization_string = config.access_key+':'+request_time+':'+signature;
+			
+			var this_request = request(endpoint);
+			this_request.get('token/acquire/')
+				.set('Content-Type', 'application/json')
+				.set('Authorization', authorization_string)
+				.expect(500)
+				.expect('Content-Type', 'application/json')
+				.end(function(err, response){
+					assert.isObject(response.body);
+					assert.property(response.body, "Message");
+					assert.equal(response.body.Message, "User is not authorized to access this resource");
+					done();
+				}, done);
+		});
+		
+		it('should fail signature validation structure', function (done) {
+	
+			var request_time = new Date().getTime();
+			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
+			var authorization_string = config.access_key+''+request_time+':'+signature;
+			
+			var this_request = request(endpoint);
+			this_request.get('token/acquire/')
+				.set('Content-Type', 'application/json')
+				.set('Authorization', authorization_string)
+				.expect(500)
+				.expect('Content-Type', 'application/json')
+				.end(function(err, response){
+					assert.isObject(response.body);
+					assert.property(response.body, "Message");
+					assert.equal(response.body.Message, "User is not authorized to access this resource");
+					done();
+				}, done);
+		});
+		
+		it('should fail due to missing headers', function (done) {
+	
+			var request_time = new Date().getTime();
+			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
+			var authorization_string = config.access_key+''+request_time+':'+signature;
+			
+			var this_request = request(endpoint);
+			this_request.get('token/acquire/')
+				.expect(500)
+				.expect('Content-Type', 'application/json')
+				.end(function(err, response){
+					assert.isObject(response.body);
+					assert.property(response.body, "message");
+					assert.equal(response.body.message, "Unauthorized");
+					done();
+				}, done);
+		});
+		
 	});
 });
