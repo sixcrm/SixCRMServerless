@@ -1,16 +1,3 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: sixtransaction
 package:
   exclude:
@@ -23,75 +10,66 @@ package:
 provider:
   name: aws
   runtime: nodejs4.3
-
-# you can overwrite defaults here
-  stage: ${opt:stage, dev}
+  stage: ${opt:stage, 'development'}
   region: us-east-1
+  profile: six
 
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
 site_config: ${file(./config/${opt:stage}/site.yml)}
+dynamo_config: ${file(./config/${opt:stage}/dynamo.yml)}
 
 functions:
-  createlead:
-    handler: endpoints/createlead/handler.createlead
+  verifysignature:
+    handler: authorizers/verifysignature/handler.verifysignature
+    environment:
+      dynamo_table: access_keys
+  acquiretoken:
+    handler: endpoints/acquiretoken/handler.acquiretoken
     events:
       - http:
-         path: lead/create
-         method: post
-         cors: true
-    #environment:
-      #dynamo_table: ${self:dynamo_config.table}
-  createorder:
-    handler: endpoints/createorder/handler.createorder
-    events:
-      - http:
-         path: order/create
-         method: post
-         cors: true
-    #environment:
-      #site_secret_key: ${file(./config/${opt:stage}/site.yml):site_secret_key}
-  editorder:
-    handler: endpoints/updateorder/handler.updateorder
-    events:
-      - http:
-         path: order/update
-         method: put
-         cors: true
-    #environment:
-      #site_secret_key: ${file(./config/${opt:stage}/site.yml):site_secret_key}
-  confirmorder:
-    handler: endpoints/confirmorder/handler.confirmorder
-    events:
-      - http:
-         path: order/confirm
+         path: token/acquire
          method: get
          cors: true
+         authorizer:
+            name: verifysignature
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+    environment:
+      dynamo_table: access_keys
+      site_secret_jwt_key: abc123
+#  createlead:
+#    handler: endpoints/createlead/handler.createlead
+#    events:
+#      - http:
+#         path: lead/create
+#         method: post
+#         cors: true
+    #environment:
+      #dynamo_table: ${self:dynamo_config.table}
+#  createorder:
+#    handler: endpoints/createorder/handler.createorder
+#    events:
+#      - http:
+#         path: order/create
+#         method: post
+#        cors: true
+    #environment:
+      #site_secret_key: ${file(./config/${opt:stage}/site.yml):site_secret_key}
+#  editorder:
+#    handler: endpoints/updateorder/handler.updateorder
+#    events:
+#      - http:
+#         path: order/update
+#         method: put
+#         cors: true
+    #environment:
+      #site_secret_key: ${file(./config/${opt:stage}/site.yml):site_secret_key}
+#  confirmorder:
+#    handler: endpoints/confirmorder/handler.confirmorder
+#    events:
+#      - http:
+ #        path: order/confirm
+#         method: get
+#         cors: true
     #environment:
       #user_secret_key: ${file(./config/${opt:stage}/site.yml):user_secret_key}
 #  getcampaigns:
@@ -106,52 +84,34 @@ functions:
 #          konnektive_password: ${file(./config/${opt:stage}/konnektive.yml):konnektive_password}
 #          konnektive_base: ${file(./config/${opt:stage}/konnektive.yml):konnektive_base}
 #          site_secret_key: ${file(./config/${opt:stage}/site.yml):site_secret_key}
-#
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - http:
-#          path: users/create
-#          method: get
-#      - s3: ${env:BUCKET}
-#      - schedule: rate(10 minutes)
-#      - sns: greeter-topic
-#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
-#
-#    Define function environment variables here
-#    environment:
-#      konnektive_loginId: 'ServerlessTest'
-#
-# you can add CloudFormation resource templates here
-#Note this stuff is damned wonky
-#resources:  
-#  Resources:
-#    DynamoDbTable:
-#      Type: AWS::DynamoDB::Table
-#      Properties:
-#        TableName: logincrmbb_clients_dev
-#        AttributeDefinitions:
-#          - AttributeName: active
-#            AttributeType: B
-#        KeySchema:
-#          - AttributeName: client_id
-#            KeyType: NUMBER
-#        ProvisionedThroughput:
-#          ReadCapacityUnits: 5
-#          WriteCapacityUnits: 5
-#    DynamoDBIamPolicy:
-#      Type: AWS::IAM::Policy
-#      DependsOn: DynamoDbTable
-#      Properties:
-#        PolicyName: lambda-dynamodb
-#        PolicyDocument:
-#          Version: '2012-10-17'
-#          Statement:
-#           - Effect: Allow
-#              Action:
-#                - dynamodb:GetItem
-#                - dynamodb:PutItem
-#              Resource: arn:aws:dynamodb:*:*:table/logincrmbb_clients
-#      Roles:
-#          - Ref: IamRoleLambdaExecution
+
+resources:  
+  Resources:
+    DynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: access_keys
+        AttributeDefinitions:
+          - AttributeName: access_key
+            AttributeType: S
+        KeySchema:
+          - AttributeName: access_key
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    DynamoDBIamPolicy:
+      Type: AWS::IAM::Policy
+      DependsOn: DynamoDbTable
+      Properties:
+        PolicyName: lambda-dynamodb
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+           - Effect: Allow
+             Action:
+               - dynamodb:GetItem
+               - dynamodb:PutItem
+             Resource: arn:aws:dynamodb:*:*:table/access_keys
+        Roles:
+          - Ref: IamRoleLambdaExecution

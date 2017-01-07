@@ -1,7 +1,6 @@
 {
 	"body":{
-		"site_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJib2R5Ijoie1wic2l0ZV9jYW1wYWlnbl9pZFwiOlwiMTFcIixcInNpdGVfY2xpZW50X2lkXCI6XCIxMTRcIixcInNpdGVfaWRcIjpcIjEyM1wiLFwic2l0ZV9wcm9kdWN0X2lkXCI6XCIyMVwifSIsImlhdCI6MTQ5NzkwMjEyNn0.ygZvPbDFRdgStEeGFvB02j7D8aKe578KFo48P69DiDk",
-		"site_referring_url": "http://goofballs.com",
-		"client_ip_address": "123.123.123.123"
-	}
+		"request_time":123
+	},
+	"Authorization":"ae31c39cb9c30a027cf6c0a612a813d33bc23b6e:1483824904139:476d523132b619457a726d1792baeaec8b1221d4"
 }

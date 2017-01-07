@@ -5,7 +5,7 @@ var AWS = require("aws-sdk");
 const dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
 const _ = require("underscore");
 
-module.exports.createlead = (event, context, callback) => {
+module.exports.acquireusertoken = (event, context, callback) => {
 	
 	
 	/*
@@ -34,7 +34,27 @@ module.exports.createlead = (event, context, callback) => {
 		duplicate_body = event.body;
 	}
 	
+	/*
+	* VALIDATION
+	* Purpose: validate the input and transform the request into a proper Konnektive request
+	*/
 	
+	//validation settings to govern both required and failed validation routines
+	var validation_settings = {
+		"site_token":{
+			required: true
+		},
+		"site_referring_url":{
+			required: true,
+			validation_types:['isURL']
+		},
+		"client_ip_address": {
+			required: true,
+			validation_types:['isIP']
+		}
+	}
+
+	var input_object = '';
 
 	post_validator.validate(duplicate_body, validation_settings, function(input_object, missing_fields, validation_errors){
 		
