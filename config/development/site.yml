@@ -1,1 +1,4 @@
-test: thisisa
+site_secret_jwt_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+dynamodb:
+  table: 'access_keys'
+

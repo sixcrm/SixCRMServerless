@@ -11,17 +11,21 @@ provider:
   stage: ${opt:stage, 'development'}
   region: us-east-1
   profile: six
+  environment:
+    dynamo_table: access_keys
+    
 
 site_config: ${file(./config/${opt:stage}/site.yml)}
-dynamo_config: ${file(./config/${opt:stage}/dynamo.yml)}
 
 functions:
   verifysignature:
     handler: authorizers/verifysignature/handler.verifysignature
     environment:
-      dynamo_table: access_keys
+      dynamodb_table: ${file(./config/${opt:stage}/site.yml):dynamodb.table}
   verifyjwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
+    environment:
+      site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):site_secret_jwt_key}
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
     events:
@@ -34,9 +38,7 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
-      #these need to come from config files
-      dynamo_table: access_keys
-      site_secret_jwt_key: abc123
+      site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):site_secret_jwt_key}
   createlead:
     handler: endpoints/createlead/handler.createlead
     events:
@@ -48,7 +50,7 @@ functions:
            name: verifyjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-#  createorder:
+# createorder:
 #    handler: endpoints/createorder/handler.createorder
 #    events:
 #      - http:

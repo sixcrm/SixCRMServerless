@@ -7,7 +7,7 @@ module.exports.verifyjwt = (event, context, callback) => {
 	validateJWT(event.authorizationToken, (error, data) => {
 		
 		if(!_.isError(error) && _.isString(data)){
-		
+			
 			switch (data.toLowerCase()) {
 				case 'allow':
 					callback(null, generatePolicy('user', 'Allow', event.methodArn));
@@ -22,27 +22,17 @@ module.exports.verifyjwt = (event, context, callback) => {
 		
 };
 
-var validateToken = function(token, callback){
-	
-	return 'allow';
-	/*
-	jwt.verify(duplicate_body['token'], process.env.user_secret_key, function(err, decoded) {
-			
-		if(err){
-			
-			var error_response = {'validation_errors':['Could not verify user token.  Please contact the system administrator.']};		
-	
-			lambda_response['body'] = JSON.stringify({
-				message: 'One or more validation errors occurred.',
-				input: event,
-				errors: error_response
-			});
+var validateJWT = function(token, callback){
 
-			callback(null, lambda_response);
-			
+	jwt.verify(token, process.env.site_secret_jwt_key, function(err, decoded) {	
+		
+		if(_.isError(err) || !_.isObject(decoded)){
+			callback(null, 'deny');			
 		}
+		
+		callback(null, 'allow');
+
 	});
-	*/
 	
 }
 
@@ -62,10 +52,6 @@ var generatePolicy = function(principalId, effect, resource) {
         authResponse.policyDocument = policyDocument;
     }
     
-    // Can optionally return a context object of your choosing.
     authResponse.context = {};
-    //authResponse.context.stringKey = "stringval";
-    //authResponse.context.numberKey = 123;
-    //authResponse.context.booleanKey = true;
     return authResponse;
 }

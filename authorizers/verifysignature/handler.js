@@ -8,7 +8,6 @@ module.exports.verifysignature = (event, context, callback) => {
 	
 	validateToken(event.authorizationToken, (error, data) => {
 		
-		console.log(data);
 		if(!_.isError(error) && _.isString(data)){
 		
 			switch (data.toLowerCase()) {
@@ -67,7 +66,6 @@ var validateToken = function(token, callback){
 
 var isRecentRequest = function(request_time){
 	var current_time = new Date().getTime();
-	console.log(current_time+' - '+request_time);
 	if(current_time - request_time > (60 * 5 * 1000)){
 		return false;
 	}
@@ -77,7 +75,7 @@ var isRecentRequest = function(request_time){
 var retrieveSecretByAccessKey = function(access_key, callback){
 	
 	var params = {
-		TableName: 'access_keys',
+		TableName: process.env.dynamodb_table,
 		KeyConditionExpression: 'access_key = :access_keyv',
 		ExpressionAttributeValues: {
 			':access_keyv': access_key

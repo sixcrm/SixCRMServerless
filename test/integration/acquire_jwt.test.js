@@ -21,7 +21,7 @@ describe('JWT Acquisition Integration Test', function() {
     	var request_time = new Date().getTime();
 		var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
     	var authorization_string = config.access_key+':'+request_time+':'+signature;
-		console.log(authorization_string);
+		
 		var this_request = request(endpoint);
     	this_request.get('token/acquire/')
 			.set('Content-Type', 'application/json')

@@ -20,10 +20,12 @@ module.exports.acquiretoken = (event, context, callback) => {
 
 	var payload = {
 		body: JSON.stringify({}),
-		iat: timestamp
+		iat: timestamp,
+		exp: Math.floor(Date.now() / 1000) + (60 * 60)
 	}
 	
-	var created_token = jwt.sign(payload, 'abc123');
+	//note the secret key must be configured!
+	var created_token = jwt.sign(payload, process.env.site_secret_jwt_key);
 
 	lambda_response.statusCode = 200;
 	lambda_response['body'] = JSON.stringify({
