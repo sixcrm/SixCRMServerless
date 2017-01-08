@@ -54,33 +54,17 @@ functions:
         nmi_username: 'demo'
         nmi_password: 'password'
         nmi_endpoint: 'https://secure.networkmerchants.com/api/transact.php'
-# createorder:
-#    handler: endpoints/createorder/handler.createorder
-#    events:
-#      - http:
-#         path: order/create
-#         method: post
-#        cors: true
-    #environment:
-      #site_secret_key: ${file(./config/${opt:stage}/site.yml):site_secret_key}
-#  editorder:
-#    handler: endpoints/updateorder/handler.updateorder
-#    events:
-#      - http:
-#         path: order/update
-#         method: put
-#         cors: true
-    #environment:
-      #site_secret_key: ${file(./config/${opt:stage}/site.yml):site_secret_key}
-#  confirmorder:
-#    handler: endpoints/confirmorder/handler.confirmorder
-#    events:
-#      - http:
- #        path: order/confirm
-#         method: get
-#         cors: true
-    #environment:
-      #user_secret_key: ${file(./config/${opt:stage}/site.yml):user_secret_key}
+  confirmorder:
+    handler: endpoints/confirmorder/handler.confirmorder
+    events:
+      - http:
+         path: order/confirm
+         method: get
+         cors: true
+         authorizer:
+           name: verifyjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
 resources:  
   Resources:
     DynamoDbTable:

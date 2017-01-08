@@ -1,0 +1,10 @@
+{
+	"title": "ConfirmOrder",
+	"type": "object",
+	"properties": {
+		"transaction_id":{
+			"type":"string"
+		}
+	},
+	"required":["transaction_id"]
+}
