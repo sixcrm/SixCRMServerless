@@ -39,17 +39,21 @@ functions:
             identitySource: method.request.header.Authorization
     environment:
       site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):site_secret_jwt_key}
-  createlead:
-    handler: endpoints/createlead/handler.createlead
+  createorder:
+    handler: endpoints/createorder/handler.createorder
     events:
       - http:
-         path: lead/create
+         path: order/create
          method: post
          cors: true
          authorizer:
            name: verifyjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
+    environment:
+        nmi_username: 'demo'
+        nmi_password: 'password'
+        nmi_endpoint: 'https://secure.networkmerchants.com/api/transact.php'
 # createorder:
 #    handler: endpoints/createorder/handler.createorder
 #    events:

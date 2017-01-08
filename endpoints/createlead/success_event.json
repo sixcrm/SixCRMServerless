@@ -1,6 +1,28 @@
 {
 	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts",
 	"body":{
-		"test":"test1"
+		"customer_vault": "add_customer",
+		"firstname":"Rama",
+		"lastname":"Damunaste",
+		"company":"Damunaste Yoga",
+		"address1":"123 Lombard St.",
+		"address2":"Floor 2",
+		"city":"Portland",
+		"state":"OR",
+		"zip":"97203",
+		"country":"US",
+		"phone":"1234567890",
+		"email":"rama@damunaste.org",
+		"shipping_firstname":"Rama",
+		"shipping_lastname":"Damunaste",
+		"shipping_company":"Damunaste Yoga",
+		"shipping_address1":"123 Lombard St.",
+		"shipping_address2":"Floor 2",
+		"shipping_city":"Portland",
+		"shipping_state":"OR",
+		"shipping_zip":"97203",
+		"shipping_country":"US",
+		"shipping_phone":"1234567890",
+		"shipping_email":"rama@damunaste.org"
 	}
 }

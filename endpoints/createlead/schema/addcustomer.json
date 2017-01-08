@@ -11,12 +11,6 @@
 		"billing_id":{
 			"type":"string"
 		},
-		"username":{
-			"type":"string"
-		},
-		"password":{
-			"type":"string"
-		},
 		"ccnumber":{
 			"type":"string"
 		},
@@ -74,10 +68,10 @@
 		"shipping":{
 			"type":"string"
 		},
-		"first_name":{
+		"firstname":{
 			"type":"string"
 		},
-		"last_name":{
+		"lastname":{
 			"type":"string"
 		},
 		"address1":{
@@ -150,5 +144,5 @@
 			"type":"string"
 		}
 	},
-	"required":["customer_vault", "username", "password"]
+	"required":["customer_vault"]
 }

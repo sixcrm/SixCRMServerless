@@ -4,6 +4,8 @@ const fs = require('fs');
 const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 const v = new Validator();
+const request = require('request');
+const querystring = require('querystring');
 
 module.exports.createlead = (event, context, callback) => {
 	
@@ -43,7 +45,6 @@ module.exports.createlead = (event, context, callback) => {
 		callback(null, lambda_response);
 	}
 	
-	console.log(validation);
 	if(validation['errors'].length > 0){		
 		var error_response = {'validation_errors':validation['errors']};		
 		lambda_response['body'] = JSON.stringify({
@@ -56,35 +57,38 @@ module.exports.createlead = (event, context, callback) => {
 		
 	validation.errors = [];
 	
-	if(_.has(duplicate_body, 'email') && !validatator.isEmail(duplicate_body['email'])){
+	if(_.has(duplicate_body, 'email') && !validator.isEmail(duplicate_body['email'])){
 		
 		validation.errors.push('"email" field must be a email address.');
 		
 	}
 	
-	if(_.has(duplicate_body, 'shipping_email') && !validatator.isEmail(duplicate_body['shipping_email'])){
+	if(_.has(duplicate_body, 'shipping_email') && !validator.isEmail(duplicate_body['shipping_email'])){
 		
 		validation.errors.push('"shipping_email" field must be a email address.');
 		
 	}
 	
-	if(_.has(duplicate_body, 'ccnumber') && !validatator.isCreditCard(duplicate_body['ccnumber'])){
+	if(_.has(duplicate_body, 'ccnumber') && !validator.isCreditCard(duplicate_body['ccnumber'])){
 		
 		validation.errors.push('"ccnumber" must be a credit card number.');
 		
 	}
 	
-	if(_.has(duplicate_body, 'shipping') && !validatator.isCurrency(duplicate_body['shipping'])){
+	if(_.has(duplicate_body, 'shipping') && !validator.isCurrency(duplicate_body['shipping'])){
 		
 		validation.errors.push('"shipping" must be a currency amount.');
 		
 	}
 	
-	if(_.has(duplicate_body, 'tax') && !validatator.isCurrency(duplicate_body['tax'])){
+	if(_.has(duplicate_body, 'tax') && !validator.isCurrency(duplicate_body['tax'])){
 		
 		validation.errors.push('"tax" must be a currency amount.');
 		
 	}
+	
+	duplicate_body['username'] = 'demo'; //config
+	duplicate_body['password'] = 'password'; //config
 	
 	if(validation['errors'].length > 0){		
 		var error_response = {'validation_errors':validation['errors']};		
@@ -96,15 +100,26 @@ module.exports.createlead = (event, context, callback) => {
 		callback(null, lambda_response);
 	}
 	
-	//build request from post variables
-	//execute post
-	//respond with informations
+	var request_options = {
+	  headers: {'content-type' : 'application/x-www-form-urlencoded'},
+	  url:     'https://secure.networkmerchants.com/api/transact.php', //config
+	  body:    querystring.stringify(duplicate_body)
+	};
 	
-	var lambda_response = {};		
-	lambda_response.statusCode = 200;
-	lambda_response['body'] = JSON.stringify({
-		message: 'Success',
-		results:{}
+	console.log(request_options);
+	request.post(request_options, (error, response, body) => {
+		if(_.isError(error)){
+		
+			console.log(error);
+
+		}
+		
+		lambda_response.statusCode = 200;
+		lambda_response['body'] = JSON.stringify({
+			message: 'Success',
+			results:body
+		});
+		callback(null, lambda_response);
 	});
 			
 };
