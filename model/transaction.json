@@ -1,0 +1,17 @@
+{
+	"title": "Transaction",
+	"type": "object",
+	"properties": {
+		"uuid":{
+			"type":"string"
+		},
+		"customer":{"$ref": "/Customer"}
+		"products":{
+			"type":"array",
+			"items":{"$ref": "/Product"}
+			"minItems": 1,
+		}
+	},
+	"required":["customer"]
+}
+

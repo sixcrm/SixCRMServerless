@@ -1,0 +1,24 @@
+{
+	"title": "Customer",
+	"type": "object",
+	"properties": {
+		"uuid":{
+			"type":"string"
+		},
+		"email":{
+			"type":"string"
+		},
+		"firstname":{
+			"type":"string"
+		},
+		"lastname":{
+			"type":"string"
+		},
+		"phone":{
+			"type":"string"
+		},
+		"address":{"$ref": "/Address"},
+		"creditcard":{"$ref": "/CreditCard"}
+	},
+	"required":["email", "firstname", "lastname"]
+}

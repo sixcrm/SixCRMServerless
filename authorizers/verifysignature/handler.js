@@ -75,7 +75,7 @@ var isRecentRequest = function(request_time){
 var retrieveSecretByAccessKey = function(access_key, callback){
 	
 	var params = {
-		TableName: process.env.dynamodb_table,
+		TableName: process.env.access_keys_table,
 		KeyConditionExpression: 'access_key = :access_keyv',
 		ExpressionAttributeValues: {
 			':access_keyv': access_key

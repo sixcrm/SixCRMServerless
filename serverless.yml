@@ -11,8 +11,6 @@ provider:
   stage: ${opt:stage, 'development'}
   region: us-east-1
   profile: six
-  environment:
-    dynamo_table: access_keys
     
 
 site_config: ${file(./config/${opt:stage}/site.yml)}
@@ -21,7 +19,7 @@ functions:
   verifysignature:
     handler: authorizers/verifysignature/handler.verifysignature
     environment:
-      dynamodb_table: ${file(./config/${opt:stage}/site.yml):dynamodb.table}
+      access_keys_table: ${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
   verifyjwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
@@ -39,6 +37,20 @@ functions:
             identitySource: method.request.header.Authorization
     environment:
       site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):site_secret_jwt_key}
+  createlead:
+    handler: endpoints/createlead/handler.createlead
+    events:
+      - http:
+         path: lead/create
+         method: post
+         cors: true
+         authorizer:
+           name: verifyjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+    environment:
+        customers_table: ${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+        transactions_table: ${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
   createorder:
     handler: endpoints/createorder/handler.createorder
     events:
@@ -67,7 +79,7 @@ functions:
            identitySource: method.request.header.Authorization
 resources:  
   Resources:
-    DynamoDbTable:
+    accesskeys:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: access_keys
@@ -80,9 +92,48 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
+    customerstable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: customers
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    transactionstable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: transactions
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    productstable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: products
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
-      DependsOn: DynamoDbTable
+      DependsOn: accesskeys
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:
@@ -92,6 +143,6 @@ resources:
              Action:
                - dynamodb:GetItem
                - dynamodb:PutItem
-             Resource: arn:aws:dynamodb:*:*:table/access_keys
+             Resource: arn:aws:dynamodb:*:*:table/*
         Roles:
           - Ref: IamRoleLambdaExecution

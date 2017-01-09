@@ -1,4 +1,11 @@
 site_secret_jwt_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
 dynamodb:
-  table: 'access_keys'
+  access_keys_table: 'access_keys'
+  transactions_table: 'transactions'
+  customers_table: 'customers'
+  products_table: 'products'
+nmi:
+  username: 'demo'
+  password: 'password'
+  endpoint: 'https://secure.networkmerchants.com/api/transact.php'
 

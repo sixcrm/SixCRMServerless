@@ -1,0 +1,41 @@
+{
+	"title": "Product",
+	"type": "object",
+	"properties": {
+		"uuid":{
+			"type":"string"
+		},
+		"name":{
+			"type":"string"
+		},
+		"type":{
+			"type":"string",
+			"enum":["straight","recurring"]
+		},
+		"prices":{
+			"type":"object",
+			"properties":{
+				"straight":{
+					"type":"string"
+				},
+				"trail":{
+					"type":"string"
+				}
+			}
+		},
+		"recurring":{
+			"type": "object",
+			"properties":{
+				"price":{
+					"type":"string"
+				},
+				"period":{
+					"type":"integer"
+				}
+			},
+			"required":["price","period"]
+		},
+	},
+	"required":["email","firstname","lastname", "prices", "type"]
+}
+

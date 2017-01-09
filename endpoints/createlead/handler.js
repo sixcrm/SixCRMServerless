@@ -6,6 +6,9 @@ const Validator = require('jsonschema').Validator;
 const v = new Validator();
 const request = require('request');
 const querystring = require('querystring');
+const uuidV4 = require('uuid/v4');
+const AWS = require("aws-sdk");
+const dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
 
 module.exports.createlead = (event, context, callback) => {
 	
@@ -22,13 +25,17 @@ module.exports.createlead = (event, context, callback) => {
 		duplicate_body = event.body;
 	}
 	
-	var addcustomerjson;
+	var customer_schema;
+	var address_schema;
+	var creditcard_schema;
 	
 	try{
-		addcustomerjson = JSON.parse(fs.readFileSync('./endpoints/createlead/schema/addcustomer.json','utf8'));
+		customer_schema = JSON.parse(fs.readFileSync('./model/customer.json','utf8'));
+		address_schema = JSON.parse(fs.readFileSync('./model/address.json','utf8'));
+		creditcard_schema = JSON.parse(fs.readFileSync('./model/creditcard.json','utf8'));
 	} catch(e){
 		lambda_response.body = JSON.stringify(
-			{message: 'Unable to load schema'}
+			{message: 'Unable to load validation schemas'}
 		);
 		callback(null, lambda_response)
 	}
@@ -37,7 +44,9 @@ module.exports.createlead = (event, context, callback) => {
 	
 	try{
 		var v = new Validator();
-		validation = v.validate(duplicate_body, addcustomerjson);
+		v.addSchema(address_schema, '/Address');
+		v.addSchema(creditcard_schema, '/CreditCard');
+		validation = v.validate(duplicate_body, customer_schema);
 	}catch(e){
 		lambda_response.body = JSON.stringify(
 			{message: e.message}
@@ -58,37 +67,8 @@ module.exports.createlead = (event, context, callback) => {
 	validation.errors = [];
 	
 	if(_.has(duplicate_body, 'email') && !validator.isEmail(duplicate_body['email'])){
-		
-		validation.errors.push('"email" field must be a email address.');
-		
+		validation.errors.push('"email" field must be a email address.');	
 	}
-	
-	if(_.has(duplicate_body, 'shipping_email') && !validator.isEmail(duplicate_body['shipping_email'])){
-		
-		validation.errors.push('"shipping_email" field must be a email address.');
-		
-	}
-	
-	if(_.has(duplicate_body, 'ccnumber') && !validator.isCreditCard(duplicate_body['ccnumber'])){
-		
-		validation.errors.push('"ccnumber" must be a credit card number.');
-		
-	}
-	
-	if(_.has(duplicate_body, 'shipping') && !validator.isCurrency(duplicate_body['shipping'])){
-		
-		validation.errors.push('"shipping" must be a currency amount.');
-		
-	}
-	
-	if(_.has(duplicate_body, 'tax') && !validator.isCurrency(duplicate_body['tax'])){
-		
-		validation.errors.push('"tax" must be a currency amount.');
-		
-	}
-	
-	duplicate_body['username'] = 'demo'; //config
-	duplicate_body['password'] = 'password'; //config
 	
 	if(validation['errors'].length > 0){		
 		var error_response = {'validation_errors':validation['errors']};		
@@ -100,26 +80,70 @@ module.exports.createlead = (event, context, callback) => {
 		callback(null, lambda_response);
 	}
 	
-	var request_options = {
-	  headers: {'content-type' : 'application/x-www-form-urlencoded'},
-	  url:     'https://secure.networkmerchants.com/api/transact.php', //config
-	  body:    querystring.stringify(duplicate_body)
-	};
+	duplicate_body['uuid'] = uuidV4();
 	
-	console.log(request_options);
-	request.post(request_options, (error, response, body) => {
-		if(_.isError(error)){
+	saveRecord("customers", duplicate_body, (error, data) => {
 		
-			console.log(error);
-
+		if(_.isError(error)){
+				
+			lambda_response['body'] = JSON.stringify({
+				message: 'Error writing to customers table.',
+				input: event,
+				errors: error
+			});
+			callback(null, lambda_response);
+		
 		}
 		
-		lambda_response.statusCode = 200;
-		lambda_response['body'] = JSON.stringify({
-			message: 'Success',
-			results:body
+		var transaction = {
+			"uuid": uuidV4(),
+			customer: duplicate_body['uuid']
+		};
+			
+		saveRecord(process.env.transactions_table, transaction, (error, data) => {
+			
+			if(_.isError(error)){
+				
+				lambda_response['body'] = JSON.stringify({
+					message: 'Error writing to transactions table.',
+					input: event,
+					errors: error
+				});
+				callback(null, lambda_response);
+		
+			}
+			
+			var result_message = {
+				transaction_id: transaction['uuid'],
+				customer: duplicate_body
+			}
+	
+			lambda_response.statusCode = 200;
+			lambda_response['body'] = JSON.stringify({
+				message: 'Success',
+				results: result_message
+			});
+	
+			callback(null, lambda_response);
+			
 		});
-		callback(null, lambda_response);
+	
 	});
 			
 };
+
+var saveRecord = function(table, item, callback){
+	
+	var params = {
+		TableName:table,
+		Item:item
+	};
+	
+	dynamodb.put(params, function(err, data) {
+	  if(_.isError(err)){
+	  	callback(err, err.stack);
+	  }
+	  callback(null, data);
+	});
+	
+}
