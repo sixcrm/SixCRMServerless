@@ -13,6 +13,4 @@
 10.  Add indexes "completed-index", "created-index" to transactions *(REEVALUATE)*
 11.  ~~Add transaction logic for creates and recycles.~~
 12.  Think on the recurring transaction processor mechanism.
-13.  ~~Add indexes to `serverless.yml` `Resources` definitions.~~
-
-
+13.  ~~Add indexes to `serverless.yml` `Resources` definitions.~~ 
