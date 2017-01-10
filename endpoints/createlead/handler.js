@@ -103,7 +103,7 @@ module.exports.createlead = (event, context, callback) => {
 			var customer = data.Items[0];
 			customer_uuid = customer.uuid;
 			
-			saveTransaction(customer_uuid, (error, data) => {
+			putTransaction(customer_uuid, (error, data) => {
 				
 				if(_.isError(error)){			
 					lambda_response['body'] = JSON.stringify({
@@ -115,7 +115,7 @@ module.exports.createlead = (event, context, callback) => {
 				}
 				
 				var result_message = {
-					transaction_id: data['uuid'],
+					transaction: data,
 					customer: customer
 				}
 
@@ -146,7 +146,7 @@ module.exports.createlead = (event, context, callback) => {
 		
 				}
 				
-				saveTransaction(customer_uuid, (error, data) => {
+				putTransaction(customer_uuid, (error, data) => {
 					
 					if(_.isError(error)){
 				
@@ -160,7 +160,7 @@ module.exports.createlead = (event, context, callback) => {
 					}
 					
 					var result_message = {
-						transaction_id: data['uuid'],
+						transaction: data,
 						customer: duplicate_body
 					}
 
@@ -181,14 +181,63 @@ module.exports.createlead = (event, context, callback) => {
 			
 };
 
+var putTransaction = function(customer_uuid, callback){
+	
+	getRecord(process.env.transactions_table, 'customer = :customerv', {':customerv': customer_uuid}, 'customer-index', (error, data) => {
+		
+		if(_.isError(error)){
+	
+			callback(error, null);
+
+		}
+		
+		if(_.isObject(data) && _.has(data, "Items")){
+			if(_.isArray(data.Items) && data.Items.length > 0){
+				data.Items.forEach(function(item){
+					if(_.has(item, 'completed') && item.completed == 'false'){
+						if(_.has(item, "created")){
+							var time_difference = getTimeDifference(item.created);
+							if(time_difference < (60*60*24*7)){
+								callback(null, item);
+							}	
+						}
+					}
+ 				});
+			}
+		}
+		
+		saveTransaction(customer_uuid, (error, data) => {
+			
+			if(_.isError(error)){
+	
+				callback(error, null);
+
+			}
+		
+			callback(null, data);
+		
+		});
+		
+	});
+	
+};	
+
+var createTimestampInSeconds =  function(){
+	return new Date().getTime() / 1000;
+}
+var getTimeDifference = function(created){
+	var now = createTimestampInSeconds();
+	return now - created;
+};
+
 var saveTransaction = function(customer_uuid, callback){
 	
 	var transaction = {
 		uuid: uuidV4(),
 		customer: customer_uuid,
-		open: true,
-		created: new Date().toISOString()
-
+		completed: 'false',
+		created: createTimestampInSeconds(),
+		modified: 'false'
 	};
 		
 	saveRecord(process.env.transactions_table, transaction, (error, data) => {

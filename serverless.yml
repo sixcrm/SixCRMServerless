@@ -115,9 +115,21 @@ resources:
         AttributeDefinitions:
           - AttributeName: uuid
             AttributeType: S
+          - AttributeName: email
+            AttributeType: S
         KeySchema:
           - AttributeName: uuid
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: email-index
+            KeySchema: 
+              - AttributeName: email,
+                KeyType: "HASH"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: 5,
+              WriteCapacityUnits: 5
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
@@ -131,6 +143,18 @@ resources:
         KeySchema:
           - AttributeName: uuid
             KeyType: HASH
+          - AttributeName: customer
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: customer-index
+            KeySchema: 
+              - AttributeName: customer,
+                KeyType: "HASH"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: 5,
+              WriteCapacityUnits: 5
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5

@@ -8,7 +8,29 @@
         "AttributeDefinitions": [{
             "AttributeName": "uuid", 
             "AttributeType": "S"
+        },
+        {
+            "AttributeName": "customer", 
+            "AttributeType": "S"
         }],
+        "GlobalSecondaryIndexes": [ 
+		  { 
+			 "IndexName": "customer-index",
+			 "KeySchema": [ 
+				{ 
+				   "AttributeName": "customer",
+				   "KeyType": "HASH"
+				}
+			 ],
+			 "Projection": { 
+				"ProjectionType": "ALL"
+			 },
+			 "ProvisionedThroughput": { 
+				"ReadCapacityUnits": 5,
+				"WriteCapacityUnits": 5
+			 }
+		  }
+		],
         "ProvisionedThroughput": {
             "ReadCapacityUnits": 5, 
             "WriteCapacityUnits": 5
