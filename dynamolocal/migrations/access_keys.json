@@ -1,0 +1,21 @@
+{
+    "Table": {
+        "TableName": "access_keys",
+        "KeySchema": [{
+            "AttributeName": "access_key",
+            "KeyType": "HASH"
+        }],
+        "AttributeDefinitions": [{
+            "AttributeName": "access_key",
+            "AttributeType": "S"
+        }],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    },
+    "Seeds": [{
+        "access_key": "ae31c39cb9c30a027cf6c0a612a813d33bc23b6e",
+        "secret_key": "MzM1YWE2YTYyYzZjMGMxYzYyOGFlZjEzYTk3ZTFlNjNiYTNhMTYxMg=="
+    }]
+}

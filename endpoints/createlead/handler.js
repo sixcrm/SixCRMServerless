@@ -8,10 +8,13 @@ const request = require('request');
 const querystring = require('querystring');
 const uuidV4 = require('uuid/v4');
 const AWS = require("aws-sdk");
-const dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+if(_.isString(process.env.dynamo_endpoint) && !_.isEmpty(process.env.dynamo_endpoint)){
+	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:'http://localhost:8001'});
+}
 
 module.exports.createlead = (event, context, callback) => {
-	
+
 	var lambda_response = {};		
 	lambda_response.statusCode = 500;
 	lambda_response['body'] = JSON.stringify({
@@ -80,14 +83,12 @@ module.exports.createlead = (event, context, callback) => {
 		callback(null, lambda_response);
 	}
 	
-	duplicate_body['uuid'] = uuidV4();
-	
-	saveRecord("customers", duplicate_body, (error, data) => {
-		
+	getRecord(process.env.customers_table, 'email = :emailv',{':emailv': duplicate_body['email']}, 'email-index', (error, data) => {
+				
 		if(_.isError(error)){
 				
 			lambda_response['body'] = JSON.stringify({
-				message: 'Error writing to customers table.',
+				message: 'Error reading from customers table.',
 				input: event,
 				errors: error
 			});
@@ -95,42 +96,133 @@ module.exports.createlead = (event, context, callback) => {
 		
 		}
 		
-		var transaction = {
-			"uuid": uuidV4(),
-			customer: duplicate_body['uuid']
-		};
-			
-		saveRecord(process.env.transactions_table, transaction, (error, data) => {
-			
-			if(_.isError(error)){
-				
-				lambda_response['body'] = JSON.stringify({
-					message: 'Error writing to transactions table.',
-					input: event,
-					errors: error
-				});
-				callback(null, lambda_response);
+		var customer_uuid = null;
 		
-			}
+		if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items) && data.Items.length > 0){
+		
+			var customer = data.Items[0];
+			customer_uuid = customer.uuid;
 			
-			var result_message = {
-				transaction_id: transaction['uuid'],
-				customer: duplicate_body
-			}
-	
-			lambda_response.statusCode = 200;
-			lambda_response['body'] = JSON.stringify({
-				message: 'Success',
-				results: result_message
+			saveTransaction(customer_uuid, (error, data) => {
+				
+				if(_.isError(error)){			
+					lambda_response['body'] = JSON.stringify({
+						message: 'Error writing to transactions table.',
+						input: event,
+						errors: error
+					});
+					callback(null, lambda_response);
+				}
+				
+				var result_message = {
+					transaction_id: data['uuid'],
+					customer: customer
+				}
+
+				lambda_response.statusCode = 200;
+				lambda_response['body'] = JSON.stringify({
+					message: 'Success',
+					results: result_message
+				});
+
+				callback(null, lambda_response);
+				
 			});
-	
-			callback(null, lambda_response);
 			
-		});
+		}else{
+		
+			customer_uuid = duplicate_body['uuid'] = uuidV4();
+				
+			saveRecord(process.env.customers_table, duplicate_body, (error, data) => {
+		
+				if(_.isError(error)){
+				
+					lambda_response['body'] = JSON.stringify({
+						message: 'Error writing to customers table.',
+						input: event,
+						errors: error
+					});
+					callback(null, lambda_response);
+		
+				}
+				
+				saveTransaction(customer_uuid, (error, data) => {
+					
+					if(_.isError(error)){
+				
+						lambda_response['body'] = JSON.stringify({
+							message: 'Error writing to transactions table.',
+							input: event,
+							errors: error
+						});
+						callback(null, lambda_response);
+		
+					}
+					
+					var result_message = {
+						transaction_id: data['uuid'],
+						customer: duplicate_body
+					}
+
+					lambda_response.statusCode = 200;
+					lambda_response['body'] = JSON.stringify({
+						message: 'Success',
+						results: result_message
+					});
+
+					callback(null, lambda_response);
+				
+				});
 	
+			});
+		}
+		
 	});
 			
 };
+
+var saveTransaction = function(customer_uuid, callback){
+	
+	var transaction = {
+		uuid: uuidV4(),
+		customer: customer_uuid,
+		open: true,
+		created: new Date().toISOString()
+
+	};
+		
+	saveRecord(process.env.transactions_table, transaction, (error, data) => {
+			
+		if(_.isError(error)){
+	
+			callback(error, null);
+
+		}
+		
+		callback(null, transaction);
+
+	});	
+
+};
+
+var getRecord = function(table, condition_expression, parameters, index, callback){
+	
+	var params = {
+		TableName: table,
+		IndexName: index,
+		KeyConditionExpression: condition_expression,
+		ExpressionAttributeValues: parameters
+	};
+	
+	dynamodb.query(params, function(err, data) {
+		if(_.isError(err)){
+			console.log(err.stack);
+			callback(err, err.stack);
+		}
+		callback(null, data);
+	});
+	
+}
 
 var saveRecord = function(table, item, callback){
 	

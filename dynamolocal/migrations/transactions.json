@@ -1,0 +1,18 @@
+{
+    "Table": {
+        "TableName": "transactions",
+        "KeySchema": [{
+            "AttributeName": "uuid",
+            "KeyType": "HASH"
+        }], 
+        "AttributeDefinitions": [{
+            "AttributeName": "uuid", 
+            "AttributeType": "S"
+        }],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5, 
+            "WriteCapacityUnits": 5
+        }
+    },
+    "Seeds": []
+}

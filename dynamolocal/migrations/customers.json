@@ -1,0 +1,40 @@
+{
+    "Table": {
+        "TableName": "customers",
+        "KeySchema": [{
+            "AttributeName": "uuid",
+            "KeyType": "HASH"
+        }],
+         "AttributeDefinitions": [{
+            "AttributeName": "uuid",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "email",
+            "AttributeType": "S"
+        }],
+         "GlobalSecondaryIndexes": [ 
+		  { 
+			 "IndexName": "email-index",
+			 "KeySchema": [ 
+				{ 
+				   "AttributeName": "email",
+				   "KeyType": "HASH"
+				}
+			 ],
+			 "Projection": { 
+				"ProjectionType": "KEYS_ONLY"
+			 },
+			 "ProvisionedThroughput": { 
+				"ReadCapacityUnits": 5,
+				"WriteCapacityUnits": 5
+			 }
+		  }
+		],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    },
+    "Seeds": []
+}

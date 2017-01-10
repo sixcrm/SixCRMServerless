@@ -6,6 +6,11 @@ const Validator = require('jsonschema').Validator;
 const v = new Validator();
 const request = require('request');
 const querystring = require('querystring');
+const AWS = require("aws-sdk");
+var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+if(_.isString(process.env.dynamo_endpoint) && !_.isEmpty(process.env.dynamo_endpoint)){
+	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:'http://localhost:8001'});
+}
 
 module.exports.createorder= (event, context, callback) => {
 	

@@ -12,14 +12,25 @@ provider:
   region: us-east-1
   profile: six
     
-
+plugins:
+  - serverless-dynamodb-local
+  
+custom:
+  dynamodb:
+    start:
+      port: 8001
+      inMemory: true
+      migration: true
+    migration:
+      dir: ./dynamolocal/migrations
+      
 site_config: ${file(./config/${opt:stage}/site.yml)}
 
 functions:
   verifysignature:
     handler: authorizers/verifysignature/handler.verifysignature
     environment:
-      access_keys_table: ${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
+      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
   verifyjwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
@@ -49,8 +60,9 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
-        customers_table: ${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-        transactions_table: ${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+        dynamo_endpoint: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+        customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
   createorder:
     handler: endpoints/createorder/handler.createorder
     events:
@@ -63,9 +75,13 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
-        nmi_username: 'demo'
-        nmi_password: 'password'
-        nmi_endpoint: 'https://secure.networkmerchants.com/api/transact.php'
+        dynamo_endpoint: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+        customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+        products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+        nmi_username: ${file(./config/${opt:stage}/site.yml):nmi.username
+        nmi_password: ${file(./config/${opt:stage}/site.yml):nmi.password
+        nmi_endpoint: ${file(./config/${opt:stage}/site.yml):nmi.endpoint
   confirmorder:
     handler: endpoints/confirmorder/handler.confirmorder
     events:
@@ -82,7 +98,7 @@ resources:
     accesskeys:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: access_keys
+        TableName: ${opt:stage}access_keys
         AttributeDefinitions:
           - AttributeName: access_key
             AttributeType: S
@@ -95,7 +111,7 @@ resources:
     customerstable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: customers
+        TableName: ${opt:stage}customers
         AttributeDefinitions:
           - AttributeName: uuid
             AttributeType: S
@@ -108,7 +124,7 @@ resources:
     transactionstable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: transactions
+        TableName: ${opt:stage}transactions
         AttributeDefinitions:
           - AttributeName: uuid
             AttributeType: S
@@ -121,7 +137,7 @@ resources:
     productstable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: products
+        TableName: ${opt:stage}products
         AttributeDefinitions:
           - AttributeName: uuid
             AttributeType: S
@@ -133,7 +149,7 @@ resources:
           WriteCapacityUnits: 5
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
-      DependsOn: accesskeys
+      DependsOn: ${opt:stage}accesskeys
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:

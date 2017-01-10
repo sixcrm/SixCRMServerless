@@ -4,7 +4,9 @@ dynamodb:
   transactions_table: 'transactions'
   customers_table: 'customers'
   products_table: 'products'
+  endpoint: 'http://localhost:8001'
 nmi:
   username: 'demo'
   password: 'password'
   endpoint: 'https://secure.networkmerchants.com/api/transact.php'
+
