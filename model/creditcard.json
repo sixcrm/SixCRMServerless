@@ -16,5 +16,5 @@
 		},
 		"address":{"$ref": "/Address"}
 	},
-	"required":["email","firstname","lastname","address"]
+	"required":["number","expiration","ccv","name","address"]
 }

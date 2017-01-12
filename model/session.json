@@ -1,0 +1,23 @@
+{
+	"title": "Session",
+	"type": "object",
+	"properties": {
+		"customer":{"$ref": "/Customer"}
+		"products":{
+			"type":"array",
+			"items":{"$ref": "/Product"}
+			"minItems": 1,
+		},
+		"created":{
+			"type":"string"
+		},
+		"modified":{
+			"type":"string"
+		}
+		"completed":{
+			"type":"string"
+		}
+	},
+	"required":["customer", "created", "modified", "completed"]
+}
+

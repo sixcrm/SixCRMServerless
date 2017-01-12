@@ -2,11 +2,11 @@
     "Table": {
         "TableName": "products",
         "KeySchema": [{
-            "AttributeName": "uuid",
+            "AttributeName": "id",
             "KeyType": "HASH"
         }],
         "AttributeDefinitions": [{
-            "AttributeName": "uuid",
+            "AttributeName": "id",
             "AttributeType": "S"
         }],
         "ProvisionedThroughput": {
@@ -14,5 +14,30 @@
             "WriteCapacityUnits": 5
         }
     },
-    "Seeds": []
+    "Seeds": [
+    	{
+    		"id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+			"name": "Test Product",
+			"type":"straight",
+			"prices":{
+				"straight": "34.99"
+			},
+			"recurring":{
+				"price":"34.99",
+				"period":30
+			}				
+		},
+		{
+    		"id": "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
+			"name": "Test Product 2",
+			"type":"straight",
+			"prices":{
+				"straight": "14.99"
+			},
+			"recurring":{
+				"price":"44.99",
+				"period":30
+			}				
+		}
+    ]
 }

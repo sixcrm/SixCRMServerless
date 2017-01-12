@@ -1,9 +1,11 @@
 site_secret_jwt_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
 dynamodb:
   access_keys_table: 'access_keys'
+  sessions_table: 'sessions'
   transactions_table: 'transactions'
   customers_table: 'customers'
   products_table: 'products'
+  creditcards_table: 'products'
 nmi:
   username: 'demo'
   password: 'password'

@@ -9,14 +9,11 @@
 		"ccnumber":{
 			"type":"string"
 		},
-		"ccexp":{
+		"ccexpiration":{
 			"type":"string",
 			"pattern": "^[0-9]{4}$"
 		},
-		"ccv":{
-			"type":"string"
-		},
-		"amount":{
+		"ccccv":{
 			"type":"string"
 		},
 		"currency":{
@@ -128,5 +125,5 @@
 			"type":"string"
 		}
 	},
-	"required":["type","ccnumber","ccexp","amount"]
+	"required":["type","ccnumber","ccexpiration"]
 }

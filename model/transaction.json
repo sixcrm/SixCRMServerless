@@ -2,10 +2,7 @@
 	"title": "Transaction",
 	"type": "object",
 	"properties": {
-		"uuid":{
-			"type":"string"
-		},
-		"customer":{"$ref": "/Customer"}
+		"session":{"$ref": "/Session"}
 		"products":{
 			"type":"array",
 			"items":{"$ref": "/Product"}
@@ -14,13 +11,10 @@
 		"created":{
 			"type":"string"
 		},
-		"modified":{
-			"type":"string"
-		}
-		"completed":{
-			"type":"string"
+		"processorresult":{
+			"type":"object"
 		}
 	},
-	"required":["customer", "created", "modified", "completed"]
+	"required":["uuid", "session", "products", "created", "processorresult"]
 }
 

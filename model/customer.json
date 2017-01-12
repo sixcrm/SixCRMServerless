@@ -2,9 +2,6 @@
 	"title": "Customer",
 	"type": "object",
 	"properties": {
-		"uuid":{
-			"type":"string"
-		},
 		"email":{
 			"type":"string"
 		},
@@ -18,7 +15,10 @@
 			"type":"string"
 		},
 		"address":{"$ref": "/Address"},
-		"creditcard":{"$ref": "/CreditCard"}
+		"creditcards":{
+			"type":"array",
+			"items":{"$ref": "/CreditCard"}
+		}
 	},
 	"required":["email", "firstname", "lastname"]
 }

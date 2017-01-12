@@ -31,10 +31,12 @@ functions:
     handler: authorizers/verifysignature/handler.verifysignature
     environment:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
+      stage: ${opt:stage}
   verifyjwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
       site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):site_secret_jwt_key}
+      stage: ${opt:stage}
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
     events:
@@ -48,6 +50,7 @@ functions:
             identitySource: method.request.header.Authorization
     environment:
       site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):site_secret_jwt_key}
+      stage: ${opt:stage}
   createlead:
     handler: endpoints/createlead/handler.createlead
     events:
@@ -62,7 +65,8 @@ functions:
     environment:
         dynamo_endpoint: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+        sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
+        stage: ${opt:stage}
   createorder:
     handler: endpoints/createorder/handler.createorder
     events:
@@ -77,11 +81,14 @@ functions:
     environment:
         dynamo_endpoint: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+        sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-        nmi_username: ${file(./config/${opt:stage}/site.yml):nmi.username
-        nmi_password: ${file(./config/${opt:stage}/site.yml):nmi.password
-        nmi_endpoint: ${file(./config/${opt:stage}/site.yml):nmi.endpoint
+        creditcards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.creditcards_table}
+        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+        nmi_username: ${file(./config/${opt:stage}/site.yml):nmi.username}
+        nmi_password: ${file(./config/${opt:stage}/site.yml):nmi.password}
+        nmi_endpoint: ${file(./config/${opt:stage}/site.yml):nmi.endpoint}
+        stage: ${opt:stage}
   confirmorder:
     handler: endpoints/confirmorder/handler.confirmorder
     events:
@@ -113,12 +120,12 @@ resources:
       Properties:
         TableName: ${opt:stage}customers
         AttributeDefinitions:
-          - AttributeName: uuid
+          - AttributeName: id
             AttributeType: S
           - AttributeName: email
             AttributeType: S
         KeySchema:
-          - AttributeName: uuid
+          - AttributeName: id
             KeyType: HASH
         GlobalSecondaryIndexes:
           - IndexName: email-index
@@ -133,15 +140,15 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
-    transactionstable:
+    sessionstable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${opt:stage}transactions
+        TableName: ${opt:stage}sessions
         AttributeDefinitions:
-          - AttributeName: uuid
+          - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: uuid
+          - AttributeName: id
             KeyType: HASH
           - AttributeName: customer
             KeyType: HASH
@@ -158,15 +165,65 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
+    transactionstable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${opt:stage}transactions
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: session
+            KeyType: HASH
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: session-index
+            KeySchema: 
+              - AttributeName: session,
+                KeyType: "HASH"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: 5,
+              WriteCapacityUnits: 5
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    creditcardsstable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${opt:stage}creditcards
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: number
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: number-index
+            KeySchema: 
+              - AttributeName: number,
+                KeyType: "HASH"
+            Projection: 
+              ProjectionType: "ALL"
+            ProvisionedThroughput: 
+              ReadCapacityUnits: 5,
+              WriteCapacityUnits: 5
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
     productstable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${opt:stage}products
         AttributeDefinitions:
-          - AttributeName: uuid
+          - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: uuid
+          - AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 5

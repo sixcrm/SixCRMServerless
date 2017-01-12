@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "transactions",
+        "TableName": "sessions",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
@@ -10,15 +10,15 @@
             "AttributeType": "S"
         },
         {
-            "AttributeName": "session", 
+            "AttributeName": "customer", 
             "AttributeType": "S"
         }],
         "GlobalSecondaryIndexes": [ 
 		  { 
-			 "IndexName": "session-index",
+			 "IndexName": "customer-index",
 			 "KeySchema": [ 
 				{ 
-				   "AttributeName": "session",
+				   "AttributeName": "customer",
 				   "KeyType": "HASH"
 				}
 			 ],
@@ -36,5 +36,14 @@
             "WriteCapacityUnits": 5
         }
     },
-    "Seeds": []
+    "Seeds": [
+    	{
+			"id": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
+			"customer": "24f7c851-29d4-4af9-87c5-0298fa74c689",
+        	"products":["668ad918-0d09-4116-a6fe-0e7a9eda36f8"],
+            "completed": "false",
+            "modified": "false",
+            "created": "1484156504"
+        }
+    ]
 }

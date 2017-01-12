@@ -13,13 +13,9 @@ if(_.isString(process.env.dynamo_endpoint) && !_.isEmpty(process.env.dynamo_endp
 	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:'http://localhost:8001'});
 }
 
-module.exports.createlead = (event, context, callback) => {
+var lr = require('../../lib/lambda-response.js');
 
-	var lambda_response = {};		
-	lambda_response.statusCode = 500;
-	lambda_response['body'] = JSON.stringify({
-		message: 'An unexpected error occured.'
-	});
+module.exports.createlead = (event, context, callback) => {
 
 	var duplicate_body;
 	try {
@@ -37,10 +33,9 @@ module.exports.createlead = (event, context, callback) => {
 		address_schema = JSON.parse(fs.readFileSync('./model/address.json','utf8'));
 		creditcard_schema = JSON.parse(fs.readFileSync('./model/creditcard.json','utf8'));
 	} catch(e){
-		lambda_response.body = JSON.stringify(
-			{message: 'Unable to load validation schemas'}
-		);
-		callback(null, lambda_response)
+		
+		lr.issueError('Unable to load validation schemas.', 500, event, e, callback);		
+	
 	}
 			
 	var validation;
@@ -51,127 +46,76 @@ module.exports.createlead = (event, context, callback) => {
 		v.addSchema(creditcard_schema, '/CreditCard');
 		validation = v.validate(duplicate_body, customer_schema);
 	}catch(e){
-		lambda_response.body = JSON.stringify(
-			{message: e.message}
-		);
-		callback(null, lambda_response);
+		
+		lr.issueError('Unable to instantiate validator.', 500, event, e, callback);
+	
 	}
 	
-	if(validation['errors'].length > 0){		
-		var error_response = {'validation_errors':validation['errors']};		
-		lambda_response['body'] = JSON.stringify({
-			message: 'One or more validation errors occurred.',
-			input: event,
-			errors: error_response
-		});
-		callback(null, lambda_response);
-	}
+	if(validation['errors'].length > 0){
 		
-	validation.errors = [];
+		lr.issueError('One or more validation errors occurred.', 500, event, new Error(validation.errors), callback);
+				
+	}
 	
 	if(_.has(duplicate_body, 'email') && !validator.isEmail(duplicate_body['email'])){
 		validation.errors.push('"email" field must be a email address.');	
 	}
 	
 	if(validation['errors'].length > 0){		
-		var error_response = {'validation_errors':validation['errors']};		
-		lambda_response['body'] = JSON.stringify({
-			message: 'One or more validation errors occurred.',
-			input: event,
-			errors: error_response
-		});
-		callback(null, lambda_response);
+		
+		lr.issueError('One or more validation errors occurred.', 500, event, new Error(validation.errors), callback);
+		
 	}
 	
 	getRecord(process.env.customers_table, 'email = :emailv',{':emailv': duplicate_body['email']}, 'email-index', (error, data) => {
-				
-		if(_.isError(error)){
-				
-			lambda_response['body'] = JSON.stringify({
-				message: 'Error reading from customers table.',
-				input: event,
-				errors: error
-			});
-			callback(null, lambda_response);
 		
-		}
+		lr.issueError('Error reading from customers table.', 500, event, error, callback);
 		
-		var customer_uuid = null;
+		var customer_id = null;
 		
 		if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items) && data.Items.length > 0){
 		
 			var customer = data.Items[0];
-			customer_uuid = customer.uuid;
+			customer_id = customer.id;
 			
-			putTransaction(customer_uuid, (error, data) => {
+			putSession(customer_id, (error, data) => {
 				
-				if(_.isError(error)){			
-					lambda_response['body'] = JSON.stringify({
-						message: 'Error writing to transactions table.',
-						input: event,
-						errors: error
-					});
-					callback(null, lambda_response);
-				}
+				lr.issueError('Error writing to sessions table.', 500, event, error, callback);
 				
 				var result_message = {
-					transaction: data,
+					session: data,
 					customer: customer
 				}
-
-				lambda_response.statusCode = 200;
-				lambda_response['body'] = JSON.stringify({
+				
+				lr.issueResponse(200, {
 					message: 'Success',
 					results: result_message
-				});
-
-				callback(null, lambda_response);
+				}, callback);
 				
 			});
 			
 		}else{
 		
-			customer_uuid = duplicate_body['uuid'] = uuidV4();
+			customer_id = duplicate_body['id'] = uuidV4();
 				
 			saveRecord(process.env.customers_table, duplicate_body, (error, data) => {
 		
-				if(_.isError(error)){
+				lr.issueError('Error writing to customers table.', 500, event, error, callback);
 				
-					lambda_response['body'] = JSON.stringify({
-						message: 'Error writing to customers table.',
-						input: event,
-						errors: error
-					});
-					callback(null, lambda_response);
-		
-				}
-				
-				putTransaction(customer_uuid, (error, data) => {
-					
-					if(_.isError(error)){
-				
-						lambda_response['body'] = JSON.stringify({
-							message: 'Error writing to transactions table.',
-							input: event,
-							errors: error
-						});
-						callback(null, lambda_response);
-		
-					}
+				putSession(customer_id, (error, data) => {
+
+					lr.issueError('Error writing to sessions table.', 500, event, error, callback);
 					
 					var result_message = {
-						transaction: data,
+						session: data,
 						customer: duplicate_body
 					}
-
-					lambda_response.statusCode = 200;
-					lambda_response['body'] = JSON.stringify({
+					
+					lr.issueResponse(200, {
 						message: 'Success',
 						results: result_message
-					});
-
-					callback(null, lambda_response);
-				
+					}, callback);
+					
 				});
 	
 			});
@@ -181,15 +125,11 @@ module.exports.createlead = (event, context, callback) => {
 			
 };
 
-var putTransaction = function(customer_uuid, callback){
+var putSession = function(customer_id, callback){
 	
-	getRecord(process.env.transactions_table, 'customer = :customerv', {':customerv': customer_uuid}, 'customer-index', (error, data) => {
+	getRecord(process.env.sessions_table, 'customer = :customerv', {':customerv': customer_id}, 'customer-index', (error, data) => {
 		
-		if(_.isError(error)){
-	
-			callback(error, null);
-
-		}
+		if(_.isError(error)){ callback(error, null);}
 		
 		if(_.isObject(data) && _.has(data, "Items")){
 			if(_.isArray(data.Items) && data.Items.length > 0){
@@ -206,13 +146,9 @@ var putTransaction = function(customer_uuid, callback){
 			}
 		}
 		
-		saveTransaction(customer_uuid, (error, data) => {
+		saveSession(customer_id, (error, data) => {
 			
-			if(_.isError(error)){
-	
-				callback(error, null);
-
-			}
+			if(_.isError(error)){ callback(error, null);}
 		
 			callback(null, data);
 		
@@ -223,24 +159,25 @@ var putTransaction = function(customer_uuid, callback){
 };	
 
 var createTimestampInSeconds =  function(){
-	return new Date().getTime() / 1000;
+	return Math.round(new Date().getTime() / 1000);
 }
+
 var getTimeDifference = function(created){
 	var now = createTimestampInSeconds();
 	return now - created;
 };
 
-var saveTransaction = function(customer_uuid, callback){
+var saveSession = function(customer_id, callback){
 	
-	var transaction = {
-		uuid: uuidV4(),
-		customer: customer_uuid,
+	var session = {
+		id: uuidV4(),
+		customer: customer_id,
 		completed: 'false',
 		created: createTimestampInSeconds(),
 		modified: 'false'
 	};
 		
-	saveRecord(process.env.transactions_table, transaction, (error, data) => {
+	saveRecord(process.env.sessions_table, session, (error, data) => {
 			
 		if(_.isError(error)){
 	
@@ -248,7 +185,7 @@ var saveTransaction = function(customer_uuid, callback){
 
 		}
 		
-		callback(null, transaction);
+		callback(null, session);
 
 	});	
 

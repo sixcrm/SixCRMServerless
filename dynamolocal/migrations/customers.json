@@ -2,12 +2,12 @@
     "Table": {
         "TableName": "customers",
         "KeySchema": [{
-            "AttributeName": "uuid",
+            "AttributeName": "id",
             "KeyType": "HASH"
         }],
          "AttributeDefinitions": [
          	{
-				"AttributeName": "uuid",
+				"AttributeName": "id",
 				"AttributeType": "S"
         	},
 			{
@@ -38,5 +38,21 @@
             "WriteCapacityUnits": 5
         }
     },
-    "Seeds": []
+    "Seeds": [	
+    	{
+    		"id":"24f7c851-29d4-4af9-87c5-0298fa74c689",
+    		"email":"rama@damunaste.org",
+    		"firstname":"Rama",
+    		"lastname":"Damunaste",
+    		"phone":"1234567890",
+    		"address":{
+    			"line1":"10 Downing St.",
+    			"city":"London",
+    			"state":"Oregon",
+    			"zip":"97213",
+    			"country":"US"
+    		},
+    		"creditcards":["59ce684d-9a76-4af0-92ee-b6c1c4850b6b"]
+    	}
+    ]
 }

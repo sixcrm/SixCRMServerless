@@ -1,0 +1,52 @@
+{
+    "Table": {
+        "TableName": "creditcards",
+        "KeySchema": [{
+            "AttributeName": "id",
+            "KeyType": "HASH"
+        }], 
+        "AttributeDefinitions": [{
+            "AttributeName": "id", 
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "ccnumber", 
+            "AttributeType": "S"
+        }],
+        "GlobalSecondaryIndexes": [{ 
+			"IndexName": "ccnumber-index",
+			"KeySchema": [ 
+				{ 
+					"AttributeName": "ccnumber",
+					"KeyType": "HASH"
+				}
+			],
+			"Projection": { 
+				"ProjectionType": "ALL"
+			},
+			"ProvisionedThroughput": { 
+				"ReadCapacityUnits": 5,
+				"WriteCapacityUnits": 5
+			}
+		}],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5, 
+            "WriteCapacityUnits": 5
+        }
+    },
+    "Seeds": [{
+    	"id":"59ce684d-9a76-4af0-92ee-b6c1c4850b6b",
+    	"ccnumber":"4111111111111111",
+		"expiration":"1025",
+		"ccv":"999",
+		"name":"Rama Damunaste",
+		"address":{
+			"line1":"10 Skid Rw.",
+			"line2":"Suite 100",
+			"city":"Portland",
+			"state":"Oregon",
+			"zip":"97213",
+			"country":"USA"
+		}
+    }]
+}
