@@ -18,7 +18,7 @@ if(process.env.stage == 'local'){
 var lr = require('../../lib/lambda-response.js');
 
 module.exports.createorder= (event, context, callback) => {
-	
+    
 	var duplicate_body;
 	try {
     	duplicate_body = JSON.parse(event['body']);
@@ -30,7 +30,7 @@ module.exports.createorder= (event, context, callback) => {
 	try{
 		orderjson = JSON.parse(fs.readFileSync('./endpoints/createorder/schema/order.json','utf8'));
 	} catch(e){
-		lr.issueError('Unable to load validation schemas.', 500, event, e, callback);	
+		return lr.issueError('Unable to load validation schemas.', 500, event, e, callback);	
 	}
 			
 	var validation;
@@ -38,7 +38,7 @@ module.exports.createorder= (event, context, callback) => {
 		var v = new Validator();
 		validation = v.validate(duplicate_body, orderjson);
 	}catch(e){
-		lr.issueError('Unable to create validation class.', 500, event, e, callback);
+		return lr.issueError('Unable to create validation class.', 500, event, e, callback);
 	}
 	
 	if(validation['errors'].length > 0){	
@@ -71,69 +71,101 @@ module.exports.createorder= (event, context, callback) => {
 	
 	if(validation['errors'].length > 0){
 	
-		lr.issueError('One or more validation errors occurred.', 500, event, new Error({'validation_errors':validation['errors']}), callback);		
+		return lr.issueError('One or more validation errors occurred.', 500, event, new Error({'validation_errors':validation['errors']}), callback);		
+		
 	}
-	
 
 	getSession(duplicate_body['session_id'], (error, session) => {
 			
-		lr.issueError(error, 500, event, error, callback);		
-		
+		if(_.isError(error)){
+			return lr.issueError(error, 500, event, error, callback);	
+		}	
+
 		getCustomer(session.customer, (error, customer) => {
 			
-			lr.issueError(error, 500, event, error, callback);
+			if(_.isError(error)){
+				return lr.issueError(error, 500, event, error, callback);	
+			}
 			
-			if(_.has(customer, 'creditcards') && _.isArray(customer.creditcards)){
+			if(!_.has(customer, 'creditcards') || !_.isArray(customer.creditcards)){
+				//throw big error baby
+				//why do we care?
+			}	
 				
-				var creditcard = createCreditCardObject(duplicate_body);
 				
-				storeCreditCard(creditcard, customer.creditcards, (error, creditcard) => {
+			var creditcard = createCreditCardObject(duplicate_body);
+			
+			storeCreditCard(creditcard, customer.creditcards, (error, creditcard) => {
+				
+				if(_.isError(error)){
+					return lr.issueError(error, 500, event, error, callback);	
+				}
+
+				getProducts(duplicate_body['products'], (error, products) => {
 					
-					lr.issueError(error, 500, event, error, callback);
+					if(_.isError(error)){
+						return lr.issueError(error, 500, event, error, callback);	
+					}
 					
-					getProducts(duplicate_body['products'], (error, products) => {
+					validateProductsSession(products, session, (error, session) => {
 						
-						lr.issueError(error, 500, event, error, callback);					
-	
-						validateProductsSession(products, session, (error, session) => {
-							
-							lr.issueError(error, 500, event, error, callback);	
-							
-							var amount = productSum(products);
+						if(_.isError(error)){
+							return lr.issueError(error, 500, event, error, callback);	
+						}
 						
-							processNMITransaction({customer: customer, creditcard: creditcard, amount: amount}, (error, processor_response) => {
+						var amount = productSum(products);
+						
+						processNMITransaction({customer: customer, creditcard: creditcard, amount: amount}, (error, processor_response) => {
+						
+							if(_.isError(error)){
+								return lr.issueError(error, 500, event, error, callback);	
+							}
 							
-								lr.issueError(error, 500, event, error, callback);
-														
-								putTransaction({session: session, products: products, amount: amount}, processor_response, (error, transaction) => {
+							console.log({session: session, products: products, amount: amount});
+							
+							putTransaction({session: session, products: products, amount: amount}, processor_response, (error, transaction) => {
+							
+								if(_.isError(error)){
+									return lr.issueError(error, 500, event, error, callback);	
+								}
 								
-									lr.issueError(error, 500, event, error, callback);
+								console.log('products');
+								console.log(products);
+								
+								console.log('session');
+								console.log(session);
 									
-									updateSession(session, products, (error, session) => {
-										
-										lr.issueError(error, 500, event, error, callback);
-										
-										transaction.products = session.products;
-										
-										lr.issueResponse(200, {
-											message: 'Success',
-											results: transaction
-										}, callback);
+								updateSession(session, products, (error, session) => {
 									
-									});
+									console.log('products');
+									console.log(products);
+								
+									console.log('session');
+									console.log(session);
 									
+									if(_.isError(error)){
+										return lr.issueError(error, 500, event, error, callback);	
+									}	
+									
+									transaction.products = session.products;
+									
+									lr.issueResponse(200, {
+										message: 'Success',
+										results: transaction
+									}, callback);
 								
 								});
-						
-							});
+								
 							
+							});
+					
 						});
 						
 					});
 					
 				});
 				
-			}
+			});
 			
 		});
 		
@@ -147,7 +179,15 @@ var updateSession =  function(session, products, callback){
 	
 	var session_products = session.products;
 	
-	var updated_products = session_products.concat(products);
+	if(_.isArray(session.products) && session.products.length > 0){
+	
+		var updated_products = session_products.concat(products);
+		
+	}else{
+		
+		var updated_products = products;
+		
+	}
 	
 	var modified = createTimestamp();
 	
@@ -155,13 +195,13 @@ var updateSession =  function(session, products, callback){
 		
 		if(_.isError(error)){
 		
-			callback(error, error.stack);
+			return callback(error, error.stack);
 			
 		}else{
 		
 			session.products = updated_products;
 		
-			callback(null, session);
+			return callback(null, session);
 			
 		}
 		
@@ -181,16 +221,19 @@ var productSum = function(products){
 }
 
 var putTransaction = function(params, processor_response, callback){
-	
+	//missing session
+	console.log('put transaction params');
+	console.log(params);
 	var transaction = createTransactionObject(params, processor_response);
-	
+
+	console.log('created transaction');
+	console.log(transaction);
 	saveRecord(process.env.transactions_table, transaction, (error, data) => {
-	
 		if(_.isError(error)){
-			callback(error, null);
+			return callback(error, null);
 		}
 		
-		callback(null, transaction);
+		return callback(null, transaction);
 		
 	});
 	
@@ -208,12 +251,18 @@ var getProductIds = function(products){
 var createTransactionObject = function(params, processor_response){
 
 	var product_ids = getProductIds(params.products);
-	
+
+	var transaction_products = [];
+    if(_.has(params.session, "products") && _.isArray(params.session.products)){
+        transaction_products = params.session.products;
+
+    }
+
 	var return_object = {
 		id: uuidV4(),
 		parentsession: params.session.id,
-		products: params.session.products,
-		processor_response: processor_response,
+		products: transaction_products,
+		processor_response: JSON.stringify(processor_response),
 		amount: params.amount,
 		date: timestampToDate(createTimestamp())
 	}
@@ -233,14 +282,15 @@ var getProducts = function(products_array, callback){
 	
 	scanRecords(process.env.products_table, "id IN ("+Object.keys(products_object).toString()+ ")", products_object, (error, products) => {
 		
-		if(_.isError(error)){ callback(error, null);}
+		if(_.isError(error)){ return callback(error, null);}
 		
 		if(!_.isEqual(products_array.length, products.length)){
 		
-			callback(new Error('Unrecognized products in products list.'), null);
+			return callback(new Error('Unrecognized products in products list.'), null);
+
 		}
 		
-		callback(null, products);
+		return callback(null, products);
 		
 	});
 	
@@ -261,7 +311,9 @@ var createCreditCardObject = function(request_body){
 }
 
 var createParameterGroup = function(parameters){
-	
+
+	console.log('parameters');
+	console.log(parameters);
 	var return_object = {};
 	
 	//authentication
@@ -287,7 +339,7 @@ var createParameterGroup = function(parameters){
 	return_object.state = parameters.creditcard.address.state;
 	return_object.zip = parameters.creditcard.address.zip;
 	return_object.country = parameters.creditcard.address.country;
-	if(_.has(parameters.creditcard.address.line2)){
+	if(_.has(parameters.creditcard.address, "line2")){
 		return_object.address2 = parameters.creditcard.address.line2;
 	}
 	
@@ -297,7 +349,7 @@ var createParameterGroup = function(parameters){
 	return_object.shipping_state = parameters.customer.address.state;
 	return_object.shipping_zip = parameters.customer.address.zip;
 	return_object.shipping_country = parameters.customer.address.country;
-	if(_.has(parameters.creditcard.address.line2)){
+	if(_.has(parameters.customer.address, "line2")){
 		return_object.shipping_address2 = parameters.customer.address.line2;
 	}
 	
@@ -306,7 +358,7 @@ var createParameterGroup = function(parameters){
 }
 
 var processNMITransaction = function(parameters_array, callback){
-	
+
 	var parameter_group = createParameterGroup(parameters_array);
 	
 	var request_options = {
@@ -318,7 +370,7 @@ var processNMITransaction = function(parameters_array, callback){
 	request.post(request_options, (error, response, body) => {
 		
 		if(_.isError(error)){
-			callback(
+			return callback(
 				error, 
 				{
 					message: 'Error',
@@ -334,7 +386,7 @@ var processNMITransaction = function(parameters_array, callback){
 
 				case '1':
 					
-					callback(null, {
+					return callback(null, {
 						message: 'Success',
 						results: response_body
 					});
@@ -343,7 +395,7 @@ var processNMITransaction = function(parameters_array, callback){
 	
 				case '2':
 
-					callback(null, {
+					return callback(null, {
 						message: 'Declined',
 						results:  response_body
 					});
@@ -353,7 +405,7 @@ var processNMITransaction = function(parameters_array, callback){
 				case '3':
 				default:
 
-					callback(
+					return callback(
 						new Error('Unsuccessful to post to NMI'), 
 						{
 							message: 'Error',
@@ -366,7 +418,7 @@ var processNMITransaction = function(parameters_array, callback){
 
 		}else{				
 
-			callback(
+			return callback(
 				new Error('Unexpected Error posting to NMI.'), 
 				{
 					message: 'Error',
@@ -379,6 +431,7 @@ var processNMITransaction = function(parameters_array, callback){
 	
 }
 
+//what does this duuuuuu?
 var storeCreditCard = function(creditcard, creditcards, callback){
 	
 	var stored_card;
@@ -387,7 +440,7 @@ var storeCreditCard = function(creditcard, creditcards, callback){
 		
 		for(var i= 0; i< creditcards.length; i++){
 			
-			if(_.isEqual(creditcard.number, creditcards[i].number)){
+			if(_.isEqual(creditcard.ccnumber, creditcards[i].ccnumber)){
 				
 				if(_.isEqual(creditcard.expiration, creditcards[i].expiration)){
 					
@@ -395,9 +448,7 @@ var storeCreditCard = function(creditcard, creditcards, callback){
 						
 						if(_.isEqual(creditcard.name, creditcards[i].name)){
 						
-							stored_card = creditcards[i];
-							
-							return;
+							return callback(creditcards[i]);
 						
 						}
 					
@@ -410,26 +461,18 @@ var storeCreditCard = function(creditcard, creditcards, callback){
 		}
 	
 	}
-	
-	if(!_.isObject(stored_card)){
 		
-		putCreditCard(creditcard, (error, stored_card) => {
-			
-			if(_.isError(error)){
-				
-				callback(error, null);
-				
-			}	
-			
-			callback(null, stored_card);
-				
-		});
-			
-	}else{
-	
-		callback(null, stored_card);
+	putCreditCard(creditcard, (error, stored_card) => {
 		
-	}
+		if(_.isError(error)){
+			
+			return callback(error, null);
+			
+		}	
+		
+		return callback(null, stored_card);
+			
+	});
 	
 }
 
@@ -457,26 +500,26 @@ var isSameCreditCard = function(creditcard1, creditcard2){
 
 var putCreditCard =  function(creditcard, callback){
 	
-	getRecords(process.env.creditcards_table, 'ccnumber = :ccnumberv', {':ccnumberv': creditcard.ccnumber}, 'ccnumber-index', (error, data) => {
+	getRecords(process.env.creditcards_table, 'ccnumber = :ccnumberv', {':ccnumberv': creditcard.ccnumber}, 'ccnumber-index', (error, creditcards) => {
 		
-		if(_.isError(error)){ callback(error, null);}
+		if(_.isError(error)){ return callback(error, null);}
 		
 		var card_identified = false;
-		data.forEach(function(item){
+		creditcards.forEach(function(item){
 			if(isSameCreditCard(creditcard, item)){
 				card_identified = true;
-				callback(null, item);
+				return callback(null, item);
 			}
 		});
 		
 		//note need to save the credit card information here
 		if(card_identified == false){
 
-			saveSession(customer_id, (error, data) => {
-			
-				if(_.isError(error)){ callback(error, null);}
+			saveCreditCard(creditcard, (error, data) => {
+				
+				if(_.isError(error)){ return callback(error, null);}
 		
-				callback(null, data);
+				return callback(null, data);
 		
 			});
 			
@@ -486,13 +529,31 @@ var putCreditCard =  function(creditcard, callback){
 	
 }
 
+var saveCreditCard = function(creditcard, callback){
+	
+	if(!_.has(creditcard, 'id')){
+		creditcard.id = uuidV4();
+	}
+	
+	saveRecord(process.env.creditcards_table, creditcard, (error, data) => {
+		
+		if(_.isError(error)){
+			return callback(error, null);
+		}
+		
+		return callback(null, creditcard);
+		
+	});
+	
+}
+
 var getCreditCard = function(id, callback){
 
 	getRecord(process.env.creditcards_table, 'id = :idv', {':idv': id}, null, (error, data) => {
 		
-		if(_.isError(error)){ callback(error, null);}
+		if(_.isError(error)){ return callback(error, null);}
 		
-		callback(null, data);
+		return callback(null, data);
 		
 	});	
 	
@@ -501,24 +562,24 @@ var getCreditCard = function(id, callback){
 var getSession = function(id, callback){
 	
 	getRecord(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, session) => {
-						
-		if(_.isError(error)){ callback(error, null); }
+			
+		if(_.isError(error)){ return callback(error, null); }
 		
 		if(_.has(session, "customer") && _.has(session, 'completed')){
 		
 			if(_.isEqual(session.completed, 'false')){
 				
-				callback(null, session);
+				return callback(null, session);
 				
 			}else{
 			
-				callback(new Error('The session has already been completed.'), null);
+				return callback(new Error('The session has already been completed.'), null);
 				
 			}
 			
 		}else{
 		
-			callback(new Error('An unexpected error occured', null));
+			return callback(new Error('An unexpected error occured', null));
 			
 		}	
 		
@@ -530,30 +591,33 @@ var getCustomer = function(id, callback){
 	
 	getRecord(process.env.customers_table, 'id = :idv', {':idv': id}, null, (error, data) => {
 
-		if(_.isError(error)){ callback(error, null);}
+		if(_.isError(error)){ return callback(error, null);}
 		
-		callback(null, data);
+		return callback(null, data);
 		
 	});	
 	
 }
 
+//this doesn't need to be asynchronous
 var validateProductsSession =  function(products, session, callback){
-
-	var validated = true;
+	
+	if(!_.has(session, 'products') || !_.isArray(session.products) || session.products.length < 1){
+		
+		return callback(null, session);
+	}
+	
 	for(var i = 0; i < products.length; i++){
 		var product_id = products[i].id;
 		for(var j = 0; j < session.products.length; j++){
 			if(_.isEqual(product_id, session.products[j])){
+				
 				return callback(new Error('Product already belongs to this session'), null);
-				validated = false;
 			}
 		}
 	}
-	
-	if(validated == true){
-		return callback(null, session);
-	}
+
+	return callback(null, session);
 
 }
 
@@ -568,19 +632,18 @@ var getRecord = function(table, condition_expression, parameters, index, callbac
 	
 	dynamodb.query(params, function(err, data) {
 		if(_.isError(err)){
-			console.log(err.stack);
-			callback(err, err.stack);
+			return callback(err, err.stack);
 		}
 		
 		if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items)){
 			
 			if(data.Items.length == 1){
 				
-				callback(null, data.Items[0]);
+				return callback(null, data.Items[0]);
 				
 			}else{
 				
-				callback(null, data.Items);
+				return callback(null, data.Items);
 				
 			}
 			
@@ -601,12 +664,11 @@ var getRecords = function(table, condition_expression, parameters, index, callba
 	
 	dynamodb.query(params, function(err, data) {
 		if(_.isError(err)){
-			console.log(err.stack);
-			callback(err, err.stack);
+			return callback(err, err.stack);
 		}
 		
 		if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items)){
-			callback(null, data.Items);
+			return callback(null, data.Items);
 		}
 		
 	});
@@ -623,12 +685,11 @@ var scanRecords = function(table, scan_expression, parameters, callback){
 	
 	dynamodb.scan(params, function(err, data) {
 		if(_.isError(err)){
-			console.log(err.stack);
-			callback(err, err.stack);
+			return callback(err, err.stack);
 		}
 		
 		if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items)){
-			callback(null, data.Items);
+			return callback(null, data.Items);
 		}
 		
 	});
@@ -644,9 +705,9 @@ var saveRecord = function(table, item, callback){
 	
 	dynamodb.put(params, function(err, data) {
 	  if(_.isError(err)){
-	  	callback(err, err.stack);
+	  	return callback(err, err.stack);
 	  }
-	  callback(null, data);
+	  return callback(null, data);
 	});
 	
 }
@@ -663,9 +724,9 @@ var updateRecord = function(table, key, expression, expression_params, callback)
 	
 	dynamodb.update(params, function(err, data) {
 	  if (err){
-	  	 callback(err, err.stack); 
+	  	 return callback(err, err.stack); 
 	  }else{     
-	  	callback(null, data);           
+	  	return callback(null, data);           
 	  }
 	});
 

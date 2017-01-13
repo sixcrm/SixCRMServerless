@@ -55,28 +55,38 @@ module.exports.confirmorder = (event, context, callback) => {
 	}
 	
 	getSession(duplicate_querystring['session_id'], (error, session) => {
-			
-		lr.issueError(error, 500, event, error, callback);
+		
+		if(_.isError(error)){	
+			lr.issueError(error, 500, event, error, callback);
+		}
 		
 		getCustomer(session.customer, (error, customer) => {
 		
-			lr.issueError(error, 500, event, error, callback);
+			if(_.isError(error)){	
+				lr.issueError(error, 500, event, error, callback);
+			}
 		
 			getProducts(session.products, (error, products) => {
 			
-				lr.issueError(error, 500, event, error, callback);
+				if(_.isError(error)){	
+					lr.issueError(error, 500, event, error, callback);
+				}
 				
 				getTransactions(session.id, (error, transactions) => {
 				
-					lr.issueError(error, 500, event, error, callback);
+					if(_.isError(error)){	
+						lr.issueError(error, 500, event, error, callback);
+					}
 					
 					updateSession(session, (error, session) => {
 					
-						lr.issueError(error, 500, event, error, callback);
+						if(_.isError(error)){	
+							lr.issueError(error, 500, event, error, callback);
+						}
 						
 						var results = {session: session, customer: customer, products: products, transactions: transactions};
 					
-						lr.issueResponse(200, {
+						return lr.issueResponse(200, {
 							message: 'Success',
 							results: results
 						}, callback);

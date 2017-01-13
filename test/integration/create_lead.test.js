@@ -40,7 +40,7 @@ describe('Create Lead Integration Test', function() {
 				"zip":"12345",
 				"country":"US"
 			},
-			"shipping":{
+			"address":{
 				"line1":"334 Lombard St.",
 				"line2":"Apartment 2",
 				"city":"Portland",

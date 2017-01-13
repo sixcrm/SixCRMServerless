@@ -35,7 +35,7 @@ module.exports.createlead = (event, context, callback) => {
 		creditcard_schema = JSON.parse(fs.readFileSync('./model/creditcard.json','utf8'));
 	} catch(e){
 		
-		lr.issueError('Unable to load validation schemas.', 500, event, e, callback);		
+		return lr.issueError('Unable to load validation schemas.', 500, event, e, callback);		
 	
 	}
 			
@@ -48,13 +48,13 @@ module.exports.createlead = (event, context, callback) => {
 		validation = v.validate(duplicate_body, customer_schema);
 	}catch(e){
 		
-		lr.issueError('Unable to instantiate validator.', 500, event, e, callback);
+		return lr.issueError('Unable to instantiate validator.', 500, event, e, callback);
 	
 	}
 	
 	if(validation['errors'].length > 0){
 		
-		lr.issueError('One or more validation errors occurred.', 500, event, new Error(validation.errors), callback);
+		return lr.issueError('One or more validation errors occurred.', 500, event, new Error(validation.errors), callback);
 				
 	}
 	
@@ -64,13 +64,15 @@ module.exports.createlead = (event, context, callback) => {
 	
 	if(validation['errors'].length > 0){		
 		
-		lr.issueError('One or more validation errors occurred.', 500, event, new Error(validation.errors), callback);
+		return lr.issueError('One or more validation errors occurred.', 500, event, new Error(validation.errors), callback);
 		
 	}
 	
 	getRecord(process.env.customers_table, 'email = :emailv',{':emailv': duplicate_body['email']}, 'email-index', (error, data) => {
 		
-		lr.issueError('Error reading from customers table.', 500, event, error, callback);
+		if(_.isError(error)){
+			return lr.issueError('Error reading from customers table.', 500, event, error, callback);
+		}
 		
 		var customer_id = null;
 		
@@ -81,14 +83,16 @@ module.exports.createlead = (event, context, callback) => {
 			
 			putSession(customer_id, (error, data) => {
 				
-				lr.issueError('Error writing to sessions table.', 500, event, error, callback);
+				if(_.isError(error)){
+					return lr.issueError('Error writing to sessions table.', 500, event, error, callback);	
+				}	
 				
 				var result_message = {
 					session: data,
 					customer: customer
 				}
 				
-				lr.issueResponse(200, {
+				return lr.issueResponse(200, {
 					message: 'Success',
 					results: result_message
 				}, callback);
@@ -100,19 +104,23 @@ module.exports.createlead = (event, context, callback) => {
 			customer_id = duplicate_body['id'] = uuidV4();
 				
 			saveRecord(process.env.customers_table, duplicate_body, (error, data) => {
-		
-				lr.issueError('Error writing to customers table.', 500, event, error, callback);
+				
+				if(_.isError(error)){
+					lr.issueError('Error writing to customers table.', 500, event, error, callback);
+				}
 				
 				putSession(customer_id, (error, data) => {
 
-					lr.issueError('Error writing to sessions table.', 500, event, error, callback);
+					if(_.isError(error)){
+						lr.issueError('Error writing to sessions table.', 500, event, error, callback);
+					}
 					
 					var result_message = {
 						session: data,
 						customer: duplicate_body
 					}
 					
-					lr.issueResponse(200, {
+					return lr.issueResponse(200, {
 						message: 'Success',
 						results: result_message
 					}, callback);

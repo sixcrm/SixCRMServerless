@@ -4,22 +4,26 @@
 
 ### General
 
+#### Done
 1.  ~~Abstract/Normalize the Lambda Response mechanisms.~~
 2.  ~~Add local dynamodb storage (or figure out why local function invoke can't speak to remote dynamo).~~
 3.  ~~Complete order call~~
 4.  ~~Add created, updated dated, completed to Transaction~~
 5.  ~~Complete confirm order.~~
-6.  Add campaign to model
 7.  ~~Flesh out the product model~~
 8.  ~~Research PCI compliant storage of CC information with AWS.~~
-9.  Add User model
-10.  Add indexes "completed-index", "created-index" to transactions *(REEVALUATE)*
 11.  ~~Add transaction logic for creates and recycles.~~
-12.  Think on the recurring transaction processor mechanism.
 13.  ~~Add indexes to `serverless.yml` `Resources` definitions.~~ 
-14.  Add Unit Testing.
 15.  ~~Convert "transactions" to "sessions", add a transaction (receipt) model/table.~~
 16.  ~~Complete Round Trip Integration Test.~~
+
+#### Outstanding
+
+6.  Add campaign to model
+9.  Add User model
+10.  Add indexes "completed-index", "created-index" to transactions *(REEVALUATE)*
+12.  Think on the recurring transaction processor mechanism.
+14.  Add Unit Testing.
 17.  Add data fixtures to remote DynamoDB.
 
 ### Verify Signature
@@ -48,10 +52,12 @@ Reminder:  Access Key is the SHA-1  of the customer's email address.
 * Mark the session as modified.
 * Install and use a Dynamo Transaction class
 
-### Update Order
 ### Confirm Order
 
 
+## Deployment
+
+1.  Need to seed DynamoDB data.
 
 ## DynamoDB
 
@@ -65,6 +71,8 @@ Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f cre
 
 ## Known Issues
 
-1.  When working with a new deployment, the lambda roles doesn't appear to have sufficient permissions to read/write against the DynamoDB tables.
-2.  When deleting an instance, CloudFormation fails to delete the S3 bucket that holds the deployment artifacts as well as the IAM Role.
+1.  ~~When working with a new deployment, the lambda roles doesn't appear to have sufficient permissions to read/write against the DynamoDB tables.~~
+2.  ~~When deleting an instance, CloudFormation fails to delete the S3 bucket that holds the deployment artifacts as well as the IAM Role.~~
+3.  Store Credit Card in Order Create doesn't make a lot of sense...
+4.  Needs to store the CCs
 

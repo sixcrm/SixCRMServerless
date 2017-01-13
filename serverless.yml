@@ -111,6 +111,7 @@ resources:
   Resources:
     accesskeys:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${opt:stage}access_keys
         AttributeDefinitions:
@@ -124,6 +125,7 @@ resources:
           WriteCapacityUnits: 5
     customerstable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${opt:stage}customers
         AttributeDefinitions:
@@ -149,6 +151,7 @@ resources:
           WriteCapacityUnits: 5
     sessionstable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${opt:stage}sessions
         AttributeDefinitions:
@@ -174,6 +177,7 @@ resources:
           WriteCapacityUnits: 5
     transactionstable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${opt:stage}transactions
         AttributeDefinitions:
@@ -199,6 +203,7 @@ resources:
           WriteCapacityUnits: 5
     creditcardsstable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${opt:stage}creditcards
         AttributeDefinitions:
@@ -224,6 +229,7 @@ resources:
           WriteCapacityUnits: 5
     productstable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${opt:stage}products
         AttributeDefinitions:

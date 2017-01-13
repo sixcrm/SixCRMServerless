@@ -5,7 +5,7 @@ dynamodb:
   transactions_table: 'transactions'
   customers_table: 'customers'
   products_table: 'products'
-  creditcards_table: 'products'
+  creditcards_table: 'creditcards'
   endpoint: ''
 nmi:
   username: 'demo'

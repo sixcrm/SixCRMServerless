@@ -88,7 +88,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484275939005-2017-01-13T02:52:19.005Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-verifysignature",
         "Handler": "authorizers/verifysignature/handler.verifysignature",
@@ -113,14 +113,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "VerifysignatureLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14": {
+    "VerifysignatureLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "VerifysignatureLambdaFunction"
         },
-        "CodeSha256": "Ji1+A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLg/xHbJyQ/14="
+        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
       }
     },
     "VerifyjwtLambdaFunction": {
@@ -130,7 +130,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484275939005-2017-01-13T02:52:19.005Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-verifyjwt",
         "Handler": "authorizers/verifyjwt/handler.verifyjwt",
@@ -155,14 +155,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "VerifyjwtLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14": {
+    "VerifyjwtLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "VerifyjwtLambdaFunction"
         },
-        "CodeSha256": "Ji1+A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLg/xHbJyQ/14="
+        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
       }
     },
     "AcquiretokenLambdaFunction": {
@@ -172,7 +172,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484275939005-2017-01-13T02:52:19.005Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-acquiretoken",
         "Handler": "endpoints/acquiretoken/handler.acquiretoken",
@@ -197,14 +197,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "AcquiretokenLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14": {
+    "AcquiretokenLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AcquiretokenLambdaFunction"
         },
-        "CodeSha256": "Ji1+A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLg/xHbJyQ/14="
+        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
       }
     },
     "CreateleadLambdaFunction": {
@@ -214,7 +214,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484275939005-2017-01-13T02:52:19.005Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-createlead",
         "Handler": "endpoints/createlead/handler.createlead",
@@ -241,14 +241,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "CreateleadLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14": {
+    "CreateleadLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateleadLambdaFunction"
         },
-        "CodeSha256": "Ji1+A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLg/xHbJyQ/14="
+        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
       }
     },
     "CreateorderLambdaFunction": {
@@ -258,7 +258,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484275939005-2017-01-13T02:52:19.005Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-createorder",
         "Handler": "endpoints/createorder/handler.createorder",
@@ -277,7 +277,7 @@
             "customers_table": "developmentcustomers",
             "sessions_table": "developmentsessions",
             "products_table": "developmentproducts",
-            "creditcards_table": "developmentproducts",
+            "creditcards_table": "developmentcreditcards",
             "transactions_table": "developmenttransactions",
             "nmi_username": "demo",
             "nmi_password": "password",
@@ -291,14 +291,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "CreateorderLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14": {
+    "CreateorderLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateorderLambdaFunction"
         },
-        "CodeSha256": "Ji1+A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLg/xHbJyQ/14="
+        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
       }
     },
     "ConfirmorderLambdaFunction": {
@@ -308,7 +308,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484275939005-2017-01-13T02:52:19.005Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-confirmorder",
         "Handler": "endpoints/confirmorder/handler.confirmorder",
@@ -320,21 +320,31 @@
           ]
         },
         "Runtime": "nodejs4.3",
-        "Timeout": 6
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "dynamo_endpoint": "",
+            "sessions_table": "developmentsessions",
+            "products_table": "developmentproducts",
+            "transactions_table": "developmenttransactions",
+            "customers_table": "developmentcustomers",
+            "stage": "development"
+          }
+        }
       },
       "DependsOn": [
         "IamPolicyLambdaExecution",
         "IamRoleLambdaExecution"
       ]
     },
-    "ConfirmorderLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14": {
+    "ConfirmorderLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ConfirmorderLambdaFunction"
         },
-        "CodeSha256": "Ji1+A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLg/xHbJyQ/14="
+        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
       }
     },
     "ApiGatewayRestApi": {
@@ -842,7 +852,7 @@
         "Type": "TOKEN"
       }
     },
-    "ApiGatewayDeployment1484275940248": {
+    "ApiGatewayDeployment1484338690626": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1017,6 +1027,7 @@
     },
     "accesskeys": {
       "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
       "Properties": {
         "TableName": "developmentaccess_keys",
         "AttributeDefinitions": [
@@ -1039,6 +1050,7 @@
     },
     "customerstable": {
       "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
       "Properties": {
         "TableName": "developmentcustomers",
         "AttributeDefinitions": [
@@ -1083,6 +1095,7 @@
     },
     "sessionstable": {
       "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
       "Properties": {
         "TableName": "developmentsessions",
         "AttributeDefinitions": [
@@ -1127,6 +1140,7 @@
     },
     "transactionstable": {
       "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
       "Properties": {
         "TableName": "developmenttransactions",
         "AttributeDefinitions": [
@@ -1135,7 +1149,7 @@
             "AttributeType": "S"
           },
           {
-            "AttributeName": "session",
+            "AttributeName": "parentsession",
             "AttributeType": "S"
           }
         ],
@@ -1147,10 +1161,10 @@
         ],
         "GlobalSecondaryIndexes": [
           {
-            "IndexName": "session-index",
+            "IndexName": "parentsession-index",
             "KeySchema": [
               {
-                "AttributeName": "session",
+                "AttributeName": "parentsession",
                 "KeyType": "HASH"
               }
             ],
@@ -1171,6 +1185,7 @@
     },
     "creditcardsstable": {
       "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
       "Properties": {
         "TableName": "developmentcreditcards",
         "AttributeDefinitions": [
@@ -1215,6 +1230,7 @@
     },
     "productstable": {
       "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
       "Properties": {
         "TableName": "developmentproducts",
         "AttributeDefinitions": [
@@ -1246,8 +1262,7 @@
             {
               "Effect": "Allow",
               "Action": [
-                "dynamodb:GetItem",
-                "dynamodb:PutItem"
+                "dynamodb:*"
               ],
               "Resource": "arn:aws:dynamodb:*:*:table/*"
             }
@@ -1279,7 +1294,7 @@
     "VerifysignatureLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "VerifysignatureLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14"
+        "Ref": "VerifysignatureLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
       }
     },
     "VerifyjwtLambdaFunctionArn": {
@@ -1294,7 +1309,7 @@
     "VerifyjwtLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "VerifyjwtLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14"
+        "Ref": "VerifyjwtLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
       }
     },
     "AcquiretokenLambdaFunctionArn": {
@@ -1309,7 +1324,7 @@
     "AcquiretokenLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AcquiretokenLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14"
+        "Ref": "AcquiretokenLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
       }
     },
     "CreateleadLambdaFunctionArn": {
@@ -1324,7 +1339,7 @@
     "CreateleadLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateleadLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14"
+        "Ref": "CreateleadLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
       }
     },
     "CreateorderLambdaFunctionArn": {
@@ -1339,7 +1354,7 @@
     "CreateorderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateorderLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14"
+        "Ref": "CreateorderLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
       }
     },
     "ConfirmorderLambdaFunctionArn": {
@@ -1354,7 +1369,7 @@
     "ConfirmorderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ConfirmorderLambdaVersionJi1A0hpvOmIJQ1WbhXQN1OWCSs4ZHDLgxHbJyQ14"
+        "Ref": "ConfirmorderLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
       }
     },
     "ServiceEndpoint": {
