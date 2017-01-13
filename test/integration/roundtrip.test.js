@@ -75,14 +75,47 @@ describe('Round Trip Test', function() {
 						assert.property(response.body, "message");
 						assert.equal(response.body.message, "Success");
 						assert.property(response.body, "results");
-						assert.property(response.body.results, "session_id");
+						assert.property(response.body.results, "session");
 						assert.property(response.body.results, "customer");
-						assert.isString(response.body.results.session_id);
+						assert.isString(response.body.results.session.id);
 						assert.isObject(response.body.results.customer);
 				
-						var session_id = response.body.results.session_id;
-					  
-						done();
+						var session_id = response.body.results.session.id;
+						console.log(session_id);
+					  	var products = ["4d3419f6-526b-4a68-9050-fc3ffcb552b4"];
+					  	var order_create = {
+							"session_id":session_id,
+							"products":products,
+							"type":"sale",
+							"ccnumber":"4111111111111111",
+							"ccexpiration":"1025",
+							"ccccv":"999",
+							"name":"Rama Damunaste",
+							"address":{
+								"line1":"10 Skid Rw.",
+								"line2":"Suite 100",
+								"city":"Portland",
+								"state":"Oregon",
+								"zip":"97213",
+								"country":"USA"
+							}
+						};
+						
+						console.log(order_create);
+					  	
+					  	this_request.post('order/create/')
+							.send(order_create)
+							.set('Content-Type', 'application/json')
+							.set('Authorization', jwt)
+							.expect(200)
+							.expect('Content-Type', 'application/json')
+							.expect('Access-Control-Allow-Origin','*')
+							.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
+							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
+							.end(function(err, response){
+								console.log(response.body);
+								done();
+						}, done);
 					}, done);
 			}, done);
 		});

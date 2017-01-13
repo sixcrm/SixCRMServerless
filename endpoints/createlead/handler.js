@@ -8,9 +8,10 @@ const request = require('request');
 const querystring = require('querystring');
 const uuidV4 = require('uuid/v4');
 const AWS = require("aws-sdk");
-var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
-if(_.isString(process.env.dynamo_endpoint) && !_.isEmpty(process.env.dynamo_endpoint)){
-	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:'http://localhost:8001'});
+if(process.env.stage == 'local'){
+	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:process.env.dynamo_endpoint});
+}else{
+	var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
 }
 
 var lr = require('../../lib/lambda-response.js');

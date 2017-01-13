@@ -63,7 +63,7 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
-        dynamo_endpoint: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         stage: ${opt:stage}
@@ -79,7 +79,7 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
-        dynamo_endpoint: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
@@ -100,6 +100,13 @@ functions:
            name: verifyjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
+    environment:
+        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+        sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
+        products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+        customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+        stage: ${opt:stage}
 resources:  
   Resources:
     accesskeys:
@@ -130,12 +137,12 @@ resources:
         GlobalSecondaryIndexes:
           - IndexName: email-index
             KeySchema: 
-              - AttributeName: email,
+              - AttributeName: email
                 KeyType: "HASH"
             Projection: 
               ProjectionType: "ALL"
             ProvisionedThroughput: 
-              ReadCapacityUnits: 5,
+              ReadCapacityUnits: 5
               WriteCapacityUnits: 5
         ProvisionedThroughput:
           ReadCapacityUnits: 5
@@ -147,20 +154,20 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: customer
+            AttributeType: S
         KeySchema:
           - AttributeName: id
-            KeyType: HASH
-          - AttributeName: customer
             KeyType: HASH
         GlobalSecondaryIndexes:
           - IndexName: customer-index
             KeySchema: 
-              - AttributeName: customer,
+              - AttributeName: customer
                 KeyType: "HASH"
             Projection: 
               ProjectionType: "ALL"
             ProvisionedThroughput: 
-              ReadCapacityUnits: 5,
+              ReadCapacityUnits: 5
               WriteCapacityUnits: 5
         ProvisionedThroughput:
           ReadCapacityUnits: 5
@@ -172,20 +179,20 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: session
-            KeyType: HASH
+          - AttributeName: parentsession
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
         GlobalSecondaryIndexes:
-          - IndexName: session-index
+          - IndexName: parentsession-index
             KeySchema: 
-              - AttributeName: session,
+              - AttributeName: parentsession
                 KeyType: "HASH"
             Projection: 
               ProjectionType: "ALL"
             ProvisionedThroughput: 
-              ReadCapacityUnits: 5,
+              ReadCapacityUnits: 5
               WriteCapacityUnits: 5
         ProvisionedThroughput:
           ReadCapacityUnits: 5
@@ -197,20 +204,20 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: ccnumber
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: number
-            KeyType: HASH
         GlobalSecondaryIndexes:
-          - IndexName: number-index
+          - IndexName: ccnumber-index
             KeySchema: 
-              - AttributeName: number,
+              - AttributeName: ccnumber
                 KeyType: "HASH"
             Projection: 
               ProjectionType: "ALL"
             ProvisionedThroughput: 
-              ReadCapacityUnits: 5,
+              ReadCapacityUnits: 5
               WriteCapacityUnits: 5
         ProvisionedThroughput:
           ReadCapacityUnits: 5
@@ -230,7 +237,7 @@ resources:
           WriteCapacityUnits: 5
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
-      DependsOn: ${opt:stage}accesskeys
+      DependsOn: accesskeys
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:
@@ -238,8 +245,7 @@ resources:
           Statement:
            - Effect: Allow
              Action:
-               - dynamodb:GetItem
-               - dynamodb:PutItem
+               - dynamodb:*
              Resource: arn:aws:dynamodb:*:*:table/*
         Roles:
           - Ref: IamRoleLambdaExecution

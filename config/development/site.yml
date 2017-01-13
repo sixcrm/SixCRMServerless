@@ -6,6 +6,7 @@ dynamodb:
   customers_table: 'customers'
   products_table: 'products'
   creditcards_table: 'products'
+  endpoint: ''
 nmi:
   username: 'demo'
   password: 'password'

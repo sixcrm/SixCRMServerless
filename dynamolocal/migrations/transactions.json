@@ -10,15 +10,15 @@
             "AttributeType": "S"
         },
         {
-            "AttributeName": "session", 
+            "AttributeName": "parentsession", 
             "AttributeType": "S"
         }],
         "GlobalSecondaryIndexes": [ 
 		  { 
-			 "IndexName": "session-index",
+			 "IndexName": "parentsession-index",
 			 "KeySchema": [ 
 				{ 
-				   "AttributeName": "session",
+				   "AttributeName": "parentsession",
 				   "KeyType": "HASH"
 				}
 			 ],

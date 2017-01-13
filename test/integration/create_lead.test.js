@@ -63,14 +63,13 @@ describe('Create Lead Integration Test', function() {
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
 				assert.property(response.body, "results");
-				assert.property(response.body.results, "transaction_id");
+				assert.property(response.body.results, "session");
 				assert.property(response.body.results, "customer");
-				assert.isString(response.body.results.transaction_id);
+				assert.property(response.body.results.session, "id");
+				assert.isString(response.body.results.session.id);
 				assert.isObject(response.body.results.customer);
 				
-				//expect(response.body.results.customer).to.be.jsonSchema(customer_schema);
-				//expect(response.body.results.customer.billing).to.be.jsonSchema(address_schema);
-				//expect(response.body.results.customer.shipping).to.be.jsonSchema(address_schema);
+				//more testing...
 					  
 				done();
 			}, done);

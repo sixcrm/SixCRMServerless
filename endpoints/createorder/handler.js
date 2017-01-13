@@ -9,14 +9,16 @@ const querystring = require('querystring');
 const AWS = require("aws-sdk");
 const uuidV4 = require('uuid/v4');
 var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
-if(_.isString(process.env.dynamo_endpoint) && !_.isEmpty(process.env.dynamo_endpoint)){
-	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:'http://localhost:8001'});
+if(process.env.stage == 'local'){
+	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:process.env.dynamo_endpoint});
+}else{
+	var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
 }
 
 var lr = require('../../lib/lambda-response.js');
 
 module.exports.createorder= (event, context, callback) => {
-
+	
 	var duplicate_body;
 	try {
     	duplicate_body = JSON.parse(event['body']);
@@ -72,11 +74,11 @@ module.exports.createorder= (event, context, callback) => {
 		lr.issueError('One or more validation errors occurred.', 500, event, new Error({'validation_errors':validation['errors']}), callback);		
 	}
 	
-	
+
 	getSession(duplicate_body['session_id'], (error, session) => {
 			
 		lr.issueError(error, 500, event, error, callback);		
-	
+		
 		getCustomer(session.customer, (error, customer) => {
 			
 			lr.issueError(error, 500, event, error, callback);
@@ -92,7 +94,7 @@ module.exports.createorder= (event, context, callback) => {
 					getProducts(duplicate_body['products'], (error, products) => {
 						
 						lr.issueError(error, 500, event, error, callback);					
-								
+	
 						validateProductsSession(products, session, (error, session) => {
 							
 							lr.issueError(error, 500, event, error, callback);	
@@ -147,7 +149,9 @@ var updateSession =  function(session, products, callback){
 	
 	var updated_products = session_products.concat(products);
 	
-	updateRecord(process.env.sessions_table, {'id': session.id}, 'set products = :a', {":a": updated_products}, (error, data) => {
+	var modified = createTimestamp();
+	
+	updateRecord(process.env.sessions_table, {'id': session.id}, 'set products = :a, modified = :m', {":a": updated_products, ":m": modified.toString()}, (error, data) => {
 		
 		if(_.isError(error)){
 		
@@ -207,7 +211,7 @@ var createTransactionObject = function(params, processor_response){
 	
 	var return_object = {
 		id: uuidV4(),
-		session: params.session.id,
+		parentsession: params.session.id,
 		products: params.session.products,
 		processor_response: processor_response,
 		amount: params.amount,
@@ -495,9 +499,9 @@ var getCreditCard = function(id, callback){
 }
 
 var getSession = function(id, callback){
-
+	
 	getRecord(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, session) => {
-				
+						
 		if(_.isError(error)){ callback(error, null); }
 		
 		if(_.has(session, "customer") && _.has(session, 'completed')){
@@ -541,14 +545,14 @@ var validateProductsSession =  function(products, session, callback){
 		var product_id = products[i].id;
 		for(var j = 0; j < session.products.length; j++){
 			if(_.isEqual(product_id, session.products[j])){
-				callback(new Error('Product already belongs to this session'), null);
+				return callback(new Error('Product already belongs to this session'), null);
 				validated = false;
 			}
 		}
 	}
 	
 	if(validated == true){
-		callback(null, session);
+		return callback(null, session);
 	}
 
 }

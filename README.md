@@ -8,7 +8,7 @@
 2.  ~~Add local dynamodb storage (or figure out why local function invoke can't speak to remote dynamo).~~
 3.  ~~Complete order call~~
 4.  ~~Add created, updated dated, completed to Transaction~~
-5.  Complete confirm order
+5.  ~~Complete confirm order.~~
 6.  Add campaign to model
 7.  ~~Flesh out the product model~~
 8.  ~~Research PCI compliant storage of CC information with AWS.~~
@@ -20,6 +20,7 @@
 14.  Add Unit Testing.
 15.  ~~Convert "transactions" to "sessions", add a transaction (receipt) model/table.~~
 16.  ~~Complete Round Trip Integration Test.~~
+17.  Add data fixtures to remote DynamoDB.
 
 ### Verify Signature
 
@@ -44,6 +45,8 @@ Reminder:  Access Key is the SHA-1  of the customer's email address.
 
 * Move all the functions to a helper class
 * Add more validation
+* Mark the session as modified.
+* Install and use a Dynamo Transaction class
 
 ### Update Order
 ### Confirm Order

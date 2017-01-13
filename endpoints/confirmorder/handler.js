@@ -6,15 +6,19 @@ const Validator = require('jsonschema').Validator;
 const v = new Validator();
 const request = require('request');
 const querystring = require('querystring');
+const AWS = require("aws-sdk");
+
+var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+if(process.env.stage == 'local'){
+	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:process.env.dynamo_endpoint});
+}else{
+	var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+}
+
+var lr = require('../../lib/lambda-response.js');
 
 module.exports.confirmorder = (event, context, callback) => {
 	
-	var lambda_response = {};		
-	lambda_response.statusCode = 500;
-	lambda_response['body'] = JSON.stringify({
-		message: 'An unexpected error occured.'
-	});
-
 	var duplicate_querystring = event.queryStringParameters;
 	
 	if(_.isString(duplicate_querystring)){
@@ -22,15 +26,12 @@ module.exports.confirmorder = (event, context, callback) => {
 		try{
 			duplicate_querystring = querystring.parse(duplicate_querystring);	
 		}catch(e){
-			var lambda_response = {};		
-			lambda_response.statusCode = 500;
-			lambda_response['body'] = JSON.stringify({
-				message: 'An unexpected error occured.',
-				error: e
-			});		
-			callback(null, lambda_response)		
+			
+			//toss error
 		}
 		
+	}else{
+		//barf
 	}
 	
 	var schema;
@@ -38,11 +39,7 @@ module.exports.confirmorder = (event, context, callback) => {
 	try{
 		schema = JSON.parse(fs.readFileSync('./endpoints/confirmorder/schema/confirmorder.json','utf8'));
 	} catch(e){
-		console.log(e);
-		lambda_response.body = JSON.stringify(
-			{message: 'Unable to load schema'}
-		);
-		callback(null, lambda_response)
+		//toss error
 	}
 			
 	var validation;
@@ -57,68 +54,242 @@ module.exports.confirmorder = (event, context, callback) => {
 		callback(null, lambda_response);
 	}
 	
-	if(validation['errors'].length > 0){		
-		var error_response = {'validation_errors':validation['errors']};		
-		lambda_response['body'] = JSON.stringify({
-			message: 'One or more validation errors occurred.',
-			input: event,
-			errors: error_response
-		});
-		callback(null, lambda_response);
-	}
+	getSession(duplicate_querystring['session_id'], (error, session) => {
+			
+		lr.issueError(error, 500, event, error, callback);
 		
-	validation.errors = [];
-	
-	if(validation['errors'].length > 0){		
-		var error_response = {'validation_errors':JSON.stringify(validation['errors'])};		
-		lambda_response['body'] = JSON.stringify({
-			message: 'One or more validation errors occurred.',
-			input: event,
-			errors: error_response
+		getCustomer(session.customer, (error, customer) => {
+		
+			lr.issueError(error, 500, event, error, callback);
+		
+			getProducts(session.products, (error, products) => {
+			
+				lr.issueError(error, 500, event, error, callback);
+				
+				getTransactions(session.id, (error, transactions) => {
+				
+					lr.issueError(error, 500, event, error, callback);
+					
+					updateSession(session, (error, session) => {
+					
+						lr.issueError(error, 500, event, error, callback);
+						
+						var results = {session: session, customer: customer, products: products, transactions: transactions};
+					
+						lr.issueResponse(200, {
+							message: 'Success',
+							results: results
+						}, callback);
+					
+					});
+		
+				});
+			
+			});
+		
 		});
-		callback(null, lambda_response);
-	}
+		
+	});
+				
+};
+
+var updateSession =  function(session, callback){
 	
-	var confirm_order_response = {
-		message:'Order Confirmed', 
-		transaction_id:duplicate_querystring.transaction_id,
-		transaction_type:"Recurring",
-		customer_id:"123456",
-		order_contents:{
-			products:[
-				{
-					id: "123456",
-					description:"Product 1",
-					amount:"34.99",
-					currency: "USD"
-				},
-				{
-					id: "123457",
-					description:"Shipping Protection",
-					amount:"2.99",
-					currency:"USD"
-				},
-				{
-					id: "123458",
-					description:"Upsell 1",
-					amount:"18.99",
-					currency:"USD"
-				},
-				{
-					id: "123459",
-					description:"Upsell 2",
-					amount:"18.99",
-					currency:"USD"
-				}
-			]
+	var completed = 'true';
+	
+	var modified = createTimestamp();
+	
+	updateRecord(process.env.sessions_table, {'id': session.id}, 'set completed = :completedv, modified = :modifiedv', {":completedv": completed, ":modifiedv": modified.toString()}, (error, data) => {
+		
+		if(_.isError(error)){
+		
+			callback(error, error.stack);
+			
+		}else{
+		
+			callback(null, session);
+			
 		}
+		
+	});
+	
+}
+
+var getCustomer = function(id, callback){
+	
+	getRecord(process.env.customers_table, 'id = :idv', {':idv': id}, null, (error, customer) => {
+						
+		if(_.isError(error)){ return callback(error, null); }
+		
+		return callback(null, customer);
+		
+	});	
+	
+}
+
+var getSession = function(id, callback){
+	
+	getRecord(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, session) => {
+						
+		if(_.isError(error)){ callback(error, null); }
+		
+		if(_.has(session, "customer") && _.has(session, 'completed')){
+		
+			if(_.isEqual(session.completed, 'false')){
+				
+				callback(null, session);
+				
+			}else{
+			
+				callback(new Error('The session has already been completed.'), null);
+				
+			}
+			
+		}else{
+		
+			callback(new Error('An unexpected error occured', null));
+			
+		}	
+		
+	});	
+	
+}
+
+var getRecords = function(table, condition_expression, parameters, index, callback){
+	
+	var params = {
+		TableName: table,
+		IndexName: index,
+		KeyConditionExpression: condition_expression,
+		ExpressionAttributeValues: parameters
 	};
 	
-	lambda_response.statusCode = 200;
-	lambda_response['body'] = JSON.stringify({
-		message: 'Success',
-		results: confirm_order_response
+	dynamodb.query(params, function(err, data) {
+		if(_.isError(err)){
+			console.log(err.stack);
+			callback(err, err.stack);
+		}
+		
+		if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items)){
+			callback(null, data.Items);
+		}
+		
 	});
-	callback(null, lambda_response);
+	
+}
+
+var getRecord = function(table, condition_expression, parameters, index, callback){
+	
+	var params = {
+		TableName: table,
+		IndexName: index,
+		KeyConditionExpression: condition_expression,
+		ExpressionAttributeValues: parameters
+	};
+	
+	dynamodb.query(params, function(err, data) {
+		if(_.isError(err)){
+			console.log(err.stack);
+			callback(err, err.stack);
+		}
+		
+		if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items)){
 			
-};
+			if(data.Items.length == 1){
+				
+				callback(null, data.Items[0]);
+				
+			}else{
+				
+				callback(null, data.Items);
+				
+			}
+			
+		}
+		
+	});
+	
+}
+
+var getProducts = function(products_array, callback){
+	
+	var products_object = {};
+	var index = 0;
+	products_array.forEach(function(value) {
+		index++;
+		var product_key = ":productvalue"+index;
+		products_object[product_key.toString()] = value;
+	});
+	
+	scanRecords(process.env.products_table, "id IN ("+Object.keys(products_object).toString()+ ")", products_object, (error, products) => {
+		
+		if(_.isError(error)){ callback(error, null);}
+		
+		if(!_.isEqual(products_array.length, products.length)){
+		
+			callback(new Error('Unrecognized products in products list.'), null);
+		}
+		
+		callback(null, products);
+		
+	});
+	
+}
+
+var getTransactions = function(session_id, callback){
+	
+	getRecords(process.env.transactions_table, 'parentsession = :parentsessionv', {':parentsessionv': session_id}, 'parentsession-index', (error, transactions) => {
+		
+		if(_.isError(error)){ callback(error, null);}
+		
+		callback(null, transactions);
+		
+	});
+	
+}
+
+var scanRecords = function(table, scan_expression, parameters, callback){
+	
+	var params = {
+		TableName: table,
+		FilterExpression: scan_expression,
+		ExpressionAttributeValues: parameters
+	};
+	
+	dynamodb.scan(params, function(err, data) {
+		if(_.isError(err)){
+			console.log(err.stack);
+			callback(err, err.stack);
+		}
+		
+		if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items)){
+			callback(null, data.Items);
+		}
+		
+	});
+	
+}
+
+var updateRecord = function(table, key, expression, expression_params, callback){
+	
+	var params = {
+		TableName:table,
+		Key: key,
+		UpdateExpression: expression,
+		ExpressionAttributeValues:expression_params,
+		ReturnValues:"UPDATED_NEW"
+	};
+	
+	dynamodb.update(params, function(err, data) {
+	  if (err){
+	  	 callback(err, err.stack); 
+	  }else{     
+	  	callback(null, data);           
+	  }
+	});
+
+}
+
+var createTimestamp =  function(){
+	return Math.round(new Date().getTime()/1000);
+}
