@@ -1,4 +1,7 @@
-site_secret_jwt_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+jwt:
+  transaction_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+  site_key: 'anwdadawdjaklwdlakd'
+  development_bypass: 'deathstalker'
 dynamodb:
   access_keys_table: 'access_keys'
   sessions_table: 'sessions'

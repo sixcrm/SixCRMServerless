@@ -13,8 +13,11 @@ before(function(done) {
 	}
 	
 	try{
-		var created_token = jwt.sign({}, global.site_config.site_secret_jwt_key);
-		global.test_jwt = created_token;
+
+		global.transaction_jwt = jwt.sign({}, global.site_config.jwt.transaction_key);
+		
+		global.site_jwt = jwt.sign({}, global.site_config.jwt.site_key);
+				
 	} catch (e){
 		console.log(e);
 	}

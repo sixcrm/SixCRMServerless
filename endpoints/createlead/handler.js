@@ -8,6 +8,7 @@ const request = require('request');
 const querystring = require('querystring');
 const uuidV4 = require('uuid/v4');
 const AWS = require("aws-sdk");
+
 if(process.env.stage == 'local'){
 	dynamodb = new AWS.DynamoDB.DocumentClient({region: 'localhost', endpoint:process.env.dynamo_endpoint});
 }else{

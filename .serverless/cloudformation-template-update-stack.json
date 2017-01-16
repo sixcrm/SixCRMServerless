@@ -88,7 +88,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484598998799-2017-01-16T20:36:38.799Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-verifysignature",
         "Handler": "authorizers/verifysignature/handler.verifysignature",
@@ -113,14 +113,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "VerifysignatureLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
+    "VerifysignatureLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "VerifysignatureLambdaFunction"
         },
-        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
+        "CodeSha256": "j+8Uc03VIjJQoK/j6OMZ9dpW/jzwPx1RgxDaor/Rm3E="
       }
     },
     "VerifyjwtLambdaFunction": {
@@ -130,7 +130,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484598998799-2017-01-16T20:36:38.799Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-verifyjwt",
         "Handler": "authorizers/verifyjwt/handler.verifyjwt",
@@ -145,7 +145,92 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
-            "site_secret_jwt_key": "ashdaiuwdaw9d0u197f02ji9ujoja90juahwi",
+            "secret_key": "ashdaiuwdaw9d0u197f02ji9ujoja90juahwi",
+            "stage": "development",
+            "development_bypass": "deathstalker"
+          }
+        }
+      },
+      "DependsOn": [
+        "IamPolicyLambdaExecution",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "VerifyjwtLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "VerifyjwtLambdaFunction"
+        },
+        "CodeSha256": "j+8Uc03VIjJQoK/j6OMZ9dpW/jzwPx1RgxDaor/Rm3E="
+      }
+    },
+    "Verifyauth0jwtLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/sixtransaction/development/1484598998799-2017-01-16T20:36:38.799Z/sixtransaction.zip"
+        },
+        "FunctionName": "sixtransaction-development-verifyauth0jwt",
+        "Handler": "authorizers/verifyjwt/handler.verifyjwt",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "secret_key": "anwdadawdjaklwdlakd",
+            "stage": "development",
+            "development_bypass": "deathstalker"
+          }
+        }
+      },
+      "DependsOn": [
+        "IamPolicyLambdaExecution",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "Verifyauth0jwtLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "Verifyauth0jwtLambdaFunction"
+        },
+        "CodeSha256": "j+8Uc03VIjJQoK/j6OMZ9dpW/jzwPx1RgxDaor/Rm3E="
+      }
+    },
+    "GraphLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/sixtransaction/development/1484598998799-2017-01-16T20:36:38.799Z/sixtransaction.zip"
+        },
+        "FunctionName": "sixtransaction-development-graph",
+        "Handler": "endpoints/graph/handler.graph",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
             "stage": "development"
           }
         }
@@ -155,14 +240,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "VerifyjwtLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
+    "GraphLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "VerifyjwtLambdaFunction"
+          "Ref": "GraphLambdaFunction"
         },
-        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
+        "CodeSha256": "j+8Uc03VIjJQoK/j6OMZ9dpW/jzwPx1RgxDaor/Rm3E="
       }
     },
     "AcquiretokenLambdaFunction": {
@@ -172,7 +257,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484598998799-2017-01-16T20:36:38.799Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-acquiretoken",
         "Handler": "endpoints/acquiretoken/handler.acquiretoken",
@@ -197,14 +282,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "AcquiretokenLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
+    "AcquiretokenLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AcquiretokenLambdaFunction"
         },
-        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
+        "CodeSha256": "j+8Uc03VIjJQoK/j6OMZ9dpW/jzwPx1RgxDaor/Rm3E="
       }
     },
     "CreateleadLambdaFunction": {
@@ -214,7 +299,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484598998799-2017-01-16T20:36:38.799Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-createlead",
         "Handler": "endpoints/createlead/handler.createlead",
@@ -241,14 +326,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "CreateleadLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
+    "CreateleadLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateleadLambdaFunction"
         },
-        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
+        "CodeSha256": "j+8Uc03VIjJQoK/j6OMZ9dpW/jzwPx1RgxDaor/Rm3E="
       }
     },
     "CreateorderLambdaFunction": {
@@ -258,7 +343,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484598998799-2017-01-16T20:36:38.799Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-createorder",
         "Handler": "endpoints/createorder/handler.createorder",
@@ -291,14 +376,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "CreateorderLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
+    "CreateorderLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateorderLambdaFunction"
         },
-        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
+        "CodeSha256": "j+8Uc03VIjJQoK/j6OMZ9dpW/jzwPx1RgxDaor/Rm3E="
       }
     },
     "ConfirmorderLambdaFunction": {
@@ -308,7 +393,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sixtransaction/development/1484338689260-2017-01-13T20:18:09.260Z/sixtransaction.zip"
+          "S3Key": "serverless/sixtransaction/development/1484598998799-2017-01-16T20:36:38.799Z/sixtransaction.zip"
         },
         "FunctionName": "sixtransaction-development-confirmorder",
         "Handler": "endpoints/confirmorder/handler.confirmorder",
@@ -337,20 +422,35 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "ConfirmorderLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw": {
+    "ConfirmorderLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ConfirmorderLambdaFunction"
         },
-        "CodeSha256": "ebPlrlZ63TPg+XYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw="
+        "CodeSha256": "j+8Uc03VIjJQoK/j6OMZ9dpW/jzwPx1RgxDaor/Rm3E="
       }
     },
     "ApiGatewayRestApi": {
       "Type": "AWS::ApiGateway::RestApi",
       "Properties": {
         "Name": "development-sixtransaction"
+      }
+    },
+    "ApiGatewayResourceGraph": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "graph",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
       }
     },
     "ApiGatewayResourceToken": {
@@ -441,6 +541,50 @@
           "Ref": "ApiGatewayResourceOrder"
         },
         "PathPart": "confirm",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodGraphOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceGraph"
+        },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
@@ -622,6 +766,48 @@
         }
       }
     },
+    "ApiGatewayMethodGraphPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceGraph"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "AuthorizationType": "CUSTOM",
+        "AuthorizerId": {
+          "Ref": "Verifyauth0jwtApiGatewayAuthorizer"
+        },
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "GraphLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": "Verifyauth0jwtApiGatewayAuthorizer"
+    },
     "ApiGatewayMethodTokenAcquireGet": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
@@ -790,6 +976,37 @@
       },
       "DependsOn": "VerifyjwtApiGatewayAuthorizer"
     },
+    "Verifyauth0jwtApiGatewayAuthorizer": {
+      "Type": "AWS::ApiGateway::Authorizer",
+      "Properties": {
+        "AuthorizerResultTtlInSeconds": 0,
+        "AuthorizerUri": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:apigateway:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":lambda:path/2015-03-31/functions/",
+              {
+                "Fn::GetAtt": [
+                  "Verifyauth0jwtLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "/invocations"
+            ]
+          ]
+        },
+        "IdentitySource": "method.request.header.Authorization",
+        "Name": "verifyauth0jwt",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "Type": "TOKEN"
+      }
+    },
     "VerifysignatureApiGatewayAuthorizer": {
       "Type": "AWS::ApiGateway::Authorizer",
       "Properties": {
@@ -852,7 +1069,7 @@
         "Type": "TOKEN"
       }
     },
-    "ApiGatewayDeployment1484338690626": {
+    "ApiGatewayDeployment1484598999232": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -861,11 +1078,58 @@
         "StageName": "development"
       },
       "DependsOn": [
+        "ApiGatewayMethodGraphPost",
         "ApiGatewayMethodTokenAcquireGet",
         "ApiGatewayMethodLeadCreatePost",
         "ApiGatewayMethodOrderCreatePost",
         "ApiGatewayMethodOrderConfirmGet"
       ]
+    },
+    "GraphLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GraphLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "Verifyauth0jwtLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Verifyauth0jwtLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com"
+      }
     },
     "AcquiretokenLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
@@ -1294,7 +1558,7 @@
     "VerifysignatureLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "VerifysignatureLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
+        "Ref": "VerifysignatureLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E"
       }
     },
     "VerifyjwtLambdaFunctionArn": {
@@ -1309,7 +1573,37 @@
     "VerifyjwtLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "VerifyjwtLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
+        "Ref": "VerifyjwtLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E"
+      }
+    },
+    "Verifyauth0jwtLambdaFunctionArn": {
+      "Description": "Lambda function info",
+      "Value": {
+        "Fn::GetAtt": [
+          "Verifyauth0jwtLambdaFunction",
+          "Arn"
+        ]
+      }
+    },
+    "Verifyauth0jwtLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "Verifyauth0jwtLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E"
+      }
+    },
+    "GraphLambdaFunctionArn": {
+      "Description": "Lambda function info",
+      "Value": {
+        "Fn::GetAtt": [
+          "GraphLambdaFunction",
+          "Arn"
+        ]
+      }
+    },
+    "GraphLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GraphLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E"
       }
     },
     "AcquiretokenLambdaFunctionArn": {
@@ -1324,7 +1618,7 @@
     "AcquiretokenLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AcquiretokenLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
+        "Ref": "AcquiretokenLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E"
       }
     },
     "CreateleadLambdaFunctionArn": {
@@ -1339,7 +1633,7 @@
     "CreateleadLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateleadLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
+        "Ref": "CreateleadLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E"
       }
     },
     "CreateorderLambdaFunctionArn": {
@@ -1354,7 +1648,7 @@
     "CreateorderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateorderLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
+        "Ref": "CreateorderLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E"
       }
     },
     "ConfirmorderLambdaFunctionArn": {
@@ -1369,7 +1663,7 @@
     "ConfirmorderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ConfirmorderLambdaVersionebPlrlZ63TPgXYtj1UWCFyRTlR6iZ2PW0rnwVGWAfw"
+        "Ref": "ConfirmorderLambdaVersionj8Uc03VIjJQoKj6OMZ9dpWjzwPx1RgxDaorRm3E"
       }
     },
     "ServiceEndpoint": {

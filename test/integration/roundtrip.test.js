@@ -14,6 +14,7 @@ try {
 
 var endpoint = config.endpoint;
 
+var appropriate_spacing = '        ';
 describe('Round Trip Test', function() {
   describe('Confirms a sales funnel purchase with partial and multiple upsells.', function() {
     it('Return a confirmed sale', function (done) {
@@ -23,7 +24,7 @@ describe('Round Trip Test', function() {
     	var authorization_string = config.access_key+':'+request_time+':'+signature;
 		
 		var this_request = request(endpoint);
-		console.log('Acquiring Token');
+		console.log(appropriate_spacing+'Acquiring Token');
     	this_request.get('token/acquire/')
 			.set('Content-Type', 'application/json')
 			.set('Authorization', authorization_string)
@@ -63,7 +64,7 @@ describe('Round Trip Test', function() {
 					}
 				};
 				
-				console.log('Creating Lead');
+				console.log(appropriate_spacing+'Creating Lead');
 				this_request.post('lead/create/')
 					.send(post_body)
 					.set('Content-Type', 'application/json')
@@ -103,7 +104,7 @@ describe('Round Trip Test', function() {
 							}
 						};
 					  	
-					  	console.log('Creating Order');
+					  	console.log(appropriate_spacing+'Creating Order');
 					  	this_request.post('order/create/')
 							.send(order_create)
 							.set('Content-Type', 'application/json')
@@ -151,7 +152,7 @@ describe('Round Trip Test', function() {
 									}
 								};
 								
-								console.log('Creating Another Order');
+								console.log(appropriate_spacing+'Creating Another Order');
 								this_request.post('order/create/')
 									.send(upsell_create)
 									.set('Content-Type', 'application/json')
@@ -180,7 +181,7 @@ describe('Round Trip Test', function() {
 										assert.property(processor_response.results, 'response');
 										assert.equal(processor_response.results.response, '1');
 										
-										console.log('Confirming Order');
+										console.log(appropriate_spacing+'Confirming Order');
 										this_request.get('order/confirm/')
 											.query('session_id='+session_id)
 											.set('Content-Type', 'application/json')

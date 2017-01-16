@@ -49,11 +49,12 @@ Reminder:  Access Key is the SHA-1  of the customer's email address.
 
 * Move all the functions to a helper class
 * Add more validation
-* Mark the session as modified.
 * Install and use a Dynamo Transaction class
 
 ### Confirm Order
 
+* Move all the functions to a helper class
+* Add more validation
 
 ## Deployment
 
@@ -74,5 +75,5 @@ Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f cre
 1.  ~~When working with a new deployment, the lambda roles doesn't appear to have sufficient permissions to read/write against the DynamoDB tables.~~
 2.  ~~When deleting an instance, CloudFormation fails to delete the S3 bucket that holds the deployment artifacts as well as the IAM Role.~~
 3.  Store Credit Card in Order Create doesn't make a lot of sense...
-4.  Needs to store the CCs
+4.  ~~Needs to store the CCs~~
 

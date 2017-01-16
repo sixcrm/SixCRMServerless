@@ -32,11 +32,36 @@ functions:
     environment:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       stage: ${opt:stage}
+      
   verifyjwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
-      site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):site_secret_jwt_key}
+      secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction_key}
       stage: ${opt:stage}
+      development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
+      
+  verifyauth0jwt:
+    handler: authorizers/verifyjwt/handler.verifyjwt
+    environment:
+      secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site_key}
+      stage: ${opt:stage}
+      development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
+      
+  graph:
+    handler: endpoints/graph/handler.graph
+    events:
+      - http:
+          path: graph/
+          method: post
+          cors: true
+          authorizer:
+            name: verifyauth0jwt
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+    environment:
+      stage: ${opt:stage}   
+      sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
+      
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
     events:
@@ -49,8 +74,9 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
-      site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):site_secret_jwt_key}
+      site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction_key}
       stage: ${opt:stage}
+      
   createlead:
     handler: endpoints/createlead/handler.createlead
     events:
@@ -67,6 +93,7 @@ functions:
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         stage: ${opt:stage}
+        
   createorder:
     handler: endpoints/createorder/handler.createorder
     events:
@@ -89,6 +116,7 @@ functions:
         nmi_password: ${file(./config/${opt:stage}/site.yml):nmi.password}
         nmi_endpoint: ${file(./config/${opt:stage}/site.yml):nmi.endpoint}
         stage: ${opt:stage}
+        
   confirmorder:
     handler: endpoints/confirmorder/handler.confirmorder
     events:

@@ -562,24 +562,33 @@ var getCreditCard = function(id, callback){
 var getSession = function(id, callback){
 	
 	getRecord(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, session) => {
-			
+		
 		if(_.isError(error)){ return callback(error, null); }
 		
-		if(_.has(session, "customer") && _.has(session, 'completed')){
-		
-			if(_.isEqual(session.completed, 'false')){
+		if(_.has(session, "customer")){
+			
+			if(_.has(session, 'completed')){
+			
+				if(_.isEqual(session.completed, 'false')){
 				
-				return callback(null, session);
+					return callback(null, session);
+				
+				}else{
+			
+					return callback(new Error('The session has already been completed.'), null);
+				
+				}
 				
 			}else{
-			
-				return callback(new Error('The session has already been completed.'), null);
+				
+				return callback(new Error('Session missing completed key.', null));
 				
 			}
 			
 		}else{
-		
-			return callback(new Error('An unexpected error occured', null));
+			
+			//note that this also occurs when nothing matches the session in the query
+			return callback(new Error('Session missing customer key.', null));
 			
 		}	
 		
