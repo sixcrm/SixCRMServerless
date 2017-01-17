@@ -1,11 +1,10 @@
 'use strict';
-//var { graphql, buildSchema } = require('graphql'); breaks Lambda
-const _ = require('underscore');
-const graphql = require('graphql').graphql;
 
+var _ = require('underscore');
+var graphql =  require('graphql').graphql;
+var SixSchema = require('./schema.js');
 var lr = require('../../lib/lambda-response.js');
-var Schema = require('./schema.js');
-var Resolver = require('./resolver.js');
+
 
 module.exports.graph = (event, context, callback) => {
 	
@@ -18,16 +17,19 @@ module.exports.graph = (event, context, callback) => {
 	if (event.query && event.query.hasOwnProperty('query')) {
 		query = event.query.query.replace("\n", ' ', "g");
 	}
-
-	graphql(Schema, query, Resolver)
-	.then((response) => {
-		if(_.has(response, "errors")){
-			throw new Error(JSON.stringify(response));
+	
+	graphql(SixSchema, query).then(result => {
+		
+		if(_.has(result, "errors")){
+			throw new Error(JSON.stringify(result));
 		}
-	  return lr.issueResponse(200, response, callback);	
-	})
-	.catch((error) => {
+	  	
+	  	return lr.issueResponse(200, result, callback);	
+
+	}).catch((error) => {
+	
     	return lr.issueError(error, 500, event, error, callback);
+    	
     });
-    
+	
 }

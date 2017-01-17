@@ -6,34 +6,19 @@ if(process.env.stage == 'local'){
 }else{
 	var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
 }
-var dynamoutilities = require('../../../lib/dynamodb-utilities.js');
-var productController = require('./Product.js');
-var customerController = require('./Customer.js');
 
-class SessionController {
+class ProductController {
 
 	constructor(){
 	
 	}
 	
-	getCustomer(session){
+	getProduct(id){
 		
-		return customerController.getCustomer(session.customer);
-        
-	}
-	
-	getProducts(session){
-		
-		return session.products.map(id => productController.getProduct(id));
-        
-	}
-	
-	getSession(id){
-	
 		return new Promise((resolve, reject) => {
 				
 			var params = {
-				TableName: process.env.sessions_table,
+				TableName: process.env.products_table,
 				KeyConditionExpression: 'id = :idv',
 				ExpressionAttributeValues: {':idv': id}
 			};
@@ -49,6 +34,7 @@ class SessionController {
 						return resolve(data.Items[0]);
 					}
 				}
+				
 				return resolve({});
 		
 			});
@@ -59,4 +45,4 @@ class SessionController {
 	
 }
 
-module.exports = new SessionController();
+module.exports = new ProductController();

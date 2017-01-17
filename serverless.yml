@@ -61,6 +61,9 @@ functions:
     environment:
       stage: ${opt:stage}   
       sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
+      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+      customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
