@@ -13,6 +13,12 @@ class CustomerController {
 	constructor(){
 	
 	}
+		
+	getAddress(customer){
+		return new Promise((resolve, reject) => {
+			resolve(customer.address);
+		});	
+	}
 	
 	getCustomer(id){
 		

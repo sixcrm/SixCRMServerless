@@ -9,6 +9,8 @@ var GraphQLString = require('graphql').GraphQLString;
 
 var sessionController = require('./controllers/Session.js');
 var productController = require('./controllers/Product.js');
+var customerController = require('./controllers/Customer.js');
+var transactionController = require('./controllers/Transaction.js');
 
 
 var productTypeEnum = new GraphQLEnumType({
@@ -67,7 +69,7 @@ var customerInterface = new GraphQLInterfaceType({
     email: {
       type: GraphQLString,
       description: 'Email of the customer.',
-    },
+    }
   }),
   resolveType(customer) {
     return customerType;
@@ -85,6 +87,20 @@ var sessionInterface = new GraphQLInterfaceType({
   }),
   resolveType(session) {
     return sessionType;
+  }
+});
+
+var transactionInterface = new GraphQLInterfaceType({
+  name: 'transaction',
+  description: 'A tranasaction',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the transaction.',
+    }
+  }),
+  resolveType(transaction) {
+    return transactionType;
   }
 });
 
@@ -118,9 +134,41 @@ var sessionType = new GraphQLObjectType({
       description:
         'The products associated with the session',
       resolve: session => sessionController.getProducts(session),
+    },
+    transactions: {
+      type: new GraphQLList(transactionType),
+      description:
+        'The transactions associated with the session',
+      resolve: function(session){
+      	 return sessionController.getTransactions(session.id);
+      }
     }
   }),
   interfaces: [sessionInterface]
+});
+
+var transactionType = new GraphQLObjectType({
+  name: 'Transaction',
+  description: 'A record denoting transactions.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the transaction.',
+    },
+    date: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The date of the transaction.',
+    },
+    parentsession: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The date of the transaction.',
+    },
+    processor_response: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The date of the transaction.',
+    }
+  }),
+  interfaces: [transactionInterface]
 });
 
 var productType = new GraphQLObjectType({
@@ -170,9 +218,42 @@ var customerType = new GraphQLObjectType({
     email: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The name of the customer.',
+    },
+    address: {
+      type: addressType,
+      description: 'The customer\'s shipping address.',
+      resolve: customer => customerController.getAddress(customer),
     }
   }),
   interfaces: [ customerInterface ]
+});
+
+var addressType = new GraphQLObjectType({
+  name: 'Address',
+  description: 'A address',
+  fields: () => ({
+    line1: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The first line of the address.',
+    },
+    line2: {
+      type: GraphQLString,
+      description: 'The second line of the address',
+    },
+    city: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The City of the address.',
+    },
+    state: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The State of the address.',
+    },
+	zip: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The ZIP code of the address.',
+    },
+  }),
+  interfaces: []
 });
 
 var queryType = new GraphQLObjectType({

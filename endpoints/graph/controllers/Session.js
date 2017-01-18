@@ -10,6 +10,7 @@ if(process.env.stage == 'local'){
 var dynamoutilities = require('../../../lib/dynamodb-utilities.js');
 var productController = require('./Product.js');
 var customerController = require('./Customer.js');
+var transactionController = require('./Transaction.js');
 
 class SessionController {
 
@@ -28,6 +29,13 @@ class SessionController {
 		return session.products.map(id => productController.getProduct(id));
         
 	}
+	
+	getTransactions(id){
+		
+		return transactionController.getTransactionsBySessionID(id);
+        
+	}
+	
 	
 	getSession(id){
 	
