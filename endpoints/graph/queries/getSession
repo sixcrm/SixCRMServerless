@@ -1,3 +1,3 @@
 {
-	"query": "{ session(id: \"668ad918-0d09-4116-a6fe-0e8a9eda36f7\"){ id, customer { id, firstname, lastname }, created, modified, completed, products { id, name } } }"
+  "query": "{ session(id: \"dea70ef3-ef3d-4b48-94bd-192dd98f1331\"){ id, customer { id, firstname, lastname }, created, modified, completed, products { id, name } } }"
 }			

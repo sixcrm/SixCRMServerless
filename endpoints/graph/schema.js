@@ -1,6 +1,4 @@
 'use strict';
-
-//var graphql = require('graphql');
 var GraphQLEnumType = require('graphql').GraphQLEnumType;
 var GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 var GraphQLObjectType = require('graphql').GraphQLObjectType;
@@ -9,23 +7,11 @@ var GraphQLNonNull = require('graphql').GraphQLNonNull;
 var GraphQLSchema = require('graphql').GraphQLSchema;
 var GraphQLString = require('graphql').GraphQLString;
 
-/*
-import {
-  GraphQLEnumType,
-  GraphQLInterfaceType,
-  GraphQLObjectType,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLSchema,
-  GraphQLString,
-} from '../type';
-*/
-
-//import { getFriends, getHero, getHuman, getDroid } from './starWarsData.js';
 var sessionController = require('./controllers/Session.js');
 var productController = require('./controllers/Product.js');
 
-const productTypeEnum = new GraphQLEnumType({
+
+var productTypeEnum = new GraphQLEnumType({
   name: 'ProductType',
   description: 'Types of products for sale',
   values: {
@@ -40,7 +26,7 @@ const productTypeEnum = new GraphQLEnumType({
   }
 });
 
-const productInterface = new GraphQLInterfaceType({
+var productInterface = new GraphQLInterfaceType({
   name: 'product',
   description: 'A product',
   fields: () => ({
@@ -62,7 +48,7 @@ const productInterface = new GraphQLInterfaceType({
   }
 });
 
-const customerInterface = new GraphQLInterfaceType({
+var customerInterface = new GraphQLInterfaceType({
   name: 'customer',
   description: 'A customer',
   fields: () => ({
@@ -88,7 +74,7 @@ const customerInterface = new GraphQLInterfaceType({
   }
 });
 
-const sessionInterface = new GraphQLInterfaceType({
+var sessionInterface = new GraphQLInterfaceType({
   name: 'session',
   description: 'A session',
   fields: () => ({
@@ -102,7 +88,7 @@ const sessionInterface = new GraphQLInterfaceType({
   }
 });
 
-const sessionType = new GraphQLObjectType({
+var sessionType = new GraphQLObjectType({
   name: 'Session',
   description: 'A record denoting a customer, a group of products and corresponding transactions.',
   fields: () => ({
@@ -132,12 +118,12 @@ const sessionType = new GraphQLObjectType({
       description:
         'The products associated with the session',
       resolve: session => sessionController.getProducts(session),
-    },
+    }
   }),
   interfaces: [sessionInterface]
 });
 
-const productType = new GraphQLObjectType({
+var productType = new GraphQLObjectType({
   name: 'Product',
   description: 'A product for sale.',
   fields: () => ({
@@ -156,12 +142,12 @@ const productType = new GraphQLObjectType({
     type: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'What kind of a product it is.',
-    },
+    }
   }),
   interfaces: [ productInterface ]
 });
 
-const customerType = new GraphQLObjectType({
+var customerType = new GraphQLObjectType({
   name: 'Customer',
   description: 'A customer.',
   fields: () => ({
@@ -184,12 +170,12 @@ const customerType = new GraphQLObjectType({
     email: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The name of the customer.',
-    },
+    }
   }),
   interfaces: [ customerInterface ]
 });
 
-const queryType = new GraphQLObjectType({
+var queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     session: {
@@ -200,7 +186,10 @@ const queryType = new GraphQLObjectType({
           type: new GraphQLNonNull(GraphQLString)
         }
       },
-      resolve: (root, { id }) => sessionController.getSession(id),
+      resolve: function(root, session){
+      	var id = session.id; 
+      	return sessionController.getSession(id);
+      }
     },
     product: {
       type: productType,
@@ -210,16 +199,17 @@ const queryType = new GraphQLObjectType({
           type: new GraphQLNonNull(GraphQLString)
         }
       },
-      resolve: (root, { id }) => productController.getProduct(id),
-    },
+      resolve: function(root, product){
+      	var id = product.id; 
+      	return productController.getProduct(id);
+      }
+    }
   })
 });
 
-/**
- * Finally, we construct our schema (whose starting query type is the query
- * type we defined above) and export it.
- */
-module.exports = new GraphQLSchema({
+var SixSchema = new GraphQLSchema({
   query: queryType,
-  types: [ sessionType, productType ]
+  types: [ sessionType, productType, customerType ]
 });
+
+module.exports = SixSchema;

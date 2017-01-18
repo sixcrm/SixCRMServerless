@@ -1,3 +1,4 @@
+'use strict';
 const AWS = require("aws-sdk");
 const _ = require('underscore');
 var dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});

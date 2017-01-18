@@ -2,24 +2,21 @@
 
 var _ = require('underscore');
 var graphql =  require('graphql').graphql;
-var SixSchema = require('./schema.js');
 var lr = require('../../lib/lambda-response.js');
 
 
 module.exports.graph = (event, context, callback) => {
 	
-	if(!_.isObject(event)){
-		event = JSON.parse(event);
-	}
+	var query = event.body;
 	
-	let query = event.query;
-	
-	if (event.query && event.query.hasOwnProperty('query')) {
+	if (_.has(event,"query") && _.has(event.query, "query")) {
 		query = event.query.query.replace("\n", ' ', "g");
 	}
 	
+	var SixSchema = require('./schema.js');
+
 	graphql(SixSchema, query).then(result => {
-		
+
 		if(_.has(result, "errors")){
 			throw new Error(JSON.stringify(result));
 		}
