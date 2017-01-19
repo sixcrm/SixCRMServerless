@@ -34,11 +34,9 @@ var validateToken = function(token, callback){
 	
 	if(_.isArray(token) && token.length == 3){
 		
-		/*
 		if(!isRecentRequest(token[1])){
 			callback(null, 'deny');
 		}
-		*/
 		
 		retrieveSecretByAccessKey(token[0], (error, secret_key) => {
 			
