@@ -16,6 +16,7 @@ if(process.env.stage == 'local'){
 }
 
 var lr = require('../../lib/lambda-response.js');
+var timestamp = require('../../lib/timestamp.js');
 
 module.exports.createorder= (event, context, callback) => {
     
@@ -189,7 +190,7 @@ var updateSession =  function(session, products, callback){
 		
 	}
 	
-	var modified = createTimestamp();
+	var modified = timestamp.createTimestampSeconds();
 	
 	updateRecord(process.env.sessions_table, {'id': session.id}, 'set products = :a, modified = :m', {":a": updated_products, ":m": modified.toString()}, (error, data) => {
 		
@@ -264,7 +265,7 @@ var createTransactionObject = function(params, processor_response){
 		products: transaction_products,
 		processor_response: JSON.stringify(processor_response),
 		amount: params.amount,
-		date: timestampToDate(createTimestamp())
+		date: timestamp.createDate()
 	}
 	
 	return return_object;
@@ -740,13 +741,3 @@ var updateRecord = function(table, key, expression, expression_params, callback)
 	});
 
 }
-
-var createTimestamp =  function(){
-	return Math.round(new Date().getTime()/1000);
-}
-
-var timestampToDate = function(timestamp){
-	var date = new Date(timestamp*1000);
-	return date.toUTCString();
-}
-

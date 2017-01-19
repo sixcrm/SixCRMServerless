@@ -16,6 +16,7 @@ if(process.env.stage == 'local'){
 }
 
 var lr = require('../../lib/lambda-response.js');
+var timestamp = require('../../lib/timestamp.js');
 
 module.exports.confirmorder = (event, context, callback) => {
 	
@@ -107,7 +108,7 @@ var updateSession =  function(session, callback){
 	
 	var completed = 'true';
 	
-	var modified = createTimestamp();
+	var modified = timestamp.createTimestampSeconds();
 	
 	updateRecord(process.env.sessions_table, {'id': session.id}, 'set completed = :completedv, modified = :modifiedv', {":completedv": completed, ":modifiedv": modified.toString()}, (error, data) => {
 		
@@ -298,8 +299,4 @@ var updateRecord = function(table, key, expression, expression_params, callback)
 	  }
 	});
 
-}
-
-var createTimestamp =  function(){
-	return Math.round(new Date().getTime()/1000);
 }

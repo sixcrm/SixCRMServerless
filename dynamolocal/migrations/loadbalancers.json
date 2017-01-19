@@ -1,0 +1,30 @@
+{
+    "Table": {
+        "TableName": "loadbalancers",
+        "KeySchema": [{
+            "AttributeName": "id",
+            "KeyType": "HASH"
+        }], 
+        "AttributeDefinitions": [{
+            "AttributeName": "id", 
+            "AttributeType": "S"
+        }],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1, 
+            "WriteCapacityUnits": 1
+        }
+    },
+    "Seeds": [{
+    	"id":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+    	"merchantproviders":[
+    		{
+    			"id":"6c40761d-8919-4ad6-884d-6a46a776cfb9",
+    			"distribution":"0.75"
+    		},
+    		{
+    			"id":"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
+    			"distribution":"0.25"
+    		}
+    	]
+    }]
+}

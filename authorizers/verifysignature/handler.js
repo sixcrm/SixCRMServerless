@@ -3,22 +3,26 @@ const _ = require("underscore");
 var AWS = require("aws-sdk");
 const dynamodb = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
 const crypto = require('crypto');
+var accessKeyController = require('../../controllers/AccessKey.js');
+var timestamp = require('../../lib/timestamp.js');
+var signature = require('../../lib/signature.js');
+var policy_response = require('../../lib/policy_response.js');
 
 module.exports.verifysignature = (event, context, callback) => {
 	
 	validateToken(event.authorizationToken, (error, data) => {
-		
+
 		if(!_.isError(error) && _.isString(data)){
-		
+			
 			switch (data.toLowerCase()) {
 				case 'allow':
-					callback(null, generatePolicy('user', 'Allow', event.methodArn));
+					callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn));
 					break;
 				
 			}
 		}
 		
-		callback(null, generatePolicy('user', 'Deny', event.methodArn));
+		callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn));
 		
 	});
 		
@@ -30,20 +34,21 @@ var validateToken = function(token, callback){
 	
 	if(_.isArray(token) && token.length == 3){
 		
+		/*
 		if(!isRecentRequest(token[1])){
 			callback(null, 'deny');
 		}
+		*/
 		
-		retrieveSecretByAccessKey(token[0], (error, data) => {
+		retrieveSecretByAccessKey(token[0], (error, secret_key) => {
 			
 			if(_.isError(error)){
 				callback(error, null);
 			}
-			
-			if(_.isString(data)){			
-			
-				var correct_signature = createSignature(data, token[1]);
-		
+			if(_.isString(secret_key)){			
+				
+				var correct_signature = signature.createSignature(secret_key, token[1]);
+					
 				if(token[2] == correct_signature){
 					
 					callback(null, 'allow');
@@ -65,8 +70,8 @@ var validateToken = function(token, callback){
 }
 
 var isRecentRequest = function(request_time){
-	var current_time = new Date().getTime();
-	if(current_time - request_time > (60 * 5 * 1000)){
+	var current_time = timestamp.createTimestampMicroSeconds();
+	if(current_time - request_time > (60 * 5 * 1000)){//this value should be configured
 		return false;
 	}
 	return true;
@@ -74,68 +79,19 @@ var isRecentRequest = function(request_time){
 
 var retrieveSecretByAccessKey = function(access_key, callback){
 	
-	var params = {
-		TableName: process.env.access_keys_table,
-		KeyConditionExpression: 'access_key = :access_keyv',
-		ExpressionAttributeValues: {
-			':access_keyv': access_key
-		}
-	};
-	
-	dynamodb.query(params, function(err, data) {
-
-		if (_.isError(err)) {	
-			callback(err, null);
-		 }
-		
-		if(!_.isObject(data) || !_.has(data,'Items') || !_.isArray(data.Items)){
-			callback(new Error('Unexpected response from DynamoDB'), null);
-		}
-		
-		if(data.Items.length < 1){
-			callback(null, null);
-		}
-		
-		data.Items.forEach(function(item){
-			
-			if(!_.has(item, "secret_key")){
-				callback(new Error('Invalid DynamoDB entry for access_key.'), null);
+	accessKeyController
+		.getAccessKey(access_key)
+		.then((data) => {
+			if(!_.isObject(data) || !_.has(data,'secret_key')){
+				callback(new Error('Unexpected response from DynamoDB'), null);
 			}
-			
-			callback(null, item.secret_key);	
-			
+			callback(null, data.secret_key);
+		})
+		.catch((error) => {
+			if (_.isError(error)) {	
+				callback(error, null);
+		 	}
 		});
-		
-	});		
+
 }
 
-var createSignature = function(secret, request_time){
-	
-	var pre_hash = secret+request_time;
-	return crypto.createHash('sha1').update(pre_hash).digest('hex');	
-	
-}
-
-var generatePolicy = function(principalId, effect, resource) {
-    var authResponse = {};
-    
-    authResponse.principalId = principalId;
-    if (effect && resource) {
-        var policyDocument = {};
-        policyDocument.Version = '2012-10-17'; // default version
-        policyDocument.Statement = [];
-        var statementOne = {};
-        statementOne.Action = 'execute-api:Invoke'; // default action
-        statementOne.Effect = effect;
-        statementOne.Resource = resource;
-        policyDocument.Statement[0] = statementOne;
-        authResponse.policyDocument = policyDocument;
-    }
-    
-    // Can optionally return a context object of your choosing.
-    authResponse.context = {};
-    //authResponse.context.stringKey = "stringval";
-    //authResponse.context.numberKey = 123;
-    //authResponse.context.booleanKey = true;
-    return authResponse;
-}

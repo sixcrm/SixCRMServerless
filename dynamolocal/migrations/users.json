@@ -1,24 +1,24 @@
 {
     "Table": {
-        "TableName": "access_keys",
+        "TableName": "users",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
-        }],
+        }], 
         "AttributeDefinitions": [{
-            "AttributeName": "id",
+            "AttributeName": "id", 
             "AttributeType": "S"
         },
         {
-            "AttributeName": "access_key",
+            "AttributeName": "auth0id", 
             "AttributeType": "S"
         }],
         "GlobalSecondaryIndexes": [ 
 		  { 
-			 "IndexName": "access_key-index",
+			 "IndexName": "auth0id-index",
 			 "KeySchema": [ 
 				{ 
-				   "AttributeName": "access_key",
+				   "AttributeName": "auth0id",
 				   "KeyType": "HASH"
 				}
 			 ],
@@ -32,13 +32,16 @@
 		  }
 		],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1,
+            "ReadCapacityUnits": 1, 
             "WriteCapacityUnits": 1
         }
     },
     "Seeds": [{
-    	"id":"82478014-c96f-49ef-b31c-5408e99df66e",
-        "access_key": "13edf909931d0f37000e438e9d67a2e165fad5d0",
-        "secret_key": "MzM1YWE2YTYyYzZjMGMxYzYyOGFlZjEzYTk3ZTFlNjNiYTNhMTYxMg=="
+    	"id":"93b086b8-6343-4271-87d6-b2a00149f070",
+    	"name":"Admin User",
+    	"auth0id":"abc123",
+    	"access_key":"82478014-c96f-49ef-b31c-5408e99df66e",
+    	"email":"tmdalbey@gmail.com",
+    	"active":"true"
     }]
 }

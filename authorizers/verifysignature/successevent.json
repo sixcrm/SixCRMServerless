@@ -2,5 +2,6 @@
 	"body":{
 		"request_time":123
 	},
-	"authorizationToken":"13edf909931d0f37000e438e9d67a2e165fad5d0:1483823075377:a3bf3f3db7b049cbf0d9a46fca81ab4494ee81a6"
+	"authorizationToken":"13edf909931d0f37000e438e9d67a2e165fad5d0:1483823075377:a3bf3f3db7b049cbf0d9a46fca81ab4494ee81a6",
+	"methodArn":"dummyARN"
 }

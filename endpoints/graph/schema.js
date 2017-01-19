@@ -7,11 +7,10 @@ var GraphQLNonNull = require('graphql').GraphQLNonNull;
 var GraphQLSchema = require('graphql').GraphQLSchema;
 var GraphQLString = require('graphql').GraphQLString;
 
-var sessionController = require('./controllers/Session.js');
-var productController = require('./controllers/Product.js');
-var customerController = require('./controllers/Customer.js');
-var transactionController = require('./controllers/Transaction.js');
-
+var sessionController = require('../../controllers/Session.js');
+var productController = require('../../controllers/Product.js');
+var customerController = require('../../controllers/Customer.js');
+var transactionController = require('../../controllers/Transaction.js');
 
 var productTypeEnum = new GraphQLEnumType({
   name: 'ProductType',
@@ -166,7 +165,13 @@ var transactionType = new GraphQLObjectType({
     processor_response: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The date of the transaction.',
-    }
+    },
+    products: {
+      type: new GraphQLList(productInterface),
+      description:
+        'The products associated with the transaction',
+      resolve: transaction => transactionController.getProducts(transaction),
+    },
   }),
   interfaces: [transactionInterface]
 });
@@ -190,6 +195,12 @@ var productType = new GraphQLObjectType({
     type: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'What kind of a product it is.',
+    },
+    //this doesn't quite work...
+    prices: {
+    	type: priceType,
+      	description: 'The prices associated with the transaction',
+      	resolve: product => productController.getPrices(product),
     }
   }),
   interfaces: [ productInterface ]
@@ -226,6 +237,38 @@ var customerType = new GraphQLObjectType({
     }
   }),
   interfaces: [ customerInterface ]
+});
+
+var priceType = new GraphQLObjectType({
+  name: 'Price',
+  description: 'A price object',
+  fields: () => ({
+    straight: {
+      type: GraphQLString,
+      description: 'The straight sale price.',
+    },
+    trial: {
+      type: GraphQLString,
+      description: 'The trial price',
+    }
+  }),
+  interfaces: []
+});
+
+var recurringType = new GraphQLObjectType({
+  name: 'Recurring',
+  description: 'A recurring details object',
+  fields: () => ({
+    period: {
+      type: GraphQLString,
+      description: 'The period in days for rebilling.',
+    },
+    price: {
+      type: GraphQLString,
+      description: 'The rebilling price.',
+    }
+  }),
+  interfaces: []
 });
 
 var addressType = new GraphQLObjectType({

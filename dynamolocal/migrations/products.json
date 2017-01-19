@@ -10,34 +10,30 @@
             "AttributeType": "S"
         }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 5, 
-            "WriteCapacityUnits": 5
+            "ReadCapacityUnits": 1, 
+            "WriteCapacityUnits": 1
         }
     },
     "Seeds": [
     	{
     		"id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
 			"name": "Test Product",
-			"type":"straight",
-			"prices":{
-				"straight": "34.99"
-			},
-			"recurring":{
-				"price":"34.99",
-				"period":30
-			}				
+			"sku":"123"			
 		},
 		{
     		"id": "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
 			"name": "Test Product 2",
-			"type":"straight",
-			"prices":{
-				"straight": "14.99"
-			},
-			"recurring":{
-				"price":"44.99",
-				"period":30
-			}				
+			"sku":"1234"
+		},
+		{
+    		"id": "616cc994-9480-4640-b26c-03810a679fe3",
+			"name": "Trial Product 1",
+			"sku":"asd"
+		},
+		{
+    		"id": "be992cea-e4be-4d3e-9afa-8e020340ed16",
+			"name": "Trial Product 2",
+			"sku":"qwerty"
 		}
     ]
 }

@@ -24,7 +24,18 @@
 10.  Add indexes "completed-index", "created-index" to transactions *(REEVALUATE)*
 12.  Think on the recurring transaction processor mechanism.
 14.  Add Unit Testing.
-17.  Add data fixtures to remote DynamoDB.
+17.  ~~Add data fixtures to remote DynamoDB.~~
+
+To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}`
+
+18.  Mutations for Graph entities
+19.  Convert all endpoints to use Entity Controllers
+20.  Eliminate raw Dynamo transactions from the endpoints
+21.  Handle "no results" with Graph
+22.  Handle Authentication with Graph/JWTs whatever
+23.  Convert "providers" to merchantproviders
+
+
 
 ### Verify Signature
 
@@ -76,4 +87,8 @@ Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f cre
 2.  ~~When deleting an instance, CloudFormation fails to delete the S3 bucket that holds the deployment artifacts as well as the IAM Role.~~
 3.  Store Credit Card in Order Create doesn't make a lot of sense...
 4.  ~~Needs to store the CCs~~
+5.  CC record missing from the transaction.
+6.  Occasionally, the product is missing from the transaction.
+7.  Customer doesn't need a billing address
+
 

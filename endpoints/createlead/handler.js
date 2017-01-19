@@ -16,6 +16,7 @@ if(process.env.stage == 'local'){
 }
 
 var lr = require('../../lib/lambda-response.js');
+var timestamp = require('../../lib/timestamp.js');
 
 module.exports.createlead = (event, context, callback) => {
 
@@ -168,12 +169,8 @@ var putSession = function(customer_id, callback){
 	
 };	
 
-var createTimestampInSeconds =  function(){
-	return Math.round(new Date().getTime() / 1000);
-}
-
 var getTimeDifference = function(created){
-	var now = createTimestampInSeconds();
+	var now = timestamp.createTimestampSeconds();
 	return now - created;
 };
 
@@ -183,7 +180,7 @@ var saveSession = function(customer_id, callback){
 		id: uuidV4(),
 		customer: customer_id,
 		completed: 'false',
-		created: createTimestampInSeconds(),
+		created: timestamp.createTimestampSeconds(),
 		modified: 'false'
 	};
 		

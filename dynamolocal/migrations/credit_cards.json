@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "creditcards",
+        "TableName": "credit_cards",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
@@ -25,13 +25,13 @@
 				"ProjectionType": "ALL"
 			},
 			"ProvisionedThroughput": { 
-				"ReadCapacityUnits": 5,
-				"WriteCapacityUnits": 5
+				"ReadCapacityUnits": 1,
+				"WriteCapacityUnits": 1
 			}
 		}],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 5, 
-            "WriteCapacityUnits": 5
+            "ReadCapacityUnits": 1, 
+            "WriteCapacityUnits": 1
         }
     },
     "Seeds": []

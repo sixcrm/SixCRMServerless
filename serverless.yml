@@ -32,6 +32,7 @@ functions:
     environment:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       stage: ${opt:stage}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       
   verifyjwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
@@ -114,7 +115,7 @@ functions:
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-        creditcards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.creditcards_table}
+        credit_cards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.credit_cards_table}
         transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
         nmi_username: ${file(./config/${opt:stage}/site.yml):nmi.username}
         nmi_password: ${file(./config/${opt:stage}/site.yml):nmi.password}
@@ -141,141 +142,8 @@ functions:
         stage: ${opt:stage}
 resources:  
   Resources:
-    accesskeys:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
-      Properties:
-        TableName: ${opt:stage}access_keys
-        AttributeDefinitions:
-          - AttributeName: access_key
-            AttributeType: S
-        KeySchema:
-          - AttributeName: access_key
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-    customerstable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
-      Properties:
-        TableName: ${opt:stage}customers
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-          - AttributeName: email
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: email-index
-            KeySchema: 
-              - AttributeName: email
-                KeyType: "HASH"
-            Projection: 
-              ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-    sessionstable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
-      Properties:
-        TableName: ${opt:stage}sessions
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-          - AttributeName: customer
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: customer-index
-            KeySchema: 
-              - AttributeName: customer
-                KeyType: "HASH"
-            Projection: 
-              ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-    transactionstable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
-      Properties:
-        TableName: ${opt:stage}transactions
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-          - AttributeName: parentsession
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: parentsession-index
-            KeySchema: 
-              - AttributeName: parentsession
-                KeyType: "HASH"
-            Projection: 
-              ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-    creditcardsstable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
-      Properties:
-        TableName: ${opt:stage}creditcards
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-          - AttributeName: ccnumber
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: ccnumber-index
-            KeySchema: 
-              - AttributeName: ccnumber
-                KeyType: "HASH"
-            Projection: 
-              ProjectionType: "ALL"
-            ProvisionedThroughput: 
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-    productstable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
-      Properties:
-        TableName: ${opt:stage}products
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
-      DependsOn: accesskeys
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:

@@ -1,5 +1,6 @@
 {
-	"body":"{ 
+	"body":"
+	{ 
 		session (id: \"668ad918-0d09-4116-a6fe-0e8a9eda36f7\") { 
 			id, 
 			customer { 
@@ -16,13 +17,19 @@
 			},
 			products {
 				id,
-				name
+				name,
+				type
 			},
 			transactions {
 				id,
 				date,
 				parentsession,
-				processor_response
+				processor_response,
+				products {
+					id,
+					name,
+					type
+				}
 			}
 		} 
 	}"
