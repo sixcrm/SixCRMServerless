@@ -13,15 +13,6 @@ try {
   console.log(e);
 }
 
-var customer_schema;
-
-try{
-	customer_schema = JSON.parse(fs.readFileSync('./model/customer.json','utf8'));
-	address_schema = JSON.parse(fs.readFileSync('./model/address.json','utf8'));
-} catch(e){
-	console.log(e);
-}
-
 var endpoint = config.endpoint;
 
 describe('Create Lead Integration Test', function() {
@@ -33,13 +24,6 @@ describe('Create Lead Integration Test', function() {
 			"lastname":"Damunaste",
 			"email":"rama@damunaste.com",
 			"phone":"1234567890",
-			"billing":{
-				"line1":"10 Downing St.",
-				"city":"Detroit",
-				"state":"Michigan",
-				"zip":"12345",
-				"country":"US"
-			},
 			"address":{
 				"line1":"334 Lombard St.",
 				"line2":"Apartment 2",

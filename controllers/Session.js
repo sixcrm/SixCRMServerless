@@ -33,7 +33,6 @@ class SessionController {
         
 	}
 	
-	
 	getSession(id){
 	
 		return new Promise((resolve, reject) => {
@@ -138,6 +137,32 @@ class SessionController {
 			
 		});
 		
+	
+	}
+	
+	updateSession(session, callback){
+		
+		return new Promise((resolve, reject) => {
+		
+			var completed = 'true';
+	
+			var modified = timestamp.createTimestampSeconds();
+	
+			dynamoutilities.updateRecord(process.env.sessions_table, {'id': session.id}, 'set completed = :completedv, modified = :modifiedv', {":completedv": completed, ":modifiedv": modified.toString()}, (error, data) => {
+			
+				if(_.isError(error)){
+		
+					reject(error);
+			
+				}else{
+		
+					resolve(session);
+			
+				}
+		
+			});
+		
+		});
 	
 	}
 	
