@@ -46,28 +46,32 @@ class CreditCardController {
 		
 	}
 	
-	storeCreditCard(creditcard, customer_credit_card_ids){
+	storeCreditCard(creditcard){
 		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
 
 			dynamoutilities.queryRecords(process.env.credit_cards_table, 'ccnumber = :ccnumberv', {':ccnumberv': creditcard.ccnumber}, 'ccnumber-index', (error, creditcards) => {
-
+				
 				if(_.isError(error)){ reject(error);}
 				
 				var card_identified = false;
 
 				creditcards.forEach(function(item){
-					
+						
 					if(controller_instance.isSameCreditCard(creditcard, item)){
-					
+						
 						resolve(item);
+						
+						card_identified = true;
+						
+						return;
 						
 					}
 					
 				});
-		
+				
 				if(card_identified == false){
 				
 					controller_instance.saveCreditCard(creditcard).then((data) => {
@@ -128,6 +132,20 @@ class CreditCardController {
 		}
 	
 		return true;
+	}
+	
+	createCreditCardObject(input_object){
+	
+		var creditcard = {
+			ccnumber: input_object.ccnumber,
+			expiration: input_object.ccexpiration,
+			ccv: input_object.ccccv,
+			name: input_object.name,
+			address: input_object.address
+		};
+	
+		return creditcard;
+	
 	}
 
 }

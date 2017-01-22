@@ -28,9 +28,11 @@ module.exports.createlead = (event, context, callback) => {
 	var creditcard_schema;
 	
 	try{
+	
 		customer_schema = JSON.parse(fs.readFileSync('./model/customer.json','utf8'));
 		address_schema = JSON.parse(fs.readFileSync('./model/address.json','utf8'));
 		creditcard_schema = JSON.parse(fs.readFileSync('./model/creditcard.json','utf8'));
+		
 	} catch(e){
 		
 		return lr.issueError('Unable to load validation schemas.', 500, event, e, callback);		
@@ -66,65 +68,65 @@ module.exports.createlead = (event, context, callback) => {
 		
 	}
 	
-	customerController.getCustomerByEmail(duplicate_body['email'])
-		.then((customer) => {
-			if(_.has(customer, "id")){
-				
-				sessionController.putSession(customer.id, (error, data) => {
-					
-					if(_.isError(error)){
-						return lr.issueError('Error writing to sessions table.', 500, event, error, callback);	
-					}	
+	customerController.getCustomerByEmail(duplicate_body['email']).then((customer) => {
+	
+		if(_.has(customer, "id")){
+	
+			sessionController.putSession(customer.id).then((session) => {
 			
+				if(_.isError(error)){
+					return lr.issueError('Error writing to sessions table.', 500, event, error, callback);	
+				}	
+	
+				var result_message = {
+					session: session,
+					customer: customer
+				}
+	
+				return lr.issueResponse(200, {
+					message: 'Success',
+					results: result_message
+				}, callback);
+	
+			});
+		
+		}else{
+		
+			var customer_id = duplicate_body['id'] = uuidV4();
+		
+			customerController.saveCustomer(duplicate_body).then((customer) => {
+				
+				sessionController.putSession(customer_id).then((session) => {
+
+					if(_.isError(error)){
+						lr.issueError('Error writing to sessions table.', 500, event, error, callback);
+					}
+					
+					//note that the customer here appears to be a id value.  We want a complete customer object...
 					var result_message = {
-						session: data,
+						session: session,
 						customer: customer
 					}
-			
+	
 					return lr.issueResponse(200, {
 						message: 'Success',
 						results: result_message
 					}, callback);
-			
+	
+				}).catch((error) => {
+					lr.issueError(error, 500, event, error, callback);
 				});
+			
+			}).catch((error) => {
+				lr.issueError(error, 500, event, error, callback);
+			});
+			
+		}
 		
-			}else{
-				
-				var customer_id = duplicate_body['id'] = uuidV4();
-				
-				customerController.saveCustomer(duplicate_body)
-					.then((data) => {
-					
-						sessionController.putSession(customer_id, (error, data) => {
-
-							if(_.isError(error)){
-								lr.issueError('Error writing to sessions table.', 500, event, error, callback);
-							}
-				
-							var result_message = {
-								session: data,
-								customer: duplicate_body
-							}
-				
-							return lr.issueResponse(200, {
-								message: 'Success',
-								results: result_message
-							}, callback);
-				
-						});
-					
-					})
-					.catch((error) => {
-						lr.issueError(error, 500, event, error, callback);
-					});
-					
-			}
-		
-		})
-		.catch((error) => {
-			if(_.isError(error)){
-				return lr.issueError(error, 500, event, error, callback);
-			}
-		});
+	}).catch((error) => {
+		if(_.isError(error)){
+			return lr.issueError(error, 500, event, error, callback);
+		}
+	});
 		
 };

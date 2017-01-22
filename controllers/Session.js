@@ -34,7 +34,7 @@ class SessionController {
 	}
 	
 	getSession(id){
-	
+		
 		return new Promise((resolve, reject) => {
 				
 			dynamoutilities.queryRecords(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, data) => {
@@ -44,13 +44,15 @@ class SessionController {
 				if(_.isArray(data)){
 					
 					if(data.length == 1){
-					
+						
 						resolve(data[0]);
 					
 					}else{
 						
 						if(data.length > 1){
+						
 							reject(new Error('More than one record returned for session ID.'));
+							
 						}else{
 							
 							resolve([]);
@@ -111,32 +113,39 @@ class SessionController {
 	putSession(customer_id, callback){
 		
 		return new Promise((resolve, reject) => {
-		
-			this.getSessionByCustomerID(customer_id).then((data) => {
 			
-				if(_.isArray(data) && data.length > 0){
-					data.forEach(function(item){
-						if(_.has(item, 'completed') && item.completed == 'false'){
-							if(_.has(item, "created")){
-								var time_difference = timestamp.getTimeDifference(item.created);
+			this.getSessionByCustomerID(customer_id).then((sessions) => {
+				
+				var session_found = false;
+
+				if(_.isArray(sessions) && sessions.length > 0){
+					sessions.forEach((session) => {
+						if(_.has(session, 'completed') && session.completed == 'false'){
+							if(_.has(session, "created")){
+								var time_difference = timestamp.getTimeDifference(session.created);
 								if(time_difference < (60*60*24*7)){
-									resolve(item);
+									resolve(session);
+									session_found = true;
+									return false;
 								}	
 							}
 						}
 					});
 				}
 			
-				this.saveSession(customer_id, (error, data) => {
-		
-					if(_.isError(error)){ reject(error);}
+				if(session_found == false){
+					
+					this.saveSession(customer_id).then((session) => {
+					
+						if(_.isError(error)){ reject(error);}
 	
-					resolve(data);
+						resolve(session);
 	
-				});
+					});
+					
+				}
 		
-			})
-			.catch((error) => {
+			}).catch((error) => {
 		
 				reject(error);
 			
@@ -146,7 +155,40 @@ class SessionController {
 	
 	}
 	
-	updateSession(session, callback){
+	updateSessionProducts(session, products){
+		
+		return new Promise((resolve, reject) => {
+		
+			var session_products = session.products;
+			
+			var purchased_products = [];
+			products.forEach((product) => {
+				purchased_products.push(product.id);
+			});
+			
+			session_products = _.union(purchased_products, session_products);
+			
+			var modified = timestamp.createTimestampSeconds();
+	
+			dynamoutilities.updateRecord(process.env.sessions_table, {'id': session.id}, 'set products = :productsv, modified = :modifiedv', {":productsv": session_products, ":modifiedv": modified.toString()}, (error, data) => {
+			
+				if(_.isError(error)){
+		
+					reject(error);
+			
+				}else{
+		
+					resolve(session);
+			
+				}
+		
+			});
+		
+		});
+		
+	}
+	
+	closeSession(session){
 		
 		return new Promise((resolve, reject) => {
 		

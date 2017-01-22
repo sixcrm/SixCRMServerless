@@ -75,11 +75,15 @@ class TransactionController {
 		return new Promise((resolve, reject) => {
 		
 			var transaction = this.createTransactionObject(params, processor_response);
-
+			
 			this.saveTransaction(transaction).then((data) => {
-				resolve(data);
+			
+				resolve(transaction);
+				
 			}).catch((error) => {
+			
 				reject(error);
+				
 			});
 		
 		});
@@ -103,8 +107,11 @@ class TransactionController {
 	
 	createTransactionObject(params, processor_response){
 		
-		if(_.has(params.session, "products") && _.isArray(params.session.products)){
-			var transaction_products = params.session.products;
+		var transaction_products = [];
+		if(_.has(params, "products") && _.isArray(params.products)){
+			params.products.forEach((product) => {
+				transaction_products.push(product.id);
+			});
 		}
 
 		var return_object = {

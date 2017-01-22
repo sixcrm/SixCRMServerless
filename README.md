@@ -19,8 +19,8 @@
 
 #### Outstanding
 
-6.  Add campaign to model
-9.  Add User model
+6.  ~~Add campaign to model~~
+9.  ~~Add User model~~
 10.  Add indexes "completed-index", "created-index" to transactions *(REEVALUATE)*
 12.  Think on the recurring transaction processor mechanism.
 14.  Add Unit Testing.
@@ -29,47 +29,33 @@
 To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}`
 
 18.  Mutations for Graph entities
-19.  Convert all endpoints to use Entity Controllers
-20.  Eliminate raw Dynamo transactions from the endpoints
+19.  ~~Convert all endpoints to use Entity Controllers~~
+20.  ~~Eliminate raw Dynamo transactions from the endpoints~~
 21.  Handle "no results" with Graph
 22.  Handle Authentication with Graph/JWTs whatever
-23.  Convert "providers" to merchantproviders
-
-
+23.  ~~Convert "providers" to merchantproviders~~
+24.  Change Campaign to allow multiple product schedules
+25.  Add user to all models (required for multi-tenancy.)
 
 ### Verify Signature
-
-* Move functions to helper class
 
 Reminder:  Access Key is the SHA-1  of the customer's email address.
 
 ### Verify JWT
 
-* Move functions to helper class
-
 ### Acquire Token
-
-* Abstract the timestamp creation to a helper class.
 
 ### Create Lead
 
-* Move all the functions to a helper class
-* Install and use a Dynamo Transaction class
-
 ### Create Order
 
-* Move all the functions to a helper class
 * Add more validation
-* Install and use a Dynamo Transaction class
 
 ### Confirm Order
 
-* Move all the functions to a helper class
 * Add more validation
 
 ## Deployment
-
-1.  Need to seed DynamoDB data.
 
 ## DynamoDB
 
@@ -85,10 +71,10 @@ Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f cre
 
 1.  ~~When working with a new deployment, the lambda roles doesn't appear to have sufficient permissions to read/write against the DynamoDB tables.~~
 2.  ~~When deleting an instance, CloudFormation fails to delete the S3 bucket that holds the deployment artifacts as well as the IAM Role.~~
-3.  Store Credit Card in Order Create doesn't make a lot of sense...
+3.  ~~Store Credit Card in Order Create doesn't make a lot of sense...~~
 4.  ~~Needs to store the CCs~~
-5.  CC record missing from the transaction.
-6.  Occasionally, the product is missing from the transaction.
-7.  Customer doesn't need a billing address
+5.  CC record missing from the transaction. *Confirm*
+6.  Occasionally, the product is missing from the transaction. *Confirm*
+7.  Customer doesn't need a billing address. *Confirm*
 
 

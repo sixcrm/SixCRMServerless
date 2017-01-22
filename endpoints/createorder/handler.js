@@ -78,32 +78,48 @@ module.exports.createorder= (event, context, callback) => {
 	}
 
 	sessionController.getSession(duplicate_body['session_id']).then((session) => {
-			
+		
+		if(session.completed == 'true'){ throw new Error('The specified session is already complete.');} 
+		
+		//if no session is returned we have a bad request... 
+		
 		customerController.getCustomer(session.customer).then((customer) => {
-				
-			var creditcard = createCreditCardObject(duplicate_body);
-
+			
+			//if no customer, problem
+			
+			var creditcard = creditCardController.createCreditCardObject(duplicate_body);
+			
 			creditCardController.storeCreditCard(creditcard, customer.creditcards).then((creditcard) => {
+				
+				//no creditcard, problem 
 				
 				productController.getProducts(duplicate_body['products']).then((products_to_purchase) => {
 					
+					//no products, problem
+					
 					campaignController.getHydratedCampaign(duplicate_body['campaign_id']).then((campaign) => {
-							
+						
+						//no campaign, problem
+						
+						//I guess this throws errors?
 						sessionController.validateProducts(products_to_purchase, session);
 						
+						//I guess this throws errors?
 						campaignController.validateProducts(products_to_purchase, campaign);
 						
 						var amount = campaignController.productSum(products_to_purchase, campaign);
-					
+						
+						//need some fucking unit tests here...
 						loadBalancerController.process(campaign.loadbalancer, {customer: customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
+							
+							//validate processor response
 							
 							transactionController.putTransaction({session: session, products: products_to_purchase, amount: amount}, processor_response).then((transaction) => {
 								
-								console.log(transaction);
-								sessionController.updateSession(session).then((session) => {
+								//no transaction, problem
 								
-									transaction.products = session.products;
-								
+								sessionController.updateSessionProducts(session, products_to_purchase).then((session) => {
+									
 									lr.issueResponse(200, {
 										message: 'Success',
 										results: transaction
@@ -141,18 +157,3 @@ module.exports.createorder= (event, context, callback) => {
 	});
 	
 };
-
-
-var createCreditCardObject = function(request_body){
-	
-	var creditcard = {
-		ccnumber: request_body.ccnumber,
-		expiration: request_body.ccexpiration,
-		ccv: request_body.ccccv,
-		name: request_body.name,
-		address: request_body.address
-	};
-	
-	return creditcard;
-	
-}

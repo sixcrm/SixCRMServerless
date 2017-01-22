@@ -64,7 +64,7 @@ module.exports.confirmorder = (event, context, callback) => {
 				
 				sessionController.getTransactions(session.id).then((transactions) => {
 						
-					sessionController.updateSession(session).then(() => {
+					sessionController.closeSession(session).then(() => {
 							
 						var results = {session: session, customer: customer, products: products, transactions: transactions};
 					
