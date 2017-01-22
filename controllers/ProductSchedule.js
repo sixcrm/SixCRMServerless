@@ -18,7 +18,7 @@ class productScheduleController {
 	}
 	
 	getProductScheduleHydrated(id){
-		
+	
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {

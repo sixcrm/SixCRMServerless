@@ -92,8 +92,8 @@ module.exports.createorder= (event, context, callback) => {
 			creditCardController.storeCreditCard(creditcard, customer.creditcards).then((creditcard) => {
 				
 				//no creditcard, problem 
-				
-				productController.getProducts(duplicate_body['products']).then((products_to_purchase) => {
+
+				productController.getProducts(duplicate_body['products']).then((products_to_purchase) => {						
 					
 					//no products, problem
 					
@@ -103,7 +103,7 @@ module.exports.createorder= (event, context, callback) => {
 						
 						//I guess this throws errors?
 						sessionController.validateProducts(products_to_purchase, session);
-						
+
 						//I guess this throws errors?
 						campaignController.validateProducts(products_to_purchase, campaign);
 						

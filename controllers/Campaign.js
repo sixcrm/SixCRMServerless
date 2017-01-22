@@ -18,7 +18,7 @@ class CampaignController {
 	
 	getProducts(campaign){
 		
-		return transaction.products.map(id => productController.getProduct(id));
+		return campaign.products.map(id => productController.getProduct(id));
         
 	}
 	
@@ -28,9 +28,10 @@ class CampaignController {
 		
 	}
 	
-	getProductSchedule(campaign){
+	getProductSchedules(campaign){
 		
-		return productScheduleController.getProductScheduleHydrated(campaign.productschedule);
+		return Promise.all(campaign.productschedules.map(id => productScheduleController.getProductScheduleHydrated(id)));
+		
 	}
 	
 	getAffiliate(campaign){
@@ -53,9 +54,9 @@ class CampaignController {
 				
 			}).then((campaign) =>{
 				
-				controller_instance.getProductSchedule(campaign).then((product_schedule) => {
+				controller_instance.getProductSchedules(campaign).then((product_schedules) => {
 					
-					campaign.product_schedule = product_schedule;
+					campaign.productschedules = product_schedules;
 					
 					return campaign;
 					
@@ -147,24 +148,32 @@ class CampaignController {
     
     validateProducts(products, campaign){
 	
-		if(!_.has(campaign, 'productschedule') || !_.has(campaign.productschedule, "schedule") || !_.isArray(campaign.productschedule.schedule) || campaign.productschedule.schedule.length < 1){
+		if(!_.has(campaign, 'productschedules') || !_.isArray(campaign.productschedules) || campaign.productschedules.length < 1){
 		
-			return true;
+			throw new Error('Invalid product schedule.');
 		
 		}
 		
-		var campaign_products = campaign.productschedule.schedule;
-		
+		var product_schedules = campaign.productschedules;
+	
+			
 		for(var i = 0; i < products.length; i++){
 			var product_id = products[i].id;
-			for(var j = 0; j < campaign_products.length; j++){
-				if(_.isEqual(product_id, campaign_products[j])){
-					return 2;
+			var product_identified = false;
+			
+			for(var j = 0; j < product_schedules.length; j++){
+				var product_schedule = product_schedules[j].schedule;
+				for(var k = 0; k <product_schedule.length; k++){
+					if(_.isEqual(product_id, product_schedule[k].product.id)){
+						product_identified = true;
+					}
 				}
 			}
-			throw new Error('Product does not agree with campaign product schedule: '+product_id);
+			if(product_identified == false){
+				throw new Error('Product does not agree with campaign product schedule: '+product_id);
+			}
 		}
-
+		
 		return true;
 
 	}
@@ -176,22 +185,26 @@ class CampaignController {
 		products.forEach(product => {
 			
 			var product_found = false;
-			
-			campaign.product_schedule.schedule.forEach(schedule_product => {
-			
-				if(schedule_product.product.id == product.id){
-					
-					product_found = true;
-					
-					return_amount += parseFloat(schedule_product.price);
-					
-				}
+		
+			campaign.productschedules.forEach(productschedule => {
 				
-			});
+				productschedule.schedule.forEach(schedule_product => {
 			
-			if(!product_found){
-				throw new Error('Product not found in campaign.');
-			}
+					if(schedule_product.product.id == product.id){
+					
+						product_found = true;
+					
+						return_amount += parseFloat(schedule_product.price);
+					
+					}
+				
+				});
+			
+				if(!product_found){
+					throw new Error('Product not found in campaign.');
+				}
+			
+			});
 			
 		});
 		
