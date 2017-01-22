@@ -67,27 +67,31 @@ class SessionController {
 		
 	}
 	
-	saveSession(customer_id, callback){
-	
-		var session = {
-			id: uuidV4(),
-			customer: customer_id,
-			completed: 'false',
-			created: timestamp.createTimestampSeconds(),
-			modified: 'false'
-		};
+	saveSession(customer_id){
 		
-		dynamoutilities.saveRecord(process.env.sessions_table, session, (error, data) => {
+		return new Promise((resolve, reject) => {
+		
+			var session = {
+				id: uuidV4(),
+				customer: customer_id,
+				completed: 'false',
+				created: timestamp.createTimestampSeconds(),
+				modified: 'false'
+			};
+		
+			dynamoutilities.saveRecord(process.env.sessions_table, session, (error, data) => {
 			
-			if(_.isError(error)){
+				if(_.isError(error)){
 	
-				callback(error, null);
+					reject(error);
 
-			}
+				}
 		
-			callback(null, session);
+				resolve(session);
 
-		});	
+			});	
+			
+		});
 
 	}
 	
@@ -106,37 +110,39 @@ class SessionController {
 	
 	putSession(customer_id, callback){
 		
-		this.getSessionByCustomerID(customer_id)
-		.then((data) => {
+		return new Promise((resolve, reject) => {
+		
+			this.getSessionByCustomerID(customer_id).then((data) => {
 			
-			if(_.isArray(data) && data.length > 0){
-				data.forEach(function(item){
-					if(_.has(item, 'completed') && item.completed == 'false'){
-						if(_.has(item, "created")){
-							var time_difference = timestamp.getTimeDifference(item.created);
-							if(time_difference < (60*60*24*7)){
-								return callback(null, item);
-							}	
+				if(_.isArray(data) && data.length > 0){
+					data.forEach(function(item){
+						if(_.has(item, 'completed') && item.completed == 'false'){
+							if(_.has(item, "created")){
+								var time_difference = timestamp.getTimeDifference(item.created);
+								if(time_difference < (60*60*24*7)){
+									resolve(item);
+								}	
+							}
 						}
-					}
-				});
-			}
+					});
+				}
 			
-			this.saveSession(customer_id, (error, data) => {
+				this.saveSession(customer_id, (error, data) => {
 		
-				if(_.isError(error)){ callback(error, null);}
+					if(_.isError(error)){ reject(error);}
 	
-				callback(null, data);
+					resolve(data);
 	
+				});
+		
+			})
+			.catch((error) => {
+		
+				reject(error);
+			
 			});
-		
-		})
-		.catch((error) => {
-		
-			callback(error, null);
 			
 		});
-		
 	
 	}
 	
@@ -164,6 +170,27 @@ class SessionController {
 		
 		});
 	
+	}
+	
+	validateProducts(products, session){
+	
+		if(!_.has(session, 'products') || !_.isArray(session.products) || session.products.length < 1){
+		
+			return true;
+		
+		}
+	
+		for(var i = 0; i < products.length; i++){
+			var product_id = products[i].id;
+			for(var j = 0; j < session.products.length; j++){
+				if(_.isEqual(product_id, session.products[j])){
+					throw new Error('Product already belongs to this session');
+				}
+			}
+		}
+
+		return true;
+
 	}
 	
 }

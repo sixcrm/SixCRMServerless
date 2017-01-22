@@ -1,6 +1,9 @@
 'use strict';
 const _ = require('underscore');
+const uuidV4 = require('uuid/v4');
+
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
+var timestamp = require('../lib/timestamp.js');
 
 var productController = require('./Product.js');
 var customerController = require('./Customer.js');
@@ -66,6 +69,103 @@ class TransactionController {
 		});
 		
 	}
+	
+	putTransaction(params, processor_response, callback){
+		
+		//missing session
+		
+		return new Promise((resolve, reject) => {
+		
+			var transaction = this.createTransactionObject(params, processor_response);
+			
+			this.saveTransaction(transaction).then((data) => {
+				resolve(data);
+			}).catch((error) => {
+				reject(error);
+			});
+		
+		});
+	
+	}
+	
+	saveTransaction(transaction){
+	
+		return new Promise((resolve, reject) => {
+		
+			dynamoutilities.saveRecord(process.env.transactions_table, transaction, (error, data) => {
+				if(_.isError(error)){
+					reject(error);
+				}
+				resolve(data);
+			});
+		
+		});
+	
+	}
+	
+	createTransactionObject(params, processor_response){
+		
+		var product_ids = [];
+		for(var i = 0; i < params.products.length; i++){
+			return_array.push(products[i].id);
+		}
+		return return_array;
+	
+		var transaction_products = [];
+		if(_.has(params.session, "products") && _.isArray(params.session.products)){
+			transaction_products = params.session.products;
+		}
+
+		var return_object = {
+			id: uuidV4(),
+			parentsession: params.session.id,
+			products: transaction_products,
+			processor_response: JSON.stringify(processor_response),
+			amount: params.amount,
+			date: timestamp.createDate()
+		}
+	
+		return return_object;
+		
+	}
+	
+	
+	updateSession(session, products, callback){
+		
+		return new Promise((resolve, reject) => {
+		
+			var products = getProductIds(products);
+	
+			var session_products = session.products;
+	
+			if(_.isArray(session.products) && session.products.length > 0){
+	
+				var updated_products = session_products.concat(products);
+		
+			}else{
+		
+				var updated_products = products;
+		
+			}
+	
+			var modified = timestamp.createTimestampSeconds();
+			
+			dynamoutilities.updateRecord(process.env.sessions_table, {'id': session.id}, 'set products = :a, modified = :m', {":a": updated_products, ":m": modified.toString()}, (error, data) => {
+				
+				if(_.isError(error)){
+					reject(error);
+				}
+			
+				session.products = updated_products;
+	
+				resolve(session);
+					
+			});
+			
+		});
+		
+	}
+	
 	
 }
 

@@ -33,7 +33,9 @@ class CustomerController {
 					}else{
 						
 						if(data.length > 1){
+							
 							reject(new Error('More than one record returned for customer ID.'));
+							
 						}else{
 							
 							resolve([]);

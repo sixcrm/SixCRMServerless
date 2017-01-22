@@ -17,11 +17,19 @@
     "Seeds": [
     	{
 			"id":"6c40761d-8919-4ad6-884d-6a46a776cfb9",
-			"name":"NMI"
+			"name":"Dummy NMI Account",
+			"processor":"NMI",
+			"username":"demo",
+			"password":"password",
+			"endpoint":"https://secure.networkmerchants.com/api/transact.php"
     	},
     	{
 			"id":"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
-			"name":"Another Merchant"
+			"name":"Another Merchant",
+			"processor":"NMI",
+			"username":"something",
+			"password":"something",
+			"endpoint":"something"
     	}
     ]
 }
