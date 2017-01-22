@@ -87,9 +87,6 @@ class NMIController {
 		
 		//need to enforce a contract here...
 		
-		console.log('parameters');
-		console.log(parameters);
-		
 		var return_object = {};
 	
 		//authentication

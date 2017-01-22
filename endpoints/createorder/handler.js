@@ -17,7 +17,7 @@ var productController = require('../../controllers/Product.js');
 var campaignController = require('../../controllers/Campaign.js');
 var transactionController = require('../../controllers/Transaction.js');
 var creditCardController = require('../../controllers/CreditCard.js');
-var merchantProviderController = require('../../controllers/MerchantProvider.js');
+var loadBalancerController = require('../../controllers/LoadBalancer.js');
 
 module.exports.createorder= (event, context, callback) => {
     
@@ -95,10 +95,11 @@ module.exports.createorder= (event, context, callback) => {
 						
 						var amount = campaignController.productSum(products_to_purchase, campaign);
 					
-						merchantProcessorController.process(campaign, {customer: customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
-						
-							transactionController.putTransaction({session: session, products: products, amount: amount}, processor_response, (error, transaction) => {
+						loadBalancerController.process(campaign.loadbalancer, {customer: customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
+							
+							transactionController.putTransaction({session: session, products: products_to_purchase, amount: amount}, processor_response).then((transaction) => {
 								
+								console.log(transaction);
 								sessionController.updateSession(session).then((session) => {
 								
 									transaction.products = session.products;

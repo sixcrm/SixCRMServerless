@@ -72,12 +72,10 @@ class TransactionController {
 	
 	putTransaction(params, processor_response, callback){
 		
-		//missing session
-		
 		return new Promise((resolve, reject) => {
 		
 			var transaction = this.createTransactionObject(params, processor_response);
-			
+
 			this.saveTransaction(transaction).then((data) => {
 				resolve(data);
 			}).catch((error) => {
@@ -105,15 +103,8 @@ class TransactionController {
 	
 	createTransactionObject(params, processor_response){
 		
-		var product_ids = [];
-		for(var i = 0; i < params.products.length; i++){
-			return_array.push(products[i].id);
-		}
-		return return_array;
-	
-		var transaction_products = [];
 		if(_.has(params.session, "products") && _.isArray(params.session.products)){
-			transaction_products = params.session.products;
+			var transaction_products = params.session.products;
 		}
 
 		var return_object = {
@@ -124,7 +115,7 @@ class TransactionController {
 			amount: params.amount,
 			date: timestamp.createDate()
 		}
-	
+		
 		return return_object;
 		
 	}
