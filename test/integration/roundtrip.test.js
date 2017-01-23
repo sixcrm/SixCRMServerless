@@ -84,11 +84,13 @@ describe('Round Trip Test', function() {
 						assert.isObject(response.body.results.customer);
 				
 						var session_id = response.body.results.session.id;
-						
-					  	var products = ["4d3419f6-526b-4a68-9050-fc3ffcb552b4"];
+						var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
+					  	var products = ["be992cea-e4be-4d3e-9afa-8e020340ed16"];
+					  	
 					  	var order_create = {
 							"session_id":session_id,
 							"products":products,
+							"campaign_id":campaign_id,
 							"type":"sale",
 							"ccnumber":"4111111111111111",
 							"ccexpiration":"1025",
@@ -133,9 +135,10 @@ describe('Round Trip Test', function() {
 								assert.property(processor_response.results, 'response');
 								assert.equal(processor_response.results.response, '1');
 								
-								var products = ["668ad918-0d09-4116-a6fe-0e7a9eda36f8"];
+								var products = ["616cc994-9480-4640-b26c-03810a679fe3"];
 								var upsell_create = {
 									"session_id":session_id,
+									"campaign_id":campaign_id,
 									"products":products,
 									"type":"sale",
 									"ccnumber":"4111111111111111",

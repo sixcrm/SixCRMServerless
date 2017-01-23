@@ -19,11 +19,9 @@ describe('Confirm Order Integration Test', function() {
   describe('Happy Path', function() {
     it('should confirm a order', function (done) {
 		var this_request = request(endpoint);
-		var query_parameters = {
-			"transaction_id":"123"
-		};
+		var session_id = "668ad918-0d09-4116-a6fe-0e8a9eda36f7";
 		this_request.get('order/confirm/')
-			.query(query_parameters)
+			.query('session_id='+session_id)
 			.set('Content-Type', 'application/json')
 			.set('Authorization', global.transaction_jwt)
 			.expect(200)
