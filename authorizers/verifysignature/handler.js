@@ -15,24 +15,15 @@ module.exports.verifysignature = (event, context, callback) => {
 
 	var token = event.authorizationToken.split(':');
 	
-
 	if(_.isArray(token) && token.length == 3){
 
 		var time_difference = timestamp.getTimeDifference(Math.floor(token[1]/1000));
 		
-		if(time_difference > (60 * 60 * 5)){
-
-			callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
-			
-		}
+		if(time_difference > (60 * 60 * 5)){ return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null)); }
 	
 		accessKeyController.getAccessKey(token[0]).then((access_key) => {
 
-			if(!_.isObject(access_key) || !_.has(access_key, 'secret_key')){
-				
-				throw new Error('Unexpected response from DynamoDB');
-				
-			}
+			if(!_.isObject(access_key) || !_.has(access_key, 'secret_key')){ return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null)); }
 			
 			var correct_signature = signature.createSignature(access_key.secret_key, token[1]);
 				
@@ -40,26 +31,30 @@ module.exports.verifysignature = (event, context, callback) => {
 
 				userController.getUserByAccessKeyId(access_key.id).then((user) => {
 
-					callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, user.id));
+					return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, user.id));
 					
 				}).catch((error) => {
 
-					callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+					return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 					
 				});
 				
 			}else{
 
-				callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+				return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 				
 			}		
 
 		}).catch((error) => {
 		
-			throw error;
+			return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 			
 		});
 		
-	}
+	}else{
 		
+		return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+		
+	}
+	
 };

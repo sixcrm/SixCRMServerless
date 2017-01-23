@@ -22,7 +22,6 @@ describe('JWT Acquisition Integration Test', function() {
 		var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
     	var authorization_string = config.access_key+':'+request_time+':'+signature;
     	
-    	console.log(authorization_string);
 		var this_request = request(endpoint);
     	this_request.get('token/acquire/')
 			.set('Content-Type', 'application/json')
@@ -33,7 +32,6 @@ describe('JWT Acquisition Integration Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
-				console.log(response.body);
 				assert.isObject(response.body);
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
@@ -58,7 +56,7 @@ describe('JWT Acquisition Integration Test', function() {
 				.expect('Content-Type', 'application/json')
 				.end(function(err, response){
 					assert.isObject(response.body);
-					assert.property(response.body, "Message");
+					assert.property(response.body, "Message")
 					assert.equal(response.body.Message, "User is not authorized to access this resource");
 					done();
 				}, done);

@@ -18,7 +18,6 @@ describe('Graph Test', function() {
   describe('Let\'s test the graph endpoint!', function() {
     it('Should return some query results in JSON', function (done) {
 		var query = '{ session(id: "668ad918-0d09-4116-a6fe-0e8a9eda36f7"){ id, customer { id, firstname, lastname }, created, modified, completed, products { id, name } } }';
-		//var query = '{ session(id: "668ad918-0d09-4116-a6fe-0e8a9eda36f7"){ id, customer, firstname } }';
 		var this_request = request(endpoint);
     	this_request.post('graph/')
 			.set('Authorization', global.site_jwt)
@@ -29,7 +28,9 @@ describe('Graph Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
-				console.log(response.body);
+				assert.isObject(response.body);
+				assert.property(response.body, 'data');
+				assert.isObject(response.body.data);
 				done();
 			}, done);
 		});

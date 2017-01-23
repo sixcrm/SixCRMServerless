@@ -14,9 +14,9 @@ before(function(done) {
 	
 	try{
 
-		global.transaction_jwt = jwt.sign({}, global.site_config.jwt.transaction_key);
+		global.transaction_jwt = jwt.sign({user_id:'93b086b8-6343-4271-87d6-b2a00149f070'}, global.site_config.jwt.transaction_key);
 		
-		global.site_jwt = jwt.sign({}, global.site_config.jwt.site_key);
+		global.site_jwt = jwt.sign({user_id:'93b086b8-6343-4271-87d6-b2a00149f070'}, global.site_config.jwt.site_key);
 				
 	} catch (e){
 		console.log(e);

@@ -41,6 +41,7 @@ To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb exec
 ### Verify Signature
 
 Reminder:  Access Key is the SHA-1  of the customer's email address.
+Clean up the callback code...
 
 ### Verify JWT
 
