@@ -5,20 +5,42 @@
             "AttributeName": "id",
             "KeyType": "HASH"
         }], 
-        "AttributeDefinitions": [{
-            "AttributeName": "id", 
-            "AttributeType": "S"
-        },
-        {
-            "AttributeName": "auth0id", 
-            "AttributeType": "S"
-        }],
+        "AttributeDefinitions": [
+			{
+				"AttributeName": "id", 
+				"AttributeType": "S"
+			},
+			{
+				"AttributeName": "auth0_id", 
+				"AttributeType": "S"
+			},
+			{
+				"AttributeName": "access_key_id", 
+				"AttributeType": "S"
+			}
+        ],
         "GlobalSecondaryIndexes": [ 
 		  { 
 			 "IndexName": "auth0id-index",
 			 "KeySchema": [ 
 				{ 
-				   "AttributeName": "auth0id",
+				   "AttributeName": "auth0_id",
+				   "KeyType": "HASH"
+				}
+			 ],
+			 "Projection": { 
+				"ProjectionType": "ALL"
+			 },
+			 "ProvisionedThroughput": { 
+				"ReadCapacityUnits": 1,
+				"WriteCapacityUnits": 1
+			 }
+		  },
+		  { 
+			 "IndexName": "access_key_id-index",
+			 "KeySchema": [ 
+				{ 
+				   "AttributeName": "access_key_id",
 				   "KeyType": "HASH"
 				}
 			 ],
@@ -39,8 +61,8 @@
     "Seeds": [{
     	"id":"93b086b8-6343-4271-87d6-b2a00149f070",
     	"name":"Admin User",
-    	"auth0id":"abc123",
-    	"access_key":"82478014-c96f-49ef-b31c-5408e99df66e",
+    	"auth0_id":"abc123",
+    	"access_key_id":"82478014-c96f-49ef-b31c-5408e99df66e",
     	"email":"tmdalbey@gmail.com",
     	"active":"true"
     }]

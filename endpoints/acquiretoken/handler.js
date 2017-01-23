@@ -8,12 +8,16 @@ var timestamp = require('../../lib/timestamp.js');
 
 module.exports.acquiretoken = (event, context, callback) => {
 	
+	console.log(event.requestContext.authorizer.user);
+	
+	var user_id = event.requestContext.authorizer.user;
+	
 	var _timestamp = timestamp.createTimestampSeconds() + (60 * 60);
 
 	var payload = {
-		body: JSON.stringify({}),
 		iat: _timestamp,
-		exp: _timestamp
+		exp: _timestamp,
+		user_id: user_id
 	}
 	
 	var created_token = jwt.sign(payload, process.env.site_secret_jwt_key);

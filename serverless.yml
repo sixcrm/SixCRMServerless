@@ -31,12 +31,14 @@ functions:
     handler: authorizers/verifysignature/handler.verifysignature
     environment:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
+      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       
   verifyjwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
+      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction_key}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
@@ -44,6 +46,7 @@ functions:
   verifyauth0jwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
+      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site_key}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
