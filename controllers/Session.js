@@ -136,8 +136,6 @@ class SessionController {
 				if(session_found == false){
 					
 					this.saveSession(customer_id).then((session) => {
-					
-						if(_.isError(error)){ reject(error);}
 	
 						resolve(session);
 	

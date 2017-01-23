@@ -20,8 +20,9 @@ describe('Order Create Integration Test', function() {
     it('should create a order', function (done) {
 		var this_request = request(endpoint);
 		var post_body = {
-			"session_id":"49a8492a-3919-4ae1-840a-23e2e6fad109",
-			"products":["4d3419f6-526b-4a68-9050-fc3ffcb552b4"],
+			"session_id":"668ad918-0d09-4116-a6fe-0e8a9eda36f7",
+			"campaign_id":"70a6689a-5814-438b-b9fd-dd484d0812f9",
+			"products":["be992cea-e4be-4d3e-9afa-8e020340ed16"],
 			"type":"sale",
 			"ccnumber":"4111111111111111",
 			"ccexpiration":"1025",
@@ -51,27 +52,22 @@ describe('Order Create Integration Test', function() {
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
 				assert.property(response.body, "results");
-				var parsed_results;
-				try{
-					parsed_results = querystring.parse(response.body.results);
-				}catch(e){
-					assert.equal(e, null);
-				}
 				
-				assert.property(parsed_results, "response");
-				assert.equal(parsed_results.response, '1');
-				assert.property(parsed_results, "responsetext");
-				assert.equal(parsed_results.responsetext, 'SUCCESS');
-				assert.property(parsed_results, 'authcode');
-				assert.isString(parsed_results.authcode);
-				expect(parsed_results.authcode).to.not.be.empty;
-				assert.property(parsed_results, 'transactionid');
-				assert.isString(parsed_results.transactionid);
-				expect(parsed_results.transactionid).to.not.be.empty;
-				assert.property(parsed_results,'type');
-				assert.equal(parsed_results.type, 'sale');
-				assert.property(parsed_results,'response_code');
-				assert.equal(parsed_results.response_code, '100');				
+				var processor_response = JSON.parse(response.body.results.processor_response);
+				assert.property(processor_response.results, "response");
+				assert.equal(processor_response.results.response, '1');
+				assert.property(processor_response.results, "responsetext");
+				assert.equal(processor_response.results.responsetext, 'SUCCESS');
+				assert.property(processor_response.results, 'authcode');
+				assert.isString(processor_response.results.authcode);
+				expect(processor_response.results.authcode).to.not.be.empty;
+				assert.property(processor_response.results, 'transactionid');
+				assert.isString(processor_response.results.transactionid);
+				expect(processor_response.results.transactionid).to.not.be.empty;
+				assert.property(processor_response.results,'type');
+				assert.equal(processor_response.results.type, 'sale');
+				assert.property(processor_response.results,'response_code');
+				assert.equal(processor_response.results.response_code, '100');				
 					  
 				done();
 			}, done);

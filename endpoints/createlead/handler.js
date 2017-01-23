@@ -15,7 +15,9 @@ var customerController = require('../../controllers/Customer.js');
 var sessionController = require('../../controllers/Session.js');
 
 module.exports.createlead = (event, context, callback) => {
-
+	
+	console.log(context);
+	
 	var duplicate_body;
 	try {
     	duplicate_body = JSON.parse(event['body']);
@@ -68,21 +70,19 @@ module.exports.createlead = (event, context, callback) => {
 		
 	}
 	
+
 	customerController.getCustomerByEmail(duplicate_body['email']).then((customer) => {
-	
+
 		if(_.has(customer, "id")){
-	
+
 			sessionController.putSession(customer.id).then((session) => {
-			
-				if(_.isError(error)){
-					return lr.issueError('Error writing to sessions table.', 500, event, error, callback);	
-				}	
-	
+
+				
 				var result_message = {
 					session: session,
 					customer: customer
 				}
-	
+				
 				return lr.issueResponse(200, {
 					message: 'Success',
 					results: result_message
@@ -91,17 +91,17 @@ module.exports.createlead = (event, context, callback) => {
 			});
 		
 		}else{
-		
+			
+
 			var customer_id = duplicate_body['id'] = uuidV4();
-		
+			
+
 			customerController.saveCustomer(duplicate_body).then((customer) => {
 				
-				sessionController.putSession(customer_id).then((session) => {
 
-					if(_.isError(error)){
-						lr.issueError('Error writing to sessions table.', 500, event, error, callback);
-					}
+				sessionController.putSession(customer_id).then((session) => {
 					
+
 					//note that the customer here appears to be a id value.  We want a complete customer object...
 					var result_message = {
 						session: session,
@@ -124,9 +124,7 @@ module.exports.createlead = (event, context, callback) => {
 		}
 		
 	}).catch((error) => {
-		if(_.isError(error)){
-			return lr.issueError(error, 500, event, error, callback);
-		}
+		return lr.issueError(error, 500, event, error, callback);
 	});
 		
 };

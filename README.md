@@ -34,7 +34,7 @@ To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb exec
 21.  Handle "no results" with Graph
 22.  Handle Authentication with Graph/JWTs whatever
 23.  ~~Convert "providers" to merchantproviders~~
-24.  Change Campaign to allow multiple product schedules
+24.  ~~Change Campaign to allow multiple product schedules~~
 25.  Add user to all models (required for multi-tenancy.)
 
 ### Verify Signature
