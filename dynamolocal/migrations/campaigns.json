@@ -18,7 +18,6 @@
     	"id":"70a6689a-5814-438b-b9fd-dd484d0812f9",
     	"name": "Example Campaign",
     	"productschedules":["12529a17-ac32-4e46-b05b-83862843055d"],
-    	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-    	"affiliate":"6b6331f6-7f84-437a-9ac6-093ba301e455"
+    	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
     }]
 }

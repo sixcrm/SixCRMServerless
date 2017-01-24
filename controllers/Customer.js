@@ -16,6 +16,14 @@ class CustomerController {
 		});	
 	}
 	
+	getCreditCards(customer){
+
+		var creditCardController = require('./CreditCard.js');
+		
+		return customer.creditcards.map(id => creditCardController.getCreditCard(id));
+		
+	}
+	
 	getCustomer(id){
 		
 		return new Promise((resolve, reject) => {

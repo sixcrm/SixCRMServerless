@@ -5,9 +5,6 @@ const uuidV4 = require('uuid/v4');
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
 
-var productController = require('./Product.js');
-var customerController = require('./Customer.js');
-
 class TransactionController {
 
 	constructor(){
@@ -16,25 +13,40 @@ class TransactionController {
 	
 	getProducts(transaction){
 		
+		var productController = require('./Product.js');
+		
 		return transaction.products.map(id => productController.getProduct(id));
         
 	}
 	
 	getTransaction(id){
 	
+	}
+	
+	getParentSession(transaction){
+		
+		var sessionController = require('./Session.js');
+		
+		var id = transaction.parentsession;
+		
+		return sessionController.getSession(id);
+		
+	}
+	
+	getTransaction(id){
+		
 		return new Promise((resolve, reject) => {
 				
-			dynamoutilities.queryRecords(process.env.transactions_table, 'parentsession = :parentsessionv', {':parentsessionv': id}, 'parentsession-index', (error, data) => {
+			dynamoutilities.queryRecords(process.env.transactions_table, 'id = :idv', {':idv': id}, null, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
-				if(_.isObject(data) && _.has(data, "Items") && _.isArray(data.Items)){
+				if(_.isArray(data)){
 					
-					if(data.Items.length == 1){
-						resolve(data.Items[0]);
+					if(data.length == 1){
+						resolve(data[0]);
 					}else{
-						
-						if(data.Items.length > 1){
+						if(data.length > 1){
 							reject(new Error('multiple transactions returned where one should be returned.'));
 						}else{
 							resolve([]);

@@ -33,6 +33,22 @@ class SessionController {
         
 	}
 	
+	getSessions(){
+		
+		return new Promise((resolve, reject) => {
+			
+			dynamoutilities.scanRecords(process.env.sessions_table, null, null, (error, data) => {
+				
+				if(_.isError(error)){ reject(error);}
+				
+				resolve(data);
+				
+			});
+			
+		});
+		
+	}
+	
 	getSession(id){
 		
 		return new Promise((resolve, reject) => {

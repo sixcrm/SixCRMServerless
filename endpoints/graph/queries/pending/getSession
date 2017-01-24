@@ -18,17 +18,18 @@
 			products {
 				id,
 				name,
-				type
+				sku
 			},
 			transactions {
 				id,
 				date,
-				parentsession,
+				parentsession {
+					id
+				},
 				processor_response,
 				products {
 					id,
-					name,
-					type
+					sku
 				}
 			}
 		} 

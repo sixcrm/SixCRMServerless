@@ -11,6 +11,7 @@ var sessionController = require('../../controllers/Session.js');
 var productController = require('../../controllers/Product.js');
 var customerController = require('../../controllers/Customer.js');
 var transactionController = require('../../controllers/Transaction.js');
+var creditCardController = require('../../controllers/CreditCard.js');
 
 var productTypeEnum = new GraphQLEnumType({
   name: 'ProductType',
@@ -39,9 +40,9 @@ var productInterface = new GraphQLInterfaceType({
       type: GraphQLString,
       description: 'The name of the product.',
     },
-    type: {
+    sku: {
       type: GraphQLString,
-      description: 'The type of the product.',
+      description: 'The SKU of the product.',
     }
   }),
   resolveType(product) {
@@ -103,6 +104,20 @@ var transactionInterface = new GraphQLInterfaceType({
   }
 });
 
+var creditCardInterface = new GraphQLInterfaceType({
+  name: 'creditcard',
+  description: 'A creditcard',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the creditcard.',
+    }
+  }),
+  resolveType(creditcard) {
+    return creditCardType;
+  }
+});
+
 var sessionType = new GraphQLObjectType({
   name: 'Session',
   description: 'A record denoting a customer, a group of products and corresponding transactions.',
@@ -130,14 +145,12 @@ var sessionType = new GraphQLObjectType({
     },
     products: {
       type: new GraphQLList(productInterface),
-      description:
-        'The products associated with the session',
+      description: 'The products associated with the session',
       resolve: session => sessionController.getProducts(session),
     },
     transactions: {
       type: new GraphQLList(transactionType),
-      description:
-        'The transactions associated with the session',
+      description: 'The transactions associated with the session',
       resolve: function(session){
       	 return sessionController.getTransactions(session.id);
       }
@@ -159,8 +172,9 @@ var transactionType = new GraphQLObjectType({
       description: 'The date of the transaction.',
     },
     parentsession: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The date of the transaction.',
+      type: sessionType,
+      description: 'The session associated with the transaction.',
+      resolve: transaction => transactionController.getParentSession(transaction),
     },
     processor_response: {
       type: new GraphQLNonNull(GraphQLString),
@@ -188,19 +202,9 @@ var productType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The name of the product.',
     },
-    completed: {
+    sku: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'A boolean string denoting that that session has otherwise been completed or expired.',
-    },
-    type: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'What kind of a product it is.',
-    },
-    //this doesn't quite work...
-    prices: {
-    	type: priceType,
-      	description: 'The prices associated with the transaction',
-      	resolve: product => productController.getPrices(product),
+      description: 'The product SKU',
     }
   }),
   interfaces: [ productInterface ]
@@ -234,6 +238,11 @@ var customerType = new GraphQLObjectType({
       type: addressType,
       description: 'The customer\'s shipping address.',
       resolve: customer => customerController.getAddress(customer),
+    },
+    creditcards: {
+	  type: new GraphQLList(creditCardType),
+      description:'The creditcards associated with the customer',
+	  resolve: customer => customerController.getCreditCards(customer)
     }
   }),
   interfaces: [ customerInterface ]
@@ -271,6 +280,39 @@ var recurringType = new GraphQLObjectType({
   interfaces: []
 });
 
+var creditCardType = new GraphQLObjectType({
+  name: 'CreditCard',
+  description: 'A creditcard',
+  fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The creditcard id',
+    },
+    ccnumber: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The creditcard number',
+    },
+    expiration: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The creditcard expiration date.',
+    },
+    ccv: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The creditcard ccv.',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The creditcard name.',
+    },
+    address: {
+      type: addressType,
+      description: 'The customer\'s shipping address.',
+      resolve: creditcard => creditCardController.getAddress(creditcard),
+    }
+  }),
+  interfaces: []
+});
+
 var addressType = new GraphQLObjectType({
   name: 'Address',
   description: 'A address',
@@ -295,6 +337,10 @@ var addressType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The ZIP code of the address.',
     },
+    country: {
+      type: GraphQLString,
+      description: 'The country code of the address.',
+    },
   }),
   interfaces: []
 });
@@ -302,6 +348,19 @@ var addressType = new GraphQLObjectType({
 var queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
+  	transaction: {
+      type: transactionType,
+      args: {
+        id: {
+          description: 'id of the transaction',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, transaction){
+      	var id = transaction.id; 
+      	return transactionController.getTransaction(id);
+      }
+    },
     session: {
       type: sessionType,
       args: {
@@ -313,6 +372,19 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, session){
       	var id = session.id; 
       	return sessionController.getSession(id);
+      }
+    },
+    customer: {
+      type: customerType,
+      args: {
+        id: {
+          description: 'id of the customer',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, customer){
+      	var id = customer.id; 
+      	return customerController.getCustomer(id);
       }
     },
     product: {

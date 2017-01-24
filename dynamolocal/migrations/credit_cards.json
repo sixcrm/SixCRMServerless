@@ -34,5 +34,19 @@
             "WriteCapacityUnits": 1
         }
     },
-    "Seeds": []
+    "Seeds": [{
+    	"id": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72",
+  		"address": {
+   	 		"city": "Portland",
+    		"country": "USA",
+    		"line1": "10 Skid Rw.",
+    		"line2": "Suite 100",
+    		"state": "Oregon",
+    		"zip": "97213"
+  		},
+  		"ccnumber": "4111111111111111",
+  		"ccv": "999",
+  		"expiration": "1025",
+  		"name": "Rama Damunaste"
+	}]
 }

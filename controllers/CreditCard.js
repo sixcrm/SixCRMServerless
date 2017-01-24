@@ -10,6 +10,12 @@ class CreditCardController {
 	
 	}
 	
+	getAddress(creditcard){
+		return new Promise((resolve, reject) => {
+			resolve(creditcard.address);
+		});	
+	}
+	
 	getCreditCard(id){
 		
 		return new Promise((resolve, reject) => {

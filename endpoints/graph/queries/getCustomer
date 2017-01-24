@@ -1,0 +1,34 @@
+{
+	"body":"
+	{ 
+		customer (id: \"24f7c851-29d4-4af9-87c5-0298fa74c689\") { 
+			id,
+    		email,
+    		firstname,
+    		lastname,
+    		phone,
+    		address {
+    			line1,
+    			city,
+    			state,
+    			zip,
+    			country
+    		},
+    		creditcards {
+    			id,
+    			ccnumber,
+    			expiration,
+    			ccv,
+    			name,
+    			address {
+    				line1,
+					city,
+					state,
+					zip,
+					country
+    			}
+    		}
+		} 
+	}"
+}
+
