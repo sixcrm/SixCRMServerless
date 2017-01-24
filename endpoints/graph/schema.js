@@ -13,6 +13,17 @@ var customerController = require('../../controllers/Customer.js');
 var transactionController = require('../../controllers/Transaction.js');
 var creditCardController = require('../../controllers/CreditCard.js');
 var productScheduleController = require('../../controllers/ProductSchedule.js');
+var merchantProviderController = require('../../controllers/MerchantProvider.js');
+
+const merchantProviderProcessorsEnum = new GraphQLEnumType({
+  name: 'MerchantProviderProcessors',
+  description: 'Whitelisted Merchant Provider Processors',
+  values: {
+    NMI: {
+      value: 'NMI'
+    }
+  }
+});
 
 var productTypeEnum = new GraphQLEnumType({
   name: 'ProductType',
@@ -310,6 +321,38 @@ var scheduleType = new GraphQLObjectType({
   interfaces: []
 });
 
+var merchantProviderType = new GraphQLObjectType({
+  name: 'merchantprovider',
+  description: 'A merchant provider.',
+  fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the merchant provider instance.',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The name of the merchant provider instance.',
+    },
+    processor: {
+      type: new GraphQLNonNull(merchantProviderProcessorsEnum),
+      description: 'The processor',
+    },
+    username: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The end of schedule.',
+    },
+    password: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The period of schedule.',
+    },
+    endpoint: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description:'The product associated with the schedule'
+    }
+  }),
+  interfaces: []
+});
+
 
 var priceType = new GraphQLObjectType({
   name: 'Price',
@@ -474,6 +517,19 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, productschedule){
       	var id = productschedule.id; 
       	return productScheduleController.getProductSchedule(id);
+      }
+    },
+    merchantprovider: {
+      type: merchantProviderType,
+      args: {
+        id: {
+          description: 'id of the merchantprovider',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, merchantprovider){
+      	var id = merchantprovider.id; 
+      	return merchantProviderController.getMerchantProvider(id);
       }
     }
   })
