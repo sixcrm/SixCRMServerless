@@ -579,8 +579,20 @@ var queryType = new GraphQLObjectType({
       	var id = loadbalancer.id; 
       	return loadBalancerController.getLoadBalancer(id);
       }
+    },
+    creditcard: {
+      type: creditCardType,
+      args: {
+        id: {
+          description: 'id of the creditcard',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, creditcard){
+      	var id = creditcard.id; 
+      	return creditCardController.getCreditCard(id);
+      }
     }
-    
   })
 });
 

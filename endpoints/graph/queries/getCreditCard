@@ -1,0 +1,20 @@
+{
+	"body":"
+	{ 
+		creditcard (id: \"df84f7bb-06bd-4daa-b1a3-6a2c113edd72\") { 
+			id,
+			ccnumber,
+			expiration,
+			ccv,
+			name,
+			address {
+				line1,
+				city,
+				state,
+				zip,
+				country
+			}
+		} 
+	}"
+}
+
