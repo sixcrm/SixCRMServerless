@@ -49,10 +49,12 @@ class userController {
 		
 	}
 	
+	getAccessKeyByID(id){
+		return accessKeyController.getAccessKeyByID(id);
+	}
+	
 	getAccessKey(id){
-		
 		return accessKeyController.getAccessKey(id);
-		
 	}
 	
 	getUser(id){

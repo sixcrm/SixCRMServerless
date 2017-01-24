@@ -18,6 +18,7 @@ var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var campaignController = require('../../controllers/Campaign.js');
 var affiliateController = require('../../controllers/Affiliate.js');
 var accessKeyController = require('../../controllers/AccessKey.js');
+var userController = require('../../controllers/User.js');
 
 const merchantProviderProcessorsEnum = new GraphQLEnumType({
   name: 'MerchantProviderProcessors',
@@ -255,6 +256,42 @@ var accessKeyType = new GraphQLObjectType({
     secret_key: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The secret_key of the accesskey.',
+    }
+  }),
+  interfaces: []
+});
+
+var userType = new GraphQLObjectType({
+  name: 'User',
+  description: 'A user.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the user',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The name of the user',
+    },
+    auth0_id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The auth0_id of the user.',
+    },
+    email: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The email of the user',
+    },
+    active: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The active status of the user',
+    },
+    accesskey: {
+      type: accessKeyType,
+      description: 'The access_key of the user.',
+      resolve: (user) => {
+      	var id = user.access_key_id
+      	return userController.getAccessKeyByID(id);
+      }
     }
   }),
   interfaces: []
@@ -718,6 +755,19 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, accesskey){
       	var id = accesskey.id; 
       	return accessKeyController.getAccessKeyByID(id);
+      }
+    },
+    user: {
+      type: userType,
+      args: {
+        id: {
+          description: 'id of the user',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, user){
+      	var id = user.id; 
+      	return userController.getUser(id);
       }
     }
     
