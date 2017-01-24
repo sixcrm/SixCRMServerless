@@ -16,6 +16,7 @@ var productScheduleController = require('../../controllers/ProductSchedule.js');
 var merchantProviderController = require('../../controllers/MerchantProvider.js');
 var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var campaignController = require('../../controllers/Campaign.js');
+var affiliateController = require('../../controllers/Affiliate.js');
 
 const merchantProviderProcessorsEnum = new GraphQLEnumType({
   name: 'MerchantProviderProcessors',
@@ -238,6 +239,46 @@ var productType = new GraphQLObjectType({
   interfaces: [ productInterface ]
 });
 
+var affiliateType = new GraphQLObjectType({
+  name: 'Affiliate',
+  description: 'A affiliate.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the product.',
+    },
+    affiliate_id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: '.',
+    },
+    sub_id_1: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: '.',
+    },
+    sub_id_2: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: '.',
+    },
+    sub_id_3: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: '.',
+    },
+    sub_id_4: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: '.',
+    },
+    sub_id_5: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: '.',
+    },
+    click_id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: '.',
+    }
+  }),
+  interfaces: []
+});
+
 var customerType = new GraphQLObjectType({
   name: 'Customer',
   description: 'A customer.',
@@ -414,8 +455,6 @@ var campaignType = new GraphQLObjectType({
   }),
   interfaces: []
 });
-
-
 
 var priceType = new GraphQLObjectType({
   name: 'Price',
@@ -632,6 +671,19 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, campaign){
       	var id = campaign.id; 
       	return campaignController.getCampaign(id);
+      }
+    },
+    affiliate: {
+      type: affiliateType,
+      args: {
+        id: {
+          description: 'id of the affiliate',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, affiliate){
+      	var id = affiliate.id; 
+      	return affiliateController.getAffiliate(id);
       }
     }
   })
