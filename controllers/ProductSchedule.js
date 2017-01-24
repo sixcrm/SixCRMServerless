@@ -11,6 +11,30 @@ class productScheduleController {
 	
 	}
 	
+	getProduct(scheduled_product){
+		
+		return productController.getProduct(scheduled_product.product);
+		
+	}
+	
+	getSchedule(product_schedule){
+		
+		return product_schedule.schedule.map(scheduled_product => this.getScheduledProduct(scheduled_product));
+		
+	}
+	
+	getScheduledProduct(scheduled_product){
+		
+		return {
+			price: scheduled_product.price,
+			start: scheduled_product.start,
+			end: scheduled_product.end,
+			period: scheduled_product.period,
+			product: scheduled_product.product_id
+		};
+		
+	}
+	
 	getProducts(product_schedule){
 		
 		return Promise.all(product_schedule.schedule.map(ps => productController.getProduct(ps.product_id)));

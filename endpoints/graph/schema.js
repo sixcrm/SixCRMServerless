@@ -12,6 +12,7 @@ var productController = require('../../controllers/Product.js');
 var customerController = require('../../controllers/Customer.js');
 var transactionController = require('../../controllers/Transaction.js');
 var creditCardController = require('../../controllers/CreditCard.js');
+var productScheduleController = require('../../controllers/ProductSchedule.js');
 
 var productTypeEnum = new GraphQLEnumType({
   name: 'ProductType',
@@ -101,6 +102,20 @@ var transactionInterface = new GraphQLInterfaceType({
   }),
   resolveType(transaction) {
     return transactionType;
+  }
+});
+
+var productScheduleInterface = new GraphQLInterfaceType({
+  name: 'productschedule',
+  description: 'A product schedule',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the productschedule.',
+    }
+  }),
+  resolveType(productschedule) {
+    return productScheduleType;
   }
 });
 
@@ -247,6 +262,54 @@ var customerType = new GraphQLObjectType({
   }),
   interfaces: [ customerInterface ]
 });
+
+
+var productScheduleType = new GraphQLObjectType({
+  name: 'ProductSchedule',
+  description: 'A product schedule.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of product schedule.',
+    },
+    schedule: {
+	  type: new GraphQLList(scheduleType),
+      description:'The schedules associated with the product schedule',
+	  resolve: productschedule => productScheduleController.getSchedule(productschedule)
+    }
+  }),
+  interfaces: []
+});
+
+var scheduleType = new GraphQLObjectType({
+  name: 'schedule',
+  description: 'A scheduled product.',
+  fields: () => ({
+    price: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The price of schedule.',
+    },
+    start: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The start of schedule.',
+    },
+    end: {
+      type: GraphQLString,
+      description: 'The end of schedule.',
+    },
+    period: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The period of schedule.',
+    },
+    product: {
+	  type: productType,
+      description:'The product associated with the schedule',
+	  resolve: schedule => productScheduleController.getProduct(schedule)
+    }
+  }),
+  interfaces: []
+});
+
 
 var priceType = new GraphQLObjectType({
   name: 'Price',
@@ -398,6 +461,19 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, product){
       	var id = product.id; 
       	return productController.getProduct(id);
+      }
+    },
+    productschedule: {
+      type: productScheduleType,
+      args: {
+        id: {
+          description: 'id of the productschedule',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, productschedule){
+      	var id = productschedule.id; 
+      	return productScheduleController.getProductSchedule(id);
       }
     }
   })
