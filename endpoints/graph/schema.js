@@ -17,6 +17,7 @@ var merchantProviderController = require('../../controllers/MerchantProvider.js'
 var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var campaignController = require('../../controllers/Campaign.js');
 var affiliateController = require('../../controllers/Affiliate.js');
+var accessKeyController = require('../../controllers/AccessKey.js');
 
 const merchantProviderProcessorsEnum = new GraphQLEnumType({
   name: 'MerchantProviderProcessors',
@@ -237,6 +238,26 @@ var productType = new GraphQLObjectType({
     }
   }),
   interfaces: [ productInterface ]
+});
+
+var accessKeyType = new GraphQLObjectType({
+  name: 'AccessKey',
+  description: 'A accesskey.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the product.',
+    },
+    access_key: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The access_key of the accesskey.',
+    },
+    secret_key: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The secret_key of the accesskey.',
+    }
+  }),
+  interfaces: []
 });
 
 var affiliateType = new GraphQLObjectType({
@@ -685,7 +706,21 @@ var queryType = new GraphQLObjectType({
       	var id = affiliate.id; 
       	return affiliateController.getAffiliate(id);
       }
+    },
+    accesskey: {
+      type: accessKeyType,
+      args: {
+        id: {
+          description: 'id of the accesskey',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, accesskey){
+      	var id = accesskey.id; 
+      	return accessKeyController.getAccessKeyByID(id);
+      }
     }
+    
   })
 });
 
