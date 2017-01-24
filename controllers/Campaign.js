@@ -22,13 +22,25 @@ class CampaignController {
         
 	}
 	
-	getLoadBalancer(campaign){
-
+	getLoadBalancerHydrated(campaign){
+		
 		return loadBalancerController.getLoadBalancerHydrated(campaign.loadbalancer);
 		
 	}
 	
+	getLoadBalancer(campaign){
+		
+		return loadBalancerController.getLoadBalancer(campaign.loadbalancer);
+		
+	}
+	
 	getProductSchedules(campaign){
+		
+		return campaign.productschedules.map(id => productScheduleController.getProductSchedule(id));
+		
+	}
+	
+	getProductSchedulesHydrated(campaign){
 		
 		return Promise.all(campaign.productschedules.map(id => productScheduleController.getProductScheduleHydrated(id)));
 		
@@ -46,7 +58,7 @@ class CampaignController {
 		
 		return new Promise((resolve, reject) => {
 			
-			controller_instance.getLoadBalancer(campaign).then((loadbalancer) => {
+			controller_instance.getLoadBalancerHydrated(campaign).then((loadbalancer) => {
 				
 				campaign.loadbalancer = loadbalancer;
 				
@@ -54,7 +66,7 @@ class CampaignController {
 				
 			}).then((campaign) =>{
 				
-				controller_instance.getProductSchedules(campaign).then((product_schedules) => {
+				controller_instance.getProductSchedulesHydrated(campaign).then((product_schedules) => {
 					
 					campaign.productschedules = product_schedules;
 					

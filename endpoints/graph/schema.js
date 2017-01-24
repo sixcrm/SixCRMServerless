@@ -15,6 +15,7 @@ var creditCardController = require('../../controllers/CreditCard.js');
 var productScheduleController = require('../../controllers/ProductSchedule.js');
 var merchantProviderController = require('../../controllers/MerchantProvider.js');
 var loadBalancerController = require('../../controllers/LoadBalancer.js');
+var campaignController = require('../../controllers/Campaign.js');
 
 const merchantProviderProcessorsEnum = new GraphQLEnumType({
   name: 'MerchantProviderProcessors',
@@ -388,6 +389,33 @@ var loadBalancerType = new GraphQLObjectType({
   interfaces: []
 });
 
+var campaignType = new GraphQLObjectType({
+  name: 'campaign',
+  description: 'A camapign.',
+  fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the campaign.',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The name of the campaign.',
+    },
+    loadbalancer: {
+      type: loadBalancerType,
+      description: 'The loadbalancer for the campaign.',
+      resolve: campaign => campaignController.getLoadBalancer(campaign)
+    },
+    productschedules: {
+      type: new GraphQLList(productScheduleType),
+      description: 'The configured product schedules associated with the campaign',
+      resolve: campaign => campaignController.getProductSchedules(campaign)
+    }
+  }),
+  interfaces: []
+});
+
+
 
 var priceType = new GraphQLObjectType({
   name: 'Price',
@@ -591,6 +619,19 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, creditcard){
       	var id = creditcard.id; 
       	return creditCardController.getCreditCard(id);
+      }
+    },
+    campaign: {
+      type: campaignType,
+      args: {
+        id: {
+          description: 'id of the campaign',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, campaign){
+      	var id = campaign.id; 
+      	return campaignController.getCampaign(id);
       }
     }
   })

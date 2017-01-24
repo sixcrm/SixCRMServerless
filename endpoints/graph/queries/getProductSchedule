@@ -9,9 +9,7 @@
     			end,
     			period,
     			product {
-    				id,
-    				name,
-    				sku
+    				id
     			}
     		}
 		} 
