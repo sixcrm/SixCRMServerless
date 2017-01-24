@@ -10,6 +10,25 @@ class loadBalancerController {
 	
 	}
 	
+	getMerchantProviderConfigurations(loadbalancer){
+		
+		return loadbalancer.merchantproviders.map((merchantproviderconfiguration) => {
+			
+			return {
+				"distribution": merchantproviderconfiguration.distribution,
+				"merchantprovider": merchantproviderconfiguration.id
+			};
+			
+		});
+		
+	}
+	
+	getMerchantProviderConfiguration(merchantproviderconfiguration){
+		
+		return merchantProviderController.getMerchantProvider(merchantproviderconfiguration.merchantprovider);
+		
+	}
+	
 	getMerchantProviders(loadbalancer){
 		
 		return Promise.all(loadbalancer.merchantproviders.map(merchantprovider => merchantProviderController.getMerchantProvider(merchantprovider.id)));

@@ -14,6 +14,7 @@ var transactionController = require('../../controllers/Transaction.js');
 var creditCardController = require('../../controllers/CreditCard.js');
 var productScheduleController = require('../../controllers/ProductSchedule.js');
 var merchantProviderController = require('../../controllers/MerchantProvider.js');
+var loadBalancerController = require('../../controllers/LoadBalancer.js');
 
 const merchantProviderProcessorsEnum = new GraphQLEnumType({
   name: 'MerchantProviderProcessors',
@@ -353,6 +354,40 @@ var merchantProviderType = new GraphQLObjectType({
   interfaces: []
 });
 
+var merchantProviderConfigurationType = new GraphQLObjectType({
+  name: 'merchantproviderconfiguration',
+  description: 'A merchant provider configuration.',
+  fields: () => ({
+  	distribution: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The distribution of the merchantprovider.',
+    },
+    merchantprovider: {
+      type: new GraphQLNonNull(merchantProviderType),
+      description: 'The merchant provider associated with the load balancer',
+      resolve: merchantproviderconfiguration => loadBalancerController.getMerchantProviderConfiguration(merchantproviderconfiguration)
+    }
+  }),
+  interfaces: []
+});
+
+var loadBalancerType = new GraphQLObjectType({
+  name: 'loadbalancer',
+  description: 'A loadbalancer.',
+  fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the loadbalancer.',
+    },
+    merchantproviderconfigurations: {
+      type: new GraphQLList(merchantProviderConfigurationType),
+      description: 'The configured merchant providers associated with the load balancer',
+      resolve: loadbalancer => loadBalancerController.getMerchantProviderConfigurations(loadbalancer)
+    }
+  }),
+  interfaces: []
+});
+
 
 var priceType = new GraphQLObjectType({
   name: 'Price',
@@ -531,7 +566,21 @@ var queryType = new GraphQLObjectType({
       	var id = merchantprovider.id; 
       	return merchantProviderController.getMerchantProvider(id);
       }
+    },
+    loadbalancer: {
+      type: loadBalancerType,
+      args: {
+        id: {
+          description: 'id of the loadbalancer',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, loadbalancer){
+      	var id = loadbalancer.id; 
+      	return loadBalancerController.getLoadBalancer(id);
+      }
     }
+    
   })
 });
 
