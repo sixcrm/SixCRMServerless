@@ -24,6 +24,22 @@ class ProductController {
 		
 	}
 	
+	updateProduct(product){
+		
+		return new Promise((resolve, reject) => {
+		
+			dynamoutilities.saveRecord(process.env.products_table, product, (error, data) => {
+			
+				if(_.isError(error)){ reject(error);}
+				
+				resolve(product);
+				
+			});
+			
+		});
+		
+	}
+	
 	deleteProduct(id){
 		
 		return new Promise((resolve, reject) => {

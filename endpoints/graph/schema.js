@@ -789,6 +789,16 @@ var mutationType = new GraphQLObjectType({
 				return productController.createProduct(product.product);
 			}
 		},
+		updateproduct:{
+			type: productType,
+			description: 'Updates a product.',
+			args: {
+				product: { type: productInputType }
+			},
+			resolve: (value, product) => {
+				return productController.updateProduct(product.product);
+			}
+		},
 		deleteproduct:{
 			type: deleteOutputType,
 			description: 'Deletes a product.',
