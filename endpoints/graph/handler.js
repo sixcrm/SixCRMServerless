@@ -17,7 +17,7 @@ module.exports.graph = (event, context, callback) => {
 		}catch(error){
 			return lr.issueError(error, 500, event, error, callback);
 		}
-		if(_.has(event,"body")){
+		if(_.has(event, "body")){
 			query = event.body;
 		}
 	}

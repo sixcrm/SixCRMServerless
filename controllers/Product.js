@@ -8,15 +8,34 @@ class ProductController {
 	
 	}
 	
-	getPrices(product){
+	createProduct(product){
+		
 		return new Promise((resolve, reject) => {
-			resolve(product.prices);
-		});	
+			
+			dynamoutilities.saveRecord(process.env.products_table, product, (error, data) => {
+			
+				if(_.isError(error)){ reject(error);}
+				
+				resolve(product);
+				
+			});
+			
+		});
+		
 	}
 	
-	getRecurring(product){
+	deleteProduct(id){
+		
 		return new Promise((resolve, reject) => {
-			resolve(product.recurring);
+			
+			dynamoutilities.deleteRecord(process.env.products_table, { id:id }, null, null, (error, data) => {
+			
+				if(_.isError(error)){ reject(error);}
+				
+				resolve({ id });
+				
+			});
+			
 		});	
 	}
 	

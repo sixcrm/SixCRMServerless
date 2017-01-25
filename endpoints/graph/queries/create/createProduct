@@ -1,0 +1,10 @@
+{
+	"body":"
+	mutation { 
+		createproduct (product: { id: \"testing\", name: \"testing\", sku: \"abc1234\" }) { 
+			id,
+			name,
+			sku
+		} 
+	}"
+}

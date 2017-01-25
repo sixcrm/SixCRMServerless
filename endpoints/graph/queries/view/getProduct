@@ -1,10 +1,10 @@
 {
 	"body":"
-	{ 
+	query { 
 		product (id: \"668ad918-0d09-4116-a6fe-0e7a9eda36f8\") { 
 			id,
-    		name,
-    		sku
+			name,
+			sku		
 		} 
 	}"
 }

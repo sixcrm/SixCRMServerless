@@ -6,6 +6,7 @@ var GraphQLList = require('graphql').GraphQLList;
 var GraphQLNonNull = require('graphql').GraphQLNonNull;
 var GraphQLSchema = require('graphql').GraphQLSchema;
 var GraphQLString = require('graphql').GraphQLString;
+var GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 var sessionController = require('../../controllers/Session.js');
 var productController = require('../../controllers/Product.js');
@@ -26,21 +27,6 @@ const merchantProviderProcessorsEnum = new GraphQLEnumType({
   values: {
     NMI: {
       value: 'NMI'
-    }
-  }
-});
-
-var productTypeEnum = new GraphQLEnumType({
-  name: 'ProductType',
-  description: 'Types of products for sale',
-  values: {
-    STRAIGHT: {
-      value: 'straight',
-      description: 'One time transaction.',
-    },
-    TRIAL: {
-      value: 'trial',
-      description: 'One time transaction with rebilling.',
     }
   }
 });
@@ -632,7 +618,7 @@ var queryType = new GraphQLObjectType({
       args: {
         id: {
           description: 'id of the session',
-          type: new GraphQLNonNull(GraphQLString)
+          type: GraphQLString
         }
       },
       resolve: function(root, session){
@@ -774,9 +760,56 @@ var queryType = new GraphQLObjectType({
   })
 });
 
+const productInputType = new GraphQLInputObjectType({
+  name: 'ProductInput',
+  fields: () => ({
+    id:		{ type: new GraphQLNonNull(GraphQLString) },
+    name:	{ type: new GraphQLNonNull(GraphQLString) },
+    sku:	{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+const deleteOutputType = new GraphQLObjectType({
+  name: 'deleteOutput',
+  fields: () => ({
+    id:	{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+var mutationType = new GraphQLObjectType({
+	name: 'Mutation',
+	fields: () => ({
+		createproduct:{
+			type: productType,
+			description: 'Adds a new product.',
+			args: {
+				product: { type: productInputType }
+			},
+			resolve: (value, product) => {
+				return productController.createProduct(product.product);
+			}
+		},
+		deleteproduct:{
+			type: deleteOutputType,
+			description: 'Deletes a product.',
+			args: {
+				id: {
+				  description: 'id of the product',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, product) => {
+				var id = product.id;
+				return productController.deleteProduct(id);
+			}
+		}
+	})
+});
+
 var SixSchema = new GraphQLSchema({
   query: queryType,
-  types: [ sessionType, productType, customerType ]
+  mutation: mutationType,
+  types: []
 });
 
 module.exports = SixSchema;

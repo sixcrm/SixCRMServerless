@@ -1,7 +1,9 @@
 {
 	"body":"
 	{ 
-		sessions { id }
+		session {
+			id
+		}
 	}"
 }
 
