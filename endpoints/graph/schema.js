@@ -229,6 +229,74 @@ var productType = new GraphQLObjectType({
   interfaces: [ productInterface ]
 });
 
+var productListType = new GraphQLObjectType({
+  name: 'Products',
+  description: 'Products for sale.',
+  fields: () => ({
+    products: {
+      type: new GraphQLList(productType),
+      description: 'The products',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var userListType = new GraphQLObjectType({
+  name: 'Users',
+  description: 'Users for sale.',
+  fields: () => ({
+    users: {
+      type: new GraphQLList(userType),
+      description: 'The products',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var affiliateListType = new GraphQLObjectType({
+  name: 'Affiliates',
+  description: 'Affiliates',
+  fields: () => ({
+    affiliates: {
+      type: new GraphQLList(affiliateType),
+      description: 'The affiliates',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var paginationType = new GraphQLObjectType({
+	name: 'Pagination',
+	description: 'Pagination Assets',
+	fields: () => ({
+		count: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The number of records returned by the query.',
+		},
+		end_cursor: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The end cursor of the paginated results.',
+		},
+		has_next_page: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'Boolean that represents whether or not the query has more records available.',
+		}
+	}),
+	interfaces: []
+});
+
 var accessKeyType = new GraphQLObjectType({
   name: 'AccessKey',
   description: 'A accesskey.',
@@ -655,9 +723,8 @@ var queryType = new GraphQLObjectType({
       }
     },
 	
-	//note we need pagination...
-    products: {
-      type: new GraphQLList(productType),
+    productlist: {
+      type: productListType,
       args: {
         limit: {
           description: 'limit',
@@ -675,6 +742,44 @@ var queryType = new GraphQLObjectType({
       }
     },
     
+    userlist: {
+      type: userListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, user){
+		var cursor = user.cursor; 
+		var limit = user.limit; 
+      	return userController.listUsers(cursor, limit);
+      }
+    },
+    
+    affiliatelist: {
+      type: affiliateListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, affiliate){
+		var cursor = affiliate.cursor; 
+		var limit = affiliate.limit; 
+      	return affiliateController.listAffiliates(cursor, limit);
+      }
+    },
+    
     productschedule: {
       type: productScheduleType,
       args: {
@@ -688,6 +793,7 @@ var queryType = new GraphQLObjectType({
       	return productScheduleController.getProductSchedule(id);
       }
     },
+    
     merchantprovider: {
       type: merchantProviderType,
       args: {

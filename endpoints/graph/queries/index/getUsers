@@ -1,11 +1,14 @@
 {
 	"body":"
 	query { 
-		productlist {
-			products {
+		userlist {
+			users {
 				id,
+				auth0_id,
 				name,
-				sku
+				email,
+				active,
+				access_key_id
 			},
 			pagination {
 				count,

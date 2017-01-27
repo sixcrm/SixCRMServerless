@@ -37,7 +37,12 @@ class SessionController {
 		
 		return new Promise((resolve, reject) => {
 			
-			dynamoutilities.scanRecords(process.env.sessions_table, null, null, (error, data) => {
+			dynamoutilities.scanRecords(
+				process.env.sessions_table, 
+				{
+					filter_expression: null, 
+					expression_attribute_values: null
+				}, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
