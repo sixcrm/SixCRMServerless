@@ -1,4 +1,6 @@
 'use strict';
+var _  = require('underscore');
+
 var GraphQLEnumType = require('graphql').GraphQLEnumType;
 var GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 var GraphQLObjectType = require('graphql').GraphQLObjectType;
@@ -644,14 +646,35 @@ var queryType = new GraphQLObjectType({
       args: {
         id: {
           description: 'id of the product',
-          type: new GraphQLNonNull(GraphQLString)
+          type: GraphQLString
         }
       },
       resolve: function(root, product){
-      	var id = product.id; 
+		var id = product.id; 
       	return productController.getProduct(id);
       }
     },
+	
+	//note we need pagination...
+    products: {
+      type: new GraphQLList(productType),
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, products){
+		var cursor = products.cursor; 
+		var limit = products.limit; 
+      	return productController.listProducts(cursor, limit);
+      }
+    },
+    
     productschedule: {
       type: productScheduleType,
       args: {

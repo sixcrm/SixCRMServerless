@@ -91,6 +91,25 @@ class ProductController {
 	
 	}
 	
+	listProducts(cursor, limit){
+		
+		return new Promise((resolve, reject) => {
+			
+			dynamoutilities.scanRecords(process.env.products_table, null, null, (error, data) => {
+				
+				if(_.isError(error)){ reject(error);}
+				
+				if(_.isArray(data)){
+					
+					resolve(data);
+				
+				}
+	
+			});
+			
+		});
+		
+	}
 	
 	getProduct(id){
 		
