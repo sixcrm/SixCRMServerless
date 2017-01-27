@@ -357,6 +357,22 @@ var loadBalancerListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var productScheduleListType = new GraphQLObjectType({
+  name: 'ProductSchedules',
+  description: 'Product Schedules',
+  fields: () => ({
+    productschedules: {
+      type: new GraphQLList(productScheduleType),
+      description: 'The product schedules',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 var paginationType = new GraphQLObjectType({
 	name: 'Pagination',
 	description: 'Pagination Assets',
@@ -951,6 +967,25 @@ var queryType = new GraphQLObjectType({
 		var cursor = loadbalancer.cursor; 
 		var limit = loadbalancer.limit; 
       	return loadBalancerController.listLoadBalancers(cursor, limit);
+      }
+    },
+    
+    productschedulelist: {
+      type: productScheduleListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, productschedule){
+		var cursor = productschedule.cursor; 
+		var limit = productschedule.limit; 
+      	return productScheduleController.listProductSchedules(cursor, limit);
       }
     },
     

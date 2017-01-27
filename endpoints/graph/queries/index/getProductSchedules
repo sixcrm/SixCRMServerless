@@ -1,0 +1,25 @@
+{
+	"body":"
+	query { 
+		productschedulelist {
+			productschedules {
+				id,
+				schedule {
+					price,
+					start,
+					end,
+					period,
+					product {
+						id
+					}
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+
