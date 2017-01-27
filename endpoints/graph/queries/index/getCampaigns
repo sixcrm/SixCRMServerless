@@ -1,0 +1,44 @@
+{
+	"body":"
+	query { 
+		campaignlist {
+			campaigns {
+				id,
+				name,
+				productschedules { 
+					id,
+					schedule {
+						price,
+						start,
+						end,
+						period,
+						product {
+							id,
+							name,
+							sku
+						}
+					}
+				}
+				loadbalancer {
+					id,
+					merchantproviderconfigurations {
+						merchantprovider {
+							id, 
+							username,
+							password,
+							endpoint,
+							processor
+						},
+						distribution
+					}
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

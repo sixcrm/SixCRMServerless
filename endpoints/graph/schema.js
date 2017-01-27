@@ -405,6 +405,22 @@ var sessionListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var campaignListType = new GraphQLObjectType({
+  name: 'Campaigns',
+  description: 'Campaigns',
+  fields: () => ({
+    campaigns: {
+      type: new GraphQLList(campaignType),
+      description: 'The campaigns',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 
 var paginationType = new GraphQLObjectType({
 	name: 'Pagination',
@@ -1038,6 +1054,25 @@ var queryType = new GraphQLObjectType({
 		var cursor = transaction.cursor; 
 		var limit = transaction.limit; 
       	return transactionController.listTransactions(cursor, limit);
+      }
+    },
+    
+    campaignlist: {
+      type: campaignListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, campaign){
+		var cursor = campaign.cursor; 
+		var limit = campaign.limit; 
+      	return campaignController.listCampaigns(cursor, limit);
       }
     },
     
