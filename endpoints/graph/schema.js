@@ -389,6 +389,23 @@ var transactionListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var sessionListType = new GraphQLObjectType({
+  name: 'Sessions',
+  description: 'Sessions',
+  fields: () => ({
+    sessions: {
+      type: new GraphQLList(sessionType),
+      description: 'The sessions',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+
 var paginationType = new GraphQLObjectType({
 	name: 'Pagination',
 	description: 'Pagination Assets',
@@ -1021,6 +1038,25 @@ var queryType = new GraphQLObjectType({
 		var cursor = transaction.cursor; 
 		var limit = transaction.limit; 
       	return transactionController.listTransactions(cursor, limit);
+      }
+    },
+    
+	sessionlist: {
+      type: sessionListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, session){
+		var cursor = session.cursor; 
+		var limit = session.limit; 
+      	return sessionController.listSessions(cursor, limit);
       }
     },
     

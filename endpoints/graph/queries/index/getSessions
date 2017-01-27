@@ -1,9 +1,45 @@
 {
 	"body":"
-	{ 
-		session {
-			id
-		}
+	query { 
+		sessionlist {
+			sessions {
+				id, 
+				customer { 
+					id, 
+					firstname, 
+					lastname, 
+					address { 
+						line1, 
+						line2, 
+						city, 
+						state, 
+						zip 
+					} 
+				},
+				products {
+					id,
+					name,
+					sku
+				},
+				transactions {
+					id,
+					date,
+					parentsession {
+						id
+					},
+					processor_response,
+					products {
+						id,
+						sku
+					}
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
 	}"
 }
 
