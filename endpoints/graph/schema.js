@@ -373,6 +373,22 @@ var productScheduleListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var transactionListType = new GraphQLObjectType({
+  name: 'Transactions',
+  description: 'Transactions',
+  fields: () => ({
+    transactions: {
+      type: new GraphQLList(transactionType),
+      description: 'The transactions',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 var paginationType = new GraphQLObjectType({
 	name: 'Pagination',
 	description: 'Pagination Assets',
@@ -986,6 +1002,25 @@ var queryType = new GraphQLObjectType({
 		var cursor = productschedule.cursor; 
 		var limit = productschedule.limit; 
       	return productScheduleController.listProductSchedules(cursor, limit);
+      }
+    },
+    
+    transactionlist: {
+      type: transactionListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, transaction){
+		var cursor = transaction.cursor; 
+		var limit = transaction.limit; 
+      	return transactionController.listTransactions(cursor, limit);
       }
     },
     

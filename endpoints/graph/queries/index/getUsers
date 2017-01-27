@@ -7,8 +7,7 @@
 				auth0_id,
 				name,
 				email,
-				active,
-				access_key_id
+				active
 			},
 			pagination {
 				count,

@@ -1,0 +1,28 @@
+{
+	"body":"
+	query { 
+		transactionlist {
+			transactions {
+				id,
+				date,
+				parentsession {
+					id,
+					customer {
+						id
+					}
+				},
+				processor_response,
+				products {
+					id,
+					sku
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+
