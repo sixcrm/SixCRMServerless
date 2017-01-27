@@ -325,6 +325,22 @@ var accessKeyListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var customerListType = new GraphQLObjectType({
+  name: 'Customers',
+  description: 'Customers',
+  fields: () => ({
+    customers: {
+      type: new GraphQLList(customerType),
+      description: 'The customers',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 var paginationType = new GraphQLObjectType({
 	name: 'Pagination',
 	description: 'Pagination Assets',
@@ -882,6 +898,24 @@ var queryType = new GraphQLObjectType({
 		var cursor = accesskey.cursor; 
 		var limit = accesskey.limit; 
       	return accessKeyController.listAccessKeys(cursor, limit);
+      }
+    },
+    customerlist: {
+      type: customerListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, customer){
+		var cursor = customer.cursor; 
+		var limit = customer.limit; 
+      	return customerController.listCustomers(cursor, limit);
       }
     },
     
