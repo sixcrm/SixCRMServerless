@@ -277,6 +277,54 @@ var affiliateListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var creditCardListType = new GraphQLObjectType({
+  name: 'CreditCards',
+  description: 'Credit cards',
+  fields: () => ({
+    creditcards: {
+      type: new GraphQLList(creditCardType),
+      description: 'The affiliates',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var merchantProviderListType = new GraphQLObjectType({
+  name: 'MerchantProviders',
+  description: 'Merchant providers',
+  fields: () => ({
+    merchantproviders: {
+      type: new GraphQLList(merchantProviderType),
+      description: 'The merchant providers',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var accessKeyListType = new GraphQLObjectType({
+  name: 'AccessKeys',
+  description: 'Access keys',
+  fields: () => ({
+    accesskeys: {
+      type: new GraphQLList(accessKeyType),
+      description: 'The access keys',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 var paginationType = new GraphQLObjectType({
 	name: 'Pagination',
 	description: 'Pagination Assets',
@@ -777,6 +825,63 @@ var queryType = new GraphQLObjectType({
 		var cursor = affiliate.cursor; 
 		var limit = affiliate.limit; 
       	return affiliateController.listAffiliates(cursor, limit);
+      }
+    },
+    
+    creditcardlist: {
+      type: creditCardListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, creditcard){
+		var cursor = creditcard.cursor; 
+		var limit = creditcard.limit; 
+      	return creditCardController.listCreditCards(cursor, limit);
+      }
+    },
+    
+    merchantproviderlist: {
+      type: merchantProviderListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, merchantprovider){
+		var cursor = merchantprovider.cursor; 
+		var limit = merchantprovider.limit; 
+      	return merchantProviderController.listMerchantProviders(cursor, limit);
+      }
+    },
+    
+    accesskeylist: {
+      type: accessKeyListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, accesskey){
+		var cursor = accesskey.cursor; 
+		var limit = accesskey.limit; 
+      	return accessKeyController.listAccessKeys(cursor, limit);
       }
     },
     

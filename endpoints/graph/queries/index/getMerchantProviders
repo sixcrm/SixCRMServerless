@@ -1,0 +1,21 @@
+{
+	"body":"
+	query { 
+		merchantproviderlist {
+			merchantproviders {
+				id,
+				name,
+				username,
+				password,
+				endpoint,
+				processor
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

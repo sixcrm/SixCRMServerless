@@ -1,0 +1,27 @@
+{
+	"body":"
+	query { 
+		creditcardlist {
+			creditcards {
+				id,
+				ccnumber,
+				expiration,
+				ccv,
+				name,
+				address {
+					line1,
+					line2,
+					city,
+					state,
+					zip
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+
