@@ -1,0 +1,26 @@
+{
+	"body":"
+	query { 
+		loadbalancerlist {
+			loadbalancers {
+				id,
+				merchantproviderconfigurations {
+					merchantprovider {
+						id, 
+						username,
+						password,
+						endpoint,
+						processor
+					},
+					distribution
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

@@ -341,6 +341,22 @@ var customerListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var loadBalancerListType = new GraphQLObjectType({
+  name: 'LoadBalancers',
+  description: 'Load Balancers',
+  fields: () => ({
+    loadbalancers: {
+      type: new GraphQLList(loadBalancerType),
+      description: 'The Load Balancers',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 var paginationType = new GraphQLObjectType({
 	name: 'Pagination',
 	description: 'Pagination Assets',
@@ -916,6 +932,25 @@ var queryType = new GraphQLObjectType({
 		var cursor = customer.cursor; 
 		var limit = customer.limit; 
       	return customerController.listCustomers(cursor, limit);
+      }
+    },
+    
+    loadbalancerlist: {
+      type: loadBalancerListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, loadbalancer){
+		var cursor = loadbalancer.cursor; 
+		var limit = loadbalancer.limit; 
+      	return loadBalancerController.listLoadBalancers(cursor, limit);
       }
     },
     
