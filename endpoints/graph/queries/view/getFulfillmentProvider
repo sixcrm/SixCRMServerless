@@ -1,0 +1,14 @@
+{
+	"body":"
+	{ 
+		fulfillmentprovider (id: \"1bd805d0-0062-499b-ae28-00c5d1b827ba\") { 
+			id,
+			name,
+			username,
+			password,
+			endpoint,
+			provider
+		} 
+	}"
+}
+

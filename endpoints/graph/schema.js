@@ -20,6 +20,7 @@ var merchantProviderController = require('../../controllers/MerchantProvider.js'
 var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var campaignController = require('../../controllers/Campaign.js');
 var affiliateController = require('../../controllers/Affiliate.js');
+var fulfillmentProviderController = require('../../controllers/FulfillmentProvider.js');
 var accessKeyController = require('../../controllers/AccessKey.js');
 var userController = require('../../controllers/User.js');
 
@@ -29,6 +30,16 @@ const merchantProviderProcessorsEnum = new GraphQLEnumType({
   values: {
     NMI: {
       value: 'NMI'
+    }
+  }
+});
+
+const fulfillmentProviderProviderEnum = new GraphQLEnumType({
+  name: 'FulfillmentProviderProcessors',
+  description: 'Whitelisted Fulfillment Provider Processors',
+  values: {
+    HASHTAG: {
+      value: 'HASHTAG'
     }
   }
 });
@@ -224,6 +235,23 @@ var productType = new GraphQLObjectType({
     sku: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The product SKU',
+    },
+    ship: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The product ship, no-ship status.',
+    },
+    shipping_delay: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The number of seconds to delay shipping after a transaction.',
+    },
+    shipping_delay: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The number of seconds to delay shipping after a transaction.',
+    },
+    fulfillment_provider: {
+		type: fulfillmentProviderType,
+		description: 'The session associated with the transaction.',
+		resolve: product => productController.getFulfillmentProvider(product),    
     }
   }),
   interfaces: [ productInterface ]
@@ -300,6 +328,22 @@ var merchantProviderListType = new GraphQLObjectType({
     merchantproviders: {
       type: new GraphQLList(merchantProviderType),
       description: 'The merchant providers',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var fulfillmentProviderListType = new GraphQLObjectType({
+  name: 'FulfillmentProviders',
+  description: 'Fulfillment providers',
+  fields: () => ({
+    fulfillmentproviders: {
+      type: new GraphQLList(fulfillmentProviderType),
+      description: 'The fulfillment providers',
     },
     pagination: {
       type: new GraphQLNonNull(paginationType),
@@ -655,6 +699,38 @@ var merchantProviderType = new GraphQLObjectType({
   interfaces: []
 });
 
+var fulfillmentProviderType = new GraphQLObjectType({
+  name: 'fulfillmentprovider',
+  description: 'A fulfillment provider.',
+  fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the fulfillment provider instance.',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The name of the fulfillment provider instance.',
+    },
+    provider: {
+      type: new GraphQLNonNull(fulfillmentProviderProviderEnum),
+      description: 'The provider.',
+    },
+    username: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The provider username.',
+    },
+    password: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The provider password.',
+    },
+    endpoint: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description:'The provider endpoint.'
+    }
+  }),
+  interfaces: []
+});
+
 var merchantProviderConfigurationType = new GraphQLObjectType({
   name: 'merchantproviderconfiguration',
   description: 'A merchant provider configuration.',
@@ -963,6 +1039,25 @@ var queryType = new GraphQLObjectType({
       }
     },
     
+     fulfillmentproviderlist: {
+      type: fulfillmentProviderListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, fulfillmentprovider){
+		var cursor = fulfillmentprovider.cursor; 
+		var limit = fulfillmentprovider.limit; 
+      	return fulfillmentProviderController.listFulfillmentProviders(cursor, limit);
+      }
+    },
+    
     accesskeylist: {
       type: accessKeyListType,
       args: {
@@ -1122,6 +1217,21 @@ var queryType = new GraphQLObjectType({
       	return merchantProviderController.getMerchantProvider(id);
       }
     },
+    
+    fulfillmentprovider: {
+      type: fulfillmentProviderType,
+      args: {
+        id: {
+          description: 'id of the fulfillmentprovider',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, fulfillmentprovider){
+      	var id = fulfillmentprovider.id; 
+      	return fulfillmentProviderController.getFulfillmentProvider(id);
+      }
+    },
+    
     loadbalancer: {
       type: loadBalancerType,
       args: {

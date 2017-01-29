@@ -3,13 +3,13 @@ const _ = require('underscore');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 
-class affiliateController {
+class fulfillmentProviderController {
 
 	constructor(){
 	
 	}
 	
-	listAffiliates(cursor, limit){
+	listFulfillmentProviders(cursor, limit){
 	
 		return new Promise((resolve, reject) => {
 			
@@ -23,7 +23,7 @@ class affiliateController {
 				query_parameters['limit'] = limit;
 			}
 			
-			dynamoutilities.scanRecordsFull(process.env.affiliates_table, query_parameters, (error, data) => {
+			dynamoutilities.scanRecordsFull(process.env.fulfillment_providers_table, query_parameters, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
@@ -52,7 +52,7 @@ class affiliateController {
 					
 					resolve(
 						{
-							affiliates: data.Items,
+							fulfillmentproviders: data.Items,
 							pagination: pagination_object
 						}
 					);
@@ -65,13 +65,13 @@ class affiliateController {
 		
 	}
 	
-	getAffiliate(id){
-
+	getFulfillmentProvider(id){
+		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
-							
-			dynamoutilities.queryRecords(process.env.affiliates_table, 'id = :idv', {':idv': id}, null, (error, data) => {
+				
+			dynamoutilities.queryRecords(process.env.fulfillment_providers_table, 'id = :idv', {':idv': id}, null, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
@@ -85,7 +85,7 @@ class affiliateController {
 						
 						if(data.length > 1){
 						
-							reject(new Error('Multiple affiliates returned where one should be returned.'));
+							reject(new Error('Multiple fulfillment providers returned where one should be returned.'));
 							
 						}else{
 						
@@ -105,4 +105,4 @@ class affiliateController {
         
 }
 
-module.exports = new affiliateController();
+module.exports = new fulfillmentProviderController();

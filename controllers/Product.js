@@ -1,11 +1,18 @@
 'use strict';
 const _ = require('underscore');
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
+var fulfillmentProviderController = require('./FulfillmentProvider.js');
 
 class ProductController {
 
 	constructor(){
 	
+	}
+	
+	getFulfillmentProvider(product){
+		
+		return fulfillmentProviderController.getFulfillmentProvider(product.fulfillment_provider);
+		
 	}
 	
 	createProduct(product){

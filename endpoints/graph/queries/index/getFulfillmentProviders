@@ -1,0 +1,21 @@
+{
+	"body":"
+	query { 
+		fulfillmentproviderlist {
+			fulfillmentproviders {
+				id, 
+				name,
+				provider,
+				username,
+				password,
+				endpoint
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

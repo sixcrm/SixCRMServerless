@@ -118,9 +118,8 @@ module.exports.createorder= (event, context, callback) => {
 								
 								//no transaction, problem
 								
-								console.log('here');
 								sessionController.updateSessionProducts(session, products_to_purchase).then((session) => {
-									console.log('here2');
+								
 									lr.issueResponse(200, {
 										message: 'Success',
 										results: transaction

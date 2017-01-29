@@ -15,6 +15,7 @@ dynamodb:
   affiliates_table: 'affiliates'
   campaigns_table: 'campaigns'
   merchant_providers_table: 'merchant_providers'
+  fulfillment_providers_table: 'fulfillment_providers'
   endpoint: 'http://localhost:8001'
 nmi:
   username: 'demo'

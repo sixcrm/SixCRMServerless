@@ -12,11 +12,11 @@ var lr = require('../../lib/lambda-response.js');
 var timestamp = require('../../lib/timestamp.js');
 
 var customerController = require('../../controllers/Customer.js');
+var affiliateController = require('../../controllers/Affiliate.js');
+var campaignController = require('../../controllers/Campaign.js');
 var sessionController = require('../../controllers/Session.js');
 
 module.exports.createlead = (event, context, callback) => {
-	
-	console.log(context);
 	
 	var duplicate_body;
 	try {
@@ -70,58 +70,90 @@ module.exports.createlead = (event, context, callback) => {
 		
 	}
 	
-
-	customerController.getCustomerByEmail(duplicate_body['email']).then((customer) => {
-
-		if(_.has(customer, "id")){
-
-			sessionController.putSession(customer.id).then((session) => {
-
-				
-				var result_message = {
-					session: session,
-					customer: customer
-				}
-				
-				return lr.issueResponse(200, {
-					message: 'Success',
-					results: result_message
-				}, callback);
+	var campaign_id;
+	if(_.has(duplicate_body, "campaign_id") && _.isString(duplicate_body.campaign_id)){
+		campaign_id = duplicate_body.campaign_id;
+	}else{
+		return lr.issueError('A lead must be associated with a campaign', 500, event, new Error('A lead must be associated with a campaign'), callback);
+	}
 	
-			});
+	var affiliate_id;
+	if(_.has(duplicate_body, "affiliate_id")){
+		affiliate_id = duplicate_body['affiliate_id'];
+	}
+	
+	campaignController.getCampaign(campaign_id).then((campaign) => {
+			
+		if(!_.has(campaign, 'id')){
+			return lr.issueError('A invalid campaign id is specified.', 500, event, new Error('A invalid campaign id is specified.'), callback);
+		}
 		
-		}else{
+		affiliateController.getAffiliate(affiliate_id).then((affiliate) => {
+			
+			if(_.isString(affiliate_id) && !_.has(affiliate, 'id')){
+				return lr.issueError('A invalid affiliate id is specified.', 500, event, new Error('A invalid affiliate id is specified.'), callback);
+			}
+			
+			customerController.getCustomerByEmail(duplicate_body['email']).then((customer) => {
+
+				if(_.has(customer, "id")){
+
+					sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: affiliate_id}).then((session) => {
+				
+						var result_message = {
+							session: session,
+							customer: customer,
+							campaign: campaign,
+							affiliate: affiliate
+						}
+				
+						return lr.issueResponse(200, {
+							message: 'Success',
+							results: result_message
+						}, callback);
+	
+					});
+		
+				}else{
 			
 
-			var customer_id = duplicate_body['id'] = uuidV4();
+					var customer_id = duplicate_body['id'] = uuidV4();
 			
 
-			customerController.saveCustomer(duplicate_body).then((customer) => {
+					customerController.saveCustomer(duplicate_body).then((customer) => {
 				
 
-				sessionController.putSession(customer_id).then((session) => {
+						sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: affiliate_id}).then((session) => {
 					
 
-					//note that the customer here appears to be a id value.  We want a complete customer object...
-					var result_message = {
-						session: session,
-						customer: customer
-					}
+							//note that the customer here appears to be a id value.  We want a complete customer object...
+							var result_message = {
+								session: session,
+								customer: customer
+							}
 	
-					return lr.issueResponse(200, {
-						message: 'Success',
-						results: result_message
-					}, callback);
+							return lr.issueResponse(200, {
+								message: 'Success',
+								results: result_message
+							}, callback);
 	
-				}).catch((error) => {
-					lr.issueError(error, 500, event, error, callback);
-				});
+						}).catch((error) => {
+							lr.issueError(error, 500, event, error, callback);
+						});
 			
+					}).catch((error) => {
+						lr.issueError(error, 500, event, error, callback);
+					});
+			
+				}
+		
 			}).catch((error) => {
-				lr.issueError(error, 500, event, error, callback);
+				return lr.issueError(error, 500, event, error, callback);
 			});
-			
-		}
+		
+		}).catch((error) => {
+			return lr.issueError(error, 500, event, error, callback);
+		});
 		
 	}).catch((error) => {
 		return lr.issueError(error, 500, event, error, callback);

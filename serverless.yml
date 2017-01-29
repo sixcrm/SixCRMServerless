@@ -74,6 +74,7 @@ functions:
       product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
       affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
       merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
+      fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
@@ -107,6 +108,8 @@ functions:
     environment:
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+        affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
+        campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         stage: ${opt:stage}
         
@@ -133,6 +136,7 @@ functions:
         product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
         affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
         merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
+        fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
         nmi_username: ${file(./config/${opt:stage}/site.yml):nmi.username}
         nmi_password: ${file(./config/${opt:stage}/site.yml):nmi.password}
         nmi_endpoint: ${file(./config/${opt:stage}/site.yml):nmi.endpoint}

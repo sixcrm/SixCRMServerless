@@ -12,7 +12,7 @@ var transactionController = require('./Transaction.js');
 class SessionController {
 
 	constructor(){
-	
+		this.session_length = 3600;
 	}
 	
 	getCustomer(session){
@@ -146,17 +146,40 @@ class SessionController {
 		
 	}
 	
-	saveSession(customer_id){
+	createSessionObject(params){
+	
+		if(!_.has(params,'customer_id')){
+			
+			return new Error('A session must be associated with a Customer ID.');
+			
+		}
+		
+		if(!_.has(params,'campaign_id')){
+		
+			return new Error('A session must be associated with a Campaign ID.');
+			
+		}
+		
+		var session = {
+			id: uuidV4(),
+			customer: params.customer_id,
+			campaign: params.campaign_id,
+			completed: 'false',
+			created: timestamp.createTimestampSeconds(),
+			modified: 'false'
+		};
+		
+		if(_.has(params, 'affiliate_id') && _.isString(params.affiliate_id)){
+			session.affiliate = params.affiliate_id;	
+		}
+		
+		return session;
+	
+	}
+	
+	saveSession(session){
 		
 		return new Promise((resolve, reject) => {
-		
-			var session = {
-				id: uuidV4(),
-				customer: customer_id,
-				completed: 'false',
-				created: timestamp.createTimestampSeconds(),
-				modified: 'false'
-			};
 		
 			dynamoutilities.saveRecord(process.env.sessions_table, session, (error, data) => {
 			
@@ -187,11 +210,25 @@ class SessionController {
 		
 	}
 	
-	putSession(customer_id, callback){
+	putSession(parameters, callback){
+		
+		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
 			
-			this.getSessionByCustomerID(customer_id).then((sessions) => {
+			if(!_.has(parameters, 'customer_id')){
+				reject(new Error('Parameters object must have a customer_id'));
+			}
+			
+			if(!_.has(parameters, 'campaign_id')){
+				reject(new Error('Parameters object must have a customer_id'));
+			}
+			
+			if(!_.has(parameters, 'affiliate_id')){
+				parameters.affiliate_id = null;	
+			}
+				
+			this.getSessionByCustomerID(parameters.customer_id).then((sessions) => {
 				
 				var session_found = false;
 
@@ -200,7 +237,7 @@ class SessionController {
 						if(_.has(session, 'completed') && session.completed == 'false'){
 							if(_.has(session, "created")){
 								var time_difference = timestamp.getTimeDifference(session.created);
-								if(time_difference < (60*60*24*7)){
+								if(time_difference < this.session_length){
 									resolve(session);
 									session_found = true;
 									return false;
@@ -212,7 +249,13 @@ class SessionController {
 			
 				if(session_found == false){
 					
-					this.saveSession(customer_id).then((session) => {
+					var session = controller_instance.createSessionObject({
+						customer_id: parameters.customer_id, 
+						campaign_id: parameters.campaign_id, 
+						affiliate_id: parameters.affiliate_id
+					});
+					
+					this.saveSession(session).then((session) => {
 	
 						resolve(session);
 	
