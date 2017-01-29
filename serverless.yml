@@ -78,7 +78,18 @@ functions:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      
+  
+  pushqueue:
+    handler: workers/pushqueue/handler.pushqueue
+    events:
+      - schedule:
+          rate: rate(1 minutes)
+          enabled: true
+    environment:
+      stage: ${opt:stage}   
+      bill_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
+      hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+          
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
     events:
@@ -173,5 +184,9 @@ resources:
              Action:
                - dynamodb:*
              Resource: arn:aws:dynamodb:*:*:table/*
+           - Effect: Allow
+             Action:
+               - sqs:*
+             Resource: arn:aws:sqs:*:*:*
         Roles:
           - Ref: IamRoleLambdaExecution
