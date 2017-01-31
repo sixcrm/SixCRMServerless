@@ -130,8 +130,15 @@ functions:
 
   pickrebill:
     handler: workers/pickrebill/handler.pickrebill
+    events:
+      - schedule:
+          rate: rate(2 hours)
+          enabled: true
     environment:
       stage: ${opt:stage}
+      bill_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
           
   processbilling:
     handler: workers/processbilling/handler.processbilling

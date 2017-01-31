@@ -112,6 +112,7 @@ module.exports.createorder= (event, context, callback) => {
 						//need some fucking unit tests here...
 						loadBalancerController.process(campaign.loadbalancer, {customer: customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
 							
+							//add rebill
 							//validate processor response
 							
 							transactionController.putTransaction({session: session, products: products_to_purchase, amount: amount}, processor_response).then((transaction) => {

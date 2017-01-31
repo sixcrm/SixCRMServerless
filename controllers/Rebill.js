@@ -3,6 +3,7 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
+var sqsutilities = require('../lib/sqs-utilities.js');
 var timestamp = require('../lib/timestamp.js');
 
 class RebillController {
@@ -128,6 +129,80 @@ class RebillController {
 					
 				}
 	
+			});
+	
+		});
+		
+	}
+	
+	markRebillProcessing(rebill){
+		
+		return new Promise((resolve, reject) => {
+			
+			dynamoutilities.updateRecord(process.env.rebills_table, {'id': rebill.id}, 'set processing = :p', {":p": "true"}, (error, data) => {
+				
+				if(_.isError(error)){
+					reject(error);
+				}
+			
+				rebill.processing = "true";
+	
+				resolve(rebill);
+					
+			});
+	
+		});
+		
+	}
+	
+	getRebillsAfterTimestamp(timestamp){
+		
+		return new Promise((resolve, reject) => {
+			
+			var query_parameters = {filter_expression: 'billdate < :timestampv AND processing <> :processingv', expression_attribute_values: {':timestampv':timestamp, ':processingv':'true'}};
+			
+			if(typeof cursor  !== 'undefined'){
+				query_parameters.ExclusiveStartKey = cursor;
+			}
+
+			if(typeof limit  !== 'undefined'){
+				query_parameters['limit'] = limit;
+			}
+			
+			dynamoutilities.scanRecords(process.env.rebills_table, query_parameters, (error, data) => {
+
+				if(_.isError(error)){ 
+					reject(error);
+				}
+				
+				if(_.isArray(data)){
+					resolve(data);
+				}
+	
+			});
+	
+		});
+		
+	}
+	
+	sendMessageAndMarkRebill(rebill){
+
+		return new Promise((resolve, reject) => {
+			
+			sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: process.env.bill_queue_url}, (error, data) =>{
+				
+				if(_.isError(error)){ reject(error);}
+				
+				this.markRebillProcessing(rebill).then((rebill) => {
+			
+					resolve(rebill);
+					
+				}).catch((error) => {
+				
+					reject(error);
+				
+				});
+			
 			});
 	
 		});

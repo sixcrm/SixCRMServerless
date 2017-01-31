@@ -12,6 +12,10 @@
         {
             "AttributeName": "parentsession", 
             "AttributeType": "S"
+        },
+        {
+            "AttributeName": "billdate", 
+            "AttributeType": "N"
         }],
         "GlobalSecondaryIndexes": [ 
 		  { 
@@ -20,6 +24,26 @@
 				{ 
 				   "AttributeName": "parentsession",
 				   "KeyType": "HASH"
+				}
+			 ],
+			 "Projection": { 
+				"ProjectionType": "ALL"
+			 },
+			 "ProvisionedThroughput": { 
+				"ReadCapacityUnits": 1,
+				"WriteCapacityUnits": 1
+			 }
+		  },
+		  { 
+			 "IndexName": "billdate-index",
+			 "KeySchema": [ 
+			 	{
+			 		"AttributeName":"id",
+			 	 	"KeyType":"HASH"
+			 	},
+				{ 
+				   "AttributeName": "billdate",
+				   "KeyType": "RANGE"
 				}
 			 ],
 			 "Projection": { 
@@ -38,7 +62,7 @@
     },
     "Seeds": [
     	{
-		  "billdate": "Mon, 16 Feb 2017 00:00:00 GMT",
+		  "billdate": 1485842247,
 		  "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
 		  "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
 		  "products": [
