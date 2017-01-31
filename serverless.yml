@@ -77,18 +77,81 @@ functions:
       fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
   
-  pushqueue:
-    handler: workers/pushqueue/handler.pushqueue
+  billtohold:
+    handler: workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
-          rate: rate(1 minutes)
+          rate: rate(1 minute)
           enabled: true
     environment:
       stage: ${opt:stage}   
-      bill_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
-      hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
+      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      workerfunction: sixtransaction-${opt:stage}-processbilling
+      
+  holdtopending:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}   
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
+      workerfunction: sixtransaction-${opt:stage}-triggerfulfillment
+      
+  pendingtoshipped:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}   
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
+      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
+      workerfunction: sixtransaction-${opt:stage}-confirmshipped  
+
+  shippedtodelivered:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}   
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
+      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
+      workerfunction: sixtransaction-${opt:stage}-confirmdelivery
+
+  pickrebill:
+    handler: workers/pickrebill/handler.pickrebill
+    environment:
+      stage: ${opt:stage}
+          
+  processbilling:
+    handler: workers/processbilling/handler.processbilling
+    environment:
+      stage: ${opt:stage} 
+      
+  triggerfulfillment:
+    handler: workers/triggerfulfillment/handler.triggerfulfillment
+    environment:
+      stage: ${opt:stage}
+      
+  confirmshipped:
+    handler: workers/confirmshipped/handler.confirmshipped
+    environment:
+      stage: ${opt:stage}
+
+  confirmdelivered:
+    handler: workers/confirmdelivered/handler.confirmdelivered
+    environment:
+      stage: ${opt:stage}
           
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
@@ -171,6 +234,7 @@ functions:
         transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         stage: ${opt:stage}
+        
 resources:  
   Resources:
     DynamoDBIamPolicy:
@@ -188,5 +252,9 @@ resources:
              Action:
                - sqs:*
              Resource: arn:aws:sqs:*:*:*
+           - Effect: Allow
+             Action:
+               - lambda:*
+             Resource: arn:aws:lambda:us-east-1:*:*:*
         Roles:
           - Ref: IamRoleLambdaExecution

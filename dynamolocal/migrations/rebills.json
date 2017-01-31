@@ -1,0 +1,49 @@
+{
+    "Table": {
+        "TableName": "rebills",
+        "KeySchema": [{
+            "AttributeName": "id",
+            "KeyType": "HASH"
+        }], 
+        "AttributeDefinitions": [{
+            "AttributeName": "id", 
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "parentsession", 
+            "AttributeType": "S"
+        }],
+        "GlobalSecondaryIndexes": [ 
+		  { 
+			 "IndexName": "parentsession-index",
+			 "KeySchema": [ 
+				{ 
+				   "AttributeName": "parentsession",
+				   "KeyType": "HASH"
+				}
+			 ],
+			 "Projection": { 
+				"ProjectionType": "ALL"
+			 },
+			 "ProvisionedThroughput": { 
+				"ReadCapacityUnits": 1,
+				"WriteCapacityUnits": 1
+			 }
+		  }
+		],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1, 
+            "WriteCapacityUnits": 1
+        }
+    },
+    "Seeds": [
+    	{
+		  "billdate": "Mon, 16 Feb 2017 00:00:00 GMT",
+		  "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
+		  "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
+		  "products": [
+			"be992cea-e4be-4d3e-9afa-8e020340ed16"
+		  ]
+		}
+    ]
+}

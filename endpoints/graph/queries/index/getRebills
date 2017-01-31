@@ -1,0 +1,27 @@
+{
+	"body":"
+	query { 
+		rebilllist {
+			rebills {
+				id,
+				billdate,
+				parentsession {
+					id,
+					customer {
+						id
+					}
+				},
+				products {
+					id,
+					sku
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

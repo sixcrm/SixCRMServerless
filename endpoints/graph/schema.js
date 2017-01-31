@@ -14,6 +14,7 @@ var sessionController = require('../../controllers/Session.js');
 var productController = require('../../controllers/Product.js');
 var customerController = require('../../controllers/Customer.js');
 var transactionController = require('../../controllers/Transaction.js');
+var rebillController = require('../../controllers/Rebill.js');
 var creditCardController = require('../../controllers/CreditCard.js');
 var productScheduleController = require('../../controllers/ProductSchedule.js');
 var merchantProviderController = require('../../controllers/MerchantProvider.js');
@@ -220,6 +221,33 @@ var transactionType = new GraphQLObjectType({
   interfaces: [transactionInterface]
 });
 
+var rebillType = new GraphQLObjectType({
+  name: 'Rebill',
+  description: 'A record denoting a rebill.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the transaction.',
+    },
+    billdate: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The date of the rebill.',
+    },
+    parentsession: {
+      type: sessionType,
+      description: 'The session associated with the transaction.',
+      resolve: rebill => rebillController.getParentSession(rebill),
+    },
+    products: {
+      type: new GraphQLList(productInterface),
+      description:
+        'The products associated with the transaction',
+      resolve: rebill => rebillController.getProducts(rebill),
+    },
+  }),
+  interfaces: []
+});
+
 var productType = new GraphQLObjectType({
   name: 'Product',
   description: 'A product for sale.',
@@ -272,6 +300,23 @@ var productListType = new GraphQLObjectType({
   }),
   interfaces: []
 });
+
+var rebillListType = new GraphQLObjectType({
+  name: 'Rebills',
+  description: 'Orders for rebilling',
+  fields: () => ({
+    rebills: {
+      type: new GraphQLList(rebillType),
+      description: 'The rebills',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 
 var userListType = new GraphQLObjectType({
   name: 'Users',
@@ -979,6 +1024,25 @@ var queryType = new GraphQLObjectType({
 		var cursor = user.cursor; 
 		var limit = user.limit; 
       	return userController.listUsers(cursor, limit);
+      }
+    },
+    
+    rebilllist: {
+      type: rebillListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, rebill){
+		var cursor = rebill.cursor; 
+		var limit = rebill.limit; 
+      	return rebillController.listRebills(cursor, limit);
       }
     },
     

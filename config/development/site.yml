@@ -6,6 +6,7 @@ dynamodb:
   access_keys_table: 'access_keys'
   sessions_table: 'sessions'
   transactions_table: 'transactions'
+  rebills_table: 'rebills'
   customers_table: 'customers'
   products_table: 'products'
   credit_cards_table: 'credit_cards'
@@ -17,6 +18,12 @@ dynamodb:
   merchant_providers_table: 'merchant_providers'
   fulfillment_providers_table: 'fulfillment_providers'
   endpoint: ''
+sqs:
+  bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'
+  hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-hold'
+  pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending'
+  shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-shipped'
+  delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-delivered'
 nmi:
   username: 'demo'
   password: 'password'
