@@ -949,6 +949,19 @@ var queryType = new GraphQLObjectType({
       	return transactionController.getTransaction(id);
       }
     },
+    rebill: {
+      type: rebillType,
+      args: {
+        id: {
+          description: 'id of the rebill',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, rebill){
+      	var id = rebill.id; 
+      	return rebillController.getRebill(id);
+      }
+    },
     session: {
       type: sessionType,
       args: {
