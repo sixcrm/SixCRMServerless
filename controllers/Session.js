@@ -21,6 +21,7 @@ class SessionController {
         
 	}
 	
+	//deprecated
 	getProducts(session){
 		
 		return session.products.map(id => productController.getProduct(id));
@@ -273,22 +274,22 @@ class SessionController {
 	
 	}
 	
-	updateSessionProducts(session, products){
+	updateSessionProductSchedules(session, product_schedules){
 		
 		return new Promise((resolve, reject) => {
 		
-			var session_products = session.products;
+			var session_product_schedules = session.product_schedules;
 			
-			var purchased_products = [];
-			products.forEach((product) => {
-				purchased_products.push(product.id);
+			var purchased_product_schedules = [];
+			product_schedules.forEach((schedule) => {
+				purchased_product_schedules.push(schedule.id);
 			});
 			
-			session_products = _.union(purchased_products, session_products);
+			session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
 			
 			var modified = timestamp.createTimestampSeconds();
 	
-			dynamoutilities.updateRecord(process.env.sessions_table, {'id': session.id}, 'set products = :productsv, modified = :modifiedv', {":productsv": session_products, ":modifiedv": modified.toString()}, (error, data) => {
+			dynamoutilities.updateRecord(process.env.sessions_table, {'id': session.id}, 'set product_schedules = :product_schedulesv, modified = :modifiedv', {":product_schedulesv": session_product_schedules, ":modifiedv": modified.toString()}, (error, data) => {
 			
 				if(_.isError(error)){
 		
@@ -332,19 +333,19 @@ class SessionController {
 	
 	}
 	
-	validateProducts(products, session){
+	validateProductSchedules(product_schedules, session){
 	
-		if(!_.has(session, 'products') || !_.isArray(session.products) || session.products.length < 1){
+		if(!_.has(session, 'product_schedules') || !_.isArray(session.product_schedules) || session.product_schedules.length < 1){
 		
 			return true;
 		
 		}
 	
-		for(var i = 0; i < products.length; i++){
-			var product_id = products[i].id;
-			for(var j = 0; j < session.products.length; j++){
-				if(_.isEqual(product_id, session.products[j])){
-					throw new Error('Product already belongs to this session');
+		for(var i = 0; i < product_schedules.length; i++){
+			var product_schedule_id = product_schedules[i].id;
+			for(var j = 0; j < session.product_schedules.length; j++){
+				if(_.isEqual(product_schedule_id, session.product_schedules[j])){
+					throw new Error('Product schedule already belongs to this session');
 				}
 			}
 		}

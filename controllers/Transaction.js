@@ -11,23 +11,11 @@ class TransactionController {
 	
 	}
 	
-	getProducts(transaction){
+	getParentRebill(transaction){
 		
-		var productController = require('./Product.js');
+		var rebillController = require('./Rebill.js');
 		
-		return transaction.products.map(id => productController.getProduct(id));
-        
-	}
-	
-	getTransaction(id){
-	
-	}
-	
-	getParentSession(transaction){
-		
-		var sessionController = require('./Session.js');
-		
-		var id = transaction.parentsession;
+		var id = transaction.rebill_id;
 		
 		return sessionController.getSession(id);
 		
@@ -118,11 +106,11 @@ class TransactionController {
         
     }
         
-	getTransactionsBySessionID(id){
+	getTransactionsByRebillID(id){
 
 		return new Promise((resolve, reject) => {
 		
-			dynamoutilities.queryRecords(process.env.transactions_table, 'parentsession = :parentsessionv', {':parentsessionv': id}, 'parentsession-index', (error, data) => {
+			dynamoutilities.queryRecords(process.env.transactions_table, 'rebill_id = :rebill_idv', {':rebill_idv': id}, 'rebill-index', (error, data) => {
 			
 				if(_.isError(error)){ reject(error);}
 				
@@ -184,8 +172,7 @@ class TransactionController {
 
 		var return_object = {
 			id: uuidV4(),
-			parentsession: params.session.id,
-			products: transaction_products,
+			rebill_id: params.rebill_id,
 			processor_response: JSON.stringify(processor_response),
 			amount: params.amount,
 			date: timestamp.createDate()
@@ -195,7 +182,7 @@ class TransactionController {
 		
 	}
 	
-	
+	//??
 	updateSession(session, products, callback){
 		
 		return new Promise((resolve, reject) => {

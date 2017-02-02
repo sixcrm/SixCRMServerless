@@ -10,15 +10,15 @@
             "AttributeType": "S"
         },
         {
-            "AttributeName": "parentsession", 
+            "AttributeName": "rebill", 
             "AttributeType": "S"
         }],
         "GlobalSecondaryIndexes": [ 
 		  { 
-			 "IndexName": "parentsession-index",
+			 "IndexName": "rebill-index",
 			 "KeySchema": [ 
 				{ 
-				   "AttributeName": "parentsession",
+				   "AttributeName": "rebill",
 				   "KeyType": "HASH"
 				}
 			 ],
@@ -41,11 +41,8 @@
 		  "amount": 34.99,
 		  "date": "Mon, 16 Jan 2017 20:48:52 GMT",
 		  "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-		  "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-		  "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-		  "products": [
-			"668ad918-0d09-4116-a6fe-0e7a9eda36f8"
-		  ]
+		  "rebill_id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
+		  "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}"
 		}
     ]
 }

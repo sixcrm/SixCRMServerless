@@ -30,6 +30,104 @@ class RebillController {
 		
 	}
 	
+	buildRebillObject(parameters){
+	
+		return {
+			id: uuidV4(),
+			billdate: parameters.billdate,
+			parentsession: parameters.parentsession,
+			products: parameters.products,
+			amount: parameters.amount
+		};
+		
+	}
+	
+	calculateDateInCycle(session_start){
+		
+		var time_difference = timestamp.getTimeDifference(session_start);
+	
+		var day_in_cycle = Math.floor((time_difference / 86400));
+		
+		return day_in_cycle;
+		
+	}
+	
+	//validate this logic with product owner
+	calculateRebill(day_in_cycle, product_schedule){
+		
+		var calculated_rebill;
+		
+		console.log('xxx');
+		console.log(product_schedule);
+		
+		product_schedule.schedule.forEach((scheduled_product) => {
+				
+			if(parseInt(day_in_cycle) >= parseInt(scheduled_product.start)){
+				
+				if(!_.has(scheduled_product, "end") || (parseInt(day_in_cycle) < parseInt(scheduled_product.end))){
+					
+					var billdate = timestamp.createTimestampSeconds() + (scheduled_product.period * 86400);
+					
+					calculated_rebill = {product: scheduled_product.product_id, billdate: billdate, amount: scheduled_product.price, product_schedule: product_schedule};
+					
+					return true;
+						
+				}
+				
+			}
+			
+		});
+		
+		if(_.isObject(calculated_rebill)){
+		
+			return calculated_rebill;
+			
+		}
+		
+		return false;
+		
+	}
+	
+	//this is a lambda entrypoint
+	createRebills( session, product_schedules, day_in_cycle){
+		
+		return Promise.all(product_schedules.map(schedule => this.createRebill(session, schedule, day_in_cycle)));
+		
+	}
+	
+	createRebill(session, product_schedule, day_in_cycle){
+		
+		return new Promise((resolve, reject) => {
+			
+			if(!_.isNumber(day_in_cycle)){
+				
+				day_in_cycle = this.calculateDateInCycle(session.created);
+				
+			}
+			
+			var rebill_parameters = this.calculateRebill(day_in_cycle, product_schedule);
+		
+			var rebill_object = this.buildRebillObject({
+				parentsession: session.id,
+				billdate: rebill_parameters.billdate,
+				products: [rebill_parameters.product],
+				amount: rebill_parameters.amount
+			});
+			
+			this.saveRebill(rebill_object).then((rebill) => {
+				
+				resolve(rebill);
+				
+			}).catch((error) => {
+				
+				reject(error);
+				
+			});
+			
+		});
+			
+	}
+	
 	listRebills(cursor, limit){
 	
 		return new Promise((resolve, reject) => {
@@ -155,6 +253,26 @@ class RebillController {
 		
 	}
 	
+	saveRebill(rebill){
+		
+		return new Promise((resolve, reject) => {
+		
+			dynamoutilities.saveRecord(process.env.rebills_table, rebill, (error, data) => {
+			
+				if(_.isError(error)){
+	
+					reject(error);
+
+				}
+		
+				resolve(rebill);
+
+			});	
+			
+		});
+
+	}
+	
 	getRebillsAfterTimestamp(timestamp){
 		
 		return new Promise((resolve, reject) => {
@@ -205,6 +323,40 @@ class RebillController {
 			
 			});
 	
+		});
+		
+	}
+	
+	updateRebillTransactions(rebill, transactions){
+		
+		return new Promise((resolve, reject) => {
+			
+			var rebill_transactions = [];
+			
+			if(_.has(rebill, "transactions") && _.isArray(rebill.transactions)){
+				rebill_transactions = rebill.transactions;
+			}
+			
+			rebill_transactions = _.union(rebill.transactions, transactions);
+			
+			rebill.transactions = rebill_transactions;
+			
+			var modified = timestamp.createTimestampSeconds();
+			
+			dynamoutilities.updateRecord(process.env.rebills_table, {'id': rebill.id}, 'set transactions = :transactionsv, modified = :modifiedv', {":transactionsv": rebill_transactions, ":modifiedv": modified.toString()}, (error, data) => {
+			
+				if(_.isError(error)){
+		
+					reject(error);
+			
+				}else{
+		
+					resolve(rebill);
+			
+				}
+		
+			});
+		
 		});
 		
 	}

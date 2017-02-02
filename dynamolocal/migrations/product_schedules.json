@@ -28,8 +28,28 @@
     			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
     			"price":"34.99",
     			"start":"15",
-    			"period":"30"
+    			"period":"30" 
     		}
     	]
-    }]
+    },
+    {
+    	"id":"8d1e896f-c50d-4a6b-8c84-d5661c16a046",
+    	"schedule":[
+    		{
+    			"product_id":"616cc994-9480-4640-b26c-03810a679fe3",
+    			"price":"4.99",
+    			"start":"0",
+    			"end":"14",
+    			"period":"14"
+    		},
+    		{
+    			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
+    			"price":"34.99",
+    			"start":"15",
+    			"period":"30" 
+    		}
+    	]
+    }
+    
+    ]
 }

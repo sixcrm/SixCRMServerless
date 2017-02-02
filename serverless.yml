@@ -218,9 +218,7 @@ functions:
         affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
         merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
         fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
-        nmi_username: ${file(./config/${opt:stage}/site.yml):nmi.username}
-        nmi_password: ${file(./config/${opt:stage}/site.yml):nmi.password}
-        nmi_endpoint: ${file(./config/${opt:stage}/site.yml):nmi.endpoint}
+        rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
         stage: ${opt:stage}
         
   confirmorder:

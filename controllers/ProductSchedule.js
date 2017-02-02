@@ -159,6 +159,12 @@ class productScheduleController {
         
     }
     
+    getProductSchedules(product_schedules){
+    	
+    	return Promise.all(product_schedules.map(product_schedule => this.getProductSchedule(product_schedule)));
+    	
+    }
+    
 	getProductSchedule(id){
 		
 		var controller_instance = this;
@@ -196,6 +202,52 @@ class productScheduleController {
         });
         
     }
+    
+    getProductForPurchase(day, schedule){
+		
+		var return_product;
+		
+    	schedule.forEach((scheduled_product) => {
+
+    		if(parseInt(day) >= parseInt(scheduled_product.start)){
+
+    			if(!_.has(scheduled_product, "end")){
+    			
+    				return scheduled_product;
+    				
+    			}
+    			
+    			if(parseInt(day) < parseInt(scheduled_product.end)){
+					
+    				return_product = scheduled_product;
+    				
+    				return true;
+    				
+    			}
+    			
+    		}
+    		
+    	});
+    	
+    	return return_product;
+    	
+    }
+    
+    productSum(day_in_schedule, schedules_for_purchase){
+		
+		var return_amount = 0.0;
+		
+		schedules_for_purchase.forEach((schedule) => {
+			
+			var product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
+			
+			return_amount += parseFloat(product_for_purchase.price);
+				
+		});
+		
+		return parseFloat(return_amount);
+	
+	}	
         
 }
 

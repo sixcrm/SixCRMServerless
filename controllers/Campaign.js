@@ -130,15 +130,19 @@ class CampaignController {
 					
 				}).then((campaign) => {
 					
+					resolve(campaign);
+					
+					/*
 					controller_instance.getAffiliate(campaign).then((affiliate) => {
 						
 						campaign.affiliate = affiliate;
-						
+					
 						resolve(campaign);
 						
 					}).catch((error) => {
 						throw error;
 					});
+					*/
 					
 				}).catch((error) => {
 					throw error;
@@ -157,10 +161,10 @@ class CampaignController {
 	getHydratedCampaign(id){
 		
 		return new Promise((resolve, reject) => {
-			
+					
 			this.getCampaign(id).then((campaign) => {
 				
-				this.hydrate(campaign).then((campaign) => {
+				this.hydrate(campaign).then((campaign) => {	
 
 					resolve(campaign);
 					
@@ -214,7 +218,7 @@ class CampaignController {
         
     }
     
-    validateProducts(products, campaign){
+    validateProductSchedules(product_schedules, campaign){
 	
 		if(!_.has(campaign, 'productschedules') || !_.isArray(campaign.productschedules) || campaign.productschedules.length < 1){
 		
@@ -222,63 +226,34 @@ class CampaignController {
 		
 		}
 		
-		var product_schedules = campaign.productschedules;
-	
-			
-		for(var i = 0; i < products.length; i++){
-			var product_id = products[i].id;
-			var product_identified = false;
-			
-			for(var j = 0; j < product_schedules.length; j++){
-				var product_schedule = product_schedules[j].schedule;
-				for(var k = 0; k <product_schedule.length; k++){
-					if(_.isEqual(product_id, product_schedule[k].product.id)){
-						product_identified = true;
-					}
-				}
-			}
-			if(product_identified == false){
-				throw new Error('Product does not agree with campaign product schedule: '+product_id);
-			}
-		}
+		var campaign_product_schedules = campaign.productschedules;
 		
+		
+		for(var i = 0; i < product_schedules.length; i++){
+			
+			var schedule_found = false;
+				
+			for(var j = 0; j < campaign_product_schedules.length; j++){
+				
+				if(product_schedules[i].id == campaign_product_schedules[j].id){
+					
+					schedule_found = true;
+					
+				}
+				
+			}
+			
+			if(schedule_found == false){
+			
+				throw new Error('Product schedule does not agree with campaign product schedule: '+product_schedules[i].id);
+				
+			}
+			
+		}
+	
 		return true;
 
 	}
-    
-    productSum(products, campaign){
-		
-		var return_amount = 0.0;
-		
-		products.forEach(product => {
-			
-			var product_found = false;
-		
-			campaign.productschedules.forEach(productschedule => {
-				
-				productschedule.schedule.forEach(schedule_product => {
-			
-					if(schedule_product.product.id == product.id){
-					
-						product_found = true;
-					
-						return_amount += parseFloat(schedule_product.price);
-					
-					}
-				
-				});
-			
-				if(!product_found){
-					throw new Error('Product not found in campaign.');
-				}
-			
-			});
-			
-		});
-		
-		return parseFloat(return_amount);
-	
-	}	
         
 }
 
