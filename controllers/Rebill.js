@@ -57,9 +57,6 @@ class RebillController {
 		
 		var calculated_rebill;
 		
-		console.log('xxx');
-		console.log(product_schedule);
-		
 		product_schedule.schedule.forEach((scheduled_product) => {
 				
 			if(parseInt(day_in_cycle) >= parseInt(scheduled_product.start)){
@@ -126,6 +123,51 @@ class RebillController {
 			
 		});
 			
+	}
+	
+	addRebillToQueue(rebill, queue_name){
+		
+		return new Promise((resolve, reject) => {
+			
+			var queue_url = '';
+			
+			switch(queue_name){
+				
+				case 'bill':
+					queue_url = process.env.bill_queue_url;
+					break;
+				case 'billfailure':
+					queue_url = process.env.bill_failed_queue_url;
+					break;
+				case 'hold':
+					queue_url = process.env.hold_queue_url;
+					break;
+				default:
+					reject(new Error('Bad queue name.'));
+					break;
+				
+			}
+			
+			console.log(queue_url);
+			
+			sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: queue_url}, (error, data) =>{
+				
+				if(_.isError(error)){ reject(error);}
+				
+				this.markRebillProcessing(rebill).then((rebill) => {
+			
+					resolve(rebill);
+					
+				}).catch((error) => {
+				
+					reject(error);
+				
+				});
+			
+			});
+			
+		});
+		
 	}
 	
 	listRebills(cursor, limit){

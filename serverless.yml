@@ -219,6 +219,8 @@ functions:
         merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
         fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
         rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+        hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+        bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
         stage: ${opt:stage}
         
   confirmorder:

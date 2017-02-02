@@ -113,9 +113,10 @@ module.exports.createorder= (event, context, callback) => {
 						
 						//need some fucking unit tests here...
 						loadBalancerController.process(campaign.loadbalancer, {customer: customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
-																								
-							rebillController.createRebills(session, schedules_to_purchase, 0).then((rebill) =>{
 							
+							//this is intended to process multiple product schedules purchased...																	
+							rebillController.createRebills(session, schedules_to_purchase, 0).then((rebill) =>{
+								
 								//hack, we need to support multiple schedules in a single order
 								rebill = rebill[0];
 								
@@ -127,21 +128,38 @@ module.exports.createorder= (event, context, callback) => {
 									
 									rebillController.updateRebillTransactions(rebill, transactions).then((rebill) => {
 										
-										rebillController.createRebills(session, schedules_to_purchase).then((nextrebill) => {
-											
-											sessionController.updateSessionProductSchedules(session, schedules_to_purchase).then((session) => {
-
-												lr.issueResponse(200, {
-													message: 'Success',
-													results: transaction
-												}, callback);
-							
-											});
 										
+										//if transaction is successful
+											//else
+											
+											
+										//add rebill to the hold queue
+										rebillController.addRebillToQueue(rebill, 'hold').then(() => {
+										
+											rebillController.createRebills(session, schedules_to_purchase).then((nextrebill) => {
+											
+												sessionController.updateSessionProductSchedules(session, schedules_to_purchase).then((session) => {
+
+													lr.issueResponse(200, {
+														message: 'Success',
+														results: transaction
+													}, callback);
+							
+												}).catch((error) => {
+													lr.issueError(error, 500, event, error, callback);
+												});
+										
+											}).catch((error) => {
+												lr.issueError(error, 500, event, error, callback);
+											});
+											
+										}).catch((error) => {
+											lr.issueError(error, 500, event, error, callback);
 										});
 									
-									});
-									
+									}).catch((error) => {
+										lr.issueError(error, 500, event, error, callback);
+									});									
 							
 								}).catch((error) => {
 									lr.issueError(error, 500, event, error, callback);

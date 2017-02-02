@@ -20,6 +20,7 @@ dynamodb:
   endpoint: 'http://localhost:8001'
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'
+  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-billfailure'
   hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-hold'
   pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending'
   shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-shipped'
