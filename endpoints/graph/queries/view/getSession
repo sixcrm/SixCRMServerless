@@ -25,14 +25,36 @@
 					product {
 						id,
 						name,
-						sku							
+						sku,
+						ship,
+						shipping_delay,
+						fulfillment_provider {
+							id,
+							name,
+							provider,
+							username,
+							password,
+							endpoint
+						}						
 					}
 				}
 			},
 			rebills {
 				id,
 				billdate,
-				amount
+				amount,
+				product_schedules {
+					id,
+					schedule {
+						price,
+						start,
+						end,
+						period,
+						product {
+							id
+						}
+					}
+				}
 			}
 		} 
 	}"
