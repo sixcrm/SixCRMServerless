@@ -18,7 +18,7 @@ module.exports.forwardmessage = (event, context, callback) => {
 		
             messages.forEach(function(message) {
 				
-            	lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(message.Body)}, (error, workerdata) => {
+            	lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(message)}, (error, workerdata) => {
             		
             		if(_.isError(error)){
             			

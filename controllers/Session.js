@@ -9,6 +9,7 @@ var productScheduleController = require('./ProductSchedule.js');
 var rebillController = require('./Rebill.js');
 var customerController = require('./Customer.js');
 var transactionController = require('./Transaction.js');
+var campaignController = require('./Campaign.js');
 
 class SessionController {
 
@@ -19,6 +20,16 @@ class SessionController {
 	getCustomer(session){
 		
 		return customerController.getCustomer(session.customer);
+        
+	}
+	
+	getCampaign(session){
+		
+		var campaign = campaignController.getCampaign(session.campaign);
+		
+		console.log(campaign);
+		
+		return campaign;
         
 	}
 	

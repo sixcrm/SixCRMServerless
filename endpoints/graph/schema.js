@@ -185,6 +185,13 @@ var sessionType = new GraphQLObjectType({
       resolve: function(session){
       	 return sessionController.getRebills(session.id);
       }
+    },
+    campaign: {
+      type: new GraphQLNonNull(campaignType),
+      description: 'The campaign associated with the session',
+      resolve: function(session){
+      	return sessionController.getCampaign(session);
+      }
     }
   }),
   interfaces: [sessionInterface]
