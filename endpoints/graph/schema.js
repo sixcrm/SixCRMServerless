@@ -174,16 +174,16 @@ var sessionType = new GraphQLObjectType({
       type: GraphQLString,
       description: 'The timestamp when the Session was modified.',
     },
-    products: {
-      type: new GraphQLList(productInterface),
-      description: 'The products associated with the session',
-      resolve: session => sessionController.getProducts(session),
+    product_schedules: {
+      type: new GraphQLList(productScheduleType),
+      description: 'The product schedules associated with the session',
+      resolve: session => sessionController.getProductSchedules(session),
     },
-    transactions: {
-      type: new GraphQLList(transactionType),
-      description: 'The transactions associated with the session',
+    rebills: {
+      type: new GraphQLList(rebillType),
+      description: 'The rebills associated with the session',
       resolve: function(session){
-      	 return sessionController.getTransactions(session.id);
+      	 return sessionController.getRebills(session.id);
       }
     }
   }),
@@ -198,24 +198,24 @@ var transactionType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The id of the transaction.',
     },
+    amount: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The amount of the transaction.',
+    },
     date: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The date of the transaction.',
-    },
-    parentsession: {
-      type: sessionType,
-      description: 'The session associated with the transaction.',
-      resolve: transaction => transactionController.getParentSession(transaction),
     },
     processor_response: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The date of the transaction.',
     },
-    products: {
-      type: new GraphQLList(productInterface),
-      description:
-        'The products associated with the transaction',
-      resolve: transaction => transactionController.getProducts(transaction),
+    rebill: {
+	  type: new GraphQLNonNull(rebillType),
+      description: 'The rebill of the transaction.',
+      resolve: function(rebill){
+      	 return rebillController.getRebill(rebill.id);
+      }
     },
   }),
   interfaces: [transactionInterface]
@@ -238,12 +238,17 @@ var rebillType = new GraphQLObjectType({
       description: 'The session associated with the transaction.',
       resolve: rebill => rebillController.getParentSession(rebill),
     },
-    products: {
-      type: new GraphQLList(productInterface),
+    product_schedules: {
+      type: new GraphQLList(productScheduleType),
       description:
-        'The products associated with the transaction',
-      resolve: rebill => rebillController.getProducts(rebill),
+        'The product schedules associated with the rebill',
+      resolve: rebill => rebillController.getProductSchedules(rebill),
     },
+    transactions: {
+	  type: new GraphQLList(transactionType),
+      description: 'The transactions associated with the rebill',
+      resolve: rebill => rebillController.getTransactions(rebill),	
+    }
   }),
   interfaces: []
 });

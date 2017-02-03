@@ -5,7 +5,8 @@ const uuidV4 = require('uuid/v4');
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
 
-var productController = require('./Product.js');
+var productScheduleController = require('./ProductSchedule.js');
+var rebillController = require('./Rebill.js');
 var customerController = require('./Customer.js');
 var transactionController = require('./Transaction.js');
 
@@ -21,10 +22,15 @@ class SessionController {
         
 	}
 	
-	//deprecated
-	getProducts(session){
+	getRebills(session){
 		
-		return session.products.map(id => productController.getProduct(id));
+		return rebillController.getRebillsBySessionID(session);
+        
+	}
+	
+	getProductSchedules(session){
+		
+		return session.product_schedules.map(schedule => productScheduleController.getProductSchedule(schedule));
         
 	}
 	

@@ -10,7 +10,7 @@
             "AttributeType": "S"
         },
         {
-            "AttributeName": "rebill", 
+            "AttributeName": "rebill_id", 
             "AttributeType": "S"
         }],
         "GlobalSecondaryIndexes": [ 
@@ -18,7 +18,7 @@
 			 "IndexName": "rebill-index",
 			 "KeySchema": [ 
 				{ 
-				   "AttributeName": "rebill",
+				   "AttributeName": "rebill_id",
 				   "KeyType": "HASH"
 				}
 			 ],

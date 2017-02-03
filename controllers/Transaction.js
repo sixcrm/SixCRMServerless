@@ -107,15 +107,15 @@ class TransactionController {
     }
         
 	getTransactionsByRebillID(id){
-
+	
 		return new Promise((resolve, reject) => {
 		
 			dynamoutilities.queryRecords(process.env.transactions_table, 'rebill_id = :rebill_idv', {':rebill_idv': id}, 'rebill-index', (error, data) => {
-			
-				if(_.isError(error)){ reject(error);}
 				
-				if(_.isArray(data)){
+				if(_.isError(error)){ reject(error);}
 
+				if(_.isArray(data)){
+					
 					resolve(data);
 					
 				}

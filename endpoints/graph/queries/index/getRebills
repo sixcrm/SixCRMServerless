@@ -11,9 +11,14 @@
 						id
 					}
 				},
-				products {
+				product_schedules {
+					id
+				},
+				transactions {
 					id,
-					sku
+					date,
+					processor_response,
+					amount
 				}
 			},
 			pagination {

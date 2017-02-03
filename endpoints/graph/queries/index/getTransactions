@@ -5,17 +5,12 @@
 			transactions {
 				id,
 				date,
-				parentsession {
+				amount,
+				rebill {
 					id,
-					customer {
-						id
-					}
+					date
 				},
-				processor_response,
-				products {
-					id,
-					sku
-				}
+				processor_response
 			},
 			pagination {
 				count,

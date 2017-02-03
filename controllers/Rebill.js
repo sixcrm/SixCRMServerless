@@ -12,11 +12,19 @@ class RebillController {
 	
 	}
 	
-	getProducts(rebill){
+	getProductSchedules(rebill){
 		
-		var productController = require('./Product.js');
+		var productScheduleController = require('./ProductSchedule.js');
 		
-		return rebill.products.map(id => productController.getProduct(id));
+		return rebill.product_schedules.map(id => productScheduleController.getProductSchedule(id));
+        
+	}
+	
+	getTransactions(rebill){
+		
+		var transactionController = require('./Transaction.js');
+		
+		return transactionController.getTransactionsByRebillID(rebill.id);
         
 	}
 	
@@ -92,6 +100,7 @@ class RebillController {
 		
 	}
 	
+	//the product schedule needs to be a part of the rebill, not the product
 	createRebill(session, product_schedule, day_in_cycle){
 		
 		return new Promise((resolve, reject) => {
@@ -107,7 +116,7 @@ class RebillController {
 			var rebill_object = this.buildRebillObject({
 				parentsession: session.id,
 				billdate: rebill_parameters.billdate,
-				products: [rebill_parameters.product],
+				product_schedules: product_schedule,
 				amount: rebill_parameters.amount
 			});
 			
@@ -147,8 +156,6 @@ class RebillController {
 					break;
 				
 			}
-			
-			console.log(queue_url);
 			
 			sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: queue_url}, (error, data) =>{
 				

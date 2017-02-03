@@ -16,22 +16,11 @@
 						zip 
 					} 
 				},
-				products {
-					id,
-					name,
-					sku
+				product_schedules {
+					id
 				},
-				transactions {
-					id,
-					date,
-					parentsession {
-						id
-					},
-					processor_response,
-					products {
-						id,
-						sku
-					}
+				rebills {
+					id
 				}
 			},
 			pagination {
