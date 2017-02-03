@@ -15,22 +15,24 @@
 					zip 
 				} 
 			},
-			products {
+			product_schedules {
 				id,
-				name,
-				sku
-			},
-			transactions {
-				id,
-				date,
-				parentsession {
-					id
-				},
-				processor_response,
-				products {
-					id,
-					sku
+				schedule {
+					price,
+					start,
+					end,
+					period,
+					product {
+						id,
+						name,
+						sku							
+					}
 				}
+			},
+			rebills {
+				id,
+				billdate,
+				amount
 			}
 		} 
 	}"

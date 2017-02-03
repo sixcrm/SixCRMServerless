@@ -9,7 +9,19 @@
     			end,
     			period,
     			product {
-    				id
+    				id,
+    				name,
+    				sku,
+    				ship,
+    				shipping_delay,
+    				fulfillment_provider {
+    					id,
+    					name,
+						username,
+						password,
+						endpoint,
+						provider
+    				}
     			}
     		}
 		} 

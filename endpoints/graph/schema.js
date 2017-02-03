@@ -233,6 +233,10 @@ var rebillType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The date of the rebill.',
     },
+    amount: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'The amount of the rebill.',
+    },
     parentsession: {
       type: sessionType,
       description: 'The session associated with the transaction.',
@@ -270,15 +274,11 @@ var productType = new GraphQLObjectType({
       description: 'The product SKU',
     },
     ship: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: GraphQLString,
       description: 'The product ship, no-ship status.',
     },
     shipping_delay: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The number of seconds to delay shipping after a transaction.',
-    },
-    shipping_delay: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: GraphQLString,
       description: 'The number of seconds to delay shipping after a transaction.',
     },
     fulfillment_provider: {
@@ -287,7 +287,7 @@ var productType = new GraphQLObjectType({
 		resolve: product => productController.getFulfillmentProvider(product),    
     }
   }),
-  interfaces: [ productInterface ]
+  interfaces: []
 });
 
 var productListType = new GraphQLObjectType({

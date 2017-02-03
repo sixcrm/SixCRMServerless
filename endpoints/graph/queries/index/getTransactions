@@ -8,7 +8,35 @@
 				amount,
 				rebill {
 					id,
-					date
+					billdate,
+					amount,
+					parentsession {
+						id,
+						customer { 
+							id, 
+							firstname, 
+							lastname, 
+							address { 
+								line1, 
+								line2, 
+								city, 
+								state, 
+								zip 
+							} 
+						}
+					},
+					product_schedules {
+						id,
+						schedule {
+							price,
+							start,
+							end,
+							period,
+							product {
+								id
+							}
+						}
+					}
 				},
 				processor_response
 			},

@@ -4,17 +4,37 @@
 		transaction (id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\") { 
 			id,
 			date,
-			parentsession {
+			amount,
+			rebill {
 				id,
-				customer {
-					id
+				amount,
+				billdate,
+				product_schedules {
+					id,
+					schedule {
+						price,
+						start,
+						end,
+						period,
+						product {
+							id,
+							name,
+							sku,
+							ship,
+							shipping_delay,
+							fulfillment_provider {
+								id,
+								name,
+								provider,
+								username,
+								password,
+								endpoint
+							}
+						}
+					}
 				}
 			},
-			processor_response,
-			products {
-				id,
-				sku
-			}
+			processor_response
 		} 
 	}"
 }
