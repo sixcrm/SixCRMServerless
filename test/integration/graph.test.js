@@ -17,7 +17,7 @@ var endpoint = config.endpoint;
 describe('Graph Test', function() {
   describe('Let\'s test the graph endpoint!', function() {
     it('Should return some query results in JSON', function (done) {
-		var query = '{ session(id: "668ad918-0d09-4116-a6fe-0e8a9eda36f7"){ id, customer { id, firstname, lastname }, created, modified, completed, products { id, name } } }';
+		var query = '{ session(id: "668ad918-0d09-4116-a6fe-0e8a9eda36f7"){ id } }';
 		var this_request = request(endpoint);
     	this_request.post('graph/')
 			.set('Authorization', global.site_jwt)
