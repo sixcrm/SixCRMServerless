@@ -123,39 +123,46 @@ module.exports.createorder= (event, context, callback) => {
 								transactionController.putTransaction({session: session, rebill: rebill, amount: amount}, processor_response).then((transaction) => {
 									
 									if(!_.isObject(transaction) || !_.has(transaction, 'id')){ throw new Error('No available transaction.');}
-										
+									
+									//this looks like a hack as well	
 									var transactions = [transaction.id];
 									
 									rebillController.updateRebillTransactions(rebill, transactions).then((rebill) => {
+									
+										if(_.has(processor_response, "message") && processor_response.message == 'Success' && _.has(processor_response, "results") && _.has(processor_response.results, 'response') && processor_response.results.response == '1'){	
+			
+											rebillController.addRebillToQueue(rebill, 'hold').then(() => {
 										
-										
-										//if transaction is successful
-											//else
+												rebillController.createRebills(session, schedules_to_purchase).then((nextrebill) => {
 											
-											
-										//add rebill to the hold queue
-										rebillController.addRebillToQueue(rebill, 'hold').then(() => {
-										
-											rebillController.createRebills(session, schedules_to_purchase).then((nextrebill) => {
-											
-												sessionController.updateSessionProductSchedules(session, schedules_to_purchase).then((session) => {
+													sessionController.updateSessionProductSchedules(session, schedules_to_purchase).then((session) => {
 
-													lr.issueResponse(200, {
-														message: 'Success',
-														results: transaction
-													}, callback);
+														lr.issueResponse(200, {
+															message: 'Success',
+															results: transaction
+														}, callback);
 							
+													}).catch((error) => {
+														lr.issueError(error, 500, event, error, callback);
+													});
+										
 												}).catch((error) => {
 													lr.issueError(error, 500, event, error, callback);
 												});
-										
+											
 											}).catch((error) => {
 												lr.issueError(error, 500, event, error, callback);
 											});
 											
-										}).catch((error) => {
-											lr.issueError(error, 500, event, error, callback);
-										});
+										}else{
+											
+											//note, let's confirm that this makes sense
+											lr.issueResponse(200, {
+												message: 'Failed',
+												results: processor_response
+											}, callback);
+											
+										}
 									
 									}).catch((error) => {
 										lr.issueError(error, 500, event, error, callback);

@@ -248,6 +248,12 @@ var rebillType = new GraphQLObjectType({
         'The product schedules associated with the rebill',
       resolve: rebill => rebillController.getProductSchedules(rebill),
     },
+    products: {
+      type: new GraphQLList(productType),
+      description:
+        'The products associated with the rebill',
+      resolve: rebill => rebillController.getProducts(rebill),
+    },
     transactions: {
 	  type: new GraphQLList(transactionType),
       description: 'The transactions associated with the rebill',

@@ -12,6 +12,14 @@ class RebillController {
 	
 	}
 	
+	getProducts(rebill){
+		
+		var productController = require('./Product.js');
+		
+		return rebill.products.map(id => productController.getProduct(id));
+        
+	}
+	
 	getProductSchedules(rebill){
 		
 		var productScheduleController = require('./ProductSchedule.js');

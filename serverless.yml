@@ -240,6 +240,7 @@ functions:
         products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
         transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+        rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
         stage: ${opt:stage}
         
 resources:  

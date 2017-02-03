@@ -22,6 +22,57 @@ class SessionController {
         
 	}
 	
+	//uh, WTF
+	getTransactions(session){
+		
+		return new Promise((resolve, reject) => {
+			
+			var session_transactions = [];
+			
+			rebillController.getRebillsBySessionID(session.id).then((rebills) => {
+				
+				Promise.all(rebills.map((rebill) => {
+					
+					return new Promise((resolve, reject) => {
+							
+						transactionController.getTransactionsByRebillID(rebill.id).then((transactions) => {
+							
+							transactions.map((transaction) => {
+							
+								session_transactions.push(transaction)
+								
+							});
+							
+							resolve(transactions);
+							
+						}).catch((error) => {
+					
+							reject(error)
+						
+						});
+						
+					});
+					
+				})).then((transactions) => {
+				
+					resolve(session_transactions);
+					
+				}).catch((error) => {
+					
+					reject(error);
+					
+				});
+		
+			}).catch((error) => {
+				
+				reject(error);
+			
+			});
+					
+		});
+		
+	}
+	
 	getRebills(session){
 		
 		return rebillController.getRebillsBySessionID(session);
@@ -34,10 +85,56 @@ class SessionController {
         
 	}
 	
-	getTransactions(id){
+	getProducts(session){
 		
-		return transactionController.getTransactionsBySessionID(id);
-        
+		var controller_instance = this;
+		
+		return new Promise((resolve, reject) => {
+			
+			var session_products = [];
+			
+			rebillController.getRebillsBySessionID(session.id).then((rebills) => {
+				
+				Promise.all(rebills.map((rebill) => {
+					
+					return new Promise((resolve, reject) => {
+						
+						var productsController = require('./Product.js');
+
+						productsController.getProducts(rebill.products).then((products) => {
+							
+							resolve(products);
+							
+						});
+						
+					});
+					
+				})).then((products) => {
+					
+					products.map(product_object => {
+						
+						product_object.map(embeded_product => {
+							
+							session_products.push(embeded_product);
+							
+						});
+						
+					});
+					
+					resolve(session_products);
+					
+				}).catch((error) => {
+					
+					reject(error);
+					
+				});
+
+			}).catch((error) => {
+				reject(error);
+			});
+			
+		});
+		
 	}
 	
 	getSessions(){
