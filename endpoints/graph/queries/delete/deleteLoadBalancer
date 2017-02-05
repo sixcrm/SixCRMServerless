@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deleteloadbalancer (id: \"Testing-ID\") { 
+			id
+		} 
+	}"
+}

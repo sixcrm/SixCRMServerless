@@ -1,11 +1,11 @@
 {
 	"body":"
-	{ 
-		loadbalancer (id: \"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\") { 
+	mutation { 
+		createloadbalancer ( loadbalancer: {id: \"Testing-ID\", merchantproviders: [{id:\"6c40761d-8919-4ad6-884d-6a46a776cfb9\", distribution:\"1.0\" } ] } ) { 
 			id,
 			merchantproviderconfigurations {
 				merchantprovider {
-					id,
+					id, 
 					name,
 					username,
 					password,
@@ -17,4 +17,3 @@
 		} 
 	}"
 }
-

@@ -14,6 +14,7 @@ class userController extends entityController {
 		this.descriptive_name = 'user';
 	}
 	
+	//shouldn't this be in the users table?
 	getUserByAccessKeyId(access_key_id){
 		
 		var controller_instance = this;
@@ -52,10 +53,12 @@ class userController extends entityController {
 		
 	}
 	
+	//what is this?
 	getAccessKeyByID(id){
 		return accessKeyController.get(id);
 	}
 	
+	//what is this?
 	getAccessKey(id){
 		return accessKeyController.getAccessKey(id);
 	}

@@ -3,11 +3,14 @@ const _ = require('underscore');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var merchantProviderController = require('./MerchantProvider.js');
+var entityController = require('./Entity.js');
 
-class loadBalancerController {
+class loadBalancerController extends entityController {
 
 	constructor(){
-	
+		super(process.env.loadbalancers_table, 'loadbalancer');
+		this.table_name = process.env.loadbalancers_table;
+		this.descriptive_name = 'loadbalancer';
 	}
 	
 	getMerchantProviderConfigurations(loadbalancer){
@@ -33,62 +36,6 @@ class loadBalancerController {
 		
 		return Promise.all(loadbalancer.merchantproviders.map(merchantprovider => merchantProviderController.get(merchantprovider.id)));
         
-	}
-	
-	listLoadBalancers(cursor, limit){
-	
-		return new Promise((resolve, reject) => {
-			
-			var query_parameters = {filter_expression: null, expression_attribute_values: null};
-			
-			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = cursor;
-			}
-
-			if(typeof limit  !== 'undefined'){
-				query_parameters['limit'] = limit;
-			}
-			
-			dynamoutilities.scanRecordsFull(process.env.loadbalancers_table, query_parameters, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data)){
-					
-					var pagination_object = {
-						count: '',
-						end_cursor: '',
-						has_next_page: 'false'
-					}
-					
-					if(_.has(data, "Count")){
-						pagination_object.count = data.Count;
-					}
-					
-					if(_.has(data, "LastEvaluatedKey")){
-						if(_.has(data.LastEvaluatedKey, "id")){
-							pagination_object.end_cursor = data.LastEvaluatedKey.id;
-						}
-					}
-					
-					var has_next_page = 'false';
-					if(_.has(data, "LastEvaluatedKey")){
-						pagination_object.has_next_page = 'true';
-					}
-					
-					resolve(
-						{
-							loadbalancers: data.Items,
-							pagination: pagination_object
-						}
-					);
-					
-				}
-	
-			});
-			
-		});
-		
 	}
 	
 	getLoadBalancerHydrated(id){
@@ -134,42 +81,6 @@ class loadBalancerController {
 		});
 		
 	}
-	
-	getLoadBalancer(id){
-		
-		return new Promise((resolve, reject) => {
-				
-			dynamoutilities.queryRecords(process.env.loadbalancers_table, 'id = :idv', {':idv': id}, null, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data) && _.isArray(data)){
-					
-					if(data.length == 1){
-											
-						resolve(data[0]);
-						
-					}else{
-						
-						if(data.length > 1){
-						
-							reject(new Error('Multiple loadbalancers returned where one should be returned.'));
-							
-						}else{
-						
-							resolve([]);
-							
-						}
-						
-					}
-					
-				}
-				
-			});
-			
-        });
-        
-    }
     
     selectMerchantProvider(loadbalancer){
     	

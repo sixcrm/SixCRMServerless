@@ -1,0 +1,19 @@
+{
+	"body":"
+	mutation { 
+		updateloadbalancer ( loadbalancer: {id: \"Testing-ID\", merchantproviders: [{id:\"6c40761d-8919-4ad6-884d-6a46a776cfb9\", distribution:\"0.7\" }, {id:\"79189a4a-ed89-4742-aa96-afcd7f6c08fb\", distribution:\"0.7\" } ] } ) { 
+			id,
+			merchantproviderconfigurations {
+				merchantprovider {
+					id, 
+					name,
+					username,
+					password,
+					endpoint,
+					processor
+				},
+				distribution
+			}
+		} 
+	}"
+}

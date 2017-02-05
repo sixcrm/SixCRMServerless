@@ -1749,6 +1749,22 @@ const customerInputType = new GraphQLInputObjectType({
   })
 });
 
+const merchantProviderConfigurationInputType = new GraphQLInputObjectType({
+  name: 'MerchantProviderConfigutationInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    distribution:		{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+const loadBalancerInputType = new GraphQLInputObjectType({
+  name: 'LoadBalancerInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    merchantproviders:	{ type: new GraphQLList(merchantProviderConfigurationInputType) }
+  })
+});
+
 const deleteOutputType = new GraphQLObjectType({
   name: 'deleteOutput',
   fields: () => ({
@@ -2097,6 +2113,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, customer) => {
 				var id = customer.id;
 				return customerController.delete(id);
+			}
+		},
+		createloadbalancer:{
+			type: loadBalancerType,
+			description: 'Adds a new customer.',
+			args: {
+				loadbalancer: { type: loadBalancerInputType }
+			},
+			resolve: (value, loadbalancer) => {
+				return loadBalancerController.create(loadbalancer.loadbalancer);
+			}
+		},
+		updateloadbalancer:{
+			type: loadBalancerType,
+			description: 'Updates a loadbalancer.',
+			args: {
+				loadbalancer: { type: loadBalancerInputType }
+			},
+			resolve: (value, loadbalancer) => {
+				return loadBalancerController.update(loadbalancer.loadbalancer);
+			}
+		},
+		deleteloadbalancer:{
+			type: deleteOutputType,
+			description: 'Deletes a loadbalancer.',
+			args: {
+				id: {
+				  description: 'id of the loadbalancer',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, loadbalancer) => {
+				var id = loadbalancer.id;
+				return loadBalancerController.delete(id);
 			}
 		},
 	})

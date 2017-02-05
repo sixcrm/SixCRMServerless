@@ -19,7 +19,7 @@ class SessionController {
 	
 	getCustomer(session){
 		
-		return customerController.getCustomer(session.customer);
+		return customerController.get(session.customer);
         
 	}
 	
