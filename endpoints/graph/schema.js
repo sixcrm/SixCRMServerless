@@ -1145,7 +1145,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, customer){
       	var id = customer.id; 
-      	return customerController.getCustomer(id);
+      	return customerController.get(id);
       }
     },
     product: {
@@ -1395,7 +1395,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, customer){
 		var cursor = customer.cursor; 
 		var limit = customer.limit; 
-      	return customerController.listCustomers(cursor, limit);
+      	return customerController.list(cursor, limit);
       }
     },
     
@@ -1725,12 +1725,27 @@ const addressInputType = new GraphQLInputObjectType({
 const creditCardInputType = new GraphQLInputObjectType({
   name: 'CreditCardInput',
   fields: () => ({
+  	id:					{ type: new GraphQLNonNull(GraphQLString) },
     ccnumber:			{ type: new GraphQLNonNull(GraphQLString) },
     expiration:			{ type: new GraphQLNonNull(GraphQLString) },
     ccv:				{ type: new GraphQLNonNull(GraphQLString) },
     name:				{ type: new GraphQLNonNull(GraphQLString) },
+    address:			{ type: new GraphQLNonNull(addressInputType) }
+  })
+});
+
+//note that the credit card input type should either be an object or an identifier
+//Add to todos...
+const customerInputType = new GraphQLInputObjectType({
+  name: 'CustomerInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    firstname:			{ type: new GraphQLNonNull(GraphQLString) },
+    lastname:			{ type: new GraphQLNonNull(GraphQLString) },
+    email:				{ type: new GraphQLNonNull(GraphQLString) },
+    phone:				{ type: new GraphQLNonNull(GraphQLString) },
     address:			{ type: new GraphQLNonNull(addressInputType) },
-    id:					{ type: new GraphQLNonNull(GraphQLString) }
+    creditcards:		{ type: new GraphQLList(GraphQLString) }
   })
 });
 
@@ -2048,6 +2063,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, creditcard) => {
 				var id = creditcard.id;
 				return creditCardController.delete(id);
+			}
+		},
+		createcustomer:{
+			type: customerType,
+			description: 'Adds a new customer.',
+			args: {
+				customer: { type: customerInputType }
+			},
+			resolve: (value, customer) => {
+				return customerController.create(customer.customer);
+			}
+		},
+		updatecustomer:{
+			type: customerType,
+			description: 'Updates a customer.',
+			args: {
+				customer: { type: customerInputType }
+			},
+			resolve: (value, customer) => {
+				return customerController.update(customer.customer);
+			}
+		},
+		deletecustomer:{
+			type: deleteOutputType,
+			description: 'Deletes a customer.',
+			args: {
+				id: {
+				  description: 'id of the customer',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, customer) => {
+				var id = customer.id;
+				return customerController.delete(id);
 			}
 		},
 	})
