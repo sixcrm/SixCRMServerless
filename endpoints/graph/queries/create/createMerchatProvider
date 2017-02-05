@@ -1,0 +1,13 @@
+{
+	"body":"
+	mutation { 
+		createmerchantprovider ( merchantprovider: { id: \"testing\", name: \"test\", username: \"test\", password: \"test\", endpoint: \"test\", processor: \"NMI\"}) { 
+			id,
+			name,
+			username,
+			password,
+			endpoint,
+			processor
+		} 
+	}"
+}

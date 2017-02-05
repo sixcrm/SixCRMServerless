@@ -1338,7 +1338,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, merchantprovider){
 		var cursor = merchantprovider.cursor; 
 		var limit = merchantprovider.limit; 
-      	return merchantProviderController.listMerchantProviders(cursor, limit);
+      	return merchantProviderController.list(cursor, limit);
       }
     },
     
@@ -1518,7 +1518,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, merchantprovider){
       	var id = merchantprovider.id; 
-      	return merchantProviderController.getMerchantProvider(id);
+      	return merchantProviderController.get(id);
       }
     },
     
@@ -1671,6 +1671,18 @@ const SMTPProviderInputType = new GraphQLInputObjectType({
     username:			{ type: new GraphQLNonNull(GraphQLString) },
     password:			{ type: new GraphQLNonNull(GraphQLString) },
     port:				{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+const merchantProviderInputType = new GraphQLInputObjectType({
+  name: 'MerchantProviderInput',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: new GraphQLNonNull(GraphQLString) },
+    username:			{ type: new GraphQLNonNull(GraphQLString) },
+    password:			{ type: new GraphQLNonNull(GraphQLString) },
+    endpoint:			{ type: new GraphQLNonNull(GraphQLString) },
+    processor:			{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -1852,6 +1864,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, smtpprovider) => {
 				var id = smtpprovider.id;
 				return SMTPProviderController.delete(id);
+			}
+		},
+		createmerchantprovider:{
+			type: merchantProviderType,
+			description: 'Adds a new Merchant Provider.',
+			args: {
+				merchantprovider: { type: merchantProviderInputType }
+			},
+			resolve: (value, merchantprovider) => {
+				return merchantProviderController.create(merchantprovider.merchantprovider);
+			}
+		},
+		updatemerchantprovider:{
+			type: merchantProviderType,
+			description: 'Updates a Merchant Provider.',
+			args: {
+				merchantprovider: { type: merchantProviderInputType }
+			},
+			resolve: (value, merchantprovider) => {
+				return merchantProviderController.update(merchantprovider.merchantprovider);
+			}
+		},
+		deletemerchantprovider:{
+			type: deleteOutputType,
+			description: 'Deletes a Merchant Provider.',
+			args: {
+				id: {
+				  description: 'id of the merchantprovider',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, merchantprovider) => {
+				var id = merchantprovider.id;
+				return merchantProviderController.delete(id);
 			}
 		}
 	})
