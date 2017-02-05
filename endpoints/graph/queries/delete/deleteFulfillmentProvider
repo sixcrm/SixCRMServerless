@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deletefulfillmentprovider (id: \"testing\") { 
+			id
+		} 
+	}"
+}

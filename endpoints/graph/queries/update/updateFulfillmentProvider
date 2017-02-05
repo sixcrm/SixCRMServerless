@@ -1,0 +1,13 @@
+{
+	"body":"
+	mutation { 
+		updatefulfillmentprovider ( fulfillmentprovider: { id: \"testing\", name: \"test2\", username: \"test\", password: \"test\", endpoint: \"test\", provider: \"HASHTAG\"}) { 
+			id, 
+			name,
+			provider,
+			username,
+			password,
+			endpoint
+		} 
+	}"
+}

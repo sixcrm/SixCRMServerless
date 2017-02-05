@@ -1357,7 +1357,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, fulfillmentprovider){
 		var cursor = fulfillmentprovider.cursor; 
 		var limit = fulfillmentprovider.limit; 
-      	return fulfillmentProviderController.listFulfillmentProviders(cursor, limit);
+      	return fulfillmentProviderController.list(cursor, limit);
       }
     },
     
@@ -1532,7 +1532,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, fulfillmentprovider){
       	var id = fulfillmentprovider.id; 
-      	return fulfillmentProviderController.getFulfillmentProvider(id);
+      	return fulfillmentProviderController.get(id);
       }
     },
     
@@ -1683,6 +1683,18 @@ const merchantProviderInputType = new GraphQLInputObjectType({
     password:			{ type: new GraphQLNonNull(GraphQLString) },
     endpoint:			{ type: new GraphQLNonNull(GraphQLString) },
     processor:			{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+const fulfillmentProviderInputType = new GraphQLInputObjectType({
+  name: 'FulfillmentProviderInput',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: new GraphQLNonNull(GraphQLString) },
+    username:			{ type: new GraphQLNonNull(GraphQLString) },
+    password:			{ type: new GraphQLNonNull(GraphQLString) },
+    endpoint:			{ type: new GraphQLNonNull(GraphQLString) },
+    provider:			{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -1898,6 +1910,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, merchantprovider) => {
 				var id = merchantprovider.id;
 				return merchantProviderController.delete(id);
+			}
+		},
+		createfulfillmentprovider:{
+			type: fulfillmentProviderType,
+			description: 'Adds a new Fulfillment Provider.',
+			args: {
+				fulfillmentprovider: { type: fulfillmentProviderInputType }
+			},
+			resolve: (value, fulfillmentprovider) => {
+				return fulfillmentProviderController.create(fulfillmentprovider.fulfillmentprovider);
+			}
+		},
+		updatefulfillmentprovider:{
+			type: fulfillmentProviderType,
+			description: 'Updates a Fulfillment Provider.',
+			args: {
+				fulfillmentprovider: { type: fulfillmentProviderInputType }
+			},
+			resolve: (value, fulfillmentprovider) => {
+				return fulfillmentProviderController.update(fulfillmentprovider.fulfillmentprovider);
+			}
+		},
+		deletefulfillmentprovider:{
+			type: deleteOutputType,
+			description: 'Deletes a Fulfillment Provider.',
+			args: {
+				id: {
+				  description: 'id of the fulfillmentprovider',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, fulfillmentprovider) => {
+				var id = fulfillmentprovider.id;
+				return fulfillmentProviderController.delete(id);
 			}
 		}
 	})
