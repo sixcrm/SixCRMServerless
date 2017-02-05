@@ -13,7 +13,7 @@ class productScheduleController {
 	
 	getProduct(scheduled_product){
 		
-		return productController.getProduct(scheduled_product.product);
+		return productController.get(scheduled_product.product);
 		
 	}
 	
@@ -37,7 +37,7 @@ class productScheduleController {
 	
 	getProducts(product_schedule){
 		
-		return Promise.all(product_schedule.schedule.map(ps => productController.getProduct(ps.product_id)));
+		return Promise.all(product_schedule.schedule.map(ps => productController.get(ps.product_id)));
 		
 	}
 	

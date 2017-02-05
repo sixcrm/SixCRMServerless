@@ -1172,7 +1172,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, email){
 		var id = email.id; 
-      	return emailController.getEmail(id);
+      	return emailController.get(id);
       }
     },
     
@@ -1205,7 +1205,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, emails){
 		var cursor = emails.cursor; 
 		var limit = emails.limit; 
-      	return emailController.listEmails(cursor, limit);
+      	return emailController.list(cursor, limit);
       }
     },
     
@@ -1698,6 +1698,18 @@ const fulfillmentProviderInputType = new GraphQLInputObjectType({
   })
 });
 
+const emailInputType = new GraphQLInputObjectType({
+  name: 'EmailInput',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: new GraphQLNonNull(GraphQLString) },
+    subject:			{ type: new GraphQLNonNull(GraphQLString) },
+    body:				{ type: new GraphQLNonNull(GraphQLString) },
+    type:				{ type: new GraphQLNonNull(GraphQLString) },
+    smtp_provider:		{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
 const deleteOutputType = new GraphQLObjectType({
   name: 'deleteOutput',
   fields: () => ({
@@ -1945,7 +1957,41 @@ var mutationType = new GraphQLObjectType({
 				var id = fulfillmentprovider.id;
 				return fulfillmentProviderController.delete(id);
 			}
-		}
+		},
+		createemail:{
+			type: emailType,
+			description: 'Adds a new email.',
+			args: {
+				email: { type: emailInputType }
+			},
+			resolve: (value, email) => {
+				return emailController.create(email.email);
+			}
+		},
+		updateemail:{
+			type: emailType,
+			description: 'Updates a Email.',
+			args: {
+				email: { type: emailInputType }
+			},
+			resolve: (value, email) => {
+				return emailController.update(email.email);
+			}
+		},
+		deleteemail:{
+			type: deleteOutputType,
+			description: 'Deletes a Email.',
+			args: {
+				id: {
+				  description: 'id of the email',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, email) => {
+				var id = email.id;
+				return emailController.delete(id);
+			}
+		},
 	})
 });
 

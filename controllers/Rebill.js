@@ -18,7 +18,7 @@ class RebillController {
 	
 	getProducts(rebill){
 		
-		return rebill.products.map(id => productController.getProduct(id));
+		return rebill.products.map(id => productController.get(id));
         
 	}
 	

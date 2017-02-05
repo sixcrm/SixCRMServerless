@@ -53,7 +53,7 @@ class userController extends entityController {
 	}
 	
 	getAccessKeyByID(id){
-		return accessKeyController.getAccessKeyByID(id);
+		return accessKeyController.get(id);
 	}
 	
 	getAccessKey(id){

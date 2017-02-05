@@ -15,7 +15,7 @@ class ProductController extends entityController {
 	
 	getFulfillmentProvider(product){
 		
-		return fulfillmentProviderController.getFulfillmentProvider(product.fulfillment_provider);
+		return fulfillmentProviderController.get(product.fulfillment_provider);
 		
 	}
 	

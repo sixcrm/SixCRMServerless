@@ -19,13 +19,13 @@ class CampaignController {
 	
 	getEmails(campaign){
 		
-		return campaign.emails.map(id => emailController.getEmail(id));
+		return campaign.emails.map(id => emailController.get(id));
         
 	}
 	
 	getProducts(campaign){
 		
-		return campaign.products.map(id => productController.getProduct(id));
+		return campaign.products.map(id => productController.get(id));
         
 	}
 	
@@ -55,7 +55,7 @@ class CampaignController {
 	
 	getAffiliate(campaign){
 		
-		return affiliateController.getAffiliate(campaign.affiliate);
+		return affiliateController.get(campaign.affiliate);
 		
 	}
 	

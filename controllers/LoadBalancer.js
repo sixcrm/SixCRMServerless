@@ -25,13 +25,13 @@ class loadBalancerController {
 	
 	getMerchantProviderConfiguration(merchantproviderconfiguration){
 		
-		return merchantProviderController.getMerchantProvider(merchantproviderconfiguration.merchantprovider);
+		return merchantProviderController.get(merchantproviderconfiguration.merchantprovider);
 		
 	}
 	
 	getMerchantProviders(loadbalancer){
 		
-		return Promise.all(loadbalancer.merchantproviders.map(merchantprovider => merchantProviderController.getMerchantProvider(merchantprovider.id)));
+		return Promise.all(loadbalancer.merchantproviders.map(merchantprovider => merchantProviderController.get(merchantprovider.id)));
         
 	}
 	
