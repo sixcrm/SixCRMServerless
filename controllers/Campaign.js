@@ -37,7 +37,7 @@ class CampaignController {
 	
 	getLoadBalancer(campaign){
 		
-		return loadBalancerController.getLoadBalancer(campaign.loadbalancer);
+		return loadBalancerController.get(campaign.loadbalancer);
 		
 	}
 	
