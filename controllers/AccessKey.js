@@ -1,13 +1,16 @@
 'use strict';
 const _ = require('underscore');
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
+var entityController = require('./Entity.js');
 
-class AccessKeyController {
+class accessKeyController extends entityController {
 
 	constructor(){
-	
+		super(process.env.access_keys_table, 'accesskey');
+		this.table_name = process.env.access_keys_table;
+		this.descriptive_name = 'accesskey';
 	}
-	
+	/*
 	getAccessKeyByID(id){
 		
 		return new Promise((resolve, reject) => {
@@ -41,7 +44,7 @@ class AccessKeyController {
         });
 		
 	}
-	
+
 	listAccessKeys(cursor, limit){
 	
 		return new Promise((resolve, reject) => {
@@ -97,7 +100,7 @@ class AccessKeyController {
 		});
 		
 	}
-	
+	*/
 	getAccessKey(access_key){
 		
 		return new Promise((resolve, reject) => {
@@ -134,4 +137,4 @@ class AccessKeyController {
 	
 }
 
-module.exports = new AccessKeyController();
+module.exports = new accessKeyController();

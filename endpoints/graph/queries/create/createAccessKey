@@ -1,0 +1,10 @@
+{
+	"body":"
+	mutation { 
+		createaccesskey (accesskey: { id: \"testing\", access_key: \"test\", secret_key: \"testing\"}) { 
+			id,
+			access_key,
+			secret_key
+		} 
+	}"
+}

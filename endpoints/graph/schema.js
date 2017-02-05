@@ -1376,7 +1376,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, accesskey){
 		var cursor = accesskey.cursor; 
 		var limit = accesskey.limit; 
-      	return accessKeyController.listAccessKeys(cursor, limit);
+      	return accessKeyController.list(cursor, limit);
       }
     },
     customerlist: {
@@ -1597,7 +1597,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, accesskey){
       	var id = accesskey.id; 
-      	return accessKeyController.getAccessKeyByID(id);
+      	return accessKeyController.get(id);
       }
     },
     user: {
@@ -1634,6 +1634,15 @@ const userInputType = new GraphQLInputObjectType({
     auth0_id:	{ type: new GraphQLNonNull(GraphQLString) },
     email:		{ type: new GraphQLNonNull(GraphQLString) },
     active: 	{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+        
+const accessKeyInputType = new GraphQLInputObjectType({
+  name: 'AccessKeyInput',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    access_key:			{ type: new GraphQLNonNull(GraphQLString) },
+    secret_key:			{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -1713,6 +1722,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, product) => {
 				var id = product.id;
 				return productController.delete(id);
+			}
+		},
+		createaccesskey:{
+			type: accessKeyType,
+			description: 'Adds a new accesskey.',
+			args: {
+				accesskey: { type: accessKeyInputType }
+			},
+			resolve: (value, accesskey) => {
+				return accessKeyController.create(accesskey.accesskey);
+			}
+		},
+		updateaccesskey:{
+			type: accessKeyType,
+			description: 'Updates a accesskey.',
+			args: {
+				accesskey: { type: accessKeyInputType }
+			},
+			resolve: (value, accesskey) => {
+				return accessKeyController.update(accesskey.accesskey);
+			}
+		},
+		deleteaccesskey:{
+			type: deleteOutputType,
+			description: 'Deletes a accesskey.',
+			args: {
+				id: {
+				  description: 'id of the accesskey',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, accesskey) => {
+				var id = accesskey.id;
+				return accessKeyController.delete(id);
 			}
 		}
 	})
