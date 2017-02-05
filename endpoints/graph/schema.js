@@ -1186,7 +1186,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, smtpprovider){
 		var id = smtpprovider.id; 
-      	return SMTPProviderController.getSMTPProvider(id);
+      	return SMTPProviderController.get(id);
       }
     },
     
@@ -1224,7 +1224,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, smtpproviders){
 		var cursor = smtpproviders.cursor; 
 		var limit = smtpproviders.limit; 
-      	return SMTPProviderController.listSMTPProviders(cursor, limit);
+      	return SMTPProviderController.list(cursor, limit);
       }
     },
 	
@@ -1661,6 +1661,19 @@ const affiliateInputType = new GraphQLInputObjectType({
   })
 });
 
+const SMTPProviderInputType = new GraphQLInputObjectType({
+  name: 'SMTPProviderInput',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: new GraphQLNonNull(GraphQLString) },
+    hostname:			{ type: new GraphQLNonNull(GraphQLString) },
+    ip_address:			{ type: new GraphQLNonNull(GraphQLString) },
+    username:			{ type: new GraphQLNonNull(GraphQLString) },
+    password:			{ type: new GraphQLNonNull(GraphQLString) },
+    port:				{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
 const deleteOutputType = new GraphQLObjectType({
   name: 'deleteOutput',
   fields: () => ({
@@ -1805,6 +1818,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, affiliate) => {
 				var id = affiliate.id;
 				return affiliateController.delete(id);
+			}
+		},
+		createsmtpprovider:{
+			type: SMTPProviderType,
+			description: 'Adds a new SMTP Provider.',
+			args: {
+				smtpprovider: { type: SMTPProviderInputType }
+			},
+			resolve: (value, smtpprovider) => {
+				return SMTPProviderController.create(smtpprovider.smtpprovider);
+			}
+		},
+		updatesmtpprovider:{
+			type: SMTPProviderType,
+			description: 'Updates a SMTP Provider.',
+			args: {
+				smtpprovider: { type: SMTPProviderInputType }
+			},
+			resolve: (value, smtpprovider) => {
+				return SMTPProviderController.update(smtpprovider.smtpprovider);
+			}
+		},
+		deletesmtpprovider:{
+			type: deleteOutputType,
+			description: 'Deletes a SMTP Provider.',
+			args: {
+				id: {
+				  description: 'id of the smtpprovider',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, smtpprovider) => {
+				var id = smtpprovider.id;
+				return SMTPProviderController.delete(id);
 			}
 		}
 	})

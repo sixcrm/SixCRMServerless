@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deletesmtpprovider (id: \"testing\") { 
+			id
+		} 
+	}"
+}

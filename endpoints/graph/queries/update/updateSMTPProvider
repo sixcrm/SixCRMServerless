@@ -1,0 +1,14 @@
+{
+	"body":"
+	mutation { 
+		updatesmtpprovider (smtpprovider: { id: \"testing\", name: \"test\", hostname: \"test\", ip_address: \"test\", username: \"test\", password: \"test\", port: \"test\"}) { 
+			id,
+			name,
+			hostname,
+			ip_address,
+			username,
+			password,
+			port
+		}
+	}"
+}
