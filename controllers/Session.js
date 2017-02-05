@@ -10,47 +10,15 @@ var rebillController = require('./Rebill.js');
 var customerController = require('./Customer.js');
 var transactionController = require('./Transaction.js');
 var campaignController = require('./Campaign.js');
+var entityController = require('./Entity.js');
 
-class SessionController {
+class sessionController extends entityController {
 
 	constructor(){
+		super(process.env.sessions_table, 'session');
+		this.table_name = process.env.sessions_table;
+		this.descriptive_name = 'session';
 		this.session_length = 3600;
-	}
-	
-	getSession(id){
-		
-		return new Promise((resolve, reject) => {
-				
-			dynamoutilities.queryRecords(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isArray(data)){
-					
-					if(data.length == 1){
-						
-						resolve(data[0]);
-					
-					}else{
-						
-						if(data.length > 1){
-						
-							reject(new Error('More than one record returned for session ID.'));
-							
-						}else{
-							
-							resolve([]);
-							
-						}
-					
-					}
-					
-				}
-	
-			});
-			
-        });
-		
 	}
 	
 	getCustomer(session){
@@ -61,11 +29,7 @@ class SessionController {
 	
 	getCampaign(session){
 		
-		var id = session;
-		if(_.has(session, "id")){
-			id = session.id;
-		}
-		return campaignController.getCampaign(id);
+		return campaignController.get(session.campaign);
         
 	}
 	
@@ -194,83 +158,6 @@ class SessionController {
 		
 	}
 	
-	getSessions(){
-		
-		return new Promise((resolve, reject) => {
-			
-			dynamoutilities.scanRecords(
-				process.env.sessions_table, 
-				{
-					filter_expression: null, 
-					expression_attribute_values: null
-				}, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				resolve(data);
-				
-			});
-			
-		});
-		
-	}
-	
-	listSessions(cursor, limit){
-	
-		return new Promise((resolve, reject) => {
-			
-			var query_parameters = {filter_expression: null, expression_attribute_values: null};
-			
-			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = cursor;
-			}
-
-			if(typeof limit  !== 'undefined'){
-				query_parameters['limit'] = limit;
-			}
-			
-			dynamoutilities.scanRecordsFull(process.env.sessions_table, query_parameters, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data)){
-					
-					var pagination_object = {
-						count: '',
-						end_cursor: '',
-						has_next_page: 'false'
-					}
-					
-					if(_.has(data, "Count")){
-						pagination_object.count = data.Count;
-					}
-					
-					if(_.has(data, "LastEvaluatedKey")){
-						if(_.has(data.LastEvaluatedKey, "id")){
-							pagination_object.end_cursor = data.LastEvaluatedKey.id;
-						}
-					}
-					
-					var has_next_page = 'false';
-					if(_.has(data, "LastEvaluatedKey")){
-						pagination_object.has_next_page = 'true';
-					}
-					
-					resolve(
-						{
-							sessions: data.Items,
-							pagination: pagination_object
-						}
-					);
-					
-				}
-	
-			});
-			
-		});
-		
-	}
-	
 	getSessionHydrated(id){
 		
 		return new Promise((resolve, reject) => {
@@ -368,26 +255,6 @@ class SessionController {
 	
 	}
 	
-	saveSession(session){
-		
-		return new Promise((resolve, reject) => {
-		
-			dynamoutilities.saveRecord(process.env.sessions_table, session, (error, data) => {
-			
-				if(_.isError(error)){
-	
-					reject(error);
-
-				}
-		
-				resolve(session);
-
-			});	
-			
-		});
-
-	}
-	
 	getSessionByCustomerID(customer_id){
 		
 		return new Promise((resolve, reject) => {
@@ -446,7 +313,7 @@ class SessionController {
 						affiliate_id: parameters.affiliate_id
 					});
 					
-					this.saveSession(session).then((session) => {
+					this.save(session).then((session) => {
 	
 						resolve(session);
 	
@@ -546,4 +413,4 @@ class SessionController {
 	
 }
 
-module.exports = new SessionController();
+module.exports = new sessionController();

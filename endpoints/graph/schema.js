@@ -1134,7 +1134,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, session){
       	var id = session.id; 
-      	return sessionController.getSession(id);
+      	return sessionController.get(id);
       }
     },
     customer: {
@@ -1473,7 +1473,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, campaign){
 		var cursor = campaign.cursor; 
 		var limit = campaign.limit; 
-      	return campaignController.listCampaigns(cursor, limit);
+      	return campaignController.list(cursor, limit);
       }
     },
     
@@ -1492,7 +1492,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, session){
 		var cursor = session.cursor; 
 		var limit = session.limit; 
-      	return sessionController.listSessions(cursor, limit);
+      	return sessionController.list(cursor, limit);
       }
     },
     
@@ -1574,7 +1574,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, campaign){
       	var id = campaign.id; 
-      	return campaignController.getCampaign(id);
+      	return campaignController.get(id);
       }
     },
     affiliate: {
@@ -1815,7 +1815,33 @@ const transactionInputType = new GraphQLInputObjectType({
     processor_response:	{ type: new GraphQLList(GraphQLString) }
   })
 });
+    	
+const campaignInputType = new GraphQLInputObjectType({
+  name: 'CampaignInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: new GraphQLNonNull(GraphQLString) },
+    loadbalancer:		{ type: new GraphQLNonNull(GraphQLString) },
+    productschedules:	{ type: new GraphQLList(GraphQLString) },
+    emails:				{ type: new GraphQLList(GraphQLString) }
+  })
+});
 
+const sessionInputType = new GraphQLInputObjectType({
+  name: 'SessionInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    customer:			{ type: new GraphQLNonNull(GraphQLString) },
+    campaign:			{ type: new GraphQLNonNull(GraphQLString) },
+    modified:			{ type: new GraphQLNonNull(GraphQLString) },
+    created:			{ type: new GraphQLNonNull(GraphQLString) },
+    completed:			{ type: new GraphQLNonNull(GraphQLString) },
+    affiliate:			{ type: GraphQLString },
+    product_schedules:	{ type: new GraphQLList(GraphQLString) },
+    emails:				{ type: new GraphQLList(GraphQLString) }
+  })
+});
+            
 var mutationType = new GraphQLObjectType({
 	name: 'Mutation',
 	fields: () => ({
@@ -2293,6 +2319,74 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, transaction) => {
 				var id = transaction.id;
 				return transactionController.delete(id);
+			}
+		},
+		createcampaign:{
+			type: campaignType,
+			description: 'Adds a new campaign.',
+			args: {
+				campaign: { type: campaignInputType }
+			},
+			resolve: (value, campaign) => {
+				return campaignController.create(campaign.campaign);
+			}
+		},
+		updatecampaign:{
+			type: campaignType,
+			description: 'Updates a campaign.',
+			args: {
+				campaign: { type: campaignInputType }
+			},
+			resolve: (value, campaign) => {
+				return campaignController.update(campaign.campaign);
+			}
+		},
+		deletecampaign:{
+			type: deleteOutputType,
+			description: 'Deletes a campaign.',
+			args: {
+				id: {
+				  description: 'id of the campaign',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, campaign) => {
+				var id = campaign.id;
+				return campaignController.delete(id);
+			}
+		},
+		createsession:{
+			type: sessionType,
+			description: 'Adds a new session.',
+			args: {
+				session: { type: sessionInputType }
+			},
+			resolve: (value, session) => {
+				return sessionController.create(session.session);
+			}
+		},
+		updatesession:{
+			type: sessionType,
+			description: 'Updates a session.',
+			args: {
+				session: { type: sessionInputType }
+			},
+			resolve: (value, session) => {
+				return sessionController.update(session.session);
+			}
+		},
+		deletesession:{
+			type: deleteOutputType,
+			description: 'Deletes a session.',
+			args: {
+				id: {
+				  description: 'id of the session',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, session) => {
+				var id = session.id;
+				return sessionController.delete(id);
 			}
 		},
 	})

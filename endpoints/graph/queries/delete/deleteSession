@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deletesession (id: \"Testing-ID\") { 
+			id
+		} 
+	}"
+}

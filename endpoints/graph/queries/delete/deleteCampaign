@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deletecampaign (id: \"Testing-ID\") { 
+			id
+		} 
+	}"
+}

@@ -10,11 +10,14 @@ var loadBalancerController = require('./LoadBalancer.js');
 var productScheduleController = require('./ProductSchedule.js');
 var affiliateController = require('./Affiliate.js');
 var emailController = require('./Email.js');
+var entityController = require('./Entity.js');
 
-class CampaignController {
+class campaignController extends entityController {
 
 	constructor(){
-	
+		super(process.env.campaigns_table, 'campaign');
+		this.table_name = process.env.campaigns_table;
+		this.descriptive_name = 'campaign';
 	}
 	
 	getEmails(campaign){
@@ -56,62 +59,6 @@ class CampaignController {
 	getAffiliate(campaign){
 		
 		return affiliateController.get(campaign.affiliate);
-		
-	}
-	
-	listCampaigns(cursor, limit){
-	
-		return new Promise((resolve, reject) => {
-			
-			var query_parameters = {filter_expression: null, expression_attribute_values: null};
-			
-			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = cursor;
-			}
-
-			if(typeof limit  !== 'undefined'){
-				query_parameters['limit'] = limit;
-			}
-			
-			dynamoutilities.scanRecordsFull(process.env.campaigns_table, query_parameters, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data)){
-					
-					var pagination_object = {
-						count: '',
-						end_cursor: '',
-						has_next_page: 'false'
-					}
-					
-					if(_.has(data, "Count")){
-						pagination_object.count = data.Count;
-					}
-					
-					if(_.has(data, "LastEvaluatedKey")){
-						if(_.has(data.LastEvaluatedKey, "id")){
-							pagination_object.end_cursor = data.LastEvaluatedKey.id;
-						}
-					}
-					
-					var has_next_page = 'false';
-					if(_.has(data, "LastEvaluatedKey")){
-						pagination_object.has_next_page = 'true';
-					}
-					
-					resolve(
-						{
-							campaigns: data.Items,
-							pagination: pagination_object
-						}
-					);
-					
-				}
-	
-			});
-			
-		});
 		
 	}
 	
@@ -187,44 +134,6 @@ class CampaignController {
 		
 	}
 	
-	getCampaign(id){
-		
-		var controller_instance = this;
-		
-		return new Promise((resolve, reject) => {
-				
-			dynamoutilities.queryRecords(process.env.campaigns_table, 'id = :idv', {':idv': id}, null, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data) && _.isArray(data)){
-					
-					if(data.length == 1){
-											
-						resolve(data[0]);
-						
-					}else{
-						
-						if(data.length > 1){
-						
-							reject(new Error('Multiple campaigns returned where one should be returned.'));
-							
-						}else{
-						
-							resolve([]);
-							
-						}
-						
-					}
-					
-				}
-				
-			});
-			
-        });
-        
-    }
-    
     validateProductSchedules(product_schedules, campaign){
 	
 		if(!_.has(campaign, 'productschedules') || !_.isArray(campaign.productschedules) || campaign.productschedules.length < 1){
@@ -264,4 +173,4 @@ class CampaignController {
         
 }
 
-module.exports = new CampaignController();
+module.exports = new campaignController();

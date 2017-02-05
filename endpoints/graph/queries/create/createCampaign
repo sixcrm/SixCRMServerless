@@ -1,0 +1,62 @@
+{
+	"body":"
+	mutation { 
+		createcampaign ( campaign: { id: \"Testing-ID\", name: \"Testing Campaign\", loadbalancer: \"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\", productschedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"], emails:[\"b44ce483-861c-4843-a7d6-b4c649d6bdde\",\"8108d6a3-2d10-4013-9e8e-df71e2dc578b\"] } ) { 
+			id,
+			name,
+			productschedules { 
+				id,
+				schedule {
+					price,
+					start,
+					end,
+					period,
+					product {
+						id,
+						name,
+						sku,
+						ship,
+						shipping_delay,
+						fulfillment_provider {
+							id, 
+							name,
+							provider,
+							username,
+							password,
+							endpoint
+						}
+					}
+				}
+			}
+			loadbalancer {
+				id,
+				merchantproviderconfigurations {
+					merchantprovider {
+						id, 
+						username,
+						password,
+						endpoint,
+						processor
+					},
+					distribution
+				}
+			},
+			emails {
+				id,
+				name,
+				subject,
+				body,
+				type,
+				smtp_provider{
+					id,
+					name,
+					hostname,
+					ip_address,
+					username,
+					password,
+					port
+				}
+			}
+		} 
+	}"
+}
