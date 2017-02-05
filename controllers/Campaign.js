@@ -43,7 +43,7 @@ class CampaignController {
 	
 	getProductSchedules(campaign){
 		
-		return campaign.productschedules.map(id => productScheduleController.getProductSchedule(id));
+		return campaign.productschedules.map(id => productScheduleController.get(id));
 		
 	}
 	

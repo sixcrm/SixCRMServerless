@@ -1433,7 +1433,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, productschedule){
 		var cursor = productschedule.cursor; 
 		var limit = productschedule.limit; 
-      	return productScheduleController.listProductSchedules(cursor, limit);
+      	return productScheduleController.list(cursor, limit);
       }
     },
     
@@ -1504,7 +1504,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, productschedule){
       	var id = productschedule.id; 
-      	return productScheduleController.getProductSchedule(id);
+      	return productScheduleController.get(id);
       }
     },
     
@@ -1762,6 +1762,25 @@ const loadBalancerInputType = new GraphQLInputObjectType({
   fields: () => ({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
     merchantproviders:	{ type: new GraphQLList(merchantProviderConfigurationInputType) }
+  })
+});
+
+const productScheduleInputType = new GraphQLInputObjectType({
+  name: 'ProductScheduleInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    schedule:			{ type: new GraphQLList(productScheduleProductConfigurationInputType) }
+  })
+});
+
+const productScheduleProductConfigurationInputType = new GraphQLInputObjectType({
+  name: 'ProductScheduleProductConfigurationInputType',
+  fields: () => ({
+    product_id:			{ type: new GraphQLNonNull(GraphQLString) },
+    price:				{ type: new GraphQLNonNull(GraphQLString) },
+    start:				{ type: new GraphQLNonNull(GraphQLString) },
+    end:				{ type: GraphQLString },
+    period:				{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -2147,6 +2166,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, loadbalancer) => {
 				var id = loadbalancer.id;
 				return loadBalancerController.delete(id);
+			}
+		},
+		createproductschedule:{
+			type: productScheduleType,
+			description: 'Adds a new product schedule.',
+			args: {
+				productschedule: { type: productScheduleInputType }
+			},
+			resolve: (value, productschedule) => {
+				return productScheduleController.create(productschedule.productschedule);
+			}
+		},
+		updateproductschedule:{
+			type: productScheduleType,
+			description: 'Updates a product schedule.',
+			args: {
+				productschedule: { type: productScheduleInputType }
+			},
+			resolve: (value, productschedule) => {
+				return productScheduleController.update(productschedule.productschedule);
+			}
+		},
+		deleteproductschedule:{
+			type: deleteOutputType,
+			description: 'Deletes a product schedule.',
+			args: {
+				id: {
+				  description: 'id of the product schedule',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, productschedule) => {
+				var id = productschedule.id;
+				return productScheduleController.delete(id);
 			}
 		},
 	})

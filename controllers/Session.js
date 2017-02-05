@@ -102,7 +102,7 @@ class SessionController {
 	
 	getProductSchedules(session){
 		
-		return session.product_schedules.map(schedule => productScheduleController.getProductSchedule(schedule));
+		return session.product_schedules.map(schedule => productScheduleController.get(schedule));
         
 	}
 	

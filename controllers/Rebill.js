@@ -24,7 +24,7 @@ class RebillController {
 	
 	getProductSchedules(rebill){
 		
-		return rebill.product_schedules.map(id => productScheduleController.getProductSchedule(id));
+		return rebill.product_schedules.map(id => productScheduleController.get(id));
         
 	}
 	
