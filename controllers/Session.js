@@ -25,11 +25,21 @@ class SessionController {
 	
 	getCampaign(session){
 		
-		var campaign = campaignController.getCampaign(session.campaign);
+		var id = session;
+		if(_.has(session, "id")){
+			id = session.id;
+		}
+		return campaignController.getCampaign(id);
+        
+	}
+	
+	getCampaignHydrated(session){
 		
-		console.log(campaign);
-		
-		return campaign;
+		var id = session;
+		if(_.has(session, "id")){
+			id = session.id;
+		}
+		return campaignController.getHydratedCampaign(id);
         
 	}
 	
@@ -224,6 +234,72 @@ class SessionController {
 		});
 		
 	}
+	
+	getSessionHydrated(id){
+		
+		return new Promise((resolve, reject) => {
+				
+			this.getSession(id).then((session) => {
+				
+				this.hydrate(session).then((session) => {	
+					
+					console.log(session);
+					process.exit();
+					
+					resolve(session);
+					
+				}).catch((error) => {
+				
+					reject(error);
+					
+				});
+				
+			});
+			
+			
+        });
+		
+	}
+	
+	hydrate(session){
+		
+		var controller_instance = this;
+		
+		return new Promise((resolve, reject) => {
+		
+			controller_instance.getCampaignHydrated(session.campaign).then((campaign) => {
+	
+				session.campaign = campaign;
+				
+				return session;
+				
+			}).then((session) => {
+				
+				controller_instance.getCustomerHydrated(session.customer).then((customer) => {
+					
+					session.customer = customer;
+					
+					return session;
+					
+				}).then((session) => {
+					
+					resolve(session);
+					
+				}).catch((error) => {
+			
+					throw error;
+				
+				});
+				
+			}).catch((error) => {
+			
+				throw error;
+				
+			});
+			
+		});
+		
+	}	
 	
 	getSession(id){
 		

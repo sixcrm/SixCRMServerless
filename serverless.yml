@@ -78,6 +78,8 @@ functions:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+      emails_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.emails_table}
+      smtp_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.smtp_providers_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
   
   billtohold:
@@ -144,7 +146,22 @@ functions:
     handler: workers/processbilling/handler.processbilling
     environment:
       stage: ${opt:stage} 
-      
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+      sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
+      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+      credit_cards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.credit_cards_table}
+      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+      campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
+      loadbalancers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.loadbalancers_table}
+      product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
+      affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
+      merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
+      fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
+      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
+      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+              
   triggerfulfillment:
     handler: workers/triggerfulfillment/handler.triggerfulfillment
     environment:

@@ -17,6 +17,8 @@ dynamodb:
   campaigns_table: 'campaigns'
   merchant_providers_table: 'merchant_providers'
   fulfillment_providers_table: 'fulfillment_providers'
+  emails_table: 'emails'
+  smtp_providers_table: 'smtp_providers'
   endpoint: ''
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'

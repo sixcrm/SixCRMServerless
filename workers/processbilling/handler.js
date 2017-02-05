@@ -3,9 +3,11 @@ var AWS = require("aws-sdk");
 
 var lr = require('../../lib/lambda-response.js');
 var rebillController = require('../../controllers/Rebill.js');
+var sessionController = require('../../controllers/Session.js');
+var loadBalancerController = require('../../controllers/LoadBalancer.js');
 
 module.exports.processbilling = (event, context, callback) => {
-    
+
     /*
     
     {
@@ -22,10 +24,16 @@ module.exports.processbilling = (event, context, callback) => {
 	}
 
     */
-    rebillController.getParentSession(event).then((session) => {
+    
+    rebillController.getParentSessionHydrated(event).then((session) => {
+			
+		loadBalancerController.process(campaign.loadbalancer, {customer: customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
+			
+			lr.issueResponse(200, {
+				message: 'Success'
+			}, callback);   
 		
-			
-			
+		});
 			
 	});
 
@@ -35,11 +43,7 @@ module.exports.processbilling = (event, context, callback) => {
 
     
 	//
-    //execute billing
-    	
-	lr.issueResponse(200, {
-		message: 'Success'
-	}, callback);        
+    //execute billing     
 
 }
 

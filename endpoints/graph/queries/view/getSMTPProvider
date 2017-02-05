@@ -1,0 +1,15 @@
+{
+	"body":"
+	{ 
+		smtpprovider (id: \"18213d0b-cd6d-4cea-91b9-993d7443468b\") { 
+			id,
+			name,
+			hostname,
+			ip_address,
+			username,
+			password,
+			port
+		} 
+	}"
+}
+

@@ -40,6 +40,22 @@
 					},
 					distribution
 				}
+			},
+			emails {
+				id,
+				name,
+				subject,
+				body,
+				type,
+				smtp_provider{
+					id,
+					name,
+					hostname,
+					ip_address,
+					username,
+					password,
+					port
+				}
 			}
 		} 
 	}"

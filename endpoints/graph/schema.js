@@ -24,6 +24,42 @@ var affiliateController = require('../../controllers/Affiliate.js');
 var fulfillmentProviderController = require('../../controllers/FulfillmentProvider.js');
 var accessKeyController = require('../../controllers/AccessKey.js');
 var userController = require('../../controllers/User.js');
+var emailController = require('../../controllers/Email.js');
+var SMTPProviderController = require('../../controllers/SMTPProvider.js');
+
+const emailTypeEnum = new GraphQLEnumType({
+	name: 'EmailTypeEnumeration',
+	description:  'The various email types.',
+	values:{
+		ALLORDERS: {
+			value: 'allorders',
+		},
+		INITIALORDERS: {
+			value: 'initialorders'
+		},
+		INITIALFULFILLMENT: {
+			value: 'initialfulfillment'
+		},
+		RECURRINGORDER: {
+			value: 'recurringorder'
+		},
+		RECURRINGFULFILLMENT: {
+			value: 'recurringfulfillment'
+		},
+		RECURRINGDECLINE: {
+			value: 'recurringdecline'
+		},
+		CANCELLATION: {
+			value: 'cancellation'
+		},
+		RETURNTOMANUFACTURER: {
+			value: 'returntomanufacturer'
+		},
+		REFUNDVOID: {
+			value: 'refundvoid'
+		}
+	}
+});
 
 const merchantProviderProcessorsEnum = new GraphQLEnumType({
   name: 'MerchantProviderProcessors',
@@ -99,7 +135,7 @@ var sessionInterface = new GraphQLInterfaceType({
   fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The id of the product.',
+      description: 'The id of the session.',
     }
   }),
   resolveType(session) {
@@ -310,6 +346,38 @@ var productListType = new GraphQLObjectType({
     products: {
       type: new GraphQLList(productType),
       description: 'The products',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var emailListType = new GraphQLObjectType({
+  name: 'Emails',
+  description: 'Email tempates for use.',
+  fields: () => ({
+    emails: {
+      type: new GraphQLList(emailType),
+      description: 'The email templates',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var SMTPProviderListType = new GraphQLObjectType({
+  name: 'SMTPProviders',
+  description: 'SMTP Providers.',
+  fields: () => ({
+    smtpproviders: {
+      type: new GraphQLList(SMTPProviderType),
+      description: 'The email templates',
     },
     pagination: {
       type: new GraphQLNonNull(paginationType),
@@ -849,6 +917,80 @@ var campaignType = new GraphQLObjectType({
       type: new GraphQLList(productScheduleType),
       description: 'The configured product schedules associated with the campaign',
       resolve: campaign => campaignController.getProductSchedules(campaign)
+    },
+    emails: {
+      type: new GraphQLList(emailType),
+      descsription: 'Emails configured and associated with the campaign',
+      resolve: campaign => campaignController.getEmails(campaign)
+    }
+  }),
+  interfaces: []
+});
+
+var emailType = new GraphQLObjectType({
+  name: 'email',
+  description: 'A email object',
+  fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The email identifier.',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The email name.',
+    },
+    subject: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The email subject.',
+    },
+    body: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The email body.',
+    },
+    type: {
+      type: new GraphQLNonNull(emailTypeEnum),
+      description: 'The email type (see enumeration).',
+    },
+    smtp_provider: {
+      type: new GraphQLNonNull(SMTPProviderType),
+      description: 'The SMTP Provider for the email.',
+      resolve: email => emailController.getSMTPProvider(email)
+    }
+  }),
+  interfaces: []
+});
+
+var SMTPProviderType = new GraphQLObjectType({
+  name: 'SMTP',
+  description: 'A SMTP Provider',
+  fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The SMTP Provider identifier.',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The name of the SMTP Provider.',
+    },
+    hostname: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The hostname of the SMTP Provider.',
+    },
+    ip_address: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The ip_address of the SMTP Provider.',
+    },
+    username: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'A username associated with the SMTP Provider.',
+    },
+    password: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The password associated with the username.',
+    },
+    port: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The SMTP port for the the SMTP Provider',
     }
   }),
   interfaces: []
@@ -1016,7 +1158,73 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, product){
 		var id = product.id; 
-      	return productController.getProduct(id);
+      	return productController.get(id);
+      }
+    },
+    
+     email: {
+      type: emailType,
+      args: {
+        id: {
+          description: 'id of the email',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, email){
+		var id = email.id; 
+      	return emailController.getEmail(id);
+      }
+    },
+    
+    smtpprovider: {
+      type: SMTPProviderType,
+      args: {
+        id: {
+          description: 'id of the SMTP Provider',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, smtpprovider){
+		var id = smtpprovider.id; 
+      	return SMTPProviderController.getSMTPProvider(id);
+      }
+    },
+    
+    emaillist: {
+      type: emailListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, emails){
+		var cursor = emails.cursor; 
+		var limit = emails.limit; 
+      	return emailController.listEmails(cursor, limit);
+      }
+    },
+    
+    smtpproviderlist: {
+      type: SMTPProviderListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, smtpproviders){
+		var cursor = smtpproviders.cursor; 
+		var limit = smtpproviders.limit; 
+      	return SMTPProviderController.listSMTPProviders(cursor, limit);
       }
     },
 	
@@ -1035,7 +1243,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, products){
 		var cursor = products.cursor; 
 		var limit = products.limit; 
-      	return productController.listProducts(cursor, limit);
+      	return productController.list(cursor, limit);
       }
     },
     
@@ -1054,7 +1262,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, user){
 		var cursor = user.cursor; 
 		var limit = user.limit; 
-      	return userController.listUsers(cursor, limit);
+      	return userController.list(cursor, limit);
       }
     },
     
@@ -1402,7 +1610,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, user){
       	var id = user.id; 
-      	return userController.getUser(id);
+      	return userController.get(id);
       }
     }
     
@@ -1418,6 +1626,17 @@ const productInputType = new GraphQLInputObjectType({
   })
 });
 
+const userInputType = new GraphQLInputObjectType({
+  name: 'UserInput',
+  fields: () => ({
+    id:			{ type: new GraphQLNonNull(GraphQLString) },
+    name:		{ type: new GraphQLNonNull(GraphQLString) },
+    auth0_id:	{ type: new GraphQLNonNull(GraphQLString) },
+    email:		{ type: new GraphQLNonNull(GraphQLString) },
+    active: 	{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
 const deleteOutputType = new GraphQLObjectType({
   name: 'deleteOutput',
   fields: () => ({
@@ -1428,6 +1647,40 @@ const deleteOutputType = new GraphQLObjectType({
 var mutationType = new GraphQLObjectType({
 	name: 'Mutation',
 	fields: () => ({
+		createuser:{
+			type: userType,
+			description: 'Adds a new user.',
+			args: {
+				user: { type: userInputType }
+			},
+			resolve: (value, user) => {
+				return userController.create(user.user);
+			}
+		},
+		updateuser:{
+			type: userType,
+			description: 'Updates a user.',
+			args: {
+				user: { type: userInputType }
+			},
+			resolve: (value, user) => {
+				return userController.update(user.user);
+			}
+		},
+		deleteuser:{
+			type: deleteOutputType,
+			description: 'Deletes a user.',
+			args: {
+				id: {
+				  description: 'id of the user',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, user) => {
+				var id = user.id;
+				return userController.delete(id);
+			}
+		},
 		createproduct:{
 			type: productType,
 			description: 'Adds a new product.',
@@ -1435,7 +1688,7 @@ var mutationType = new GraphQLObjectType({
 				product: { type: productInputType }
 			},
 			resolve: (value, product) => {
-				return productController.createProduct(product.product);
+				return productController.create(product.product);
 			}
 		},
 		updateproduct:{
@@ -1445,7 +1698,7 @@ var mutationType = new GraphQLObjectType({
 				product: { type: productInputType }
 			},
 			resolve: (value, product) => {
-				return productController.updateProduct(product.product);
+				return productController.update(product.product);
 			}
 		},
 		deleteproduct:{
@@ -1459,7 +1712,7 @@ var mutationType = new GraphQLObjectType({
 			},
 			resolve: (value, product) => {
 				var id = product.id;
-				return productController.deleteProduct(id);
+				return productController.delete(id);
 			}
 		}
 	})

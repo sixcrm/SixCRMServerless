@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deleteuser (id: \"testing\") { 
+			id
+		} 
+	}"
+}

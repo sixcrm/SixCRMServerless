@@ -5,6 +5,10 @@ const uuidV4 = require('uuid/v4');
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var sqsutilities = require('../lib/sqs-utilities.js');
 var timestamp = require('../lib/timestamp.js');
+var sessionController = require('./Session.js');
+var transactionController = require('./Transaction.js');
+var productScheduleController = require('./ProductSchedule.js');
+var productController = require('./Product.js');
 
 class RebillController {
 
@@ -14,15 +18,11 @@ class RebillController {
 	
 	getProducts(rebill){
 		
-		var productController = require('./Product.js');
-		
 		return rebill.products.map(id => productController.getProduct(id));
         
 	}
 	
 	getProductSchedules(rebill){
-		
-		var productScheduleController = require('./ProductSchedule.js');
 		
 		return rebill.product_schedules.map(id => productScheduleController.getProductSchedule(id));
         
@@ -30,21 +30,22 @@ class RebillController {
 	
 	getTransactions(rebill){
 		
-		var transactionController = require('./Transaction.js');
-		
 		return transactionController.getTransactionsByRebillID(rebill.id);
         
 	}
 	
 	getParentSession(rebill){
 		
-		var sessionController = require('./Session.js');
-		
-		var id = rebill.parentsession;
-		
-		return sessionController.getSession(id);
+		return sessionController.getSession(rebill.parentsession);
 		
 	}
+	
+	getParentSessionHydrated(rebill){
+		
+		return sessionController.getSessionHydrated(rebill.parentsession);
+		
+	}
+
 	
 	buildRebillObject(parameters){
 	

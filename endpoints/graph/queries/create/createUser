@@ -1,0 +1,12 @@
+{
+	"body":"
+	mutation { 
+		createuser (user: { id: \"testing\", auth0_id: \"test\", name: \"testingname\", email:\"testingemail\", active:\"true\" }) { 
+			id,
+			auth0_id,
+			name,
+			email,
+			active
+		} 
+	}"
+}

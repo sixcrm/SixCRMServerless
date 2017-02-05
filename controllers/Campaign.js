@@ -9,11 +9,18 @@ var productController = require('./Product.js');
 var loadBalancerController = require('./LoadBalancer.js');
 var productScheduleController = require('./ProductSchedule.js');
 var affiliateController = require('./Affiliate.js');
+var emailController = require('./Email.js');
 
 class CampaignController {
 
 	constructor(){
 	
+	}
+	
+	getEmails(campaign){
+		
+		return campaign.emails.map(id => emailController.getEmail(id));
+        
 	}
 	
 	getProducts(campaign){

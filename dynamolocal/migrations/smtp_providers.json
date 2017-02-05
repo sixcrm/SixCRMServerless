@@ -1,0 +1,28 @@
+{
+    "Table": {
+        "TableName": "smtp_providers",
+        "KeySchema": [{
+            "AttributeName": "id",
+            "KeyType": "HASH"
+        }], 
+        "AttributeDefinitions": [{
+            "AttributeName": "id", 
+            "AttributeType": "S"
+        }],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1, 
+            "WriteCapacityUnits": 1
+        }
+    },
+    "Seeds": [
+    	{
+			"id":"18213d0b-cd6d-4cea-91b9-993d7443468b",
+			"name":"SMTP Provider 1",
+			"hostname":"a",
+			"ip_address":"b",
+			"username":"c",
+			"password":"d",
+			"port":"e"
+    	}
+    ]
+}

@@ -1,0 +1,22 @@
+{
+	"body":"
+	{ 
+		email (id: \"b44ce483-861c-4843-a7d6-b4c649d6bdde\") {
+			id,
+			name,
+			subject,
+			body,
+			type,
+			smtp_provider{
+				id,
+				name,
+				hostname,
+				ip_address,
+				username,
+				password,
+				port
+			}
+		} 
+	}"
+}
+

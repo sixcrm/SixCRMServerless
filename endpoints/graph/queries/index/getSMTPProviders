@@ -1,0 +1,22 @@
+{
+	"body":"
+	query { 
+		smtpproviderlist {
+			smtpproviders{
+				id,
+				name,
+				hostname,
+				ip_address,
+				username,
+				password,
+				port
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

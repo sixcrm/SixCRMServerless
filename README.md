@@ -6,15 +6,15 @@
 
 #### Outstanding
 
-1.  Add fulfillment fields
-2.  Complete Graph Schema for Reads
-3.  Graph Mutations (Update, Create, Delete)
-4.  Handle "no-results" with Graph
-5.  Endpoint User validation (active, has access)
+-  Add fulfillment fields
+-  Graph Mutations (Update, Create, Delete)
+-  Handle "no-results" with Graph
+-  Endpoint User validation (active, has access)
+-  Add indexes "completed-index", "created-index" to transactions *(REEVALUATE)*
+-  Think on the recurring transaction processor mechanism.
+-  Add Unit Testing.
+-  Add Affiliate to Session Create
 
-10.  Add indexes "completed-index", "created-index" to transactions *(REEVALUATE)*
-12.  Think on the recurring transaction processor mechanism.
-14.  Add Unit Testing.
 
 ### Verify Signature
 
@@ -54,5 +54,6 @@ Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f cre
 5.  CC record missing from the transaction. *Confirm*
 6.  Occasionally, the product is missing from the transaction. *Confirm*
 7.  Customer doesn't need a billing address. *Confirm*
+8.  Delete/Update methods need to check for existence first.
 
 
