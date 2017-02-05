@@ -80,7 +80,7 @@ module.exports = class entityController {
 				if(_.isObject(data) && _.isArray(data)){
 					
 					if(data.length == 1){
-	
+						
 						resolve(data[0]);
 						
 					}else{

@@ -19,7 +19,6 @@ class SessionController {
 	
 	getSession(id){
 		
-		console.log('yeh');
 		return new Promise((resolve, reject) => {
 				
 			dynamoutilities.queryRecords(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, data) => {

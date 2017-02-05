@@ -1,0 +1,43 @@
+{
+	"body":"
+	mutation { 
+		createtransaction ( transaction: { id: \"Testing-ID\", date: \"Mon, 16 Jan 2017 20:48:52 GMT\", rebill_id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\", amount:30000.00, processor_response:\"Test\" } ) { 
+			id,
+			date,
+			amount,
+			rebill {
+				id,
+				billdate,
+				amount,
+				parentsession {
+					id,
+					customer { 
+						id, 
+						firstname, 
+						lastname, 
+						address { 
+							line1, 
+							line2, 
+							city, 
+							state, 
+							zip 
+						} 
+					}
+				},
+				product_schedules {
+					id,
+					schedule {
+						price,
+						start,
+						end,
+						period,
+						product {
+							id
+						}
+					}
+				}
+			},
+			processor_response
+		} 
+	}"
+}

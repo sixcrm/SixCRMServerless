@@ -4,11 +4,14 @@ const uuidV4 = require('uuid/v4');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
+var entityController = require('./Entity.js');
 
-class TransactionController {
+class transactionController extends entityController {
 
 	constructor(){
-	
+		super(process.env.transactions_table, 'transaction');
+		this.table_name = process.env.transactions_table;
+		this.descriptive_name = 'transaction';
 	}
 	
 	//this was screwy....
@@ -16,96 +19,10 @@ class TransactionController {
 		
 		var rebillController = require('./Rebill.js');
 		
-		var id = transaction.rebill_id;
-		
-		return rebillController.getSession(id);
-		
-	}
-	
-	listTransactions(cursor, limit){
-	
-		return new Promise((resolve, reject) => {
-			
-			var query_parameters = {filter_expression: null, expression_attribute_values: null};
-			
-			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = cursor;
-			}
+		return rebillController.get(transaction.rebill_id);
 
-			if(typeof limit  !== 'undefined'){
-				query_parameters['limit'] = limit;
-			}
-			
-			dynamoutilities.scanRecordsFull(process.env.transactions_table, query_parameters, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data)){
-					
-					var pagination_object = {
-						count: '',
-						end_cursor: '',
-						has_next_page: 'false'
-					}
-					
-					if(_.has(data, "Count")){
-						pagination_object.count = data.Count;
-					}
-					
-					if(_.has(data, "LastEvaluatedKey")){
-						if(_.has(data.LastEvaluatedKey, "id")){
-							pagination_object.end_cursor = data.LastEvaluatedKey.id;
-						}
-					}
-					
-					var has_next_page = 'false';
-					if(_.has(data, "LastEvaluatedKey")){
-						pagination_object.has_next_page = 'true';
-					}
-					
-					resolve(
-						{
-							transactions: data.Items,
-							pagination: pagination_object
-						}
-					);
-					
-				}
-	
-			});
-			
-		});
 		
 	}
-	
-	getTransaction(id){
-		
-		return new Promise((resolve, reject) => {
-				
-			dynamoutilities.queryRecords(process.env.transactions_table, 'id = :idv', {':idv': id}, null, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isArray(data)){
-					
-					if(data.length == 1){
-						resolve(data[0]);
-					}else{
-						if(data.length > 1){
-							reject(new Error('multiple transactions returned where one should be returned.'));
-						}else{
-							resolve([]);
-						}
-						
-					}
-					
-				}
-				
-			});
-			
-        });
-        
-    }
         
 	getTransactionsByRebillID(id){
 		
@@ -133,7 +50,7 @@ class TransactionController {
 		
 			var transaction = this.createTransactionObject(params, processor_response);
 			
-			this.saveTransaction(transaction).then((data) => {
+			this.save(transaction).then((data) => {
 			
 				resolve(transaction);
 				
@@ -141,21 +58,6 @@ class TransactionController {
 			
 				reject(error);
 				
-			});
-		
-		});
-	
-	}
-	
-	saveTransaction(transaction){
-	
-		return new Promise((resolve, reject) => {
-		
-			dynamoutilities.saveRecord(process.env.transactions_table, transaction, (error, data) => {
-				if(_.isError(error)){
-					reject(error);
-				}
-				resolve(data);
 			});
 		
 		});
@@ -223,4 +125,4 @@ class TransactionController {
 	
 }
 
-module.exports = new TransactionController();
+module.exports = new transactionController();

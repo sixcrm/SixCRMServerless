@@ -9,6 +9,7 @@ var GraphQLNonNull = require('graphql').GraphQLNonNull;
 var GraphQLSchema = require('graphql').GraphQLSchema;
 var GraphQLString = require('graphql').GraphQLString;
 var GraphQLInt = require('graphql').GraphQLInt;
+var GraphQLFloat = require('graphql').GraphQLFloat;
 var GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 var sessionController = require('../../controllers/Session.js');
@@ -257,8 +258,8 @@ var transactionType = new GraphQLObjectType({
     rebill: {
 	  type: new GraphQLNonNull(rebillType),
       description: 'The rebill of the transaction.',
-      resolve: function(rebill){
-      	 return rebillController.get(rebill.id);
+      resolve: function(transaction){
+      	 return transactionController.getParentRebill(transaction);
       }
     },
   }),
@@ -1107,7 +1108,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, transaction){
       	var id = transaction.id; 
-      	return transactionController.getTransaction(id);
+      	return transactionController.get(id);
       }
     },
     rebill: {
@@ -1453,7 +1454,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, transaction){
 		var cursor = transaction.cursor; 
 		var limit = transaction.limit; 
-      	return transactionController.listTransactions(cursor, limit);
+      	return transactionController.list(cursor, limit);
       }
     },
     
@@ -1801,6 +1802,17 @@ const rebillInputType = new GraphQLInputObjectType({
     amount:				{ type: new GraphQLNonNull(GraphQLString) },
     products:			{ type: new GraphQLList(GraphQLString) },
     product_schedules:	{ type: new GraphQLList(GraphQLString) }
+  })
+});
+
+const transactionInputType = new GraphQLInputObjectType({
+  name: 'TransactionInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    date:				{ type: new GraphQLNonNull(GraphQLString) },
+    rebill_id:			{ type: new GraphQLNonNull(GraphQLString) },
+    amount:				{ type: new GraphQLNonNull(GraphQLFloat) },
+    processor_response:	{ type: new GraphQLList(GraphQLString) }
   })
 });
 
@@ -2247,6 +2259,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, rebill) => {
 				var id = rebill.id;
 				return rebillController.delete(id);
+			}
+		},
+		createtransaction:{
+			type: transactionType,
+			description: 'Adds a new transaction.',
+			args: {
+				transaction: { type: transactionInputType }
+			},
+			resolve: (value, transaction) => {
+				return transactionController.create(transaction.transaction);
+			}
+		},
+		updatetransaction:{
+			type: transactionType,
+			description: 'Updates a transaction.',
+			args: {
+				transaction: { type: transactionInputType }
+			},
+			resolve: (value, transaction) => {
+				return transactionController.update(transaction.transaction);
+			}
+		},
+		deletetransaction:{
+			type: deleteOutputType,
+			description: 'Deletes a transaction.',
+			args: {
+				id: {
+				  description: 'id of the transaction',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, transaction) => {
+				var id = transaction.id;
+				return transactionController.delete(id);
 			}
 		},
 	})
