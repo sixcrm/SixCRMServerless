@@ -1300,7 +1300,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, affiliate){
 		var cursor = affiliate.cursor; 
 		var limit = affiliate.limit; 
-      	return affiliateController.listAffiliates(cursor, limit);
+      	return affiliateController.list(cursor, limit);
       }
     },
     
@@ -1379,6 +1379,7 @@ var queryType = new GraphQLObjectType({
       	return accessKeyController.list(cursor, limit);
       }
     },
+    
     customerlist: {
       type: customerListType,
       args: {
@@ -1584,7 +1585,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, affiliate){
       	var id = affiliate.id; 
-      	return affiliateController.getAffiliate(id);
+      	return affiliateController.get(id);
       }
     },
     accesskey: {
@@ -1643,6 +1644,20 @@ const accessKeyInputType = new GraphQLInputObjectType({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
     access_key:			{ type: new GraphQLNonNull(GraphQLString) },
     secret_key:			{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+const affiliateInputType = new GraphQLInputObjectType({
+  name: 'AffiliateInput',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    affiliate_id:		{ type: new GraphQLNonNull(GraphQLString) },
+    sub_id_1:			{ type: new GraphQLNonNull(GraphQLString) },
+    sub_id_2:			{ type: new GraphQLNonNull(GraphQLString) },
+    sub_id_3:			{ type: new GraphQLNonNull(GraphQLString) },
+    sub_id_4:			{ type: new GraphQLNonNull(GraphQLString) },
+    sub_id_5:			{ type: new GraphQLNonNull(GraphQLString) },
+    click_id:			{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -1756,6 +1771,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, accesskey) => {
 				var id = accesskey.id;
 				return accessKeyController.delete(id);
+			}
+		},
+		createaffiliate:{
+			type: affiliateType,
+			description: 'Adds a new affiliate.',
+			args: {
+				affiliate: { type: affiliateInputType }
+			},
+			resolve: (value, affiliate) => {
+				return affiliateController.create(affiliate.affiliate);
+			}
+		},
+		updateaffiliate:{
+			type: affiliateType,
+			description: 'Updates a affiliate.',
+			args: {
+				affiliate: { type: affiliateInputType }
+			},
+			resolve: (value, affiliate) => {
+				return affiliateController.update(affiliate.affiliate);
+			}
+		},
+		deleteaffiliate:{
+			type: deleteOutputType,
+			description: 'Deletes a affiliate.',
+			args: {
+				id: {
+				  description: 'id of the affiliate',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, affiliate) => {
+				var id = affiliate.id;
+				return affiliateController.delete(id);
 			}
 		}
 	})

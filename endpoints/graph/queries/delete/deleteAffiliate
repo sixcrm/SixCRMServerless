@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deleteaffiliate (id: \"testing\") { 
+			id
+		} 
+	}"
+}

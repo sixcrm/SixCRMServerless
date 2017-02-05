@@ -1,0 +1,15 @@
+{
+	"body":"
+	mutation { 
+		createaffiliate (affiliate: { id: \"testing\", affiliate_id: \"test\", sub_id_1: \"test\", sub_id_2: \"test\", sub_id_3: \"test\", sub_id_4: \"test\", sub_id_5: \"test\", click_id: \"test\"}) { 
+			id,
+			affiliate_id,
+			sub_id_1,
+			sub_id_2,
+			sub_id_3,
+			sub_id_4,
+			sub_id_5,
+			click_id
+		} 
+	}"
+}
