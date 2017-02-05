@@ -108,8 +108,8 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
-			
+			dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
+				
 				if(_.isError(error)){ reject(error);}
 				
 				resolve(entity);

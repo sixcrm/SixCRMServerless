@@ -1319,7 +1319,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, creditcard){
 		var cursor = creditcard.cursor; 
 		var limit = creditcard.limit; 
-      	return creditCardController.listCreditCards(cursor, limit);
+      	return creditCardController.list(cursor, limit);
       }
     },
     
@@ -1559,7 +1559,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, creditcard){
       	var id = creditcard.id; 
-      	return creditCardController.getCreditCard(id);
+      	return creditCardController.get(id);
       }
     },
     campaign: {
@@ -1707,6 +1707,30 @@ const emailInputType = new GraphQLInputObjectType({
     body:				{ type: new GraphQLNonNull(GraphQLString) },
     type:				{ type: new GraphQLNonNull(GraphQLString) },
     smtp_provider:		{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+const addressInputType = new GraphQLInputObjectType({
+  name: 'AddressInput',
+  fields: () => ({
+    line1:				{ type: new GraphQLNonNull(GraphQLString) },
+    line2:				{ type: GraphQLString },
+    city:				{ type: new GraphQLNonNull(GraphQLString) },
+    state:				{ type: new GraphQLNonNull(GraphQLString) },
+    zip:				{ type: new GraphQLNonNull(GraphQLString) },
+    country:			{ type: new GraphQLNonNull(GraphQLString) },
+  })
+});
+				
+const creditCardInputType = new GraphQLInputObjectType({
+  name: 'CreditCardInput',
+  fields: () => ({
+    ccnumber:			{ type: new GraphQLNonNull(GraphQLString) },
+    expiration:			{ type: new GraphQLNonNull(GraphQLString) },
+    ccv:				{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: new GraphQLNonNull(GraphQLString) },
+    address:			{ type: new GraphQLNonNull(addressInputType) },
+    id:					{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -1990,6 +2014,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, email) => {
 				var id = email.id;
 				return emailController.delete(id);
+			}
+		},
+		createcreditcard:{
+			type: creditCardType,
+			description: 'Adds a new credit card.',
+			args: {
+				creditcard: { type: creditCardInputType }
+			},
+			resolve: (value, creditcard) => {
+				return creditCardController.create(creditcard.creditcard);
+			}
+		},
+		updatecreditcard:{
+			type: creditCardType,
+			description: 'Updates a Credit Card.',
+			args: {
+				creditcard: { type: creditCardInputType }
+			},
+			resolve: (value, creditcard) => {
+				return creditCardController.update(creditcard.creditcard);
+			}
+		},
+		deletecreditcard:{
+			type: deleteOutputType,
+			description: 'Deletes a Credit Card.',
+			args: {
+				id: {
+				  description: 'id of the creditcard',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, creditcard) => {
+				var id = creditcard.id;
+				return creditCardController.delete(id);
 			}
 		},
 	})

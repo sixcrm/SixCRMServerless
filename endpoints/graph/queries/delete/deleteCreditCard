@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deletecreditcard (id: \"105207a0-928d-4dd4-a0d6-889965a621fa\") { 
+			id
+		} 
+	}"
+}
