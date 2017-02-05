@@ -11,13 +11,14 @@ class TransactionController {
 	
 	}
 	
+	//this was screwy....
 	getParentRebill(transaction){
 		
 		var rebillController = require('./Rebill.js');
 		
 		var id = transaction.rebill_id;
 		
-		return sessionController.getSession(id);
+		return rebillController.getSession(id);
 		
 	}
 	

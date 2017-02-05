@@ -17,6 +17,43 @@ class SessionController {
 		this.session_length = 3600;
 	}
 	
+	getSession(id){
+		
+		console.log('yeh');
+		return new Promise((resolve, reject) => {
+				
+			dynamoutilities.queryRecords(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, data) => {
+				
+				if(_.isError(error)){ reject(error);}
+				
+				if(_.isArray(data)){
+					
+					if(data.length == 1){
+						
+						resolve(data[0]);
+					
+					}else{
+						
+						if(data.length > 1){
+						
+							reject(new Error('More than one record returned for session ID.'));
+							
+						}else{
+							
+							resolve([]);
+							
+						}
+					
+					}
+					
+				}
+	
+			});
+			
+        });
+		
+	}
+	
 	getCustomer(session){
 		
 		return customerController.get(session.customer);
@@ -300,42 +337,6 @@ class SessionController {
 		});
 		
 	}	
-	
-	getSession(id){
-		
-		return new Promise((resolve, reject) => {
-				
-			dynamoutilities.queryRecords(process.env.sessions_table, 'id = :idv', {':idv': id}, null, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isArray(data)){
-					
-					if(data.length == 1){
-						
-						resolve(data[0]);
-					
-					}else{
-						
-						if(data.length > 1){
-						
-							reject(new Error('More than one record returned for session ID.'));
-							
-						}else{
-							
-							resolve([]);
-							
-						}
-					
-					}
-					
-				}
-	
-			});
-			
-        });
-		
-	}
 	
 	createSessionObject(params){
 	

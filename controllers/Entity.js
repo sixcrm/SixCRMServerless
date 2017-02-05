@@ -66,6 +66,7 @@ module.exports = class entityController {
 		
 	}
 	
+	//need to add getBySecondaryIndex method...
 	get(id){
 		
 		var controller_instance = this;
@@ -79,7 +80,7 @@ module.exports = class entityController {
 				if(_.isObject(data) && _.isArray(data)){
 					
 					if(data.length == 1){
-											
+	
 						resolve(data[0]);
 						
 					}else{

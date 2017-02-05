@@ -8,6 +8,7 @@ var GraphQLList = require('graphql').GraphQLList;
 var GraphQLNonNull = require('graphql').GraphQLNonNull;
 var GraphQLSchema = require('graphql').GraphQLSchema;
 var GraphQLString = require('graphql').GraphQLString;
+var GraphQLInt = require('graphql').GraphQLInt;
 var GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 var sessionController = require('../../controllers/Session.js');
@@ -257,7 +258,7 @@ var transactionType = new GraphQLObjectType({
 	  type: new GraphQLNonNull(rebillType),
       description: 'The rebill of the transaction.',
       resolve: function(rebill){
-      	 return rebillController.getRebill(rebill.id);
+      	 return rebillController.get(rebill.id);
       }
     },
   }),
@@ -1119,7 +1120,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, rebill){
       	var id = rebill.id; 
-      	return rebillController.getRebill(id);
+      	return rebillController.get(id);
       }
     },
     session: {
@@ -1281,7 +1282,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, rebill){
 		var cursor = rebill.cursor; 
 		var limit = rebill.limit; 
-      	return rebillController.listRebills(cursor, limit);
+      	return rebillController.list(cursor, limit);
       }
     },
     
@@ -1791,6 +1792,18 @@ const deleteOutputType = new GraphQLObjectType({
   })
 });
 
+const rebillInputType = new GraphQLInputObjectType({
+  name: 'RebillInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    billdate:			{ type: new GraphQLNonNull(GraphQLInt) },
+    parentsession:		{ type: new GraphQLNonNull(GraphQLString) },
+    amount:				{ type: new GraphQLNonNull(GraphQLString) },
+    products:			{ type: new GraphQLList(GraphQLString) },
+    product_schedules:	{ type: new GraphQLList(GraphQLString) }
+  })
+});
+
 var mutationType = new GraphQLObjectType({
 	name: 'Mutation',
 	fields: () => ({
@@ -2200,6 +2213,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, productschedule) => {
 				var id = productschedule.id;
 				return productScheduleController.delete(id);
+			}
+		},
+		createrebill:{
+			type: rebillType,
+			description: 'Adds a new rebill.',
+			args: {
+				rebill: { type: rebillInputType }
+			},
+			resolve: (value, rebill) => {
+				return rebillController.create(rebill.rebill);
+			}
+		},
+		updaterebill:{
+			type: rebillType,
+			description: 'Updates a rebill.',
+			args: {
+				rebill: { type: rebillInputType }
+			},
+			resolve: (value, rebill) => {
+				return rebillController.update(rebill.rebill);
+			}
+		},
+		deleterebill:{
+			type: deleteOutputType,
+			description: 'Deletes a rebill.',
+			args: {
+				id: {
+				  description: 'id of the rebill',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, rebill) => {
+				var id = rebill.id;
+				return rebillController.delete(id);
 			}
 		},
 	})

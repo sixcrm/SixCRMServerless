@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deleterebill (id: \"Testing-ID\") { 
+			id
+		} 
+	}"
+}

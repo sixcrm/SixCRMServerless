@@ -5,15 +5,18 @@ const uuidV4 = require('uuid/v4');
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var sqsutilities = require('../lib/sqs-utilities.js');
 var timestamp = require('../lib/timestamp.js');
-var sessionController = require('./Session.js');
 var transactionController = require('./Transaction.js');
 var productScheduleController = require('./ProductSchedule.js');
 var productController = require('./Product.js');
+var sessionController = require('./Session.js');
+var entityController = require('./Entity.js');
 
-class RebillController {
+class rebillController extends entityController {
 
 	constructor(){
-	
+		super(process.env.rebills_table, 'rebill');
+		this.table_name = process.env.rebills_table;
+		this.descriptive_name = 'rebill';
 	}
 	
 	getProducts(rebill){
@@ -36,6 +39,9 @@ class RebillController {
 	
 	getParentSession(rebill){
 		
+		//why is this necessary?
+		var sessionController = require('./Session.js');
+
 		return sessionController.getSession(rebill.parentsession);
 		
 	}
@@ -129,7 +135,7 @@ class RebillController {
 				amount: rebill_parameters.amount
 			});
 			
-			this.saveRebill(rebill_object).then((rebill) => {
+			this.save(rebill_object).then((rebill) => {
 				
 				resolve(rebill);
 				
@@ -185,91 +191,6 @@ class RebillController {
 		});
 		
 	}
-	
-	listRebills(cursor, limit){
-	
-		return new Promise((resolve, reject) => {
-			
-			var query_parameters = {filter_expression: null, expression_attribute_values: null};
-			
-			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = cursor;
-			}
-
-			if(typeof limit  !== 'undefined'){
-				query_parameters['limit'] = limit;
-			}
-			
-			dynamoutilities.scanRecordsFull(process.env.rebills_table, query_parameters, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data)){
-					
-					var pagination_object = {
-						count: '',
-						end_cursor: '',
-						has_next_page: 'false'
-					}
-					
-					if(_.has(data, "Count")){
-						pagination_object.count = data.Count;
-					}
-					
-					if(_.has(data, "LastEvaluatedKey")){
-						if(_.has(data.LastEvaluatedKey, "id")){
-							pagination_object.end_cursor = data.LastEvaluatedKey.id;
-						}
-					}
-					
-					var has_next_page = 'false';
-					if(_.has(data, "LastEvaluatedKey")){
-						pagination_object.has_next_page = 'true';
-					}
-					
-					resolve(
-						{
-							rebills: data.Items,
-							pagination: pagination_object
-						}
-					);
-					
-				}
-	
-			});
-			
-		});
-		
-	}
-	
-	getRebill(id){
-		
-		return new Promise((resolve, reject) => {
-				
-			dynamoutilities.queryRecords(process.env.rebills_table, 'id = :idv', {':idv': id}, null, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isArray(data)){
-					
-					if(data.length == 1){
-						resolve(data[0]);
-					}else{
-						if(data.length > 1){
-							reject(new Error('multiple rebills returned where one should be returned.'));
-						}else{
-							resolve([]);
-						}
-						
-					}
-					
-				}
-				
-			});
-			
-        });
-        
-    }
         
 	getRebillsBySessionID(id){
 
@@ -309,26 +230,6 @@ class RebillController {
 	
 		});
 		
-	}
-	
-	saveRebill(rebill){
-		
-		return new Promise((resolve, reject) => {
-		
-			dynamoutilities.saveRecord(process.env.rebills_table, rebill, (error, data) => {
-			
-				if(_.isError(error)){
-	
-					reject(error);
-
-				}
-		
-				resolve(rebill);
-
-			});	
-			
-		});
-
 	}
 	
 	getRebillsAfterTimestamp(timestamp){
@@ -421,4 +322,4 @@ class RebillController {
 		
 }
 
-module.exports = new RebillController();
+module.exports = new rebillController();
