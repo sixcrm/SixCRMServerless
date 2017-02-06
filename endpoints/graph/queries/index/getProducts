@@ -22,7 +22,7 @@
 				end_cursor,
 				has_next_page
 			}
-		},
+		}
 	}"
 }
 

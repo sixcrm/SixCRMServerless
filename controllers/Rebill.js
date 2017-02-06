@@ -42,7 +42,7 @@ class rebillController extends entityController {
 		//why is this necessary?
 		var sessionController = require('./Session.js');
 
-		return sessionController.getSession(rebill.parentsession);
+		return sessionController.get(rebill.parentsession);
 		
 	}
 	

@@ -1416,7 +1416,7 @@ var queryType = new GraphQLObjectType({
       resolve: function(root, loadbalancer){
 		var cursor = loadbalancer.cursor; 
 		var limit = loadbalancer.limit; 
-      	return loadBalancerController.listLoadBalancers(cursor, limit);
+      	return loadBalancerController.list(cursor, limit);
       }
     },
     
@@ -1548,7 +1548,7 @@ var queryType = new GraphQLObjectType({
       },
       resolve: function(root, loadbalancer){
       	var id = loadbalancer.id; 
-      	return loadBalancerController.getLoadBalancer(id);
+      	return loadBalancerController.get(id);
       }
     },
     creditcard: {

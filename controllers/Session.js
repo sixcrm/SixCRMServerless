@@ -162,7 +162,7 @@ class sessionController extends entityController {
 		
 		return new Promise((resolve, reject) => {
 				
-			this.getSession(id).then((session) => {
+			this.get(id).then((session) => {
 				
 				this.hydrate(session).then((session) => {	
 					
