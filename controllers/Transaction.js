@@ -4,6 +4,7 @@ const uuidV4 = require('uuid/v4');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
+
 var entityController = require('./Entity.js');
 
 class transactionController extends entityController {
@@ -14,11 +15,10 @@ class transactionController extends entityController {
 		this.descriptive_name = 'transaction';
 	}
 	
-	//this was screwy....
 	getParentRebill(transaction){
 		
+		//why is this here?
 		var rebillController = require('./Rebill.js');
-		
 		return rebillController.get(transaction.rebill_id);
 
 		
@@ -26,21 +26,7 @@ class transactionController extends entityController {
         
 	getTransactionsByRebillID(id){
 		
-		return new Promise((resolve, reject) => {
-		
-			dynamoutilities.queryRecords(process.env.transactions_table, 'rebill_id = :rebill_idv', {':rebill_idv': id}, 'rebill-index', (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-
-				if(_.isArray(data)){
-					
-					resolve(data);
-					
-				}
-	
-			});
-	
-		});
+		return this.getBySecondaryIndex('rebill_id', id, 'rebill-index');
 		
 	}
 	
@@ -84,45 +70,7 @@ class transactionController extends entityController {
 		return return_object;
 		
 	}
-	
-	//??
-	updateSession(session, products, callback){
-		
-		return new Promise((resolve, reject) => {
-		
-			var products = getProductIds(products);
-	
-			var session_products = session.products;
-	
-			if(_.isArray(session.products) && session.products.length > 0){
-	
-				var updated_products = session_products.concat(products);
-		
-			}else{
-		
-				var updated_products = products;
-		
-			}
-	
-			var modified = timestamp.createTimestampSeconds();
-			
-			dynamoutilities.updateRecord(process.env.sessions_table, {'id': session.id}, 'set products = :a, modified = :m', {":a": updated_products, ":m": modified.toString()}, (error, data) => {
-				
-				if(_.isError(error)){
-					reject(error);
-				}
-			
-				session.products = updated_products;
-	
-				resolve(session);
-					
-			});
-			
-		});
-		
-	}
-	
-	
+
 }
 
 module.exports = new transactionController();

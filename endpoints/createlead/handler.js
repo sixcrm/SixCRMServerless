@@ -82,13 +82,13 @@ module.exports.createlead = (event, context, callback) => {
 		affiliate_id = duplicate_body['affiliate_id'];
 	}
 	
-	campaignController.getCampaign(campaign_id).then((campaign) => {
+	campaignController.get(campaign_id).then((campaign) => {
 			
 		if(!_.has(campaign, 'id')){
 			return lr.issueError('A invalid campaign id is specified.', 500, event, new Error('A invalid campaign id is specified.'), callback);
 		}
 		
-		affiliateController.getAffiliate(affiliate_id).then((affiliate) => {
+		affiliateController.get(affiliate_id).then((affiliate) => {
 			
 			if(_.isString(affiliate_id) && !_.has(affiliate, 'id')){
 				return lr.issueError('A invalid affiliate id is specified.', 500, event, new Error('A invalid affiliate id is specified.'), callback);
@@ -120,7 +120,7 @@ module.exports.createlead = (event, context, callback) => {
 					var customer_id = duplicate_body['id'] = uuidV4();
 			
 
-					customerController.saveCustomer(duplicate_body).then((customer) => {
+					customerController.save(duplicate_body).then((customer) => {
 				
 
 						sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: affiliate_id}).then((session) => {

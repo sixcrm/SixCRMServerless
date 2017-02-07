@@ -668,7 +668,7 @@ var userType = new GraphQLObjectType({
       description: 'The access_key of the user.',
       resolve: (user) => {
       	var id = user.access_key_id
-      	return userController.getAccessKeyByID(id);
+      	return userController.getAccessKey(id);
       }
     }
   }),

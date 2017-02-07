@@ -21,7 +21,7 @@ module.exports.verifysignature = (event, context, callback) => {
 		
 		if(time_difference > (60 * 60 * 5)){ return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null)); }
 	
-		accessKeyController.getAccessKey(token[0]).then((access_key) => {
+		accessKeyController.getAccessKeyByKey(token[0]).then((access_key) => {
 
 			if(!_.isObject(access_key) || !_.has(access_key, 'secret_key')){ return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null)); }
 			

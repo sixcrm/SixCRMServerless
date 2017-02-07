@@ -18,7 +18,9 @@ class sessionController extends entityController {
 		super(process.env.sessions_table, 'session');
 		this.table_name = process.env.sessions_table;
 		this.descriptive_name = 'session';
+		
 		this.session_length = 3600;
+		
 	}
 	
 	getCustomer(session){
@@ -43,7 +45,7 @@ class sessionController extends entityController {
         
 	}
 	
-	//uh, WTF
+	//used in Create Order
 	getTransactions(session){
 		
 		return new Promise((resolve, reject) => {
@@ -255,16 +257,10 @@ class sessionController extends entityController {
 	
 	}
 	
+	//Technical Debt:  This needs to use a Entity method
 	getSessionByCustomerID(customer_id){
 		
-		return new Promise((resolve, reject) => {
-			dynamoutilities.queryRecords(process.env.sessions_table, 'customer = :customerv', {':customerv': customer_id}, 'customer-index', (error, data) => {
-				if(_.isError(error)){
-					reject(error);
-				}
-				resolve(data);
-			});
-		});
+		return this.listBySecondaryIndex('customer', customer_id, 'customer-index');
 		
 	}
 	
@@ -333,60 +329,29 @@ class sessionController extends entityController {
 	
 	updateSessionProductSchedules(session, product_schedules){
 		
-		return new Promise((resolve, reject) => {
+		var session_product_schedules = session.product_schedules;
 		
-			var session_product_schedules = session.product_schedules;
-			
-			var purchased_product_schedules = [];
-			product_schedules.forEach((schedule) => {
-				purchased_product_schedules.push(schedule.id);
-			});
-			
-			session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
-			
-			var modified = timestamp.createTimestampSeconds();
-	
-			dynamoutilities.updateRecord(process.env.sessions_table, {'id': session.id}, 'set product_schedules = :product_schedulesv, modified = :modifiedv', {":product_schedulesv": session_product_schedules, ":modifiedv": modified.toString()}, (error, data) => {
-			
-				if(_.isError(error)){
-		
-					reject(error);
-			
-				}else{
-		
-					resolve(session);
-			
-				}
-		
-			});
-		
+		var purchased_product_schedules = [];
+		product_schedules.forEach((schedule) => {
+			purchased_product_schedules.push(schedule.id);
 		});
 		
+		session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
+		
+		session.product_schedules = session_product_schedules;
+		session.modified = timestamp.createTimestampSeconds().toString();
+
+		return this.update(session);
+					
 	}
 	
 	closeSession(session){
 		
-		return new Promise((resolve, reject) => {
+		session.completed = 'true';
+
+		session.modified = timestamp.createTimestampSeconds().toString();
 		
-			var completed = 'true';
-	
-			var modified = timestamp.createTimestampSeconds();
-	
-			dynamoutilities.updateRecord(process.env.sessions_table, {'id': session.id}, 'set completed = :completedv, modified = :modifiedv', {":completedv": completed, ":modifiedv": modified.toString()}, (error, data) => {
-			
-				if(_.isError(error)){
-		
-					reject(error);
-			
-				}else{
-		
-					resolve(session);
-			
-				}
-		
-			});
-		
-		});
+		return this.update(session);	
 	
 	}
 	

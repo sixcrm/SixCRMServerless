@@ -44,6 +44,7 @@ class productScheduleController extends entityController {
 		
 	}
 	
+	//Is there a better way?
 	getProductScheduleHydrated(id){
 		
 		var controller_instance = this;

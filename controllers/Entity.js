@@ -1,5 +1,6 @@
 'use strict';
 const _ = require('underscore');
+const uuidV4 = require('uuid/v4');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 
@@ -66,7 +67,72 @@ module.exports = class entityController {
 		
 	}
 	
-	//need to add getBySecondaryIndex method...
+	listBySecondaryIndex(field, index_value, index_name){
+		
+		var controller_instance = this;
+		
+		return new Promise((resolve, reject) => {
+				
+			var query = field+' = :index_valuev';
+			
+			dynamoutilities.queryRecords(this.table_name, query, {':index_valuev': index_value}, index_name, (error, data) => {
+				
+				if(_.isError(error)){ reject(error);}
+				
+				if(_.isArray(data)){
+					
+					resolve(data);
+					
+				}else{
+				
+					reject(data);
+					
+				}				
+	
+			});
+			
+        });
+	}
+	
+	getBySecondaryIndex(field, index_value, index_name){
+		
+		var controller_instance = this;
+		
+		return new Promise((resolve, reject) => {
+				
+			var query = field+' = :index_valuev';
+			
+			dynamoutilities.queryRecords(this.table_name, query, {':index_valuev': index_value}, index_name, (error, data) => {
+				
+				if(_.isError(error)){ reject(error);}
+				
+				if(_.isArray(data)){
+					
+					if(data.length == 1){
+					
+						resolve(data[0]);
+					
+					}else{
+						
+						if(data.length > 1){
+							
+							reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
+							
+						}else{
+							
+							resolve([]);
+							
+						}
+					
+					}
+					
+				}
+	
+			});
+			
+        });
+	}
+	
 	get(id){
 		
 		var controller_instance = this;
@@ -109,13 +175,31 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
+			if(!_.has(entity,'id')){
+			
+				entity.id = uuidV4();
+				
+			}
+			
+			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': entity.id}, null, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
-				resolve(entity);
+				if(_.isObject(data) && _.isArray(data) && data.length > 0){
 				
-			});
+					reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
+					
+				}				
+				
+				dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
+				
+					if(_.isError(error)){ reject(error);}
+				
+					resolve(entity);
+				
+				});
+			
+			});	
 			
 		});
 		
@@ -124,15 +208,29 @@ module.exports = class entityController {
 	update(entity){
 		
 		return new Promise((resolve, reject) => {
-		
-			dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
 			
+			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': entity.id}, null, (error, data) => {
+				
 				if(_.isError(error)){ reject(error);}
 				
-				resolve(entity);
-				
-			});
+				if(_.isObject(data) && _.isArray(data) && data.length == 1){
+					
+					dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
 			
+						if(_.isError(error)){ reject(error);}
+				
+						resolve(entity);
+				
+					});
+					
+				}else{
+					
+					reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.'));
+					
+				}
+			
+			});		
+				
 		});
 		
 	}
@@ -141,11 +239,25 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			dynamoutilities.deleteRecord(this.table_name, { id:id }, null, null, (error, data) => {
-			
+			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': id}, null, (error, data) => {
+				
 				if(_.isError(error)){ reject(error);}
 				
-				resolve({ id });
+				if(_.isObject(data) && _.isArray(data) && data.length == 1){
+				
+					dynamoutilities.deleteRecord(this.table_name, { id:id }, null, null, (error, data) => {
+			
+						if(_.isError(error)){ reject(error);}
+				
+						resolve({ id });
+				
+					});
+					
+				}else{
+					
+					reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.'));
+					
+				}
 				
 			});
 			

@@ -115,6 +115,7 @@ class rebillController extends entityController {
 		
 	}
 	
+	//Technical Debt:  This is a mess
 	//the product schedule needs to be a part of the rebill, not the product
 	createRebill(session, product_schedule, day_in_cycle){
 		
@@ -193,42 +194,16 @@ class rebillController extends entityController {
 	}
         
 	getRebillsBySessionID(id){
-
-		return new Promise((resolve, reject) => {
 		
-			dynamoutilities.queryRecords(process.env.rebills_table, 'parentsession = :parentsessionv', {':parentsessionv': id}, 'parentsession-index', (error, data) => {
-			
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isArray(data)){
-
-					resolve(data);
-					
-				}
-	
-			});
-	
-		});
+		var thing = this.getBySecondaryIndex('parentsession', id, 'parentsession-index');
 		
 	}
 	
 	markRebillProcessing(rebill){
 		
-		return new Promise((resolve, reject) => {
-			
-			dynamoutilities.updateRecord(process.env.rebills_table, {'id': rebill.id}, 'set processing = :p', {":p": "true"}, (error, data) => {
-				
-				if(_.isError(error)){
-					reject(error);
-				}
-			
-				rebill.processing = "true";
-	
-				resolve(rebill);
-					
-			});
-	
-		});
+		rebill.processing = "true";
+		
+		return this.update(rebill);
 		
 	}
 	
@@ -288,35 +263,19 @@ class rebillController extends entityController {
 	
 	updateRebillTransactions(rebill, transactions){
 		
-		return new Promise((resolve, reject) => {
+		var rebill_transactions = [];
 			
-			var rebill_transactions = [];
-			
-			if(_.has(rebill, "transactions") && _.isArray(rebill.transactions)){
-				rebill_transactions = rebill.transactions;
-			}
-			
-			rebill_transactions = _.union(rebill.transactions, transactions);
-			
-			rebill.transactions = rebill_transactions;
-			
-			var modified = timestamp.createTimestampSeconds();
-			
-			dynamoutilities.updateRecord(process.env.rebills_table, {'id': rebill.id}, 'set transactions = :transactionsv, modified = :modifiedv', {":transactionsv": rebill_transactions, ":modifiedv": modified.toString()}, (error, data) => {
-			
-				if(_.isError(error)){
+		if(_.has(rebill, "transactions") && _.isArray(rebill.transactions)){
+			rebill_transactions = rebill.transactions;
+		}
 		
-					reject(error);
+		rebill_transactions = _.union(rebill.transactions, transactions);
+		
+		rebill.transactions = rebill_transactions;
+		
+		rebill.modified = timestamp.createTimestampSeconds().toString();
 			
-				}else{
-		
-					resolve(rebill);
-			
-				}
-		
-			});
-		
-		});
+		return this.update(rebill);
 		
 	}
 		

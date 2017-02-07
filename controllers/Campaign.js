@@ -62,6 +62,7 @@ class campaignController extends entityController {
 		
 	}
 	
+	// is there a better way?
 	hydrate(campaign){
 		
 		var controller_instance = this;

@@ -24,10 +24,8 @@ class creditCardController extends entityController {
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
-
-			dynamoutilities.queryRecords(process.env.credit_cards_table, 'ccnumber = :ccnumberv', {':ccnumberv': creditcard.ccnumber}, 'ccnumber-index', (error, creditcards) => {
-				
-				if(_.isError(error)){ reject(error);}
+			
+			this.listBySecondaryIndex(ccnumber, creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
 				
 				var card_identified = false;
 
@@ -47,7 +45,7 @@ class creditCardController extends entityController {
 				
 				if(card_identified == false){
 				
-					controller_instance.saveCreditCard(creditcard).then((data) => {
+					controller_instance.save(creditcard).then((data) => {
 					
 						resolve(data);
 		
@@ -58,29 +56,11 @@ class creditCardController extends entityController {
 					});
 			
 				}
-		
+				
+			}).catch((error) => {
+				reject(error);
 			});
-			
-		});
 	
-	}
-	
-	saveCreditCard(creditcard, callback){
-		
-		return new Promise((resolve, reject) => {
-		
-			if(!_.has(creditcard, 'id')){
-				creditcard.id = uuidV4();
-			}
-			
-			dynamoutilities.saveRecord(process.env.credit_cards_table, creditcard, (error, data) => {
-		
-				if(_.isError(error)){ return reject(error); }
-		
-				return resolve(creditcard);
-		
-			});
-		
 		});
 	
 	}
