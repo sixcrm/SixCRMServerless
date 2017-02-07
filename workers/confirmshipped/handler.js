@@ -1,18 +1,27 @@
 'use strict';
 var AWS = require("aws-sdk");
+var _ = require("underscore");
 
+var lr = require('../../lib/lambda-response.js');
+var rebillController = require('../../controllers/Rebill.js');
 var lr = require('../../lib/lambda-response.js');
 
 module.exports.confirmshipped = (event, context, callback) => {
     
-    console.log(event);
-    console.log(context);
-	//this is where the fulfillment provider contacts us and puts the message in "shipped" status...
-	//note that this may just be a thing where the record is marked and all we do is query the record and check it's status
-	//don't execute the associated method every minute
+    var rebill_id = event.id;
+    
+    rebillController.get(rebill_id).then((rebill) => {
     	
-	lr.issueResponse(200, {
-		message: 'Success'
-	}, callback);        
+    	if(_.has(rebill, "trackingnumber")){
+    		
+    		return callback(null, rebill);
+    		
+    	}else{
+    		
+    		return callback(null, false);
+    		
+    	}	
+    	
+    });        
 
 }

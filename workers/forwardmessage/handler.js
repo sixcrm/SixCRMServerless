@@ -23,9 +23,15 @@ module.exports.forwardmessage = (event, context, callback) => {
             		if(_.isError(error)){
             			
 						lr.issueError(error, 500, event, error, callback);
+					
+					}else if(workerdata == false){
+					
+						lr.issueResponse(200, {
+							message: 'Success'
+						}, callback);
 							
             		}else{
-			
+
 						sqs.sendMessage({message_body: workerdata, queue_url: process.env.destination_queue_url}, (error, data) => {
 				
 							if(_.isError(error)){
