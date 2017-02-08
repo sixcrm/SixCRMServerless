@@ -57,16 +57,16 @@ module.exports.confirmorder = (event, context, callback) => {
 		lr.issueError(error, 500, event, error, callback);
 	}
 	
-	sessionController.getSession(duplicate_querystring['session_id']).then((session) => {
+	sessionController.get(duplicate_querystring['session_id']).then((session) => {
 	
 		if(session.completed == 'true'){ throw new Error('The specified session is already complete.');}
 	
-		customerController.getCustomer(session.customer).then((customer) => {
-			
+		customerController.get(session.customer).then((customer) => {
+	
 			sessionController.getProducts(session).then((products) => {
-				
+	
 				sessionController.getTransactions(session).then((transactions) => {
-					
+	
 					sessionController.closeSession(session).then(() => {
 	
 						var results = {session: session, customer: customer, products: products, transactions: transactions};

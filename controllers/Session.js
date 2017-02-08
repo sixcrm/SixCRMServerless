@@ -116,14 +116,22 @@ class sessionController extends entityController {
 			
 			var session_products = [];
 			
+			console.log('1');
+			
 			rebillController.getRebillsBySessionID(session.id).then((rebills) => {
+			
+				console.log('2');
 				
 				Promise.all(rebills.map((rebill) => {
 					
 					return new Promise((resolve, reject) => {
+					
+						console.log('4');
 						
 						var productsController = require('./Product.js');
-
+						
+						console.log(rebill);
+						
 						productsController.getProducts(rebill.products).then((products) => {
 							
 							resolve(products);
@@ -133,6 +141,8 @@ class sessionController extends entityController {
 					});
 					
 				})).then((products) => {
+				
+					console.log('3');
 					
 					products.map(product_object => {
 						

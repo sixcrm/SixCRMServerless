@@ -24,6 +24,7 @@ class ProductController extends entityController {
 		return new Promise((resolve, reject) => {
 			
 			if(_.isArray(products_array)){
+			
 				var products_object = {};
 				var index = 0;
 				products_array.forEach(function(value) {
