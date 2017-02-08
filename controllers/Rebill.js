@@ -136,8 +136,8 @@ class rebillController extends entityController {
 				amount: rebill_parameters.amount
 			});
 			
-			this.save(rebill_object).then((rebill) => {
-				
+			this.create(rebill_object).then((rebill) => {
+			
 				resolve(rebill);
 				
 			}).catch((error) => {

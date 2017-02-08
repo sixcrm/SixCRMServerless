@@ -25,8 +25,8 @@ class creditCardController extends entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			this.listBySecondaryIndex(ccnumber, creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
-				
+			this.listBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
+
 				var card_identified = false;
 
 				creditcards.forEach(function(item){
@@ -45,7 +45,7 @@ class creditCardController extends entityController {
 				
 				if(card_identified == false){
 				
-					controller_instance.save(creditcard).then((data) => {
+					controller_instance.create(creditcard).then((data) => {
 					
 						resolve(data);
 		

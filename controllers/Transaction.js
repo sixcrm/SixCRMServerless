@@ -32,21 +32,9 @@ class transactionController extends entityController {
 	
 	putTransaction(params, processor_response, callback){
 		
-		return new Promise((resolve, reject) => {
-		
-			var transaction = this.createTransactionObject(params, processor_response);
+		var transaction = this.createTransactionObject(params, processor_response);
 			
-			this.save(transaction).then((data) => {
-			
-				resolve(transaction);
-				
-			}).catch((error) => {
-			
-				reject(error);
-				
-			});
-		
-		});
+		return this.create(transaction);
 	
 	}
 	

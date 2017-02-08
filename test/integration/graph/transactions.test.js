@@ -40,7 +40,7 @@ var tests = [{
 }];
 
 describe('Graph Test', function() {
-  describe('Let\'s test the graph endpoint!', function() {
+  describe('Let\'s test the graph '+entity+' endpoint!', function() {
   	tests.forEach((test) => {
 		it(entity+' '+test.name+' JSON results', function (done) {
 			var query = tu.getQuery(test.query);

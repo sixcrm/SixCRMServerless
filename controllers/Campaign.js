@@ -113,11 +113,12 @@ class campaignController extends entityController {
 		
 	}	
 	
+	//is there a better way?
 	getHydratedCampaign(id){
 		
 		return new Promise((resolve, reject) => {
 					
-			this.getCampaign(id).then((campaign) => {
+			this.get(id).then((campaign) => {
 				
 				this.hydrate(campaign).then((campaign) => {	
 

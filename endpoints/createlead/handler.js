@@ -117,10 +117,10 @@ module.exports.createlead = (event, context, callback) => {
 				}else{
 			
 
-					var customer_id = duplicate_body['id'] = uuidV4();
+					//var customer_id = duplicate_body['id'] = uuidV4();
 			
-
-					customerController.save(duplicate_body).then((customer) => {
+					
+					customerController.create(duplicate_body).then((customer) => {
 				
 
 						sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: affiliate_id}).then((session) => {

@@ -41,7 +41,7 @@ Clean up the callback code...
 
 To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}`
 
-To start the local Dynamo instance: `sls dynamodb start --stage development -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  
+To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  
 
 ## Local Development
 
@@ -55,5 +55,11 @@ Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f cre
 6.  Occasionally, the product is missing from the transaction. *Confirm*
 7.  Customer doesn't need a billing address. *Confirm*
 8.  Delete/Update methods need to check for existence first.
+
+## For immediate refinement:
+
+1.  The "hydrate" methods suck -  improve.
+2.  The error handling in the endpoints seems like garbage.
+3.  Graph endpoint should not return the data when there's an error, it should be a clear "error: message" sort of thing
 
 

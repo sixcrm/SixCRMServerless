@@ -13,7 +13,7 @@ var timestamp = require('../../lib/timestamp.js');
 
 var sessionController = require('../../controllers/Session.js');
 var customerController = require('../../controllers/Customer.js');
-var productController = require('../../controllers/Product.js');
+//var productController = require('../../controllers/Product.js');
 var productScheduleController = require('../../controllers/ProductSchedule.js');
 var campaignController = require('../../controllers/Campaign.js');
 var transactionController = require('../../controllers/Transaction.js');
@@ -81,20 +81,20 @@ module.exports.createorder= (event, context, callback) => {
 		
 	}
 	
-	sessionController.getSession(duplicate_body['session_id']).then((session) => {
+	sessionController.get(duplicate_body['session_id']).then((session) => {
 		
 		if(!_.isObject(session) || !_.has(session, 'id')){ throw new Error('No available session.');}
 		
 		if(session.completed == 'true'){ throw new Error('The specified session is already complete.');} 
 		
-		customerController.getCustomer(session.customer).then((customer) => {
+		customerController.get(session.customer).then((customer) => {
 
 			if(!_.isObject(customer) || !_.has(customer, 'id')){ throw new Error('No available customer.');}
-			
+
 			var creditcard = creditCardController.createCreditCardObject(duplicate_body);
 			
 			creditCardController.storeCreditCard(creditcard, customer.creditcards).then((creditcard) => {
-			
+				
 				if(!_.isObject(creditcard) || !_.has(creditcard, 'id')){ throw new Error('No available creditcard.');}
 
 				productScheduleController.getProductSchedules(duplicate_body['product_schedules']).then((schedules_to_purchase) => {						
@@ -113,7 +113,7 @@ module.exports.createorder= (event, context, callback) => {
 						
 						//need some fucking unit tests here...
 						loadBalancerController.process(campaign.loadbalancer, {customer: customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
-							
+						
 							//this is intended to process multiple product schedules purchased...																	
 							rebillController.createRebills(session, schedules_to_purchase, 0).then((rebill) =>{
 								
@@ -121,7 +121,7 @@ module.exports.createorder= (event, context, callback) => {
 								rebill = rebill[0];
 								
 								transactionController.putTransaction({session: session, rebill: rebill, amount: amount}, processor_response).then((transaction) => {
-									
+								
 									if(!_.isObject(transaction) || !_.has(transaction, 'id')){ throw new Error('No available transaction.');}
 									
 									//this looks like a hack as well	
@@ -130,11 +130,11 @@ module.exports.createorder= (event, context, callback) => {
 									rebillController.updateRebillTransactions(rebill, transactions).then((rebill) => {
 									
 										if(_.has(processor_response, "message") && processor_response.message == 'Success' && _.has(processor_response, "results") && _.has(processor_response.results, 'response') && processor_response.results.response == '1'){	
-			
-											rebillController.addRebillToQueue(rebill, 'hold').then(() => {
-										
-												rebillController.createRebills(session, schedules_to_purchase).then((nextrebill) => {
 											
+											rebillController.addRebillToQueue(rebill, 'hold').then(() => {
+
+												rebillController.createRebills(session, schedules_to_purchase).then((nextrebill) => {
+
 													sessionController.updateSessionProductSchedules(session, schedules_to_purchase).then((session) => {
 
 														lr.issueResponse(200, {

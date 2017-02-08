@@ -257,7 +257,6 @@ class sessionController extends entityController {
 	
 	}
 	
-	//Technical Debt:  This needs to use a Entity method
 	getSessionByCustomerID(customer_id){
 		
 		return this.listBySecondaryIndex('customer', customer_id, 'customer-index');
@@ -309,7 +308,7 @@ class sessionController extends entityController {
 						affiliate_id: parameters.affiliate_id
 					});
 					
-					this.save(session).then((session) => {
+					this.create(session).then((session) => {
 	
 						resolve(session);
 	

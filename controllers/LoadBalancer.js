@@ -38,13 +38,14 @@ class loadBalancerController extends entityController {
         
 	}
 	
+	//Isn't there a better way?
 	getLoadBalancerHydrated(id){
 		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
 			
-			controller_instance.getLoadBalancer(id).then((loadbalancer) => {
+			controller_instance.get(id).then((loadbalancer) => {
 				
 				controller_instance.getMerchantProviders(loadbalancer).then((merchant_providers) =>{
 					
