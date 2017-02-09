@@ -186,22 +186,20 @@ module.exports = class entityController {
 				
 			}
 			
-			console.log('here');
 			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': entity.id}, null, (error, data) => {
 				
-				console.log('ere2');
 				if(_.isError(error)){ reject(error);}
-				console.log('ere3');
+
 				if(_.isObject(data) && _.isArray(data) && data.length > 0){
-					console.log('ere4');
+
 					reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
 					
 				}				
-				console.log('ere5');
+
 				dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
-					console.log('ere6');
+
 					if(_.isError(error)){ reject(error);}
-					console.log('ere7');
+
 					resolve(entity);
 				
 				});
