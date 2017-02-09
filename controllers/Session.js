@@ -104,6 +104,10 @@ class sessionController extends entityController {
 	
 	getProductSchedules(session){
 		
+		if(!_.has(session, "product_schedules")){
+			return null;
+		}
+		
 		return session.product_schedules.map(schedule => productScheduleController.get(schedule));
         
 	}
@@ -116,22 +120,14 @@ class sessionController extends entityController {
 			
 			var session_products = [];
 			
-			console.log('1');
-			
 			rebillController.getRebillsBySessionID(session.id).then((rebills) => {
-			
-				console.log('2');
 				
 				Promise.all(rebills.map((rebill) => {
 					
 					return new Promise((resolve, reject) => {
-					
-						console.log('4');
 						
 						var productsController = require('./Product.js');
-						
-						console.log(rebill);
-						
+
 						productsController.getProducts(rebill.products).then((products) => {
 							
 							resolve(products);
@@ -141,8 +137,6 @@ class sessionController extends entityController {
 					});
 					
 				})).then((products) => {
-				
-					console.log('3');
 					
 					products.map(product_object => {
 						
@@ -267,6 +261,7 @@ class sessionController extends entityController {
 	
 	}
 	
+	//Technical Debt:  This needs to use a Entity method
 	getSessionByCustomerID(customer_id){
 		
 		return this.listBySecondaryIndex('customer', customer_id, 'customer-index');
@@ -318,7 +313,7 @@ class sessionController extends entityController {
 						affiliate_id: parameters.affiliate_id
 					});
 					
-					this.create(session).then((session) => {
+					this.save(session).then((session) => {
 	
 						resolve(session);
 	

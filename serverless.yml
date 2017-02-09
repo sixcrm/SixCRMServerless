@@ -42,6 +42,7 @@ functions:
       secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction_key}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       
   verifyauth0jwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
@@ -50,6 +51,7 @@ functions:
       secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site_key}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       
   graph:
     handler: endpoints/graph/handler.graph

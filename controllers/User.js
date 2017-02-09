@@ -15,7 +15,7 @@ class userController extends entityController {
 	}
 	
 	getUserByAccessKeyId(access_key_id){
-		return this.getBySecondaryIndex('access_key-id', access_key_id, 'access_key_id-index');
+		return this.getBySecondaryIndex('access_key_id', access_key_id, 'access_key_id-index');
 	}
 	
 	getAccessKey(id){

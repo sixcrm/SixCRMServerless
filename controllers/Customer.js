@@ -22,7 +22,15 @@ class customerController extends entityController {
 	
 	getCreditCards(customer){
 		
-		return customer.creditcards.map(id => creditCardController.get(id));
+		if(_.has(customer, "creditcards")){
+			
+			return customer.creditcards.map(id => creditCardController.get(id));
+			
+		}else{
+			
+			return null;
+			
+		}
 		
 	}
 	

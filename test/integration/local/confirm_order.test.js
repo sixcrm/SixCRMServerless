@@ -30,6 +30,7 @@ describe('Confirm Order Integration Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
+				console.log(response.body);
 				assert.isObject(response.body);
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");

@@ -22,13 +22,29 @@ class campaignController extends entityController {
 	
 	getEmails(campaign){
 		
-		return campaign.emails.map(id => emailController.get(id));
+		if(_.has(campaign, "emails")){
+		
+			return campaign.emails.map(id => emailController.get(id));
+			
+		}else{
+			
+			return null;
+			
+		}
         
 	}
 	
 	getProducts(campaign){
 		
-		return campaign.products.map(id => productController.get(id));
+		if(_.has(campaign, "products")){
+		
+			return campaign.products.map(id => productController.get(id));
+			
+		}else{
+		
+			return null;
+			
+		}
         
 	}
 	
@@ -45,14 +61,30 @@ class campaignController extends entityController {
 	}
 	
 	getProductSchedules(campaign){
+	
+		if(_.has(campaign, "productschedules")){
 		
-		return campaign.productschedules.map(id => productScheduleController.get(id));
+			return campaign.productschedules.map(id => productScheduleController.get(id));
+			
+		}else{
+			
+			return null;
+			
+		}
 		
 	}
 	
 	getProductSchedulesHydrated(campaign){
 		
-		return Promise.all(campaign.productschedules.map(id => productScheduleController.getProductScheduleHydrated(id)));
+		if(_.has(campaign, "productschedules")){
+		
+			return Promise.all(campaign.productschedules.map(id => productScheduleController.getProductScheduleHydrated(id)));
+			
+		}else{
+			
+			return null;
+			
+		}
 		
 	}
 	

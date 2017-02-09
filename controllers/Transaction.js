@@ -15,11 +15,15 @@ class transactionController extends entityController {
 		this.descriptive_name = 'transaction';
 	}
 	
+	//Technical Debt:  Why is this missing rebill_ids	
 	getParentRebill(transaction){
 		
-		//why is this here?
-		var rebillController = require('./Rebill.js');
-		return rebillController.get(transaction.rebill_id);
+		if(_.has(transaction, "rebill_id")){
+			var rebillController = require('./Rebill.js');
+			return rebillController.get(transaction.rebill_id);
+		}else{
+			return null;
+		}
 
 		
 	}

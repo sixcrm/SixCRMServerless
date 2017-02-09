@@ -19,7 +19,10 @@ class rebillController extends entityController {
 		this.descriptive_name = 'rebill';
 	}
 	
+	//Note: rebills don't get product associations, only product schedules
 	getProducts(rebill){
+		
+		if(!_.has(rebill, 'products')){ return null; }
 		
 		return rebill.products.map(id => productController.get(id));
         
@@ -27,6 +30,7 @@ class rebillController extends entityController {
 	
 	getProductSchedules(rebill){
 		
+		if(!_.has(rebill, 'product_schedules')){ return null; }
 		return rebill.product_schedules.map(id => productScheduleController.get(id));
         
 	}
@@ -39,6 +43,8 @@ class rebillController extends entityController {
 	
 	getParentSession(rebill){
 		
+		if(!_.has(rebill, 'parentsession')){ return null; }
+		
 		//why is this necessary?
 		var sessionController = require('./Session.js');
 
@@ -47,6 +53,8 @@ class rebillController extends entityController {
 	}
 	
 	getParentSessionHydrated(rebill){
+	
+		if(!_.has(rebill, 'parentsession')){ return null; }
 		
 		return sessionController.getSessionHydrated(rebill.parentsession);
 		
@@ -54,12 +62,12 @@ class rebillController extends entityController {
 
 	
 	buildRebillObject(parameters){
-	
+		
 		return {
 			id: uuidV4(),
 			billdate: parameters.billdate,
 			parentsession: parameters.parentsession,
-			products: parameters.products,
+			product_schedules: parameters.product_schedules,
 			amount: parameters.amount
 		};
 		
@@ -109,7 +117,7 @@ class rebillController extends entityController {
 	}
 	
 	//this is a lambda entrypoint
-	createRebills( session, product_schedules, day_in_cycle){
+	createRebills(session, product_schedules, day_in_cycle){
 		
 		return Promise.all(product_schedules.map(schedule => this.createRebill(session, schedule, day_in_cycle)));
 		
@@ -128,13 +136,15 @@ class rebillController extends entityController {
 			}
 			
 			var rebill_parameters = this.calculateRebill(day_in_cycle, product_schedule);
-		
+			
 			var rebill_object = this.buildRebillObject({
 				parentsession: session.id,
 				billdate: rebill_parameters.billdate,
-				product_schedules: product_schedule,
+				product_schedules: [product_schedule],
 				amount: rebill_parameters.amount
 			});
+			
+			//console.log(rebill_object);
 			
 			this.create(rebill_object).then((rebill) => {
 			
@@ -207,6 +217,7 @@ class rebillController extends entityController {
 		
 	}
 	
+	//Technical Debt:  This shouldn't go here...
 	getRebillsAfterTimestamp(timestamp){
 		
 		return new Promise((resolve, reject) => {

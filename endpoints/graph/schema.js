@@ -256,7 +256,7 @@ var transactionType = new GraphQLObjectType({
       description: 'The date of the transaction.',
     },
     rebill: {
-	  type: new GraphQLNonNull(rebillType),
+	  type: rebillType,
       description: 'The rebill of the transaction.',
       resolve: function(transaction){
       	 return transactionController.getParentRebill(transaction);
@@ -873,7 +873,7 @@ var merchantProviderConfigurationType = new GraphQLObjectType({
       description: 'The distribution of the merchantprovider.',
     },
     merchantprovider: {
-      type: new GraphQLNonNull(merchantProviderType),
+      type: merchantProviderType,
       description: 'The merchant provider associated with the load balancer',
       resolve: merchantproviderconfiguration => loadBalancerController.getMerchantProviderConfiguration(merchantproviderconfiguration)
     }
@@ -954,7 +954,7 @@ var emailType = new GraphQLObjectType({
       description: 'The email type (see enumeration).',
     },
     smtp_provider: {
-      type: new GraphQLNonNull(SMTPProviderType),
+      type: SMTPProviderType,
       description: 'The SMTP Provider for the email.',
       resolve: email => emailController.getSMTPProvider(email)
     }
@@ -998,6 +998,7 @@ var SMTPProviderType = new GraphQLObjectType({
   interfaces: []
 });
 
+//Techincal Debt:  This seems deprecated
 var priceType = new GraphQLObjectType({
   name: 'Price',
   description: 'A price object',
@@ -1014,6 +1015,7 @@ var priceType = new GraphQLObjectType({
   interfaces: []
 });
 
+//Technical Debt:  This seems deprecated
 var recurringType = new GraphQLObjectType({
   name: 'Recurring',
   description: 'A recurring details object',
@@ -1088,7 +1090,7 @@ var addressType = new GraphQLObjectType({
       description: 'The ZIP code of the address.',
     },
     country: {
-      type: GraphQLString,
+      type: new GraphQLNonNull(GraphQLString),
       description: 'The country code of the address.',
     },
   }),

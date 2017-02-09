@@ -24,7 +24,7 @@ module.exports = class entityController {
 			if(typeof limit  !== 'undefined'){
 				query_parameters['limit'] = limit;
 			}
-			
+					
 			dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
@@ -50,6 +50,10 @@ module.exports = class entityController {
 					var has_next_page = 'false';
 					if(_.has(data, "LastEvaluatedKey")){
 						pagination_object.has_next_page = 'true';
+					}
+					
+					if(data.Items.length < 1){
+						data.Items = null;
 					}
 					
 					var resolve_object = {
@@ -79,19 +83,20 @@ module.exports = class entityController {
 				
 				if(_.isError(error)){ reject(error);}
 				
-				if(_.isArray(data)){
+				if(_.isArray(data) && data.length > 1){
 					
 					resolve(data);
 					
 				}else{
 				
-					reject(data);
+					reject(null);
 					
 				}				
 	
 			});
 			
         });
+        
 	}
 	
 	getBySecondaryIndex(field, index_value, index_name){
@@ -101,7 +106,7 @@ module.exports = class entityController {
 		return new Promise((resolve, reject) => {
 				
 			var query = field+' = :index_valuev';
-			
+					
 			dynamoutilities.queryRecords(this.table_name, query, {':index_valuev': index_value}, index_name, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
@@ -120,7 +125,7 @@ module.exports = class entityController {
 							
 						}else{
 							
-							resolve([]);
+							resolve(null);
 							
 						}
 					
@@ -140,7 +145,7 @@ module.exports = class entityController {
 		return new Promise((resolve, reject) => {
 				
 			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': id}, null, (error, data) => {
-				
+					
 				if(_.isError(error)){ reject(error);}
 				
 				if(_.isObject(data) && _.isArray(data)){
@@ -156,8 +161,8 @@ module.exports = class entityController {
 							reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
 							
 						}else{
-						
-							resolve([]);
+							
+							resolve(null);
 							
 						}
 						
@@ -181,20 +186,22 @@ module.exports = class entityController {
 				
 			}
 			
+			console.log('here');
 			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': entity.id}, null, (error, data) => {
 				
+				console.log('ere2');
 				if(_.isError(error)){ reject(error);}
-				
+				console.log('ere3');
 				if(_.isObject(data) && _.isArray(data) && data.length > 0){
-				
+					console.log('ere4');
 					reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
 					
 				}				
-				
+				console.log('ere5');
 				dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
-				
+					console.log('ere6');
 					if(_.isError(error)){ reject(error);}
-				
+					console.log('ere7');
 					resolve(entity);
 				
 				});

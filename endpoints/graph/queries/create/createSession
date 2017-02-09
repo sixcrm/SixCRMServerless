@@ -40,38 +40,7 @@
 				}
 			},
 			rebills {
-				id,
-				billdate,
-				product_schedules {
-					id,
-					schedule {
-						price,
-						start,
-						end,
-						period,
-						product {
-							id,
-							name,
-							sku,
-							ship,
-							shipping_delay,
-							fulfillment_provider {
-								id, 
-								name,
-								provider,
-								username,
-								password,
-								endpoint
-							}
-						}
-					}
-				},
-				transactions {
-					id,
-					date,
-					processor_response,
-					amount
-				}
+				id
 			},
 			campaign {
 				id,

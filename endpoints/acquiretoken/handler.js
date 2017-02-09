@@ -8,8 +8,10 @@ var timestamp = require('../../lib/timestamp.js');
 
 module.exports.acquiretoken = (event, context, callback) => {
 	
-	var user_id = event.requestContext.authorizer.user;
+	console.log(event);
 	
+	var user_id = event.requestContext.authorizer.user;
+
 	var _timestamp = timestamp.createTimestampSeconds() + (60 * 60);
 
 	var payload = {

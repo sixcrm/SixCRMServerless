@@ -32,12 +32,12 @@ module.exports.verifyjwt = (event, context, callback) => {
 		var user_id = decoded.user_id;
 		
 		userController.get(user_id).then((user) => {
+		
 			//check to make sure that the user is active			
-			console.log(user);
 			return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, user.id));
 			
 		}).catch((error) => {
-			console.log(error);
+
 			return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 			
 		});

@@ -22,6 +22,8 @@ describe('Round Trip Test', function() {
     	var request_time = new Date().getTime();
 		var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
     	var authorization_string = config.access_key+':'+request_time+':'+signature;
+    	
+    	console.log(authorization_string);
 		
 		var this_request = request(endpoint);
 		console.log(appropriate_spacing+'Acquiring Token');
@@ -34,6 +36,7 @@ describe('Round Trip Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
+				console.log(response.body);
 				assert.isObject(response.body);
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
@@ -77,6 +80,7 @@ describe('Round Trip Test', function() {
 					.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 					.end(function(err, response){
+						console.log(response.body);
 						assert.property(response.body, "message");
 						assert.equal(response.body.message, "Success");
 						assert.property(response.body, "results");
@@ -87,11 +91,12 @@ describe('Round Trip Test', function() {
 				
 						var session_id = response.body.results.session.id;
 						var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
-					  	var products = ["be992cea-e4be-4d3e-9afa-8e020340ed16"];
+					  	var product_schedules = ["12529a17-ac32-4e46-b05b-83862843055d"]
 					  	
+					  	console.log(session_id);
 					  	var order_create = {
 							"session_id":session_id,
-							"products":products,
+							"product_schedules":product_schedules,
 							"campaign_id":campaign_id,
 							"type":"sale",
 							"ccnumber":"4111111111111111",
@@ -119,11 +124,12 @@ describe('Round Trip Test', function() {
 							.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
+								console.log(response.body);
 								assert.property(response.body, "message");
 								assert.equal(response.body.message, "Success");
 								assert.property(response.body, "results");
-								assert.property(response.body.results, "parentsession");
-								assert.isString(response.body.results.parentsession);
+//								assert.property(response.body.results, "parentsession");
+//								assert.isString(response.body.results.parentsession);								
 								assert.property(response.body.results, "processor_response");
 								try{
 									var processor_response = JSON.parse(response.body.results.processor_response);
@@ -137,11 +143,12 @@ describe('Round Trip Test', function() {
 								assert.property(processor_response.results, 'response');
 								assert.equal(processor_response.results.response, '1');
 								
-								var products = ["616cc994-9480-4640-b26c-03810a679fe3"];
+								var upsell_product_schedules = ["8d1e896f-c50d-4a6b-8c84-d5661c16a046"];
+								
 								var upsell_create = {
 									"session_id":session_id,
 									"campaign_id":campaign_id,
-									"products":products,
+									"product_schedules":upsell_product_schedules,
 									"type":"sale",
 									"ccnumber":"4111111111111111",
 									"ccexpiration":"1025",
@@ -171,8 +178,8 @@ describe('Round Trip Test', function() {
 										assert.property(response.body, "message");
 										assert.equal(response.body.message, "Success");
 										assert.property(response.body, "results");
-										assert.property(response.body.results, "parentsession");
-										assert.isString(response.body.results.parentsession);
+//										assert.property(response.body.results, "parentsession");
+//										assert.isString(response.body.results.parentsession);
 										assert.property(response.body.results, "processor_response");
 										try{
 											var processor_response = JSON.parse(response.body.results.processor_response);

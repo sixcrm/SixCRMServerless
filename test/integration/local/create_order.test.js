@@ -19,12 +19,13 @@ describe('Order Create Integration Test', function() {
   describe('Happy Path', function() {
     it('should create a order', function (done) {
 		var this_request = request(endpoint);
+	
 		var post_body = {
 			"session_id":"668ad918-0d09-4116-a6fe-0e8a9eda36f7",
 			"campaign_id":"70a6689a-5814-438b-b9fd-dd484d0812f9",
-			"products":["be992cea-e4be-4d3e-9afa-8e020340ed16"],
-			"type":"sale",
+			"product_schedules":["12529a17-ac32-4e46-b05b-83862843055d"],
 			"ccnumber":"4111111111111111",
+			"type":"sale",
 			"ccexpiration":"1025",
 			"ccccv":"999",
 			"name":"Rama Damunaste",
