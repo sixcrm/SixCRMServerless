@@ -1619,9 +1619,12 @@ var queryType = new GraphQLObjectType({
 const productInputType = new GraphQLInputObjectType({
   name: 'ProductInput',
   fields: () => ({
-    id:		{ type: new GraphQLNonNull(GraphQLString) },
-    name:	{ type: new GraphQLNonNull(GraphQLString) },
-    sku:	{ type: new GraphQLNonNull(GraphQLString) }
+    id:						{ type: new GraphQLNonNull(GraphQLString) },
+    name:					{ type: new GraphQLNonNull(GraphQLString) },
+    sku:					{ type: new GraphQLNonNull(GraphQLString) },
+    ship:					{ type: new GraphQLNonNull(GraphQLString) },
+    shipping_delay: 		{ type: new GraphQLNonNull(GraphQLString) },
+    fulfillment_provider: 	{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
