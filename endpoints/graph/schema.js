@@ -225,7 +225,7 @@ var sessionType = new GraphQLObjectType({
       }
     },
     campaign: {
-      type: new GraphQLNonNull(campaignType),
+      type: campaignType,
       description: 'The campaign associated with the session',
       resolve: function(session){
       	return sessionController.getCampaign(session);
@@ -292,12 +292,6 @@ var rebillType = new GraphQLObjectType({
       description:
         'The product schedules associated with the rebill',
       resolve: rebill => rebillController.getProductSchedules(rebill),
-    },
-    products: {
-      type: new GraphQLList(productType),
-      description:
-        'The products associated with the rebill',
-      resolve: rebill => rebillController.getProducts(rebill),
     },
     transactions: {
 	  type: new GraphQLList(transactionType),
@@ -1802,7 +1796,6 @@ const rebillInputType = new GraphQLInputObjectType({
     billdate:			{ type: new GraphQLNonNull(GraphQLInt) },
     parentsession:		{ type: new GraphQLNonNull(GraphQLString) },
     amount:				{ type: new GraphQLNonNull(GraphQLString) },
-    products:			{ type: new GraphQLList(GraphQLString) },
     product_schedules:	{ type: new GraphQLList(GraphQLString) }
   })
 });

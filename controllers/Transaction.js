@@ -30,6 +30,7 @@ class transactionController extends entityController {
         
 	getTransactionsByRebillID(id){
 		
+		return null;
 		return this.listBySecondaryIndex('rebill_id', id, 'rebill-index');
 		
 	}

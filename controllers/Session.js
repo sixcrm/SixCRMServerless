@@ -25,11 +25,16 @@ class sessionController extends entityController {
 	
 	getCustomer(session){
 		
+		if(!_.has(session, "customer")){ return null; }
+		
 		return customerController.get(session.customer);
         
 	}
 	
 	getCampaign(session){
+		
+		if(!_.has(session, "campaign")){ return null; }
+		
 		
 		return campaignController.get(session.campaign);
         
@@ -104,9 +109,7 @@ class sessionController extends entityController {
 	
 	getProductSchedules(session){
 		
-		if(!_.has(session, "product_schedules")){
-			return null;
-		}
+		if(!_.has(session, "product_schedules")){ return null; }
 		
 		return session.product_schedules.map(schedule => productScheduleController.get(schedule));
         
@@ -195,7 +198,9 @@ class sessionController extends entityController {
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
-		
+			
+			if(!_.has(session, "campaign")){ return null; }
+					
 			controller_instance.getCampaignHydrated(session.campaign).then((campaign) => {
 	
 				session.campaign = campaign;
@@ -203,6 +208,8 @@ class sessionController extends entityController {
 				return session;
 				
 			}).then((session) => {
+				
+				if(!_.has(session, "customer")){ return null; }
 				
 				controller_instance.getCustomerHydrated(session.customer).then((customer) => {
 					

@@ -31,6 +31,7 @@ class rebillController extends entityController {
 	getProductSchedules(rebill){
 		
 		if(!_.has(rebill, 'product_schedules')){ return null; }
+		
 		return rebill.product_schedules.map(id => productScheduleController.get(id));
         
 	}
@@ -205,6 +206,7 @@ class rebillController extends entityController {
         
 	getRebillsBySessionID(id){
 		
+		return null;
 		return this.listBySecondaryIndex('parentsession', id, 'parentsession-index');
 		
 	}

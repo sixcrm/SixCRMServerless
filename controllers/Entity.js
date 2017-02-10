@@ -71,11 +71,26 @@ module.exports = class entityController {
 		
 	}
 	
+	//Technical Debt:  This may need to be rewritten...
 	listBySecondaryIndex(field, index_value, index_name){
 		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
+			
+			/*
+			Technical Debt:  These must be in place for listing...
+			
+			var query_parameters = {filter_expression: null, expression_attribute_values: null};
+			
+			if(typeof cursor  !== 'undefined'){
+				query_parameters.ExclusiveStartKey = cursor;
+			}
+
+			if(typeof limit  !== 'undefined'){
+				query_parameters['limit'] = limit;
+			}
+			*/
 				
 			var query = field+' = :index_valuev';
 			
@@ -83,13 +98,13 @@ module.exports = class entityController {
 				
 				if(_.isError(error)){ reject(error);}
 				
-				if(_.isArray(data) && data.length > 1){
+				if(_.isArray(data) && data.length > 0){
 					
 					resolve(data);
 					
 				}else{
 				
-					reject(null);
+					resolve(null);
 					
 				}				
 	
@@ -177,7 +192,7 @@ module.exports = class entityController {
     }
     
     create(entity){
-		
+
 		return new Promise((resolve, reject) => {
 			
 			if(!_.has(entity,'id')){
