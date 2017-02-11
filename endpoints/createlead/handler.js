@@ -97,9 +97,9 @@ module.exports.createlead = (event, context, callback) => {
 			customerController.getCustomerByEmail(duplicate_body['email']).then((customer) => {
 
 				if(_.has(customer, "id")){
-
+					
 					sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: affiliate_id}).then((session) => {
-				
+						
 						var result_message = {
 							session: session,
 							customer: customer,
@@ -115,17 +115,11 @@ module.exports.createlead = (event, context, callback) => {
 					});
 		
 				}else{
-			
-
-					//var customer_id = duplicate_body['id'] = uuidV4();
-			
 					
 					customerController.create(duplicate_body).then((customer) => {
-				
 
 						sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: affiliate_id}).then((session) => {
-					
-
+				
 							//note that the customer here appears to be a id value.  We want a complete customer object...
 							var result_message = {
 								session: session,

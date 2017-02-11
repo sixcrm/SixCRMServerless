@@ -115,10 +115,10 @@ module.exports.createorder= (event, context, callback) => {
 						loadBalancerController.process(campaign.loadbalancer, {customer: customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
 						
 							//this is intended to process multiple product schedules purchased...																
-							rebillController.createRebills(session, schedules_to_purchase, 0).then((rebill) =>{
+							rebillController.createRebills(session, schedules_to_purchase, 0).then((rebills) =>{
 								
 								//hack, we need to support multiple schedules in a single order
-								rebill = rebill[0];
+								rebill = rebills[0];
 								
 								transactionController.putTransaction({session: session, rebill: rebill, amount: amount}, processor_response).then((transaction) => {
 								

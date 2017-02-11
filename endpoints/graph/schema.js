@@ -145,6 +145,7 @@ var sessionInterface = new GraphQLInterfaceType({
   }
 });
 
+//this is trash?
 var transactionInterface = new GraphQLInterfaceType({
   name: 'transaction',
   description: 'A tranasaction',
@@ -233,37 +234,6 @@ var sessionType = new GraphQLObjectType({
     }
   }),
   interfaces: [sessionInterface]
-});
-
-var transactionType = new GraphQLObjectType({
-  name: 'Transaction',
-  description: 'A record denoting transactions.',
-  fields: () => ({
-    id: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The id of the transaction.',
-    },
-    amount: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The amount of the transaction.',
-    },
-    date: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The date of the transaction.',
-    },
-    processor_response: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The date of the transaction.',
-    },
-    rebill: {
-	  type: rebillType,
-      description: 'The rebill of the transaction.',
-      resolve: function(transaction){
-      	 return transactionController.getParentRebill(transaction);
-      }
-    },
-  }),
-  interfaces: [transactionInterface]
 });
 
 var rebillType = new GraphQLObjectType({
@@ -858,6 +828,25 @@ var fulfillmentProviderType = new GraphQLObjectType({
   interfaces: []
 });
 
+var transactionProductType = new GraphQLObjectType({
+  name: 'transactionproduct',
+  description: 'A product associated with a transaction.',
+  fields: () => ({
+    amount: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The amount of the product.',
+    },
+    product: {
+      type: productType,
+      description: 'The product.',
+      resolve: function(transactionproduct){
+      	return transactionController.getProduct(transactionproduct.product);
+      }
+    }
+  }),
+  interfaces: []
+});
+
 var merchantProviderConfigurationType = new GraphQLObjectType({
   name: 'merchantproviderconfiguration',
   description: 'A merchant provider configuration.',
@@ -890,6 +879,40 @@ var loadBalancerType = new GraphQLObjectType({
     }
   }),
   interfaces: []
+});
+
+var transactionType = new GraphQLObjectType({
+  name: 'Transaction',
+  description: 'A record denoting transactions.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the transaction.',
+    },
+    amount: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The amount of the transaction.',
+    },
+    date: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The date of the transaction.',
+    },
+    processor_response: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The date of the transaction.',
+    },
+    rebill: {
+	  type: rebillType,
+      description: 'The rebill of the transaction.',
+      resolve: transaction => transactionController.getParentRebill(transaction)
+    },
+    products: {
+	  type: new GraphQLList(transactionProductType),
+	  description: 'Products associated with the transaction',
+	  resolve: transaction => transactionController.getTransactionProducts(transaction)
+    }
+  }),
+  interfaces: [transactionInterface]
 });
 
 var campaignType = new GraphQLObjectType({
@@ -1810,10 +1833,19 @@ const transactionInputType = new GraphQLInputObjectType({
     date:				{ type: new GraphQLNonNull(GraphQLString) },
     rebill_id:			{ type: new GraphQLNonNull(GraphQLString) },
     amount:				{ type: new GraphQLNonNull(GraphQLFloat) },
-    processor_response:	{ type: new GraphQLList(GraphQLString) }
+    processor_response:	{ type: new GraphQLList(GraphQLString) },
+    products:			{ type: new GraphQLList(transactionProductInputType) }
   })
 });
-    	
+
+const transactionProductInputType = new GraphQLInputObjectType({
+  name: 'TransactionProductInputType',
+  fields: () => ({
+    amount:				{ type: new GraphQLNonNull(GraphQLString) },
+    product:			{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+	
 const campaignInputType = new GraphQLInputObjectType({
   name: 'CampaignInputType',
   fields: () => ({

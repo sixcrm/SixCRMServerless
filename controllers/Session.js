@@ -24,9 +24,9 @@ class sessionController extends entityController {
 	}
 	
 	getCustomer(session){
-		
+			
 		if(!_.has(session, "customer")){ return null; }
-		
+			
 		return customerController.get(session.customer);
         
 	}
@@ -103,7 +103,7 @@ class sessionController extends entityController {
 	
 	getRebills(session){
 		
-		return rebillController.getRebillsBySessionID(session);
+		return rebillController.getRebillsBySessionID(session.id);
         
 	}
 	
@@ -123,18 +123,31 @@ class sessionController extends entityController {
 			
 			var session_products = [];
 			
-			rebillController.getRebillsBySessionID(session.id).then((rebills) => {
+			controller_instance.getRebills(session).then((rebills) => {
 				
+				//for each rebill				
 				Promise.all(rebills.map((rebill) => {
-					
+						
 					return new Promise((resolve, reject) => {
 						
-						var productsController = require('./Product.js');
+						//get transactions
+						rebillController.getTransactions(rebill).then((transactions) => {
+							
+							//foreach transaction
+							Promise.all(transactions.map((transaction) => {
+								
+								return new Promise((resolve, reject) => {
+										
+									transactionController.getProducts(transaction).then((products) => {
+										
+										session_products.push(products);
+										
+									})
+									
+								});
+								
+							}));
 
-						productsController.getProducts(rebill.products).then((products) => {
-							
-							resolve(products);
-							
 						});
 						
 					});
@@ -174,9 +187,6 @@ class sessionController extends entityController {
 			this.get(id).then((session) => {
 				
 				this.hydrate(session).then((session) => {	
-					
-					console.log(session);
-					process.exit();
 					
 					resolve(session);
 					
@@ -320,7 +330,7 @@ class sessionController extends entityController {
 						affiliate_id: parameters.affiliate_id
 					});
 					
-					this.save(session).then((session) => {
+					this.create(session).then((session) => {
 	
 						resolve(session);
 	

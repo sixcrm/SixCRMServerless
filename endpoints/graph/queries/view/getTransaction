@@ -5,6 +5,7 @@
 			id,
 			date,
 			amount,
+			processor_response,
 			rebill {
 				id,
 				amount,
@@ -34,7 +35,24 @@
 					}
 				}
 			},
-			processor_response
+			products {
+				amount,
+				product {
+					id,
+					name,
+					sku,
+					ship,
+					shipping_delay,
+					fulfillment_provider {
+						id,
+						name,
+						provider,
+						username,
+						password,
+						endpoint
+					}
+				}
+			}	
 		} 
 	}"
 }

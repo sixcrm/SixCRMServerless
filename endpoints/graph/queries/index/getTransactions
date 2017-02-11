@@ -38,7 +38,25 @@
 						}
 					}
 				},
-				processor_response
+				processor_response,
+				products {
+					amount,
+					product {
+						id,
+						name,
+						sku,
+						ship,
+						shipping_delay,
+						fulfillment_provider {
+							id,
+							name,
+							provider,
+							username,
+							password,
+							endpoint
+						}
+					}
+				}
 			},
 			pagination {
 				count,

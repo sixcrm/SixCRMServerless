@@ -5,6 +5,7 @@ const uuidV4 = require('uuid/v4');
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
 
+var productController = require('./Product.js');
 var entityController = require('./Entity.js');
 
 class transactionController extends entityController {
@@ -27,10 +28,56 @@ class transactionController extends entityController {
 
 		
 	}
+	
+	getProduct(id){
+		
+		return productController.get(id);
+		
+	}
+	
+	getProducts(transaction){
+		
+		if(!_.has(transaction, "products")){ return null; }
+		
+		return Promise.all(transaction.products.map(transaction_product => this.getTransactionProduct(transaction_product)));
+		
+	}
+	
+	getTransactionProducts(transaction){
+		
+		return transaction.products.map((transactionproduct) => {
+			
+			return {
+				"amount": transactionproduct.amount,
+				"product": transactionproduct.product
+			};
+			
+		});	
+		
+	}
+	
+	getTransactionProduct(transaction_product){
+	
+		if(!_.has(transaction_product, "product")){ return null; }
+		
+		return new Promise((resolve, reject) => {
+			
+			productController.get(transaction_product.product).then((product) => {
+				
+				if(_.isError(error)){ reject(error); }
+				
+				transaction_product['product'] = product;
+				
+				resolve(transaction_product);
+				
+			});
+			
+		});
+		
+	}
         
 	getTransactionsByRebillID(id){
 		
-		return null;
 		return this.listBySecondaryIndex('rebill_id', id, 'rebill-index');
 		
 	}

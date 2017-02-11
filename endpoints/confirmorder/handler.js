@@ -58,14 +58,24 @@ module.exports.confirmorder = (event, context, callback) => {
 	}
 	
 	sessionController.get(duplicate_querystring['session_id']).then((session) => {
-		console.log('1');
+		
+		if(!_.isObject(session) || !_.has(session, "id")){
+			throw new Error('The specified session does not exist.');
+		}
+
 		
 		if(session.completed == 'true'){ throw new Error('The specified session is already complete.');}
-		console.log(session);
-		customerController.get(session.customer).then((customer) => {
-			console.log('2');
+
+		sessionController.getCustomer(session).then((customer) => {
+			
+			console.log('customer:');		
+			console.log(customer);
+			
 			sessionController.getProducts(session).then((products) => {
-				console.log('3');
+				
+				console.log('products');
+				console.log(products);
+				
 				sessionController.getTransactions(session).then((transactions) => {
 					console.log('4');
 					sessionController.closeSession(session).then(() => {

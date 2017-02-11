@@ -206,7 +206,6 @@ class rebillController extends entityController {
         
 	getRebillsBySessionID(id){
 		
-		return null;
 		return this.listBySecondaryIndex('parentsession', id, 'parentsession-index');
 		
 	}
