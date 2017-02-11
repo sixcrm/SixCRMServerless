@@ -222,7 +222,7 @@ var sessionType = new GraphQLObjectType({
       type: new GraphQLList(rebillType),
       description: 'The rebills associated with the session',
       resolve: function(session){
-      	 return sessionController.getRebills(session.id);
+      	 return sessionController.getRebills(session);
       }
     },
     campaign: {

@@ -25,8 +25,7 @@ class transactionController extends entityController {
 		}else{
 			return null;
 		}
-
-		
+	
 	}
 	
 	getProduct(id){
@@ -91,20 +90,13 @@ class transactionController extends entityController {
 	}
 	
 	createTransactionObject(params, processor_response){
-		
-		var transaction_products = [];
-		if(_.has(params, "products") && _.isArray(params.products)){
-			params.products.forEach((product) => {
-				transaction_products.push(product.id);
-			});
-		}
 
 		var return_object = {
-			id: uuidV4(),
 			rebill_id: params.rebill_id,
 			processor_response: JSON.stringify(processor_response),
 			amount: params.amount,
-			date: timestamp.createDate()
+			date: timestamp.createDate(),
+			products: params.products
 		}
 		
 		return return_object;

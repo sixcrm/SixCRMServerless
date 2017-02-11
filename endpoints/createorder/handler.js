@@ -120,7 +120,7 @@ module.exports.createorder= (event, context, callback) => {
 								//hack, we need to support multiple schedules in a single order
 								rebill = rebills[0];
 								
-								transactionController.putTransaction({session: session, rebill: rebill, amount: amount}, processor_response).then((transaction) => {
+								transactionController.putTransaction({session: session, rebill: rebill, amount: amount, products:[{amount:123.00, product:'abc123'}]}, processor_response).then((transaction) => {
 								
 									if(!_.isObject(transaction) || !_.has(transaction, 'id')){ throw new Error('No available transaction.');}
 									
