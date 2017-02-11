@@ -118,7 +118,7 @@ module.exports.createorder= (event, context, callback) => {
 							rebillController.createRebills(session, schedules_to_purchase, 0).then((rebills) =>{
 								
 								//hack, we need to support multiple schedules in a single order
-								rebill = rebills[0];
+								var rebill = rebills[0];
 								
 								transactionController.putTransaction({session: session, rebill: rebill, amount: amount, products:[{amount:123.00, product:'abc123'}]}, processor_response).then((transaction) => {
 								
