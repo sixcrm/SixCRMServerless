@@ -83,7 +83,7 @@ function validateInput (event, callback) {
 
 function createLead (event, callback) {
 	var params = event;
-  var promises = [];
+	var promises = [];
 	if(!params.campaign_id || !_.isString(params.campaign_id)){
 		return lr.issueError('A lead must be associated with a campaign', 500, event, new Error('A lead must be associated with a campaign'), callback);
 	}
