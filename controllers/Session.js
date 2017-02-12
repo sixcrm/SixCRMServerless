@@ -65,13 +65,21 @@ class sessionController extends entityController {
 							
 						transactionController.getTransactionsByRebillID(rebill.id).then((transactions) => {
 							
-							transactions.map((transaction) => {
-							
-								session_transactions.push(transaction)
+							if(_.isNull(transactions)){
 								
-							});
+								resolve(null);
+								
+							}else{
 							
-							resolve(transactions);
+								transactions.map((transaction) => {
+							
+									session_transactions.push(transaction)
+								
+								});
+							
+								resolve(transactions);
+							
+							}
 							
 						}).catch((error) => {
 					
@@ -115,8 +123,8 @@ class sessionController extends entityController {
         
 	}
 	
-	getProducts(session){
-		
+	getTransactionProducts(session){
+			
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
@@ -125,28 +133,42 @@ class sessionController extends entityController {
 			
 			controller_instance.getRebills(session).then((rebills) => {
 				
-				//for each rebill				
 				Promise.all(rebills.map((rebill) => {
-						
+											
 					return new Promise((resolve, reject) => {
 						
-						//get transactions
 						rebillController.getTransactions(rebill).then((transactions) => {
 							
-							//foreach transaction
-							Promise.all(transactions.map((transaction) => {
+							//note that at the time of a createorder, there are lots of rebills, only one of which has a transaction
+							if(_.isNull(transactions)){ 
 								
-								return new Promise((resolve, reject) => {
+								resolve([]); 
+								
+							}else{
+											
+								Promise.all(transactions.map((transaction) => {
+								
+									return new Promise((resolve, reject) => {
 										
-									transactionController.getProducts(transaction).then((products) => {
+										transactionController.getProducts(transaction).then((products) => {
 										
-										session_products.push(products);
+											resolve(products);
 										
-									})
+										});
 									
+									});
+								
+								})).then((products) => {
+								
+									resolve(products);
+								
+								}).catch((error) => {
+								
+									reject(error);
+								
 								});
 								
-							}));
+							}
 
 						});
 						
@@ -154,28 +176,26 @@ class sessionController extends entityController {
 					
 				})).then((products) => {
 					
-					products.map(product_object => {
-						
-						product_object.map(embeded_product => {
-							
-							session_products.push(embeded_product);
-							
+					products.forEach((c1) => {
+						c1.forEach((c2) => {
+							c2.forEach((product) => {
+								session_products.push(product);
+							});
 						});
-						
 					});
 					
 					resolve(session_products);
 					
-				}).catch((error) => {
-					
+				}).catch((error) => {	
 					reject(error);
-					
 				});
-
-			}).catch((error) => {
+					
+			}).catch((error) => {	
 				reject(error);
 			});
-			
+
+		}).catch((error) => {
+			reject(error);
 		});
 		
 	}

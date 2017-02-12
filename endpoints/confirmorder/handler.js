@@ -63,24 +63,17 @@ module.exports.confirmorder = (event, context, callback) => {
 			throw new Error('The specified session does not exist.');
 		}
 
-		
 		if(session.completed == 'true'){ throw new Error('The specified session is already complete.');}
 
 		sessionController.getCustomer(session).then((customer) => {
-			
-			console.log('customer:');		
-			console.log(customer);
-			
-			sessionController.getProducts(session).then((products) => {
-				
-				console.log('products');
-				console.log(products);
-				
+		
+			sessionController.getTransactionProducts(session).then((transaction_products) => {
+
 				sessionController.getTransactions(session).then((transactions) => {
-					console.log('4');
+
 					sessionController.closeSession(session).then(() => {
-						console.log('5');
-						var results = {session: session, customer: customer, products: products, transactions: transactions};
+
+						var results = {session: session, customer: customer, transactions: transactions, transaction_products: transaction_products};
 	
 						return lr.issueResponse(200, {
 							message: 'Success',

@@ -127,7 +127,7 @@ class rebillController extends entityController {
 	//Technical Debt:  This is a mess
 	//the product schedule needs to be a part of the rebill, not the product
 	createRebill(session, product_schedule, day_in_cycle){
-		
+	
 		return new Promise((resolve, reject) => {
 			
 			if(!_.isNumber(day_in_cycle)){
@@ -141,11 +141,9 @@ class rebillController extends entityController {
 			var rebill_object = this.buildRebillObject({
 				parentsession: session.id,
 				billdate: rebill_parameters.billdate,
-				product_schedules: [product_schedule],
+				product_schedules: [product_schedule.id],
 				amount: rebill_parameters.amount
 			});
-			
-			//console.log(rebill_object);
 			
 			this.create(rebill_object).then((rebill) => {
 			
