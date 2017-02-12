@@ -2,7 +2,7 @@ service: sixtransaction
 package:
   exclude:
     - .git/**
-    
+
 # frameworkVersion: "=X.X.X"
 
 provider:
@@ -11,10 +11,11 @@ provider:
   stage: ${opt:stage, 'development'}
   region: us-east-1
   profile: six
-    
+
 plugins:
   - serverless-dynamodb-local
-  
+  - serverless-offline
+
 custom:
   dynamodb:
     start:
@@ -22,8 +23,9 @@ custom:
       inMemory: true
       migration: true
     migration:
+      table_prefix: ${opt:stage}
       dir: ./dynamolocal/migrations
-      
+
 site_config: ${file(./config/${opt:stage}/site.yml)}
 
 functions:
@@ -34,7 +36,7 @@ functions:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      
+
   verifyjwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
@@ -43,7 +45,7 @@ functions:
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      
+
   verifyauth0jwt:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
@@ -52,7 +54,7 @@ functions:
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      
+
   graph:
     handler: endpoints/graph/handler.graph
     events:
@@ -65,7 +67,7 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
-      stage: ${opt:stage}   
+      stage: ${opt:stage}
       customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
       sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
       products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
@@ -83,7 +85,7 @@ functions:
       emails_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.emails_table}
       smtp_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.smtp_providers_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-  
+
   billtohold:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -91,11 +93,11 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}   
+      stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       workerfunction: sixtransaction-${opt:stage}-processbilling
-      
+
   holdtopending:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -103,11 +105,11 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}   
+      stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: sixtransaction-${opt:stage}-triggerfulfillment
-      
+
   pendingtoshipped:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -115,10 +117,10 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}   
+      stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
-      workerfunction: sixtransaction-${opt:stage}-confirmshipped  
+      workerfunction: sixtransaction-${opt:stage}-confirmshipped
 
   shippedtodelivered:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -127,7 +129,7 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}   
+      stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: sixtransaction-${opt:stage}-confirmdelivery
@@ -143,11 +145,11 @@ functions:
       bill_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-          
+
   processbilling:
     handler: workers/processbilling/handler.processbilling
     environment:
-      stage: ${opt:stage} 
+      stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
       sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
@@ -163,12 +165,12 @@ functions:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-              
+
   triggerfulfillment:
     handler: workers/triggerfulfillment/handler.triggerfulfillment
     environment:
       stage: ${opt:stage}
-      
+
   confirmshipped:
     handler: workers/confirmshipped/handler.confirmshipped
     environment:
@@ -178,7 +180,7 @@ functions:
     handler: workers/confirmdelivered/handler.confirmdelivered
     environment:
       stage: ${opt:stage}
-          
+
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
     events:
@@ -193,7 +195,7 @@ functions:
     environment:
       site_secret_jwt_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction_key}
       stage: ${opt:stage}
-      
+
   createlead:
     handler: endpoints/createlead/handler.createlead
     events:
@@ -212,7 +214,7 @@ functions:
         campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         stage: ${opt:stage}
-        
+
   createorder:
     handler: endpoints/createorder/handler.createorder
     events:
@@ -241,7 +243,7 @@ functions:
         hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
         bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
         stage: ${opt:stage}
-        
+
   confirmorder:
     handler: endpoints/confirmorder/handler.confirmorder
     events:
@@ -261,8 +263,8 @@ functions:
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
         stage: ${opt:stage}
-        
-resources:  
+
+resources:
   Resources:
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
