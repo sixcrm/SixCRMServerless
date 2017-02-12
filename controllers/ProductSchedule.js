@@ -14,6 +14,21 @@ class productScheduleController extends entityController {
 		this.descriptive_name = 'productschedule';
 	}
 	
+	getTransactionProducts(day_in_schedule, schedules_to_purchase){
+		
+		var transaction_products = [];
+		
+		schedules_to_purchase.forEach((schedule) => {
+			var product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
+			transaction_products.push({
+				amount: product_for_purchase.price, 
+				product: product_for_purchase.product_id
+			});
+		});
+	
+		return transaction_products;
+	}
+	
 	getProduct(scheduled_product){
 		
 		return productController.get(scheduled_product.product);

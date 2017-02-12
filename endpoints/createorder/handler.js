@@ -108,7 +108,10 @@ module.exports.createorder= (event, context, callback) => {
 						sessionController.validateProductSchedules(schedules_to_purchase, session);
 						
 						campaignController.validateProductSchedules(schedules_to_purchase, campaign);
-
+						
+						var transaction_products = productScheduleController.getTransactionProducts(0, schedules_to_purchase);
+						
+						//note that this feature is very redundant, please see above productScheduleController.getTransactionProducts
 						var amount = productScheduleController.productSum(0, schedules_to_purchase);
 						
 						//need some fucking unit tests here...
@@ -120,7 +123,7 @@ module.exports.createorder= (event, context, callback) => {
 								//hack, we need to support multiple schedules in a single order
 								var rebill = rebills[0];
 								
-								transactionController.putTransaction({session: session, rebill: rebill, amount: amount, products:[{amount:123.00, product:'abc123'}]}, processor_response).then((transaction) => {
+								transactionController.putTransaction({session: session, rebill: rebill, amount: amount, products: transaction_products}, processor_response).then((transaction) => {
 								
 									if(!_.isObject(transaction) || !_.has(transaction, 'id')){ throw new Error('No available transaction.');}
 									
