@@ -29,21 +29,62 @@ class confirmOrderController {
 		
 			var duplicate_querystring = event.queryStringParameters;
 			
-			try{
-			
-				duplicate_querystring = querystring.parse(duplicate_querystring);
-			
-			}catch(e){
+			if(!_.isObject(duplicate_querystring)){
+	
+				if(_.isString(duplicate_querystring)){
+	
+					try{
+						duplicate_querystring = querystring.parse(duplicate_querystring);	
+					}catch(error){
+						
+						throw new Error('Unable to parse querystring.');						
+						
+					}
+					
+					resolve(duplicate_querystring);
+					
+				}else{
+		
+					throw new Error('Request querystring is an unexpected format.');
+	
+				}
+		
+			}else{
 				
-				reject(e);
+				resolve(duplicate_querystring);
 				
 			}
-			
-			resolve(duplicate_querystring);
 			
 		});
 		
 	}
+	
+	/*
+	
+	var duplicate_querystring = event.queryStringParameters;
+	
+	if(!_.isObject(duplicate_querystring)){
+	
+		if(_.isString(duplicate_querystring)){
+	
+			try{
+				duplicate_querystring = querystring.parse(duplicate_querystring);	
+			}catch(error){
+			
+				lr.issueError(error, 500, event, error, callback);
+			}
+		
+		}else{
+		
+			var error = new Error('Request querystring is an unexpected format.')
+	
+			lr.issueError(error, 500, event, error, callback);
+	
+		}
+		
+	}
+	
+	*/
 	
 	validateInput(querystring){
 		
