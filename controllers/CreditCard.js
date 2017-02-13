@@ -20,12 +20,12 @@ class creditCardController extends entityController {
 	}
 	
 	storeCreditCard(creditcard){
-		
+	
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
 			
-			this.listBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
+			controller_instance.listBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
 
 				var card_identified = false;
 
@@ -46,7 +46,7 @@ class creditCardController extends entityController {
 				if(card_identified == false){
 				
 					controller_instance.create(creditcard).then((data) => {
-					
+						
 						resolve(data);
 		
 					}).catch((error) => {
@@ -88,16 +88,22 @@ class creditCardController extends entityController {
 	}
 	
 	createCreditCardObject(input_object){
-	
-		var creditcard = {
-			ccnumber: input_object.ccnumber,
-			expiration: input_object.ccexpiration,
-			ccv: input_object.ccccv,
-			name: input_object.name,
-			address: input_object.address
-		};
-	
-		return creditcard;
+		
+		return new Promise((resolve, reject) => {
+		
+			var creditcard = {
+				ccnumber: input_object.ccnumber,
+				expiration: input_object.ccexpiration,
+				ccv: input_object.ccccv,
+				name: input_object.name,
+				address: input_object.address
+			};
+			
+			resolve(creditcard);
+			
+		});
+		
+		//return Promise.resolve(creditcard);
 	
 	}
 
