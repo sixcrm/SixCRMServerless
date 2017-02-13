@@ -99,7 +99,6 @@ class createLeadController {
 	
 	createLead (event) {
 		
-		console.log('here');
 		var params = event;
 		var promises = [];
 		
@@ -134,20 +133,20 @@ class createLeadController {
 
 			//If a customer exists, return the payload
 			if(_.has(customer, "id")){
+				
+				return sessionController.putSession({
+					customer_id: customer.id,
+					campaign_id: campaign.id,
+					affiliate_id: params.affiliate_id
+				}).then((session) => {
+					return {
+						session: session,
+						customer: customer,
+						campaign: campaign,
+						affiliate: affiliate
+					};
 
-						return sessionController.putSession({
-							customer_id: customer.id,
-							campaign_id: campaign.id,
-							affiliate_id: params.affiliate_id
-						}).then((session) => {
-							return {
-								session: session,
-								customer: customer,
-								campaign: campaign,
-								affiliate: affiliate
-							};
-
-						});
+				});
 
 			} else {
 			// Customer does not exist, lets create the customer and return the session payload
