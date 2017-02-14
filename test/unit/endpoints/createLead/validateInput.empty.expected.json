@@ -1,0 +1,8 @@
+{
+	"message": "One or more validation errors occurred.",
+	"issues": [
+		"requires property \"email\"",
+		"requires property \"firstname\"",
+		"requires property \"lastname\""
+	]
+}
