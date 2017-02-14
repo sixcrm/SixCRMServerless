@@ -1,0 +1,6 @@
+{
+	"message": "One or more validation errors occurred.",
+	"issues": [
+		"\"email\" field must be an email address."
+	]
+}
