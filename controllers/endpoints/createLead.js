@@ -13,37 +13,37 @@ var campaignController = require('../../controllers/Campaign.js');
 var sessionController = require('../../controllers/Session.js');
 
 class createLeadController {
-	
+
 	constructor(){
-	
+
 	}
-	
+
 	execute(event){
-		
+
 		return this.acquireBody(event).then(this.validateInput).then(this.createLead);
-	}	
-	
+	}
+
 	acquireBody(event){
 
 		return new Promise((resolve, reject) => {
-			
+
 			var duplicate_body;
 			try {
 				duplicate_body = JSON.parse(event['body']);
 			} catch (e) {
 				duplicate_body = event.body;
 			}
-			
+
 			resolve(duplicate_body);
-			
+
 		});
-		
+
 	}
-	
+
 	validateInput(event){
-		
+
 		return new Promise((resolve, reject) => {
-			
+
 			var customer_schema;
 			var address_schema;
 			var creditcard_schema;
@@ -56,52 +56,48 @@ class createLeadController {
 
 			} catch(e){
 
-				reject(new Error('Unable to load validation schemas.'));
+				return reject(new Error('Unable to load validation schemas.'));
 
 			}
 
 			var validation;
-
 			var params = JSON.parse(JSON.stringify(event));
-			
+
 			try{
 				var v = new Validator();
 				v.addSchema(address_schema, '/Address');
 				v.addSchema(creditcard_schema, '/CreditCard');
 				validation = v.validate(params, customer_schema);
 			}catch(e){
-
-				reject(new Error('Unable to instantiate validator.'));
-
+				return reject(new Error('Unable to instantiate validator.'));
 			}
 
-			if(validation['errors'].length > 0){
-
-				reject(new Error('One or more validation errors occurred.'));
-
-			}
 
 			if(params.email && !validator.isEmail(params.email)){
-				validation.errors.push('"email" field must be a email address.');
+				validation.errors.push({message:'"email" field must be an email address.'});
 			}
 
-			if(validation['errors'].length > 0){
+			if(validation.errors && validation.errors.length){
 
-				reject(new Error('One or more validation errors occurred.'));
+				var error = {
+					message: 'One or more validation errors occurred.',
+					issues: validation.errors.map((e)=>{ return e.message; })
+				};
+				return reject(error);
 
 			}
-	
-			resolve(params)
+
+			return resolve(params)
 
 		});
-		
+
 	}
-	
+
 	createLead (event) {
-		
+
 		var params = event;
 		var promises = [];
-		
+
 		if(!params.campaign_id || !_.isString(params.campaign_id)){
 			throw new Error('A lead must be associated with a campaign');
 		}
@@ -133,7 +129,7 @@ class createLeadController {
 
 			//If a customer exists, return the payload
 			if(_.has(customer, "id")){
-				
+
 				return sessionController.putSession({
 					customer_id: customer.id,
 					campaign_id: campaign.id,
@@ -166,11 +162,11 @@ class createLeadController {
 				});
 
 			}
-			
+
 		});
-		
+
 	}
-	
+
 }
 
 module.exports = new createLeadController();
