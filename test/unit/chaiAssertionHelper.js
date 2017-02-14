@@ -2,9 +2,9 @@ var fs = require('fs');
 
 module.exports = function(chai, utils) {
 	var Assertion = chai.Assertion;
-	Assertion.addChainableMethod('deepEqualProcessor', assertProcessed);
+	Assertion.addChainableMethod('deepEqualProcessor', assertProcessor);
 
-	function assertProcessed(basePath, fileName) {
+	function assertProcessor(basePath, fileName) {
 		var expectedPath = basePath + '/' + fileName + '.expected.json';
 		var expected = require(expectedPath);
 
@@ -21,18 +21,7 @@ module.exports = function(chai, utils) {
 			}
 			fs.writeFile(basePath + '/' + fileName + '.processed.json', data);
 
-			deleteUndefined(actual);
 			chai.assert.deepEqual(actual, expected, "Expected data to equal contents of " + expectedPath);
-		}
-	}
-
-	function deleteUndefined(processed) {
-		for (var i in processed) {
-			if (processed[i] === null || typeof processed[i] === "undefined") {
-				delete processed[i];
-			} else if (typeof processed[i] === 'object') {
-				deleteUndefined(processed[i]);
-			}
 		}
 	}
 };
