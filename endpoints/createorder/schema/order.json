@@ -2,9 +2,20 @@
 	"title": "Order",
 	"type": "object",
 	"properties": {
-		"type":{
-			"type":"string",
-			"enum":["sale", "auth", "credit", "validate", "offline"]
+		"campaign_id":{
+			"type":"string"
+		},
+		"session_id":{
+			"type":"string"
+		},
+		"product_schedules":{
+			"type": "array",
+            "minItems": 1,
+            "items": { "type": "string" },
+            "uniqueItems": true
+		},
+		"name":{
+			"type":"string"
 		},
 		"ccnumber":{
 			"type":"string"
@@ -16,114 +27,30 @@
 		"ccccv":{
 			"type":"string"
 		},
-		"currency":{
-			"type":"string",
-			"enum":["USD"]
-		},
-		"payment":{
-			"type":"string",
-			"enum":["creditcard"]
-		},
-		"processor_id":{
-			"type":"string"
-		},
-		"billing_method":{
-			"type":"string",
-			"enum":["recurring"]
-		},
-		"orderid":{
-			"type":"string"
-		},
-		"order_description":{
-			"type":"string"
-		},
-		"ipaddress":{
-			"type":"string"
-		},
-		"ponumber":{
-			"type":"string"
-		},
-		"tax":{
-			"type":"string"
-		},
-		"shipping":{
-			"type":"string"
-		},
-		"firstname":{
-			"type":"string"
-		},
-		"lastname":{
-			"type":"string"
-		},
-		"address1":{
-			"type":"string"
-		},
-		"address2":{
-			"type":"string"
-		},
-		"city":{
-			"type":"string"
-		},
-		"state":{
-			"type":"string"	
-		},
-		"zip":{
-			"type":"string"
-		},
-		"country":{
-			"type":"string"
-		},
-		"phone":{
-			"type":"string"
-		},
-		"email":{
-			"type":"string"
-		},
-		"company":{
-			"type":"string"
-		},
-		"fax":{
-			"type":"string"
-		},
-		"shipping_id":{
-			"type":"string"
-		},
-		"shipping_firstname":{
-			"type":"string"
-		},
-		"shipping_lastname":{
-			"type":"string"
-		},
-		"shipping_company":{
-			"type":"string"
-		},
-		"shipping_address1":{
-			"type":"string"
-		},
-		"shipping_address2":{
-			"type":"string"
-		},
-		"shipping_city":{
-			"type":"string"
-		},
-		"shipping_state":{
-			"type":"string"
-		},
-		"shipping_zip":{
-			"type":"string"
-		},
-		"shipping_country":{
-			"type":"string"
-		},
-		"shipping_phone":{
-			"type":"string"
-		},
-		"shipping_fax":{
-			"type":"string"
-		},
-		"shipping_email":{
-			"type":"string"
+		"address":{
+			"type":"object",
+			"properties":{
+				"line1":{
+					"type":"string"
+				},
+				"line2":{
+					"type":"string"
+				},
+				"city":{
+					"type":"string"
+				},
+				"state":{
+					"type":"string"
+				},
+				"zip":{
+					"type":"string"
+				},
+				"country":{
+					"type":"string"
+				}
+			},
+			"required":["line1","city","state","zip","country"]
 		}
 	},
-	"required":["type","ccnumber","ccexpiration"]
+	"required":["ccnumber","ccexpiration", "ccccv", "product_schedules", "campaign_id", "session_id", "name"]
 }

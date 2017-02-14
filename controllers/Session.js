@@ -60,9 +60,9 @@ class sessionController extends entityController {
 			rebillController.getRebillsBySessionID(session.id).then((rebills) => {
 				
 				Promise.all(rebills.map((rebill) => {
-					
+						
 					return new Promise((resolve, reject) => {
-							
+						
 						transactionController.getTransactionsByRebillID(rebill.id).then((transactions) => {
 							
 							if(_.isNull(transactions)){
@@ -124,7 +124,7 @@ class sessionController extends entityController {
 	}
 	
 	getTransactionProducts(session){
-			
+		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
@@ -132,26 +132,26 @@ class sessionController extends entityController {
 			var session_products = [];
 			
 			controller_instance.getRebills(session).then((rebills) => {
-				
+		
 				Promise.all(rebills.map((rebill) => {
-											
+		
 					return new Promise((resolve, reject) => {
-						
+		
 						rebillController.getTransactions(rebill).then((transactions) => {
-							
+		
 							//note that at the time of a createorder, there are lots of rebills, only one of which has a transaction
 							if(_.isNull(transactions)){ 
-								
+		
 								resolve([]); 
 								
 							}else{
-											
+		
 								Promise.all(transactions.map((transaction) => {
-								
+		
 									return new Promise((resolve, reject) => {
-										
+									
 										transactionController.getProducts(transaction).then((products) => {
-										
+									
 											resolve(products);
 										
 										});
@@ -159,11 +159,11 @@ class sessionController extends entityController {
 									});
 								
 								})).then((products) => {
-								
+									
 									resolve(products);
 								
 								}).catch((error) => {
-								
+									
 									reject(error);
 								
 								});
@@ -177,9 +177,13 @@ class sessionController extends entityController {
 				})).then((products) => {
 					
 					products.forEach((c1) => {
+
 						c1.forEach((c2) => {
+
 							c2.forEach((product) => {
+
 								session_products.push(product);
+								
 							});
 						});
 					});

@@ -34,7 +34,7 @@ describe('Round Trip Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
-				console.log(response.body);
+				//console.log(response.body);
 				assert.isObject(response.body);
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
@@ -78,7 +78,7 @@ describe('Round Trip Test', function() {
 					.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 					.end(function(err, response){
-						console.log(response.body);
+						//console.log(response.body);
 						assert.property(response.body, "message");
 						assert.equal(response.body.message, "Success");
 						assert.property(response.body, "results");
@@ -121,7 +121,7 @@ describe('Round Trip Test', function() {
 							.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
-								console.log(response.body);
+								//console.log(response.body);
 								assert.property(response.body, "message");
 								assert.equal(response.body.message, "Success");
 								assert.property(response.body, "results");
@@ -172,7 +172,7 @@ describe('Round Trip Test', function() {
 									.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 									.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 									.end(function(err, response){
-										console.log(response.body);
+										//console.log(response.body);
 										assert.property(response.body, "message");
 										assert.equal(response.body.message, "Success");
 										assert.property(response.body, "results");
@@ -191,6 +191,7 @@ describe('Round Trip Test', function() {
 										assert.property(processor_response.results, 'response');
 										assert.equal(processor_response.results.response, '1');
 										
+										//console.log('Session ID: '+session_id);
 										console.log(appropriate_spacing+'Confirming Order');
 										this_request.get('order/confirm/')
 											.query('session_id='+session_id)
@@ -202,17 +203,24 @@ describe('Round Trip Test', function() {
 											.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 											.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 											.end(function(err, response){
-												console.log(response.body);
+												//console.log(response.body);
 												assert.property(response.body, "message");
 												assert.equal(response.body.message, "Success");
 												assert.property(response.body, "results");
 												assert.property(response.body.results, "session");
 												assert.property(response.body.results, "customer");
-												assert.property(response.body.results, "products");
+												assert.property(response.body.results, "transactions");
+												assert.property(response.body.results, "transaction_products");
+												
+												//console.log(response.body.results.transactions);
+												assert.equal(response.body.results.transactions.length, 2);
+												assert.equal(response.body.results.transaction_products.length, 2);
+												//should have 2 transactions
+												//should have 2 products
 
 												done();
 											}, done);
-											
+
 									}, done);
 						}, done);
 					}, done);

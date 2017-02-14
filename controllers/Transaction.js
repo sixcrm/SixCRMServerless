@@ -34,14 +34,6 @@ class transactionController extends entityController {
 		
 	}
 	
-	getProducts(transaction){
-		
-		if(!_.has(transaction, "products")){ return null; }
-		
-		return Promise.all(transaction.products.map(transaction_product => this.getTransactionProduct(transaction_product)));
-		
-	}
-	
 	getTransactionProducts(transaction){
 		
 		return transaction.products.map((transactionproduct) => {
@@ -60,13 +52,11 @@ class transactionController extends entityController {
 		if(!_.has(transaction_product, "product")){ return null; }
 		
 		return new Promise((resolve, reject) => {
-			
+		
 			productController.get(transaction_product.product).then((product) => {
-				
-				if(_.isError(error)){ reject(error); }
-				
+		
 				transaction_product['product'] = product;
-				
+		
 				resolve(transaction_product);
 				
 			});
@@ -74,9 +64,17 @@ class transactionController extends entityController {
 		});
 		
 	}
+	
+	getProducts(transaction){
+		
+		if(!_.has(transaction, "products")){ return null; }
+		
+		return Promise.all(transaction.products.map(transaction_product => this.getTransactionProduct(transaction_product)));
+		
+	}
         
 	getTransactionsByRebillID(id){
-		
+
 		return this.listBySecondaryIndex('rebill_id', id, 'rebill-index');
 		
 	}
@@ -84,15 +82,15 @@ class transactionController extends entityController {
 	putTransaction(params, processor_response, callback){
 		
 		var transaction = this.createTransactionObject(params, processor_response);
-			
+		
 		return this.create(transaction);
 	
 	}
 	
 	createTransactionObject(params, processor_response){
-
+		
 		var return_object = {
-			rebill_id: params.rebill_id,
+			rebill_id: params.rebill.id,
 			processor_response: JSON.stringify(processor_response),
 			amount: params.amount,
 			date: timestamp.createDate(),

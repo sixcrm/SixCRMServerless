@@ -67,7 +67,7 @@ class createOrderController {
 			}catch(e){
 				throw new Error('Unable to create validation class.');
 			}
-	
+			
 			if(validation['errors'].length > 0){	
 				throw new Error(JSON.stringify({'Validation_errors: ':validation['errors']}));
 			}
@@ -150,7 +150,7 @@ class createOrderController {
 				
 				return Promise.all(promises).then((promises) => {
 
-					var transaction_products = promises[1];
+					var transaction_products = promises[0];
 					
 					//note refactor this to use the transaction products above....
 					var amount = productScheduleController.productSum(0, schedules_to_purchase);
@@ -183,7 +183,7 @@ class createOrderController {
 							return Promise.all(promises).then((promises) => {
 							
 								var transaction = promises[0];
-								
+							
 								//this looks like a hack as well	
 								var transactions = [transaction.id];
 								
