@@ -1713,15 +1713,25 @@ var queryType = new GraphQLObjectType({
       args: {
         id: {
           description: 'id of the user',
-          type: new GraphQLNonNull(GraphQLString)
+          type: GraphQLString
+        },
+        email: {
+        	description: 'email of the user',
+        	type: GraphQLString
         }
       },
       resolve: function(root, user){
-      	var id = user.id; 
-      	return userController.get(id);
+      	if(_.has(user,"id")){ 
+			var id = user.id; 
+			return userController.get(id);
+		}else if(_.has(user,"email")){
+			var email = user.email;
+			return userController.getUserByEmail(email);
+		}else{
+			return null;
+		}
       }
     }
-    
   })
 });
 

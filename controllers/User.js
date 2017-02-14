@@ -25,6 +25,10 @@ class userController extends entityController {
 	getAccessKeyByKey(id){
 		return accessKeyController.getAccessKeyByKey(id);
 	}
+	
+	getUserByEmail(email){
+		return this.getBySecondaryIndex('email', email, 'email-index');
+	}
         
 }
 

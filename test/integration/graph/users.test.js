@@ -37,6 +37,10 @@ var tests = [{
 {
 	name: "delete",
 	query: "./endpoints/graph/queries/delete/deleteUser"
+},
+{
+	name: "byemail",
+	query: "./endpoints/graph/queries/view/getUserByEmail"
 }];
 
 describe('Graph Test', function() {

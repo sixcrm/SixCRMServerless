@@ -1,0 +1,18 @@
+{
+	"body":"
+	{ 
+		user (email: \"timothy.dalbey@sixcrm.com\") { 
+			id,
+			name,
+			auth0_id,
+			email,
+			active,
+			accesskey {
+				id,
+				access_key,
+				secret_key
+			}
+		} 
+	}"
+}
+
