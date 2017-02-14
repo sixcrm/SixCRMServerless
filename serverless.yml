@@ -84,6 +84,7 @@ functions:
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
       emails_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.emails_table}
       smtp_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.smtp_providers_table}
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   billtohold:
@@ -109,6 +110,7 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: sixtransaction-${opt:stage}-triggerfulfillment
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
 
   pendingtoshipped:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -121,6 +123,7 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       workerfunction: sixtransaction-${opt:stage}-confirmshipped
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
 
   shippedtodelivered:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -133,6 +136,7 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: sixtransaction-${opt:stage}-confirmdelivery
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
 
   pickrebill:
     handler: workers/pickrebill/handler.pickrebill
@@ -164,6 +168,7 @@ functions:
       fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
 
   triggerfulfillment:

@@ -28,6 +28,7 @@ var accessKeyController = require('../../controllers/AccessKey.js');
 var userController = require('../../controllers/User.js');
 var emailController = require('../../controllers/Email.js');
 var SMTPProviderController = require('../../controllers/SMTPProvider.js');
+var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 
 const emailTypeEnum = new GraphQLEnumType({
 	name: 'EmailTypeEnumeration',
@@ -360,6 +361,22 @@ var rebillListType = new GraphQLObjectType({
     rebills: {
       type: new GraphQLList(rebillType),
       description: 'The rebills',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var shippingReceiptListType = new GraphQLObjectType({
+  name: 'ShippingReceipts',
+  description: 'Receipts from shipping',
+  fields: () => ({
+    shippingreceipts: {
+      type: new GraphQLList(shippingReceiptType),
+      description: 'The shipping receipts',
     },
     pagination: {
       type: new GraphQLNonNull(paginationType),
@@ -842,10 +859,47 @@ var transactionProductType = new GraphQLObjectType({
       resolve: function(transactionproduct){
       	return transactionController.getProduct(transactionproduct.product);
       }
+    },
+    shippingreceipt: {
+	  type: shippingReceiptType,
+	  description: 'A shipping receipt associated with the transaction product.',
+	  resolve: function(transactionproduct){
+		if(!_.has(transactionproduct, "shippingreceipt")){ return null; }
+	    return shippingReceiptController.get(transactionproduct.shippingreceipt);	    
+	  }
     }
   }),
   interfaces: []
 });
+
+var shippingReceiptType = new GraphQLObjectType({
+  name: 'shippingreceipt',
+  description: 'A shipping receipt.',
+  fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the shipping receipt.',
+    },
+    created: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'A timestamp when the receipt is generated.',
+    },
+    status: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'A shipping status',
+    },
+    modified: {
+      type: GraphQLString,
+      description: 'A timestamp when the receipt is generated.',
+    },
+    trackingnumber: {
+      type: GraphQLString,
+      description: 'A tracking number for the shipment',
+    },
+  }),
+  interfaces: []
+});
+
 
 var merchantProviderConfigurationType = new GraphQLObjectType({
   name: 'merchantproviderconfiguration',
@@ -1130,6 +1184,19 @@ var queryType = new GraphQLObjectType({
       	return transactionController.get(id);
       }
     },
+    shippingreceipt: {
+      type: shippingReceiptType,
+      args: {
+        id: {
+          description: 'id of the shipping receipt',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, shippingreceipt){
+      	var id = shippingreceipt.id; 
+      	return shippingReceiptController.get(id);
+      }
+    },
     rebill: {
       type: rebillType,
       args: {
@@ -1303,6 +1370,25 @@ var queryType = new GraphQLObjectType({
 		var cursor = rebill.cursor; 
 		var limit = rebill.limit; 
       	return rebillController.list(cursor, limit);
+      }
+    },
+    
+    shippingreceiptlist: {
+      type: shippingReceiptListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, shippingreceipt){
+		var cursor = shippingreceipt.cursor; 
+		var limit = shippingreceipt.limit; 
+      	return shippingReceiptController.list(cursor, limit);
       }
     },
     
@@ -1854,6 +1940,17 @@ const campaignInputType = new GraphQLInputObjectType({
     loadbalancer:		{ type: new GraphQLNonNull(GraphQLString) },
     productschedules:	{ type: new GraphQLList(GraphQLString) },
     emails:				{ type: new GraphQLList(GraphQLString) }
+  })
+});
+
+const shippingReceiptInputType = new GraphQLInputObjectType({
+  name: 'ShippingReceiptInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    created:			{ type: new GraphQLNonNull(GraphQLString) },
+    status:				{ type: new GraphQLNonNull(GraphQLString) },
+    modified:			{ type: GraphQLString },
+    trackingnumber:		{ type: GraphQLString }
   })
 });
 
@@ -2417,6 +2514,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, session) => {
 				var id = session.id;
 				return sessionController.delete(id);
+			}
+		},
+		createshippingreceipt:{
+			type: shippingReceiptType,
+			description: 'Adds a new shippingreceipt.',
+			args: {
+				shippingreceipt: { type: shippingReceiptInputType }
+			},
+			resolve: (value, shippingreceipt) => {
+				return shippingReceiptController.create(shippingreceipt.shippingreceipt);
+			}
+		},
+		updateshippingreceipt:{
+			type: shippingReceiptType,
+			description: 'Updates a shippingreceipt.',
+			args: {
+				shippingreceipt: { type: shippingReceiptInputType }
+			},
+			resolve: (value, shippingreceipt) => {
+				return shippingReceiptController.update(shippingreceipt.shippingreceipt);
+			}
+		},
+		deleteshippingreceipt:{
+			type: deleteOutputType,
+			description: 'Deletes a shippingreceipt.',
+			args: {
+				id: {
+				  description: 'id of the shippingreceipt',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, shippingreceipt) => {
+				var id = shippingreceipt.id;
+				return shippingReceiptController.delete(id);
 			}
 		},
 	})

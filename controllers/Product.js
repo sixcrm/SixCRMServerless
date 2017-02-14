@@ -32,7 +32,8 @@ class ProductController extends entityController {
 					var product_key = ":productvalue"+index;
 					products_object[product_key.toString()] = value;
 				});
-	
+				
+				//Technical Debt:  This needs to go the entity controller
 				dynamoutilities.scanRecords(
 					process.env.products_table, 
 					{

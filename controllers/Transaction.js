@@ -38,10 +38,16 @@ class transactionController extends entityController {
 		
 		return transaction.products.map((transactionproduct) => {
 			
-			return {
+			var base_product = {
 				"amount": transactionproduct.amount,
 				"product": transactionproduct.product
 			};
+			
+			if(_.has(transactionproduct, "shippingreceipt")){
+				base_product['shippingreceipt'] = transactionproduct.shippingreceipt;
+			}
+			
+			return base_product;
 			
 		});	
 		

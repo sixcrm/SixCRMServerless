@@ -19,6 +19,7 @@ dynamodb:
   fulfillment_providers_table: 'fulfillment_providers'
   emails_table: 'emails'
   smtp_providers_table: 'smtp_providers'
+  shipping_receipts_table: 'shipping_receipts'
   endpoint: 'http://localhost:8001'
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'

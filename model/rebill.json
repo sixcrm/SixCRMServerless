@@ -1,0 +1,38 @@
+{
+	"title": "Rebill",
+	"type": "object",
+	"properties": {
+		"id":{
+			"type":"string"
+		},
+		"amount":{
+			"type":"string"	
+		},
+		"billdate":{
+			"type":"string"
+		},
+		"modified":{
+			"type":"string"
+		},
+		"parentsession":{
+			"type":"string"
+		},
+		"processing":{
+			"type":"string"
+		},
+		"product_schedules":{
+			"type":"array",
+			"items":{
+				"type":"string"
+			}
+		},
+		"transactions":{
+			"type":"array",
+			"items":{
+				"type":"string"
+			}
+		}
+		
+	},
+	"required":["amount", "billdate", "id", "completed","parentsession", "product_schedules", "transactions"]
+}

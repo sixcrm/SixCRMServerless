@@ -77,7 +77,7 @@ class createLeadController {
 				validation.errors.push({message:'"email" field must be an email address.'});
 			}
 
-			if(validation.errors && validation.errors.length){
+			if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
 
 				var error = {
 					message: 'One or more validation errors occurred.',

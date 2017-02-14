@@ -1,0 +1,12 @@
+{
+	"body":"
+	mutation { 
+		updateshippingreceipt (shippingreceipt: { id: \"testing\", created:\"123123\", modified:\"123456\", status:\"delivered\", trackingnumber:\"abc123\"}) { 
+			id,
+			created,
+			modified,
+			status,
+			trackingnumber
+		} 
+	}"
+}

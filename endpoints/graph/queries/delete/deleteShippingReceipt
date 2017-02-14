@@ -1,0 +1,8 @@
+{
+	"body":"
+	mutation { 
+		deleteshippingreceipt (id: \"testing\") { 
+			id
+		} 
+	}"
+}

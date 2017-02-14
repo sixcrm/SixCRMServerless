@@ -55,6 +55,13 @@
 							password,
 							endpoint
 						}
+					},
+					shippingreceipt {
+						id,
+						created,
+						modified,
+						status,
+						trackingnumber
 					}
 				}
 			},

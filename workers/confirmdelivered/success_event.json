@@ -1,4 +1,14 @@
 {
-	"session":"test",
-	"transaction":"test"
+  "amount": "4.99",
+  "billdate": 1488245248,
+  "id": "b5ccef6d-a256-4f3c-8feb-0f590c59e5aa",
+  "modified": "1487035648",
+  "parentsession": "c7ab368a-e9e6-498a-8056-5d3b5263f7ea",
+  "processing": "true",
+  "product_schedules": [
+    "8d1e896f-c50d-4a6b-8c84-d5661c16a046"
+  ],
+  "transactions": [
+    "78fc92a6-e9af-4fbf-867e-5b52f161ac79"
+  ]
 }
