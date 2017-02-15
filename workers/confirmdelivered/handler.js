@@ -41,6 +41,9 @@ module.exports.confirmdelivered = (event, context, callback) => {
 	}
 	
 	
+	rebillController.getTransactions(event).then((transactions) => {
+	
+	});
     //get transactions
     	//for the products that are shippable
     		//get the shipping receipts

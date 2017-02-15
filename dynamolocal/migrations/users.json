@@ -64,27 +64,31 @@
     	"auth0_id":"abc123",
     	"access_key_id":"82478014-c96f-49ef-b31c-5408e99df66e",
     	"email":"timothy.dalbey@sixcrm.com",
-    	"active":"true"
+    	"active":"true",
+    	"termsandconditions":"0.1"
     },
     {
     	"id":"05483f39-12c7-469e-a730-88daa52ee0e4",
     	"name":"NikolaBosic",
     	"auth0_id":"abc123",
     	"email":"nikola.bosic@toptal.com",
-    	"active":"true"
+    	"active":"true",
+    	"termsandconditions":"0.1"
     },
     {
     	"id":"f12271c9-9668-44bb-bb03-3f53af8568ea",
     	"name":"KrisTrujillo",
     	"auth0_id":"abc123",
     	"email":"kris@sixcrm.com",
-    	"active":"true"
+    	"active":"true",
+    	"termsandconditions":"0.1"
     },
     {
     	"id":"943c9546-730f-42e4-a0f8-208a8e2837ec",
     	"name":"Jared Esguerra",
     	"auth0_id":"abc123",
     	"email":"jared@sixcrm.com",
-    	"active":"true"
+    	"active":"true",
+    	"termsandconditions":"0.1"
     }]
 }

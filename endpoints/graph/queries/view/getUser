@@ -7,10 +7,19 @@
 			auth0_id,
 			email,
 			active,
+			termsandconditions,
 			accesskey {
 				id,
 				access_key,
 				secret_key
+			},
+			address {
+				line1,
+				line2,
+				city,
+				state,
+				zip,
+				country
 			}
 		} 
 	}"

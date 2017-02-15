@@ -644,12 +644,23 @@ var userType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The active status of the user',
     },
+    termsandconditions:{
+	  type: GraphQLString,
+      description: 'The accepted Terms and Conditions version.',
+    },
     accesskey: {
       type: accessKeyType,
       description: 'The access_key of the user.',
       resolve: (user) => {
       	var id = user.access_key_id
       	return userController.getAccessKey(id);
+      }
+    },
+    address: {
+      type: addressType,
+      description: 'The address of the user.',
+      resolve: (user) => {
+      	return userController.getAddress(user);
       }
     }
   }),
@@ -1754,7 +1765,9 @@ const userInputType = new GraphQLInputObjectType({
     name:		{ type: new GraphQLNonNull(GraphQLString) },
     auth0_id:	{ type: new GraphQLNonNull(GraphQLString) },
     email:		{ type: new GraphQLNonNull(GraphQLString) },
-    active: 	{ type: new GraphQLNonNull(GraphQLString) }
+    active: 	{ type: new GraphQLNonNull(GraphQLString) },
+    termsandconditions: 	{ type: GraphQLString },
+    address:	{ type: addressInputType }
   })
 });
         
@@ -1988,7 +2001,7 @@ var mutationType = new GraphQLObjectType({
 			args: {
 				user: { type: userInputType }
 			},
-			resolve: (value, user) => {
+			resolve: (value, user) => {	
 				return userController.create(user.user);
 			}
 		},

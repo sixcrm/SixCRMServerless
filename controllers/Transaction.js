@@ -55,18 +55,30 @@ class transactionController extends entityController {
 	
 	getTransactionProduct(transaction_product){
 	
-		if(!_.has(transaction_product, "product")){ return null; }
+		var promises = [];
 		
-		return new Promise((resolve, reject) => {
+		if(_.has(transaction_product, "product")){
+			var getProduct = productController.get(transaction_product.product);
+			promises.push(getProduct);	
+		}else{
+			return null;
+		}
 		
-			productController.get(transaction_product.product).then((product) => {
+		if(_.has(transaction_product, "shippingreceipt")){
+			var getShippingReceipt = shippingReceiptController.get(transaction_product.shippingreceipt);
+			promises.push(getShippingReceipt);	
+		}
 		
-				transaction_product['product'] = product;
-		
-				resolve(transaction_product);
-				
-			});
+		return Promise.all(promises).then((promises) => {
 			
+			transaction_product['product'] = promises[0];
+			
+			if(_.has(transaction_product, 'shippingreceipt')){
+				transaction_product['shippingreceipt'] = promises[1];
+			}
+			
+			resolve(transaction_product);
+					
 		});
 		
 	}

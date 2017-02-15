@@ -29,6 +29,18 @@ class userController extends entityController {
 	getUserByEmail(email){
 		return this.getBySecondaryIndex('email', email, 'email-index');
 	}
+	
+	getAddress(user){
+		
+		if(_.has(user, "address")){
+			
+			return user.address;
+			
+		}else{
+			return null;
+		}
+		
+	}
         
 }
 

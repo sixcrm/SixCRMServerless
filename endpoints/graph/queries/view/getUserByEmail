@@ -11,7 +11,16 @@
 				id,
 				access_key,
 				secret_key
-			}
+			},
+			address {
+				line1,
+				line2,
+				city,
+				state,
+				zip,
+				country
+			},
+			termsandconditions
 		} 
 	}"
 }
