@@ -61,7 +61,7 @@ class createLeadController {
 			}
 
 			var validation;
-			var params = JSON.parse(JSON.stringify(event));
+			var params = JSON.parse(JSON.stringify(event || {}));
 
 			try{
 				var v = new Validator();
@@ -95,7 +95,7 @@ class createLeadController {
 
 	createLead (event) {
 
-		var params = event;
+		var params = event || {};
 		var promises = [];
 
 		if(!params.campaign_id || !_.isString(params.campaign_id)){
@@ -145,23 +145,28 @@ class createLeadController {
 				});
 
 			} else {
-			// Customer does not exist, lets create the customer and return the session payload
-
-				return customerController.create(params).then((customer) => {
-
-					return sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: params.affiliate_id}).then((session) => {
-
-						//note that the customer here appears to be a id value.  We want a complete customer object...
-						return {
-							session: session,
-							customer: customer
-						};
-
-					});
-
-				});
-
+				// Customer does not exist, lets create the customer and return the session payload
+				return this.createNewCustomerWithSession(params, campaign);
 			}
+
+		});
+
+	}
+
+
+	createNewCustomerAndSession(params, campaign) {
+
+		return customerController.create(params).then((customer) => {
+
+			return sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: params.affiliate_id}).then((session) => {
+
+				//note that the customer here appears to be a id value.  We want a complete customer object...
+				return {
+					session: session,
+					customer: customer
+				};
+
+			});
 
 		});
 
