@@ -7,6 +7,7 @@ var timestamp = require('../lib/timestamp.js');
 
 var productController = require('./Product.js');
 var entityController = require('./Entity.js');
+var shippingReceiptController = require('./ShippingReceipt.js');
 
 class transactionController extends entityController {
 
@@ -54,7 +55,7 @@ class transactionController extends entityController {
 	}
 	
 	getTransactionProduct(transaction_product){
-	
+		
 		var promises = [];
 		
 		if(_.has(transaction_product, "product")){
@@ -77,7 +78,7 @@ class transactionController extends entityController {
 				transaction_product['shippingreceipt'] = promises[1];
 			}
 			
-			resolve(transaction_product);
+			return transaction_product;
 					
 		});
 		

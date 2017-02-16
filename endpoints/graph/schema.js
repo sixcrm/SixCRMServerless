@@ -1761,7 +1761,7 @@ const productInputType = new GraphQLInputObjectType({
 const userInputType = new GraphQLInputObjectType({
   name: 'UserInput',
   fields: () => ({
-    id:			{ type: new GraphQLNonNull(GraphQLString) },
+    id:			{ type: GraphQLString },
     name:		{ type: new GraphQLNonNull(GraphQLString) },
     auth0_id:	{ type: new GraphQLNonNull(GraphQLString) },
     email:		{ type: new GraphQLNonNull(GraphQLString) },

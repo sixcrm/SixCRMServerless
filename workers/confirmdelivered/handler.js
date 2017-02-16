@@ -8,6 +8,8 @@ var _ = require("underscore");
 
 var lr = require('../../lib/lambda-response.js');
 var rebillController = require('../../controllers/Rebill.js');
+var transactionController = require('../../controllers/Transaction.js');
+var shippingProviderController = require('../../controllers/shippingproviders/ShippingProviders.js');
 
 module.exports.confirmdelivered = (event, context, callback) => {
 	
@@ -52,49 +54,61 @@ module.exports.confirmdelivered = (event, context, callback) => {
 	return Promise.all(promises).then((promises) => {
 		
 		var transactions = promises[0];
-
+		
+		var transaction_products = [];
+		
 		transactions.map((transaction) => {
 			
 			if(_.has(transaction, 'products')){
 				
-				return Promise.all(transaction.products.map(transactionController.getTransactionProduct)).then((transaction_products) => {
-				
-					return Promise.all(transaction_products.map((transaction_product) => {
-						
-						return new Promise((resolve, reject) => {
-							
-							//check if tracking number on shipping receipt has been delivered.
-							//if not delivered, mark delivered false...
-							
-						});
-						
-					});
-				
-				});
-						
-				
-			}else{
-				
-				//a rebill that has a transaction without products??
+				transaction.products.map((transaction_product) => {
+					  
+					var getTransactionProduct = transactionController.getTransactionProduct(transaction_product);
+					transaction_products.push(getTransactionProduct);
+
+				});	
 				
 			}
-			
-		});
 		
-		return true;
+		});
+				
+		return Promise.all(transaction_products).then((transaction_products) => {
+			
+			var shipping_provider_stati = [];	
+			transaction_products.map((transaction_product) => {
+			
+				if(_.has(transaction_product, "shippingreceipt") && _.has(transaction_product.shippingreceipt, "trackingnumber")){
+					
+					//Technical Debt:  This is hard-coded to USPS, that may need to change
+					var getShippingProviderStatus = shippingProviderController.getStatus('usps', transaction_product.shippingreceipt.trackingnumber);
+					shipping_provider_stati.push(getShippingProviderStatus);
+					
+				}
+			
+			});
+			
+			return Promise.all(shipping_provider_stati).then((shipping_provider_stati) => {
+			
+				shipping_provider_stati.map((shipping_provider_status) => {
+				
+					//if status is not delivered
+					//delivered = false
+					
+				});
+				
+			});
+		
+		});
 		
 	}).then((something) => {
 		
+		//if delivered == true
+			//return rebill
+		//else return false
 		lr.issueResponse(200, {
 			message: 'Success'
 		}, callback);
 		
-	}).catch((error) => {
-	
-		 lr.issueResponse(500, {
-			message: 'Success'
-		}, callback);
-		
-	});        
+	});
 
 }
