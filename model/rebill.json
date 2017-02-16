@@ -6,19 +6,19 @@
 			"type":"string"
 		},
 		"amount":{
-			"type":"string"	
+			"type":["string","integer","float"]
 		},
 		"billdate":{
-			"type":"string"
+			"type":["string","integer"]
 		},
 		"modified":{
-			"type":"string"
+			"type":["string","boolean"]
 		},
 		"parentsession":{
 			"type":"string"
 		},
 		"processing":{
-			"type":"string"
+			"type":["string", "boolean"]
 		},
 		"product_schedules":{
 			"type":"array",
@@ -34,5 +34,5 @@
 		}
 		
 	},
-	"required":["amount", "billdate", "id", "completed","parentsession", "product_schedules", "transactions"]
+	"required":["amount", "billdate", "id", "parentsession", "product_schedules", "transactions"]
 }

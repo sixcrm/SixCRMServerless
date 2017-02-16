@@ -181,6 +181,9 @@ functions:
     handler: workers/confirmdelivered/handler.confirmdelivered
     environment:
       stage: ${opt:stage}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
