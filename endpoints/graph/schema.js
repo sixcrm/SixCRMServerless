@@ -1858,7 +1858,7 @@ const addressInputType = new GraphQLInputObjectType({
 const creditCardInputType = new GraphQLInputObjectType({
   name: 'CreditCardInput',
   fields: () => ({
-  	id:					{ type: new GraphQLNonNull(GraphQLString) },
+  	id:					{ type: GraphQLString },
     ccnumber:			{ type: new GraphQLNonNull(GraphQLString) },
     expiration:			{ type: new GraphQLNonNull(GraphQLString) },
     ccv:				{ type: new GraphQLNonNull(GraphQLString) },
