@@ -32,3 +32,7 @@ nmi:
   username: 'demo'
   password: 'password'
   endpoint: 'https://secure.networkmerchants.com/api/transact.php'
+shipping_providers:
+  usps:
+    user_id: '005SIXCR2114'
+    password: '392VM80MW850'

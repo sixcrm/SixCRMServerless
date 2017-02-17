@@ -18,7 +18,8 @@
     "serverless-offline": "^3.8.3",
     "underscore": "^1.8.3",
     "uuid": "^3.0.1",
-    "validator": "^6.2.0"
+    "validator": "^6.2.0",
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -31,9 +32,9 @@
     "test": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/*.test.js",
     "test-unit": "mocha ./test/unit/**/*.spec.js"
   },
-	"pre-commit": [
-		"test-unit"
-	],
+  "pre-commit": [
+    "test-unit"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TimothyDalbey/sixcrmtransactionapi.git"

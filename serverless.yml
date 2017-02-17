@@ -186,6 +186,8 @@ functions:
       products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
+      usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
 
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
