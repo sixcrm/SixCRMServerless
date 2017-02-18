@@ -1,14 +1,3 @@
 {
-  "amount": "34.99",
-  "billdate": 1488245248,
-  "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-  "modified": "1487035648",
-  "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-  "processing": "true",
-  "product_schedules": [
-    "12529a17-ac32-4e46-b05b-83862843055d"
-  ],
-  "transactions": [
-    "e624af6a-21dc-4c64-b310-3b0523f8ca42"
-  ]
+  "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3"
 }
