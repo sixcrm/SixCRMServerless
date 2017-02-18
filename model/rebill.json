@@ -34,5 +34,5 @@
 		}
 		
 	},
-	"required":["amount", "billdate", "id", "parentsession", "product_schedules", "transactions"]
+	"required":["amount", "billdate", "id", "parentsession", "product_schedules"]
 }

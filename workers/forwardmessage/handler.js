@@ -25,19 +25,22 @@ module.exports.forwardmessage = (event, context, callback) => {
             		if(_.isError(error)){
             			
 						lr.issueError(error, 500, event, error, callback);
+					  
+					}
 					
-					//Technical Debt:  This is actually a complex object...  
-					}else if(workerdata == false){
-					
-						lr.issueResponse(200, {
-							message: 'Success'
-						}, callback);
-							
-            		}else{
+					if(workerdata.StatusCode !== 200){
 						
-						console.log(workerdata);
-						//note that the workerdata is assumed to be a rebill object...
-						sqs.sendMessage({message_body: workerdata, queue_url: process.env.destination_queue_url}, (error, data) => {
+						var error = new Error('Non-200 Status Code returned in workerdata object.');
+						
+						lr.issueError(error, 500, event, error, callback);
+						
+					}
+					
+					var response = JSON.parse(workerdata.Payload.body);
+				
+					if(_.has(response, "forward")){
+					
+						sqs.sendMessage({message_body: response.forward, queue_url: process.env.destination_queue_url}, (error, data) => {
 				
 							if(_.isError(error)){
 								lr.issueError(error, 500, event, error, callback);
@@ -57,7 +60,13 @@ module.exports.forwardmessage = (event, context, callback) => {
 				
 						});
 						
-					}
+					}else{
+						
+						lr.issueResponse(200, {
+							message: 'No forward message present.  Maintain queue state.'
+						}, callback);
+							
+            		}
 				
 				});
             
