@@ -29,6 +29,11 @@ custom:
 site_config: ${file(./config/${opt:stage}/site.yml)}
 
 functions:
+
+########################
+# Authorizers qualify requests passing through API Gateway
+########################
+
   verifysignature:
     handler: authorizers/verifysignature/handler.verifysignature
     environment:
@@ -54,6 +59,10 @@ functions:
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+
+########################
+# Backend Graph Endpoint renders entity data to the website
+########################
 
   graph:
     handler: endpoints/graph/handler.graph
@@ -87,6 +96,12 @@ functions:
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
+########################
+# State Machine Lambdas
+########################
+
+# Movement Managers 
+ 
   billtohold:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -134,6 +149,20 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: sixtransaction-${opt:stage}-confirmdelivery
+
+  deliveredtoarchive:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
+      workerfunction: sixtransaction-development-archive
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint}
+
+# Workers
 
   pickrebill:
     handler: workers/pickrebill/handler.pickrebill
@@ -187,19 +216,6 @@ functions:
       products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-    
-  test:
-    handler: workers/test/handler.test
-    environment:
-      stage: ${opt:stage}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
-      usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
-      workerfunction: sixtransaction-${opt:stage}-confirmdelivered
       
   confirmdelivered:
     handler: workers/confirmdelivered/handler.confirmdelivered
@@ -212,6 +228,33 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
       usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
+  
+  archive:
+    handler: workers/archive/handler.archive
+    environment:
+      stage: ${opt:stage}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+       
+  test:
+    handler: workers/test/handler.test
+    environment:
+      stage: ${opt:stage}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
+      usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
+      workerfunction: sixtransaction-${opt:stage}-confirmdelivered
+
+########################
+# Transaction Endpoints  (initial customer entrypoint)
+########################
 
   acquiretoken:
     handler: endpoints/acquiretoken/handler.acquiretoken
@@ -295,6 +338,10 @@ functions:
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
         stage: ${opt:stage}
+
+########################
+# Resource definitions for required system resources
+########################
 
 resources:
   Resources:

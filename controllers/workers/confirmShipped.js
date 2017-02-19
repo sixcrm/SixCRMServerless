@@ -8,79 +8,19 @@ var _ = require("underscore");
 
 var rebillController = require('../../controllers/Rebill.js');
 var transactionController = require('../../controllers/Transaction.js');
+var workerController = require('./worker.js');
 
-class confirmShippedController {
+class confirmShippedController extends workerController {
 	
 	constructor(){
-	
+		super();
 	}
 	
 	execute(event){
 		
-		return this.acquireRebill(event).then(this.validateRebill).then(this.confirmShipped);
+		return this.acquireRebill(event).then(this.confirmShipped);
 		
 	}	
-	
-	acquireRebill(event){
-		
-		return new Promise((resolve, reject) => {
-		
-			var id;
-			if(_.has(event, 'id')){
-				id = event.id;
-			}else{
-				id = event;
-			}
-			
-			rebillController.get(id).then((rebill) => {
-				resolve(rebill);
-			}).catch((error) => {
-				reject(error);
-			});
-			
-		});
-		
-	}	
-	
-	validateRebill(rebill){
-		
-		return new Promise((resolve, reject) => {
-			
-			try{
-
-				var rebill_schema = require('../../model/rebill.json');
-
-			} catch(e){
-		
-				reject(new Error('Unable to load validation schemas.'));
-
-			}
-	
-			var validation;
-
-			try{
-				var v = new Validator();
-				validation = v.validate(rebill, rebill_schema);
-			}catch(e){
-				reject(e);
-			}
-	
-			if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
-		
-				var error = {
-					message: 'One or more validation errors occurred.',
-					issues: validation.errors.map((e) => { return e.message; })
-				};
-		
-				reject(error);
-
-			}
-	
-			resolve(rebill);
-			
-		});
-		
-	}
 	
 	confirmShipped(rebill) {
 		
