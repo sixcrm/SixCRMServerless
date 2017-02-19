@@ -4,6 +4,7 @@ const uuidV4 = require('uuid/v4');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 
+//Technical Debt:  This controller needs a "hydrate" method or prototype
 module.exports = class entityController {
 	
 	constuctor(table_name, descriptive_name){

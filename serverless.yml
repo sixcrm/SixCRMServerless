@@ -167,10 +167,16 @@ functions:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
 
-  triggerfulfillment:
-    handler: workers/triggerfulfillment/handler.triggerfulfillment
+  shipproduct:
+    handler: workers/shipproduct/handler.shipproduct
     environment:
       stage: ${opt:stage}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
+      fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   confirmshipped:
     handler: workers/confirmshipped/handler.confirmshipped
