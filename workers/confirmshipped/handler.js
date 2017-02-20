@@ -3,24 +3,25 @@ var lr = require('../../lib/lambda-response.js');
 var confirmShippedController = require('../../controllers/workers/confirmShipped.js');
 
 module.exports.confirmshipped = (event, context, callback) => {
-	
+
 	confirmShippedController.execute(event).then((shipped) => {
 		
-		if(shipped !== 'SHIPPED'){
+		if(shipped.message !== confirmShippedController.messages.shipped){
 			
 			lr.issueResponse(200, {
-				message: shipped
+				message: shipped.message
 			}, callback);
 			
 		}else{
-				
-			lr.issueResponse(200, {
-				message: shipped,
-				forward: event
-			}, callback);
+			
+			confirmShippedController.createForwardMessage(event).then((forward_object) => {
+				lr.issueResponse(200, {
+					message: shipped.message,
+					forward: forward_object
+				}, callback);
+			});
 			
 		}
-		
 		
 	}).catch((error) =>{
 	

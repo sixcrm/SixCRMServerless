@@ -14,6 +14,10 @@ class confirmShippedController extends workerController {
 	
 	constructor(){
 		super();
+		this.messages = {
+			shipped: 'SHIPPED',
+			notshipped: 'NOTSHIPPED'
+		};
 	}
 	
 	execute(event){
@@ -61,7 +65,7 @@ class confirmShippedController extends workerController {
 						
 						if(!_.has(transaction_product, "shipping_receipt") || !_.has(transaction_product.shipping_receipt,'trackingnumber')){
 					
-							shipped = 'NOTSHIPPED';
+							shipped = this.messages.notshipped;
 							
 						}
 					
@@ -72,7 +76,7 @@ class confirmShippedController extends workerController {
 			}).then(() => {
 				
 				if(shipped == 'true'){
-					shipped = 'SHIPPED';
+					shipped = this.messages.shipped;
 				}
 				return shipped;
 			

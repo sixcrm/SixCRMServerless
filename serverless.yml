@@ -144,7 +144,7 @@ functions:
       stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
-      workerfunction: sixtransaction-${opt:stage}-confirmshipped
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
 
   shippedtodelivered:
     handler: workers/forwardmessage/handler.forwardmessage
