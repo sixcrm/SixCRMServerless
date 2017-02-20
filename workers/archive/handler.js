@@ -13,11 +13,13 @@ module.exports.archive = (event, context, callback) => {
 			}, callback);
 			
 		}else{
-				
-			lr.issueResponse(200, {
-				message: response,
-				forward: event
-			}, callback);
+		
+			archiveController.createForwardMessage(event).then((forward_object) => {
+				lr.issueResponse(200, {
+					message: response,
+					forward: forward_object
+				}, callback);
+			});
 			
 		}
 		

@@ -6,21 +6,22 @@ module.exports.confirmdelivered = (event, context, callback) => {
 	
 	confirmDeliveredController.execute(event).then((delivered) => {
 		
-		if(delivered !== true){
+		if(delivered.message !== confirmDeliveredController.messages.delivered){
 			
 			lr.issueResponse(200, {
-				message: delivered.parsed_status
+				message: delivered.message
 			}, callback);
 			
 		}else{
 			
-			lr.issueResponse(200, {
-				message: 'DELIVERED',
-				forward: event
-			}, callback);
+			confirmDeliveredController.createForwardMessage(event).then((forward_object) => {
+				lr.issueResponse(200, {
+					message: 'DELIVERED',
+					forward: forward_object
+				}, callback);
+			});
 			
 		}
-		
 		
 	}).catch((error) =>{
 	

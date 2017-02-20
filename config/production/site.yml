@@ -23,13 +23,19 @@ dynamodb:
   endpoint: ''
 lambda:
   endpoint: ''
+  function_names:
+    deliveredtoarchive: 'sixtransaction-production-archive'
+    shippedtodelivered: 'sixtransaction-production-confirmdelivery'
+    pendingtoshipped: 'sixtransaction-production-confirmshipped'
+    holdtopending: 'sixtransaction-production-triggerfulfillment'
+    billtohold: 'sixtransaction-production-processbilling'
 sqs:
-  bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'
-  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-billfailure'
-  hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-hold'
-  pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending'
-  shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-shipped'
-  delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-delivered'
+  bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill'
+  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-billfailure'
+  hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-hold'
+  pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending'
+  shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-shipped'
+  delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-delivered'
 nmi:
   username: 'demo'
   password: 'password'

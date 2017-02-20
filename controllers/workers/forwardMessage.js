@@ -40,7 +40,6 @@ class forwardMessageController extends workerController {
 	
 	parseLambdaResponse(lambda_response){
 		
-		console.log(lambda_response);
 		return new Promise((resolve, reject) => {
 			
 			var parsed_lambda_response;
@@ -104,7 +103,7 @@ class forwardMessageController extends workerController {
 									if(_.has(response, "forward")){
 						
 										if(_.has(process.env, "destination_queue_url")){
-						
+											
 											sqs.sendMessage({message_body: response.forward, queue_url: process.env.destination_queue_url}, (error, data) => {
 				
 												if(_.isError(error)){

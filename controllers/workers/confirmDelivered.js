@@ -15,11 +15,22 @@ class confirmDeliveredController extends workerController {
 	
 	constructor(){
 		super();
+		this.messages = {
+			delivered: 'DELIVERED'
+		};
 	}
 	
 	execute(event){
 		
-		return this.acquireRebill(event).then(this.confirmDelivered);
+		return new Promise((resolve, reject) => {
+			
+			this.acquireRebill(event).then((rebill) => { 
+				this.confirmDelivered(rebill).then((delivered) =>{ 
+					resolve(delivered); 
+				}); 
+			});
+			
+		});
 		
 	}
 	
@@ -32,7 +43,9 @@ class confirmDeliveredController extends workerController {
 		var getTransactions = rebillController.getTransactions(rebill);
 		promises.push(getTransactions);
 	
-		var delivered = true;
+		var delivered = {
+			message:this.messages.delivered
+		};
 	
 		return Promise.all(promises).then((promises) => {
 			
@@ -76,10 +89,10 @@ class confirmDeliveredController extends workerController {
 					shipping_provider_stati.map((shipping_provider_status) => {
 					
 						if(_.has(shipping_provider_status, "parsed_status")){
-						
-							if(shipping_provider_status !== 'DELIVERED'){
-							
-								delivered = shipping_provider_status;
+			
+							if(shipping_provider_status.parsed_status !== this.messages.delivered){
+												
+								delivered.message = shipping_provider_status.parsed_status;
 							
 								return;
 							
@@ -93,10 +106,24 @@ class confirmDeliveredController extends workerController {
 		
 			}).then(() => {
 				
+				/*
+				if(delivered.message == this.messages.delivered){
+					delivered.forward = {id:rebill.id};
+				}
+				
 				return delivered;
-			
+				*/
+				
 			});
 		
+		}).then(() => {
+			
+			if(delivered.message == this.messages.delivered){
+				delivered.forward = {id:rebill.id};
+			}
+				
+			return delivered;
+				
 		});
 				
 	}

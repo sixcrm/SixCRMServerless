@@ -71,6 +71,16 @@ module.exports = class workerController {
 		
 	}
 	
+	createForwardMessage(event){
+		return new Promise((resolve, reject) => {
+			this.parseInputEvent(event).then((id) => {
+				resolve(JSON.stringify({id:id}));
+			}).catch((error) => {
+				reject(error);
+			});
+		});
+	}
+	
 	acquireRebill(event){
 
 		return new Promise((resolve, reject) => {

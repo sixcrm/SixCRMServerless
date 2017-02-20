@@ -2,6 +2,14 @@ service: sixtransaction
 package:
   exclude:
     - .git/**
+    - node_modules/dynamodb-localhost/**
+    - node_modules/serverless/**
+    - node_modules/serverless-offline/**
+    - node_modules/serverless-dynamodb-local/**
+    - node_modules/mocha/**
+    - node_modules/chai/**
+    - node_modules/chai-json-schema/**
+    - node_modules/supertest/**
 
 # frameworkVersion: "=X.X.X"
 
@@ -148,7 +156,7 @@ functions:
       stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
-      workerfunction: sixtransaction-${opt:stage}-confirmdelivery
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
 
   deliveredtoarchive:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -159,7 +167,7 @@ functions:
     environment:
       stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
-      workerfunction: sixtransaction-development-archive
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint}
 
 # Workers
