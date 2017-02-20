@@ -19,6 +19,7 @@ class shipProductController extends workerController {
 		this.messages = {
 			notified: 'NOTIFIED',
 			noship: 'NOSHIP',
+			failed: 'FAILED'
 		};
 	}
 	
@@ -90,17 +91,27 @@ class shipProductController extends workerController {
 					 
 					fulfillmentTriggerController.triggerFulfillment(transaction_product).then((fulfillment_response) => {
 						
-						if(fulfillment_response == this.messages.notified){
+						switch(fulfillment_response){
+						
+							case this.messages.notified:
 		
-							this.issueShippingReceipt(fulfillment_response, transaction_product, transaction).then(() => {
+								this.issueShippingReceipt(fulfillment_response, transaction_product, transaction).then(() => {
 							
-								resolve(fulfillment_response);	
+									resolve(this.messages.notified);	
 							
-							});
+								});
+								
+								break;
 							
-						}else{
+							case this.messages.failed:
 							
-							resolve(fulfillment_response);
+								resolve(this.messages.failed);
+								break;
+								
+							default:
+							
+								resolve(fulfillment_response);
+								break;
 							
 						}
 						

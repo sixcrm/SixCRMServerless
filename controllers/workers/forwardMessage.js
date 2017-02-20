@@ -12,7 +12,8 @@ class forwardMessageController extends workerController {
 		this.messages = {
 			success:'SUCCESS',
 			successnoaction:'SUCCESSNOACTION',
-			successnomessages:'SUCCESSNOMESSAGES'
+			successnomessages:'SUCCESSNOMESSAGES',
+			failforward:'FAILFORWARD'
 		};
 	}
 	
@@ -77,7 +78,7 @@ class forwardMessageController extends workerController {
 		
 			//Technical Debt:  This handles a maximum of 10 messages at a time...
 			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}, (error, messages) => {
-		
+				
 				if(_.isError(error)){ reject(error); }
 
 				if (messages && messages.length > 0) {
@@ -138,8 +139,36 @@ class forwardMessageController extends workerController {
 										}
 						
 									}else{
-						
-										resolve(controller_instance.messages.successnoaction);
+										
+										if(_.has(process.env, 'failure_queue_url')){
+											
+											if(_.has(response, "failed")){
+											
+												sqs.sendMessage({message_body: response.failed, queue_url: process.env.failure_queue_url}, (error, data) => {
+				
+													if(_.isError(error)){ reject(error); }
+				
+													sqs.deleteMessage({queue_url: process.env.origin_queue_url, receipt_handle: message.ReceiptHandle}, (error, data) => {
+					
+														if(_.isError(error)){ reject(error) }
+					
+														resolve(controller_instance.messages.failforward);
+	
+													});	
+				
+												});
+												
+											}else{
+												
+												resolve(controller_instance.messages.successnoaction);
+												
+											}
+											
+										}else{
+											
+											resolve(controller_instance.messages.successnoaction);
+											
+										}
 							
 									}
 									

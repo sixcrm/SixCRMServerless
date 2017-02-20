@@ -2,7 +2,7 @@
 module.exports = class fulfillmentProviderController {
 
 	constructor(){
-		this.stati = {success: "NOTIFIED", noship: "NOSHIP", error: "NOTIFICATIONERROR"};
+		this.stati = {success: "NOTIFIED", noship: "NOSHIP", error: "NOTIFICATIONERROR", failed: "FAILED"};
 	}
         
 }

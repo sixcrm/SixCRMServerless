@@ -6,21 +6,21 @@ module.exports.archive = (event, context, callback) => {
 	
 	archiveController.execute(event).then((response) => {
 		
-		if(response !== archiveController.messages.success){
+		switch(response){
 			
-			lr.issueResponse(200, {
-				message: response
-			}, callback);
-			
-		}else{
-		
-			archiveController.createForwardMessage(event).then((forward_object) => {
+			case archiveController.messages.success:
 				lr.issueResponse(200, {
 					message: response,
 					forward: forward_object
 				}, callback);
-			});
-			
+				break;
+				
+			default:
+				lr.issueResponse(200, {
+					message: response
+				}, callback);
+				break;
+				
 		}
 		
 	}).catch((error) =>{

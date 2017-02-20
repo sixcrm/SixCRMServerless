@@ -26,11 +26,12 @@ dynamodb:
 lambda:
   endpoint: ''
   function_names:
-    deliveredtoarchive: 'sixtransaction-production-archive'
+    deliveredtoarchive: 'sixtransaction-production-archivedelivered'
     shippedtodelivered: 'sixtransaction-production-confirmdelivery'
     pendingtoshipped: 'sixtransaction-production-confirmshipped'
     pendingfailedtopending: 'sixtransaction-development-shipproduct'
     holdtopending: 'sixtransaction-production-shipproduct'
+    holdtoarchive: 'sixtransaction-development-archivehold'
     billtohold: 'sixtransaction-production-processbilling'
     billfailedtohold: 'sixtransaction-development-processbilling'
     

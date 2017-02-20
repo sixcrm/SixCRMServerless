@@ -6,20 +6,35 @@ module.exports.shipproduct = (event, context, callback) => {
 	
 	shipProductController.execute(event).then((shipped) => {
 		
-		if(shipped !== shipProductController.messages.notified){
+		switch(shipped){
 			
-			lr.issueResponse(200, {
-				message: shipped.message
-			}, callback);
+			case shipProductController.messages.notified:
+				
+				shipProductController.createForwardMessage(event).then((forward_object) => {
+					lr.issueResponse(200, {
+						message: shipped ,
+						forward: forward_object
+					}, callback);
+				});
 			
-		}else{
-
-			shipProductController.createForwardMessage(event).then((forward_object) => {
+				break;
+			
+			case shipProductController.messages.failed:
+				
+				shipProductController.createForwardMessage(event).then((forward_object) => {
+					lr.issueResponse(200, {
+						message: shipped ,
+						failed: forward_object
+					}, callback);
+				});
+			
+				break;
+			
+			case default:
 				lr.issueResponse(200, {
-					message: shipped ,
-					forward: forward_object
+					message: shipped.message
 				}, callback);
-			});
+				break;
 			
 		}
 		

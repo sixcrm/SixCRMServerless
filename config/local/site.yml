@@ -26,11 +26,12 @@ dynamodb:
 lambda:
   endpoint: 'http://localhost:3000'
   function_names:
-    deliveredtoarchive: 'sixtransaction-development-archive'
+    deliveredtoarchive: 'sixtransaction-development-archivedelivered'
     shippedtodelivered: 'sixtransaction-development-confirmdelivered'
     pendingtoshipped: 'sixtransaction-development-confirmshipped'
     pendingfailedtopending: 'sixtransaction-development-shipproduct'
     holdtopending: 'sixtransaction-development-shipproduct'
+    holdtoarchive: 'sixtransaction-development-archivehold'
     billtohold: 'sixtransaction-development-processbilling'
     billfailedtohold: 'sixtransaction-development-processbilling'
     

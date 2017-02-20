@@ -120,6 +120,8 @@ functions:
       stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
+      #this is not correct
       workerfunction: sixtransaction-${opt:stage}-processbilling
       
   billfailedtohold:
@@ -132,6 +134,7 @@ functions:
       stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      #this is not correct
       workerfunction: sixtransaction-${opt:stage}-processbilling
 
   holdtopending:
@@ -145,6 +148,19 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
+      failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
+      
+  holdtoarchive:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtoarchive}
+      archivefilter: 'NOSHIP'
       
   pendingfailedtopending:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -193,6 +209,7 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint}
+      archivefilter: 'ALL'
 
 # Workers
 
@@ -261,7 +278,7 @@ functions:
       usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
       usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
   
-  archive:
+  archivedelivered:
     handler: workers/archive/handler.archive
     environment:
       stage: ${opt:stage}
@@ -270,6 +287,18 @@ functions:
       products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      archivefilter: 'ALL'
+  
+  archivehold:
+    handler: workers/archive/handler.archive
+    environment:
+      stage: ${opt:stage}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      archivefilter: 'NOSHIP'
        
   test:
     handler: workers/test/handler.test
