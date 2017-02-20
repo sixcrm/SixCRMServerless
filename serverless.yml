@@ -121,6 +121,18 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       workerfunction: sixtransaction-${opt:stage}-processbilling
+      
+  billfailedtohold:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(6 hours)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
+      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      workerfunction: sixtransaction-${opt:stage}-processbilling
 
   holdtopending:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -132,8 +144,20 @@ functions:
       stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
-      workerfunction: sixtransaction-${opt:stage}-triggerfulfillment
-
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
+      
+  pendingfailedtopending:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(6 hours)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
+      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
+      
   pendingtoshipped:
     handler: workers/forwardmessage/handler.forwardmessage
     events:

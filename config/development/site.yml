@@ -2,6 +2,7 @@ jwt:
   transaction_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
   site_key: 'anwdadawdjaklwdlakd'
   development_bypass: 'deathstalker'
+  
 dynamodb:
   access_keys_table: 'access_keys'
   sessions_table: 'sessions'
@@ -21,25 +22,32 @@ dynamodb:
   smtp_providers_table: 'smtp_providers'
   shipping_receipts_table: 'shipping_receipts'
   endpoint: ''
+  
 lambda:
   endpoint: ''
   function_names:
     deliveredtoarchive: 'sixtransaction-development-archive'
     shippedtodelivered: 'sixtransaction-development-confirmdelivery'
     pendingtoshipped: 'sixtransaction-development-confirmshipped'
-    holdtopending: 'sixtransaction-development-triggerfulfillment'
+    pendingfailedtopending: 'sixtransaction-development-shipproduct'
+    holdtopending: 'sixtransaction-development-shipproduct'
     billtohold: 'sixtransaction-development-processbilling'
+    billfailedtohold: 'sixtransaction-development-processbilling'
+    
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'
-  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-billfailure'
+  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill-failed'
   hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-hold'
   pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending'
+  pending_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending-failed'
   shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-shipped'
   delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-delivered'
+  
 nmi:
   username: 'demo'
   password: 'password'
   endpoint: 'https://secure.networkmerchants.com/api/transact.php'
+  
 shipping_providers:
   usps:
     user_id: '005SIXCR2114'

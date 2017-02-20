@@ -9,6 +9,11 @@ class forwardMessageController extends workerController {
 	
 	constructor(){
 		super();
+		this.messages = {
+			success:'SUCCESS',
+			successnoaction:'SUCCESSNOACTION',
+			successnomessages:'SUCCESSNOMESSAGES'
+		};
 	}
 	
 	execute(event){
@@ -74,9 +79,9 @@ class forwardMessageController extends workerController {
 			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}, (error, messages) => {
 		
 				if(_.isError(error)){ reject(error); }
-				
+
 				if (messages && messages.length > 0) {
-		
+					
 					messages.forEach(function(message) {
 						
 						//Technical Debt: in the case of a local context, I want this to invoke a local function...
@@ -114,7 +119,7 @@ class forwardMessageController extends workerController {
 					
 													if(_.isError(error)){ reject(error) }
 					
-													resolve('SUCCESS');
+													resolve(controller_instance.messages.success);
 	
 												});	
 				
@@ -126,7 +131,7 @@ class forwardMessageController extends workerController {
 					
 												if(_.isError(error)){ reject(error); }
 				
-												resolve('SUCCESS');
+												resolve(controller_instance.messages.success);
 
 											});	
 								
@@ -134,7 +139,7 @@ class forwardMessageController extends workerController {
 						
 									}else{
 						
-										resolve('SUCCESSNOACTION');
+										resolve(controller_instance.messages.successnoaction);
 							
 									}
 									
@@ -148,7 +153,7 @@ class forwardMessageController extends workerController {
 	
 				}else{
 			
-					resolve('SUCCESSNOMESSAGES');
+					resolve(this.messages.successnomessages);
 						
 				}
 			

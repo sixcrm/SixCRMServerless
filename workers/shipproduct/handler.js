@@ -6,21 +6,22 @@ module.exports.shipproduct = (event, context, callback) => {
 	
 	shipProductController.execute(event).then((shipped) => {
 		
-		if(shipped !== 'SHIPPED'){
+		if(shipped !== shipProductController.messages.notified){
 			
 			lr.issueResponse(200, {
-				message: shipped
+				message: shipped.message
 			}, callback);
 			
 		}else{
-				
-			lr.issueResponse(200, {
-				message: shipped,
-				forward: event
-			}, callback);
+
+			shipProductController.createForwardMessage(event).then((forward_object) => {
+				lr.issueResponse(200, {
+					message: shipped ,
+					forward: forward_object
+				}, callback);
+			});
 			
 		}
-		
 		
 	}).catch((error) =>{
 	

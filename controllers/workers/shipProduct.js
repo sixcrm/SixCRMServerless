@@ -16,6 +16,10 @@ class shipProductController extends workerController {
 	
 	constructor(){
 		super();
+		this.messages = {
+			notified: 'NOTIFIED',
+			noship: 'NOSHIP',
+		};
 	}
 	
 	execute(event){
@@ -86,7 +90,7 @@ class shipProductController extends workerController {
 					 
 					fulfillmentTriggerController.triggerFulfillment(transaction_product).then((fulfillment_response) => {
 						
-						if(fulfillment_response == 'NOTIFIED'){
+						if(fulfillment_response == this.messages.notified){
 		
 							this.issueShippingReceipt(fulfillment_response, transaction_product, transaction).then(() => {
 							
@@ -104,13 +108,13 @@ class shipProductController extends workerController {
 					
 				}else{
 					
-					resolve('NOTIFIED');
+					resolve(this.messages.notified);
 					
 				}
 				
 			}else{
 				
-				resolve("NOSHIP");
+				resolve(this.messages.noship);
 				
 			}
 			
@@ -161,7 +165,7 @@ class shipProductController extends workerController {
 							
 							});
 						
-							return 'NOTIFIED';
+							return this.messages.notified;
 					
 						}).then((result_message) => {
 						
@@ -171,7 +175,7 @@ class shipProductController extends workerController {
 					
 					}else{
 					
-						return 'NOSHIP';
+						return this.messages.noship;
 					
 					}
 					
@@ -214,9 +218,9 @@ class shipProductController extends workerController {
 			
 			return Promise.all(process_transactions).then((process_transactions) => {
 				
-				var response = 'NOTIFIED';
+				var response = this.messages.notified;
 				process_transactions.map((processed_transaction) => {
-					if(processed_transaction != 'NOTIFIED'){
+					if(processed_transaction != this.messages.notified){
 						response = processed_transaction;
 					}
 				});
