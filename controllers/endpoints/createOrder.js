@@ -160,7 +160,8 @@ class createOrderController {
 					promises.push(getProcessorResponse);
 					
 					return Promise.all(promises).then((promises) => {
-					
+						
+						//Technical Debt:  What happens if this is denied?!
 						var processor_response = promises[0];
 					
 						//validate processor_response as being good

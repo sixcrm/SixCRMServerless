@@ -197,6 +197,19 @@ class processBillingController extends workerController {
 							
 	}
 	
+	evaluateTransactionResponse(processor_response){
+		
+		return new Promise((resolve, reject) => {
+			
+			if(_.has(processor_response, "message") && processor_response.message == 'Success'){
+				return resolve(this.messages.success);
+			}
+			return resolve(this.messages.failed);
+			
+		});
+		
+	}
+	
 	processBilling(rebill) {
 		
 		return new Promise((resolve, reject) => {
@@ -209,7 +222,11 @@ class processBillingController extends workerController {
 						
 						this.createTransaction(rebill, products, processor_result).then((transaction) => {
 							
-							resolve(this.messages.success);
+							this.evaluateTransactionResponse(processor_result).then((response) => {
+							
+								resolve(response);
+								
+							});
 							
 						});
 						
