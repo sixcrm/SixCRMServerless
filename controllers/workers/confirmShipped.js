@@ -1,9 +1,4 @@
 'use strict';
-var AWS = require("aws-sdk");
-const fs = require('fs');
-const validator = require('validator');
-const Validator = require('jsonschema').Validator;
-const v = new Validator();
 var _ = require("underscore");
 
 var rebillController = require('../../controllers/Rebill.js');

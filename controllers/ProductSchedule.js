@@ -19,12 +19,14 @@ class productScheduleController extends entityController {
 		var transaction_products = [];
 		
 		schedules_to_purchase.forEach((schedule) => {
+
 			var product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
-			//console.log(product_for_purchase);
+
 			transaction_products.push({
 				amount: product_for_purchase.price, 
 				product: product_for_purchase.product_id
 			});
+			
 		});
 		//console.log(transaction_products);
 		return transaction_products;
@@ -132,14 +134,16 @@ class productScheduleController extends entityController {
     getProductForPurchase(day, schedule){
 		
 		var return_product;
-		
+
     	schedule.forEach((scheduled_product) => {
 
     		if(parseInt(day) >= parseInt(scheduled_product.start)){
-
+				
     			if(!_.has(scheduled_product, "end")){
-    			
-    				return scheduled_product;
+    				
+    				return_product = scheduled_product;
+    				
+    				return true;
     				
     			}
     			

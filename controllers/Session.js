@@ -227,6 +227,7 @@ class sessionController extends entityController {
 		
 	}
 	
+	//Technical Debt:  This needs to move to a prototype
 	hydrate(session){
 		
 		var controller_instance = this;
@@ -245,7 +246,7 @@ class sessionController extends entityController {
 				
 				if(!_.has(session, "customer")){ return null; }
 				
-				controller_instance.getCustomerHydrated(session.customer).then((customer) => {
+				controller_instance.getCustomer(session).then((customer) => {
 					
 					session.customer = customer;
 					

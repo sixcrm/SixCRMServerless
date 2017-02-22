@@ -121,8 +121,7 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
-      #this is not correct
-      workerfunction: sixtransaction-${opt:stage}-processbilling
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billtohold}
       
   billfailedtohold:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -134,8 +133,7 @@ functions:
       stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
-      #this is not correct
-      workerfunction: sixtransaction-${opt:stage}-processbilling
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billfailedtohold}
 
   holdtopending:
     handler: workers/forwardmessage/handler.forwardmessage

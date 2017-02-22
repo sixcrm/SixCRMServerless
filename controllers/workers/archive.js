@@ -1,9 +1,9 @@
 'use strict';
 var _ = require("underscore");
 
-var workerController = require('./worker.js');
 var transactionController = require('../Transaction.js');
 var rebillController = require('../Rebill.js');
+var workerController = require('./worker.js');
 
 class archiveController extends workerController {
 	

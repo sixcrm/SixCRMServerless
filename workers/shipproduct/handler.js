@@ -30,7 +30,7 @@ module.exports.shipproduct = (event, context, callback) => {
 			
 				break;
 			
-			case default:
+			default:
 				lr.issueResponse(200, {
 					message: shipped.message
 				}, callback);

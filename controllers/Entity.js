@@ -1,6 +1,9 @@
 'use strict';
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
+var fs = require('fs');
+var validator = require('validator');
+var Validator = require('jsonschema').Validator;
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 
@@ -283,6 +286,50 @@ module.exports = class entityController {
 			});
 			
 		});	
+	}
+	
+	validate(object){
+		
+		return new Promise((resolve, reject) => {
+		
+			var v = new Validator();
+		
+			var schema;
+		
+			try{
+
+				schema = require('../model/'+this.descriptive_name);
+
+			} catch(e){
+
+				return reject(new Error('Unable to load validation schema for '+this.descriptive_name));
+
+			}
+
+			var validation;
+
+			try{
+				var v = new Validator();
+				validation = v.validate(object, schema);
+			}catch(e){
+				return reject(new Error('Unable to instantiate validator.'));
+			}
+			
+			if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
+
+				var error = {
+					message: 'One or more validation errors occurred.',
+					issues: validation.errors.map((e)=>{ return e.message; })
+				};
+				
+				return reject(error);
+
+			}
+			
+			return resolve(validation);
+		
+		});
+		
 	}
         
 }

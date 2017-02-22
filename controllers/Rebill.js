@@ -32,7 +32,21 @@ class rebillController extends entityController {
 		
 		if(!_.has(rebill, 'product_schedules')){ return null; }
 		
-		return rebill.product_schedules.map(id => productScheduleController.get(id));
+		return new Promise((resolve, reject) => {
+			
+			var promises = [];
+			
+			rebill.product_schedules.map((id) => {
+				promises.push(productScheduleController.get(id));
+			});
+			
+			Promise.all(promises).then((promises) => {
+				
+				resolve(promises);
+				
+			});
+			
+		});
         
 	}
 	

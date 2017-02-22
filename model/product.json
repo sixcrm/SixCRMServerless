@@ -2,10 +2,24 @@
 	"title": "Product",
 	"type": "object",
 	"properties": {
+		"id":{
+			"type":"string"
+		},
 		"name":{
 			"type":"string"
 		},
+		"sku":{
+			"type":"string"
+		},
+		"ship":{
+			"type":"true"
+		},
+		"shipping_delay":{
+			"type":"string"
+		},
+		"fulfillment_provider":{
+			"type":["string", "object", "null"]
+		}
 	},
-	"required":["name"]
+	"required":["name","sku","ship"]
 }
-
