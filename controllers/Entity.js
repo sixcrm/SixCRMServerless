@@ -10,7 +10,7 @@ var dynamoutilities = require('../lib/dynamodb-utilities.js');
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 module.exports = class entityController {
 	
-	constuctor(table_name, descriptive_name){
+	constructor(table_name, descriptive_name){
 		this.table_name = table_name;
 		this.descriptive_name = descriptive_name;
 	}
