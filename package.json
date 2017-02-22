@@ -24,13 +24,14 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-json-schema": "^1.4.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "serverless": "^1.4.0",
     "supertest": "^2.0.1"
   },
   "scripts": {
     "test": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/*.test.js",
-    "test-unit": "mocha ./test/unit/**/*.spec.js"
+    "test-unit": "istanbul cover _mocha -- './test/unit/**/*.spec.js'"
   },
   "pre-commit": [
     "test-unit"
