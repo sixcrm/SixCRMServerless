@@ -49,6 +49,11 @@ Make sure to turn on the local DynamoDB instance.
 
 Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f createlead -p ./endpoints/createlead/success_event.json  --stage local`
 
+## Running unit tests
+
+To run unit tests execute `npm run test-unit` in the root of the project. Tests are also run automatically before each
+commit. You can access the code coverage report at `coverage/lcov-report/index.html`.
+
 ## Known Issues
 
 5.  CC record missing from the transaction. *Confirm*
