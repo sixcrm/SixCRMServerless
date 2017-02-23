@@ -22,23 +22,25 @@ module.exports = class entityController {
 			var query_parameters = {filter_expression: null, expression_attribute_values: null};
 			
 			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = cursor;
+				query_parameters.ExclusiveStartKey = { id: cursor };
 			}
 
 			if(typeof limit  !== 'undefined'){
 				query_parameters['limit'] = limit;
 			}
-					
+			
 			dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
 				if(_.isObject(data)){
 					
+					console.log(data);
+					
 					var pagination_object = {
 						count: '',
 						end_cursor: '',
-						has_next_page: 'false'
+						has_next_page: 'true'
 					}
 					
 					if(_.has(data, "Count")){
@@ -51,9 +53,8 @@ module.exports = class entityController {
 						}
 					}
 					
-					var has_next_page = 'false';
-					if(_.has(data, "LastEvaluatedKey")){
-						pagination_object.has_next_page = 'true';
+					if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
+						pagination_object.has_next_page = 'false';
 					}
 					
 					if(data.Items.length < 1){

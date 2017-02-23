@@ -1,0 +1,70 @@
+{
+	"body":"
+	query { 
+		campaignlist ({argumentation}) {
+			campaigns {
+				id,
+				name,
+				productschedules { 
+					id,
+					schedule {
+						price,
+						start,
+						end,
+						period,
+						product {
+							id,
+							name,
+							sku,
+							ship,
+							shipping_delay,
+							fulfillment_provider {
+								id, 
+								name,
+								provider,
+								username,
+								password,
+								endpoint
+							}
+						}
+					}
+				}
+				loadbalancer {
+					id,
+					merchantproviderconfigurations {
+						merchantprovider {
+							id, 
+							username,
+							password,
+							endpoint,
+							processor
+						},
+						distribution
+					}
+				},
+				emails {
+					id,
+					name,
+					subject,
+					body,
+					type,
+					smtp_provider{
+						id,
+						name,
+						hostname,
+						ip_address,
+						username,
+						password,
+						port
+					}
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

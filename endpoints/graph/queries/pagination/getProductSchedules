@@ -1,0 +1,37 @@
+{
+	"body":"
+	query { 
+		productschedulelist ({argumentation}) {
+			productschedules {
+				id,
+				schedule {
+					price,
+					start,
+					end,
+					period,
+					product {
+						id,
+						name,
+						sku,
+						ship,
+						shipping_delay,
+						fulfillment_provider {
+							id, 
+							name,
+							provider,
+							username,
+							password,
+							endpoint
+						}
+					}
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

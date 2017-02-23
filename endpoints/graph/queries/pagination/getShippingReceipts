@@ -1,0 +1,20 @@
+{
+	"body":"
+	query { 
+		shippingreceiptlist ({argumentation}) {
+			shippingreceipts {
+				id,
+				created,
+				modified,
+				status,
+				trackingnumber
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

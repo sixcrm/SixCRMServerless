@@ -1,0 +1,29 @@
+{
+	"body":"
+	query { 
+		userlist ({argumentation}) {
+			users {
+				id,
+				auth0_id,
+				name,
+				email,
+				active,
+				termsandconditions,
+				address {
+					line1,
+					line2,
+					city,
+					state,
+					zip,
+					country
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+
