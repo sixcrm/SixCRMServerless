@@ -4,7 +4,7 @@ const _ = require('underscore');
 const graphql = require('graphql').graphql;
 const buildSchema  = require('graphql').buildSchema;
 
-var lr = require('../../lib/lambda-response.js');
+var LambdaResponse = require('../../lib/lambda-response.js');
 var Schema = require('./schema.js');
 //var Resolver = require('./resolver.js');
 var SessionController = require('./controllers/Session.js');
@@ -46,10 +46,10 @@ module.exports.graph = (event, context, callback) => {
 		if(_.has(response, "errors")){
 			throw new Error(JSON.stringify(response));
 		}
-	  return lr.issueResponse(200, response, callback);	
+	  return new LambdaResponse().issueResponse(200, response, callback);
 	})
 	.catch((error) => {
-    	return lr.issueError(error, 500, event, error, callback);
+    	return new LambdaResponse().issueError(error, 500, event, error, callback);
     });
     
 }

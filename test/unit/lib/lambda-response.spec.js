@@ -19,7 +19,7 @@ describe('lib/lambda-response', () => {
             let expectedResponse = anyResponse();
 
             // when
-            LambdaResponse.issueResponse(aCode, aBody, (first, second) => {
+            new LambdaResponse().issueResponse(aCode, aBody, (first, second) => {
                 let response = second;
 
                 // then
@@ -28,14 +28,30 @@ describe('lib/lambda-response', () => {
             });
         });
 
-        xit('should issue a response with a default code when no code provided', (done) => {
+        it('should issue a response with a default code when no code provided', (done) => {
             // given
             let aCode = null;
             let aBody = anyBody;
             let expectedResponse = aResponseWithDefaultCode();
 
             // when
-            LambdaResponse.issueResponse(aCode, aBody, (first, second) => {
+            new LambdaResponse().issueResponse(aCode, aBody, (first, second) => {
+                let response = second;
+
+                // then
+                expect(response).to.deep.equal(expectedResponse);
+                done();
+            });
+        });
+
+        it('should issue a response with a default body when no body provided', (done) => {
+            // given
+            let aCode = anyCode;
+            let aBody = null;
+            let expectedResponse = aResponseWithDefaultBody();
+
+            // when
+            new LambdaResponse().issueResponse(aCode, aBody, (first, second) => {
                 let response = second;
 
                 // then
@@ -53,7 +69,7 @@ describe('lib/lambda-response', () => {
             let expectedResponse = anyErrorResponse();
 
             // when
-            LambdaResponse.issueError(aMessage, aCode, anEvent, anError, (first, second) => {
+            new LambdaResponse().issueError(aMessage, aCode, anEvent, anError, (first, second) => {
                 let response = second;
 
                 // then
@@ -71,7 +87,7 @@ describe('lib/lambda-response', () => {
             let expectedResponse = anyErrorResponse();
 
             // when
-            LambdaResponse.issueError(aMessage, aCode, anEvent, anError, (first, second) => {
+            new LambdaResponse().issueError(aMessage, aCode, anEvent, anError, (first, second) => {
                 let response = second;
 
                 // then
@@ -89,7 +105,7 @@ describe('lib/lambda-response', () => {
             let expectedResponse = anErrorResponseWithGenericMessage();
 
             // when
-            LambdaResponse.issueError(aMessage, aCode, anEvent, anError, (first, second) => {
+            new LambdaResponse().issueError(aMessage, aCode, anEvent, anError, (first, second) => {
                 let response = second;
 
                 // then
@@ -117,6 +133,16 @@ describe('lib/lambda-response', () => {
                 'Access-Control-Allow-Origin': '*'
             },
             body: '{}'
+        };
+    }
+
+    function aResponseWithDefaultBody() {
+        return {
+            statusCode: anyCode,
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: 'An unexpected error occurred.'
         };
     }
 

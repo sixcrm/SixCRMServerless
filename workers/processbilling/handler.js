@@ -1,5 +1,5 @@
 'use strict';
-var lr = require('../../lib/lambda-response.js');
+var LambdaResponse = require('../../lib/lambda-response.js');
 var processBillingController = require('../../controllers/workers/processBilling.js');
 
 module.exports.processbilling = (event, context, callback) => {
@@ -11,7 +11,7 @@ module.exports.processbilling = (event, context, callback) => {
 			case processBillingController.messages.success:
 				
 				processBillingController.createForwardMessage(event).then((forward_object) => {
-					lr.issueResponse(200, {
+					new LambdaResponse().issueResponse(200, {
 						message: result ,
 						forward: forward_object
 					}, callback);
@@ -22,7 +22,7 @@ module.exports.processbilling = (event, context, callback) => {
 			case processBillingController.messages.failed:
 				
 				processBillingController.createForwardMessage(event).then((forward_object) => {
-					lr.issueResponse(200, {
+					new LambdaResponse().issueResponse(200, {
 						message: result ,
 						failed: forward_object
 					}, callback);
@@ -32,7 +32,7 @@ module.exports.processbilling = (event, context, callback) => {
 			
 			default:
 			
-				lr.issueResponse(200, {
+				new LambdaResponse().issueResponse(200, {
 					message: result.message
 				}, callback);
 				break;
@@ -41,7 +41,7 @@ module.exports.processbilling = (event, context, callback) => {
 		
 	}).catch((error) =>{
 	
-		return lr.issueError(error.message, 500, event, error, callback);
+		return new LambdaResponse().issueError(error.message, 500, event, error, callback);
 		
 	});
 

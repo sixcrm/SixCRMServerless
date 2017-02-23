@@ -1,5 +1,5 @@
 'use strict';
-var lr = require('../../lib/lambda-response.js');
+var LambdaResponse = require('../../lib/lambda-response.js');
 var shipProductController = require('../../controllers/workers/shipProduct.js');
 
 module.exports.shipproduct = (event, context, callback) => {
@@ -11,7 +11,7 @@ module.exports.shipproduct = (event, context, callback) => {
 			case shipProductController.messages.notified:
 				
 				shipProductController.createForwardMessage(event).then((forward_object) => {
-					lr.issueResponse(200, {
+					new LambdaResponse().issueResponse(200, {
 						message: shipped ,
 						forward: forward_object
 					}, callback);
@@ -22,7 +22,7 @@ module.exports.shipproduct = (event, context, callback) => {
 			case shipProductController.messages.failed:
 				
 				shipProductController.createForwardMessage(event).then((forward_object) => {
-					lr.issueResponse(200, {
+					new LambdaResponse().issueResponse(200, {
 						message: shipped ,
 						failed: forward_object
 					}, callback);
@@ -31,7 +31,7 @@ module.exports.shipproduct = (event, context, callback) => {
 				break;
 			
 			default:
-				lr.issueResponse(200, {
+				new LambdaResponse().issueResponse(200, {
 					message: shipped.message
 				}, callback);
 				break;
@@ -40,7 +40,7 @@ module.exports.shipproduct = (event, context, callback) => {
 		
 	}).catch((error) =>{
 	
-		return lr.issueError(error.message, 500, event, error, callback);
+		return new LambdaResponse().issueError(error.message, 500, event, error, callback);
 		
 	});
 

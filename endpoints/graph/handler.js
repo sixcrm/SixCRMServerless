@@ -2,7 +2,7 @@
 
 var _ = require('underscore');
 var graphql =  require('graphql').graphql;
-var lr = require('../../lib/lambda-response.js');
+var LambdaResponse = require('../../lib/lambda-response.js');
 
 
 module.exports.graph = (event, context, callback) => {
@@ -15,7 +15,7 @@ module.exports.graph = (event, context, callback) => {
 		try{
 			event = JSON.parse(event.replace(/[\n\r\t]+/g, ''))
 		}catch(error){
-			return lr.issueError(error, 500, event, error, callback);
+			return new LambdaResponse().issueError(error, 500, event, error, callback);
 		}
 		if(_.has(event, "body")){
 			query = event.body;
@@ -33,11 +33,11 @@ module.exports.graph = (event, context, callback) => {
 			throw new Error(JSON.stringify(result));
 		}
 	  	
-	  	return lr.issueResponse(200, result, callback);	
+	  	return new LambdaResponse().issueResponse(200, result, callback);
 
 	}).catch((error) => {
 	
-    	return lr.issueError(error, 500, event, error, callback);
+    	return new LambdaResponse().issueError(error, 500, event, error, callback);
     	
     });
 	

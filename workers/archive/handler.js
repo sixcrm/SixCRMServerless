@@ -1,5 +1,5 @@
 'use strict';
-var lr = require('../../lib/lambda-response.js');
+var LambdaResponse = require('../../lib/lambda-response.js');
 var archiveController = require('../../controllers/workers/archive.js');
 
 module.exports.archive = (event, context, callback) => {
@@ -9,14 +9,14 @@ module.exports.archive = (event, context, callback) => {
 		switch(response){
 			
 			case archiveController.messages.success:
-				lr.issueResponse(200, {
+				new LambdaResponse().issueResponse(200, {
 					message: response,
 					forward: forward_object
 				}, callback);
 				break;
 				
 			default:
-				lr.issueResponse(200, {
+				new LambdaResponse().issueResponse(200, {
 					message: response
 				}, callback);
 				break;
@@ -25,7 +25,7 @@ module.exports.archive = (event, context, callback) => {
 		
 	}).catch((error) =>{
 	
-		return lr.issueError(error.message, 500, event, error, callback);
+		return new LambdaResponse().issueError(error.message, 500, event, error, callback);
 		
 	});
 

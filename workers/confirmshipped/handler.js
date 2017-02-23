@@ -1,5 +1,5 @@
 'use strict';
-var lr = require('../../lib/lambda-response.js');
+var LambdaResponse = require('../../lib/lambda-response.js');
 var confirmShippedController = require('../../controllers/workers/confirmShipped.js');
 
 module.exports.confirmshipped = (event, context, callback) => {
@@ -8,14 +8,14 @@ module.exports.confirmshipped = (event, context, callback) => {
 		
 		if(shipped.message !== confirmShippedController.messages.shipped){
 			
-			lr.issueResponse(200, {
+			new LambdaResponse().issueResponse(200, {
 				message: shipped.message
 			}, callback);
 			
 		}else{
 			
 			confirmShippedController.createForwardMessage(event).then((forward_object) => {
-				lr.issueResponse(200, {
+				new LambdaResponse().issueResponse(200, {
 					message: shipped.message,
 					forward: forward_object
 				}, callback);
@@ -25,7 +25,7 @@ module.exports.confirmshipped = (event, context, callback) => {
 		
 	}).catch((error) =>{
 	
-		return lr.issueError(error.message, 500, event, error, callback);
+		return new LambdaResponse().issueError(error.message, 500, event, error, callback);
 		
 	});
 
