@@ -20,46 +20,55 @@ var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var rebillController = require('../../controllers/Rebill.js');
 
 class createOrderController {
-	
+
 	constructor(){
-	
+
 	}
-	
+
 	execute(event){
-		
-		return this.acquireBody(event).then(this.validateInput).then(this.createOrder);
-		
-	}	
-	
+
+		return this.acquireBody(event)
+		.then(this.validateInput)
+		.then(this.getOrderInfo)
+		.then(this.getTransactionInfo)
+		.then(this.createOrder)
+		.then(this.postOrderProcessing)
+		.catch((err) => {
+			console.log(err);
+			throw err;
+		});
+
+	}
+
 	acquireBody(event){
 
 		return new Promise((resolve, reject) => {
-			
+
 			var duplicate_body;
 			try {
 				duplicate_body = JSON.parse(event['body']);
 			} catch (e) {
 				duplicate_body = event.body;
 			}
-			
+
 			resolve(duplicate_body);
-			
+
 		});
-		
-	}	
-	
+
+	}
+
 	validateInput(event_body){
-		
+
 		return new Promise((resolve, reject) => {
-			
+
 			var orderjson;
-			
+
 			try{
 				orderjson = JSON.parse(fs.readFileSync('./endpoints/createorder/schema/order.json','utf8'));
 			} catch(e){
-				throw new Error('Unable to load validation schemas.');	
+				throw new Error('Unable to load validation schemas.');
 			}
-			
+
 			var validation;
 			try{
 				var v = new Validator();
@@ -67,173 +76,181 @@ class createOrderController {
 			}catch(e){
 				throw new Error('Unable to create validation class.');
 			}
-			
-			if(validation['errors'].length > 0){	
-				throw new Error(JSON.stringify({'Validation_errors: ':validation['errors']}));
-			}
-	
+
 			if(_.has(event_body, 'email') && !validator.isEmail(event_body['email'])){
-				throw new Error('"email" field must be a email address.');
+				validation.errors.push({message: '"email" field must be a email address.'});
 			}
-	
+
 			if(_.has(event_body, 'shipping_email') && !validator.isEmail(event_body['shipping_email'])){
-				validation.errors.push('"shipping_email" field must be a email address.');
+				validation.errors.push({message: '"shipping_email" field must be a email address.'});
 			}
-	
+
 			if(_.has(event_body, 'ccnumber') && !validator.isCreditCard(event_body['ccnumber'])){
-		
+
 				if(process.env.stage == 'production'){
-					validation.errors.push('"ccnumber" must be a credit card number.');
+					validation.errors.push({message: '"ccnumber" must be a credit card number.'});
 				}
-		
+
 			}
-	
-			if(validation['errors'].length > 0){
-	
-				throw new Error('One or more validation errors occurred: '+validation['errors']);		
-		
+
+			if(validation['errors'].length > 0) {
+				var error = {
+					message: 'One or more validation errors occurred.',
+					issues: validation.errors.map((e) => {e.message})
+				};
+				throw error;
 			}
-			
-			resolve(event_body);
-			
+
+			return resolve(event_body);
+
 		});
-		
+
 	}
-	
-	createOrder (event_body) {
-		
+
+
+	getOrderInfo(event_body) {
+
 		var promises = [];
 		var getSession = sessionController.get(event_body['session_id']);
 		var getCampaign = campaignController.getHydratedCampaign(event_body['campaign_id']);
 		var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
 		var getCreditCard	= creditCardController.createCreditCardObject(event_body).then((creditcard) => { return creditCardController.storeCreditCard(creditcard) });
+
 		promises.push(getSession);
 		promises.push(getCampaign);
 		promises.push(getProductSchedules);
 		promises.push(getCreditCard);
-		
+
 		return Promise.all(promises).then((promises) => {
-			
-			var session = promises[0];
-			var campaign = promises[1];
-			var schedules_to_purchase = promises[2];
-			var creditcard = promises[3];
-			
-			if(!_.isObject(session) || !_.has(session, 'id')){ throw new Error('No available session.'); }
-				
-			if(!_.isObject(campaign) || !_.has(campaign, 'id')){ throw new Error('No available campaign.'); }
-			
-			if(!_.isObject(creditcard) || !_.has(creditcard, 'id')){ throw new Error('No available creditcard.');}
-				
-			if(session.completed == 'true'){ throw new Error('The specified session is already complete.');} 
-			
-			if(!_.isArray(schedules_to_purchase) || (schedules_to_purchase.length < 1)){ throw new Error('No available schedules to purchase.');}
-			
-			sessionController.validateProductSchedules(schedules_to_purchase, session);
-						
-			campaignController.validateProductSchedules(schedules_to_purchase, campaign);	
-				
-			promises = [];
-			var getCustomer = customerController.get(session.customer);	
-			promises.push(getCustomer);
-			
-			return Promise.all(promises).then((promises) => {
-				
-				var customer = promises[0];
-				
-				//more validation
-				if(!_.isObject(customer) || !_.has(customer, 'id')){ throw new Error('No available customer.'); }
-				
-				promises = [];
-				var getTransactionProducts = productScheduleController.getTransactionProducts(0, schedules_to_purchase);				
-				promises.push(getTransactionProducts);
-				
-				return Promise.all(promises).then((promises) => {
 
-					var transaction_products = promises[0];
-					
-					//note refactor this to use the transaction products above....
-					var amount = productScheduleController.productSum(0, schedules_to_purchase);
-					
-					var promises = [];
-					var getProcessorResponse = loadBalancerController.process(campaign.loadbalancer, {customer: customer, creditcard: creditcard, amount: amount});
-					promises.push(getProcessorResponse);
-					
-					return Promise.all(promises).then((promises) => {
-						
-						//Technical Debt:  What happens if this is denied?!
-						var processor_response = promises[0];
-					
-						//validate processor_response as being good
-					
-						promises = [];
-						var getRebills = rebillController.createRebills(session, schedules_to_purchase, 0);
-						promises.push(getRebills);
-						
-						return Promise.all(promises).then((promises) => {
+			var info = {
+				session: promises[0],
+			  campaign:  promises[1],
+			  schedulesToPurchase: promises[2],
+			  creditcard: promises[3]
+			};
 
-							var rebills = promises[0];
-							
-							//hack, we need to support multiple schedules in a single order
-							var rebill = rebills[0];
-							
-							promises = [];
-							var saveTransaction = transactionController.putTransaction({session: session, rebill: rebill, amount: amount, products: transaction_products}, processor_response);
-							promises.push(saveTransaction);
-							
-							return Promise.all(promises).then((promises) => {
-							
-								var transaction = promises[0];
-							
-								//this looks like a hack as well	
-								var transactions = [transaction.id];
-								
-								promises = [];
-								var rebillUpdates = rebillController.updateRebillTransactions(rebill, transactions);
-								promises.push(rebillUpdates);
-								
-								return Promise.all(promises).then((promises) => {
-									
-									if(!_.has(processor_response, "message") || processor_response.message !== 'Success' || !_.has(processor_response, "results") || !_.has(processor_response.results, 'response') || processor_response.results.response !== '1'){	
-										throw new Error('The processor didn\'t approve the transaction: '+processor_response.message);
-									};
-									
-									promises = [];
-									var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
-									var createNextRebills = rebillController.createRebills(session, schedules_to_purchase);
-									var updateSession = sessionController.updateSessionProductSchedules(session, schedules_to_purchase);
-									promises.push(addRebillToQueue);
-									promises.push(createNextRebills);
-									promises.push(updateSession);
-									
-									return Promise.all(promises).then((promises) => {
-									
-										var rebills_added_to_queue = promises[0];
-										var next_rebills = promises[1];
-										var updated_session = promises[2];
-										
-										//add some validation here...
-										
-										return transaction;
-										
-									});
-									
-								});
-								
-							});
-							
-						});
-						
-					});
-			
-				});
-								
-			});
-			
-		});
-				
+			if(!_.isObject(info.session) || !_.has(info.session, 'id')){
+ 			 	throw new Error('No available session.');
+ 		 	}
+
+			if(!_.isObject(info.campaign) || !_.has(info.campaign, 'id')){
+ 			 	throw new Error('No available campaign.');
+			}
+
+			if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
+ 			 	throw new Error('No available creditcard.');
+			}
+
+			if(info.session.completed == 'true'){
+ 			 	throw new Error('The specified session is already complete.');
+			}
+
+			if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
+ 			 	throw new Error('No available schedules to purchase.');
+			}
+
+			sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
+
+			campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
+
+			return info;
+		})
+
 	}
-	
+
+
+	getTransactionInfo(info) {
+
+		var promises = [];
+		var getCustomer = customerController.get(info.session.customer);
+		var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.schedulesToPurchase);
+		var getRebills = rebillController.createRebills(info.session, info.schedulesToPurchase, 0);
+		promises.push(getCustomer);
+		promises.push(getTransactionProducts);
+		promises.push(getRebills);
+
+		return Promise.all(promises).then((promises) => {
+
+			info.customer = promises[0];
+			info.transactionProducts = promises[1];
+			info.rebills = promises[2];
+
+			//more validation
+			if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
+ 			 	throw new Error('No available customer.');
+			}
+
+
+			//note refactor this to use the transaction products above....
+			info.amount = productScheduleController.productSum(0, info.schedulesToPurchase);
+
+			return info;
+		});
+	}
+
+
+
+	createOrder(info) {
+
+		return loadBalancerController.process( info.campaign.loadbalancer, {customer: info.customer, creditcard: info.creditcard, amount: info.amount})
+		.then((processor) => {
+			//Technical Debt:  What happens if this is denied?!
+
+			//validate processor
+			if( !_.has(processor, "message") || processor.message !== 'Success' ||
+				!_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'
+			) {
+				throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
+			};
+
+			info.processor = processor;
+
+			return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
+
+				//TODO:validate transaction above
+				info.transaction = transaction;
+				console.log(info);
+
+				return info;
+			});
+		});
+
+	}
+
+	postOrderProcessing(info) {
+
+		//this looks like a hack as well
+		var transactions = [info.transaction.id];
+
+		//hack, we need to support multiple schedules in a single order
+		var rebill = info.rebills[0];
+
+		var promises = [];
+		var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
+		var createNextRebills = rebillController.createRebills(info.session, info.schedulesToPurchase);
+		var updateSession = sessionController.updateSessionProductSchedules(info.session, info.schedulesToPurchase);
+		var rebillUpdates = rebillController.updateRebillTransactions(rebill, transactions);
+
+		promises.push(addRebillToQueue);
+		promises.push(createNextRebills);
+		promises.push(updateSession);
+		promises.push(rebillUpdates);
+
+		return Promise.all(promises).then((promises) => {
+
+			var rebills_added_to_queue = promises[0];
+			var next_rebills = promises[1];
+			var updated_session = promises[2];
+			var updateRebills = promises[3];
+
+			//add some validation here...
+
+			return info.transaction;
+
+		});
+	}
+
 }
 
 module.exports = new createOrderController();
