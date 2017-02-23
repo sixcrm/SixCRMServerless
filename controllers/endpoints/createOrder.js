@@ -57,35 +57,40 @@ class createOrderController {
 
 	}
 
-	validateInput(event_body){
+	validateInput(event){
 
 		return new Promise((resolve, reject) => {
 
-			var orderjson;
 
+			var order_schema;
 			try{
-				orderjson = JSON.parse(fs.readFileSync('./endpoints/createorder/schema/order.json','utf8'));
+				order_schema = require('../../model/order');
 			} catch(e){
-				throw new Error('Unable to load validation schemas.');
+				return reject(new Error('Unable to load validation schemas.'));
 			}
 
 			var validation;
+			var params = JSON.parse(JSON.stringify(event || {}));
+
 			try{
 				var v = new Validator();
-				validation = v.validate(event_body, orderjson);
+				validation = v.validate(params, order_schema);
 			}catch(e){
-				throw new Error('Unable to create validation class.');
+				return reject(new Error('Unable to instantiate validator.'));
 			}
 
-			if(_.has(event_body, 'email') && !validator.isEmail(event_body['email'])){
+
+			//Are these ever attached?
+			if(params.email && !validator.isEmail(params.email)){
 				validation.errors.push({message: '"email" field must be a email address.'});
 			}
 
-			if(_.has(event_body, 'shipping_email') && !validator.isEmail(event_body['shipping_email'])){
+			//Are these ever attached?
+			if(params.shipping_email && !validator.isEmail(params.shipping_email)){
 				validation.errors.push({message: '"shipping_email" field must be a email address.'});
 			}
 
-			if(_.has(event_body, 'ccnumber') && !validator.isCreditCard(event_body['ccnumber'])){
+			if(!validator.isCreditCard(params.ccnumber || '')){
 
 				if(process.env.stage == 'production'){
 					validation.errors.push({message: '"ccnumber" must be a credit card number.'});
@@ -96,12 +101,12 @@ class createOrderController {
 			if(validation['errors'].length > 0) {
 				var error = {
 					message: 'One or more validation errors occurred.',
-					issues: validation.errors.map((e) => {e.message})
+					issues: validation.errors.map(e => e.message)
 				};
-				throw error;
+				return reject(error);
 			}
 
-			return resolve(event_body);
+			return resolve(params);
 
 		});
 
