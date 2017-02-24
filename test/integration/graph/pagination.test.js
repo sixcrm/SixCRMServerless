@@ -8,7 +8,6 @@ var crypto = require('crypto');
 
 var tu = require('../../../lib/test-utilities.js');
 
-
 try {
   var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
 } catch (e) {
@@ -34,7 +33,6 @@ var entities = [
 	{camel:'Transactions',lower:'transaction'},
 	{camel:'Users',lower:'user'}
 ];
-	
 	
 var endpoint = config.endpoint;
 
@@ -111,15 +109,9 @@ entities.forEach((entity) => {
 								}
 							});
 				
-		
 					}else{
 						done();
 					}
-						
-					//make sure that there's a single result
-					
-					//if it's the last one, were done
-					//if there's another, get it and check to make sure that the id's make sense...
 			
 				}, done);
 			});
