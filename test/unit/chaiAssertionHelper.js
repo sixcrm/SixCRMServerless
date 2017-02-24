@@ -19,7 +19,7 @@ module.exports = function(chai, utils) {
 			if (typeof actual !== 'string') {
 				data = JSON.stringify(actual, null, '	');
 			}
-			fs.writeFile(basePath + '/' + fileName + '.processed.json', data);
+			fs.writeFileSync(basePath + '/' + fileName + '.processed.json', data);
 
 			chai.assert.deepEqual(actual, expected, "Expected data to equal contents of " + expectedPath);
 		}
