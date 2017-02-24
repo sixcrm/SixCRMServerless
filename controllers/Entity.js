@@ -78,7 +78,7 @@ module.exports = class entityController {
 	
 	//Technical Debt:  This may need to be rewritten...
 	listBySecondaryIndex(field, index_value, index_name){
-		
+		//console.log(`Entity.listBySecondaryIndex. field: "${field}", index_value: "${index_value}", index_name: "${index_name}"`)
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
@@ -98,10 +98,12 @@ module.exports = class entityController {
 			*/
 				
 			var query = field+' = :index_valuev';
-			
 			dynamoutilities.queryRecords(this.table_name, query, {':index_valuev': index_value}, index_name, (error, data) => {
 				
-				if(_.isError(error)){ reject(error);}
+				if(_.isError(error)){ 
+					console.log('listBySecondaryIndex failed with error: ', error)
+					reject(error);
+				}
 				
 				if(_.isArray(data) && data.length > 0){
 					

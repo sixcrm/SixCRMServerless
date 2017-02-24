@@ -41,7 +41,9 @@ Clean up the callback code...
 
 To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}`
 
-To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  
+To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  Note that you will need to specify the `endpoint-url`, i.e. `aws dynamodb list-tables --endpoint-url http://localhost:8001`.
+
+If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --stage {stage}`. 
 
 Note:  To execute these features, you will need the JDK version 8.0+ installed as well as having necessarily installed the Serverless dynamo package using `sls dynamodb install` after the `npm install` steps.
 

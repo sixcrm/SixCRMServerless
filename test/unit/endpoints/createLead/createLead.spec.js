@@ -31,7 +31,7 @@ describe('endpoints/createLead', function () {
 		it('should pass validations and be returned unchanged', function () {
 			var actual = createLead.validateInput(require('./fixtures/validLead'));
 
-		  return expect(actual).to.deepEqualProcessor(__dirname, 'validateInput.valid');
+			return expect(actual).to.deepEqualProcessor(__dirname, 'validateInput.valid');
 		});
 	});
 
