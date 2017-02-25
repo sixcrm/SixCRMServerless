@@ -6,6 +6,8 @@ var fs = require('fs');
 var yaml = require('js-yaml');
 var crypto = require('crypto');
 
+var signature = require('../../lib/signature.js');
+
 try {
   var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
 } catch (e) {
@@ -19,10 +21,10 @@ describe('JWT Acquisition Integration Test', function() {
     it('should acquire a JWT', function (done) {
     	
     	var request_time = new Date().getTime();
-		var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
-    	var authorization_string = config.access_key+':'+request_time+':'+signature;
-    	
-    	console.log(authorization_string);
+		var this_signature = signature.createSignature(config.secret_key, request_time);
+		
+		//crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
+    	var authorization_string = config.access_key+':'+request_time+':'+this_signature;
     	
 		var this_request = request(endpoint);
     	this_request.get('token/acquire/')
@@ -34,7 +36,7 @@ describe('JWT Acquisition Integration Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
-				console.log(response.body);
+				//console.log(response.body);
 				assert.isObject(response.body);
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
@@ -44,12 +46,14 @@ describe('JWT Acquisition Integration Test', function() {
 			}, done);
 		});
 	});
+	
 	describe('Broken Path(s)', function() {
+	
 		it('should fail signature validation due to bad signature', function (done) {
 
 			var request_time = new Date().getTime();
-			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex')+'1';
-			var authorization_string = config.access_key+':'+request_time+':'+signature;
+			var this_signature = signature.createSignature(config.secret_key, request_time)+'1';
+			var authorization_string = config.access_key+':'+request_time+':'+this_signature;
 
 			var this_request = request(endpoint);
 			this_request.get('token/acquire/')
@@ -64,11 +68,12 @@ describe('JWT Acquisition Integration Test', function() {
 					done();
 				}, done);
 		});
+		
 		it('should fail signature validation due to bad access_key', function (done) {
 		
 			var request_time = new Date().getTime();
-			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
-			var authorization_string = 'abc123:'+request_time+':'+signature;
+			var this_signature = signature.createSignature(config.secret_key, request_time);
+			var authorization_string = 'awdadwya8w0dau8dwuadjowja:'+request_time+':'+this_signature;
 
 			var this_request = request(endpoint);
 			this_request.get('token/acquire/')
@@ -87,8 +92,8 @@ describe('JWT Acquisition Integration Test', function() {
 		it('should fail signature validation due to bad expired timestamp', function (done) {
 	
 			var request_time = 123;
-			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
-			var authorization_string = config.access_key+':'+request_time+':'+signature;
+			var this_signature = signature.createSignature(config.secret_key, request_time);
+			var authorization_string = config.access_key+':'+request_time+':'+this_signature;
 			
 			var this_request = request(endpoint);
 			this_request.get('token/acquire/')
@@ -107,8 +112,8 @@ describe('JWT Acquisition Integration Test', function() {
 		it('should fail signature validation structure', function (done) {
 	
 			var request_time = new Date().getTime();
-			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
-			var authorization_string = config.access_key+''+request_time+':'+signature;
+			var this_signature = signature.createSignature(config.secret_key, request_time);
+			var authorization_string = config.access_key+''+request_time+':'+this_signature;
 			
 			var this_request = request(endpoint);
 			this_request.get('token/acquire/')
@@ -127,8 +132,8 @@ describe('JWT Acquisition Integration Test', function() {
 		it('should fail due to missing headers', function (done) {
 	
 			var request_time = new Date().getTime();
-			var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
-			var authorization_string = config.access_key+''+request_time+':'+signature;
+			var this_signature = signature.createSignature(config.secret_key, request_time);
+			var authorization_string = config.access_key+''+request_time+':'+this_signature;
 			
 			var this_request = request(endpoint);
 			this_request.get('token/acquire/')
