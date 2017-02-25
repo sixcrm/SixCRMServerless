@@ -7,10 +7,6 @@ var timestamp = require('../../lib/timestamp.js');
 
 class acquireTokenController {
 	
-	constructor(){
-	
-	}
-	
 	execute(event){
 		
 		return this.validateInput(event).then(this.acquireToken);
@@ -21,7 +17,6 @@ class acquireTokenController {
 		
 		return new Promise((resolve, reject) => {
 			
-			/*
 			if(_.has(event, "requestContext") && _.has(event.requestContext, "authorizer") && _.has(event.requestContext.authorizer,"user")){
 			
 				resolve(event);
@@ -31,7 +26,7 @@ class acquireTokenController {
 				throw new Error('Unset user object in the JWT.');
 				
 			}
-			*/
+
 			resolve(event);
 			
 			
