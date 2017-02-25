@@ -35,8 +35,6 @@ module.exports = class entityController {
 				
 				if(_.isObject(data)){
 					
-					console.log(data);
-					
 					var pagination_object = {
 						count: '',
 						end_cursor: '',
