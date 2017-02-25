@@ -67,6 +67,8 @@ class verifySignatureController {
 			
 			accessKeyController.getAccessKeyByKey(token_object.access_key).then((access_key) => {
 				
+				if(!_.isObject(access_key) || !_.has(access_key, 'id')){ return reject(false); }
+				
 				if(!signature.validateSignature(access_key.secret_key, token_object.timestamp, token_object.signature)){ 
 							
 					return reject(false); 
