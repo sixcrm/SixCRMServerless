@@ -233,9 +233,11 @@ class createOrderController {
 
 		var promises = [];
 		var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
-		var createNextRebills = rebillController.createRebills(info.session, info.schedulesToPurchase);
 		var updateSession = sessionController.updateSessionProductSchedules(info.session, info.schedulesToPurchase);
 		var rebillUpdates = rebillController.updateRebillTransactions(rebill, transactions);
+		
+		//Technical Debt:  This is deprecated.  Instead, add the session id object to the rebill queue
+		var createNextRebills = rebillController.createRebills(info.session, info.schedulesToPurchase);
 
 		promises.push(addRebillToQueue);
 		promises.push(createNextRebills);
