@@ -6,6 +6,7 @@ const v = new Validator();
 var _ = require("underscore");
 
 var rebillController = require('../../controllers/Rebill.js');
+var sessionController = require('../../controllers/Session.js');
 
 module.exports = class workerController {
 	
@@ -106,6 +107,31 @@ module.exports = class workerController {
 		
 	}	
 	
+	acquireSession(event){
+
+		return new Promise((resolve, reject) => {
+			
+			this.parseInputEvent(event).then((id) => {
+				
+				//let's add a hydration method here...
+				sessionController.get(id).then((session) => {
+				
+					this.validateSession(session).then((session) => {
+						resolve(session);
+					});
+					
+				}).catch((error) => {
+					reject(error);
+				});
+			
+			}).catch((error) => {
+				reject(error);
+			});
+			
+		});
+		
+	}	
+	
 	validateRebill(rebill){
 
 		return new Promise((resolve, reject) => {
@@ -141,6 +167,46 @@ module.exports = class workerController {
 			}
 			
 			resolve(rebill);
+			
+		});
+		
+	}
+	
+	validateSession(session){
+
+		return new Promise((resolve, reject) => {
+			
+			try{
+
+				var session_schema = require('../../model/session.json');
+
+			} catch(e){
+		
+				reject(new Error('Unable to load validation schemas.'));
+
+			}
+	
+			var validation;
+
+			try{
+				var v = new Validator();
+				validation = v.validate(session, session_schema);
+			}catch(e){
+				reject(e);
+			}
+		
+			if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
+				
+				var error = {
+					message: 'One or more validation errors occurred.',
+					issues: validation.errors.map((e) => { return e.message; })
+				};
+		
+				reject(error);
+
+			}
+			 
+			resolve(session);
 			
 		});
 		
