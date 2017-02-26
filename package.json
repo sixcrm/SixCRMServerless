@@ -32,7 +32,7 @@
     "supertest": "^2.0.1"
   },
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/*.test.js",
+    "test-integration": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/**/*.test.js",
     "test-unit": "istanbul cover _mocha -- './test/unit/**/*.spec.js'",
     "test-local-integration": "ENV=local mocha ./test/integration/local/createOrder/createOrder.test.js",
     "test-workers" : "istanbul cover _mocha  -- './test/unit/workers/**/*.spec.js'"

@@ -31,6 +31,7 @@ lambda:
     pendingtoshipped: 'sixtransaction-development-confirmshipped'
     pendingfailedtopending: 'sixtransaction-development-shipproduct'
     holdtopending: 'sixtransaction-development-shipproduct'
+    createrebillstoarchive: 'sixtransaction-development-creatrebills'
     holdtoarchive: 'sixtransaction-development-archivehold'
     billtohold: 'sixtransaction-development-processbilling'
     billfailedtohold: 'sixtransaction-development-processbilling'
@@ -43,6 +44,7 @@ sqs:
   pending_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending-failed'
   shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-shipped'
   delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-delivered'
+  rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
   
 nmi:
   username: 'demo'
