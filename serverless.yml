@@ -123,29 +123,17 @@ functions:
       failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billtohold}
       
-  billfailedtohold:
+  recovertohold:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
-          rate: rate(6 hours)
+          rate: cron(0 1 ? * FRI *)
           enabled: true
     environment:
       stage: ${opt:stage}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billfailedtohold}
-    
-  rebilltoarchive:
-    handler: workers/forwardmessage/handler.forwardmessage
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: true
-    environment:
-      stage: ${opt:stage}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url}
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.createrebillstoarchive}
-      archivefilter: 'ALL'
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
       
   holdtopending:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -159,18 +147,6 @@ functions:
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
       failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
-      
-  holdtoarchive:
-    handler: workers/forwardmessage/handler.forwardmessage
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: true
-    environment:
-      stage: ${opt:stage}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtoarchive}
-      archivefilter: 'NOSHIP'
       
   pendingfailedtopending:
     handler: workers/forwardmessage/handler.forwardmessage
@@ -208,6 +184,8 @@ functions:
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
 
+# Archive Methods (Exit Points)
+
   deliveredtoarchive:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -218,9 +196,45 @@ functions:
       stage: ${opt:stage}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint} #Technical Debt:  Why is this here?
+      archivefilter: 'ALL'
+      
+  holdtoarchive:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtoarchive}
+      archivefilter: 'NOSHIP'
+
+  rebilltoarchive:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.createrebillstoarchive}
       archivefilter: 'ALL'
 
+  recovertoarchive:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(6 hours)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertoarchive}
+      archivefilter: 'TWOATTEMPTS'
+      
 # Workers
 
   createrebills:
@@ -323,6 +337,17 @@ functions:
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'NOSHIP'
+      
+  archiverecover:
+    handler: workers/archive/handler.archive
+    environment:
+      stage: ${opt:stage}
+      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
+      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
+      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
+      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      archivefilter: 'TWOATTEMPTS'
        
   test:
     handler: workers/test/handler.test

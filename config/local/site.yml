@@ -33,12 +33,13 @@ lambda:
     holdtopending: 'sixtransaction-development-shipproduct'
     holdtoarchive: 'sixtransaction-development-archivehold'
     billtohold: 'sixtransaction-development-processbilling'
-    billfailedtohold: 'sixtransaction-development-processbilling'
+    recovertohold: 'sixtransaction-development-processbilling'
     createrebillstoarchive: 'sixtransaction-development-createrebills'
+    recovertoarchive: 'sixtransaction-development-archiverecover'
     
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'
-  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill-failed'
+  recover_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-recover'
   hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-hold'
   pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending'
   pending_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending-failed'

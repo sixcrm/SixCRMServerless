@@ -75,8 +75,6 @@ class forwardMessageController extends workerController {
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
-		
-			console.log(process.env.origin_queue_url);
 			
 			//Technical Debt:  This handles a maximum of 10 messages at a time...
 			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}, (error, messages) => {
@@ -87,16 +85,31 @@ class forwardMessageController extends workerController {
 					
 					messages.forEach(function(message) {
 						
+						console.log(message);
+						console.log(process.env.workerfunction);
 						//Technical Debt: in the case of a local context, I want this to invoke a local function...
 						lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(message)}, (error, workerdata) => {
-					
+							
 							if(_.isError(error)){ reject(error);}
-					
+							
 							if(workerdata.StatusCode !== 200){ reject(new Error('Non-200 Status Code returned from Lambda invokation.')); }
+							
+							console.log(workerdata);
 							
 							controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
 								
-								if(response.statusCode !== 200){ 
+								console.log(response);		
+								if(!_.has(response, 'statusCode')){
+									
+									var error_message = ' Worker data object has unrecognized structure.';
+									if(_.has(response, 'body')){
+										error_message += response.body;
+									}
+									reject(new Error(error_message)); 
+									
+								}
+								
+								if( response.statusCode !== 200){ 
 									
 									var error_message = 'Non-200 Status Code returned in workerdata object: ';
 									if(_.has(response, 'body')){
