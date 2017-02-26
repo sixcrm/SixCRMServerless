@@ -9,10 +9,16 @@ module.exports.archive = (event, context, callback) => {
 		switch(response){
 			
 			case archiveController.messages.success:
-				new LambdaResponse().issueResponse(200, {
-					message: response,
-					forward: forward_object
-				}, callback);
+				
+				archiveController.createForwardObject().then((forward_object) => {
+				
+					new LambdaResponse().issueResponse(200, {
+						message: response,
+						forward: forward_object
+					}, callback);
+				
+				});
+				
 				break;
 				
 			default:

@@ -15,7 +15,8 @@ class archiveController extends workerController {
 		};
 		this.archivefilters = {
 			all:'ALL',
-			noship:'NOSHIP'
+			noship:'NOSHIP',
+			twoattempts:'TWOATTEMPTS'
 		}
 		
 	}
@@ -25,6 +26,26 @@ class archiveController extends workerController {
 		return this.acquireRebill(event).then((rebill) => this.archive(rebill));
 		
 	}	
+	
+	confirmSecondAttempt(rebill){
+		
+		console.log(rebill);
+		
+		return new Promise((resolve, reject) => {
+			
+			if(_.has(rebill, 'second_attempt')){
+				
+				resolve(true);
+				
+			}else{
+				
+				resolve(false);
+				
+			}
+			
+		});
+		
+	}
 	
 	confirmNoShip(rebill){
 		
@@ -73,6 +94,7 @@ class archiveController extends workerController {
 	
 	archive(rebill){
 		
+		console.log(rebill);
 		return new Promise((resolve, reject) => {
 			
 			if(_.has(process.env, "archivefilter")){
@@ -81,7 +103,8 @@ class archiveController extends workerController {
 					
 					case this.archivefilters.all:
 
-						resolve(this.messages.success);
+						return resolve(this.messages.success);
+						
 						break;
 					
 					case this.archivefilters.noship:
@@ -89,12 +112,29 @@ class archiveController extends workerController {
 						this.confirmNoShip(rebill).then((confirmed) => {
 								
 							if(confirmed === true){
-								resolve(this.messages.success);
+								return resolve(this.messages.success);
 							}else{
-								resolve(this.messages.skip);
+								return resolve(this.messages.skip);
 							}
 							
 						})
+						
+						break;
+					
+					case this.archivefilters.twoattempts:
+						
+						console.log(rebill);
+						this.confirmSecondAttempt(rebill).then((confirmed) => {
+							
+							console.log('Confirmed:'+confirmed);
+							
+							if(confirmed === true){
+								return resolve(this.messages.success);
+							}else{
+								return resolve(this.messages.skip);
+							}
+							
+						});
 						
 						break;
 					
@@ -113,6 +153,12 @@ class archiveController extends workerController {
 			
 		});
 		
+	}
+	
+	createForwardObject(){
+		return new Promise((resolve, reject) => {
+			resolve({forward: true});
+		});
 	}
 
 }
