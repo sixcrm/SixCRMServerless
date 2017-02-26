@@ -76,6 +76,8 @@ class forwardMessageController extends workerController {
 		
 		return new Promise((resolve, reject) => {
 		
+			console.log(process.env.origin_queue_url);
+			
 			//Technical Debt:  This handles a maximum of 10 messages at a time...
 			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}, (error, messages) => {
 				

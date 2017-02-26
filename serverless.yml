@@ -143,7 +143,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url_queue_url}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.createrebillstoarchive}
       archivefilter: 'ALL'
       
