@@ -40,6 +40,8 @@ Clean up the callback code...
 ## DynamoDB
 
 Configure your AWS credentials:
+<<<<<<< HEAD
+=======
 
 ~/.aws/credentials
 ```
@@ -49,6 +51,25 @@ aws_secret_access_key=YYY
 ```
 Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot you.
 
+~/.aws/config
+```
+[six]
+region=us-east-1
+output=json
+```
+
+To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}` (where `{stage}` is `local`, `development` or `production`).
+>>>>>>> bde287160596c942c2c08855cbb00f4f5601b5d5
+
+~/.aws/credentials
+```
+[six]
+aws_access_key_id=XXX
+aws_secret_access_key=YYY
+```
+Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot you.
+
+<<<<<<< HEAD
 ~/.aws/config
 ```
 [six]
