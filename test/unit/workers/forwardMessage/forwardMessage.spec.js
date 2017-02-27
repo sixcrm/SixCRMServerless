@@ -9,13 +9,13 @@ var assert = chai.assert;
 chai.should();
 require('../../../bootstrap.test')
 
-// console.log("STARTING forwardMessage test=====================");
-describe('workers/forwardMessage', function () {
-	describe('forwardMessage', function (done) {
-		it('will be NOTIFIED', function() {
-			var forwardMessage = require('../../../../controllers/workers/forwardMessage');
-			var actual = forwardMessage.forwardMessage();
-			return Promise.resolve(actual).should.eventually.equal("NOTIFIED")
-		})
-	});
-});
+
+//describe('workers/forwardMessage', function () {
+//	describe('forwardMessage', function (done) {
+//		it('will be NOTIFIED', function() {
+//			var forwardMessage = require('../../../../controllers/workers/forwardMessage');
+//			var actual = forwardMessage.forwardMessage();
+//			return Promise.resolve(actual).should.eventually.equal("NOTIFIED")
+//		})
+//	});
+//});

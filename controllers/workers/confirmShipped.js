@@ -3,7 +3,9 @@ var _ = require("underscore");
 
 var rebillController = require('../../controllers/Rebill.js');
 var transactionController = require('../../controllers/Transaction.js');
+var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 var workerController = require('./worker.js');
+var util = require('util');
 
 class confirmShippedController extends workerController {
 	
@@ -32,7 +34,6 @@ class confirmShippedController extends workerController {
 		return Promise.all(promises).then((promises) => {
 			
 			var transactions = promises[0];
-		
 			var transaction_products = [];
 		
 			transactions.map((transaction) => {
@@ -42,7 +43,6 @@ class confirmShippedController extends workerController {
 					transaction.products.map((transaction_product) => {
 					  
 						var getTransactionProduct = transactionController.getTransactionProduct(transaction_product);
-					
 						transaction_products.push(getTransactionProduct);
 
 					});	
@@ -50,16 +50,13 @@ class confirmShippedController extends workerController {
 				}
 		
 			});
-			
+
 			return Promise.all(transaction_products).then((transaction_products) => {
-			
 				var shipping_provider_stati = [];	
 				transaction_products.map((transaction_product) => {
-					
 					if(transaction_product.product.ship == 'true'){
-						
-						if(!_.has(transaction_product, "shipping_receipt") || !_.has(transaction_product.shipping_receipt,'trackingnumber')){
-					
+						// We only have the ID here, so this fails
+						if(!_.has(transaction_product, "shippingreceipt") || !_.has(transaction_product.shippingreceipt,'trackingnumber')){
 							shipped = this.messages.notshipped;
 							
 						}

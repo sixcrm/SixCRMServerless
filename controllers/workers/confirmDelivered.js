@@ -5,6 +5,7 @@ var rebillController = require('../../controllers/Rebill.js');
 var transactionController = require('../../controllers/Transaction.js');
 var shippingStatusController = require('../../controllers/shippingproviders/ShippingStatus.js');
 var workerController = require('./worker.js');
+var util = require('util');
 
 class confirmDeliveredController extends workerController {
 	
@@ -33,7 +34,6 @@ class confirmDeliveredController extends workerController {
 	//Technical Debt:  Confirm after the tracking number goes to "delivered"
 	//Technical Debt:  This should only execute AFTER the shipping receipt is three days old
 	confirmDelivered(rebill) {
-		
 		var promises = [];
 		var getTransactions = rebillController.getTransactions(rebill);
 		promises.push(getTransactions);
@@ -43,7 +43,6 @@ class confirmDeliveredController extends workerController {
 		};
 	
 		return Promise.all(promises).then((promises) => {
-			
 			var transactions = promises[0];
 		
 			var transaction_products = [];

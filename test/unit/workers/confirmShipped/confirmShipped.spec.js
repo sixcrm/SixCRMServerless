@@ -11,13 +11,13 @@ require('../../../bootstrap.test')
 
 // What we really need is to chain workers on a particular rebill to test
 // shipping and confirmed shipped.
+// TODO: This test fails if confirmShipped doesn't hydrate the shippingreceipt reference. 
 describe('workers/confirmShipped', function () {
 	describe('confirmShipped', function (done) {
 		it('will be SHIPPED', function() {
             var confirmShipped = require('../../../../controllers/workers/confirmShipped');
-			var shipProduct = require('../../../../controllers/workers/shipProduct');
-            var ship = shipProduct.shipProducts(require('./fixtures/validRebill'));
-			var actual = confirmShipped.confirmShipped(require('./fixtures/validRebill'));
+            var rebill = require('./fixtures/validRebill');
+			var actual = confirmShipped.confirmShipped(rebill);
 			return Promise.resolve(actual).should.eventually.equal("SHIPPED")
 		})
 	});
