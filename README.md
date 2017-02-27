@@ -39,17 +39,34 @@ Clean up the callback code...
 
 ## DynamoDB
 
-To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}`
+Configure your AWS credentials:
+
+~/.aws/credentials
+```
+[six]
+aws_access_key_id=XXX
+aws_secret_access_key=YYY
+```
+Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot you.
+
+~/.aws/config
+```
+[six]
+region=us-east-1
+output=json
+```
+
+To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}` (where `{stage}` is `local`, `development` or `production`).
 
 To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  
 
-Note:  To execute these features, you will need the JDK version 8.0+ installed as well as having necessarily installed the Serverless dynamo package using `sls dynamodb install` after the `npm install` steps.
+Note:  To execute these features, you will need the JDK version 8.0+ installed as well as having necessarily installed the Serverless dynamo package using `sls dynamodb install --stage local` after the `npm install` steps.
 
 ## Local Development
 
 Make sure to turn on the local DynamoDB instance.
 
-Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f createlead -p ./endpoints/createlead/success_event.json  --stage local`
+Invoke functions as follows: `SLS_DEBUG=*; AWS_PROFILE=six serverless invoke local -f createlead -p ./endpoints/createlead/success_event.json  --stage local`
 
 ## Running unit tests
 
