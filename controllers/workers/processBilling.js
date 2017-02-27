@@ -35,7 +35,21 @@ class processBillingController extends workerController {
 		
 		return new Promise((resolve, reject) => {
 			
-			if(timestamp.getTimeDifference(rebill.billdate) < 0){ reject(new Error('Rebill is not eligible for processing at this time.')); }
+			if(timestamp.getTimeDifference(rebill.billdate) < 0){ return reject(new Error('Rebill is not eligible for processing at this time.')); }
+			
+			if(_.has(rebill, 'second_attempt')){  return reject(new Error('The rebill has already been attempted three times.')); }
+			
+			if(_.has(rebill, 'first_attempt')){
+				
+				let time_difference = timestamp.getTimeDifference(rebill.first_attempt);
+				
+				if(time_difference < (60 * 60 * 24)){
+					
+					return reject(new Error('Rebill\'s first attempt is too recent.'));
+					
+				}
+				
+			}
 			
 			var promises = [];
 			promises.push(rebillController.getTransactions(rebill));
@@ -52,7 +66,7 @@ class processBillingController extends workerController {
 				//if(transactions.length > 0){ return reject(new Error('Rebill already has processed transactions.')); }
 				
 				//session needs load balancers
-				//Trechnical Debt:  With capacity
+				//Technical Debt:  With capacity
 				
 				if(product_schedules.length < 1){ return reject(new Error('A Rebill must be associated with atleast one product schedule.')); }
 				
@@ -202,10 +216,46 @@ class processBillingController extends workerController {
 		return new Promise((resolve, reject) => {
 			
 			if(_.has(processor_response, "message") && processor_response.message == 'Success'){
+			
 				return resolve(this.messages.success);
+				
 			}
+			
 			return resolve(this.messages.failed);
 			
+		});
+		
+	}
+	
+	//Technical Debt:  This methodology could lead to state issues. 
+	//Technical Debt:  We should create a updateField method in the Entity class to address exactly this sort of functionality across  
+	
+	markRebill(rebill){
+		
+		return new Promise((resolve, reject) => {
+			
+			rebillController.get(rebill.id).then((rebill) => {
+			
+				let now = timestamp.createTimestampSeconds();
+				
+				if(_.has(rebill, 'first_attempt')){
+				
+					rebill.second_attempt = now;			
+				
+				}else{
+				
+					rebill.first_attempt = now;				
+				
+				}
+			
+				rebillController.update(rebill).then((rebill) => {
+				
+					return resolve(true);
+				
+				});
+				
+			});
+		
 		});
 		
 	}
@@ -223,8 +273,18 @@ class processBillingController extends workerController {
 						this.createTransaction(rebill, products, processor_result).then((transaction) => {
 							
 							this.evaluateTransactionResponse(processor_result).then((response) => {
-							
-								resolve(response);
+								
+								if(response == this.messages.failed){
+									
+									this.markRebill(rebill).then(() => {
+									
+										return resolve(response);
+										
+									});
+									
+								}
+								
+								return resolve(response);
 								
 							});
 							

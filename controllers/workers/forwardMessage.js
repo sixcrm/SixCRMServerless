@@ -5,6 +5,22 @@ var lambda = require('../../lib/lambda-utilities.js');
 
 var workerController = require('./worker.js');
 
+/*
+*
+* This class is complicated.
+* The most important thing to note about this class is the following:
+* - If the lambda worker function returns a 200 and a response which is JSON
+* -- If the JSON has a "forward" object
+* --- If the destination queue is configured
+* ---- then it'll pass the forward object along
+* --- otherwise, it'll just delete the message
+* -- If the JSON has a "failed" object
+* --- If the failure queue is configured
+* ---- Then it'll forward the object to the failure queue
+* -- Otherwise, it'll return a success, no-action event
+*
+*/
+
 class forwardMessageController extends workerController {
 	
 	constructor(){
@@ -67,7 +83,6 @@ class forwardMessageController extends workerController {
 			
 		});
 		
-		
 	}	
 	
 	forwardMessage(){
@@ -84,9 +99,7 @@ class forwardMessageController extends workerController {
 				if (messages && messages.length > 0) {
 					
 					messages.forEach(function(message) {
-						
-						console.log(message);
-						console.log(process.env.workerfunction);
+					
 						//Technical Debt: in the case of a local context, I want this to invoke a local function...
 						lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(message)}, (error, workerdata) => {
 							
@@ -94,11 +107,8 @@ class forwardMessageController extends workerController {
 							
 							if(workerdata.StatusCode !== 200){ reject(new Error('Non-200 Status Code returned from Lambda invokation.')); }
 							
-							console.log(workerdata);
-							
 							controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
 								
-								console.log(response);		
 								if(!_.has(response, 'statusCode')){
 									
 									var error_message = ' Worker data object has unrecognized structure.';
@@ -120,7 +130,7 @@ class forwardMessageController extends workerController {
 								}
 								
 								controller_instance.parseLambdaResponse(response.body).then((response) => {
-								
+									
 									if(_.has(response, "forward")){
 						
 										if(_.has(process.env, "destination_queue_url")){

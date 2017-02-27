@@ -83,16 +83,20 @@ module.exports = class workerController {
 	}
 	
 	acquireRebill(event){
-
+		
 		return new Promise((resolve, reject) => {
 			
 			this.parseInputEvent(event).then((id) => {
 				
 				//let's add a hydration method here...
 				rebillController.get(id).then((rebill) => {
-				
+					
 					this.validateRebill(rebill).then((rebill) => {
+						
 						resolve(rebill);
+					
+					}).catch((error) => {
+						reject(error);
 					});
 					
 				}).catch((error) => {
@@ -152,7 +156,7 @@ module.exports = class workerController {
 				var v = new Validator();
 				validation = v.validate(rebill, rebill_schema);
 			}catch(e){
-				reject(e);
+				reject(e.message);
 			}
 		
 			if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
@@ -162,7 +166,7 @@ module.exports = class workerController {
 					issues: validation.errors.map((e) => { return e.message; })
 				};
 		
-				reject(error);
+				reject(new Error(error.message));
 
 			}
 			
