@@ -29,17 +29,15 @@ class archiveController extends workerController {
 	
 	confirmSecondAttempt(rebill){
 		
-		console.log(rebill);
-		
 		return new Promise((resolve, reject) => {
 			
 			if(_.has(rebill, 'second_attempt')){
 				
-				resolve(true);
+				return resolve(true);
 				
 			}else{
 				
-				resolve(false);
+				return resolve(false);
 				
 			}
 			
@@ -94,7 +92,6 @@ class archiveController extends workerController {
 	
 	archive(rebill){
 		
-		console.log(rebill);
 		return new Promise((resolve, reject) => {
 			
 			if(_.has(process.env, "archivefilter")){
@@ -123,10 +120,7 @@ class archiveController extends workerController {
 					
 					case this.archivefilters.twoattempts:
 						
-						console.log(rebill);
 						this.confirmSecondAttempt(rebill).then((confirmed) => {
-							
-							console.log('Confirmed:'+confirmed);
 							
 							if(confirmed === true){
 								return resolve(this.messages.success);
@@ -155,10 +149,14 @@ class archiveController extends workerController {
 		
 	}
 	
-	createForwardObject(){
+	createForwardObject(event){
+		
 		return new Promise((resolve, reject) => {
+		
 			resolve({forward: true});
+			
 		});
+		
 	}
 
 }

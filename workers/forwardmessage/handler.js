@@ -5,7 +5,7 @@ var forwardMessageController = require('../../controllers/workers/forwardMessage
 module.exports.forwardmessage = (event, context, callback) => {
 	
 	forwardMessageController.execute().then((response) => {
-	
+		
 		new LambdaResponse().issueResponse(200, {
 			message: response
 		}, callback);
