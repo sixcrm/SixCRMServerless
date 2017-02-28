@@ -6,8 +6,8 @@ var util   = require('util');
 var AWS    = require('aws-sdk');
 
 
-
-//global.environment = 'local';
+console.log("SETTING GLOBAL.ENVIRONMENT TO local FOR RUNNING UNIT TESTS...");
+global.environment = 'local';
 
 // ***HACK:***==============================================================
 // This is merely built from the ultimate values in serverless.yml. What we
@@ -56,7 +56,6 @@ process.env = {
     'AWS_PROFILE'                 : 'six',
 };
 
-
 // Seems you need an AWS.Config call, even with bogus credentials. Otherwise,
 // AWS will make a remote call through a link-local address (169.254.169.254)
 // for metadata. TODO: confirm
@@ -69,6 +68,7 @@ var config = new AWS.Config({
 before(function(done) {
     
     try {
+        console.log("===============load config for ", global.environment);
       var config = yaml.safeLoad(fs.readFileSync('./config/'+global.environment+'/site.yml', 'utf8'));
       global.site_config = config;
       //console.log("global.site_config: ", util.inspect(config,{depth : null}));
