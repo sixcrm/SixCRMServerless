@@ -13,6 +13,19 @@
 				access_key,
 				secret_key
 			},
+			acl {
+				account {
+					id,
+					name,
+					active
+				},
+				role {
+					id,
+					name,
+					active
+				}
+				signature
+			},
 			address {
 				line1,
 				line2,

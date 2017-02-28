@@ -1,4 +1,4 @@
-global.environment = 'development'; 
+global.environment = 'development';
 
 if(typeof process.env.TEST_ENVIRONMENT !== 'undefined'){
 	

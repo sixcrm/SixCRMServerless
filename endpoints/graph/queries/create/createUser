@@ -1,7 +1,7 @@
 {
 	"body":"
 	mutation { 
-		createuser (user: { id: \"testing\", auth0_id: \"test\", name: \"testingname\", email:\"testingemail\", active:\"true\", termsandconditions:\"2.1\"address:{line1: \"123 Heckamecca\", line2:\"Room 666\", city:\"Portland\", state:\"OR\", zip:\"97203\", country:\"US\"} }) { 
+		createuser (user: { id: \"testing\", auth0_id: \"test\", name: \"testingname\", email:\"testingemail\", active:\"true\", termsandconditions:\"2.1\", address:{line1: \"123 Heckamecca\", line2:\"Room 666\", city:\"Portland\", state:\"OR\", zip:\"97203\", country:\"US\"}, acl: [{account:\"testing\", role: \"testing\", signature:\"testing\"}] }) { 
 			id,
 			auth0_id,
 			name,
@@ -14,6 +14,19 @@
 				state,
 				zip,
 				country
+			},
+			acl {
+				account {
+					id,
+					name,
+					active
+				},
+				role {
+					id,
+					name,
+					active
+				}
+				signature
 			},
 			termsandconditions
 		} 

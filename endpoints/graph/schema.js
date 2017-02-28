@@ -694,6 +694,31 @@ var roleType = new GraphQLObjectType({
   interfaces: []
 });
 
+var userACLType = new GraphQLObjectType({
+  name: 'UserACL',
+  description: 'A user access control list object.',
+  fields: () => ({
+  	signature: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The signature of the ACL mapping.',
+    },
+  	account:{
+      type: accountType,
+      description: 'The account related to user ACL object',
+      resolve: (user_acl) => {
+      	return userController.getAccount(user_acl.account);
+      }
+    },
+    role:{
+      type: roleType,
+      description: 'The role related to user ACL object',
+      resolve: (user_acl) => {
+      	return userController.getRole(user_acl.role);
+      }
+    }
+  })
+});
+
 var userType = new GraphQLObjectType({
   name: 'User',
   description: 'A user.',
@@ -721,6 +746,11 @@ var userType = new GraphQLObjectType({
     termsandconditions:{
 	  type: GraphQLString,
       description: 'The accepted Terms and Conditions version.',
+    },
+    acl:{
+      type: new GraphQLList(userACLType),
+      description: 'The user\'s ACL objects.',
+      resolve: user => userController.getACL(user)
     },
     accesskey: {
       type: accessKeyType,
@@ -1888,7 +1918,17 @@ const userInputType = new GraphQLInputObjectType({
     email:		{ type: new GraphQLNonNull(GraphQLString) },
     active: 	{ type: new GraphQLNonNull(GraphQLString) },
     termsandconditions: 	{ type: GraphQLString },
-    address:	{ type: addressInputType }
+    address:	{ type: addressInputType },
+    acl:		{ type: new GraphQLList(userACLInputType) }
+  })
+});
+
+const userACLInputType = new GraphQLInputObjectType({
+  name: 'UserACLInputType',
+  fields: () => ({
+    account:				{ type: new GraphQLNonNull(GraphQLString) },
+    role:					{ type: new GraphQLNonNull(GraphQLString) },
+    signature:				{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
         

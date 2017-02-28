@@ -8,15 +8,17 @@ var Validator = require('jsonschema').Validator;
 let dynamoutilities = require('../lib/dynamodb-utilities.js');
 let arrayutilities = require('../lib/array-utilities.js');
 
-
 //Technical Debt:  This controller needs a "hydrate" method or prototype
+
 module.exports = class entityController {
 	
 	constructor(table_name, descriptive_name){
 		this.table_name = table_name;
 		this.descriptive_name = descriptive_name;
+		this.nonaccounts = ['user','role','accesskey','account', 'fulfillmentprovider'];
 	}
 	
+	//ACL enabled
 	list(cursor, limit){
 	
 		return new Promise((resolve, reject) => {
@@ -26,9 +28,16 @@ module.exports = class entityController {
 			if(typeof cursor  !== 'undefined'){
 				query_parameters.ExclusiveStartKey = { id: cursor };
 			}
-
+   
 			if(typeof limit  !== 'undefined'){
 				query_parameters['limit'] = limit;
+			}
+			
+			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+				query_parameters.filter_expression = 'account = :accountv'
+				query_parameters.expression_attribute_values = {':accountv':global.account};
+				
 			}
 			
 			dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
@@ -76,17 +85,17 @@ module.exports = class entityController {
 		
 	}
 	
-	//Technical Debt:  This may need to be rewritten...
-	listBySecondaryIndex(field, index_value, index_name){
-		//console.log(`Entity.listBySecondaryIndex. field: "${field}", index_value: "${index_value}", index_name: "${index_name}"`)
+	//ACL enabled
+	listBySecondaryIndex(field, index_value, index_name, cursor, limit){
+		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
 			
-			/*
-			Technical Debt:  These must be in place for listing...
-			
-			var query_parameters = {filter_expression: null, expression_attribute_values: null};
+			let query_parameters = {
+				condition_expression: field+' = :index_valuev',
+				expression_attribute_values: {':index_valuev': index_value}
+			}
 			
 			if(typeof cursor  !== 'undefined'){
 				query_parameters.ExclusiveStartKey = cursor;
@@ -95,10 +104,15 @@ module.exports = class entityController {
 			if(typeof limit  !== 'undefined'){
 				query_parameters['limit'] = limit;
 			}
-			*/
+			
+			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-			var query = field+' = :index_valuev';
-			dynamoutilities.queryRecords(this.table_name, query, {':index_valuev': index_value}, index_name, (error, data) => {
+				query_parameters.filter_expression = 'account = :accountv'
+				query_parameters.expression_attribute_values[':accountv'] = global.account;
+				
+			}
+			
+			dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 				
 				if(_.isError(error)){ 
 					console.log('listBySecondaryIndex failed with error: ', error)
@@ -121,15 +135,34 @@ module.exports = class entityController {
         
 	}
 	
-	getBySecondaryIndex(field, index_value, index_name){
+	//ACL enabled
+	getBySecondaryIndex(field, index_value, index_name, cursor, limit){
 		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
+			
+			let query_parameters = {
+				condition_expression: field+' = :index_valuev',
+				expression_attribute_values: {':index_valuev': index_value},
+			}
+			
+			if(typeof cursor  !== 'undefined'){
+				query_parameters.ExclusiveStartKey = cursor;
+			}
+
+			if(typeof limit  !== 'undefined'){
+				query_parameters['limit'] = limit;
+			}
+			
+			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-			var query = field+' = :index_valuev';
+				query_parameters.filter_expression = 'account = :accountv'
+				query_parameters.expression_attribute_values[':accountv'] = global.account;
+				
+			}
 					
-			dynamoutilities.queryRecords(this.table_name, query, {':index_valuev': index_value}, index_name, (error, data) => {
+			dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
@@ -160,33 +193,26 @@ module.exports = class entityController {
         });
 	}
 	
+	//ACL enabled
 	get(id){
 		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
 			
+			let query_parameters = {
+				condition_expression: 'id = :idv',
+				expression_attribute_values: {':idv': id}
+			};
 			
-			let query;
-			let query_params;
-			
-			if(false && _.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, ['accesskey', 'user', 'account', 'role'])){
+			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-				query = 'id = :idv and account = :accountv';
-				query_params = {':idv': id, ':accountv': global.account};
+				query_parameters.filter_expression = 'account = :accountv';
+				query_parameters.expression_attribute_values[':accountv'] = global.account;
 				
-				console.log(query);
-				console.log(query_params);
-			}else{
-				
-				query = 'id = :idv';
-				query_params = {':idv': id};
-
 			}
 			
-			//console.log(this.table_name);
-			//console.log(query);
-			dynamoutilities.queryRecords(this.table_name, query, query_params, null, (error, data) => {
+			dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 					
 				if(_.isError(error)){ reject(error);}
 				
@@ -218,6 +244,7 @@ module.exports = class entityController {
         
     }
     
+    //ACL enabled
     create(entity){
 
 		return new Promise((resolve, reject) => {
@@ -228,7 +255,29 @@ module.exports = class entityController {
 				
 			}
 			
-			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': entity.id}, null, (error, data) => {
+			if(_.has(global, 'account')){
+				
+				if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+					entity.account = global.account;
+					
+				}
+				
+			}
+			
+			let query_parameters = {
+				condition_expression: 'id = :idv',
+				expression_attribute_values: {':idv': entity.id}
+			};
+			
+			if(_.has(global, 'account')){
+				
+				query_parameters.filter_expression = 'account = :accountv';
+				query_parameters.expression_attribute_values[':accountv'] = global.account;
+				
+			}
+			
+			dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 
@@ -252,11 +301,34 @@ module.exports = class entityController {
 		
 	}
 	
+	//ACL enabled
 	update(entity){
 		
 		return new Promise((resolve, reject) => {
 			
-			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': entity.id}, null, (error, data) => {
+			if(_.has(global, 'account')){
+				
+				if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+			
+					entity.account = global.account;
+				
+				}
+			
+			}
+			
+			let query_parameters = {
+				condition_expression: 'id = :idv',
+				expression_attribute_values: {':idv': entity.id}
+			};
+			
+			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+				query_parameters.filter_expression = 'account = :accountv';
+				query_parameters.expression_attribute_values[':accountv'] = global.account;
+				
+			}
+			
+			dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
@@ -282,17 +354,33 @@ module.exports = class entityController {
 		
 	}
 	
+	//NOT ACL enabled
 	delete(id){
 		
 		return new Promise((resolve, reject) => {
 			
-			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': id}, null, (error, data) => {
+			let query_parameters = {
+				condition_expression: 'id = :idv',
+				expression_attribute_values: {':idv': id}
+			};
+			
+			let delete_parameters = {id:id};
+			
+			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+				query_parameters.filter_expression = 'account = :accountv';
+				query_parameters.expression_attribute_values[':accountv'] = global.account;
+				
+			}
+
+			
+			dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
 				
 				if(_.isObject(data) && _.isArray(data) && data.length == 1){
 				
-					dynamoutilities.deleteRecord(this.table_name, { id:id }, null, null, (error, data) => {
+					dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error, data) => {
 			
 						if(_.isError(error)){ reject(error);}
 				
@@ -308,9 +396,11 @@ module.exports = class entityController {
 				
 			});
 			
-		});	
+		});
+			
 	}
 	
+	//ACL enabled
 	validate(object){
 		
 		return new Promise((resolve, reject) => {
