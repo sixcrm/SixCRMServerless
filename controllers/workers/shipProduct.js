@@ -28,7 +28,6 @@ class shipProductController extends workerController {
 	}	
 	
 	issueShippingReceipt(fulfillment_response, transaction_product, transaction){
-		console.log("shipProduct.issueShippingReceipt executes ...");
 		return new Promise((resolve, reject) => {
 			
 			var promises = []
@@ -78,7 +77,6 @@ class shipProductController extends workerController {
 	}
 	
 	executeFulfillment(transaction_product, transaction){
-		console.log("shipProduct.executeFulfillment executes ...");
 		return new Promise((resolve, reject) => {
 				
 			if(transaction_product.product.ship == 'true'){
