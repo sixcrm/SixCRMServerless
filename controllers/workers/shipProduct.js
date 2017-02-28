@@ -6,6 +6,7 @@ var transactionController = require('../../controllers/Transaction.js');
 var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 var fulfillmentTriggerController = require('../../controllers/fulfillmentproviders/FulfillmentTrigger.js');
 var workerController = require('./worker.js');
+var util = require('util');
 
 class shipProductController extends workerController {
 	
@@ -27,7 +28,7 @@ class shipProductController extends workerController {
 	}	
 	
 	issueShippingReceipt(fulfillment_response, transaction_product, transaction){
-	
+		console.log("shipProduct.issueShippingReceipt executes ...");
 		return new Promise((resolve, reject) => {
 			
 			var promises = []
@@ -77,7 +78,7 @@ class shipProductController extends workerController {
 	}
 	
 	executeFulfillment(transaction_product, transaction){
-		
+		console.log("shipProduct.executeFulfillment executes ...");
 		return new Promise((resolve, reject) => {
 				
 			if(transaction_product.product.ship == 'true'){
@@ -129,7 +130,6 @@ class shipProductController extends workerController {
 	}
 	
 	processTransaction(transaction){
-		
 		return new Promise((resolve, reject) => {
 			
 			if(_.has(transaction, 'products')){
@@ -204,7 +204,6 @@ class shipProductController extends workerController {
 	//Technical Debt:  Introduce fulfillment delay
 	//Technical Debt: Do not attempt to fulfillment provider a second time (aka shipping receipt already exists) -  Does this still plaugue us?
 	shipProducts(rebill) {
-		
 		var promises = [];
 		var getTransactions = rebillController.getTransactions(rebill);
 		promises.push(getTransactions);

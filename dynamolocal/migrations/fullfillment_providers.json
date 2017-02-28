@@ -15,11 +15,17 @@
         }
     },
     "Seeds": [
-    	{
-			"id":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
-			"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-			"name":"Hashtag Fulfillment Provider 1",
-			"provider":"HASHTAG",
+        {
+            "id":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
+            "name":"Hashtag Fulfillment Provider 1",
+            "provider":"HASHTAG",
+            "username":"demo",
+            "password":"password",
+            "endpoint":"whatever"
+        },{
+			"id":"00000000-0000-0000-0000-000000000001",
+			"name":"shipProduct Test Provider",
+			"provider":"Zappie",
 			"username":"demo",
 			"password":"password",
 			"endpoint":"whatever"

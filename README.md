@@ -39,17 +39,57 @@ Clean up the callback code...
 
 ## DynamoDB
 
-To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}`
+Configure your AWS credentials:
+<<<<<<< HEAD
+=======
 
-To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  
+~/.aws/credentials
+```
+[six]
+aws_access_key_id=XXX
+aws_secret_access_key=YYY
+```
+Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot you.
 
-Note:  To execute these features, you will need the JDK version 8.0+ installed as well as having necessarily installed the Serverless dynamo package using `sls dynamodb install` after the `npm install` steps.
+~/.aws/config
+```
+[six]
+region=us-east-1
+output=json
+```
+
+To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}` (where `{stage}` is `local`, `development` or `production`).
+>>>>>>> bde287160596c942c2c08855cbb00f4f5601b5d5
+
+~/.aws/credentials
+```
+[six]
+aws_access_key_id=XXX
+aws_secret_access_key=YYY
+```
+Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot you.
+
+<<<<<<< HEAD
+~/.aws/config
+```
+[six]
+region=us-east-1
+output=json
+```
+
+To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}` (where `{stage}` is `local`, `development` or `production`).
+
+To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  Note that you will need to specify the `endpoint-url`, i.e. `aws dynamodb list-tables --endpoint-url http://localhost:8001`.
+
+If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --stage {stage}`. 
+
+Note:  To execute these features, you will need the JDK version 8.0+ installed as well as having necessarily installed the Serverless dynamo package using `sls dynamodb install --stage local` after the `npm install` steps.
 
 ## Local Development
 
 Make sure to turn on the local DynamoDB instance.
 
-Invoke functions as follows: `export SLS_DEBUG=*; serverless invoke local -f createlead -p ./endpoints/createlead/success_event.json  --stage local`
+Invoke functions as follows: `SLS_DEBUG=*; AWS_PROFILE=six serverless invoke local -f createlead -p ./endpoints/createlead/success_event.json  --stage local`
 
 ## Running unit tests
 

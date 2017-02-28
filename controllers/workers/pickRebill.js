@@ -19,13 +19,13 @@ class pickRebillController extends workerController {
 	}	
 	
 	pickRebill(){
-	
+		console.log("pickRebill executes ...");
 		return new Promise((resolve, reject) => {
 			
 			var now = timestamp.createTimestampSeconds();
 	
 			rebillController.getRebillsAfterTimestamp(now).then((rebills) => {
-		
+				console.log("Executed promise for rebills ....");
 				Promise.all(rebills.map(rebill => rebillController.sendMessageAndMarkRebill(rebill))).then((values) => {
 					
 					//do something here?		
