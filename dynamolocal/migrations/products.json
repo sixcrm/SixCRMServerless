@@ -17,6 +17,7 @@
     "Seeds": [
     	{
     		"id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+    		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 			"name": "Test Product",
 			"sku":"123",
 			"ship":"true",
@@ -25,6 +26,7 @@
 		},
 		{
     		"id": "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
+    		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 			"name": "Test Product 2",
 			"sku":"1234",
 			"ship":"true",
@@ -33,6 +35,7 @@
 		},
 		{
     		"id": "616cc994-9480-4640-b26c-03810a679fe3",
+    		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 			"name": "Trial Product 1",
 			"sku":"asd",
 			"ship":"true",
@@ -41,6 +44,7 @@
 		},
 		{
     		"id": "be992cea-e4be-4d3e-9afa-8e020340ed16",
+    		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 			"name": "Trial Product 2",
 			"sku":"qwerty",
 			"ship":"true",

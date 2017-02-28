@@ -21,6 +21,8 @@ dynamodb:
   emails_table: 'emails'
   smtp_providers_table: 'smtp_providers'
   shipping_receipts_table: 'shipping_receipts'
+  accounts_table: 'accounts'
+  roles_table: 'roles'
   endpoint: ''
   
 lambda:

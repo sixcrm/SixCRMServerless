@@ -5,7 +5,9 @@ var fs = require('fs');
 var validator = require('validator');
 var Validator = require('jsonschema').Validator;
 
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
+let dynamoutilities = require('../lib/dynamodb-utilities.js');
+let arrayutilities = require('../lib/array-utilities.js');
+
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 module.exports = class entityController {
@@ -76,7 +78,7 @@ module.exports = class entityController {
 	
 	//Technical Debt:  This may need to be rewritten...
 	listBySecondaryIndex(field, index_value, index_name){
-		
+		//console.log(`Entity.listBySecondaryIndex. field: "${field}", index_value: "${index_value}", index_name: "${index_name}"`)
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
@@ -96,10 +98,12 @@ module.exports = class entityController {
 			*/
 				
 			var query = field+' = :index_valuev';
-			
 			dynamoutilities.queryRecords(this.table_name, query, {':index_valuev': index_value}, index_name, (error, data) => {
 				
-				if(_.isError(error)){ reject(error);}
+				if(_.isError(error)){ 
+					console.log('listBySecondaryIndex failed with error: ', error)
+					reject(error);
+				}
 				
 				if(_.isArray(data) && data.length > 0){
 					
@@ -161,17 +165,37 @@ module.exports = class entityController {
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
+			
+			
+			let query;
+			let query_params;
+			
+			if(false && _.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, ['accesskey', 'user', 'account', 'role'])){
 				
-			dynamoutilities.queryRecords(this.table_name, 'id = :idv', {':idv': id}, null, (error, data) => {
+				query = 'id = :idv and account = :accountv';
+				query_params = {':idv': id, ':accountv': global.account};
+				
+				console.log(query);
+				console.log(query_params);
+			}else{
+				
+				query = 'id = :idv';
+				query_params = {':idv': id};
+
+			}
+			
+			//console.log(this.table_name);
+			//console.log(query);
+			dynamoutilities.queryRecords(this.table_name, query, query_params, null, (error, data) => {
 					
 				if(_.isError(error)){ reject(error);}
 				
 				if(_.isObject(data) && _.isArray(data)){
-										
+					
 					if(data.length == 1){
-
+						
 						resolve(data[0]);
-							
+						
 					}else{
 						
 						if(data.length > 1){

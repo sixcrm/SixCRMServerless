@@ -1,0 +1,18 @@
+{
+	"body":"
+	query { 
+		rolelist {
+			roles {
+				id,
+				name,
+				active
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

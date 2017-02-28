@@ -29,6 +29,8 @@ var userController = require('../../controllers/User.js');
 var emailController = require('../../controllers/Email.js');
 var SMTPProviderController = require('../../controllers/SMTPProvider.js');
 var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
+var accountController = require('../../controllers/Account.js');
+var roleController = require('../../controllers/Role.js');
 
 const emailTypeEnum = new GraphQLEnumType({
 	name: 'EmailTypeEnumeration',
@@ -483,6 +485,38 @@ var accessKeyListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var accountListType = new GraphQLObjectType({
+  name: 'Accounts',
+  description: 'Accounts',
+  fields: () => ({
+    accounts: {
+      type: new GraphQLList(accountType),
+      description: 'The accounts',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
+var roleListType = new GraphQLObjectType({
+  name: 'Roles',
+  description: 'Roles',
+  fields: () => ({
+    roles: {
+      type: new GraphQLList(roleType),
+      description: 'The roles',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 var customerListType = new GraphQLObjectType({
   name: 'Customers',
   description: 'Customers',
@@ -606,7 +640,7 @@ var accessKeyType = new GraphQLObjectType({
   fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The id of the product.',
+      description: 'The id of the accesskey.',
     },
     access_key: {
       type: new GraphQLNonNull(GraphQLString),
@@ -615,6 +649,46 @@ var accessKeyType = new GraphQLObjectType({
     secret_key: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The secret_key of the accesskey.',
+    }
+  }),
+  interfaces: []
+});
+
+var accountType = new GraphQLObjectType({
+  name: 'Account',
+  description: 'A account.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the account.',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The name of the account.',
+    },
+    active: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The active status of the account.',
+    }
+  }),
+  interfaces: []
+});
+
+var roleType = new GraphQLObjectType({
+  name: 'Role',
+  description: 'A role.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the role.',
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The name of the role.',
+    },
+    active: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The active status of the role.',
     }
   }),
   interfaces: []
@@ -1097,23 +1171,6 @@ var priceType = new GraphQLObjectType({
   interfaces: []
 });
 
-//Technical Debt:  This seems deprecated
-var recurringType = new GraphQLObjectType({
-  name: 'Recurring',
-  description: 'A recurring details object',
-  fields: () => ({
-    period: {
-      type: GraphQLString,
-      description: 'The period in days for rebilling.',
-    },
-    price: {
-      type: GraphQLString,
-      description: 'The rebilling price.',
-    }
-  }),
-  interfaces: []
-});
-
 var creditCardType = new GraphQLObjectType({
   name: 'CreditCard',
   description: 'A creditcard',
@@ -1498,6 +1555,44 @@ var queryType = new GraphQLObjectType({
       }
     },
     
+    accountlist: {
+      type: accountListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, account){
+		var cursor = account.cursor; 
+		var limit = account.limit; 
+      	return accountController.list(cursor, limit);
+      }
+    },
+    
+    rolelist: {
+      type: roleListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, role){
+		var cursor = role.cursor; 
+		var limit = role.limit; 
+      	return roleController.list(cursor, limit);
+      }
+    },
+    
     customerlist: {
       type: customerListType,
       args: {
@@ -1719,6 +1814,32 @@ var queryType = new GraphQLObjectType({
       	return accessKeyController.get(id);
       }
     },
+    account: {
+      type: accountType,
+      args: {
+        id: {
+          description: 'id of the account',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, account){
+      	var id = account.id; 
+      	return accountController.get(id);
+      }
+    },
+    role: {
+      type: roleType,
+      args: {
+        id: {
+          description: 'id of the role',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, role){
+      	var id = role.id; 
+      	return roleController.get(id);
+      }
+    },
     user: {
       type: userType,
       args: {
@@ -1777,6 +1898,24 @@ const accessKeyInputType = new GraphQLInputObjectType({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
     access_key:			{ type: new GraphQLNonNull(GraphQLString) },
     secret_key:			{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+const accountInputType = new GraphQLInputObjectType({
+  name: 'AccountInput',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: new GraphQLNonNull(GraphQLString) },
+    active:				{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+const roleInputType = new GraphQLInputObjectType({
+  name: 'RoleInput',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: new GraphQLNonNull(GraphQLString) },
+    active:				{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -2095,6 +2234,74 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, accesskey) => {
 				var id = accesskey.id;
 				return accessKeyController.delete(id);
+			}
+		},
+		createaccount:{
+			type: accountType,
+			description: 'Adds a new account.',
+			args: {
+				account: { type: accountInputType }
+			},
+			resolve: (value, account) => {
+				return accountController.create(account.account);
+			}
+		},
+		updateaccount:{
+			type: accountType,
+			description: 'Updates a account.',
+			args: {
+				account: { type: accountInputType }
+			},
+			resolve: (value, account) => {
+				return accountController.update(account.account);
+			}
+		},
+		deleteaccount:{
+			type: deleteOutputType,
+			description: 'Deletes a account.',
+			args: {
+				id: {
+				  description: 'id of the account',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, account) => {
+				var id = account.id;
+				return accountController.delete(id);
+			}
+		},
+		createrole:{
+			type: roleType,
+			description: 'Adds a new role.',
+			args: {
+				role: { type: roleInputType }
+			},
+			resolve: (value, role) => {
+				return roleController.create(role.role);
+			}
+		},
+		updaterole:{
+			type: roleType,
+			description: 'Updates a role.',
+			args: {
+				role: { type: roleInputType }
+			},
+			resolve: (value, role) => {
+				return roleController.update(role.role);
+			}
+		},
+		deleterole:{
+			type: deleteOutputType,
+			description: 'Deletes a role.',
+			args: {
+				id: {
+				  description: 'id of the role',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, role) => {
+				var id = role.id;
+				return roleController.delete(id);
 			}
 		},
 		createaffiliate:{

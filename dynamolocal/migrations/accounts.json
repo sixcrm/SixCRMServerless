@@ -1,0 +1,27 @@
+{
+    "Table": {
+        "TableName": "accounts",
+        "KeySchema": [{
+            "AttributeName": "id",
+            "KeyType": "HASH"
+        }],
+        "AttributeDefinitions": [{
+            "AttributeName": "id",
+            "AttributeType": "S"
+        }],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1,
+            "WriteCapacityUnits": 1
+        }
+    },
+    "Seeds": [{
+    	"id":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        "name": "Test Account 1",
+        "active":"true"
+    },
+    {
+    	"id":"5db7ed46-75b1-4ecd-b489-e61ef5d1107a",
+        "name": "Test Account 2",
+        "active":"true"
+    }]
+}

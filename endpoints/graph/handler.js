@@ -4,8 +4,9 @@ var _ = require('underscore');
 var graphql =  require('graphql').graphql;
 var LambdaResponse = require('../../lib/lambda-response.js');
 
-
 module.exports.graph = (event, context, callback) => {
+	
+	global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
 	
 	var query; 
 	

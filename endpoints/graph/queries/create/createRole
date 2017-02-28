@@ -1,0 +1,10 @@
+{
+	"body":"
+	mutation { 
+		createrole (role: { id: \"testing\", name: \"testingrole\", active: \"true\"}) { 
+			id,
+			name,
+			active
+		} 
+	}"
+}
