@@ -59,7 +59,6 @@ output=json
 ```
 
 To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}` (where `{stage}` is `local`, `development` or `production`).
->>>>>>> bde287160596c942c2c08855cbb00f4f5601b5d5
 
 ~/.aws/credentials
 ```
@@ -69,7 +68,6 @@ aws_secret_access_key=YYY
 ```
 Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot you.
 
-<<<<<<< HEAD
 ~/.aws/config
 ```
 [six]
@@ -81,7 +79,13 @@ To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb exec
 
 To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  Note that you will need to specify the `endpoint-url`, i.e. `aws dynamodb list-tables --endpoint-url http://localhost:8001`.
 
-If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --stage {stage}`. 
+If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --stage {stage}`.
+ 
+To start a local SQS server, edit the `congif/local/site.yml` file, and comment the sqs queue url's that point to Amazon and
+uncomment the ones that point to localhost. Next, make sure the file `runLocalSqs.sh` in the project root is executable (`chmod u+x runLocalSqs.sh`)
+and run it from there (`./runLocalSqs.sh`). It will download and run the local ElasticMQ server which is compatible with SQS.
+You can use it as an Amazon SQS instance, including calling methods documented in the Amazon SQS API Reference: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/Welcome.html
+Our queues are defined in the `sqs-local.conf` file and are created automatically when the ElasticMQ is run via `runLocalSqs.sh` file.
 
 Note:  To execute these features, you will need the JDK version 8.0+ installed as well as having necessarily installed the Serverless dynamo package using `sls dynamodb install --stage local` after the `npm install` steps.
 
