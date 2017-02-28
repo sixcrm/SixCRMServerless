@@ -1,8 +1,8 @@
-global.environment = 'local';
+global.environment = 'development'; 
 
-console.log("global.js executes ...");
 if(typeof process.env.TEST_ENVIRONMENT !== 'undefined'){
 	
 	global.environment = process.env.TEST_ENVIRONMENT;
 	
 }
+

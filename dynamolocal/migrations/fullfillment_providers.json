@@ -22,13 +22,6 @@
             "username":"demo",
             "password":"password",
             "endpoint":"whatever"
-        },{
-			"id":"00000000-0000-0000-0000-000000000001",
-			"name":"shipProduct Test Provider",
-			"provider":"Zappie",
-			"username":"demo",
-			"password":"password",
-			"endpoint":"whatever"
-    	}
+        }
     ]
 }

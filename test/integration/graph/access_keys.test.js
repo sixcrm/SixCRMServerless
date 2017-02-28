@@ -8,7 +8,6 @@ var crypto = require('crypto');
 
 var tu = require('../../../lib/test-utilities.js');
 
-
 try {
   var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
 } catch (e) {
@@ -45,6 +44,7 @@ describe('Graph Test', function() {
 		it(entity+' '+test.name+' JSON results', function (done) {
 			var query = tu.getQuery(test.query);
 			var this_request = request(endpoint);
+			
 			this_request.post('graph/')
 				.set('Authorization', global.site_jwt)
 				.send(query)
@@ -56,7 +56,7 @@ describe('Graph Test', function() {
 				.end(function(err, response){
 					tu.assertResultSet(response);
 					done();
-				}, done);
+				});
 			});
 		});
 	});

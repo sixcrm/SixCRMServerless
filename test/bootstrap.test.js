@@ -7,7 +7,7 @@ var AWS    = require('aws-sdk');
 
 
 
-global.environment = 'local';
+//global.environment = 'local';
 
 // ***HACK:***==============================================================
 // This is merely built from the ultimate values in serverless.yml. What we

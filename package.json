@@ -37,6 +37,9 @@
     "test-local-integration": "ENV=local mocha ./test/integration/local/createOrder/createOrder.test.js",
     "test-workers" : "istanbul cover _mocha  -- './test/unit/workers/**/*.spec.js'"
   },
+  "pre-commit": [
+    "test-unit"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TimothyDalbey/sixcrmtransactionapi.git"
