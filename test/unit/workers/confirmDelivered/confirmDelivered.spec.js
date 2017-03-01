@@ -9,10 +9,14 @@ var assert = chai.assert;
 chai.should();
 require('../../../bootstrap.test')
 
-// Disabled for now, due to: Error: Unexpected response from USPS
+// Disabled for now. One of two errors, either:
+// "Error: Unexpected response from USPS"
+// or "TypeError: this.dynamodb.query is not a function" in lib/dynamodb-utilities.js
+
 // describe('workers/confirmDelivered', function () {
 // 	describe('confirmDelivered', function (done) {
 // 		it('will be DELIVERED', function() {
+//             console.log("==============");
 //             var confirmDelivered = require('../../../../controllers/workers/confirmDelivered');
 //             var rebill = require('./fixtures/validRebill');
 // 			var actual = confirmDelivered.confirmDelivered(rebill);

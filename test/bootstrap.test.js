@@ -6,8 +6,8 @@ var util   = require('util');
 var AWS    = require('aws-sdk');
 
 
-console.log("SETTING GLOBAL.ENVIRONMENT TO local FOR RUNNING UNIT TESTS...");
-global.environment = 'local';
+//console.log("SETTING GLOBAL.ENVIRONMENT TO local FOR RUNNING UNIT TESTS...");
+//global.environment = 'local';
 
 // ***HACK:***==============================================================
 // This is merely built from the ultimate values in serverless.yml. What we
@@ -50,7 +50,9 @@ process.env = {
     'transaction_key'             : 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi',
     'site_key'                    : 'anwdadawdjaklwdlakd',
     'development_bypass'          : 'deathstalker',
-    'stage'                       : 'local',
+    // DynamoDB Utilities
+    'stage'                       : 'local', // endpoints/confirmOrder validateInputs will fail otherwise with 'ResourceNotFoundException'
+    //'IS_OFFLINE'                  : true,
 
     // this is ignored
     'AWS_PROFILE'                 : 'six',
@@ -60,18 +62,17 @@ process.env = {
 // AWS will make a remote call through a link-local address (169.254.169.254)
 // for metadata. TODO: confirm
 var config = new AWS.Config({
-    accessKeyId     : 'fake', 
-    secretAccessKey : 'fake', 
-    region          : 'localhost'
+   accessKeyId     : 'fake', 
+   secretAccessKey : 'fake', 
+   region          : 'localhost'
 });
 
 before(function(done) {
-    
     try {
-        console.log("===============load config for ", global.environment);
-      var config = yaml.safeLoad(fs.readFileSync('./config/'+global.environment+'/site.yml', 'utf8'));
-      global.site_config = config;
-      //console.log("global.site_config: ", util.inspect(config,{depth : null}));
+        console.log("=============== load config ./config/", global.environment, '/site.yml');
+        var config = yaml.safeLoad(fs.readFileSync('./config/'+global.environment+'/site.yml', 'utf8'));
+        global.site_config = config;
+        //console.log("global.site_config: ", util.inspect(config,{depth : null}));
     } catch (e) {
       console.log(e);
     }
