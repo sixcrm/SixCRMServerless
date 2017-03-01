@@ -30,30 +30,6 @@ class graphController {
 		
 	}
 	
-	validateUserPermissions(event){
-	
-		return new Promise((resolve, reject) => {
-			
-			//with the query, make sure that the user is permissioned to execute the query on the account
-			
-			resolve(event);
-			
-		});
-			
-	}
-	
-	setAccount(event){
-		
-		return new Promise((resolve, reject) => {
-			
-			global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
-			
-			return resolve(event);
-		
-		});
-		
-	}
-	
 	acquireQuery(event){
 		
 		return new Promise((resolve, reject) => {
@@ -86,13 +62,39 @@ class graphController {
 			
 	}
 	
+	validateUserPermissions(event){
+		
+		//get the user's role permissions
+		//get the query 
+		
+		return new Promise((resolve, reject) => {
+			
+			//with the query, make sure that the user is permissioned to execute the query on the account
+			
+			resolve(event);
+			
+		});
+			
+	}
+	
+	setAccount(event){
+		
+		return new Promise((resolve, reject) => {
+			
+			global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
+			
+			return resolve(event);
+		
+		});
+		
+	}
+	
 	graphQuery(event) {
 		
 		var query = event.parsed_query;
 		
 		return new Promise((resolve, reject) => {
 			
-			//path seems bad
 			var SixSchema = require('../../endpoints/graph/schema.js');
 	
 			graphql(SixSchema, query).then((result) => {

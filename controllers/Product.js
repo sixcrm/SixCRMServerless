@@ -19,6 +19,7 @@ class ProductController extends entityController {
 		
 	}
 	
+	//Technical Debt: what is this?
 	getProducts(products_array){
 		
 		return new Promise((resolve, reject) => {
