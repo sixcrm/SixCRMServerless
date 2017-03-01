@@ -1,0 +1,16 @@
+{
+	"title": "UserInvite",
+	"type": "object",
+	"properties": {
+		"email":{
+			"type":"string"
+		},
+		"account":{
+			"type":"string"
+		},
+		"role":{
+			"type":"string"
+		}
+	},
+	"required":["email", "account", "role"]
+}

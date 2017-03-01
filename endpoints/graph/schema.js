@@ -719,6 +719,17 @@ var userACLType = new GraphQLObjectType({
   })
 });
 
+var userInviteType = new GraphQLObjectType({
+  name: 'UserInvite',
+  description: 'A user unvite.',
+  fields: () => ({
+    link: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the user',
+    }
+  })
+});
+
 var userType = new GraphQLObjectType({
   name: 'User',
   description: 'A user.',
@@ -1931,6 +1942,15 @@ const userACLInputType = new GraphQLInputObjectType({
     signature:				{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
+
+const userInviteInputType = new GraphQLInputObjectType({
+  name: 'UserInviteInput',
+  fields: () => ({
+    email:		{ type: new GraphQLNonNull(GraphQLString) },
+    account:	{ type: new GraphQLNonNull(GraphQLString) },
+    role:		{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
         
 const accessKeyInputType = new GraphQLInputObjectType({
   name: 'AccessKeyInput',
@@ -2174,6 +2194,16 @@ const sessionInputType = new GraphQLInputObjectType({
 var mutationType = new GraphQLObjectType({
 	name: 'Mutation',
 	fields: () => ({
+		inviteuser:{
+			type: userInviteType,
+			description: 'Invites a new user to the site.',
+			args: {
+				user: { type: userInviteInputType }
+			},
+			resolve: (value, user) => {	
+				return userController.invite(user.user);
+			}
+		},
 		createuser:{
 			type: userType,
 			description: 'Adds a new user.',

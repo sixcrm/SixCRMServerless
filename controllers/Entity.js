@@ -401,21 +401,25 @@ module.exports = class entityController {
 	}
 	
 	//ACL enabled
-	validate(object){
+	validate(object, object_type = ''){
 		
 		return new Promise((resolve, reject) => {
-		
+			
+			if(object_type == ''){
+				object_type = this.descriptive_name;
+			}
+			
 			var v = new Validator();
 		
 			var schema;
 		
 			try{
 
-				schema = require('../model/'+this.descriptive_name);
+				schema = require('../model/'+object_type);
 
 			} catch(e){
 
-				return reject(new Error('Unable to load validation schema for '+this.descriptive_name));
+				return reject(new Error('Unable to load validation schema for '+object_type));
 
 			}
 

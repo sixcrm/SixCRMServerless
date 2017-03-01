@@ -63,7 +63,7 @@ functions:
     handler: authorizers/verifyjwt/handler.verifyjwt
     environment:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site_key}
+      secret_key: ${file(./config/${opt:stage}/site.yml):jwt.auth0.secret_key}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
