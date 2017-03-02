@@ -10,6 +10,7 @@ chai.should();
 require('../../../bootstrap.test')
 
 
+// Commented out because: "MissingRequiredParameter: Missing required key 'QueueUrl' in params"
 //describe('workers/forwardMessage', function () {
 //	describe('forwardMessage', function (done) {
 //		it('will be NOTIFIED', function() {
