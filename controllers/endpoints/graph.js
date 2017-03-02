@@ -6,8 +6,12 @@ var timestamp = require('../../lib/timestamp.js');
 
 class graphController {
 	
-	execute(event, context){
+	execute(event){
 		
+		//console.log('User:');
+		//console.log(event.requestContext.authorizer.user);
+					
+		//console.log(context);
 	//get the user in the JWT
 	//get the account from the request
 	//validate that they match up
@@ -81,7 +85,7 @@ class graphController {
 		
 		return new Promise((resolve, reject) => {
 			
-			global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
+			//global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
 			
 			return resolve(event);
 		

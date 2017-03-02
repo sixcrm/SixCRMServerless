@@ -17,6 +17,7 @@ class userController extends entityController {
 		this.descriptive_name = 'user';
 	}
 	
+	/*
 	invite(user){
 	
 		return new Promise((resolve, reject) => {
@@ -63,6 +64,7 @@ class userController extends entityController {
 		});
 		
 	}
+	*/
 	
 	getUserByAccessKeyId(access_key_id){
 		return this.getBySecondaryIndex('access_key_id', access_key_id, 'access_key_id-index');
@@ -70,17 +72,11 @@ class userController extends entityController {
 	
 	getACL(user){
 		
+		if(!_.has(user.acl)){ return null; }
+		
 		return user.acl.map((useracl_object) => {
 			
 			return useracl_object;	
-			
-			/*
-			return {
-				"account": useracl_object.account,
-				"role": useracl_object.role,
-				"signature": useracl_object.signature
-			}
-			*/
 			
 		});	
 		

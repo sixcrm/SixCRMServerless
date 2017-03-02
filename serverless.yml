@@ -76,13 +76,17 @@ functions:
     handler: endpoints/graph/handler.graph
     events:
       - http:
-          path: graph/
+          path: graph/{account}
           method: post
           cors: true
           authorizer:
             name: verifyauth0jwt
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
+          request:
+            parameters:
+              paths:
+                account: false
     environment:
       stage: ${opt:stage}
       customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}

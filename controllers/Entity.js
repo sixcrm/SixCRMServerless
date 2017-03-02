@@ -15,9 +15,9 @@ module.exports = class entityController {
 	constructor(table_name, descriptive_name){
 		this.table_name = table_name;
 		this.descriptive_name = descriptive_name;
-		this.nonaccounts = ['user','role','accesskey','account', 'fulfillmentprovider'];
+		this.nonaccounts = ['user', 'role', 'accesskey', 'account', 'fulfillmentprovider'];
 	}
-	
+
 	//ACL enabled
 	list(cursor, limit){
 	
@@ -84,7 +84,7 @@ module.exports = class entityController {
 		});
 		
 	}
-	
+
 	//ACL enabled
 	listBySecondaryIndex(field, index_value, index_name, cursor, limit){
 		
@@ -134,7 +134,7 @@ module.exports = class entityController {
         });
         
 	}
-	
+
 	//ACL enabled
 	getBySecondaryIndex(field, index_value, index_name, cursor, limit){
 		
@@ -192,7 +192,7 @@ module.exports = class entityController {
 			
         });
 	}
-	
+
 	//ACL enabled
 	get(id){
 		
@@ -300,7 +300,7 @@ module.exports = class entityController {
 		});
 		
 	}
-	
+
 	//ACL enabled
 	update(entity){
 		
@@ -353,7 +353,7 @@ module.exports = class entityController {
 		});
 		
 	}
-	
+
 	//NOT ACL enabled
 	delete(id){
 		
@@ -399,14 +399,14 @@ module.exports = class entityController {
 		});
 			
 	}
-	
+
 	//ACL enabled
-	validate(object, object_type = ''){
+	validate(object, object_type){
 		
 		return new Promise((resolve, reject) => {
 			
-			if(object_type == ''){
-				object_type = this.descriptive_name;
+			if(typeof object_type == 'undefined'){
+				var object_type = this.descriptive_name;
 			}
 			
 			var v = new Validator();
@@ -448,5 +448,5 @@ module.exports = class entityController {
 		});
 		
 	}
-        
+
 }

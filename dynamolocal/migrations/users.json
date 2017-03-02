@@ -118,5 +118,20 @@
     			"signature":"somesignature"
     		}
     	]
+    },
+    {
+    	"id":"7cf8ebc8-d0a9-42fb-9785-fc48d7a6b3a0",
+    	"name":"Mychael Walton",
+    	"auth0_id":"google-oauth2|115021313586107803846",
+    	"email":"waltr0n21@gmail.com",
+    	"active":"true",
+    	"termsandconditions":"0.1",
+    	"acl":[
+    		{
+    			"account":"*",
+    			"role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
+    			"signature":"somesignature"
+    		}
+    	]
     }]
 }

@@ -47,6 +47,7 @@ entities.forEach((entity) => {
 			var query_arguments = 'limit:"'+limit+'"';
 			var query = query[0]+query_arguments+query[1];
 			
+			console.log(query);
 			var this_request = request(endpoint);
 			this_request.post('graph/')
 				.set('Authorization', global.site_jwt)
@@ -64,6 +65,7 @@ entities.forEach((entity) => {
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'has_next_page');
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'count');
 					
+					console.log(response.body.data[entity.lower+'list']);
 					assert.equal(response.body.data[entity.lower+'list'][entity.lower+'s'].length, limit);
 					assert.isAtMost(response.body.data[entity.lower+'list'].pagination.count, limit);
 						

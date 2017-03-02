@@ -44,7 +44,7 @@ class verifyJWTController {
 			if(!_.has(process.env, 'secret_key')){ return resolve(false); }
 			
 			jwt.verify(token, process.env.secret_key, function(error, decoded) {
-				
+					
 				if(_.isError(error) || !_.isObject(decoded)){
 		
 					return resolve(false);
@@ -67,14 +67,28 @@ class verifyJWTController {
 				return resolve(this.messages.bypass);
 				
 			}
-			
+		
 			this.validateToken(token).then((decoded_token) => {
-				
+			
 				if(decoded_token == false){ return resolve(false); }
 				
 				if(_.has(decoded_token, 'user_id')){
 					
 					userController.get(decoded_token.user_id).then((user) => {
+						
+						if(_.isObject(user) && _.has(user, 'id')){
+							
+							return resolve(user);
+							
+						}
+						
+						return resolve(false);
+						
+					});
+					
+				}else if(_.has(decoded_token, 'email')){
+					
+					userController.getUserByEmail(decoded_token.email).then((user) => {
 						
 						if(_.isObject(user) && _.has(user, 'id')){
 							
