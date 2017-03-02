@@ -25,10 +25,14 @@ describe('endpoints/confirmOrder', function () {
 			var actual = confirmOrder.validateInput(require('./fixtures/validSession'));
 			return assert.isFulfilled(actual);
 		});
-		it('should pass call to confirmOrder', function () {
-			var actual = confirmOrder.confirmOrder(require('./fixtures/validSession'));
-			return assert.isFulfilled(actual);
-		});
+		// As per comment above, this unit test can only pass the *first* time
+		// it is run against a freshly populated local database. As such, it
+		// makes a lousy unit test
+		// 
+		// it('should pass call to confirmOrder', function () {
+		// 	var actual = confirmOrder.confirmOrder(require('./fixtures/validSession'));
+		// 	return assert.isFulfilled(actual);
+		// });
 	});
 });
 
