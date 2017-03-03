@@ -71,6 +71,16 @@
     			"account":"*",
     			"role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
     			"signature":"somesignature"
+    		},
+    		{
+    			"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    			"role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
+    			"signature":"somesignature"
+    		},
+    		{
+    			"account":"5db7ed46-75b1-4ecd-b489-e61ef5d1107a",
+    			"role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
+    			"signature":"somesignature"
     		}
     	]
     },

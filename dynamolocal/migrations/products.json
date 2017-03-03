@@ -42,6 +42,15 @@
 			"shipping_delay":"3600",
 			"fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba"	
 		},
+		{
+    		"id": "fce5bafb-e4e4-47f4-9e8f-97fb8ed2a6da",
+    		"account":"5db7ed46-75b1-4ecd-b489-e61ef5d1107a",
+			"name": "Test Product 3",
+			"sku":"123456789",
+			"ship":"true",
+			"shipping_delay":"3600",
+			"fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba"	
+		},
         {
             "id": "be992cea-e4be-4d3e-9afa-8e020340ed16",
             "name": "Trial Product 2",
