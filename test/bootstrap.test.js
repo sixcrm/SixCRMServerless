@@ -4,7 +4,9 @@ const yaml = require('js-yaml');
 const _    = require("underscore");
 var util   = require('util');
 var AWS    = require('aws-sdk');
+var timestamp = require('../lib/timestamp.js');
 
+/*
 
 
 //global.environment = 'local';
@@ -65,6 +67,7 @@ var config = new AWS.Config({
     secretAccessKey : 'fake', 
     region          : 'localhost'
 });
+*/
 
 before(function(done) {
     
@@ -78,6 +81,7 @@ before(function(done) {
     
     try{
     	
+    	var now = timestamp.createTimestampSeconds();
     	var jwt_contents = {
 		  "email": "waltr0n21@gmail.com",
 		  "email_verified": true,
@@ -85,18 +89,20 @@ before(function(done) {
 		  "iss": "https://sixcrm.auth0.com/",
 		  "sub": "google-oauth2|115021313586107803846",
 		  "aud": "JM1tC2j7tycbu62el3oBhyklpNbk5x6F",
-		  "exp": 1488437797,
-		  "iat": 1488401797
+		  "exp": (now+3600),
+		  "iat": now
 		};
 
         global.transaction_jwt = jwt.sign({user_id:'93b086b8-6343-4271-87d6-b2a00149f070'}, global.site_config.jwt.transaction_key);
         global.site_jwt = jwt.sign(jwt_contents, global.site_config.jwt.auth0.secret_key);
-        
+		global.test_account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
+		
     } catch (e){
         console.log(e);
     }
 
     done();
+    
   //do some fixture loading etc here    
 });
 

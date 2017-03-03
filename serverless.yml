@@ -83,10 +83,6 @@ functions:
             name: verifyauth0jwt
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
-          request:
-            parameters:
-              paths:
-                account: false
     environment:
       stage: ${opt:stage}
       customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}

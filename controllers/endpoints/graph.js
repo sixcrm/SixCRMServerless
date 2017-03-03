@@ -1,6 +1,7 @@
 'use strict';
 const _ = require("underscore");
 const graphql =  require('graphql').graphql;
+var accountController = require('../Account.js');
 
 var timestamp = require('../../lib/timestamp.js');
 
@@ -8,18 +9,19 @@ class graphController {
 	
 	execute(event){
 		
+		console.log(event);
 		//console.log('User:');
 		//console.log(event.requestContext.authorizer.user);
 					
 		//console.log(context);
-	//get the user in the JWT
-	//get the account from the request
-	//validate that they match up
+		//get the user in the JWT
+		//get the account from the request
+		//validate that they match up
 	
 		return this.validateInput(event)
+			.then((event) => this.setAccount(event))
 			.then((event) => this.acquireQuery(event))
 			.then((event) => this.validateUserPermissions(event))
-			.then((event) => this.setAccount(event))
 			.then((event) => this.graphQuery(event));
 			
 	}	
@@ -85,10 +87,14 @@ class graphController {
 		
 		return new Promise((resolve, reject) => {
 			
-			//global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
+			if(_.has(event, 'pathParameters') && _.has(event.pathParameters, 'account')){
+					
+				global.account = event.pathParameters.account;
+				
+			}
 			
-			return resolve(event);
-		
+			resolve(event);
+			
 		});
 		
 	}

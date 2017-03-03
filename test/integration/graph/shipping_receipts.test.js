@@ -45,7 +45,7 @@ describe('Graph Test', function() {
 		it(entity+' '+test.name+' JSON results', function (done) {
 			var query = tu.getQuery(test.query);
 			var this_request = request(endpoint);
-			this_request.post('graph/')
+			this_request.post('graph/'+global.test_account)
 				.set('Authorization', global.site_jwt)
 				.send(query)
 				.expect(200)

@@ -47,9 +47,9 @@ entities.forEach((entity) => {
 			var query_arguments = 'limit:"'+limit+'"';
 			var query = query[0]+query_arguments+query[1];
 			
-			console.log(query);
 			var this_request = request(endpoint);
-			this_request.post('graph/')
+			
+			this_request.post('graph/'+global.test_account)
 				.set('Authorization', global.site_jwt)
 				.send(query)
 				.expect(200)
@@ -58,14 +58,14 @@ entities.forEach((entity) => {
 				.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 				.end(function(err, response){
-				
-					tu.assertResultSet(response);
 					
+					tu.assertResultSet(response);
+					console.log(response.body.data);
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'end_cursor');
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'has_next_page');
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'count');
 					
-					console.log(response.body.data[entity.lower+'list']);
+					//console.log(response.body.data[entity.lower+'list']);
 					assert.equal(response.body.data[entity.lower+'list'][entity.lower+'s'].length, limit);
 					assert.isAtMost(response.body.data[entity.lower+'list'].pagination.count, limit);
 						
@@ -86,7 +86,7 @@ entities.forEach((entity) => {
 						var query_arguments = 'limit:"'+limit+'", cursor: "'+cursor+'"';
 						var query = query[0]+query_arguments+query[1];
 					
-						this_request.post('graph/')
+						this_request.post('graph/'+global.test_account)
 							.set('Authorization', global.site_jwt)
 							.send(query)
 							.expect(200)

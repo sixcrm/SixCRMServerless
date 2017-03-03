@@ -45,8 +45,7 @@ describe('Graph Test', function() {
 			var query = tu.getQuery(test.query);
 			var this_request = request(endpoint);
 			
-			//var test_jwt = '';
-			this_request.post('graph/')
+			this_request.post('graph/'+global.test_account)
 				.set('Authorization', global.site_jwt)
 				//.set('Authorization', test_jwt)
 				.send(query)
