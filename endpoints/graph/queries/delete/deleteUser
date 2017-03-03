@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		deleteuser (id: \"testing\") { 

@@ -72,7 +72,7 @@ class userController extends entityController {
 	
 	getACL(user){
 		
-		if(!_.has(user.acl)){ return null; }
+		if(!_.has(user, 'acl')){ return null; }
 		
 		return user.acl.map((useracl_object) => {
 			
@@ -84,7 +84,11 @@ class userController extends entityController {
 	
 	getAccount(id){
 		
-		return accountController.get(id);
+		if(id == '*'){ 
+			return accountController.getMasterAccount(); 
+		}else{
+			return accountController.get(id);
+		}
 		
 	}
 	

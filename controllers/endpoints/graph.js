@@ -9,7 +9,6 @@ class graphController {
 	
 	execute(event){
 		
-		console.log(event);
 		//console.log('User:');
 		//console.log(event.requestContext.authorizer.user);
 					
@@ -19,6 +18,7 @@ class graphController {
 		//validate that they match up
 	
 		return this.validateInput(event)
+			.then((event) => this.acquireAccount(event))
 			.then((event) => this.setAccount(event))
 			.then((event) => this.acquireQuery(event))
 			.then((event) => this.validateUserPermissions(event))
@@ -68,6 +68,63 @@ class graphController {
 			
 	}
 	
+	acquireAccount(event){
+		
+		return new Promise((resolve, reject) => {
+		
+			var account; 
+			var pathParameters;
+			
+			if(_.isObject(event) && _.has(event, "pathParameters")){
+				
+				pathParameters = event.pathParameters;
+				
+			}else if(_.isString(event)){
+			
+				try{
+					event = JSON.parse(event.replace(/[\n\r\t]+/g, ''))
+				}catch(error){
+					return reject(error);
+				}
+				
+				if(_.has(event, "pathParameters")){
+					
+					pathParameters = event.pathParameters;
+					
+				}
+				
+			}
+			
+			if(_.isObject(pathParameters) && _.has(pathParameters, 'account')){
+	
+				event.account = pathParameters.account;
+					
+			}else if(_.isString(pathParameters)){
+				
+				try{
+
+					pathParameters = JSON.parse(pathParameters);
+					
+				}catch(error){
+				
+					return reject(error);
+					
+				}
+				
+				if(_.isObject(pathParameters) && _.has(pathParameters, 'account')){
+	
+					event.account = pathParameters.account;
+				
+				}
+				
+			}
+		
+			return resolve(event);
+			
+		});
+			
+	}
+	
 	validateUserPermissions(event){
 		
 		//get the user's role permissions
@@ -87,9 +144,9 @@ class graphController {
 		
 		return new Promise((resolve, reject) => {
 			
-			if(_.has(event, 'pathParameters') && _.has(event.pathParameters, 'account')){
+			if(_.has(event, 'account')){
 					
-				global.account = event.pathParameters.account;
+				global.account = event.account;
 				
 			}
 			

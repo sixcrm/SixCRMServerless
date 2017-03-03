@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query { 
 		userlist ({argumentation}) {

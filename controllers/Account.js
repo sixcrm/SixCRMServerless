@@ -11,6 +11,22 @@ class accountController extends entityController {
 		this.descriptive_name = 'account';  
 	}
 	
+	getMasterAccount(){
+	
+		return new Promise((resolve, reject) => {
+		
+			let master_account = {
+				"id":"*",
+				"name": "Master Account",
+				"active":"true"
+			};
+			
+			resolve(master_account);
+			
+		});
+		
+	}
+	
 }
 
 module.exports = new accountController();

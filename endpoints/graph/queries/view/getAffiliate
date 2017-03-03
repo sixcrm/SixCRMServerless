@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	{ 
 		affiliate (id: \"6b6331f6-7f84-437a-9ac6-093ba301e455\") { 

@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		deleterole (id: \"testing\") { 

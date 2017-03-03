@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		updaterole (role: { id: \"testing\", name: \"testingrole-updated\", active: \"false\"}) { 

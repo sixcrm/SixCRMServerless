@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		createaccount (account: { id: \"testing\", name: \"testingaccount\", active: \"true\"}) { 

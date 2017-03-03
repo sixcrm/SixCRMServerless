@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		updateuser (user: { id: \"testing\", auth0_id: \"test\", name: \"testingname\", email:\"testingemail\", active:\"false\", termsandconditions:\"2.1\", address:{line1: \"123 Heckamecca\", line2:\"Room 666\", city:\"Portland\", state:\"OR\", zip:\"97203\", country:\"US\"}, acl: [{account:\"testing\", role: \"testing\", signature:\"testing\"}] }) { 

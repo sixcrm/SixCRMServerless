@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
 		user (email: \"timothy.dalbey@sixcrm.com\") { 

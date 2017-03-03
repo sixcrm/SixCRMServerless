@@ -1,4 +1,5 @@
 {
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
 		role (id: \"cae614de-ce8a-40b9-8137-3d3bdff78039\") { 
