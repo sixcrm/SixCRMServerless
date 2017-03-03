@@ -69,7 +69,7 @@
           "rebill_id": "00000000-0000-0000-0000-000000000001",
           "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
           "products":[{
-            "shipping_receipt":"00000000-0000-0000-0000-000000000001",
+            "shippingreceipt":"00000000-0000-0000-0000-000000000001",
             "product":"00000000-0000-0000-0000-100000000000",
             "amount":124.99
           }]
@@ -82,7 +82,7 @@
 		  "rebill_id": "00000000-0000-0000-0000-000000000003",
 		  "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
 		  "products":[{
-		  	"shipping_receipt":"00000000-0000-0000-0000-000000000003",
+		  	"shippingreceipt":"00000000-0000-0000-0000-000000000003",
 		  	"product":"00000000-0000-0000-0000-200000000000",
 		  	"amount":139.99
 		  }]

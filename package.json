@@ -33,9 +33,10 @@
   },
   "scripts": {
     "test-integration": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/**/*.test.js",
-    "test-unit": "istanbul cover _mocha -- './test/unit/**/*.spec.js'",
+    "test-unit": "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive  './test/unit/**/*.spec.js'",
     "test-local-integration": "ENV=local mocha ./test/integration/local/createOrder/createOrder.test.js",
-    "test-workers" : "istanbul cover _mocha  -- './test/unit/workers/**/*.spec.js'"
+    "test-workers" : "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
+    "test-endpoints": "istanbul cover _mocha  -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'"
   },
   "pre-commit": [
     "test-unit"

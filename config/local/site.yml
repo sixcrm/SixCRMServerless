@@ -52,6 +52,15 @@ sqs:
   delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-delivered'
   rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
   rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure'
+#  bill_queue_url: 'http://localhost:9324/queue/bill'
+#  recover_queue_url: 'http://localhost:9324/queue/recover'
+#  hold_queue_url: 'http://localhost:9324/queue/hold'
+#  pending_queue_url: 'http://localhost:9324/queue/pending'
+#  pending_failed_queue_url: 'http://localhost:9324/queue/pending-failed'
+#  shipped_queue_url: 'http://localhost:9324/queue/shipped'
+#  delivered_queue_url: 'http://localhost:9324/queue/delivered'
+#  rebill_queue_url: 'http://localhost:9324/queue/rebill'
+#  rebill_failed_queue_url: 'http://localhost:9324/queue/rebill-failure'
   
 nmi:
   username: 'demo'

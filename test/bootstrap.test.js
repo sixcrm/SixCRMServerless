@@ -8,7 +8,7 @@ var timestamp = require('../lib/timestamp.js');
 
 /*
 
-
+//console.log("SETTING GLOBAL.ENVIRONMENT TO local FOR RUNNING UNIT TESTS...");
 //global.environment = 'local';
 
 // ***HACK:***==============================================================
@@ -52,29 +52,30 @@ process.env = {
     'transaction_key'             : 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi',
     'site_key'                    : 'anwdadawdjaklwdlakd',
     'development_bypass'          : 'deathstalker',
-    'stage'                       : 'local',
+    // DynamoDB Utilities
+    'stage'                       : 'local', // endpoints/confirmOrder validateInputs will fail otherwise with 'ResourceNotFoundException'
+    //'IS_OFFLINE'                  : true,
 
     // this is ignored
     'AWS_PROFILE'                 : 'six',
 };
 
-
 // Seems you need an AWS.Config call, even with bogus credentials. Otherwise,
 // AWS will make a remote call through a link-local address (169.254.169.254)
 // for metadata. TODO: confirm
 var config = new AWS.Config({
-    accessKeyId     : 'fake', 
-    secretAccessKey : 'fake', 
-    region          : 'localhost'
+   accessKeyId     : 'fake', 
+   secretAccessKey : 'fake', 
+   region          : 'localhost'
 });
 */
 
 before(function(done) {
-    
     try {
-      var config = yaml.safeLoad(fs.readFileSync('./config/'+global.environment+'/site.yml', 'utf8'));
-      global.site_config = config;
-      //console.log("global.site_config: ", util.inspect(config,{depth : null}));
+        console.log("=============== load config ./config/", global.environment, '/site.yml');
+        var config = yaml.safeLoad(fs.readFileSync('./config/'+global.environment+'/site.yml', 'utf8'));
+        global.site_config = config;
+        //console.log("global.site_config: ", util.inspect(config,{depth : null}));
     } catch (e) {
       console.log(e);
     }
