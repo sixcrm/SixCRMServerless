@@ -1,0 +1,19 @@
+{
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query { 
+		rolelist ({argumentation}) {
+			roles {
+				id,
+				name,
+				active
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		}
+	}"
+}
+

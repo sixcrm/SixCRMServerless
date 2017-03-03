@@ -17,6 +17,7 @@ try {
 var endpoint = config.endpoint;
 var entities = [
 	{camel:'AccessKeys',lower:'accesskey'}, 
+	{camel:'Accounts',lower:'account'}, 
 	{camel:'Affiliates',lower:'affiliate'},
 	{camel:'Campaigns',lower:'campaign'},
 	{camel:'Customers',lower:'customer'},
@@ -27,6 +28,7 @@ var entities = [
 	{camel:'ProductSchedules',lower:'productschedule'},
 	{camel:'Products',lower:'product'},
 	{camel:'Rebills',lower:'rebill'},
+	{camel:'Roles',lower:'role'}, 
 	{camel:'Sessions',lower:'session'},
 	{camel:'ShippingReceipts',lower:'shippingreceipt'},
 	{camel:'SMTPProviders',lower:'smtpprovider'},
@@ -49,7 +51,10 @@ entities.forEach((entity) => {
 			
 			var this_request = request(endpoint);
 			
-			this_request.post('graph/'+global.test_account)
+			var account = tu.getAccount('./endpoints/graph/queries/pagination/get'+entity.camel);
+			//console.log('\tQuery endpoint: '+endpoint+'graph/'+account);
+			//console.log();
+			this_request.post('graph/'+account)
 				.set('Authorization', global.site_jwt)
 				.send(query)
 				.expect(200)
@@ -86,7 +91,7 @@ entities.forEach((entity) => {
 						var query_arguments = 'limit:"'+limit+'", cursor: "'+cursor+'"';
 						var query = query[0]+query_arguments+query[1];
 					
-						this_request.post('graph/'+global.test_account)
+						this_request.post('graph/'+account)
 							.set('Authorization', global.site_jwt)
 							.send(query)
 							.expect(200)

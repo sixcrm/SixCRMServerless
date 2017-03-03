@@ -1,0 +1,19 @@
+{
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query { 
+		accountlist ({argumentation}) {
+			accounts {
+				id,
+				name,
+				active
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		}
+	}"
+}
+
