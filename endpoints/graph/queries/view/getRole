@@ -2,10 +2,14 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		role (id: \"cae614de-ce8a-40b9-8137-3d3bdff78039\") { 
+		role (id: \"e09ac44b-6cde-4572-8162-609f6f0aeca8\") { 
 			id,
 			name,
-			active
+			active,
+			permissions {
+				allow,
+				deny
+			}
 		} 
 	}"
 }

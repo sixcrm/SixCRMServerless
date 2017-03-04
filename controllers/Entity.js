@@ -7,6 +7,7 @@ var Validator = require('jsonschema').Validator;
 
 let dynamoutilities = require('../lib/dynamodb-utilities.js');
 let arrayutilities = require('../lib/array-utilities.js');
+let permissionutilities = require('../lib/permission-utilities.js');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 
@@ -17,68 +18,92 @@ module.exports = class entityController {
 		this.descriptive_name = descriptive_name;
 		this.nonaccounts = ['user', 'role', 'accesskey', 'account', 'fulfillmentprovider'];
 	}
-
+	
+	can(action){	
+		
+		return permissionutilities.validatePermissions(action, this.descriptive_name);
+		
+	}
+	
 	//ACL enabled
 	list(cursor, limit){
-	
+		
 		return new Promise((resolve, reject) => {
 			
-			var query_parameters = {filter_expression: null, expression_attribute_values: null};
+			this.can('read').then((permission) => {
 			
-			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = { id: cursor };
-			}
-   
-			if(typeof limit  !== 'undefined'){
-				query_parameters['limit'] = limit;
-			}
-			
-			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				if(permission != true){
 				
-				query_parameters.filter_expression = 'account = :accountv'
-				query_parameters.expression_attribute_values = {':accountv':global.account};
+					resolve(null);
 				
-			}
-			
-			dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data)){
-					
-					var pagination_object = {
-						count: '',
-						end_cursor: '',
-						has_next_page: 'true'
-					}
-					
-					if(_.has(data, "Count")){
-						pagination_object.count = data.Count;
-					}
-					
-					if(_.has(data, "LastEvaluatedKey")){
-						if(_.has(data.LastEvaluatedKey, "id")){
-							pagination_object.end_cursor = data.LastEvaluatedKey.id;
-						}
-					}
-					
-					if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
-						pagination_object.has_next_page = 'false';
-					}
-					
-					if(data.Items.length < 1){
-						data.Items = null;
-					}
-					
-					var resolve_object = {
-							pagination: pagination_object
-					};
-					resolve_object[this.descriptive_name+'s'] = data.Items;
-					
-					resolve(resolve_object);
-					
 				}
+
+				var query_parameters = {filter_expression: null, expression_attribute_values: null};
+			
+				if(typeof cursor  !== 'undefined'){
+					query_parameters.ExclusiveStartKey = { id: cursor };
+				}
+   
+				if(typeof limit  !== 'undefined'){
+					query_parameters['limit'] = limit;
+				}
+			
+				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+					if(global.account == '*'){
+					
+						//for now, do nothing
+					
+					}else{
+				
+						query_parameters.filter_expression = 'account = :accountv'
+						query_parameters.expression_attribute_values = {':accountv':global.account};
+					
+					}
+				
+				}
+			
+				dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+				
+					if(_.isError(error)){ reject(error);}
+				
+					if(_.isObject(data)){
+					
+						var pagination_object = {
+							count: '',
+							end_cursor: '',
+							has_next_page: 'true'
+						}
+					
+						if(_.has(data, "Count")){
+							pagination_object.count = data.Count;
+						}
+					
+						if(_.has(data, "LastEvaluatedKey")){
+							if(_.has(data.LastEvaluatedKey, "id")){
+								pagination_object.end_cursor = data.LastEvaluatedKey.id;
+							}
+						}
+					
+						if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
+							pagination_object.has_next_page = 'false';
+						}
+					
+						if(data.Items.length < 1){
+							data.Items = null;
+						}
+					
+						var resolve_object = {
+								pagination: pagination_object
+						};
+						resolve_object[this.descriptive_name+'s'] = data.Items;
+					
+						resolve(resolve_object);
+					
+					}
 	
+				});
+			
 			});
 			
 		});
@@ -92,46 +117,64 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			let query_parameters = {
-				condition_expression: field+' = :index_valuev',
-				expression_attribute_values: {':index_valuev': index_value}
-			}
+			this.can('read').then((permission) => {
 			
-			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = cursor;
-			}
-
-			if(typeof limit  !== 'undefined'){
-				query_parameters['limit'] = limit;
-			}
-			
-			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
-				
-				query_parameters.filter_expression = 'account = :accountv'
-				query_parameters.expression_attribute_values[':accountv'] = global.account;
-				
-			}
-			
-			dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
-				
-				if(_.isError(error)){ 
-					console.log('listBySecondaryIndex failed with error: ', error)
-					reject(error);
-				}
-				
-				if(_.isArray(data) && data.length > 0){
-					
-					resolve(data);
-					
-				}else{
+				if(permission != true){
 				
 					resolve(null);
-					
-				}				
-	
-			});
+				
+				}
 			
-        });
+				let query_parameters = {
+					condition_expression: field+' = :index_valuev',
+					expression_attribute_values: {':index_valuev': index_value}
+				}
+			
+				if(typeof cursor  !== 'undefined'){
+					query_parameters.ExclusiveStartKey = cursor;
+				}
+
+				if(typeof limit  !== 'undefined'){
+					query_parameters['limit'] = limit;
+				}
+			
+				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+					if(global.account == '*'){
+					
+						//for now, do nothing
+					
+					}else{
+				
+						query_parameters.filter_expression = 'account = :accountv'
+						query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+					}
+				
+				}
+			
+				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+				
+					if(_.isError(error)){ 
+						console.log('listBySecondaryIndex failed with error: ', error)
+						reject(error);
+					}
+				
+					if(_.isArray(data) && data.length > 0){
+					
+						resolve(data);
+					
+					}else{
+				
+						resolve(null);
+					
+					}				
+	
+				});
+			
+			});
+		
+		});
         
 	}
 
@@ -142,55 +185,70 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			let query_parameters = {
-				condition_expression: field+' = :index_valuev',
-				expression_attribute_values: {':index_valuev': index_value},
-			}
+			this.can('read').then((permission) => {
 			
-			if(typeof cursor  !== 'undefined'){
-				query_parameters.ExclusiveStartKey = cursor;
-			}
+				if(permission != true){ resolve(null); }
+				
+				let query_parameters = {
+					condition_expression: field+' = :index_valuev',
+					expression_attribute_values: {':index_valuev': index_value},
+				}
+			
+				if(typeof cursor  !== 'undefined'){
+					query_parameters.ExclusiveStartKey = cursor;
+				}
 
-			if(typeof limit  !== 'undefined'){
-				query_parameters['limit'] = limit;
-			}
+				if(typeof limit  !== 'undefined'){
+					query_parameters['limit'] = limit;
+				}
 			
-			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-				query_parameters.filter_expression = 'account = :accountv'
-				query_parameters.expression_attribute_values[':accountv'] = global.account;
-				
-			}
+					if(global.account == '*'){
 					
-			dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isArray(data)){
-					
-					if(data.length == 1){
-					
-						resolve(data[0]);
+						//for now, do nothing
 					
 					}else{
-						
-						if(data.length > 1){
-							
-							reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
-							
+				
+						query_parameters.filter_expression = 'account = :accountv'
+						query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+					}
+				
+				}
+					
+				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+				
+					if(_.isError(error)){ reject(error);}
+				
+					if(_.isArray(data)){
+					
+						if(data.length == 1){
+					
+							resolve(data[0]);
+					
 						}else{
+						
+							if(data.length > 1){
 							
-							resolve(null);
+								reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
 							
+							}else{
+							
+								resolve(null);
+							
+							}
+					
 						}
 					
 					}
-					
-				}
 	
+				});
+				
 			});
 			
         });
+        
 	}
 
 	//ACL enabled
@@ -200,43 +258,57 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			let query_parameters = {
-				condition_expression: 'id = :idv',
-				expression_attribute_values: {':idv': id}
-			};
+			this.can('read').then((permission) => {
 			
-			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				if(permission != true){ resolve(null); }
 				
-				query_parameters.filter_expression = 'account = :accountv';
-				query_parameters.expression_attribute_values[':accountv'] = global.account;
-				
-			}
+				let query_parameters = {
+					condition_expression: 'id = :idv',
+					expression_attribute_values: {':idv': id}
+				};
 			
-			dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
-					
-				if(_.isError(error)){ reject(error);}
+				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-				if(_.isObject(data) && _.isArray(data)){
+					if(global.account == '*'){
 					
-					if(data.length == 1){
-						
-						resolve(data[0]);
-						
+						//for now, do nothing
+					
 					}else{
-						
-						if(data.length > 1){
-						
-							reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
-							
-						}else{
-							
-							resolve(null);
-							
-						}
-						
-					}
+				
+						query_parameters.filter_expression = 'account = :accountv';
+						query_parameters.expression_attribute_values[':accountv'] = global.account;
 					
+					}
+				
 				}
+			
+				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+					
+					if(_.isError(error)){ reject(error);}
+				
+					if(_.isObject(data) && _.isArray(data)){
+					
+						if(data.length == 1){
+						
+							resolve(data[0]);
+						
+						}else{
+						
+							if(data.length > 1){
+						
+								reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
+							
+							}else{
+							
+								resolve(null);
+							
+							}
+						
+						}
+					
+					}
+				
+				});
 				
 			});
 			
@@ -249,53 +321,67 @@ module.exports = class entityController {
 
 		return new Promise((resolve, reject) => {
 			
-			if(!_.has(entity,'id')){
+			this.can('create').then((permission) => {
 			
-				entity.id = uuidV4();
+				if(permission != true){ resolve(null); }
 				
-			}
+				if(!_.has(entity,'id')){
 			
-			if(_.has(global, 'account')){
+					entity.id = uuidV4();
 				
-				if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
-				
-					entity.account = global.account;
-					
 				}
-				
-			}
 			
-			let query_parameters = {
-				condition_expression: 'id = :idv',
-				expression_attribute_values: {':idv': entity.id}
-			};
-			
-			if(_.has(global, 'account')){
+				if(_.has(global, 'account')){
 				
-				query_parameters.filter_expression = 'account = :accountv';
-				query_parameters.expression_attribute_values[':accountv'] = global.account;
+					if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-			}
-			
-			dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-
-				if(_.isObject(data) && _.isArray(data) && data.length > 0){
-
-					reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
+						entity.account = global.account;
 					
-				}				
-
-				dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
-
+					}
+				
+				}
+			
+				let query_parameters = {
+					condition_expression: 'id = :idv',
+					expression_attribute_values: {':idv': entity.id}
+				};
+			
+				if(_.has(global, 'account')){
+				
+					if(global.account == '*'){
+					
+						//for now, do nothing
+					
+					}else{
+				
+						query_parameters.filter_expression = 'account = :accountv';
+						query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+					}
+				
+				}
+			
+				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+				
 					if(_.isError(error)){ reject(error);}
 
-					resolve(entity);
+					if(_.isObject(data) && _.isArray(data) && data.length > 0){
+
+						reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
+					
+					}				
+
+					dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
+
+						if(_.isError(error)){ reject(error);}
+
+						resolve(entity);
 				
-				});
+					});
 			
-			});	
+				});	
+			
+			});
 			
 		});
 		
@@ -306,50 +392,64 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			if(_.has(global, 'account')){
-				
-				if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+			this.can('update').then((permission) => {
 			
-					entity.account = global.account;
+				if(permission != true){ resolve(null); }
+				
+				if(_.has(global, 'account')){
+				
+					if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+			
+						entity.account = global.account;
+				
+					}
+			
+				}
+			
+				let query_parameters = {
+					condition_expression: 'id = :idv',
+					expression_attribute_values: {':idv': entity.id}
+				};
+			
+				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+					if(global.account == '*'){
+					
+						//for now, do nothing
+					
+					}else{
+				
+						query_parameters.filter_expression = 'account = :accountv';
+						query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+					}
 				
 				}
 			
-			}
-			
-			let query_parameters = {
-				condition_expression: 'id = :idv',
-				expression_attribute_values: {':idv': entity.id}
-			};
-			
-			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
-				query_parameters.filter_expression = 'account = :accountv';
-				query_parameters.expression_attribute_values[':accountv'] = global.account;
+					if(_.isError(error)){ reject(error);}
 				
-			}
-			
-			dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
-				
-				if(_.isError(error)){ reject(error);}
-				
-				if(_.isObject(data) && _.isArray(data) && data.length == 1){
+					if(_.isObject(data) && _.isArray(data) && data.length == 1){
 					
-					dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
+						dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
 			
-						if(_.isError(error)){ reject(error);}
+							if(_.isError(error)){ reject(error);}
 				
-						resolve(entity);
+							resolve(entity);
 				
-					});
+						});
 					
-				}else{
+					}else{
 					
-					reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.'));
+						reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.'));
 					
-				}
+					}
 			
-			});		
+				});		
 				
+			});
+			
 		});
 		
 	}
@@ -359,41 +459,55 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			let query_parameters = {
-				condition_expression: 'id = :idv',
-				expression_attribute_values: {':idv': id}
-			};
+			this.can('update').then((permission) => {
 			
-			let delete_parameters = {id:id};
+				if(permission != true){ resolve(null); }
+				
+				let query_parameters = {
+					condition_expression: 'id = :idv',
+					expression_attribute_values: {':idv': id}
+				};
 			
-			if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				let delete_parameters = {id:id};
+			
+				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-				query_parameters.filter_expression = 'account = :accountv';
-				query_parameters.expression_attribute_values[':accountv'] = global.account;
+					if(global.account == '*'){
+					
+						//for now, do nothing
+					
+					}else{
 				
-			}
+						query_parameters.filter_expression = 'account = :accountv';
+						query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+					}
+				
+				}
 
 			
-			dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
-				if(_.isError(error)){ reject(error);}
+					if(_.isError(error)){ reject(error);}
 				
-				if(_.isObject(data) && _.isArray(data) && data.length == 1){
+					if(_.isObject(data) && _.isArray(data) && data.length == 1){
 				
-					dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error, data) => {
+						dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error, data) => {
 			
-						if(_.isError(error)){ reject(error);}
+							if(_.isError(error)){ reject(error);}
 				
-						resolve({ id });
+							resolve({ id });
 				
-					});
+						});
 					
-				}else{
+					}else{
 					
-					reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.'));
+						reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.'));
 					
-				}
+					}
 				
+				});
+			
 			});
 			
 		});

@@ -143,5 +143,21 @@
     			"signature":"somesignature"
     		}
     	]
+    },
+    {
+    	"id":"8e3987aa-7da6-4955-9a98-b4d87609c092",
+    	"name":"CustomerService",
+    	"auth0_id":"abc123",
+    	"access_key_id":"82478014-c96f-49ef-b31c-5408e99df66e",
+    	"email":"customer.service@test.com",
+    	"active":"true",
+    	"termsandconditions":"0.1",
+    	"acl":[
+    		{
+    			"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    			"role":"1116c054-42bb-4bf5-841e-ee0c413fa69e",
+    			"signature":"somesignature"
+    		}
+    	]
     }]
 }

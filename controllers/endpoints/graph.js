@@ -1,27 +1,21 @@
 'use strict';
 const _ = require("underscore");
 const graphql =  require('graphql').graphql;
-var accountController = require('../Account.js');
 
 var timestamp = require('../../lib/timestamp.js');
+var userController = require('../User.js');
 
 class graphController {
 	
 	execute(event){
 		
-		//console.log('User:');
-		//console.log(event.requestContext.authorizer.user);
-					
-		//console.log(context);
-		//get the user in the JWT
-		//get the account from the request
-		//validate that they match up
+		//validate that user has access to the account they match up
 	
 		return this.validateInput(event)
+			.then((event) => this.acquireUser(event))
 			.then((event) => this.acquireAccount(event))
 			.then((event) => this.setAccount(event))
 			.then((event) => this.acquireQuery(event))
-			.then((event) => this.validateUserPermissions(event))
 			.then((event) => this.graphQuery(event));
 			
 	}	
@@ -125,16 +119,56 @@ class graphController {
 			
 	}
 	
-	validateUserPermissions(event){
-		
-		//get the user's role permissions
-		//get the query 
+	//Note:  This method acquires a user object from either the mock request or the authorizer and places that user object in the globals	
+	acquireUser(event){
 		
 		return new Promise((resolve, reject) => {
 			
-			//with the query, make sure that the user is permissioned to execute the query on the account
+			let user;
 			
-			resolve(event);
+			//event coming from Lambda authorizer
+			if(_.has(event, 'requestContext') && _.has(event.requestContext, 'authorizer') && _.has(event.requestContext.authorizer, 'user')){
+				
+				user = event.requestContext.authorizer.user;
+			
+			//mock request	
+			}else if(_.isString(event)){
+					
+				let parsed_event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
+				
+				if(_.has(parsed_event, 'requestContext')){
+					
+					let request_context = JSON.parse(parsed_event.requestContext);
+					
+					if(_.has(request_context, 'authorizer') && _.has(request_context.authorizer, 'user')){
+						
+						user = request_context.authorizer.user;
+						
+					}
+					
+				}
+				
+			}
+			
+			if(_.isString(user)){
+				
+				global.disableactionchecks = true;
+				
+				userController.getHydrated(user).then((user) => {
+					
+					global.disableactionchecks = false;
+						
+					global.user = user;
+				
+					return resolve(event);
+				
+				});
+				
+			}else{
+				
+				return reject(new Error('Undefined user id'));
+				
+			}
 			
 		});
 			

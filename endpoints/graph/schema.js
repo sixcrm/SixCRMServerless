@@ -689,6 +689,27 @@ var roleType = new GraphQLObjectType({
     active: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The active status of the role.',
+    },
+    permissions:{
+      type: new GraphQLNonNull(permissionsType),
+      description: 'The permsissions associated with the role.',
+      resolve: role => roleController.getPermissions(role)
+    }
+  }),
+  interfaces: []
+});
+
+var permissionsType = new GraphQLObjectType({
+  name: 'Permissions',
+  description: 'A role permissions object.',
+  fields: () => ({
+    allow: {
+      type: new GraphQLList(GraphQLString),
+      description: 'A permissions list',
+    },
+    deny: {
+      type: new GraphQLList(GraphQLString),
+      description: 'A permissions list',
     }
   }),
   interfaces: []

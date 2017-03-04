@@ -17,6 +17,26 @@ class userController extends entityController {
 		this.descriptive_name = 'user';
 	}
 	
+	
+	getHydrated(id){
+		
+		return new Promise((resolve, reject) => {
+			
+			this.get(id).then(user => {
+		
+				this.getACLHydrated(user).then(acl => {
+				
+					user.acl = acl;
+				
+					resolve(user);
+				
+				});
+			
+			});
+			
+		});
+		
+	}
 	/*
 	invite(user){
 	
@@ -79,6 +99,51 @@ class userController extends entityController {
 			return useracl_object;	
 			
 		});	
+		
+	}
+	
+	getHydratedACLObject(useracl){
+		
+		return new Promise((resolve, reject) => {
+			
+			let promises = []
+			promises.push(this.getAccount(useracl.account));
+			promises.push(this.getRole(useracl.role));
+			
+			return Promise.all(promises).then(promises => {
+				
+				useracl.account = promises[0];
+				useracl.role = promises[1];
+				
+				return resolve(useracl);
+				
+			})
+			
+		});
+		
+	}
+	
+	getACLHydrated(user){
+		
+		if(!_.has(user, 'acl')){ return null; }
+		
+		return new Promise((resolve, reject) => {
+		
+			let promises = []
+		
+			user.acl.map((useracl_object) => {
+			
+				promises.push(this.getHydratedACLObject(useracl_object));
+			
+			});	
+		
+			return Promise.all(promises).then((promises) => {
+			
+				resolve(promises);
+					
+			});
+			
+		});
 		
 	}
 	

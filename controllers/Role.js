@@ -11,6 +11,13 @@ class roleController extends entityController {
 		this.descriptive_name = 'role';
 	}
 	
+	getPermissions(role){
+		if(_.has(role, 'permissions')){
+			return role.permissions;
+		}else{
+			return null
+		}
+	}
 }
 
 module.exports = new roleController();

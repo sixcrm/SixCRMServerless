@@ -17,16 +17,54 @@
     "Seeds": [{
     	"id":"cae614de-ce8a-40b9-8137-3d3bdff78039",
         "name": "Owner",
-        "active":"true"
+        "active":"true",
+        "permissions":{
+        	"allow":[
+        		"*"
+        	]
+        }
     },
     {
     	"id":"e09ac44b-6cde-4572-8162-609f6f0aeca8",
         "name": "Admin",
-        "active":"true"
+        "active":"true",
+        "permissions":{
+        	"allow":[
+				"accesskey/*",
+				"affiliate/*",
+				"campaign/*",
+				"creditcard/*",
+				"customer/*",
+				"email/*",
+				"loadbalancer/*",
+				"merchantprovider/*",
+				"productschedule/*",
+				"product/*",
+				"rebill/*",
+				"session/*",
+				"shippingreceipt/*",
+				"smtprovider/*",
+				"transaction/*",
+				"user/*"
+        	],
+        	"deny":["*"]
+        }
     },
     {
     	"id":"1116c054-42bb-4bf5-841e-ee0c413fa69e",
         "name": "Customer Service",
-        "active":"true"
+        "active":"true",
+        "permissions":{
+        	"allow":[
+				"customer/*",
+				"productschedule/*",
+				"product/*",
+				"rebill/*",
+				"session/*",
+				"shippingreceipt/*",
+				"transaction/*"
+        	],
+        	"deny":["*"]
+        }
     }]
 }
