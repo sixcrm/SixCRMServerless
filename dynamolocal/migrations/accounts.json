@@ -23,5 +23,10 @@
     	"id":"5db7ed46-75b1-4ecd-b489-e61ef5d1107a",
         "name": "Test Account 2",
         "active":"true"
+    },
+    {
+    	"id":"*",
+        "name": "Master Account",
+        "active":"true"
     }]
 }

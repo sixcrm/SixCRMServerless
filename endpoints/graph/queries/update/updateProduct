@@ -1,5 +1,6 @@
 {
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		updateproduct (product: { id: \"testing\", name: \"testing2\", sku: \"abc12345\", ship: \"true\", shipping_delay:\"3601\",  fulfillment_provider:\"1bd805d0-0062-499b-ae28-00c5d1b827ba\"}) { 

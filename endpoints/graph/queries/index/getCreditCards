@@ -1,6 +1,6 @@
 {
-	"requestContext": "{ \"authorizer\":{\"user\":\"8e3987aa-7da6-4955-9a98-b4d87609c092\"} }",
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query { 
 		creditcardlist {

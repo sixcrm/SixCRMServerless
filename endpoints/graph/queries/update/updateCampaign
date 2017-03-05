@@ -1,5 +1,6 @@
 {
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		updatecampaign ( campaign: { id: \"Testing-ID\", name: \"Testing Campaign2\", loadbalancer: \"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\", productschedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"], emailtemplates:[\"b44ce483-861c-4843-a7d6-b4c649d6bdde\"] } ) { 

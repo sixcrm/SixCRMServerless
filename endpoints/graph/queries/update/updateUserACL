@@ -1,0 +1,19 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation { 
+		updateuseracl (useracl: { id: \"69701230-cb23-49ba-8d46-656dddb04908\", user:\"7cf8ebc8-d0a9-42fb-9785-fc48d7a6b3a0\", account:\"5db7ed46-75b1-4ecd-b489-e61ef5d1107a\", role:\"1116c054-42bb-4bf5-841e-ee0c413fa69e\"}) { 
+			id,
+			user {
+				id
+			},
+			account {
+				id
+			},
+			role {
+				id
+			}
+		} 
+	}"
+}

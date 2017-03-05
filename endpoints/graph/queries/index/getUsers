@@ -1,8 +1,9 @@
 {
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query { 
-		userlist (limit:\"1\") {
+		userlist {
 			users {
 				id,
 				auth0_id,
@@ -21,7 +22,6 @@
 						name,
 						active
 					}
-					signature
 				},
 				address {
 					line1,

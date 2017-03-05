@@ -26,6 +26,7 @@ var affiliateController = require('../../controllers/Affiliate.js');
 var fulfillmentProviderController = require('../../controllers/FulfillmentProvider.js');
 var accessKeyController = require('../../controllers/AccessKey.js');
 var userController = require('../../controllers/User.js');
+var userACLController = require('../../controllers/UserACL.js');
 var emailTemplateController = require('../../controllers/EmailTemplate.js');
 var SMTPProviderController = require('../../controllers/SMTPProvider.js');
 var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
@@ -405,6 +406,22 @@ var userListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var userACLListType = new GraphQLObjectType({
+  name: 'UserACLs',
+  description: 'User ACLs.',
+  fields: () => ({
+    useracls: {
+      type: new GraphQLList(userACLType),
+      description: 'The acls',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 var affiliateListType = new GraphQLObjectType({
   name: 'Affiliates',
   description: 'Affiliates',
@@ -719,22 +736,29 @@ var userACLType = new GraphQLObjectType({
   name: 'UserACL',
   description: 'A user access control list object.',
   fields: () => ({
-  	signature: {
+  	id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The signature of the ACL mapping.',
+      description: 'The id of the role.',
+    },
+    user:{
+      type: new GraphQLNonNull(userType),
+      description: 'The user related to user ACL object',
+      resolve: (user_acl) => {
+      	return userACLController.getUser(user_acl);
+      }
     },
   	account:{
-      type: accountType,
+      type: new GraphQLNonNull(accountType),
       description: 'The account related to user ACL object',
       resolve: (user_acl) => {
-      	return userController.getAccount(user_acl.account);
+      	return userACLController.getAccount(user_acl);
       }
     },
     role:{
-      type: roleType,
+      type: new GraphQLNonNull(roleType),
       description: 'The role related to user ACL object',
       resolve: (user_acl) => {
-      	return userController.getRole(user_acl.role);
+      	return userACLController.getRole(user_acl);
       }
     }
   })
@@ -1484,6 +1508,25 @@ var queryType = new GraphQLObjectType({
       }
     },
     
+    useracllist: {
+      type: userACLListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, useracl){
+		var cursor = useracl.cursor; 
+		var limit = useracl.limit; 
+      	return userACLController.list(cursor, limit);
+      }
+    },
+    
     rebilllist: {
       type: rebillListType,
       args: {
@@ -1925,6 +1968,19 @@ var queryType = new GraphQLObjectType({
 			return null;
 		}
       }
+    },
+    useracl: {
+      type: userACLType,
+      args: {
+        id: {
+          description: 'id of the useracl',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, useracl){
+		var id = useracl.id; 
+		return userACLController.get(id);
+      }
     }
   })
 });
@@ -1958,9 +2014,10 @@ const userInputType = new GraphQLInputObjectType({
 const userACLInputType = new GraphQLInputObjectType({
   name: 'UserACLInputType',
   fields: () => ({
+  	id:						{ type: new GraphQLNonNull(GraphQLString) },
+  	user:					{ type: new GraphQLNonNull(GraphQLString) },
     account:				{ type: new GraphQLNonNull(GraphQLString) },
-    role:					{ type: new GraphQLNonNull(GraphQLString) },
-    signature:				{ type: new GraphQLNonNull(GraphQLString) }
+    role:					{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -2256,6 +2313,40 @@ var mutationType = new GraphQLObjectType({
 			resolve: (value, user) => {
 				var id = user.id;
 				return userController.delete(id);
+			}
+		},
+		createuseracl:{
+			type: userACLType,
+			description: 'Adds a new user acl.',
+			args: {
+				useracl: { type: userACLInputType }
+			},
+			resolve: (value, useracl) => {	
+				return userACLController.create(useracl.useracl);
+			}
+		},
+		updateuseracl:{
+			type: userACLType,
+			description: 'Updates a user acl.',
+			args: {
+				useracl: { type: userACLInputType }
+			},
+			resolve: (value, useracl) => {
+				return userACLController.update(useracl.useracl);
+			}
+		},
+		deleteuseracl:{
+			type: deleteOutputType,
+			description: 'Deletes a user acl.',
+			args: {
+				id: {
+				  description: 'id of the useracl',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, useracl) => {
+				var id = useracl.id;
+				return userACLController.delete(id);
 			}
 		},
 		createproduct:{

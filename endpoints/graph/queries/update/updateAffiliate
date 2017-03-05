@@ -1,5 +1,6 @@
 {
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		updateaffiliate (affiliate: { id: \"testing\", affiliate_id: \"test\", sub_id_1: \"test\", sub_id_2: \"test\", sub_id_3: \"test\", sub_id_4: \"test\", sub_id_5: \"test\", click_id: \"test\"}) { 

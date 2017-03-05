@@ -22,22 +22,22 @@ module.exports = class entityController {
 	can(action){	
 		
 		return permissionutilities.validatePermissions(action, this.descriptive_name);
+		
 	}
 	
 	//ACL enabled
 	list(cursor, limit){
 		
 		return new Promise((resolve, reject) => {
-		
+			
 			this.can('read').then((permission) => {
-		
+				
 				if(permission != true){
 					
 					resolve(null);
 					//resolve(permissionutilities.messages.nopermission); 
 				
-				}
-				
+				}				
 				
 				var query_parameters = {filter_expression: null, expression_attribute_values: null};
 
@@ -48,15 +48,15 @@ module.exports = class entityController {
 				if(typeof limit  !== 'undefined'){
 					query_parameters['limit'] = limit;
 				}
-
+									
 				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
-
+				
 					if(global.account == '*'){
 
 						//for now, do nothing
 					
 					}else{
-
+						
 						query_parameters.filter_expression = 'account = :accountv';
 						query_parameters.expression_attribute_values = {':accountv':global.account};
 					
@@ -66,9 +66,8 @@ module.exports = class entityController {
 
 				dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 					
-
-					if(_.isError(error)){ console.log('n');reject(error);}
-				
+					if(_.isError(error)){ console.log(error); reject(error);}
+						
 					if(_.isObject(data)){
 
 						var pagination_object = {
@@ -128,10 +127,13 @@ module.exports = class entityController {
 				}
 			
 				let query_parameters = {
-					condition_expression: field+' = :index_valuev',
-					expression_attribute_values: {':index_valuev': index_value}
+					condition_expression: '#'+field+' = :index_valuev',
+					expression_attribute_values: {':index_valuev': index_value},
+					expression_attribute_names: {}
 				}
-			
+				
+				query_parameters.expression_attribute_names['#'+field] = field;
+				
 				if(typeof cursor  !== 'undefined'){
 					query_parameters.ExclusiveStartKey = cursor;
 				}
@@ -265,7 +267,7 @@ module.exports = class entityController {
 		return new Promise((resolve, reject) => {
 			
 			this.can('read').then((permission) => {
-			
+					
 				if(permission != true){
 				
 					resolve(null);
@@ -582,6 +584,18 @@ module.exports = class entityController {
 			return resolve(validation);
 		
 		});
+		
+	}
+	
+	isUUID(string, version){
+		
+		return validator.isUUID(string, version);
+		
+	}
+	
+	isEmail(string){
+		
+		return validator.isEmail(string);	
 		
 	}
 

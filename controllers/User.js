@@ -7,6 +7,7 @@ var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var accountController = require('./Account.js');
 var roleController = require('./Role.js');
 var accessKeyController = require('./AccessKey.js');
+let userACLController = require('./UserACL.js');
 var entityController = require('./Entity.js');
 
 class userController extends entityController {
@@ -17,21 +18,26 @@ class userController extends entityController {
 		this.descriptive_name = 'user';
 	}
 	
-	
 	getHydrated(id){
+		
+		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
 			
 			this.get(id).then((user) => {
-				
+			
 				if(_.has(user, 'id')){
 				
-					this.getACLHydrated(user).then(acl => {
-				
+					this.getACLPartiallyHydrated(user).then((acl) => {
+						
 						user.acl = acl;
-				
+					
 						resolve(user);
-				
+						
+					}).catch((error) => {
+					
+						reject(error);
+						
 					});
 				
 				}else{
@@ -40,11 +46,91 @@ class userController extends entityController {
 										
 				}
 			
+			}).catch((error) => {
+			
+				return reject(error);
+				
 			});
 			
 		});
 		
 	}
+	
+	getACL(user){
+		
+		return userACLController.getACLByUser(user.id);
+		
+	}
+	
+	getACLPartiallyHydrated(user){
+		
+		return new Promise((resolve, reject) => {
+		
+			var acls = [];
+			
+			userACLController.listBySecondaryIndex('user', user.id, 'user-index').then((acls) => {
+				
+				if(_.isNull(acls)){
+					resolve(null);
+				}
+					
+				let acl_promises = acls.map(acl => userACLController.getPartiallyHydratedACLObject(acl));
+				
+				Promise.all(acl_promises).then((acl_promises) => {
+
+					resolve(acl_promises);
+					
+				}).catch((error) => {
+
+					reject(error);
+				});
+				
+			});
+			
+		});
+		
+	}
+	
+	getAccount(id){
+		
+		if(id == '*'){ 
+			return accountController.getMasterAccount(); 
+		}else{
+			return accountController.get(id);
+		}
+		
+	}
+	
+	getAccessKey(id){
+		return accessKeyController.get(id);
+	}
+	
+	getAccessKeyByKey(id){
+		return accessKeyController.getAccessKeyByKey(id);
+	}
+	
+	getUserByEmail(email){
+		return this.getBySecondaryIndex('email', email, 'email-index');
+	}
+	
+	getAddress(user){
+		
+		if(_.has(user, "address")){
+			
+			return user.address;
+			
+		}else{
+			return null;
+		}
+		
+	}
+	
+	getUserByAccessKeyId(access_key_id){
+	
+		return this.getBySecondaryIndex('access_key_id', access_key_id, 'access_key_id-index');
+		
+	}
+	
 	/*
 	invite(user){
 	
@@ -93,108 +179,7 @@ class userController extends entityController {
 		
 	}
 	*/
-	
-	getUserByAccessKeyId(access_key_id){
-		return this.getBySecondaryIndex('access_key_id', access_key_id, 'access_key_id-index');
-	}
-	
-	getACL(user){
-		
-		if(!_.has(user, 'acl')){ return null; }
-		
-		return user.acl.map((useracl_object) => {
-			
-			return useracl_object;	
-			
-		});	
-		
-	}
-	
-	getHydratedACLObject(useracl){
-		
-		return new Promise((resolve, reject) => {
-			
-			let promises = []
-			promises.push(this.getAccount(useracl.account));
-			promises.push(this.getRole(useracl.role));
-			
-			return Promise.all(promises).then(promises => {
-				
-				useracl.account = promises[0];
-				useracl.role = promises[1];
-				
-				return resolve(useracl);
-				
-			})
-			
-		});
-		
-	}
-	
-	getACLHydrated(user){
-		
-		if(!_.has(user, 'acl')){ return null; }
-		
-		return new Promise((resolve, reject) => {
-		
-			let promises = []
-		
-			user.acl.map((useracl_object) => {
-			
-				promises.push(this.getHydratedACLObject(useracl_object));
-			
-			});	
-		
-			return Promise.all(promises).then((promises) => {
-			
-				resolve(promises);
-					
-			});
-			
-		});
-		
-	}
-	
-	getAccount(id){
-		
-		if(id == '*'){ 
-			return accountController.getMasterAccount(); 
-		}else{
-			return accountController.get(id);
-		}
-		
-	}
-	
-	getRole(id){
-		
-		return roleController.get(id);
-		
-	}
-	
-	getAccessKey(id){
-		return accessKeyController.get(id);
-	}
-	
-	getAccessKeyByKey(id){
-		return accessKeyController.getAccessKeyByKey(id);
-	}
-	
-	getUserByEmail(email){
-		return this.getBySecondaryIndex('email', email, 'email-index');
-	}
-	
-	getAddress(user){
-		
-		if(_.has(user, "address")){
-			
-			return user.address;
-			
-		}else{
-			return null;
-		}
-		
-	}
-        
+	        
 }
 
 module.exports = new userController();

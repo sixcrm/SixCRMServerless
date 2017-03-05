@@ -3,11 +3,22 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query { 
-		rolelist {
-			roles {
+		useracllist {
+			useracls {
 				id,
-				name,
-				active
+				role {
+					id,
+					name
+				},
+				account {
+					id,
+					name
+				},
+				user {
+					id,
+					email,
+					name
+				}
 			},
 			pagination {
 				count,

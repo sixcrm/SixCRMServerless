@@ -45,7 +45,9 @@
 				"shippingreceipt/*",
 				"smtprovider/*",
 				"transaction/*",
-				"user/*"
+				"account/read",
+				"user/read",
+				"useracl/*"
         	],
         	"deny":["*"]
         }
@@ -62,7 +64,8 @@
 				"rebill/*",
 				"session/*",
 				"shippingreceipt/*",
-				"transaction/*"
+				"transaction/*",
+				"role/read"
         	],
         	"deny":["*"]
         }

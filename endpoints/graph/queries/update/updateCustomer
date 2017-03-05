@@ -1,5 +1,6 @@
 {
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
 		updatecustomer ( customer: {id: \"Testing-ID\", email: \"test2@test.com\", firstname: \"Test\", lastname: \"Test\", phone: \"1234567890\", address: { line1: \"123 Test St.\", line2: \"Apartment 3\", city: \"Portland\", state: \"Oregon\", zip: \"97213\", country: \"USA\" }, creditcards:[\"df84f7bb-06bd-4daa-b1a3-6a2c113edd72\"] } ) { 

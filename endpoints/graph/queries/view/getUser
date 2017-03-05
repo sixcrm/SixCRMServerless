@@ -1,4 +1,5 @@
 {
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
@@ -25,7 +26,6 @@
 					name,
 					active
 				}
-				signature
 			},
 			address {
 				line1,

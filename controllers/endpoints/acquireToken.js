@@ -17,7 +17,7 @@ class acquireTokenController {
 		
 		return new Promise((resolve, reject) => {
 			
-			if(_.has(event, "requestContext") && _.has(event.requestContext, "authorizer") && _.has(event.requestContext.authorizer,"user")){
+			if(_.has(event, "requestContext") && _.has(event.requestContext, "authorizer") && _.has(event.requestContext.authorizer, "user")){
 			
 				resolve(event);
 				
