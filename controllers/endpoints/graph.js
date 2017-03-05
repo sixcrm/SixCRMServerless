@@ -133,7 +133,7 @@ class graphController {
 			
 			//mock request	
 			}else if(_.isString(event)){
-					
+				
 				let parsed_event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
 				
 				if(_.has(parsed_event, 'requestContext')){

@@ -9,7 +9,7 @@ var productController = require('./Product.js');
 var loadBalancerController = require('./LoadBalancer.js');
 var productScheduleController = require('./ProductSchedule.js');
 var affiliateController = require('./Affiliate.js');
-var emailController = require('./Email.js');
+var emailTemplateController = require('./EmailTemplate.js');
 var entityController = require('./Entity.js');
 
 class campaignController extends entityController {
@@ -20,11 +20,11 @@ class campaignController extends entityController {
 		this.descriptive_name = 'campaign';
 	}
 	
-	getEmails(campaign){
+	getEmailTemplates(campaign){
 		
 		if(_.has(campaign, "emails")){
 		
-			return campaign.emails.map(id => emailController.get(id));
+			return campaign.emailtemplates.map(id => emailTemplateController.get(id));
 			
 		}else{
 			

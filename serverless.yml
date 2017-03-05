@@ -99,7 +99,7 @@ functions:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      emails_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.emails_table}
+      email_templates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.email_templates_table}
       smtp_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.smtp_providers_table}
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}

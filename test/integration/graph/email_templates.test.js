@@ -9,26 +9,26 @@ chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
 
-var entity = 'Accounts';
+var entity = 'EmailTemplates';
 var tests = [{
 	name: "index",
-	query: "./endpoints/graph/queries/index/getAccounts"
+	query: "./endpoints/graph/queries/index/getEmailTemplates"
 },
 {
 	name: "view",
-	query: "./endpoints/graph/queries/view/getAccount"
+	query: "./endpoints/graph/queries/view/getEmailTemplate"
 },
 {
 	name: "create",
-	query: "./endpoints/graph/queries/create/createAccount"
+	query: "./endpoints/graph/queries/create/createEmailTemplate"
 },
 {
 	name: "update",
-	query: "./endpoints/graph/queries/update/updateAccount"
+	query: "./endpoints/graph/queries/update/updateEmailTemplate"
 },
 {
 	name: "delete",
-	query: "./endpoints/graph/queries/delete/deleteAccount"
+	query: "./endpoints/graph/queries/delete/deleteEmailTemplate"
 }];
 
 let this_request = request(endpoint);

@@ -1,27 +1,21 @@
-var request = require('supertest');
-var chai = require('chai');
+const request = require('supertest');
+const chai = require('chai');
+const assert = require('chai').assert
+const fs = require('fs');
+const yaml = require('js-yaml');
+const tu = require('../../../lib/test-utilities.js');
+
 chai.use(require('chai-json-schema'));
-var assert = require('chai').assert
-var fs = require('fs');
-var yaml = require('js-yaml');
-var crypto = require('crypto');
 
-var tu = require('../../../lib/test-utilities.js');
+let endpoint = global.integration_test_config.endpoint;
 
-try {
-  var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
-} catch (e) {
-  console.log(e);
-}
-
-var endpoint = config.endpoint;
 var entities = [
 	{camel:'AccessKeys',lower:'accesskey'}, 
 	{camel:'Accounts',lower:'account'}, 
 	{camel:'Affiliates',lower:'affiliate'},
 	{camel:'Campaigns',lower:'campaign'},
 	{camel:'Customers',lower:'customer'},
-	{camel:'Emails',lower:'email'},
+	{camel:'EmailTemplates',lower:'emailtemplate'},
 	{camel:'FulfillmentProviders',lower:'fulfillmentprovider'},
 	{camel:'LoadBalancers',lower:'loadbalancer'},
 	{camel:'MerchantProviders',lower:'merchantprovider'},
@@ -35,8 +29,8 @@ var entities = [
 	{camel:'Transactions',lower:'transaction'},
 	{camel:'Users',lower:'user'}
 ];
-	
-var endpoint = config.endpoint;
+
+let testing_jwt = tu.createTestAuth0JWT('super.user@test.com', global.site_config.jwt.auth0.secret_key);
 
 entities.forEach((entity) => {
 	describe('Graph Test', function() {
@@ -44,7 +38,8 @@ entities.forEach((entity) => {
 		it(entity.camel+' Page 1 JSON results', function (done) {
 			
 			var limit = 1;
-			var raw_query = tu.getQuery('./endpoints/graph/queries/pagination/get'+entity.camel);
+			let query_path = './endpoints/graph/queries/pagination/get'+entity.camel;
+			var raw_query = tu.getQuery(query_path);
 			var query = raw_query.split('{argumentation}');
 			var query_arguments = 'limit:"'+limit+'"';
 			var query = query[0]+query_arguments+query[1];
@@ -52,10 +47,9 @@ entities.forEach((entity) => {
 			var this_request = request(endpoint);
 			
 			var account = tu.getAccount('./endpoints/graph/queries/pagination/get'+entity.camel);
-			//console.log('\tQuery endpoint: '+endpoint+'graph/'+account);
-			//console.log();
+
 			this_request.post('graph/'+account)
-				.set('Authorization', global.site_jwt)
+				.set('Authorization', testing_jwt)
 				.send(query)
 				.expect(200)
 				.expect('Content-Type', 'application/json')
@@ -64,13 +58,12 @@ entities.forEach((entity) => {
 				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 				.end(function(err, response){
 					
-					tu.assertResultSet(response);
-					console.log(response.body.data);
+					tu.assertResultSet(response, global.test_accounts[0].role);
+	
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'end_cursor');
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'has_next_page');
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'count');
 					
-					//console.log(response.body.data[entity.lower+'list']);
 					assert.equal(response.body.data[entity.lower+'list'][entity.lower+'s'].length, limit);
 					assert.isAtMost(response.body.data[entity.lower+'list'].pagination.count, limit);
 						
@@ -92,7 +85,7 @@ entities.forEach((entity) => {
 						var query = query[0]+query_arguments+query[1];
 					
 						this_request.post('graph/'+account)
-							.set('Authorization', global.site_jwt)
+							.set('Authorization', testing_jwt)
 							.send(query)
 							.expect(200)
 							.expect('Content-Type', 'application/json')
@@ -101,7 +94,7 @@ entities.forEach((entity) => {
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
 							
-								tu.assertResultSet(response);
+								tu.assertResultSet(response, global.test_accounts[0].role);
 								
 								if(response.body.data[entity.lower+'list'].pagination.count > 0){
 									assert.equal(response.body.data[entity.lower+'list'].pagination.count, limit);

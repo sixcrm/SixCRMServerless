@@ -26,7 +26,7 @@
     },
     {
     	"id":"e09ac44b-6cde-4572-8162-609f6f0aeca8",
-        "name": "Admin",
+        "name": "Administrator",
         "active":"true",
         "permissions":{
         	"allow":[
@@ -35,7 +35,7 @@
 				"campaign/*",
 				"creditcard/*",
 				"customer/*",
-				"email/*",
+				"emailtemplate/*",
 				"loadbalancer/*",
 				"merchantprovider/*",
 				"productschedule/*",

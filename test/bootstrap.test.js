@@ -71,36 +71,11 @@ var config = new AWS.Config({
 */
 
 before(function(done) {
-    try {
-        console.log("=============== load config ./config/", global.environment, '/site.yml');
-        var config = yaml.safeLoad(fs.readFileSync('./config/'+global.environment+'/site.yml', 'utf8'));
-        global.site_config = config;
-        //console.log("global.site_config: ", util.inspect(config,{depth : null}));
-    } catch (e) {
-      console.log(e);
-    }
-    
-    try{
-    	
-    	var now = timestamp.createTimestampSeconds();
-    	var jwt_contents = {
-		  "email": "waltr0n21@gmail.com",
-		  "email_verified": true,
-		  "picture": "https://lh4.googleusercontent.com/-ZTy3frxxIEM/AAAAAAAAAAI/AAAAAAAAAa4/CMWDALO30VQ/photo.jpg",
-		  "iss": "https://sixcrm.auth0.com/",
-		  "sub": "google-oauth2|115021313586107803846",
-		  "aud": "JM1tC2j7tycbu62el3oBhyklpNbk5x6F",
-		  "exp": (now+3600),
-		  "iat": now
-		};
+	
+	//can these be set in the test themselves?		
+	global.test_account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
 
-        global.transaction_jwt = jwt.sign({user_id:'93b086b8-6343-4271-87d6-b2a00149f070'}, global.site_config.jwt.transaction_key);
-        global.site_jwt = jwt.sign(jwt_contents, global.site_config.jwt.auth0.secret_key);
-		global.test_account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
-		
-    } catch (e){
-        console.log(e);
-    }
+	global.transaction_jwt = jwt.sign({user_id:'93b086b8-6343-4271-87d6-b2a00149f070'}, global.site_config.jwt.transaction_key);
 
     done();
     

@@ -26,15 +26,15 @@ var affiliateController = require('../../controllers/Affiliate.js');
 var fulfillmentProviderController = require('../../controllers/FulfillmentProvider.js');
 var accessKeyController = require('../../controllers/AccessKey.js');
 var userController = require('../../controllers/User.js');
-var emailController = require('../../controllers/Email.js');
+var emailTemplateController = require('../../controllers/EmailTemplate.js');
 var SMTPProviderController = require('../../controllers/SMTPProvider.js');
 var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 var accountController = require('../../controllers/Account.js');
 var roleController = require('../../controllers/Role.js');
 
-const emailTypeEnum = new GraphQLEnumType({
-	name: 'EmailTypeEnumeration',
-	description:  'The various email types.',
+const emailTemplateTypeEnum = new GraphQLEnumType({
+	name: 'EmailTemplateTypeEnumeration',
+	description:  'The various email template types.',
 	values:{
 		ALLORDERS: {
 			value: 'allorders',
@@ -324,12 +324,12 @@ var productListType = new GraphQLObjectType({
   interfaces: []
 });
 
-var emailListType = new GraphQLObjectType({
-  name: 'Emails',
+var emailTemplateListType = new GraphQLObjectType({
+  name: 'EmailTemplates',
   description: 'Email tempates for use.',
   fields: () => ({
-    emails: {
-      type: new GraphQLList(emailType),
+    emailtemplates: {
+      type: new GraphQLList(emailTemplateType),
       description: 'The email templates',
     },
     pagination: {
@@ -346,7 +346,7 @@ var SMTPProviderListType = new GraphQLObjectType({
   fields: () => ({
     smtpproviders: {
       type: new GraphQLList(SMTPProviderType),
-      description: 'The email templates',
+      description: 'The SMTP providers',
     },
     pagination: {
       type: new GraphQLNonNull(paginationType),
@@ -478,7 +478,7 @@ var accessKeyListType = new GraphQLObjectType({
       description: 'The access keys',
     },
     pagination: {
-      type: new GraphQLNonNull(paginationType),
+      type: paginationType,
       description: 'Query pagination',
     }
   }),
@@ -1138,26 +1138,26 @@ var campaignType = new GraphQLObjectType({
       description: 'The configured product schedules associated with the campaign',
       resolve: campaign => campaignController.getProductSchedules(campaign)
     },
-    emails: {
-      type: new GraphQLList(emailType),
-      descsription: 'Emails configured and associated with the campaign',
-      resolve: campaign => campaignController.getEmails(campaign)
+    emailtemplates: {
+      type: new GraphQLList(emailTemplateType),
+      descsription: 'Email templates configured and associated with the campaign',
+      resolve: campaign => campaignController.getEmailTemplates(campaign)
     }
   }),
   interfaces: []
 });
 
-var emailType = new GraphQLObjectType({
-  name: 'email',
-  description: 'A email object',
+var emailTemplateType = new GraphQLObjectType({
+  name: 'emailtemplate',
+  description: 'A email template object',
   fields: () => ({
   	id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The email identifier.',
+      description: 'The email template identifier.',
     },
     name: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The email name.',
+      description: 'The email template name.',
     },
     subject: {
       type: new GraphQLNonNull(GraphQLString),
@@ -1165,16 +1165,16 @@ var emailType = new GraphQLObjectType({
     },
     body: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The email body.',
+      description: 'The email template body.',
     },
     type: {
-      type: new GraphQLNonNull(emailTypeEnum),
-      description: 'The email type (see enumeration).',
+      type: new GraphQLNonNull(emailTemplateTypeEnum),
+      description: 'The email template type (see enumeration).',
     },
     smtp_provider: {
       type: SMTPProviderType,
-      description: 'The SMTP Provider for the email.',
-      resolve: email => emailController.getSMTPProvider(email)
+      description: 'The SMTP Provider for the email template.',
+      resolve: emailtemplate => emailTemplateController.getSMTPProvider(emailtemplate)
     }
   }),
   interfaces: []
@@ -1380,17 +1380,17 @@ var queryType = new GraphQLObjectType({
       }
     },
     
-     email: {
-      type: emailType,
+     emailtemplate: {
+      type: emailTemplateType,
       args: {
         id: {
-          description: 'id of the email',
+          description: 'id of the email template',
           type: GraphQLString
         }
       },
-      resolve: function(root, email){
-		var id = email.id; 
-      	return emailController.get(id);
+      resolve: function(root, emailtemplate){
+		var id = emailtemplate.id; 
+      	return emailTemplateController.get(id);
       }
     },
     
@@ -1408,8 +1408,8 @@ var queryType = new GraphQLObjectType({
       }
     },
     
-    emaillist: {
-      type: emailListType,
+    emailtemplatelist: {
+      type: emailTemplateListType,
       args: {
         limit: {
           description: 'limit',
@@ -1420,10 +1420,10 @@ var queryType = new GraphQLObjectType({
           type: GraphQLString
         }
       },
-      resolve: function(root, emails){
-		var cursor = emails.cursor; 
-		var limit = emails.limit; 
-      	return emailController.list(cursor, limit);
+      resolve: function(root, emailtemplates){
+		var cursor = emailtemplates.cursor; 
+		var limit = emailtemplates.limit; 
+      	return emailTemplateController.list(cursor, limit);
       }
     },
     
@@ -2051,8 +2051,8 @@ const fulfillmentProviderInputType = new GraphQLInputObjectType({
   })
 });
 
-const emailInputType = new GraphQLInputObjectType({
-  name: 'EmailInput',
+const emailTemplateInputType = new GraphQLInputObjectType({
+  name: 'EmailTemplateInput',
   fields: () => ({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
     name:				{ type: new GraphQLNonNull(GraphQLString) },
@@ -2182,7 +2182,7 @@ const campaignInputType = new GraphQLInputObjectType({
     name:				{ type: new GraphQLNonNull(GraphQLString) },
     loadbalancer:		{ type: new GraphQLNonNull(GraphQLString) },
     productschedules:	{ type: new GraphQLList(GraphQLString) },
-    emails:				{ type: new GraphQLList(GraphQLString) }
+    emailtemplates:		{ type: new GraphQLList(GraphQLString) }
   })
 });
 
@@ -2207,8 +2207,7 @@ const sessionInputType = new GraphQLInputObjectType({
     created:			{ type: new GraphQLNonNull(GraphQLString) },
     completed:			{ type: new GraphQLNonNull(GraphQLString) },
     affiliate:			{ type: GraphQLString },
-    product_schedules:	{ type: new GraphQLList(GraphQLString) },
-    emails:				{ type: new GraphQLList(GraphQLString) }
+    product_schedules:	{ type: new GraphQLList(GraphQLString) }
   })
 });
             
@@ -2531,38 +2530,38 @@ var mutationType = new GraphQLObjectType({
 				return fulfillmentProviderController.delete(id);
 			}
 		},
-		createemail:{
-			type: emailType,
-			description: 'Adds a new email.',
+		createemailtemplate:{
+			type: emailTemplateType,
+			description: 'Adds a new email template.',
 			args: {
-				email: { type: emailInputType }
+				emailtemplate: { type: emailTemplateInputType }
 			},
-			resolve: (value, email) => {
-				return emailController.create(email.email);
+			resolve: (value, emailtemplate) => {
+				return emailTemplateController.create(emailtemplate.emailtemplate);
 			}
 		},
-		updateemail:{
-			type: emailType,
-			description: 'Updates a Email.',
+		updateemailtemplate:{
+			type: emailTemplateType,
+			description: 'Updates a Email Template.',
 			args: {
-				email: { type: emailInputType }
+				emailtemplate: { type: emailTemplateInputType }
 			},
-			resolve: (value, email) => {
-				return emailController.update(email.email);
+			resolve: (value, emailtemplate) => {
+				return emailTemplateController.update(emailtemplate.emailtemplate);
 			}
 		},
-		deleteemail:{
+		deleteemailtemplate:{
 			type: deleteOutputType,
-			description: 'Deletes a Email.',
+			description: 'Deletes a Email Template.',
 			args: {
 				id: {
-				  description: 'id of the email',
+				  description: 'id of the email template',
 				  type: new GraphQLNonNull(GraphQLString)
 				}
 			},
-			resolve: (value, email) => {
-				var id = email.id;
-				return emailController.delete(id);
+			resolve: (value, emailtemplate) => {
+				var id = emailtemplate.id;
+				return emailTemplateController.delete(id);
 			}
 		},
 		createcreditcard:{

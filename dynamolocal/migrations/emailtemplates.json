@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "emails",
+        "TableName": "email_templates",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"

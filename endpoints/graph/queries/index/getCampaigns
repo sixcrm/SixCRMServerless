@@ -43,7 +43,7 @@
 						distribution
 					}
 				},
-				emails {
+				emailtemplates {
 					id,
 					name,
 					subject,

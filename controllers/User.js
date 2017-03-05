@@ -22,15 +22,23 @@ class userController extends entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			this.get(id).then(user => {
-		
-				this.getACLHydrated(user).then(acl => {
+			this.get(id).then((user) => {
 				
-					user.acl = acl;
+				if(_.has(user, 'id')){
 				
-					resolve(user);
+					this.getACLHydrated(user).then(acl => {
 				
-				});
+						user.acl = acl;
+				
+						resolve(user);
+				
+					});
+				
+				}else{
+					
+					resolve(null);
+										
+				}
 			
 			});
 			

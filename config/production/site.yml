@@ -21,7 +21,7 @@ dynamodb:
   campaigns_table: 'campaigns'
   merchant_providers_table: 'merchant_providers'
   fulfillment_providers_table: 'fulfillment_providers'
-  emails_table: 'emails'
+  email_templates_table: 'email_templates'
   smtp_providers_table: 'smtp_providers'
   shipping_receipts_table: 'shipping_receipts'
   accounts_table: 'accounts'

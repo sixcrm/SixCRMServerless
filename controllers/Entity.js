@@ -22,53 +22,55 @@ module.exports = class entityController {
 	can(action){	
 		
 		return permissionutilities.validatePermissions(action, this.descriptive_name);
-		
 	}
 	
 	//ACL enabled
 	list(cursor, limit){
 		
 		return new Promise((resolve, reject) => {
-			
+		
 			this.can('read').then((permission) => {
-			
+		
 				if(permission != true){
-				
+					
 					resolve(null);
+					//resolve(permissionutilities.messages.nopermission); 
 				
 				}
-
+				
+				
 				var query_parameters = {filter_expression: null, expression_attribute_values: null};
-			
+
 				if(typeof cursor  !== 'undefined'){
 					query_parameters.ExclusiveStartKey = { id: cursor };
 				}
-   
+
 				if(typeof limit  !== 'undefined'){
 					query_parameters['limit'] = limit;
 				}
-			
+
 				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
-				
+
 					if(global.account == '*'){
-					
+
 						//for now, do nothing
 					
 					}else{
-				
-						query_parameters.filter_expression = 'account = :accountv'
+
+						query_parameters.filter_expression = 'account = :accountv';
 						query_parameters.expression_attribute_values = {':accountv':global.account};
 					
 					}
 				
 				}
-			
+
 				dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
-				
-					if(_.isError(error)){ reject(error);}
+					
+
+					if(_.isError(error)){ console.log('n');reject(error);}
 				
 					if(_.isObject(data)){
-					
+
 						var pagination_object = {
 							count: '',
 							end_cursor: '',
@@ -146,7 +148,7 @@ module.exports = class entityController {
 					
 					}else{
 				
-						query_parameters.filter_expression = 'account = :accountv'
+						query_parameters.filter_expression = 'account = :accountv';
 						query_parameters.expression_attribute_values[':accountv'] = global.account;
 					
 					}
@@ -187,7 +189,11 @@ module.exports = class entityController {
 			
 			this.can('read').then((permission) => {
 			
-				if(permission != true){ resolve(null); }
+				if(permission != true){ 
+					
+					resolve(null);
+						
+				}
 				
 				let query_parameters = {
 					condition_expression: field+' = :index_valuev',
@@ -210,7 +216,7 @@ module.exports = class entityController {
 					
 					}else{
 				
-						query_parameters.filter_expression = 'account = :accountv'
+						query_parameters.filter_expression = 'account = :accountv';
 						query_parameters.expression_attribute_values[':accountv'] = global.account;
 					
 					}
@@ -260,7 +266,11 @@ module.exports = class entityController {
 			
 			this.can('read').then((permission) => {
 			
-				if(permission != true){ resolve(null); }
+				if(permission != true){
+				
+					resolve(null);
+				
+				}
 				
 				let query_parameters = {
 					condition_expression: 'id = :idv',
@@ -323,7 +333,11 @@ module.exports = class entityController {
 			
 			this.can('create').then((permission) => {
 			
-				if(permission != true){ resolve(null); }
+				if(permission != true){ 
+				
+					resolve(null);
+									
+				}
 				
 				if(!_.has(entity,'id')){
 			
@@ -394,7 +408,11 @@ module.exports = class entityController {
 			
 			this.can('update').then((permission) => {
 			
-				if(permission != true){ resolve(null); }
+				if(permission != true){ 
+					
+					resolve(null);
+					
+				}
 				
 				if(_.has(global, 'account')){
 				
@@ -461,7 +479,11 @@ module.exports = class entityController {
 			
 			this.can('update').then((permission) => {
 			
-				if(permission != true){ resolve(null); }
+				if(permission != true){ 
+				
+					resolve(null);
+					
+				}
 				
 				let query_parameters = {
 					condition_expression: 'id = :idv',

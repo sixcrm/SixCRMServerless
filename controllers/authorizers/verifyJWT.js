@@ -74,7 +74,11 @@ class verifyJWTController {
 				
 				if(_.has(decoded_token, 'user_id')){
 					
+					global.disableactionchecks = true;
+					
 					userController.get(decoded_token.user_id).then((user) => {
+						
+						global.disableactionchecks = false;
 						
 						if(_.isObject(user) && _.has(user, 'id')){
 							
@@ -88,7 +92,11 @@ class verifyJWTController {
 					
 				}else if(_.has(decoded_token, 'email')){
 					
+					global.disableactionchecks = true;
+					
 					userController.getUserByEmail(decoded_token.email).then((user) => {
+					
+						global.disableactionchecks = false;
 						
 						if(_.isObject(user) && _.has(user, 'id')){
 							

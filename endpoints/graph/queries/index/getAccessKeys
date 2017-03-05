@@ -1,4 +1,5 @@
 {
+	"requestContext":"{\"authorizer\":{\"user\":\"admin.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query { 
