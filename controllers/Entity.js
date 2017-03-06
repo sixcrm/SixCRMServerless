@@ -5,9 +5,10 @@ var fs = require('fs');
 var validator = require('validator');
 var Validator = require('jsonschema').Validator;
 
-let dynamoutilities = require('../lib/dynamodb-utilities.js');
-let arrayutilities = require('../lib/array-utilities.js');
-let permissionutilities = require('../lib/permission-utilities.js');
+const dynamoutilities = require('../lib/dynamodb-utilities.js');
+const arrayutilities = require('../lib/array-utilities.js');
+const permissionutilities = require('../lib/permission-utilities.js');
+const du = require('../lib/debug-utilities.js');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 
@@ -21,7 +22,25 @@ module.exports = class entityController {
 	
 	can(action){	
 		
-		return permissionutilities.validatePermissions(action, this.descriptive_name);
+		du.debug('Can check:', action, this.descriptive_name);
+		
+		return new Promise((resolve, reject) => {
+		
+			permissionutilities.validatePermissions(action, this.descriptive_name).then((permission) => {
+				
+				du.debug('Has permission:', permission);
+				
+				return resolve(permission);
+				
+			}).catch((error) => {
+				
+				du.debug(error);
+				
+				return reject(error);
+				
+			});
+		
+		});
 		
 	}
 	
@@ -34,7 +53,7 @@ module.exports = class entityController {
 				
 				if(permission != true){
 					
-					resolve(null);
+					return resolve(null);
 					//resolve(permissionutilities.messages.nopermission); 
 				
 				}				
@@ -48,20 +67,29 @@ module.exports = class entityController {
 				if(typeof limit  !== 'undefined'){
 					query_parameters['limit'] = limit;
 				}
-									
-				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
-				
-					if(global.account == '*'){
+					
+				if(global.disableaccountfilter !== true){
+								
+					if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+					
+					
+						if(global.account == '*'){
 
-						//for now, do nothing
+							//for now, do nothing
 					
-					}else{
+						}else{
 						
-						query_parameters.filter_expression = 'account = :accountv';
-						query_parameters.expression_attribute_values = {':accountv':global.account};
+							query_parameters.filter_expression = 'account = :accountv';
+							query_parameters.expression_attribute_values = {':accountv':global.account};
 					
+						}
+				
 					}
 				
+				}else{
+				
+					du.warning('Global Account Filter Disabled');
+					
 				}
 
 				dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
@@ -110,9 +138,11 @@ module.exports = class entityController {
 		});
 		
 	}
-
+	
 	//ACL enabled
 	listBySecondaryIndex(field, index_value, index_name, cursor, limit){
+		
+		du.debug('Listing by secondary index', field, index_value, index_name);
 		
 		var controller_instance = this;
 		
@@ -122,7 +152,7 @@ module.exports = class entityController {
 				
 				if(permission !== true){
 				
-					resolve(null);
+					return resolve(null);
 				
 				}
 			
@@ -142,36 +172,46 @@ module.exports = class entityController {
 					query_parameters['limit'] = limit;
 				}
 				
-				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				if(global.disableaccountfilter !== true){
 				
-					if(global.account == '*'){
-					
-						//for now, do nothing
-					
-					}else{
+					if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-						query_parameters.filter_expression = 'account = :accountv';
-						query_parameters.expression_attribute_values[':accountv'] = global.account;
+						if(global.account == '*'){
 					
+							//for now, do nothing
+					
+						}else{
+				
+							query_parameters.filter_expression = 'account = :accountv';
+							query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+						}
+				
 					}
 				
+				}else{
+				
+					du.warning('Global Account Filter Disabled');
+					
 				}
 				
+				du.debug(query_parameters);
+				
 				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
-
+					
 					if(_.isError(error)){ 
 
-						reject(error);
+						return reject(error);
 						
 					}
 				
 					if(_.isArray(data) && data.length > 0){
 					
-						resolve(data);
+						return resolve(data);
 					
 					}else{
 				
-						resolve(null);
+						return resolve(null);
 					
 					}				
 	
@@ -210,20 +250,28 @@ module.exports = class entityController {
 				if(typeof limit  !== 'undefined'){
 					query_parameters['limit'] = limit;
 				}
-			
-				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-					if(global.account == '*'){
-					
-						//for now, do nothing
-					
-					}else{
+				if(global.disableaccountfilter !== true){
 				
-						query_parameters.filter_expression = 'account = :accountv';
-						query_parameters.expression_attribute_values[':accountv'] = global.account;
+					if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+						if(global.account == '*'){
 					
+							//for now, do nothing
+					
+						}else{
+				
+							query_parameters.filter_expression = 'account = :accountv';
+							query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+						}
+				
 					}
 				
+				}else{
+					
+					du.warning('Global Account Filter Disabled');
+					
 				}
 					
 				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
@@ -279,20 +327,28 @@ module.exports = class entityController {
 					condition_expression: 'id = :idv',
 					expression_attribute_values: {':idv': id}
 				};
-			
-				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-					if(global.account == '*'){
-					
-						//for now, do nothing
-					
-					}else{
+				if(global.disableaccountfilter !== true){
 				
-						query_parameters.filter_expression = 'account = :accountv';
-						query_parameters.expression_attribute_values[':accountv'] = global.account;
+					if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				
+						if(global.account == '*'){
 					
+							//for now, do nothing
+					
+						}else{
+				
+							query_parameters.filter_expression = 'account = :accountv';
+							query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+						}
+				
 					}
 				
+				}else{
+					
+					du.warning('Global Account Filter Disabled');
+					
 				}
 			
 				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {

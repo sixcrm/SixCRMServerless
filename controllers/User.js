@@ -2,13 +2,14 @@
 const _ = require('underscore');
 const validator = require('validator');
 
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
+const dynamoutilities = require('../lib/dynamodb-utilities.js');
+const du = require('../lib/debug-utilities.js');
 
-var accountController = require('./Account.js');
-var roleController = require('./Role.js');
-var accessKeyController = require('./AccessKey.js');
-let userACLController = require('./UserACL.js');
-var entityController = require('./Entity.js');
+const accountController = require('./Account.js');
+const roleController = require('./Role.js');
+const accessKeyController = require('./AccessKey.js');
+const userACLController = require('./UserACL.js');
+const entityController = require('./Entity.js');
 
 class userController extends entityController {
 
@@ -26,23 +27,31 @@ class userController extends entityController {
 			
 			this.get(id).then((user) => {
 				
+				du.debug('Prehydrated User:', user);
+				
 				if(_.has(user, 'id')){
 				
 					this.getACLPartiallyHydrated(user).then((acl) => {
 						
+						if(_.isNull(acl)){
+							return reject(new Error('User does not have ACL definitions'));
+						}
+						
+						du.debug('Partially hydrated User ACL object:', acl);
+							
 						user.acl = acl;
 					
-						resolve(user);
+						return resolve(user);
 						
 					}).catch((error) => {
 					
-						reject(error);
+						return reject(error);
 						
 					});
 				
 				}else{
 					
-					resolve(null);
+					return resolve(null);
 										
 				}
 			
@@ -68,16 +77,18 @@ class userController extends entityController {
 		
 			var acls = [];
 			
-			console.log('UserID: '+user.id);
+			du.debug('User: ', user.id);
 			
 			userACLController.listBySecondaryIndex('user', user.id, 'user-index').then((acls) => {
 				
-				console.log(acls);
+				du.debug('ACLs: ', acls);
 				
 				if(_.isNull(acls)){
-					resolve(null);
+					return resolve(null);
 				}
-					
+				
+				du.debug('ACLs: ', acls);
+				
 				let acl_promises = acls.map(acl => userACLController.getPartiallyHydratedACLObject(acl));
 				
 				Promise.all(acl_promises).then((acl_promises) => {

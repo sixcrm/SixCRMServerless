@@ -3,6 +3,8 @@ const _ = require("underscore");
 const graphql =  require('graphql').graphql;
 
 var timestamp = require('../../lib/timestamp.js');
+const du = require('../../lib/debug-utilities.js');
+
 let userController = require('../User.js');
 
 class graphController {
@@ -87,17 +89,23 @@ class graphController {
 		return new Promise((resolve, reject) => {
 			
 			if(!_.has(event, 'user')){
-				reject(new Error('Missing user object in event'));
+				return reject(new Error('Missing user object in event'));
 			}
 			
 			let user_string = event.user;
 			
-			global.disableactionchecks = true;
+			du.debug('Getting User to set in globals', user_string);
 			
 			if(userController.isUUID(user_string, 4)){
 				
+				global.disableactionchecks = true; 
+				
+				global.disableaccountfilter = true;
+				
 				userController.getHydrated(user_string).then((user) => {
-
+					
+					global.disableaccountfilter = false;
+					
 					global.disableactionchecks = false;
 					
 					global.user = user;
@@ -105,7 +113,9 @@ class graphController {
 					return resolve(event);
 			
 				}).catch((error) => {
-				
+					
+					du.debug(error);
+					
 					reject(error);
 				
 				});	
@@ -114,12 +124,18 @@ class graphController {
 				
 				global.disableactionchecks = true;
 				
+				global.disableaccountfilter = true;
+				
 				userController.getUserByEmail(user_string).then((user) => {
-						
+					
 					userController.getHydrated(user.id).then((user) => {
+						
+						global.disableaccountfilter = false;
 						
 						global.disableactionchecks = false;
 					
+						du.debug('Setting global user:', user);
+						
 						global.user = user;
 						
 						return resolve(event);
