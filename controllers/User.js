@@ -25,7 +25,7 @@ class userController extends entityController {
 		return new Promise((resolve, reject) => {
 			
 			this.get(id).then((user) => {
-			
+				
 				if(_.has(user, 'id')){
 				
 					this.getACLPartiallyHydrated(user).then((acl) => {
@@ -68,7 +68,11 @@ class userController extends entityController {
 		
 			var acls = [];
 			
+			console.log('UserID: '+user.id);
+			
 			userACLController.listBySecondaryIndex('user', user.id, 'user-index').then((acls) => {
+				
+				console.log(acls);
 				
 				if(_.isNull(acls)){
 					resolve(null);

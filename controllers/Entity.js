@@ -66,7 +66,7 @@ module.exports = class entityController {
 
 				dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 					
-					if(_.isError(error)){ console.log(error); reject(error);}
+					if(_.isError(error)){ reject(error);}
 						
 					if(_.isObject(data)){
 
@@ -119,8 +119,8 @@ module.exports = class entityController {
 		return new Promise((resolve, reject) => {
 			
 			this.can('read').then((permission) => {
-			
-				if(permission != true){
+				
+				if(permission !== true){
 				
 					resolve(null);
 				
@@ -141,7 +141,7 @@ module.exports = class entityController {
 				if(typeof limit  !== 'undefined'){
 					query_parameters['limit'] = limit;
 				}
-			
+				
 				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
 					if(global.account == '*'){
@@ -156,12 +156,13 @@ module.exports = class entityController {
 					}
 				
 				}
-			
-				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 				
+				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+
 					if(_.isError(error)){ 
-						console.log('listBySecondaryIndex failed with error: ', error)
+
 						reject(error);
+						
 					}
 				
 					if(_.isArray(data) && data.length > 0){
@@ -330,73 +331,75 @@ module.exports = class entityController {
     
     //ACL enabled
     create(entity){
-
+		
 		return new Promise((resolve, reject) => {
 			
 			this.can('create').then((permission) => {
-			
+				
 				if(permission != true){ 
 				
-					resolve(null);
+					return resolve(null);
 									
-				}
+				}else{
 				
-				if(!_.has(entity,'id')){
+					if(!_.has(entity,'id')){
 			
-					entity.id = uuidV4();
+						entity.id = uuidV4();
 				
-				}
-			
-				if(_.has(global, 'account')){
-				
-					if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
-				
-						entity.account = global.account;
-					
 					}
-				
-				}
 			
-				let query_parameters = {
-					condition_expression: 'id = :idv',
-					expression_attribute_values: {':idv': entity.id}
-				};
-			
-				if(_.has(global, 'account')){
+					if(_.has(global, 'account')){
 				
-					if(global.account == '*'){
-					
-						//for now, do nothing
-					
-					}else{
+						if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
 				
-						query_parameters.filter_expression = 'account = :accountv';
-						query_parameters.expression_attribute_values[':accountv'] = global.account;
+							entity.account = global.account;
 					
+						}
+				
 					}
-				
-				}
 			
-				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+					let query_parameters = {
+						condition_expression: 'id = :idv',
+						expression_attribute_values: {':idv': entity.id}
+					};
+			
+					if(_.has(global, 'account')){
 				
-					if(_.isError(error)){ reject(error);}
-
-					if(_.isObject(data) && _.isArray(data) && data.length > 0){
-
-						reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
+						if(global.account == '*'){
 					
-					}				
+							//for now, do nothing
+					
+						}else{
+				
+							query_parameters.filter_expression = 'account = :accountv';
+							query_parameters.expression_attribute_values[':accountv'] = global.account;
+					
+						}
+				
+					}
 
-					dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
-
+					dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+				
 						if(_.isError(error)){ reject(error);}
 
-						resolve(entity);
+						if(_.isObject(data) && _.isArray(data) && data.length > 0){
+
+							return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
+					
+						}				
+
+						dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
+
+							if(_.isError(error)){ reject(error);}
+
+							return resolve(entity);
 				
-					});
+						});
 			
-				});	
-			
+					});	
+					
+				}	
+				
 			});
 			
 		});

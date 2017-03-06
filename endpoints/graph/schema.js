@@ -2492,6 +2492,7 @@ var mutationType = new GraphQLObjectType({
 				affiliate: { type: affiliateInputType }
 			},
 			resolve: (value, affiliate) => {
+				console.log('here');
 				return affiliateController.create(affiliate.affiliate);
 			}
 		},

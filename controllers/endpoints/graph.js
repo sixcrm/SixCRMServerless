@@ -13,17 +13,17 @@ class graphController {
 	
 		return this.validateInput(event)
 			.then((event) => this.parseEvent(event))
-			.then((event) => this.acquireUser(event))
-			.then((event) => this.setGlobalUser(event))
 			.then((event) => this.acquireAccount(event))
 			.then((event) => this.setGlobalAccount(event))
+			.then((event) => this.acquireUser(event))
+			.then((event) => this.setGlobalUser(event))
 			.then((event) => this.acquireQuery(event))
 			.then((event) => this.graphQuery(event));
 			
 	}	
 	
 	validateInput(event){
-		
+
 		return new Promise((resolve, reject) => {
 			
 			resolve(event);
@@ -33,7 +33,7 @@ class graphController {
 	}
 	
 	parseEvent(event){
-		
+
 		return new Promise((resolve, reject) => {
 			
 			if(!_.isObject(event)){
@@ -62,12 +62,12 @@ class graphController {
 	}
 	
 	acquireUser(event){
-		
+
 		return new Promise((resolve, reject) => {
 			
 			//event coming from Lambda authorizer
 			if(_.has(event, 'requestContext') && _.has(event.requestContext, 'authorizer') && _.has(event.requestContext.authorizer, 'user')){
-				
+			
 				event.user = event.requestContext.authorizer.user;
 				
 			}else{
@@ -83,7 +83,7 @@ class graphController {
 	}
 	
 	setGlobalUser(event){
-		
+
 		return new Promise((resolve, reject) => {
 			
 			if(!_.has(event, 'user')){
@@ -95,9 +95,9 @@ class graphController {
 			global.disableactionchecks = true;
 			
 			if(userController.isUUID(user_string, 4)){
-			
-				userController.getHydrated(user_string).then((user) => {
 				
+				userController.getHydrated(user_string).then((user) => {
+
 					global.disableactionchecks = false;
 					
 					global.user = user;
@@ -143,7 +143,7 @@ class graphController {
 	}
 	
 	acquireAccount(event){
-		
+
 		return new Promise((resolve, reject) => {
 		
 			var account; 
@@ -178,7 +178,7 @@ class graphController {
 	}
 	
 	setGlobalAccount(event){
-		
+
 		return new Promise((resolve, reject) => {
 			
 			if(_.has(event, 'account')){
@@ -194,7 +194,7 @@ class graphController {
 	}
 	
 	acquireQuery(event){
-		
+
 		return new Promise((resolve, reject) => {
 		
 			var query; 
@@ -218,7 +218,7 @@ class graphController {
 	}
 	
 	graphQuery(event) {
-		
+
 		var query = event.parsed_query;
 		
 		return new Promise((resolve, reject) => {
