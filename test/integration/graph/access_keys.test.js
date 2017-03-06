@@ -40,7 +40,6 @@ describe('Graph '+entity+' Test', function() {
 			
 			let test_jwt = tu.createTestAuth0JWT(test_account.email, global.site_config.jwt.auth0.secret_key);
 			
-			console.log(test_jwt);
 			tests.forEach((test) => {
 	
 				let account = tu.getAccount(test.query);
