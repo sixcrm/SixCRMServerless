@@ -9,26 +9,26 @@ chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
 
-var entity = 'Load Balancers';
+var entity = 'User ACLs';
 var tests = [{
 	name: "index",
-	query: "./endpoints/graph/queries/index/getLoadBalancers"
+	query: "./endpoints/graph/queries/index/getUserACLs"
 },
 {
 	name: "view",
-	query: "./endpoints/graph/queries/view/getLoadBalancer"
+	query: "./endpoints/graph/queries/view/getUserACL"
 },
 {
 	name: "create",
-	query: "./endpoints/graph/queries/create/createLoadBalancer"
+	query: "./endpoints/graph/queries/create/createUserACL"
 },
 {
 	name: "update",
-	query: "./endpoints/graph/queries/update/updateLoadBalancer"
+	query: "./endpoints/graph/queries/update/updateUserACL"
 },
 {
 	name: "delete",
-	query: "./endpoints/graph/queries/delete/deleteLoadBalancer"
+	query: "./endpoints/graph/queries/delete/deleteUserACL"
 }];
 
 let this_request = request(endpoint);

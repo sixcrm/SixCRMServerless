@@ -4,6 +4,7 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
+    "async": "^2.1.5",
     "aws-sdk": "^2.7.13",
     "chai-as-promised": "^6.0.0",
     "crypto": "0.0.3",
@@ -35,7 +36,7 @@
     "test-integration": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/**/*.test.js",
     "test-unit": "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive  './test/unit/**/*.spec.js'",
     "test-local-integration": "ENV=local mocha ./test/integration/local/createOrder/createOrder.test.js",
-    "test-workers" : "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
+    "test-workers": "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
     "test-endpoints": "istanbul cover _mocha  -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'"
   },
   "pre-commit": [
