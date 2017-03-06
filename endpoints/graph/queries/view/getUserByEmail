@@ -9,10 +9,23 @@
 			auth0_id,
 			email,
 			active,
+			termsandconditions,
 			accesskey {
 				id,
 				access_key,
 				secret_key
+			},
+			acl {
+				account {
+					id,
+					name,
+					active
+				},
+				role {
+					id,
+					name,
+					active
+				}
 			},
 			address {
 				line1,
@@ -21,8 +34,7 @@
 				state,
 				zip,
 				country
-			},
-			termsandconditions
+			}
 		} 
 	}"
 }
