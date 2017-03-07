@@ -141,7 +141,7 @@ describe('lib/dynamodb-utilities', () => {
             };
 
             // when
-            DynamoDBUtilities.queryRecords(aTableName, anyConditionExpression, anyParams, anyIndex = 0, (err, data) => {
+            DynamoDBUtilities.queryRecords(aTableName, anyParams, anyIndex = 0, (err, data) => {
                 // then
                 expect(data).to.deep.equal(anyResults.Items);
                 done();
