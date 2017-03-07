@@ -85,7 +85,11 @@ class graphController {
 	}
 	
 	setGlobalUser(event){
-
+		
+		du.debug('Set Global User', event);
+		
+		du.debug('Global', global);
+		
 		return new Promise((resolve, reject) => {
 			
 			if(!_.has(event, 'user')){
@@ -94,7 +98,7 @@ class graphController {
 			
 			let user_string = event.user;
 			
-			du.debug('Getting User to set in globals', user_string);
+			du.debug('user_string', user_string);
 			
 			if(userController.isUUID(user_string, 4)){
 				
@@ -130,11 +134,17 @@ class graphController {
 			
 			}else if(userController.isEmail(user_string)){
 				
+				du.debug('Is email: '+user_string);
+				
 				global.disableactionchecks = true;
 				
 				global.disableaccountfilter = true;
 				
+				du.debug('Get User By Email');
+				
 				userController.getUserByEmail(user_string).then((user) => {
+					
+					du.debug(user);
 					
 					if(_.has(user, 'id')){
 					
@@ -161,7 +171,13 @@ class graphController {
 						});	
 						
 					}else{
-					
+						
+						du.debug('Global User', global.user);
+						
+						global.user = undefined;
+						
+						du.debug('Resolving Event, user unset', event);
+						
 						return resolve(event);
 						
 					}

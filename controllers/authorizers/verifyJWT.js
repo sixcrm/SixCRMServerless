@@ -104,7 +104,7 @@ class verifyJWTController {
 							
 						}
 						
-						return resolve(false);
+						return resolve(decoded_token.email);
 						
 					});
 					
@@ -115,6 +115,8 @@ class verifyJWTController {
 				}
 					
 				
+			}).catch((error) =>{
+				return reject(error);
 			});
 
 		});

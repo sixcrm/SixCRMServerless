@@ -3,13 +3,18 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		userintrospection { 
+		user (id: \"super.user@test.com\") { 
 			id,
 			name,
 			auth0_id,
 			email,
 			active,
 			termsandconditions,
+			accesskey {
+				id,
+				access_key,
+				secret_key
+			},
 			acl {
 				account {
 					id,
