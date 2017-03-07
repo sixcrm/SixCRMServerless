@@ -104,19 +104,27 @@ class graphController {
 				
 				userController.getHydrated(user_string).then((user) => {
 					
-					global.disableaccountfilter = false;
+					if(_.has(user, 'id')){
 					
-					global.disableactionchecks = false;
+						global.disableaccountfilter = false;
 					
-					global.user = user;
+						global.disableactionchecks = false;
 					
-					return resolve(event);
+						global.user = user;
+					
+						return resolve(event);
+						
+					}else{
+						
+						return resolve(event);
+						
+					}
 			
 				}).catch((error) => {
 					
 					du.debug(error);
 					
-					reject(error);
+					return reject(error);
 				
 				});	
 			
@@ -128,29 +136,45 @@ class graphController {
 				
 				userController.getUserByEmail(user_string).then((user) => {
 					
-					userController.getHydrated(user.id).then((user) => {
-						
-						global.disableaccountfilter = false;
-						
-						global.disableactionchecks = false;
+					if(_.has(user, 'id')){
 					
-						du.debug('Setting global user:', user);
+						userController.getHydrated(user.id).then((user) => {
+							
+							global.disableaccountfilter = false;
 						
-						global.user = user;
+							global.disableactionchecks = false;
+					
+							du.debug('Setting global user:', user);
+							
+							if(_.has(user, 'id')){
+							
+								global.user = user;
+								
+							}
 						
-						return resolve(event);
+							return resolve(event);
 			
-					}).catch((error) => {
+						}).catch((error) => {
 				
-						reject(error);
+							return reject(error);
 				
-					});	
+						});	
+						
+					}else{
+					
+						return resolve(event);
+						
+					}
 					
 				}).catch((error) => {
 					
-					reject(error);
+					return reject(error);
 					
 				});
+				
+			}else{
+			
+				return reject(new Error('A user identifier or a email is required.'));
 				
 			}
 		
@@ -159,7 +183,7 @@ class graphController {
 	}
 	
 	acquireAccount(event){
-
+		
 		return new Promise((resolve, reject) => {
 		
 			var account; 
@@ -237,6 +261,8 @@ class graphController {
 
 		var query = event.parsed_query;
 		
+		du.debug('graph query', query);		
+		
 		return new Promise((resolve, reject) => {
 			
 			var SixSchema = require('../../endpoints/graph/schema.js');
@@ -246,12 +272,16 @@ class graphController {
 				if(_.has(result, "errors")){
 					reject(new Error(JSON.stringify(result)));
 				}
-		
-				resolve(result);
+				
+				du.debug(result);
+				
+				return resolve(result);
 
 			}).catch((error) => {
-	
-				reject(error);
+				
+				du.warning(error);
+				
+				return reject(error);
 		
 			});
 			

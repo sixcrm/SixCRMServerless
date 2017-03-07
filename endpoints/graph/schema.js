@@ -1,5 +1,6 @@
 'use strict';
 var _  = require('underscore');
+const du = require('../../lib/debug-utilities.js');
 
 var GraphQLEnumType = require('graphql').GraphQLEnumType;
 var GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
@@ -1325,18 +1326,10 @@ var addressType = new GraphQLObjectType({
 var queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
-  	userintrosection:{
+  	userintrospection:{
   	  type: userType,
-	  args: {
-		email: {
-		  description: 'The email address of the user.',
-		  type: new GraphQLNonNull(GraphQLString)
-		}
-	  },
 	  resolve: function(root, user){
-	  	console.log(user);
-		var id = user.id; 
-		return userController.get(id); 
+		return userController.introspection(); 
 	  }
   	},
   	transaction: {

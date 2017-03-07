@@ -226,15 +226,19 @@ module.exports = class entityController {
 	//ACL enabled
 	getBySecondaryIndex(field, index_value, index_name, cursor, limit){
 		
+		du.highlight('here');
+		
 		var controller_instance = this;
 		
-		return new Promise((resolve, reject) => {
+		du.debug(Array.from(arguments));
+		
+		return new Promise((resolve, reject) => {	
 			
 			this.can('read').then((permission) => {
-			
+				
 				if(permission != true){ 
 					
-					resolve(null);
+					return resolve(null);
 						
 				}
 				
@@ -273,26 +277,28 @@ module.exports = class entityController {
 					du.warning('Global Account Filter Disabled');
 					
 				}
-					
-				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 				
+				du.debug(query_parameters);
+				
+				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+					
 					if(_.isError(error)){ reject(error);}
 				
 					if(_.isArray(data)){
 					
 						if(data.length == 1){
 					
-							resolve(data[0]);
+							return resolve(data[0]);
 					
 						}else{
 						
 							if(data.length > 1){
 							
-								reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
+								return reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
 							
 							}else{
-							
-								resolve(null);
+								
+								return resolve(null);
 							
 							}
 					

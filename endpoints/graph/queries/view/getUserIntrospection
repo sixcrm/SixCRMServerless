@@ -1,20 +1,15 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"requestContext":"{\"authorizer\":{\"user\":\"timothy.dalbey@sixcrm.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		user (email: \"timothy.dalbey@sixcrm.com\") { 
+		userintrospection { 
 			id,
 			name,
 			auth0_id,
 			email,
 			active,
 			termsandconditions,
-			accesskey {
-				id,
-				access_key,
-				secret_key
-			},
 			acl {
 				account {
 					id,

@@ -19,6 +19,20 @@ class userController extends entityController {
 		this.descriptive_name = 'user';
 	}
 	
+	introspection(){
+		
+		return new Promise((resolve, reject) => {
+			
+			if(_.has(global, 'user')){
+				return resolve(global.user);
+			}else{
+				return resolve(null);
+			}
+			
+		});
+		
+	}
+	
 	getHydrated(id){
 		
 		var controller_instance = this;
@@ -125,7 +139,9 @@ class userController extends entityController {
 	}
 	
 	getUserByEmail(email){
+		
 		return this.getBySecondaryIndex('email', email, 'email-index');
+		
 	}
 	
 	getAddress(user){
