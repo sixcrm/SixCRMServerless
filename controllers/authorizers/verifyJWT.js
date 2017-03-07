@@ -3,7 +3,7 @@ const _ = require("underscore");
 const jwt = require("jsonwebtoken");
 
 var timestamp = require('../../lib/timestamp.js');
-var array_utilities = require('../../lib/array-utilities.js');
+const du = require('../../lib/debug-utilities.js');
 
 var userController = require('../../controllers/User.js');
 
@@ -23,6 +23,8 @@ class verifyJWTController {
 	
 	acquireToken(event){
 		
+		du.debug('Acquire Token');
+		
 		return new Promise((resolve, reject) => {
 		
 			if(_.has(event, 'authorizationToken')){
@@ -39,12 +41,16 @@ class verifyJWTController {
 	
 	validateToken(token){
 		
+		du.debug('Validate Token');
+		
 		return new Promise((resolve, reject) => {
 			
 			if(!_.has(process.env, 'secret_key')){ return resolve(false); }
 			
 			jwt.verify(token, process.env.secret_key, function(error, decoded) {
-					
+				
+				du.debug('Decoded', decoded);	
+				
 				if(_.isError(error) || !_.isObject(decoded)){
 		
 					return resolve(false);
@@ -67,14 +73,20 @@ class verifyJWTController {
 				return resolve(this.messages.bypass);
 				
 			}
-		
+			
+			du.debug('Token:', token);
+			 
 			this.validateToken(token).then((decoded_token) => {
 			
 				if(decoded_token == false){ return resolve(false); }
 				
+				du.debug('Decoded Token:', decoded_token);
+				
 				if(_.has(decoded_token, 'user_id')){
 					
 					global.disableactionchecks = true;
+					
+					du.debug('Decoded Token: ', decoded_token);
 					
 					userController.get(decoded_token.user_id).then((user) => {
 						
@@ -125,7 +137,7 @@ class verifyJWTController {
 	
 	developmentBypass(token){
 		
-		if(_.has(process.env, 'stage') && array_utilities.inArray(process.env.stage, ['local', 'development'])){
+		if(_.has(process.env, 'stage') && _.contains(['local', 'development'], process.env.stage)){
 			
 			if(_.has(process.env, 'development_bypass') && token == process.env.development_bypass){
 				

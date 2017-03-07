@@ -6,7 +6,6 @@ var validator = require('validator');
 var Validator = require('jsonschema').Validator;
 
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
-const arrayutilities = require('../lib/array-utilities.js');
 const permissionutilities = require('../lib/permission-utilities.js');
 const du = require('../lib/debug-utilities.js');
 
@@ -70,7 +69,7 @@ module.exports = class entityController {
 					
 				if(global.disableaccountfilter !== true){
 								
-					if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+					if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 					
 					
 						if(global.account == '*'){
@@ -174,7 +173,7 @@ module.exports = class entityController {
 				
 				if(global.disableaccountfilter !== true){
 				
-					if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+					if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 				
 						if(global.account == '*'){
 					
@@ -257,7 +256,7 @@ module.exports = class entityController {
 				
 				if(global.disableaccountfilter !== true){
 				
-					if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+					if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 				
 						if(global.account == '*'){
 					
@@ -336,7 +335,7 @@ module.exports = class entityController {
 				
 				if(global.disableaccountfilter !== true){
 				
-					if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+					if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 				
 						if(global.account == '*'){
 					
@@ -412,7 +411,7 @@ module.exports = class entityController {
 			
 					if(_.has(global, 'account')){
 				
-						if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+						if(!_.contains(this.nonaccounts, this.descriptive_name)){
 				
 							entity.account = global.account;
 					
@@ -483,7 +482,7 @@ module.exports = class entityController {
 				
 				if(_.has(global, 'account')){
 				
-					if(!arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+					if(!_.contains(this.nonaccounts, this.descriptive_name)){
 			
 						entity.account = global.account;
 				
@@ -496,7 +495,7 @@ module.exports = class entityController {
 					expression_attribute_values: {':idv': entity.id}
 				};
 			
-				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 				
 					if(global.account == '*'){
 					
@@ -559,7 +558,7 @@ module.exports = class entityController {
 			
 				let delete_parameters = {id:id};
 			
-				if(_.has(global, 'account') && !arrayutilities.inArray(this.descriptive_name, this.nonaccounts)){
+				if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 				
 					if(global.account == '*'){
 					

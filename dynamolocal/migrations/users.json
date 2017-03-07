@@ -2,7 +2,7 @@
     "Table": {
         "TableName": "users",
         "KeySchema": [{
-            "AttributeName": "id",
+            "AttributeName": "email",
             "KeyType": "HASH"
         }], 
         "AttributeDefinitions": [

@@ -86,9 +86,9 @@ class graphController {
 	
 	setGlobalUser(event){
 		
-		du.debug('Set Global User', event);
+		du.debug('Set Global User');
 		
-		du.debug('Global', global);
+		//du.debug('Global', global);
 		
 		return new Promise((resolve, reject) => {
 			
