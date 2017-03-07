@@ -2,6 +2,7 @@
 const _ = require('underscore');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
+const du = require('../lib/debug-utilities.js');
 
 var accountController = require('./Account.js');
 var roleController = require('./Role.js');
@@ -44,18 +45,20 @@ class userACLController extends entityController {
 	
 	getACLByUser(user){
 		
+		du.debug('getACLByUser');
 		return this.listBySecondaryIndex('user', user, 'user-index');
 		
 	}
 	
 	getACLByAccount(account){
-		
+		du.debug('getACLByAccount');
 		return this.listBySecondaryIndex('account', account, 'account-index');
 		
 	}
 	
 	getUser(useracl){
-		
+			
+		du.debug('getUser');
 		//necessary because of embedded embeds (etc)
 		let userController = require('./User.js');
 		
@@ -70,6 +73,8 @@ class userACLController extends entityController {
 	}
 	
 	getRole(useracl){
+		
+		du.debug('getRole');
 		
 		return roleController.get(useracl.role);
 	

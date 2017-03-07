@@ -3,11 +3,10 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		user (id: \"93b086b8-6343-4271-87d6-b2a00149f070\") { 
+		user (id: \"customerservice.user@test.com\") { 
 			id,
 			name,
 			auth0_id,
-			email,
 			active,
 			termsandconditions,
 			accesskey {

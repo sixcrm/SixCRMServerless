@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		deleteuser (id: \"testing\") { 
+		deleteuser (id: \"testing.user@test.com\") { 
 			id
 		} 
 	}"

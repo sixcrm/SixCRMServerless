@@ -2,7 +2,7 @@
     "Table": {
         "TableName": "users",
         "KeySchema": [{
-            "AttributeName": "email",
+            "AttributeName": "id",
             "KeyType": "HASH"
         }], 
         "AttributeDefinitions": [
@@ -11,31 +11,11 @@
 				"AttributeType": "S"
 			},
 			{
-				"AttributeName": "email", 
-				"AttributeType": "S"
-			},
-			{
 				"AttributeName": "access_key_id", 
 				"AttributeType": "S"
 			}
         ],
         "GlobalSecondaryIndexes": [ 
-		  { 
-			 "IndexName": "email-index",
-			 "KeySchema": [ 
-				{ 
-				   "AttributeName": "email",
-				   "KeyType": "HASH"
-				}
-			 ],
-			 "Projection": { 
-				"ProjectionType": "ALL"
-			 },
-			 "ProvisionedThroughput": { 
-				"ReadCapacityUnits": 1,
-				"WriteCapacityUnits": 1
-			 }
-		  },
 		  { 
 			 "IndexName": "access_key_id-index",
 			 "KeySchema": [ 
@@ -59,75 +39,66 @@
         }
     },
     "Seeds": [{
-    	"id":"93b086b8-6343-4271-87d6-b2a00149f070",
     	"name":"TimothyDalbey",
     	"auth0_id":"abc123",
-    	"access_key_id":"82478014-c96f-49ef-b31c-5408e99df66e",
-    	"email":"timothy.dalbey@sixcrm.com",
+    	"id":"timothy.dalbey@sixcrm.com",
     	"active":"true",
     	"termsandconditions":"0.1"
     },
     {
-    	"id":"05483f39-12c7-469e-a730-88daa52ee0e4",
     	"name":"NikolaBosic",
     	"auth0_id":"abc123",
-    	"email":"nikola.bosic@toptal.com",
+    	"id":"nikola.bosic@toptal.com",
     	"active":"true",
     	"termsandconditions":"0.1"
     },
     {
-    	"id":"f12271c9-9668-44bb-bb03-3f53af8568ea",
     	"name":"KrisTrujillo",
     	"auth0_id":"abc123",
-    	"email":"kris@sixcrm.com",
+    	"id":"kris@sixcrm.com",
     	"active":"true",
     	"termsandconditions":"0.1"
     },
     {
-    	"id":"943c9546-730f-42e4-a0f8-208a8e2837ec",
     	"name":"Jared Esguerra",
     	"auth0_id":"abc123",
-    	"email":"jared@sixcrm.com",
+    	"id":"jared@sixcrm.com",
     	"active":"true",
     	"termsandconditions":"0.1"
     },
     {
-    	"id":"7cf8ebc8-d0a9-42fb-9785-fc48d7a6b3a0",
     	"name":"Mychael Walton",
     	"auth0_id":"google-oauth2|115021313586107803846",
-    	"email":"waltr0n21@gmail.com",
+    	"id":"waltr0n21@gmail.com",
     	"active":"true",
     	"termsandconditions":"0.1"
     },
     {
-    	"id":"3ee02883-c836-4d37-a412-804251be08d6",
     	"name":"Customer Service Test User",
     	"auth0_id":"google-oauth2|115021313586107803846",
-    	"email":"customerservice.user@test.com",
+    	"id":"customerservice.user@test.com",
     	"active":"true",
+    	"access_key_id":"82478014-c96f-49ef-b31c-5408e99df66e",
     	"termsandconditions":"0.1"
     },
     {
-    	"id":"312efaf4-d4c8-44d8-849a-6b7c3734eaac",
     	"name":"Owner Test User",
     	"auth0_id":"google-oauth2|115021313586107803846",
-    	"email":"owner.user@test.com",
+    	"id":"owner.user@test.com",
     	"active":"true",
     	"termsandconditions":"0.1"
     },
     {
-    	"id":"1d314f24-d497-4c9f-8855-6a580c39894a",
     	"name":"Admin Test User",
     	"auth0_id":"google-oauth2|115021313586107803846",
-    	"email":"admin.user@test.com",
+    	"id":"admin.user@test.com",
     	"active":"true",
     	"termsandconditions":"0.1"
     },
     {
-    	"id":"3c0149df-27b9-4cd7-8160-f71a265a1869",
     	"name":"Super Test User",
     	"auth0_id":"google-oauth2|115021313586107803846",
-    	"email":"super.user@test.com",
+    	"id":"super.user@test.com",
     	"active":"true",
     	"termsandconditions":"0.1"
     }]

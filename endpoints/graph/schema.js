@@ -792,10 +792,6 @@ var userType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The auth0_id of the user.',
     },
-    email: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The email of the user',
-    },
     active: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The active status of the user',
@@ -813,8 +809,12 @@ var userType = new GraphQLObjectType({
       type: accessKeyType,
       description: 'The access_key of the user.',
       resolve: (user) => {
-      	var id = user.access_key_id
-      	return userController.getAccessKey(id);
+      	if(_.has(user, 'access_key_id')){
+      		var id = user.access_key_id
+      		return userController.getAccessKey(id);
+      	}else{
+      		return null;
+      	}	
       }
     },
     address: {
@@ -1958,19 +1958,12 @@ var queryType = new GraphQLObjectType({
         id: {
           description: 'id of the user',
           type: GraphQLString
-        },
-        email: {
-        	description: 'email of the user',
-        	type: GraphQLString
         }
       },
       resolve: function(root, user){
       	if(_.has(user,"id")){ 
 			var id = user.id; 
 			return userController.get(id);
-		}else if(_.has(user,"email")){
-			var email = user.email;
-			return userController.getUserByEmail(email);
 		}else{
 			return null;
 		}
@@ -1985,8 +1978,12 @@ var queryType = new GraphQLObjectType({
         }
       },
       resolve: function(root, useracl){
-		var id = useracl.id; 
-		return userACLController.get(id);
+      	if(_.has(useracl, 'id')){
+			var id = useracl.id; 
+			return userACLController.get(id);
+		}else{
+			return null;
+		}
       }
     }
   })
@@ -2007,10 +2004,9 @@ const productInputType = new GraphQLInputObjectType({
 const userInputType = new GraphQLInputObjectType({
   name: 'UserInput',
   fields: () => ({
-    id:			{ type: GraphQLString },
+    id:			{ type: new GraphQLNonNull(GraphQLString) },
     name:		{ type: new GraphQLNonNull(GraphQLString) },
     auth0_id:	{ type: new GraphQLNonNull(GraphQLString) },
-    email:		{ type: new GraphQLNonNull(GraphQLString) },
     active: 	{ type: new GraphQLNonNull(GraphQLString) },
     termsandconditions: 	{ type: GraphQLString },
     address:	{ type: addressInputType },

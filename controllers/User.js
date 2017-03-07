@@ -138,12 +138,6 @@ class userController extends entityController {
 		return accessKeyController.getAccessKeyByKey(id);
 	}
 	
-	getUserByEmail(email){
-		
-		return this.getBySecondaryIndex('email', email, 'email-index');
-		
-	}
-	
 	getAddress(user){
 		
 		if(_.has(user, "address")){
@@ -174,7 +168,8 @@ class userController extends entityController {
 				}
 				
 				var promises = [];
-				promises.push(this.getUserByEmail(user.email));
+				//refactored
+				promises.push(this.get(user.email));
 				promises.push(accountController.get(user.account));
 				promises.push(roleController.get(user.role));
 				

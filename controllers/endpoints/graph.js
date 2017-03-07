@@ -100,39 +100,7 @@ class graphController {
 			
 			du.debug('user_string', user_string);
 			
-			if(userController.isUUID(user_string, 4)){
-				
-				global.disableactionchecks = true; 
-				
-				global.disableaccountfilter = true;
-				
-				userController.getHydrated(user_string).then((user) => {
-					
-					if(_.has(user, 'id')){
-					
-						global.disableaccountfilter = false;
-					
-						global.disableactionchecks = false;
-					
-						global.user = user;
-					
-						return resolve(event);
-						
-					}else{
-						
-						return resolve(event);
-						
-					}
-			
-				}).catch((error) => {
-					
-					du.debug(error);
-					
-					return reject(error);
-				
-				});	
-			
-			}else if(userController.isEmail(user_string)){
+			if(userController.isEmail(user_string)){
 				
 				du.debug('Is email: '+user_string);
 				
@@ -140,9 +108,9 @@ class graphController {
 				
 				global.disableaccountfilter = true;
 				
-				du.debug('Get User By Email');
+				du.debug('Get User');
 				
-				userController.getUserByEmail(user_string).then((user) => {
+				userController.get(user_string).then((user) => {
 					
 					du.debug(user);
 					

@@ -16,7 +16,6 @@
 				},
 				user {
 					id,
-					email,
 					name
 				}
 			},

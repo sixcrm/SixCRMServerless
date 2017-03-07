@@ -3,16 +3,19 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createuseracl (useracl: { id: \"69701230-cb23-49ba-8d46-656dddb04908\", user:\"7cf8ebc8-d0a9-42fb-9785-fc48d7a6b3a0\", account:\"5db7ed46-75b1-4ecd-b489-e61ef5d1107a\", role:\"e09ac44b-6cde-4572-8162-609f6f0aeca8\"}) { 
+		createuseracl (useracl: { id: \"69701230-cb23-49ba-8d46-656dddb04908\", user:\"customerservice.user@test.com\", account:\"5db7ed46-75b1-4ecd-b489-e61ef5d1107a\", role:\"e09ac44b-6cde-4572-8162-609f6f0aeca8\"}) { 
 			id,
 			user {
-				id
+				id,
+				name
 			},
-			account {
-				id
+			role{
+				id,
+				name
 			},
-			role {
-				id
+			account{
+				id,
+				name
 			}
 		} 
 	}"

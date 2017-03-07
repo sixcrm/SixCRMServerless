@@ -57,55 +57,55 @@
     "Seeds": [{
     	"id":"890105d3-5832-4f83-90fe-29eeaf76dd0a",
         "account":"*",
-        "user":"93b086b8-6343-4271-87d6-b2a00149f070",
+        "user":"timothy.dalbey@sixcrm.com",
         "role":"cae614de-ce8a-40b9-8137-3d3bdff78039"
     },
     {
     	"id":"6bbf9d03-033d-44e6-a02b-b87868b65efe",
         "account":"*",
-        "user":"f12271c9-9668-44bb-bb03-3f53af8568ea",
+        "user":"kris@sixcrm.com",
         "role":"cae614de-ce8a-40b9-8137-3d3bdff78039"
     },
     {
     	"id":"2e947415-f6eb-46e9-af8a-17c57bd01998",
         "account":"*",
-        "user":"05483f39-12c7-469e-a730-88daa52ee0e4",
+        "user":"nikola.bosic@toptal.com",
         "role":"cae614de-ce8a-40b9-8137-3d3bdff78039"
     },
     {
     	"id":"4de4107f-5278-4fc4-8a41-66b176a4f483",
         "account":"*",
-        "user":"943c9546-730f-42e4-a0f8-208a8e2837ec",
+        "user":"jared@sixcrm.com",
         "role":"cae614de-ce8a-40b9-8137-3d3bdff78039"
     },
     {
     	"id":"ad489e81-2422-4b03-9c8d-7da51e697ecd",
         "account":"*",
-        "user":"7cf8ebc8-d0a9-42fb-9785-fc48d7a6b3a0",
+        "user":"waltr0n21@gmail.com",
         "role":"cae614de-ce8a-40b9-8137-3d3bdff78039"
     },
     {
     	"id":"ba10bdfb-e1c9-4e78-815a-837812ee46da",
         "account":"*",
-        "user":"3c0149df-27b9-4cd7-8160-f71a265a1869",
+        "user":"super.user@test.com",
         "role":"cae614de-ce8a-40b9-8137-3d3bdff78039"
     },
     {
     	"id":"e0b96ed2-f657-4c19-9219-1eab1cd3e706",
         "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "user":"1d314f24-d497-4c9f-8855-6a580c39894a",
+        "user":"admin.user@test.com",
         "role":"e09ac44b-6cde-4572-8162-609f6f0aeca8"
     },
     {
     	"id":"1d28d82f-87f1-48eb-9a25-13513956776a",
         "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "user":"312efaf4-d4c8-44d8-849a-6b7c3734eaac",
+        "user":"owner.user@test.com",
         "role":"cae614de-ce8a-40b9-8137-3d3bdff78039"
     },
     {
     	"id":"68c49dd4-a44b-4b07-bd02-b250881d928c",
         "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "user":"3ee02883-c836-4d37-a412-804251be08d6",
+        "user":"customerservice.user@test.com",
         "role":"1116c054-42bb-4bf5-841e-ee0c413fa69e"
     }]
 }

@@ -84,6 +84,7 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
+      SIX_VERBOSE: 0
       stage: ${opt:stage}
       customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
       sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}

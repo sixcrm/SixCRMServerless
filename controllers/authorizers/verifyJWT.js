@@ -81,32 +81,12 @@ class verifyJWTController {
 				if(decoded_token == false){ return resolve(false); }
 				
 				du.debug('Decoded Token:', decoded_token);
-				
-				if(_.has(decoded_token, 'user_id')){
+					
+				if(_.has(decoded_token, 'email')){
 					
 					global.disableactionchecks = true;
 					
-					du.debug('Decoded Token: ', decoded_token);
-					
-					userController.get(decoded_token.user_id).then((user) => {
-						
-						global.disableactionchecks = false;
-						
-						if(_.isObject(user) && _.has(user, 'id')){
-							
-							return resolve(user);
-							
-						}
-						
-						return resolve(false);
-						
-					});
-					
-				}else if(_.has(decoded_token, 'email')){
-					
-					global.disableactionchecks = true;
-					
-					userController.getUserByEmail(decoded_token.email).then((user) => {
+					userController.get(decoded_token.email).then((user) => {
 					
 						global.disableactionchecks = false;
 						

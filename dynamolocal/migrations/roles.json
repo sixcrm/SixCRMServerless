@@ -63,7 +63,7 @@
 				"customer/*",
 				"productschedule/*",
 				"product/*",
-				"role/view",
+				"role/read",
 				"rebill/*",
 				"session/*",
 				"shippingreceipt/*",

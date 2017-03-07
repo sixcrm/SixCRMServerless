@@ -8,7 +8,6 @@
 				id,
 				auth0_id,
 				name,
-				email,
 				active,
 				termsandconditions,
 				acl {
