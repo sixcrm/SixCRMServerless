@@ -1325,6 +1325,20 @@ var addressType = new GraphQLObjectType({
 var queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
+  	userintrosection:{
+  	  type: userType,
+	  args: {
+		email: {
+		  description: 'The email address of the user.',
+		  type: new GraphQLNonNull(GraphQLString)
+		}
+	  },
+	  resolve: function(root, user){
+	  	console.log(user);
+		var id = user.id; 
+		return userController.get(id); 
+	  }
+  	},
   	transaction: {
       type: transactionType,
       args: {

@@ -32,6 +32,7 @@
         	"allow":[
 				"accesskey/*",
 				"affiliate/*",
+				"account/*",
 				"campaign/*",
 				"creditcard/*",
 				"customer/*",
@@ -41,6 +42,7 @@
 				"productschedule/*",
 				"product/*",
 				"rebill/*",
+				"role/view",
 				"session/*",
 				"shippingreceipt/*",
 				"smtprovider/*",
@@ -61,6 +63,7 @@
 				"customer/*",
 				"productschedule/*",
 				"product/*",
+				"role/view",
 				"rebill/*",
 				"session/*",
 				"shippingreceipt/*",

@@ -32,6 +32,7 @@ var entities = [
 ];
 
 let testing_jwt = tu.createTestAuth0JWT('super.user@test.com', global.site_config.jwt.auth0.secret_key);
+//Technical Debt:  Test pagination using all roles
 
 entities.forEach((entity) => {
 	describe('Graph Test', function() {
@@ -59,7 +60,7 @@ entities.forEach((entity) => {
 				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 				.end(function(err, response){
 					
-					tu.assertResultSet(response, global.test_accounts[0].role);
+					tu.assertResultSet(response, global.test_users[0].role);
 	
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'end_cursor');
 					assert.property(response.body.data[entity.lower+'list'].pagination, 'has_next_page');
@@ -95,7 +96,7 @@ entities.forEach((entity) => {
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
 							
-								tu.assertResultSet(response, global.test_accounts[0].role);
+								tu.assertResultSet(response, global.test_users[0].role);
 								
 								if(response.body.data[entity.lower+'list'].pagination.count > 0){
 									assert.equal(response.body.data[entity.lower+'list'].pagination.count, limit);
