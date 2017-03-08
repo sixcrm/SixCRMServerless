@@ -58,7 +58,12 @@ class userACLController extends entityController {
 	
 	getUser(useracl){
 			
-		du.debug('getUser');
+		du.debug('getUser', useracl);
+		
+		if(_.has(useracl, 'user') && _.has(useracl.user, 'id')){
+			return useracl.user;
+		}
+		
 		//necessary because of embedded embeds (etc)
 		let userController = require('./User.js');
 		
@@ -68,6 +73,10 @@ class userACLController extends entityController {
 	
 	getAccount(useracl){
 		
+		if(_.has(useracl, 'account') && _.has(useracl.account, 'id')){
+			return useracl.account;
+		}
+		
 		return accountController.get(useracl.account);
 		
 	}
@@ -75,6 +84,10 @@ class userACLController extends entityController {
 	getRole(useracl){
 		
 		du.debug('getRole');
+		
+		if(_.has(useracl, 'role') && _.has(useracl.role, 'id')){
+			return useracl.role;
+		}
 		
 		return roleController.get(useracl.role);
 	

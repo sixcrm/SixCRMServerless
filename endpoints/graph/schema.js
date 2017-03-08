@@ -745,7 +745,7 @@ var userACLType = new GraphQLObjectType({
       type: new GraphQLNonNull(userType),
       description: 'The user related to user ACL object',
       resolve: (user_acl) => {
-      	return userACLController.getUser(user_acl);
+        return userACLController.getUser(user_acl);
       }
     },
   	account:{
@@ -803,7 +803,7 @@ var userType = new GraphQLObjectType({
     acl:{
       type: new GraphQLList(userACLType),
       description: 'The user\'s ACL objects.',
-      resolve: user => userController.getACL(user)
+      resolve: (user) => userController.getACL(user)
     },
     accesskey: {
       type: accessKeyType,

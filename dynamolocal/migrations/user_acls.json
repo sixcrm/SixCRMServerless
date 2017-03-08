@@ -107,5 +107,17 @@
         "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
         "user":"customerservice.user@test.com",
         "role":"1116c054-42bb-4bf5-841e-ee0c413fa69e"
+    },
+    {
+    	"id":"474e5f79-2662-49ab-a58e-8cc45e33159c",
+        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        "user":"nikola.bosic@coingcs.com",
+        "role":"e09ac44b-6cde-4572-8162-609f6f0aeca8"
+    },
+     {
+    	"id":"4bb5f4d7-11d4-4148-aec9-f8bfaea6a367",
+        "account":"5db7ed46-75b1-4ecd-b489-e61ef5d1107a",
+        "user":"nikola.bosic@coingcs.com",
+        "role":"1116c054-42bb-4bf5-841e-ee0c413fa69e"
     }]
 }

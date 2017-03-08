@@ -101,5 +101,12 @@
     	"id":"super.user@test.com",
     	"active":"true",
     	"termsandconditions":"0.1"
+    },
+    {
+    	"name":"Nikola Bosic Secondary Account",
+    	"auth0_id":"google-oauth2|115021313586107803846",
+    	"id":"nikola.bosic@coingcs.com",
+    	"active":"true",
+    	"termsandconditions":"0.1"
     }]
 }

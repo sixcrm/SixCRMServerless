@@ -2,6 +2,7 @@
 const _ = require('underscore');
 const validator = require('validator');
 
+const slackutilities = require('../lib/slack-utilities.js');
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
 const du = require('../lib/debug-utilities.js');
 
@@ -21,11 +22,24 @@ class userController extends entityController {
 	
 	introspection(){
 		
+		du.debug('Introspection');
+		
 		return new Promise((resolve, reject) => {
 			
 			if(_.has(global, 'user')){
-				return resolve(global.user);
+				du.debug('Global User:', global.user);
+				
+				//Technical Debt:  This should really just launch a separate process rather than waiting for resolve
+				slackutilities.sendMessage('User login: '+global.user.id).then((message) => {
+					du.highlight(message);
+					return resolve(global.user);
+				}).catch((error) => {
+					du.highlight(error);
+					return resolve(global.user);
+				});
+				
 			}else{
+				du.debug('No Global User');
 				return resolve(null);
 			}
 			
@@ -80,6 +94,10 @@ class userController extends entityController {
 	}
 	
 	getACL(user){
+		
+		if(_.has(user, 'acl') && _.isArray(user.acl)){
+			return user.acl;
+		}
 		
 		return userACLController.getACLByUser(user.id);
 		
