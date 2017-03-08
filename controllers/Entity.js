@@ -662,5 +662,17 @@ module.exports = class entityController {
 		return validator.isEmail(string);	
 		
 	}
+	
+	disableACLs(){
+		du.warning('Disabling ACLs');
+		global.disableactionchecks = true;
+		global.disableaccountfilter = true;
+	}
+	
+	enableACLs(){
+		du.warning('Re-Enabling ACLs');
+		global.disableactionchecks = false;
+		global.disableaccountfilter = false;
+	}
 
 }

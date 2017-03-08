@@ -1,1 +1,3 @@
-endpoint: 'z'
+endpoint: 'https://api.sixcrm.com/'
+access_key: "13edf909931d0f37000e438e9d67a2e165fad5d0",
+secret_key: "MzM1YWE2YTYyYzZjMGMxYzYyOGFlZjEzYTk3ZTFlNjNiYTNhMTYxMg=="

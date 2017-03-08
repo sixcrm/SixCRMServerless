@@ -1,12 +1,15 @@
-var request = require('supertest');
-var chai = require('chai');
+const request = require('supertest');
+const chai = require('chai');
 chai.use(require('chai-json-schema'));
-var assert = require('chai').assert
-var fs = require('fs');
-var yaml = require('js-yaml');
-var crypto = require('crypto');
+const assert = require('chai').assert
 
-var signature = require('../../lib/signature.js');
+const fs = require('fs');
+const yaml = require('js-yaml');
+const crypto = require('crypto');
+
+const du =  require('../../../lib/debug-utilities.js');
+const tu =  require('../../../lib/test-utilities.js');
+const signature = require('../../../lib/signature.js');
 
 try {
   var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
@@ -14,18 +17,24 @@ try {
   console.log(e);
 }
 
-var endpoint = config.endpoint;
+du.debug('Integration Config:', config);
 
-describe('JWT Acquisition Integration Test', function() {
+var endpoint = config.endpoint;
+du.debug('Endpoint:'+ endpoint);
+
+describe('Site JWT Acquisition Integration Test', function() {
   describe('Happy Path', function() {
-    it('should acquire a JWT', function (done) {
+    it('should acquire a Site JWT', function (done) {
     	
     	var request_time = new Date().getTime();
 		var this_signature = signature.createSignature(config.secret_key, request_time);
 		
-		//crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
+		du.debug('Signature: ', this_signature);
+	
     	var authorization_string = config.access_key+':'+request_time+':'+this_signature;
     	
+    	du.debug('Authorization String: ', authorization_string);
+    		
 		var this_request = request(endpoint);
     	this_request.get('token/acquire/')
 			.set('Content-Type', 'application/json')
@@ -36,17 +45,21 @@ describe('JWT Acquisition Integration Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
-				//console.log(response.body);
+				
+				if(err){ du.warning(err); }
+				
+				du.output(response.body);
+				
 				assert.isObject(response.body);
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
 				assert.property(response.body, "token");
 				assert.isString(response.body.token);
-				done();
+			
 			}, done);
-		});
 	});
 	
+	/*
 	describe('Broken Path(s)', function() {
 	
 		it('should fail signature validation due to bad signature', function (done) {
@@ -146,5 +159,6 @@ describe('JWT Acquisition Integration Test', function() {
 					done();
 				}, done);
 		});
+	*/
 	});
 });

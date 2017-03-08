@@ -1,4 +1,8 @@
 'use strict';
+/*
+* Technical Debt:  Because we are now using JWTs, and because we can generate signatures on the backend, do we really need to verify the signature any longer?
+*/
+
 const _ = require("underscore");
 
 var policy_response = require('../../lib/policy_response.js');

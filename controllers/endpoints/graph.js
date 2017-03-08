@@ -104,9 +104,7 @@ class graphController {
 				
 				du.debug('Is email: '+user_string);
 				
-				global.disableactionchecks = true;
-				
-				global.disableaccountfilter = true;
+				userController.disableACLs();
 				
 				du.debug('Get User');
 				
@@ -118,9 +116,7 @@ class graphController {
 					
 						userController.getHydrated(user.id).then((user) => {
 							
-							global.disableaccountfilter = false;
-						
-							global.disableactionchecks = false;
+							userController.enableACLs();
 					
 							du.debug('Setting global user:', user);
 							
