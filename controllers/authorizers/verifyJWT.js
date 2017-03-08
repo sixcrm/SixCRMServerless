@@ -84,11 +84,11 @@ class verifyJWTController {
 					
 				if(_.has(decoded_token, 'email')){
 					
-					global.disableactionchecks = true;
+					userController.disableALCs();
 					
 					userController.get(decoded_token.email).then((user) => {
 					
-						global.disableactionchecks = false;
+						userController.enableALCs();
 						
 						if(_.isObject(user) && _.has(user, 'id')){
 							
