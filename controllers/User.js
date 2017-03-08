@@ -26,21 +26,18 @@ class userController extends entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			if(_.has(global, 'user')){
+			if(_.has(global, 'user') && _.has(global.user, 'id')){
+			
 				du.debug('Global User:', global.user);
 				
-				//Technical Debt:  This should really just launch a separate process rather than waiting for resolve
-				slackutilities.sendMessage('User login: '+global.user.id).then((message) => {
-					du.highlight(message);
-					return resolve(global.user);
-				}).catch((error) => {
-					du.highlight(error);
-					return resolve(global.user);
-				});
+				return resolve(global.user);
 				
 			}else{
+			
 				du.debug('No Global User');
+				
 				return resolve(null);
+				
 			}
 			
 		});
