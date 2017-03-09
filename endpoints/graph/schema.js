@@ -2294,6 +2294,16 @@ var mutationType = new GraphQLObjectType({
 				return userController.create(user.user);
 			}
 		},
+		createuserstrict:{
+			type: userType,
+			description: 'Adds a new user.',
+			args: {
+				user: { type: userInputType }
+			},
+			resolve: (value, user) => {	
+				return userController.createStrict(user.user); 
+			}
+		},
 		updateuser:{
 			type: userType,
 			description: 'Updates a user.',

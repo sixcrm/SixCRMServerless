@@ -58,10 +58,6 @@ class userController extends entityController {
 				
 					this.getACLPartiallyHydrated(user).then((acl) => {
 						
-						if(_.isNull(acl)){
-							return reject(new Error('User does not have ACL definitions'));
-						}
-						
 						du.debug('Partially hydrated User ACL object:', acl);
 							
 						user.acl = acl;
@@ -164,6 +160,39 @@ class userController extends entityController {
 		}
 		
 	}
+	
+	createStrict(user){
+		
+		du.debug('Create User Strict');
+		du.debug('Arguments:', user);
+			
+		return new Promise((resolve, reject) => {
+		
+			if(_.has(global, 'user') && _.has(global.user, 'id')){
+				
+				if(global.user.id == user.id){
+					
+					this.disableACLs();
+					
+					this.create(user).then((user) => {
+						
+						this.enableACLs();
+						
+						resolve(user);
+						
+					}).catch((error) => {
+					
+						reject(error);
+					
+					});
+					
+				}
+			
+			}
+			
+		});
+		
+	}	
 	
 	getUserByAccessKeyId(access_key_id){
 	

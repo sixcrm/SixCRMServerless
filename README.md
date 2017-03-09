@@ -93,7 +93,7 @@ Note:  To execute these features, you will need the JDK version 8.0+ installed a
 
 Make sure to turn on the local DynamoDB instance.
 
-Invoke functions as follows: `SLS_DEBUG=*; AWS_PROFILE=six serverless invoke local -f createlead -p ./endpoints/createlead/success_event.json  --stage local`
+Invoke functions as follows: `export SLS_DEBUG=*; export SIX_VERBOSE=2; AWS_PROFILE=six serverless invoke local -f createlead -p ./endpoints/createlead/success_event.json  --stage local`
 
 ## Running unit tests
 
