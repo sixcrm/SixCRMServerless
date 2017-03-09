@@ -102,11 +102,12 @@ class forwardMessageController extends workerController {
 					
 						//Technical Debt: in the case of a local context, I want this to invoke a local function...
 						lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(message)}, (error, workerdata) => {
-							
-							if(_.isError(error)){ reject(error);}
-							
+							if(_.isError(error)){
+								reject(error);
+								return;
+							}
 							if(workerdata.StatusCode !== 200){ reject(new Error('Non-200 Status Code returned from Lambda invokation.')); }
-							
+
 							controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
 								
 								if(!_.has(response, 'statusCode')){

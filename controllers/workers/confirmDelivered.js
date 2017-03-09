@@ -19,11 +19,12 @@ class confirmDeliveredController extends workerController {
 	execute(event){
 		
 		return new Promise((resolve, reject) => {
-			
-			this.acquireRebill(event).then((rebill) => { 
-				this.confirmDelivered(rebill).then((delivered) =>{ 
+			this.acquireRebill(event).then((rebill) => {
+				this.confirmDelivered(rebill).then((delivered) => {
 					resolve(delivered); 
 				}); 
+			}).catch(error => {
+				reject(error);
 			});
 			
 		});
