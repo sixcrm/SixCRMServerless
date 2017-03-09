@@ -8,13 +8,11 @@ var verifyJWTController = require('../../controllers/authorizers/verifyJWT.js');
 
 module.exports.verifyjwt = (event, context, callback) => {
 	
-	verifyJWTController.execute(event).then((user) => {
+	verifyJWTController.execute(event).then((response) => {
 		
-		if(_.isObject(user) && _.has(user, 'id')){ return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, user.id)); }
+		if(validator.isEmail(response)){ return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, response)); }
 		
-		if(validator.isEmail(user)){ return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, user)); }
-		
-		if(user == verifyJWTController.messages.bypass){ return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, null)); }
+		if(response == verifyJWTController.messages.bypass){ return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, null)); }
 				
 		return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 		

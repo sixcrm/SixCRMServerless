@@ -663,16 +663,30 @@ module.exports = class entityController {
 		
 	}
 	
-	disableACLs(){
+	disableACLs(argument){
+	
+		//Technical Debt:  This function isn't scoped to the child class unless we provide the argument
+		
 		du.warning('Disabling ACLs');
+		
 		global.disableactionchecks = true;
 		global.disableaccountfilter = true;
+		
+		return;
+		
 	}
 	
-	enableACLs(){
+	enableACLs(argument){
+	
+		//Technical Debt:  This function isn't scoped to the child class unless we provide the argument
+		
 		du.warning('Re-Enabling ACLs');
+		
 		global.disableactionchecks = false;
 		global.disableaccountfilter = false;
+		
+		return;
+		
 	}
 
 }

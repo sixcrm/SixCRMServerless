@@ -47,12 +47,16 @@ class verifyJWTController {
 			
 			if(!_.has(process.env, 'secret_key')){ return resolve(false); }
 			
+			du.debug('Token: '+token, 'Secret: '+process.env.secret_key);
+			
 			jwt.verify(token, process.env.secret_key, function(error, decoded) {
 				
 				du.debug('Decoded', decoded);	
 				
 				if(_.isError(error) || !_.isObject(decoded)){
-		
+					
+					du.warning(error);
+					
 					return resolve(false);
 			
 				}
@@ -83,29 +87,10 @@ class verifyJWTController {
 				du.debug('Decoded Token:', decoded_token);
 					
 				if(_.has(decoded_token, 'email')){
-					
-					userController.disableALCs();
-					
-					userController.get(decoded_token.email).then((user) => {
-					
-						userController.enableALCs();
-						
-						if(_.isObject(user) && _.has(user, 'id')){
-							
-							return resolve(user);
-							
-						}
-						
-						return resolve(decoded_token.email);
-						
-					});
-					
-				}else{
-					
-					return resolve(false);
-					
+					return resolve(decoded_token.email);
 				}
-					
+				
+				return resolve(false);
 				
 			}).catch((error) =>{
 				return reject(error);
