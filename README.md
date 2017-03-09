@@ -100,6 +100,11 @@ Invoke functions as follows: `SLS_DEBUG=*; AWS_PROFILE=six serverless invoke loc
 To run unit tests execute `npm run test-unit` in the root of the project. Tests are also run automatically before each
 commit. You can access the code coverage report at `coverage/lcov-report/index.html`.
 
+## Running functional tests
+1. Make sure ElasticMQ is running
+1. Make sure local dynamodb is running
+1. execute `npm run test-functional`
+
 ## Known Issues
 
 5.  CC record missing from the transaction. *Confirm*
