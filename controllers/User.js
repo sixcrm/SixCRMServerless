@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
 const validator = require('validator');
+const uuidV4 = require('uuid/v4');
 
 const slackutilities = require('../lib/slack-utilities.js');
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
@@ -161,15 +162,83 @@ class userController extends entityController {
 		
 	}
 	
+	createProfile(email){
+		
+		return new Promise((resolve, reject) => {
+		
+			this.disableACLs();
+			
+			let account_id = uuidV4();
+			
+			let promises = [];
+			promises.push(accountController.create({id: account_id,name: email+'-pending-name', active: 'false'}));
+			promises.push(this.create({id:email, name:email, active:"false"}));
+			promises.push(roleController.get('cae614de-ce8a-40b9-8137-3d3bdff78039'));
+			
+			Promise.all(promises).then((promises) => {
+				
+				let account = promises[0];
+				let user = promises[1];
+				let role = promises[2];
+				
+				if(!_.has(account, 'id') || !_.has(user, 'id') || !_.has(role, 'id')){
+					reject(new Error('Unable to create new profile'));
+				}
+				
+				du.debug('User', user);
+				du.debug('Role', role);
+				du.debug('Account', account);
+				
+				let acl_object = {
+					user: user.id,
+					account: account_id,
+					role: role.id
+				};
+				
+				du.debug('ACL object to create:', acl_object);
+				
+				userACLController.create(acl_object).then((acl) => {
+					
+					
+					acl.account = account;
+					acl.role = role;
+					
+					du.debug(acl);
+					
+					this.enableACLs();
+							
+					user.acl = [acl];
+					
+					
+					resolve(user);
+					
+				}).catch((error) => {
+					
+					du.warning(error);
+					reject(error);
+					
+				});
+	
+			}).catch((error) => {
+				
+				reject(error);
+				
+			});
+			
+		});
+		
+	}
+	
 	createStrict(user){
 		
 		du.debug('Create User Strict');
 		du.debug('Arguments:', user);
 			
 		return new Promise((resolve, reject) => {
-		
+			
+			du.debug('global user', global.user);
 			if(_.has(global, 'user') && _.has(global.user, 'id')){
-				
+
 				if(global.user.id == user.id){
 					
 					this.disableACLs();

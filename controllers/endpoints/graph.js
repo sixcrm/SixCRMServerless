@@ -18,7 +18,7 @@ class graphController {
 			.then((event) => this.acquireAccount(event))
 			.then((event) => this.setGlobalAccount(event))
 			.then((event) => this.acquireUser(event))
-			.then((event) => this.setGlobalUser(event))
+			.then((event) => this.retrieveAndSetGlobalUser(event))
 			.then((event) => this.acquireQuery(event))
 			.then((event) => this.graphQuery(event));
 			
@@ -84,11 +84,12 @@ class graphController {
 			
 	}
 	
-	setGlobalUser(event){
+	//Technical Debt:  On first login, the user doesn't exist...
+	//Possibly create the user, account and a ACL?
+	
+	retrieveAndSetGlobalUser(event){
 		
 		du.debug('Set Global User');
-		
-		//du.debug('Global', global);
 		
 		return new Promise((resolve, reject) => {
 			
@@ -102,7 +103,7 @@ class graphController {
 			
 			if(userController.isEmail(user_string)){
 				
-				du.debug('Is email: '+user_string);
+				du.debug('Is email: true');
 				
 				userController.disableACLs();
 				
@@ -110,39 +111,46 @@ class graphController {
 				
 				userController.get(user_string).then((user) => {
 					
-					du.debug(user);
+					du.debug('Have user:', user);
 					
 					if(_.has(user, 'id')){
-					
+						
 						userController.getHydrated(user.id).then((user) => {
 							
+							du.warning('here');
 							userController.enableACLs();
-					
-							du.debug('Setting global user:', user);
 							
-							if(_.has(user, 'id')){
-							
-								global.user = user;
-								
-							}
+							this.setGlobalUser(user);
 						
 							return resolve(event);
 			
 						}).catch((error) => {
-				
+								
+							du.warning(error);
 							return reject(error);
 				
 						});	
 						
 					}else{
+
+						this.unsetGlobalUser();
 						
-						du.debug('Global User', global.user);
+						userController.createProfile(user_string).then((user) => {
 						
-						global.user = undefined;
-						
-						du.debug('Resolving Event, user unset', event);
-						
-						return resolve(event);
+							if(_.has(user, 'id')){
+								
+								this.setGlobalUser(user);
+								
+							}
+							
+							return resolve(event);
+													
+						}).catch((error) => {
+							
+							du.highlight(error);
+							return reject(error);
+							
+						});
 						
 					}
 					
@@ -160,6 +168,24 @@ class graphController {
 		
 		});
 	
+	}
+	
+	unsetGlobalUser(){
+	
+		global.user = undefined;
+		
+	}
+	
+	setGlobalUser(user){
+		
+		du.debug('Setting global user:', user);
+							
+		if(_.has(user, 'id')){
+		
+			global.user = user;
+			
+		}
+							
 	}
 	
 	acquireAccount(event){
@@ -250,7 +276,9 @@ class graphController {
 			graphql(SixSchema, query).then((result) => {
 			
 				if(_.has(result, "errors")){
-					reject(new Error(JSON.stringify(result)));
+				
+					return reject(new Error(JSON.stringify(result)));
+					
 				}
 				
 				du.debug(result);

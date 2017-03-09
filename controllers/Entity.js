@@ -358,7 +358,13 @@ module.exports = class entityController {
 			
 				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 					
-					if(_.isError(error)){ reject(error);}
+					if(_.isError(error)){ 
+						
+						du.warning(error);
+													
+						reject(error);
+					
+					}
 				
 					if(_.isObject(data) && _.isArray(data)){
 					
@@ -409,7 +415,7 @@ module.exports = class entityController {
 				
 					}
 			
-					if(_.has(global, 'account')){
+					if(!_.has(entity, 'account') && _.has(global, 'account')){
 				
 						if(!_.contains(this.nonaccounts, this.descriptive_name)){
 				
@@ -441,7 +447,11 @@ module.exports = class entityController {
 
 					dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
-						if(_.isError(error)){ reject(error);}
+						if(_.isError(error)){ 
+							
+							reject(error);
+						
+						}
 
 						if(_.isObject(data) && _.isArray(data) && data.length > 0){
 

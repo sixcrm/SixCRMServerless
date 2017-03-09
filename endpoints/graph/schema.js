@@ -789,7 +789,7 @@ var userType = new GraphQLObjectType({
       description: 'The name of the user',
     },
     auth0_id: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: GraphQLString,
       description: 'The auth0_id of the user.',
     },
     active: {
