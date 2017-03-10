@@ -30,7 +30,7 @@
     "serverless-dynamodb-local": "^0.2.17",
     "serverless-offline": "git+https://github.com/psheraton/serverless-offline.git",
     "supertest": "^2.0.1",
-    "pre-commit": "^1.2.2",
+    "pre-commit": "^1.2.2"
   },
   "scripts": {
     "test-integration": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/**/*.test.js",
