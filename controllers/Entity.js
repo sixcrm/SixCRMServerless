@@ -521,6 +521,8 @@ module.exports = class entityController {
 					}
 				
 				}
+				
+				du.debug('Update query validation', this.table_name, query_parameters);
 			
 				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				

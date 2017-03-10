@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		deleteuseracl (id: \"69701230-cb23-49ba-8d46-656dddb04908\") { 
+		deleteuseracl (id: \"testing-user-acl\") { 
 			id
 		} 
 	}"
