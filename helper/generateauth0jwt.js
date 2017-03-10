@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 const tu = require('../lib/test-utilities.js');
 const timestamp = require('../lib/timestamp.js');
 
-let site_config = yaml.safeLoad(fs.readFileSync('../config/development/site.yml', 'utf8'));
+let site_config = yaml.safeLoad(fs.readFileSync(__dirname+'/../config/development/site.yml', 'utf8'));
 let now = timestamp.createTimestampSeconds();
 
 let secret_key = site_config.jwt.auth0.secret_key;

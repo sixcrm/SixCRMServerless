@@ -15,11 +15,11 @@ class graphController {
 	
 		return this.validateInput(event)
 			.then((event) => this.parseEvent(event))
+			.then((event) => this.acquireQuery(event))
 			.then((event) => this.acquireAccount(event))
 			.then((event) => this.setGlobalAccount(event))
 			.then((event) => this.acquireUser(event))
 			.then((event) => this.retrieveAndSetGlobalUser(event))
-			.then((event) => this.acquireQuery(event))
 			.then((event) => this.graphQuery(event));
 			
 	}	
@@ -85,11 +85,9 @@ class graphController {
 	}
 	
 	//Technical Debt:  On first login, the user doesn't exist...
-	//Possibly create the user, account and a ACL?
-	
 	retrieveAndSetGlobalUser(event){
 		
-		du.debug('Set Global User');
+		du.debug('Retrieve and Set Global User');
 		
 		return new Promise((resolve, reject) => {
 			
@@ -101,91 +99,26 @@ class graphController {
 			
 			du.debug('user_string', user_string);
 			
-			if(userController.isEmail(user_string)){
+			userController.getUserStrict(user_string).then((user) => {
 				
-				du.debug('Is email: true');
+				if(_.has(user, 'id')){
+					du.debug('Is a user object.');
+					userController.setGlobalUser(user);
+				}else if(user == false){
+					du.debug('Unable to acquire user, setting global user to email.');
+					userController.setGlobalUser(user_string);
+				}
 				
-				userController.disableACLs();
+				return resolve(event);
 				
-				du.debug('Get User');
+			}).catch((error) => {
 				
-				userController.get(user_string).then((user) => {
-					
-					du.debug('Have user:', user);
-					
-					if(_.has(user, 'id')){
-						
-						userController.getHydrated(user.id).then((user) => {
-							
-							du.warning('here');
-							userController.enableACLs();
-							
-							this.setGlobalUser(user);
-						
-							return resolve(event);
-			
-						}).catch((error) => {
-								
-							du.warning(error);
-							return reject(error);
+				return reject(error);
 				
-						});	
-						
-					}else{
-
-						this.unsetGlobalUser();
-						
-						userController.createProfile(user_string).then((user) => {
-						
-							if(_.has(user, 'id')){
-								
-								this.setGlobalUser(user);
-								
-							}
-							
-							return resolve(event);
-													
-						}).catch((error) => {
-							
-							du.highlight(error);
-							return reject(error);
-							
-						});
-						
-					}
-					
-				}).catch((error) => {
-					
-					return reject(error);
-					
-				});
-				
-			}else{
-			
-				return reject(new Error('A user identifier or a email is required.'));
-				
-			}
+			});
 		
 		});
 	
-	}
-	
-	unsetGlobalUser(){
-	
-		global.user = undefined;
-		
-	}
-	
-	setGlobalUser(user){
-		
-		du.debug('Setting global user:', user);
-							
-		if(_.has(user, 'id')){
-		
-			global.user = user;
-			
-		}
-							
 	}
 	
 	acquireAccount(event){

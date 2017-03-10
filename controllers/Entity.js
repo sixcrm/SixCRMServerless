@@ -396,6 +396,7 @@ module.exports = class entityController {
         
     }
     
+    //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
     //ACL enabled
     create(entity){
 		
@@ -414,7 +415,7 @@ module.exports = class entityController {
 						entity.id = uuidV4();
 				
 					}
-			
+					
 					if(!_.has(entity, 'account') && _.has(global, 'account')){
 				
 						if(!_.contains(this.nonaccounts, this.descriptive_name)){
@@ -476,7 +477,8 @@ module.exports = class entityController {
 		});
 		
 	}
-
+	
+	//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
 	//ACL enabled
 	update(entity){
 		
@@ -615,10 +617,18 @@ module.exports = class entityController {
 	//ACL enabled
 	validate(object, object_type){
 		
+		du.debug('Validating:', object_type, object);
+		
 		return new Promise((resolve, reject) => {
 			
-			if(typeof object_type == 'undefined'){
+			du.debug(object_type);
+			
+			if(!_.isString(object_type)){
+				
+				du.debug('Is not a string: ', object_type);
+				
 				var object_type = this.descriptive_name;
+				
 			}
 			
 			var v = new Validator();
@@ -626,15 +636,22 @@ module.exports = class entityController {
 			var schema;
 		
 			try{
-
-				schema = require('../model/'+object_type);
+				
+				let schema_path = '../model/'+object_type;
+				
+				du.debug('Schema path: '+schema_path);
+				
+				schema = require(schema_path);
 
 			} catch(e){
-
+				
+				du.warning(e);
 				return reject(new Error('Unable to load validation schema for '+object_type));
 
 			}
-
+			
+			du.debug('Validation Schema loaded');
+			
 			var validation;
 
 			try{
@@ -663,13 +680,19 @@ module.exports = class entityController {
 	
 	isUUID(string, version){
 		
-		return validator.isUUID(string, version);
+		if(_.isString(string)){
+			return validator.isUUID(string, version);
+		}
+		return false;
 		
 	}
 	
 	isEmail(string){
 		
-		return validator.isEmail(string);	
+		if(_.isString(string)){
+			return validator.isEmail(string);	
+		}
+		return false;
 		
 	}
 	
@@ -699,4 +722,26 @@ module.exports = class entityController {
 		
 	}
 
+	unsetGlobalUser(){
+	
+		global.user = undefined;
+		
+	}
+	
+	setGlobalUser(user){
+		
+		du.debug('Setting global user:', user);
+							
+		if(_.has(user, 'id') || this.isEmail(user)){
+		
+			global.user = user;
+			
+		}
+							
+	}
+	
+	acquireGlobalUser(){
+		
+	}
+	
 }

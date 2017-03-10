@@ -1,5 +1,5 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"nikola.bosic@coingcs.com\"}}",
+	"requestContext":"{\"authorizer\":{\"user\":\"tmdalbey@gmail.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 

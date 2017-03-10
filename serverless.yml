@@ -459,10 +459,6 @@ functions:
 
 resources:
   Resources:
-    AccessKeys:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        ${file(./dynamodb/migrations/access_keys.json):Table}
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
       Properties:
