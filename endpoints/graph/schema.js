@@ -2032,6 +2032,14 @@ const userInviteInputType = new GraphQLInputObjectType({
     role:		{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
+
+const inviteInputType = new GraphQLInputObjectType({
+  name: 'inviteInput',
+  fields: () => ({
+    token:		{ type: new GraphQLNonNull(GraphQLString) },
+    parameters:	{ type: new GraphQLNonNull(GraphQLString) }
+  })
+});
         
 const accessKeyInputType = new GraphQLInputObjectType({
   name: 'AccessKeyInput',
@@ -2274,14 +2282,24 @@ const sessionInputType = new GraphQLInputObjectType({
 var mutationType = new GraphQLObjectType({
 	name: 'Mutation',
 	fields: () => ({
+		acceptinvite:{
+			type: userType,
+			description: 'Completes a user invite.',
+			args: {
+				invite: { type: inviteInputType }
+			},
+			resolve: (value, invite) => {	
+				return userController.acceptInvite(invite.invite);
+			}
+		},
 		inviteuser:{
 			type: userInviteType,
 			description: 'Invites a new user to the site.',
 			args: {
-				user: { type: userInviteInputType }
+				userinvite: { type: userInviteInputType }
 			},
-			resolve: (value, user) => {	
-				return userController.invite(user.user);
+			resolve: (value, userinvite) => {	
+				return userController.invite(userinvite.userinvite);
 			}
 		},
 		createuser:{

@@ -45,7 +45,7 @@ class userACLController extends entityController {
 	
 	getACLByUser(user){
 		
-		du.debug('getACLByUser');
+		du.debug('getACLByUser', user);
 		return this.listBySecondaryIndex('user', user, 'user-index');
 		
 	}
@@ -91,6 +91,53 @@ class userACLController extends entityController {
 		
 		return roleController.get(useracl.role);
 	
+	}
+	
+	assure(useracl){
+		
+		du.highlight('Assure UserACL', useracl);
+		
+		return new Promise((resolve, reject) => {
+			
+			this.getACLByUser(useracl.user).then((acl) => {
+				
+				let identified_acl = false;
+				
+				if(!_.isNull(acl)){
+					acl.forEach((acl_object) => {
+					
+						if(acl_object.account == useracl.account){
+						
+							identified_acl = acl_object;
+							return true;
+					
+						}					
+					
+					});		
+				}
+				
+				if(_.has(identified_acl, 'id')){
+					du.highlight('Identified ACL:', identified_acl);
+					return resolve(identified_acl);
+				}else{
+					du.highlight('Unable to identify ACL');
+					this.create(useracl).then((acl) => {
+						du.highlight('ACL created: ', acl);
+						return resolve(acl);
+					}).catch((error) => {
+						return reject(error);
+					});
+					
+				}
+				
+			}).catch((error) => {
+				
+				return reject(error);
+				
+			});
+		
+		});
+
 	}
         
 }

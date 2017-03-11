@@ -1,0 +1,35 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation { 
+		acceptinvite (invite: {token: \"6a8eb335020a390e9d0a7f9bb4d8975d6c57902e\", parameters:\"bmV3LnVzZXJAdGVzdC5jb206ZDNmYTNiZjMtNzgyNC00OWY0LTgyNjEtODc2NzQ0ODJiZjFjOmUwOWFjNDRiLTZjZGUtNDU3Mi04MTYyLTYwOWY2ZjBhZWNhODoxNDg5MjU5NTEz\"}) { 
+			id,
+			name,
+			auth0_id,
+			active,
+			termsandconditions,
+			acl {
+				account {
+					id,
+					name,
+					active
+				},
+				role {
+					id,
+					name,
+					active
+				}
+			},
+			address {
+				line1,
+				line2,
+				city,
+				state,
+				zip,
+				country
+			}
+		} 
+	}"
+}
+

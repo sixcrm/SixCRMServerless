@@ -6,6 +6,7 @@ const uuidV4 = require('uuid/v4');
 const slackutilities = require('../lib/slack-utilities.js');
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
 const du = require('../lib/debug-utilities.js');
+const inviteutilities = require('../lib/invite-utilities.js');
 
 const accountController = require('./Account.js');
 const roleController = require('./Role.js');
@@ -440,55 +441,163 @@ class userController extends entityController {
 		
 	}
 	
-	/*
-	invite(user){
+	assureUser(user_id){
+		
+		return new Promise((resolve, reject) => {
+			
+			du.debug('Assure User');
+			du.highlight('User ID: ', user_id);
+				
+			this.get(user_id).then((user) => {
+		
+				if(_.has(user, 'id')){
+					
+					du.highlight('User Existed', user);
+					
+					return resolve(user);
+					
+				}else{
+					
+					let user_object = {
+						id: user_id,
+						termsandconditions: "0",
+						active: "false",
+						auth0id: "-",
+						name: "-"
+					};
+					
+					du.highlight('New User', user_object);
+					
+					this.create(user_object).then((user) => {
+						
+						if(_.has(user, 'id')){
+						
+							return resolve(user);
+							
+						}else{
+						
+							return reject(new Error('Unable to assure user.'));
+							
+						}
+						
+					});
+					
+				}
+			
+			}).catch((error) => {
+			
+				return reject(error);
+				
+			});
+			
+		});
+
+	}
+	
+	acceptInvite(invite){
+		
+		return new Promise((resolve, reject) => {
+			
+			inviteutilities.decodeAndValidate(invite.token, invite.parameters).then((invite_parameters) => {
+			
+				du.highlight('Invite Parameters', invite_parameters);
+				
+				this.assureUser(invite_parameters.email).then((user) => {
+					
+					du.highlight('User to Accept Invite:', user);
+					
+					let user_acl_object = {
+						account: invite_parameters.account,
+						role: invite_parameters.role,
+						user: user.id
+					}
+					
+					userACLController.assure(user_acl_object).then((useracl) => {
+						
+						du.highlight("Assured UserACL", useracl);
+							
+						this.getHydrated(user.id).then((user) => {
+							
+							return resolve(user);
+						
+						}).catch((error) => {
+						
+							return reject(error);
+							
+						});
+						
+					}).catch((error) => {
+					
+						return reject(error);
+						
+					});
+					
+				});
+			
+			}).catch((error) => {
+			
+				return reject(error);
+				
+			});
+			
+		});
+
+	}
+	
+	invite(userinvite){
 	
 		return new Promise((resolve, reject) => {
 			
-			this.validate(user, 'userinvite').then((validated) => {
+			du.highlight('User Invite: ', userinvite);
+			
+			if(!this.isEmail(userinvite.email)){
+				reject(new Error('Invalid user email address.'));
+			}
+			
+			var promises = [];
+			//refactored
+			promises.push(accountController.get(userinvite.account));
+			promises.push(roleController.get(userinvite.role));
+			promises.push(this.get(userinvite.email));
+			
+			Promise.all(promises).then((promises) => {
+			
+				let account = promises[0];
+				let role = promises[1];
+				let invited_user = promises[2];
 				
-				if(!validator.isEmail(user.email)){
-					reject(new Error('Invalid user email address.'));
+				du.highlight(account);
+				du.highlight(role);
+				du.highlight(invited_user);
+						
+				if(!_.has(account, 'id')){ reject(new Error('Invalid account.')); }
+				//is the account that we are operating against 
+				
+				if(!_.has(role, 'id')){ reject(new Error('Invalid role.')); }
+				//is not the owner
+				//role is not higher than the inviting user's role
+				
+				if(_.has(invited_user, 'email')){
+					
+					//make sure that the user isn't already on the account with the same role.
+					
 				}
 				
-				var promises = [];
-				//refactored
-				promises.push(this.get(user.email));
-				promises.push(accountController.get(user.account));
-				promises.push(roleController.get(user.role));
+				inviteutilities.invite({email:userinvite.email, account: account.id, role: role.id}).then((response) => {
 				
-				Promise.all(promises).then((promises) => {
-				
-					let invited_user = promises[0];
-					let account = promises[1];
-					let role = promises[2];
+					return resolve(response)
 					
-					if(!_.has(account, 'id')){ reject(new Error('Invalid account.')); }
-					//is the account that we are operating against 
+				}).catch((error) => {
 					
-					if(!_.has(role, 'id')){ reject(new Error('Invalid role.')); }
-					//is not the owner
-					//role is not higher than the inviting user's role
-					
-					if(_.has(invited_user, 'id')){
-						
-						//make sure that the user isn't already on the account with the same role.
-						
-					}
-					
-					//create link with signature
-					//respond with link	
+					return reject(error);
 					
 				});
 				
-			}).catch((error) => {
-				reject(error);
 			});
 			
 		});
 		
 	}
-	*/
 	        
 }
 

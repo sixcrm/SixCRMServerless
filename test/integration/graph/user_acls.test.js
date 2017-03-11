@@ -39,6 +39,8 @@ describe('Graph '+entity+' Test', function() {
   		
   		global.test_users.forEach((test_user) => {
 			
+			if(test_user.email !== 'super.user@test.com'){ return true; }
+			
 			describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials on the account "'+test_account.name+'"', function() {  
 			
 				let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
