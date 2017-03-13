@@ -27,6 +27,7 @@ dynamodb:
   shipping_receipts_table: 'shipping_receipts'
   accounts_table: 'accounts'
   roles_table: 'roles'
+  ses_notifications_table: 'ses_notifications'
   endpoint: 'http://localhost:8001'
   
 lambda:

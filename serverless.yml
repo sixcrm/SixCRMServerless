@@ -240,6 +240,13 @@ functions:
       
 # Workers
 
+  sesnotifications:
+    handler: workers/sesnotifications/handler.sesnotifications
+    environment:
+      stage: ${opt:stage}
+      ses_notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.ses_notifications_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+
   createrebills:
     handler: workers/createrebills/handler.createrebills
     events:

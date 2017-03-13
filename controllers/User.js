@@ -499,8 +499,10 @@ class userController extends entityController {
 		return new Promise((resolve, reject) => {
 			
 			inviteutilities.decodeAndValidate(invite.token, invite.parameters).then((invite_parameters) => {
-			
+				
 				du.highlight('Invite Parameters', invite_parameters);
+				
+				this.disableACLs();
 				
 				this.assureUser(invite_parameters.email).then((user) => {
 					
@@ -515,7 +517,8 @@ class userController extends entityController {
 					userACLController.assure(user_acl_object).then((useracl) => {
 						
 						du.highlight("Assured UserACL", useracl);
-							
+						
+						//Technical Debt:  we need to return some sort of success message here and force the user to login rather than returning the user as an object.
 						this.getHydrated(user.id).then((user) => {
 							
 							return resolve(user);
@@ -583,14 +586,16 @@ class userController extends entityController {
 					
 				}
 				
-				inviteutilities.invite({email:userinvite.email, account: account.id, role: role.id}).then((response) => {
+				let invite_parameters = {email:userinvite.email, account: account.id, role: role.id};
 				
-					return resolve(response)
-					
+				inviteutilities.invite(invite_parameters).then((link) => {
+						
+					return resolve({link:link});
+						
 				}).catch((error) => {
-					
+						
 					return reject(error);
-					
+						
 				});
 				
 			});
