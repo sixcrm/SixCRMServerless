@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-var request = require('supertest');
+const SqSTestUtils = require('./sqs-test-utils');
 
 describe('Functional test for message workers', function () {
     let forwardingFunction;
@@ -29,8 +29,8 @@ describe('Functional test for message workers', function () {
 
 
         // Technical Debt: don't skip this test. Fix the 'cannot read property' in USPS.js
-        xit('should say "no action" when there is a message with unknown id', function (done) {
-            givenAnyMessageInShippedQueue().then((response) => {
+        xit('should say "no action" when there is a message', function (done) {
+            givenAnyMessageInShippedQueue().then(() => {
                 forwardingFunction.execute().then((response) => {
                     expect(response).to.equal(forwardingFunction.messages.successnoaction);
                     done();
@@ -59,8 +59,8 @@ describe('Functional test for message workers', function () {
             });
         });
 
-        it('should say "no action" when there is a message with unknown id', function (done) {
-            givenAnyMessageInDeliveredQueue().then((response) => {
+        it('should say "no action" when there is a message', function (done) {
+            givenAnyMessageInDeliveredQueue().then(() => {
                 forwardingFunction.execute().then((response) => {
                     expect(response).to.equal(forwardingFunction.messages.successnoaction);
                     done();
@@ -72,28 +72,18 @@ describe('Functional test for message workers', function () {
     });
 
     function givenAnyMessageInShippedQueue() {
-        return sendMessageToQueue('shipped', '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}');
+        return SqSTestUtils.sendMessageToQueue('shipped', '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}');
     }
 
     function givenAnyMessageInDeliveredQueue() {
-        return sendMessageToQueue('delivered', '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}');
+        return SqSTestUtils.sendMessageToQueue('delivered', '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}');
     }
 
     function purgeShippedQueue() {
-        return purgeQueue('shipped');
+        return SqSTestUtils.purgeQueue('shipped');
     }
     function purgeDeliveredQueue() {
-        return purgeQueue('delivered');
-    }
-
-    function sendMessageToQueue(queue, body) {
-        return request('http://localhost:9324')
-            .get('/queue/' + queue +'?Action=SendMessage&MessageBody=' + encodeURIComponent(body));
-    }
-
-    function purgeQueue(queue) {
-        return request('http://localhost:9324')
-            .get('/queue/' + queue + '?Action=PurgeQueue');
+        return SqSTestUtils.purgeQueue('delivered');
     }
 
     function shippedToDelivered() {
