@@ -70,7 +70,25 @@ functions:
 ########################
 # Backend Graph Endpoint renders entity data to the website
 ########################
-
+  search:
+    handler: endpoints/search/handler.search
+    events:
+      - http:
+          path: search/{account}
+          method: post
+          cors: true
+          authorizer:
+            name: verifyauth0jwt
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+    environment:
+      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
+      user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
+      roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
+      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
+      accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      
   graph:
     handler: endpoints/graph/handler.graph
     events:
@@ -484,5 +502,9 @@ resources:
              Action:
                - lambda:*
              Resource: arn:aws:lambda:us-east-1:*:*:*
+           - Effect: Allow
+             Action:
+               - ses:*
+             Resource: arn:aws:ses:us-east-1:*:identity/*
         Roles:
           - Ref: IamRoleLambdaExecution
