@@ -7,19 +7,51 @@ describe('Functional test for message workers', function () {
     before(() => {
         setGlobalUser();
         setEnvironmentVariables();
+        purgeAllQueues().then(() => {
+            done();
+        });
+    });
+
+    describe('Confirms messages can move from bill to hold.', function () {
+        before(() => {
+            forwardingFunction = billToHold();
+        });
+
+        it('should say "no message" when no message is in input queue', function () {
+            return forwardingFunction.execute().then((response) => {
+                expect(response).to.equal(forwardingFunction.messages.successnomessages);
+                return SqSTestUtils.messageCountInQueue('hold').then((count) => {
+                    expect(count).to.equal(0);
+                });
+            });
+        });
+    });
+
+    describe('Confirms messages can move from bill to recover.', function () {
+        before(() => {
+            forwardingFunction = billToHold();
+        });
+
+        // Technical Debt: finish this.
+        xit('should move the message to recover when failure occurs', function () {
+            return givenAnyMessageInBillQueueThatShouldFailToForward().then(() => {
+                return forwardingFunction.execute().then((response) => {
+                    expect(response).to.equal(forwardingFunction.messages.failforward);
+                    return SqSTestUtils.messageCountInQueue('recover').then((count) => {
+                        expect(count).to.equal(1);
+                        return SqSTestUtils.messageCountInQueue('hold').then((count) => {
+                            expect(count).to.equal(0);
+                        });
+                    });
+                });
+            });
+        });
     });
 
     describe('Confirms messages can move from shipped to delivered.', function () {
         before(() => {
             forwardingFunction = shippedToDelivered();
         });
-
-        beforeEach((done) => {
-            purgeShippedQueue().then(() => {
-                done();
-            });
-        });
-
 
         it('should say "no message" when no message is in input queue', function () {
             return forwardingFunction.execute().then((response) => {
@@ -32,7 +64,7 @@ describe('Functional test for message workers', function () {
         xit('should say "no action" when there is a message', function (done) {
             givenAnyMessageInShippedQueue().then(() => {
                 forwardingFunction.execute().then((response) => {
-                    expect(response).to.equal(forwardingFunction.messages.successnoaction);
+                    expect(response).to.equal(forwardingFunction.messages.success);
                     done();
                 }).catch(error => {
                     done(error);
@@ -46,26 +78,19 @@ describe('Functional test for message workers', function () {
             forwardingFunction = deliveredToArchive();
         });
 
-        beforeEach((done) => {
-            purgeDeliveredQueue().then(() => {
-                done();
-            });
-        });
-
-
         it('should say "no message" when no message is in input queue', function () {
             return forwardingFunction.execute().then((response) => {
                 expect(response).to.equal(forwardingFunction.messages.successnomessages);
             });
         });
 
-        it('should say "no action" when there is a message', function (done) {
-            givenAnyMessageInDeliveredQueue().then(() => {
-                forwardingFunction.execute().then((response) => {
-                    expect(response).to.equal(forwardingFunction.messages.successnoaction);
-                    done();
-                }).catch(error => {
-                    done(error);
+        it('should say "success" when there is a message, and delete it', function () {
+            return givenAnyMessageInDeliveredQueue().then(() => {
+                return forwardingFunction.execute().then((response) => {
+                    expect(response).to.equal(forwardingFunction.messages.success);
+                    return SqSTestUtils.messageCountInQueue('delivered').then(count => {
+                        expect(count).to.equal(0);
+                    });
                 });
             });
         });
@@ -75,30 +100,51 @@ describe('Functional test for message workers', function () {
         return SqSTestUtils.sendMessageToQueue('shipped', '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}');
     }
 
+    function givenAnyMessageInBillQueueThatShouldFailToForward() {
+        return SqSTestUtils.sendMessageToQueue('bill', '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}');
+    }
+
     function givenAnyMessageInDeliveredQueue() {
         return SqSTestUtils.sendMessageToQueue('delivered', '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}');
     }
 
-    function purgeShippedQueue() {
-        return SqSTestUtils.purgeQueue('shipped');
+    function purgeAllQueues() {
+        return new Promise((resolve) => {
+            Promise.all([
+                SqSTestUtils.purgeQueue('bill'),
+                SqSTestUtils.purgeQueue('recover'),
+                SqSTestUtils.purgeQueue('hold'),
+                SqSTestUtils.purgeQueue('shipped'),
+                SqSTestUtils.purgeQueue('delivered'),
+            ]).then(() => {
+                resolve();
+            });
+        });
     }
-    function purgeDeliveredQueue() {
-        return SqSTestUtils.purgeQueue('delivered');
+
+    function billToHold() {
+        process.env.failure_queue_url = 'http://localhost:9324/queue/recover';
+        return configureForwardingFunction(
+            'http://localhost:9324/queue/bill',
+            'http://localhost:9324/queue/hold',
+            'processbilling');
     }
 
     function shippedToDelivered() {
         return configureForwardingFunction(
             'http://localhost:9324/queue/shipped',
             'http://localhost:9324/queue/delivered',
-            'controllers/workers/confirmDelivered');
+            'confirmdelivered');
     }
 
     function deliveredToArchive() {
         process.env.archivefilter = 'ALL';
-        return configureForwardingFunction(
+        let func =  configureForwardingFunction(
             'http://localhost:9324/queue/delivered',
             null,
-            'controllers/workers/archive');
+            'archive');
+        delete process.env.destination_queue_url;
+        return func;
     }
 
     function configureForwardingFunction(originQueue, destinationQueue, workerFunction) {

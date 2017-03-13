@@ -25,7 +25,7 @@ describe('Confirms our helper tools can send and receive messages', function () 
         });
     });
 
-    it('you should be able to read the message from a queue', function() {
+    it('you should be able to read a single message from a queue', function() {
         return SqsTestUtils.sendMessageToQueue(aQueue, aBody).then(() => {
             return SqsTestUtils.receiveMessageFromQueue(aQueue).then(message => {
                 expect(message).to.equal(aBody);
@@ -33,7 +33,7 @@ describe('Confirms our helper tools can send and receive messages', function () 
         });
     });
 
-    it('you should be able to read the message from a queue one by one', function() {
+    it('you should be able to read messages from a queue one by one', function() {
         return SqsTestUtils.sendMessageToQueue(aQueue, aBody).then(() => {
             return SqsTestUtils.sendMessageToQueue(aQueue, anotherBody).then(() => {
                 return SqsTestUtils.receiveMessageFromQueue(aQueue).then(message => {
