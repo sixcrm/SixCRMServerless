@@ -15,6 +15,20 @@ class SqsTestUtils {
         return this.executeQuery(queue, 'Action=PurgeQueue');
     }
 
+    purgeAllQueues() {
+        return new Promise((resolve) => {
+            Promise.all([
+                this.purgeQueue('bill'),
+                this.purgeQueue('recover'),
+                this.purgeQueue('hold'),
+                this.purgeQueue('shipped'),
+                this.purgeQueue('delivered')
+            ]).then(() => {
+                resolve();
+            });
+        });
+    }
+
     messageCountInQueue(queue) {
         return new Promise((resolve, reject) => {
             this.executeQuery(queue, 'Action=GetQueueAttributes&AttributeName.1=ApproximateNumberOfMessages').then(res => {
