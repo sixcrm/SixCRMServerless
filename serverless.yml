@@ -376,19 +376,6 @@ functions:
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'TWOATTEMPTS'
-       
-  test:
-    handler: workers/test/handler.test
-    environment:
-      stage: ${opt:stage}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
-      usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
-      workerfunction: sixtransaction-${opt:stage}-confirmdelivered
 
 ########################
 # Transaction Endpoints  (initial customer entrypoint)
@@ -506,5 +493,9 @@ resources:
              Action:
                - ses:*
              Resource: arn:aws:ses:us-east-1:*:identity/*
+           - Effect: Allow
+             Action:
+               - cloudsearch:*
+             Resource: 	arn:aws:cloudsearch:us-east-1:*:domain/*
         Roles:
           - Ref: IamRoleLambdaExecution
