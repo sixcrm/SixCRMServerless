@@ -54,6 +54,8 @@ sqs:
   delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-delivered'
   rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
   rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure'
+  search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchindex'
+  search_de-indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchdeindex'
   
 nmi:
   username: 'demo'

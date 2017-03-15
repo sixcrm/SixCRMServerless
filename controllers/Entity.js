@@ -8,6 +8,7 @@ var Validator = require('jsonschema').Validator;
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
 const permissionutilities = require('../lib/permission-utilities.js');
 const du = require('../lib/debug-utilities.js');
+const sqs = require('../../lib/sqs-utilities.js');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 
@@ -743,6 +744,20 @@ module.exports = class entityController {
 	}
 	
 	acquireGlobalUser(){
+		
+	}
+	
+	removeFromSearchIndex(entity){
+	
+		return indexingutilities.removeFromSearchIndex(entity);
+		
+	}
+	
+	addToSearchIndex(entity, entity_type){
+		
+		entity.entity_type = entity_type;
+		
+		return indexingutilities.addToSearchIndex(entity);
 		
 	}
 	
