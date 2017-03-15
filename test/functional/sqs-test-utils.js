@@ -30,9 +30,25 @@ class SqsTestUtils {
     }
 
     messageCountInQueue(queue) {
+        let query = 'Action=GetQueueAttributes' +
+            '&AttributeName.1=ApproximateNumberOfMessages' +
+            '&AttributeName.2=ApproximateNumberOfMessagesNotVisible' +
+            '&AttributeName.3=ApproximateNumberOfMessagesDelayed';
+
+        // Return the sum of all 3 attributes.
         return new Promise((resolve, reject) => {
-            this.executeQuery(queue, 'Action=GetQueueAttributes&AttributeName.1=ApproximateNumberOfMessages').then(res => {
-                resolve(Number(res.text.match(/<Value>(\d*)<\/Value>/)[1]));
+            this.executeQuery(queue, query).then(res => {
+                let text = res.text;
+                let regexp = /<Value>(\d*)<\/Value>/g;
+                let result = 0;
+
+                let match = regexp.exec(text);
+                while (match != null) {
+                    result += Number(match[1]);
+                    match = regexp.exec(text);
+                }
+
+                resolve(result);
             });
         });
     }
