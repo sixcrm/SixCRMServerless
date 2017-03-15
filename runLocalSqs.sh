@@ -24,4 +24,4 @@ fi
 which java > /dev/null || echo 'Please install Java.'
 
 # Run elasticmq
-java -Dconfig.file=sqs-local.conf -jar ${BINDIR}/${FILENAME}
+java -Dlogback.configurationFile=sqs-local-logback.xml -Dconfig.file=sqs-local.conf -jar ${BINDIR}/${FILENAME}
