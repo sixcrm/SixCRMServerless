@@ -8,7 +8,8 @@ var Validator = require('jsonschema').Validator;
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
 const permissionutilities = require('../lib/permission-utilities.js');
 const du = require('../lib/debug-utilities.js');
-const sqs = require('../../lib/sqs-utilities.js');
+const sqs = require('../lib/sqs-utilities.js');
+const indexingutilities = require('../lib/indexing-utilities.js');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 
@@ -465,7 +466,15 @@ module.exports = class entityController {
 
 							if(_.isError(error)){ reject(error);}
 
-							return resolve(entity);
+							this.addToSearchIndex(entity, this.descriptive_name).then((indexed) => {
+								
+								return resolve(entity);
+								
+							}).catch((error) => {
+								
+								return reject(error);
+								
+							});
 				
 						});
 			
@@ -532,10 +541,18 @@ module.exports = class entityController {
 					if(_.isObject(data) && _.isArray(data) && data.length == 1){
 					
 						dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
-			
+							
 							if(_.isError(error)){ reject(error);}
-				
-							resolve(entity);
+							
+							this.updateSearchIndex(entity, this.descriptive_name).then((indexed) => {
+								
+								return resolve(entity);
+								
+							}).catch((error) => {
+								
+								return reject(error);
+								
+							});
 				
 						});
 					
@@ -598,8 +615,16 @@ module.exports = class entityController {
 						dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error, data) => {
 			
 							if(_.isError(error)){ reject(error);}
-				
-							resolve({ id });
+						
+							this.removeFromSearchIndex(id).then((removed) => {
+								
+								return resolve(id);
+									
+							}).catch((error) => {
+							
+								return reject(error);
+								
+							});
 				
 						});
 					
@@ -745,17 +770,36 @@ module.exports = class entityController {
 	
 	acquireGlobalUser(){
 		
+		if(_.has(global, 'user')){
+			
+			return global.user;
+			
+		}
+		
+		return null;
+		
+	}
+	
+	updateSearchIndex(entity, entity_type){
+		
+		entity['entity_type'] = entity_type;
+		
+		return indexingutilities.updateSearchIndex(entity);
+		
 	}
 	
 	removeFromSearchIndex(entity){
-	
+		
 		return indexingutilities.removeFromSearchIndex(entity);
 		
 	}
 	
 	addToSearchIndex(entity, entity_type){
 		
-		entity.entity_type = entity_type;
+		du.warning('here');
+		entity['entity_type'] = entity_type;
+		
+		du.warning('Indexing:', entity);
 		
 		return indexingutilities.addToSearchIndex(entity);
 		

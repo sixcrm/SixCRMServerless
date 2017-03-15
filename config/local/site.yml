@@ -55,7 +55,7 @@ sqs:
   rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
   rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure'
   search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchindex'
-  search_de-indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchdeindex'
+  search_deindexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchdeindex'
 #  bill_queue_url: 'http://localhost:9324/queue/bill'
 #  recover_queue_url: 'http://localhost:9324/queue/recover'
 #  hold_queue_url: 'http://localhost:9324/queue/hold'
