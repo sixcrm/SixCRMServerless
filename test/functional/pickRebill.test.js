@@ -62,8 +62,7 @@ describe('Pick Rebill', function () {
             expect(response).to.be.true;
             expect(rebill.processing).to.be.equal('true');
             return SqSTestUtils.messageCountInQueue('bill').then((count) => {
-                // Technical Debt: queue should contain the message. Investigate why it's empty.
-                // expect(count).to.equal(1);
+                expect(count).to.equal(1);
             });
         });
     });
