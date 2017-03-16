@@ -116,12 +116,13 @@ module.exports = class workerController {
 		return new Promise((resolve, reject) => {
 			
 			this.parseInputEvent(event).then((id) => {
-				
 				//let's add a hydration method here...
 				sessionController.get(id).then((session) => {
 				
 					this.validateSession(session).then((session) => {
 						resolve(session);
+					}).catch((error) => {
+						reject(error);
 					});
 					
 				}).catch((error) => {
