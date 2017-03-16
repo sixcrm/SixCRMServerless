@@ -1,4 +1,5 @@
 #!/bin/bash
+ELASTIC_DIR=tools/elasticmq
 BINDIR=bin
 FILENAME=elasticmq-server-0.13.2.jar
 DOWNLOAD_URL=https://s3-eu-west-1.amazonaws.com/softwaremill-public/${FILENAME}
@@ -24,4 +25,4 @@ fi
 which java > /dev/null || echo 'Please install Java.'
 
 # Run elasticmq
-java -Dlogback.configurationFile=sqs-local-logback.xml -Dconfig.file=sqs-local.conf -jar ${BINDIR}/${FILENAME}
+java -Dlogback.configurationFile=${ELASTIC_DIR}/sqs-local-logback.xml -Dconfig.file=${ELASTIC_DIR}/sqs-local.conf -jar ${BINDIR}/${FILENAME}
