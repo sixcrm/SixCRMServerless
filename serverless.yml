@@ -70,6 +70,7 @@ functions:
 ########################
 # Backend Graph Endpoint renders entity data to the website
 ########################
+
   search:
     handler: endpoints/search/handler.search
     events:
@@ -257,6 +258,18 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertoarchive}
       archivefilter: 'TWOATTEMPTS'
+
+  indextoarchive:
+    handler: workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(6 hours)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
+      archivefilter: 'ALL'
       
 # Workers
 
@@ -266,7 +279,16 @@ functions:
       stage: ${opt:stage}
       ses_notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.ses_notifications_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-
+  
+  indexentities:
+    handler: workers/indexentities/handler.indexentities
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      
   createrebills:
     handler: workers/createrebills/handler.createrebills
     events:

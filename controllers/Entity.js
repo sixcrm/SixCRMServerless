@@ -544,7 +544,7 @@ module.exports = class entityController {
 							
 							if(_.isError(error)){ reject(error);}
 							
-							this.updateSearchIndex(entity, this.descriptive_name).then((indexed) => {
+							this.addToSearchIndex(entity, this.descriptive_name).then((indexed) => {
 								
 								return resolve(entity);
 								
@@ -780,14 +780,6 @@ module.exports = class entityController {
 		
 	}
 	
-	updateSearchIndex(entity, entity_type){
-		
-		entity['entity_type'] = entity_type;
-		
-		return indexingutilities.updateSearchIndex(entity);
-		
-	}
-	
 	removeFromSearchIndex(entity){
 		
 		return indexingutilities.removeFromSearchIndex(entity);
@@ -797,6 +789,7 @@ module.exports = class entityController {
 	addToSearchIndex(entity, entity_type){
 		
 		du.warning('here');
+		
 		entity['entity_type'] = entity_type;
 		
 		du.warning('Indexing:', entity);
