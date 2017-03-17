@@ -33,6 +33,7 @@ class forwardMessageController extends workerController {
 		};
 	}
 	
+	// Techincal Debt: This doesn't require a event.
 	execute(event){
 		
 		return this.forwardMessage();

@@ -788,8 +788,6 @@ module.exports = class entityController {
 	
 	addToSearchIndex(entity, entity_type){
 		
-		du.warning('here');
-		
 		entity['entity_type'] = entity_type;
 		
 		du.warning('Indexing:', entity);
