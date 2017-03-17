@@ -13,6 +13,33 @@ describe('Functional test for message workers', function () {
         });
     });
 
+    describe('Confirms messages can move from rebill queue.', function () {
+        before(() => {
+            forwardingFunction = rebillToArchive();
+        });
+
+        it('should say "no message" when no message is in input queue', function () {
+            return forwardingFunction.execute().then((response) => {
+                expect(response).to.equal(forwardingFunction.messages.successnomessages);
+                return SqSTestUtils.messageCountInQueue('rebill').then((count) => {
+                    expect(count).to.equal(0);
+                });
+            });
+        });
+
+        it('should say "success" when there is a message, and delete it', function () {
+            return givenAnyMessageInRebillQueue().then(() => {
+                return forwardingFunction.execute().then((response) => {
+                    expect(response).to.equal(forwardingFunction.messages.success);
+                    return SqSTestUtils.messageCountInQueue('rebill').then(count => {
+                        expect(count).to.equal(0);
+                    });
+                });
+            });
+        });
+
+    });
+
     describe('Confirms messages can move from bill to hold.', function () {
         before(() => {
             forwardingFunction = billToHold();
@@ -109,12 +136,31 @@ describe('Functional test for message workers', function () {
         return SqSTestUtils.sendMessageToQueue('delivered', '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}');
     }
 
+    function givenAnyMessageInRebillQueue() {
+        return SqSTestUtils.sendMessageToQueue('rebill', '{"id":"' + givenAnySession().id + '"}');
+    }
+
+    function givenAnySession() {
+        return {
+            "id": "668ad918-0d09-4116-a6fe-0e8a9eda36f7"
+        }
+    }
+
     function billToHold() {
         process.env.failure_queue_url = 'http://localhost:9324/queue/recover';
         return configureForwardingFunction(
             'http://localhost:9324/queue/bill',
             'http://localhost:9324/queue/hold',
             'processbilling');
+    }
+
+    function rebillToArchive() {
+        let func =  configureForwardingFunction(
+            'http://localhost:9324/queue/rebill',
+            null,
+            'createrebills');
+        delete process.env.destination_queue_url;
+        return func;
     }
 
     function shippedToDelivered() {

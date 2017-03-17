@@ -60,6 +60,7 @@ class TestUtils {
         process.env.delivered_queue_url = 'http://localhost:9324/queue/delivered';
         process.env.rebill_queue_url = 'http://localhost:9324/queue/rebill';
         process.env.rebill_failed_queue_url = 'http://localhost:9324/queue/rebill-failure';
+        process.env.search_indexing_queue_url = 'http://localhost:9324/queue/searchindex';
     }
 }
 
