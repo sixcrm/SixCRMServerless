@@ -41,7 +41,7 @@ class createRebillsController extends workerController {
 			productScheduleController.getProductSchedules(session.product_schedules).then((schedules_to_purchase) => {
 				
 				rebillController.createRebills(session, schedules_to_purchase).then((rebills) => {
-					
+
 					if(rebills.length > 0){
 						
 						return resolve(this.messages.success);
@@ -52,8 +52,12 @@ class createRebillsController extends workerController {
 						
 					}
 						
+				}).catch((error) => {
+					reject(error);
 				});
 			
+			}).catch((error) => {
+				reject(error);
 			});
 			
 			
