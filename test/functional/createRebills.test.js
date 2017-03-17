@@ -11,7 +11,7 @@ describe('createRebills', function () {
         });
     });
 
-    it('should move message from bill to rebill', function () {
+    it('should return success when a valid session is passed', function () {
         let fn = createRebills();
         let session = givenAnySession();
         return fn.execute(session).then((response) => {
