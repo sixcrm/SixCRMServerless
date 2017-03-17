@@ -23,7 +23,8 @@ class SqsTestUtils {
                 this.purgeQueue('recover'),
                 this.purgeQueue('hold'),
                 this.purgeQueue('shipped'),
-                this.purgeQueue('delivered')
+                this.purgeQueue('delivered'),
+                this.purgeQueue('searchindex')
             ]).then(() => {
                 resolve();
             });

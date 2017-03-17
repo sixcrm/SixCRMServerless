@@ -28,6 +28,7 @@ describe('createRebills', function () {
 
     function createRebills() {
         process.env.rebill_queue_url = 'http://localhost:9324/queue/rebill';
+        process.env.search_indexing_queue_url = 'http://localhost:9324/queue/searchindex';
         return require('../../controllers/workers/createRebills');
     }
 });
