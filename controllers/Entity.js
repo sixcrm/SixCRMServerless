@@ -453,6 +453,7 @@ module.exports = class entityController {
 						if(_.isError(error)){ 
 							
 							reject(error);
+							return;
 						
 						}
 

@@ -19,10 +19,12 @@ class SqsTestUtils {
         return new Promise((resolve) => {
             Promise.all([
                 this.purgeQueue('bill'),
+                this.purgeQueue('rebill'),
                 this.purgeQueue('recover'),
                 this.purgeQueue('hold'),
                 this.purgeQueue('shipped'),
-                this.purgeQueue('delivered')
+                this.purgeQueue('delivered'),
+                this.purgeQueue('searchindex')
             ]).then(() => {
                 resolve();
             });
