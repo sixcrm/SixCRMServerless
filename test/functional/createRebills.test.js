@@ -19,10 +19,24 @@ describe('createRebills', function () {
         });
     });
 
+    it('should return validation error when a non-existing session is passed', function () {
+        let fn = createRebills();
+        let session = givenNonExistingSession();
+        return fn.execute(session).catch((error) => {
+            expect(error.message).to.be.equal('One or more validation errors occurred.');
+        });
+    });
+
 
     function givenAnySession() {
         return {
             "id": "668ad918-0d09-4116-a6fe-0e8a9eda36f7"
+        }
+    }
+
+    function givenNonExistingSession() {
+        return {
+            "id": "668ad918-0d09-4242-a6fe-0e8a9eda36f7"
         }
     }
 
