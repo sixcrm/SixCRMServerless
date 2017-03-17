@@ -25,6 +25,10 @@ describe('Pick Rebill', function () {
         mockery.resetCache();
     });
 
+    after(() => {
+        mockery.deregisterAll();
+    });
+
 
     it('should not move anything to bill queue when bill table is empty', function () {
         mockery.registerMock('../lib/dynamodb-utilities.js', {
