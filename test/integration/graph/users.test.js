@@ -29,10 +29,6 @@ var tests = [{
 {
 	name: "delete",
 	query: "./endpoints/graph/queries/delete/deleteUser"
-},
-{
-	name: "byemail",
-	query: "./endpoints/graph/queries/view/getUserByEmail"
 }];
 
 let this_request = request(endpoint);
@@ -43,7 +39,7 @@ describe('Graph '+entity+' Test', function() {
   		
   		global.test_users.forEach((test_user) => {
 			
-			describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials on the account "'+test_account.name, function() {  
+			describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials on the account "'+test_account.name+'"', function() {  
 			
 				let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
 			

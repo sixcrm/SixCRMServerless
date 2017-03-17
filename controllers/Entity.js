@@ -577,66 +577,72 @@ module.exports = class entityController {
 		return new Promise((resolve, reject) => {
 			
 			this.can('update').then((permission) => {
-			
+				
 				if(permission != true){ 
 				
-					resolve(null);
+					return resolve(null);
 					
-				}
+				}else{
 				
-				let query_parameters = {
-					condition_expression: 'id = :idv',
-					expression_attribute_values: {':idv': id}
-				};
+					let query_parameters = {
+						condition_expression: 'id = :idv',
+						expression_attribute_values: {':idv': id}
+					};
 			
-				let delete_parameters = {id:id};
+					let delete_parameters = {id:id};
 			
-				if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+					if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 				
-					if(global.account == '*'){
+						if(global.account == '*'){
 					
-						//for now, do nothing
+							//for now, do nothing
 					
-					}else{
+						}else{
 				
-						query_parameters.filter_expression = 'account = :accountv';
-						query_parameters.expression_attribute_values[':accountv'] = global.account;
+							query_parameters.filter_expression = 'account = :accountv';
+							query_parameters.expression_attribute_values[':accountv'] = global.account;
 					
+						}
+				
 					}
-				
-				}
 
 			
-				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+					dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
-					if(_.isError(error)){ reject(error);}
+						if(_.isError(error)){ reject(error);}
 				
-					if(_.isObject(data) && _.isArray(data) && data.length == 1){
+						if(_.isObject(data) && _.isArray(data) && data.length == 1){
 				
-						dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error, data) => {
+							dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error, data) => {
 			
-							if(_.isError(error)){ reject(error);}
+								if(_.isError(error)){ reject(error);}
 						
-							this.removeFromSearchIndex(id).then((removed) => {
+								this.removeFromSearchIndex(id, this.descriptive_name).then((removed) => {
 								
-								return resolve(id);
+									du.debug('Removed: '+removed);
+								
+									return resolve({id: id});
 									
-							}).catch((error) => {
+								}).catch((error) => {
 							
-								return reject(error);
+									du.debug('Rejecting:', id);
 								
+									return reject(error);
+								
+								});
+				
 							});
+					
+						}else{
+					
+							return reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.'));
+					
+						}
 				
-						});
-					
-					}else{
-					
-						reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.'));
-					
-					}
+					});
 				
-				});
-			
+				}
+				
 			});
 			
 		});
@@ -781,7 +787,9 @@ module.exports = class entityController {
 		
 	}
 	
-	removeFromSearchIndex(entity){
+	removeFromSearchIndex(id, entity_type){
+		
+		let entity = {id:id, entity_type: entity_type};
 		
 		return indexingutilities.removeFromSearchIndex(entity);
 		

@@ -126,7 +126,6 @@ functions:
       roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-      search_deindexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_deindexing_queue_url}
 
 ########################
 # State Machine Lambdas
@@ -260,10 +259,10 @@ functions:
       archivefilter: 'TWOATTEMPTS'
 
   indextoarchive:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: workers/forwardmessages/handler.forwardmessages
     events:
       - schedule:
-          rate: rate(6 hours)
+          rate: rate(1 minute)
           enabled: true
     environment:
       stage: ${opt:stage}
