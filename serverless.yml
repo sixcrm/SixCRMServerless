@@ -519,6 +519,6 @@ resources:
            - Effect: Allow
              Action:
                - cloudsearch:*
-             Resource: 	arn:aws:cloudsearch:us-east-1:*:domain/*
+             Resource: 	arn:aws:cloudsearch:us-east-1:*:*
         Roles:
           - Ref: IamRoleLambdaExecution

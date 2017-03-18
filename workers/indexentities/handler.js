@@ -5,7 +5,12 @@ const du = require('../../lib/debug-utilities.js');
 
 module.exports.indexentities = (event, context, callback) => {
 	
+	du.debug('Executing Index Entities');
+	du.debug('Event:', event);
+	
 	indexEntitiesController.execute(event).then((result) => {
+		
+		du.warning('Result:', result);
 		
 		if(result !== indexEntitiesController.messages.success && result !== indexEntitiesController.messages.successnoaction){
 			

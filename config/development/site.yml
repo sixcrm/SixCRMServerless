@@ -43,9 +43,11 @@ lambda:
     recovertohold: 'sixtransaction-development-processbilling'
     createrebillstoarchive: 'sixtransaction-development-createrebills'
     recovertoarchive: 'sixtransaction-development-archiverecover'
+    indextoarchive: 'sixtransaction-development-indexentities'
     
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'
+  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill-failed'
   recover_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-recover'
   hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-hold'
   pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending'
@@ -55,7 +57,6 @@ sqs:
   rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
   rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure'
   search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchindex'
-  search_deindexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchdeindex'
   
 nmi:
   username: 'demo'

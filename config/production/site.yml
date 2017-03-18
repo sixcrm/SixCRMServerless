@@ -43,9 +43,11 @@ lambda:
     recovertohold: 'sixtransaction-development-processbilling'
     createrebillstoarchive: 'sixtransaction-development-createrebills'
     recovertoarchive: 'sixtransaction-development-archiverecover'
+    indextoarchive: 'sixtransaction-development-indexentities'
     
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill'
+  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill-failed'
   recover_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-recover'
   hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-hold'
   pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending'
