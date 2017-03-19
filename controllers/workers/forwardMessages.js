@@ -109,29 +109,44 @@ class forwardMessagesController extends workerController {
 												
 	}
 	
-	forwardMessages(){
-	
-		var controller_instance = this;
+	getMessages(){
 		
 		return new Promise((resolve, reject) => {
 			
 			//Technical Debt:  This handles a maximum of 10 messages at a time...
 			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}, (error, messages) => {
 				
-				if(_.isError(error)){ reject(error); }
+				if(error){
+					return reject(error);
+				}
+				
+				return resolve(messages);
+				
+			});
+			
+		});
+		
+	}
+	
+	forwardMessages(){
+	
+		var controller_instance = this;
+		
+		return new Promise((resolve, reject) => {
+			
+			this.getMessages().then((messages) => {
 
-				if (messages && messages.length > 0) {
+				if (_.isArray(messages) && messages.length > 0) {
 					
-					du.debug(process.env.workerfunction);
+					du.debug('Worker function:  ', process.env.workerfunction);
+					
 					//Technical Debt: in the case of a local context, I want this to invoke a local function...
 					lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(messages)}, (error, workerdata) => {
-						if(_.isError(error)){
-							reject(error);
-							return;
-						}
+						
+						if(_.isError(error)){ return reject(error); }
 						
 						if(workerdata.StatusCode !== 200){ reject(new Error('Non-200 Status Code returned from Lambda invokation.')); }
-
+						
 						controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
 							
 							if(!_.has(response, 'statusCode')){
@@ -241,6 +256,10 @@ class forwardMessagesController extends workerController {
 						
 				}
 			
+			}).catch((error) => {
+			
+				return reject(error);
+				
 			});
 
 		});
