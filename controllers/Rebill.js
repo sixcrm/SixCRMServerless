@@ -11,6 +11,8 @@ var productController = require('./Product.js');
 var sessionController = require('./Session.js');
 var entityController = require('./Entity.js');
 
+const oneDayInSeconds = 86400;
+
 class rebillController extends entityController {
 
 	constructor(){
@@ -95,9 +97,9 @@ class rebillController extends entityController {
      */
 	calculateDayInCycle(session_start){
 		
-		var time_difference = timestamp.getTimeDifference(session_start);
+		let time_difference = timestamp.getTimeDifference(session_start);
 	
-		var day_in_cycle = Math.floor((time_difference / 86400));
+		let day_in_cycle = Math.floor((time_difference / oneDayInSeconds));
 		
 		return day_in_cycle;
 		
@@ -114,7 +116,7 @@ class rebillController extends entityController {
 				
 				if(!_.has(scheduled_product, "end") || (parseInt(day_in_cycle) < parseInt(scheduled_product.end))){
 					
-					var billdate = timestamp.createTimestampSeconds() + (scheduled_product.period * 86400);
+					var billdate = timestamp.createTimestampSeconds() + (scheduled_product.period * oneDayInSeconds);
 					
 					calculated_rebill = {product: scheduled_product.product_id, billdate: billdate, amount: scheduled_product.price, product_schedule: product_schedule};
 					
