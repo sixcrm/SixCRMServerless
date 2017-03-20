@@ -6,6 +6,7 @@ describe('Functional test for message workers', function () {
     let forwardingFunction;
 
     before((done) => {
+        process.env.require_local = true;
         TestUtils.setGlobalUser();
         TestUtils.setEnvironmentVariables();
         SqSTestUtils.purgeAllQueues().then(() => {
