@@ -1,6 +1,6 @@
 {
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
-	"body":"{\"q\":\"Test\", \"return\": \"_all_fields\"}"
+	"body":"{\"query\":\"Test\", \"return\":\"_all_fields\"}"
 }
 

@@ -5,6 +5,7 @@ const querystring = require('querystring');
 
 var timestamp = require('../../lib/timestamp.js');
 const du = require('../../lib/debug-utilities.js');
+const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
 
 var endpointController = require('./endpoint.js');
 
@@ -39,7 +40,10 @@ class searchController extends endpointController {
 		});
 	}
 	
+	//Technical Debt:  Rebuild this
+	/*
 	search(event){
+	
 		return new Promise((resolve, reject) => {
 		
 			let search_uri = this.buildSearchURI(event);
@@ -56,7 +60,29 @@ class searchController extends endpointController {
 		});
 		
 	}	
+	*/
 	
+	search(event){
+		
+		return new Promise((resolve, reject) => {
+			
+			du.debug(event.search_parameters);
+			
+			cloudsearchutilities.search(event.search_parameters).then((results) => {
+				
+				return resolve(results);
+				
+			}).catch((error) => {
+				
+				return reject(error);
+				
+			});
+			
+		});
+		
+	}
+	
+	/*
 	buildSearchURI(event){
 		
 		let qs = querystring.encode(event.search_parameters);
@@ -69,6 +95,7 @@ class searchController extends endpointController {
 		return endpoint;
 		
 	}
+	*/
 	
 	respond(event){
 		return new Promise((resolve, reject) => {
