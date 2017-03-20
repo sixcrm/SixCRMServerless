@@ -2,6 +2,7 @@
 var _ = require("underscore");
 var sqs = require('../../lib/sqs-utilities.js');
 var lambda = require('../../lib/lambda-utilities.js');
+var du = require('../../lib/debug-utilities.js');
 
 var workerController = require('./worker.js');
 
