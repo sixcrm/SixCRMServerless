@@ -93,7 +93,7 @@ class rebillController extends entityController {
      * @param session_start Given time.
      * @returns {number}
      */
-	calculateDateInCycle(session_start){
+	calculateDayInCycle(session_start){
 		
 		var time_difference = timestamp.getTimeDifference(session_start);
 	
@@ -151,7 +151,7 @@ class rebillController extends entityController {
 			
 			if(!_.isNumber(day_in_cycle)){
 				
-				day_in_cycle = this.calculateDateInCycle(session.created);
+				day_in_cycle = this.calculateDayInCycle(session.created);
 				
 			}
 			

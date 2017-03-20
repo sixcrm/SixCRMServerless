@@ -74,7 +74,7 @@ class processBillingController extends workerController {
 					
 					if(validated.errors.length > 0 ){ return reject( new Error('Invalid Session returned.')); }
 					
-					var day_in_cycle = rebillController.calculateDateInCycle(parent_session.created);
+					var day_in_cycle = rebillController.calculateDayInCycle(parent_session.created);
 					if(!_.isNumber(day_in_cycle) || day_in_cycle < 0){
 						return reject( new Error('Invalid day in cycle returned for session.'));
 					}
@@ -145,7 +145,7 @@ class processBillingController extends workerController {
 				var product_schedules = promises[0];
 				var parent_session = promises[1];
 				
-				var day_in_cycle = rebillController.calculateDateInCycle(parent_session.created);
+				var day_in_cycle = rebillController.calculateDayInCycle(parent_session.created);
 				var transaction_products = productScheduleController.getTransactionProducts(day_in_cycle, product_schedules);
 				
 				resolve(transaction_products);

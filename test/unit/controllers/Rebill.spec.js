@@ -146,15 +146,15 @@ describe('controllers/Rebill.js', () => {
 
     describe('should calculate day in cycle', () => {
         it('for today', () => {
-            expect(rebillController.calculateDateInCycle(nowInSeconds())).to.equal(0);
+            expect(rebillController.calculateDayInCycle(nowInSeconds())).to.equal(0);
         });
 
         it('for tomorrow', () => {
-            expect(rebillController.calculateDateInCycle(nowInSeconds() + oneDayInSeconds)).to.equal(-1);
+            expect(rebillController.calculateDayInCycle(nowInSeconds() + oneDayInSeconds)).to.equal(-1);
         });
 
         it('for yesterday', () => {
-            expect(rebillController.calculateDateInCycle(nowInSeconds() - oneDayInSeconds)).to.equal(1);
+            expect(rebillController.calculateDayInCycle(nowInSeconds() - oneDayInSeconds)).to.equal(1);
         });
     });
 });
