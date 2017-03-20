@@ -114,13 +114,16 @@ class forwardMessagesController extends workerController {
 		return new Promise((resolve, reject) => {
 			
 			//Technical Debt:  This handles a maximum of 10 messages at a time...
-			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}, (error, messages) => {
+			//this should clear the queue where possible...
+			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}).then((messages) => {
 				
-				if(error){
-					return reject(error);
-				}
+				du.debug('Messages', messages);
 				
 				return resolve(messages);
+				
+			}).catch((error) => {
+				
+				return reject(error);
 				
 			});
 			
@@ -135,17 +138,27 @@ class forwardMessagesController extends workerController {
 		return new Promise((resolve, reject) => {
 			
 			this.getMessages().then((messages) => {
-
+				
+				du.highlight('Messages', messages);
+				
 				if (_.isArray(messages) && messages.length > 0) {
 					
 					du.debug('Worker function:  ', process.env.workerfunction);
 					
-					//Technical Debt: in the case of a local context, I want this to invoke a local function...
-					lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(messages)}, (error, workerdata) => {
+					let invoke_parameters = {
+						function_name: process.env.workerfunction, 
+						payload: JSON.stringify(messages)
+					};
+					
+					lambda.invokeFunction(invoke_parameters).then((workerdata) => {
 						
-						if(_.isError(error)){ return reject(error); }
+						du.debug('Workerdata:', workerdata);
 						
-						if(workerdata.StatusCode !== 200){ reject(new Error('Non-200 Status Code returned from Lambda invokation.')); }
+						if(workerdata.StatusCode !== 200){ 
+							
+							return reject(new Error('Non-200 Status Code returned from Lambda invokation.')); 
+							
+						}
 						
 						controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
 							
@@ -248,6 +261,10 @@ class forwardMessagesController extends workerController {
 						
 						});
 			
+					}).catch((error) => {
+						
+						return reject(error);
+						
 					});
 	
 				}else{

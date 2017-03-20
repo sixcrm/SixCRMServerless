@@ -93,14 +93,14 @@ class forwardMessageController extends workerController {
 		return new Promise((resolve, reject) => {
 			
 			//Technical Debt:  This handles a maximum of 10 messages at a time...
-			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}, (error, messages) => {
-				
-				if(_.isError(error)){ reject(error); }
+			sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}).then((messages) => {
 
 				if (messages && messages.length > 0) {
 					
 					messages.forEach(function(message) {
-					
+						
+						du.debug('Handling Message:', message);
+						
 						//Technical Debt: in the case of a local context, I want this to invoke a local function...
 						lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(message)}, (error, workerdata) => {
 							if(_.isError(error)){
@@ -213,6 +213,10 @@ class forwardMessageController extends workerController {
 						
 				}
 			
+			}).catch((error) => {
+			
+				return reject(error);	
+					
 			});
 
 		});
