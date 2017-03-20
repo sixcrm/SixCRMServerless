@@ -87,7 +87,12 @@ class rebillController extends entityController {
 		};
 		
 	}
-	
+
+    /**
+	 * Returns difference in days from now to given time.
+     * @param session_start Given time.
+     * @returns {number}
+     */
 	calculateDateInCycle(session_start){
 		
 		var time_difference = timestamp.getTimeDifference(session_start);
