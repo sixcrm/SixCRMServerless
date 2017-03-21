@@ -9,44 +9,19 @@ const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
 
 var endpointController = require('./endpoint.js');
 
-class searchController extends endpointController {
+class searchController {
 	
 	constructor(){
-		super();
+
 	}
 	
-	execute(event){
-		
-		du.debug('Executing Search', event);
-		
-		return this.parseEvent(event)
-			.then((event) => this.acquireSearchTerms(event))
-			//.then((event) => this.acquireAccount(event))
-			//.then((event) => this.setGlobalAccount(event))
-			//.then((event) => this.acquireUser(event))
-			//.then((event) => this.retrieveAndSetGlobalUser(event))
-			.then((event) => this.search(event));
-			
-	}	
-	
-	acquireSearchTerms(event){
-		return new Promise((resolve, reject) => {
-			du.debug('Event:', event);
-			if(_.isString(event.body)){
-				let search_parameters = JSON.parse(event.body);
-				event.search_parameters = search_parameters;
-			}
-			resolve(event);
-		});
-	}
-	
-	search(event){
+	search(search_input){
 		
 		return new Promise((resolve, reject) => {
 			
-			du.debug(event.search_parameters);
-			
-			cloudsearchutilities.search(event.search_parameters).then((results) => {
+			cloudsearchutilities.search(search_input).then((results) => {
+				
+				du.highlight(results);
 				
 				return resolve(results);
 				
@@ -58,13 +33,6 @@ class searchController extends endpointController {
 			
 		});
 		
-	}
-	
-	
-	respond(event){
-		return new Promise((resolve, reject) => {
-			return resolve(true);
-		});
 	}
 	
 }

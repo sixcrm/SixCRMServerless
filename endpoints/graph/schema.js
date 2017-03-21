@@ -33,6 +33,7 @@ var SMTPProviderController = require('../../controllers/SMTPProvider.js');
 var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 var accountController = require('../../controllers/Account.js');
 var roleController = require('../../controllers/Role.js');
+const searchController = require('../../controllers/endpoints/Search.js');
 
 const emailTemplateTypeEnum = new GraphQLEnumType({
 	name: 'EmailTemplateTypeEnumeration',
@@ -1323,9 +1324,202 @@ var addressType = new GraphQLObjectType({
   interfaces: []
 });
 
+/* 
+* Search Results 
+*/
+
+const searchInputType = new GraphQLInputObjectType({
+  name: 'SearchInput',
+  fields: () => ({
+    query:					{ type: new GraphQLNonNull(GraphQLString) },
+    cursor:					{ type: GraphQLString },
+    expr:					{ type: GraphQLString },
+    facet:					{ type: GraphQLString },
+    filterQuery: 			{ type: GraphQLString },
+    highlight: 				{ type: GraphQLString },
+	partial: 				{ type: GraphQLString },
+	return: 				{ type: GraphQLString },
+	size: 					{ type: GraphQLString },
+	sort: 					{ type: GraphQLString },
+	start: 					{ type: GraphQLString },
+	stats: 					{ type: GraphQLString }
+  })
+});
+            
+var searchResultsType = new GraphQLObjectType({
+  name: 'SearchResults',
+  description: 'Search Results.',
+  fields: () => ({
+    status: {
+      type: new GraphQLNonNull(searchStatusType),
+      description: 'Search Result Status',
+    },
+    hits: {
+      type: new GraphQLNonNull(searchHitsType),
+      description: 'Search Result Hits',
+    }
+  }),
+  interfaces: []
+});
+
+var searchStatusType = new GraphQLObjectType({
+  name: 'SearchStatus',
+  description: 'Search Result Hits.',
+  fields: () => ({
+    timems: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'Microsecond result time.',
+    },
+    rid: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The result ID.',
+    }
+  }),
+  interfaces: []
+});
+
+var searchHitsType = new GraphQLObjectType({
+  name: 'SearchResultHits',
+  description: 'Search Result Hits.',
+  fields: () => ({
+    found: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'Search Result Found',
+    },
+    start: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'Search Result Start',
+    },
+    hit: {
+      type: new GraphQLList(searchHitType),
+      description: 'Search Result Hit'
+    }
+  }),
+  interfaces: []
+});
+						
+var searchHitType = new GraphQLObjectType({
+  name: 'SearchResultHit',
+  description: 'Search Result Hit.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'Search Result ID',
+    },
+    fields: {
+    	type: new GraphQLNonNull(searchResultFieldsType),
+    	description: 'Search Result fields.'
+    }
+  }),
+  interfaces: []
+});
+
+//Note:  These are exactly what's present in the CloudSearch implementation
+var searchResultFieldsType = new GraphQLObjectType({
+  name: 'SearchResultFields',
+  description: 'Search Result Fields.',
+  fields: () => ({
+	entity_type: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'Search Result ID',
+    },
+    account: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    active: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    address: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    alias: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    amount: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    email: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    first_six: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    firstname: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    last_four: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    lastname: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    name: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    phone: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    sku: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    },
+    tracking_number: {
+      type: GraphQLString,
+      description: 'Search Result ID',
+    }
+  }),
+  interfaces: []
+});
+/* 
+* Search Suggester 
+*/
+
+const suggestInputType = new GraphQLInputObjectType({
+  name: 'SuggestInput',
+  fields: () => ({
+    query:					{ type: new GraphQLNonNull(GraphQLString) },
+    suggester:				{ type: new GraphQLNonNull(GraphQLString) },
+    size:					{ type: GraphQLString }
+  })
+});
+
 var queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
+  	search:{
+  	  type: searchResultsType,
+	  description: 'Executes a search query.',
+	  args: {
+	    search: { type: searchInputType }
+	  },
+	  resolve: function(root, search){
+		return searchController.search(search.search); 
+	  }
+  	},
+  	/*
+  	suggest:{
+  	  type: suggestResultsType,
+  	  description: 'Retrieves string suggestions.',
+	  args: {
+	    search: { type: suggestInputType }
+	  },
+	  resolve: function(root, search){
+		return searchController.suggest(); 
+	  }
+  	},
+  	*/
   	userintrospection:{
   	  type: userType,
 	  resolve: function(root, user){
@@ -2278,7 +2472,7 @@ const sessionInputType = new GraphQLInputObjectType({
     product_schedules:	{ type: new GraphQLList(GraphQLString) }
   })
 });
-            
+
 var mutationType = new GraphQLObjectType({
 	name: 'Mutation',
 	fields: () => ({

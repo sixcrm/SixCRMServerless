@@ -1,0 +1,37 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	{ 
+		search (search: {query: \"Test\"}) { 
+			status {
+				timems,
+				rid
+			},
+			hits {
+				found,
+				start,
+				hit {
+					id,
+					fields {
+						account,
+						active,
+						address,
+						alias,
+						amount,
+						email,
+						entity_type,
+						firstname,
+						last_four,
+						lastname,
+						name,
+						phone,
+						sku,
+						tracking_number
+					}
+				}
+			}
+		} 
+	}"
+}
+
