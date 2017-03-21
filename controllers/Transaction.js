@@ -4,6 +4,7 @@ const uuidV4 = require('uuid/v4');
 
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
+var random = require('../lib/random.js');
 
 var productController = require('./Product.js');
 var entityController = require('./Entity.js');
@@ -113,10 +114,19 @@ class transactionController extends entityController {
 			processor_response: JSON.stringify(processor_response),
 			amount: params.amount,
 			date: timestamp.createDate(),
-			products: params.products
+			products: params.products,
+			alias: this.createAlias()
 		}
 		
 		return return_object;
+		
+	}
+	
+	createAlias(){
+		
+		let alias = random.createRandomString(9);
+		
+		return 'T'+alias;
 		
 	}
 
