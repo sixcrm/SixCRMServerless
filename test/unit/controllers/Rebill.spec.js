@@ -1,9 +1,9 @@
 const PermissionTestGenerators = require('../lib/permission-test-generators');
+const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
 describe('controllers/Rebill.js', () => {
-    let rebillController;
     const oneDayInSeconds = 86400;
 
     function nowInSeconds() {
@@ -11,10 +11,28 @@ describe('controllers/Rebill.js', () => {
     }
 
     before(() => {
-        rebillController = require('../../../controllers/Rebill');
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    after(() => {
+        mockery.deregisterAll();
     });
 
     describe('calculate rebill', () => {
+        let rebillController;
+
+        before(() => {
+            rebillController = require('../../../controllers/Rebill');
+        });
+
         it('should calculate rebill', () => {
             // given
             let aProductSchedule = {
@@ -152,6 +170,7 @@ describe('controllers/Rebill.js', () => {
             let aSession = givenAnySession();
             let aProductSchedule = givenAnyProductSchedule();
             let aDayInCycle = givenAnyDayInCycle();
+            let rebillController = require('../../../controllers/Rebill');
 
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).catch((error) => {
@@ -166,6 +185,7 @@ describe('controllers/Rebill.js', () => {
             let aSession = givenAnySession();
             let aProductSchedule = givenAnyProductSchedule();
             let aDayInCycle = givenAnyDayInCycle();
+            let rebillController = require('../../../controllers/Rebill');
 
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
@@ -174,22 +194,71 @@ describe('controllers/Rebill.js', () => {
             });
         });
 
-        xit('works when parameters are correct', () => {
+        it('creates a rebill with a date in the future', () => {
             // given
-            PermissionTestGenerators.givenUserWithNoPermissions();
+            PermissionTestGenerators.givenUserWithAllowed('create','rebill');
             let aSession = givenAnySession();
             let aProductSchedule = givenAnyProductSchedule();
             let aDayInCycle = givenAnyDayInCycle();
 
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, []);
+                },
+                saveRecord: (table, entity, callback) => {
+                    callback(null, entity);
+                }
+            });
+            mockery.registerMock('../lib/indexing-utilities.js', {
+                addToSearchIndex: (entity, entity_type) => {
+                    return new Promise((resolve) => {
+                        resolve(true);
+                    });
+                }
+            });
+
+            let rebillController = require('../../../controllers/Rebill');
+
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
-                expect(rebill).not.to.be.null;
-                expect(rebill).to.equal('a');
+                expect(rebill.id).to.have.lengthOf(36);
+                expect(rebill.billdate).to.equal(nowInSeconds() + aProductSchedule.schedule[0].period * oneDayInSeconds);
             });
         });
     });
 
+    describe('buildRebillObject', () => {
+        it('returns an object with correct parameters', () => {
+            // given
+            let parameters = {
+                billdate: Date.now(),
+                parentsession: '1',
+                product_schedules: [],
+                amount: 100
+            };
+
+
+            let rebillController = require('../../../controllers/Rebill');
+
+            // when
+            let rebillObject = rebillController.buildRebillObject(parameters);
+
+            // then
+            expect(rebillObject.id).to.have.lengthOf(36); // UUIDv4 is 36 characters long
+            expect(rebillObject.billdate).to.equal(parameters.billdate);
+            expect(rebillObject.parentsession).to.equal(parameters.parentsession);
+            expect(rebillObject.product_schedules).to.equal(parameters.product_schedules);
+            expect(rebillObject.amount).to.equal(parameters.amount);
+        });
+    });
+
     describe('should calculate day in cycle', () => {
+        let rebillController;
+
+        before(() => {
+            rebillController = require('../../../controllers/Rebill');
+        });
+
         it('for today', () => {
             expect(rebillController.calculateDayInCycle(nowInSeconds())).to.equal(0);
         });
