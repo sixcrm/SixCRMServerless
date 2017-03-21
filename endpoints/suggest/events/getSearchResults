@@ -1,0 +1,6 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"{\"query\":\"Test\", \"suggester\":\"name\"}"
+}
+

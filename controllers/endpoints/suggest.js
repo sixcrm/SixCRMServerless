@@ -9,7 +9,7 @@ const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
 
 var endpointController = require('./endpoint.js');
 
-class searchController extends endpointController {
+class suggestController extends endpointController {
 	
 	constructor(){
 		super();
@@ -17,36 +17,36 @@ class searchController extends endpointController {
 	
 	execute(event){
 		
-		du.debug('Executing Search', event);
+		du.debug('Executing Suggest', event);
 		
 		return this.parseEvent(event)
-			.then((event) => this.acquireSearchTerms(event))
+			.then((event) => this.acquireSuggestTerms(event))
 			//.then((event) => this.acquireAccount(event))
 			//.then((event) => this.setGlobalAccount(event))
 			//.then((event) => this.acquireUser(event))
 			//.then((event) => this.retrieveAndSetGlobalUser(event))
-			.then((event) => this.search(event));
+			.then((event) => this.suggest(event));
 			
 	}	
 	
-	acquireSearchTerms(event){
+	acquireSuggestTerms(event){
 		return new Promise((resolve, reject) => {
 			du.debug('Event:', event);
 			if(_.isString(event.body)){
-				let search_parameters = JSON.parse(event.body);
-				event.search_parameters = search_parameters;
+				let suggest_parameters = JSON.parse(event.body);
+				event.suggest_parameters = suggest_parameters;
 			}
 			resolve(event);
 		});
 	}
 	
-	search(event){
+	suggest(event){
 		
 		return new Promise((resolve, reject) => {
 			
-			du.debug(event.search_parameters);
+			du.debug(event.suggest_parameters);
 			
-			cloudsearchutilities.search(event.search_parameters).then((results) => {
+			cloudsearchutilities.suggest(event.suggest_parameters).then((results) => {
 				
 				return resolve(results);
 				
@@ -69,4 +69,4 @@ class searchController extends endpointController {
 	
 }
 
-module.exports = new searchController();
+module.exports = new suggestController();
