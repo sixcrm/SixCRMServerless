@@ -1,3 +1,4 @@
+const PermissionTestGenerators = require('../lib/permission-test-generators');
 let chai = require('chai');
 let expect = chai.expect;
 
@@ -144,6 +145,50 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
+    describe('create rebill', () => {
+        it('fails when user is not set', () => {
+            // given
+            global.user = null;
+            let aSession = givenAnySession();
+            let aProductSchedule = givenAnyProductSchedule();
+            let aDayInCycle = givenAnyDayInCycle();
+
+            // when
+            return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).catch((error) => {
+                // then
+                expect(error.message).to.be.defined;
+            });
+        });
+
+        it('fails when user does not have permissions', () => {
+            // given
+            PermissionTestGenerators.givenUserWithNoPermissions();
+            let aSession = givenAnySession();
+            let aProductSchedule = givenAnyProductSchedule();
+            let aDayInCycle = givenAnyDayInCycle();
+
+            // when
+            return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
+                // then
+                expect(rebill).to.be.null;
+            });
+        });
+
+        xit('works when parameters are correct', () => {
+            // given
+            PermissionTestGenerators.givenUserWithNoPermissions();
+            let aSession = givenAnySession();
+            let aProductSchedule = givenAnyProductSchedule();
+            let aDayInCycle = givenAnyDayInCycle();
+
+            // when
+            return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
+                expect(rebill).not.to.be.null;
+                expect(rebill).to.equal('a');
+            });
+        });
+    });
+
     describe('should calculate day in cycle', () => {
         it('for today', () => {
             expect(rebillController.calculateDayInCycle(nowInSeconds())).to.equal(0);
@@ -157,4 +202,28 @@ describe('controllers/Rebill.js', () => {
             expect(rebillController.calculateDayInCycle(nowInSeconds() - oneDayInSeconds)).to.equal(1);
         });
     });
+
+    function givenAnySession() {
+        return {
+            "id": "668ad918-0d09-4116-a6fe-0e8a9eda36f7"
+        }
+    }
+
+    function givenAnyProductSchedule() {
+        return {
+            schedule: [
+                {
+                    start: 1,
+                    end: 30,
+                    period: 1,
+                    product_id: 42,
+                    price: 100
+                }
+            ]
+        }
+    }
+
+    function givenAnyDayInCycle() {
+        return 2;
+    }
 });
