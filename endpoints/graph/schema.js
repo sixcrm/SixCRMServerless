@@ -34,6 +34,7 @@ var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 var accountController = require('../../controllers/Account.js');
 var roleController = require('../../controllers/Role.js');
 const searchController = require('../../controllers/endpoints/Search.js');
+const suggestController = require('../../controllers/endpoints/Suggest.js');
 
 const emailTemplateTypeEnum = new GraphQLEnumType({
 	name: 'EmailTemplateTypeEnumeration',
@@ -1482,6 +1483,7 @@ var searchResultFieldsType = new GraphQLObjectType({
   }),
   interfaces: []
 });
+
 /* 
 * Search Suggester 
 */
@@ -1494,6 +1496,63 @@ const suggestInputType = new GraphQLInputObjectType({
     size:					{ type: GraphQLString }
   })
 });
+
+var suggestResultsType = new GraphQLObjectType({
+  name: 'SuggestResults',
+  description: 'Suggest Results.',
+  fields: () => ({
+    status: {
+      type: new GraphQLNonNull(searchStatusType),
+      description: 'Search Result Status',
+    },
+    suggest: {
+      type: new GraphQLNonNull(suggestTopLevelResultsType),
+      description: 'Search Result Hits',
+    }
+  }),
+  interfaces: []
+});
+
+var suggestTopLevelResultsType = new GraphQLObjectType({
+  name: 'SuggestTopLevelResults',
+  description: 'Suggest Top Level Results.',
+  fields: () => ({
+    query: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'Suggest Query',
+    },
+    found: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'The number of Search Results found that match the suggestion query',
+    },
+    suggestions: {
+      type: new GraphQLList(suggestionType),
+      description: 'The suggestions associated with the query',
+    }
+  }),
+  interfaces: []
+});
+
+var suggestionType = new GraphQLObjectType({
+  name: 'Suggestion',
+  description: 'A Suggestion.',
+  fields: () => ({
+    suggestion: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The suggestion string',
+    },
+    score: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'The number of Search Results found that match the suggestion query',
+    },
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id associated with the suggestion.',
+    }
+  }),
+  interfaces: []
+});
+
 
 var queryType = new GraphQLObjectType({
   name: 'Query',
@@ -1508,18 +1567,16 @@ var queryType = new GraphQLObjectType({
 		return searchController.search(search.search); 
 	  }
   	},
-  	/*
   	suggest:{
   	  type: suggestResultsType,
   	  description: 'Retrieves string suggestions.',
 	  args: {
-	    search: { type: suggestInputType }
+	    suggest: { type: suggestInputType }
 	  },
-	  resolve: function(root, search){
-		return searchController.suggest(); 
+	  resolve: function(root, suggest){
+		return suggestController.suggest(suggest.suggest); 
 	  }
   	},
-  	*/
   	userintrospection:{
   	  type: userType,
 	  resolve: function(root, user){

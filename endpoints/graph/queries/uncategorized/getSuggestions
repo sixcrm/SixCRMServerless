@@ -1,0 +1,23 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	{ 
+		suggest (suggest: {query: \"Tes\", suggester:\"name\"}) { 
+			status {
+				timems,
+				rid
+			},
+			suggest {
+				query,
+				found,
+				suggestions {
+					suggestion,
+					score,
+					id
+				}
+			}
+		} 
+	}"
+}
+
