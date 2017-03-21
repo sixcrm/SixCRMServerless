@@ -483,6 +483,8 @@ module.exports = class entityController {
 					
 				}	
 				
+			}).catch((error) => {
+				return reject(error);
 			});
 			
 		});
