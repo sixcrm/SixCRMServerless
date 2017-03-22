@@ -361,7 +361,7 @@ describe('lib/indexing-utilities', () => {
             expect(response).to.equal('[]');
         });
 
-        it('succeeds', () => {
+        it('succeeds for strings', () => {
             // given
             let array = [
                 {
@@ -378,7 +378,30 @@ describe('lib/indexing-utilities', () => {
 
             // then
             expect(response)
-                .to.equal('[{"id":1,"fields":{"foo":"\\"bar\\"","name":"\\"Alice\\""},"type":"add","name":""}]');
+                .to.equal('[{"id":1,"fields":{"foo":"bar","name":"Alice"},"type":"add","name":""}]');
+        });
+
+        it('succeeds for objects', () => {
+            // given
+            let array = [
+                {
+                    Body: JSON.stringify({
+                        id: 1,
+                        foo: {
+                            obj: 'val'
+                        },
+                        index_action: 'add',
+                        name: 'Alice'
+                    })
+                }
+            ];
+            // when
+            let response = IndexingUtilities.createIndexingDocument(array);
+
+            // then
+            expect(response)
+                .to.equal('[{"id":1,"fields":{"foo":"{\\"obj\\":\\"val\\"}","name":"Alice"},"type":"add","name":""}]');
+        });
         });
     });
 
