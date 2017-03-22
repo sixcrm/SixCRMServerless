@@ -70,44 +70,6 @@ functions:
 ########################
 # Backend Graph Endpoint renders entity data to the website
 ########################
-
-  search:
-    handler: endpoints/search/handler.search
-    events:
-      - http:
-          path: search/{account}
-          method: post
-          cors: true
-          authorizer:
-            name: verifyauth0jwt
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
-    environment:
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-      roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
-      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
-      accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-
-  suggest:
-    handler: endpoints/suggest/handler.suggest
-    events:
-      - http:
-          path: suggest/{account}
-          method: post
-          cors: true
-          authorizer:
-            name: verifyauth0jwt
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
-    environment:
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-      roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
-      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
-      accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       
   graph:
     handler: endpoints/graph/handler.graph
