@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		suggest (suggest: {query: \"Tes\", suggester:\"name\"}) { 
+		suggest (suggest: {query: \"Tes\", suggester:\"suggestion_field_1\"}) { 
 			status {
 				timems,
 				rid
