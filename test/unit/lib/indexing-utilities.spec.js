@@ -402,6 +402,36 @@ describe('lib/indexing-utilities', () => {
             expect(response)
                 .to.equal('[{"id":1,"fields":{"foo":"{\\"obj\\":\\"val\\"}","name":"Alice"},"type":"add","name":""}]');
         });
+
+        it('succeeds for multiple entities', () => {
+            // given
+            let array = [
+                {
+                    Body: JSON.stringify({
+                        id: 1,
+                        foo: 'bar',
+                        index_action: 'add',
+                        name: 'Alice'
+                    })
+                },
+                {
+                    Body: JSON.stringify({
+                        id: 2,
+                        foo: 'baz',
+                        index_action: 'delete',
+                        name: 'Bob'
+                    })
+                }
+            ];
+            // when
+            let response = IndexingUtilities.createIndexingDocument(array);
+
+            // then
+            expect(response)
+                .to.equal('[' +
+                '{"id":1,"fields":{"foo":"bar","name":"Alice"},"type":"add","name":""},' +
+                '{"id":2,"fields":{"foo":"baz","name":"Bob"},"type":"delete","name":""}' +
+                ']');
         });
     });
 
