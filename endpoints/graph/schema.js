@@ -33,8 +33,8 @@ var SMTPProviderController = require('../../controllers/SMTPProvider.js');
 var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 var accountController = require('../../controllers/Account.js');
 var roleController = require('../../controllers/Role.js');
-const searchController = require('../../controllers/endpoints/Search.js');
-const suggestController = require('../../controllers/endpoints/Suggest.js');
+const searchController = require('../../controllers/endpoints/search.js');
+const suggestController = require('../../controllers/endpoints/suggest.js');
 
 const emailTemplateTypeEnum = new GraphQLEnumType({
 	name: 'EmailTemplateTypeEnumeration',
