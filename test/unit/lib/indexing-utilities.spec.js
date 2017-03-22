@@ -326,4 +326,60 @@ describe('lib/indexing-utilities', () => {
         });
     });
 
+    describe('createIndexingDocument', () => {
+        it('returns empty document for entities with no index_action', () => {
+            // given
+            let array = [
+                {
+                    Body: JSON.stringify({
+                        id: 1,
+                        foo: 'bar',
+                    })
+                }
+            ];
+            // when
+            let response = IndexingUtilities.createIndexingDocument(array);
+
+            // then
+            expect(response).to.equal('[]');
+        });
+
+        it('returns empty document for entities with no id', () => {
+            // given
+            let array = [
+                {
+                    Body: JSON.stringify({
+                        foo: 'bar',
+                        index_action: 'add'
+                    })
+                }
+            ];
+            // when
+            let response = IndexingUtilities.createIndexingDocument(array);
+
+            // then
+            expect(response).to.equal('[]');
+        });
+
+        it('succeeds', () => {
+            // given
+            let array = [
+                {
+                    Body: JSON.stringify({
+                        id: 1,
+                        foo: 'bar',
+                        index_action: 'add',
+                        name: 'Alice'
+                    })
+                }
+            ];
+            // when
+            let response = IndexingUtilities.createIndexingDocument(array);
+
+            // then
+            expect(response)
+                .to.equal('[{"id":1,"fields":{"foo":"\\"bar\\"","name":"\\"Alice\\""},"type":"add","name":""}]');
+        });
+    });
+
 });
