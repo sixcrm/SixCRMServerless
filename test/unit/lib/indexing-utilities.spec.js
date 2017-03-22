@@ -378,7 +378,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             expect(response)
-                .to.equal('[{"id":1,"fields":{"foo":"bar","name":"Alice"},"type":"add","name":""}]');
+                .to.equal('[{"id":1,"fields":{"foo":"bar","name":"Alice"},"type":"add"}]');
         });
 
         it('succeeds for objects', () => {
@@ -400,7 +400,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             expect(response)
-                .to.equal('[{"id":1,"fields":{"foo":"{\\"obj\\":\\"val\\"}","name":"Alice"},"type":"add","name":""}]');
+                .to.equal('[{"id":1,"fields":{"foo":"{\\"obj\\":\\"val\\"}","name":"Alice"},"type":"add"}]');
         });
 
         it('succeeds for multiple entities', () => {
@@ -411,7 +411,8 @@ describe('lib/indexing-utilities', () => {
                         id: 1,
                         foo: 'bar',
                         index_action: 'add',
-                        name: 'Alice'
+                        firstname: 'Gilford',
+                        lastname: 'Twatson'
                     })
                 },
                 {
@@ -429,8 +430,8 @@ describe('lib/indexing-utilities', () => {
             // then
             expect(response)
                 .to.equal('[' +
-                '{"id":1,"fields":{"foo":"bar","name":"Alice"},"type":"add","name":""},' +
-                '{"id":2,"fields":{"foo":"baz","name":"Bob"},"type":"delete","name":""}' +
+                '{"id":1,"fields":{"foo":"bar","firstname":"Gilford","lastname":"Twatson","name":"Gilford Twatson"},"type":"add"},' +
+                '{"id":2,"fields":{"foo":"baz","name":"Bob"},"type":"delete"}' +
                 ']');
         });
     });
