@@ -1117,6 +1117,10 @@ var transactionType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The id of the transaction.',
     },
+    alias: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The alias of the transaction.',
+    },
     amount: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The amount of the transaction.',
@@ -3114,7 +3118,7 @@ var mutationType = new GraphQLObjectType({
 				transaction: { type: transactionInputType }
 			},
 			resolve: (value, transaction) => {
-				return transactionController.create(transaction.transaction);
+				return transactionController.createTransaction(transaction.transaction);
 			}
 		},
 		updatetransaction:{

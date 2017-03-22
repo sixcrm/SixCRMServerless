@@ -5,6 +5,7 @@ const uuidV4 = require('uuid/v4');
 var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
 var random = require('../lib/random.js');
+const du = require('../lib/debug-utilities.js');
 
 var productController = require('./Product.js');
 var entityController = require('./Entity.js');
@@ -109,6 +110,8 @@ class transactionController extends entityController {
 	
 	createTransactionObject(params, processor_response){
 		
+		du.debug('Creating Transaction Object');
+
 		var return_object = {
 			rebill_id: params.rebill.id,
 			processor_response: JSON.stringify(processor_response),
@@ -126,7 +129,25 @@ class transactionController extends entityController {
 		
 		let alias = random.createRandomString(9);
 		
+		du.highlight('Alias', alias);
+		
 		return 'T'+alias;
+		
+	}
+	
+	createTransaction(entity){
+		
+		if(!_.has(entity, 'alias')){
+			
+			let alias = this.createAlias();
+			
+			entity['alias'] = alias;
+			
+		}
+		
+		du.highlight(entity);
+		
+		return this.create(entity);
 		
 	}
 

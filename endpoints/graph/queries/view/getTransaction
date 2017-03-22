@@ -5,6 +5,7 @@
 	{ 
 		transaction (id: \"cf3cd926-b321-453a-99be-591611f07e3d\") { 
 			id,
+			alias,
 			date,
 			amount,
 			processor_response,

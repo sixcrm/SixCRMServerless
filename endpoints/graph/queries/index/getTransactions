@@ -6,6 +6,7 @@
 		transactionlist {
 			transactions {
 				id,
+				alias,
 				date,
 				amount,
 				rebill {
