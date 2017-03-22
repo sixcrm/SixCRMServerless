@@ -917,6 +917,10 @@ var productScheduleType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The id of product schedule.',
     },
+    name: {
+      type: GraphQLString,
+      description: 'The name of product schedule.',
+    },
     schedule: {
 	  type: new GraphQLList(scheduleType),
       description:'The schedules associated with the product schedule',
@@ -2445,6 +2449,7 @@ const productScheduleInputType = new GraphQLInputObjectType({
   name: 'ProductScheduleInputType',
   fields: () => ({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
+    name:				{ type: GraphQLString },
     schedule:			{ type: new GraphQLList(productScheduleProductConfigurationInputType) }
   })
 });

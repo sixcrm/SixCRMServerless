@@ -6,6 +6,7 @@
 		productschedulelist {
 			productschedules {
 				id,
+				name,
 				schedule {
 					price,
 					start,

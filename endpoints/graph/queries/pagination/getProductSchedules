@@ -6,6 +6,7 @@
 		productschedulelist ({argumentation}) {
 			productschedules {
 				id,
+				name,
 				schedule {
 					price,
 					start,

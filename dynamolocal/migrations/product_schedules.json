@@ -16,6 +16,7 @@
     },
     "Seeds": [{
     	"id":"12529a17-ac32-4e46-b05b-83862843055d",
+    	"name":"Product Schedule 1",
     	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
     	"schedule":[
     		{
@@ -35,6 +36,7 @@
     },
     {
         "id":"8d1e896f-c50d-4a6b-8c84-d5661c16a046",
+        "name":"Product Schedule 2",
         "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
         "schedule":[
             {
@@ -54,6 +56,7 @@
     },
     {
     	"id":"00000000-0000-0000-0000-000000000011",
+    	"name":"Product Schedule 3",
     	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
     	"schedule":[
     		{
@@ -64,7 +67,5 @@
     			"period":"30"
     		}
     	]
-    }
-    
-    ]
+    }]
 }

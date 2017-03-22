@@ -3,8 +3,9 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createproductschedule ( productschedule: {id: \"Testing-ID\", schedule: [ { product_id:\"668ad918-0d09-4116-a6fe-0e7a9eda36f8\", start:\"0\", end:\"30\", price:\"49.00\", period: \"30\" } ] } ) { 
+		createproductschedule ( productschedule: {id: \"Testing-ID\", name:\"Testing Name\", schedule: [ { product_id:\"668ad918-0d09-4116-a6fe-0e7a9eda36f8\", start:\"0\", end:\"30\", price:\"49.00\", period: \"30\" } ] } ) { 
 			id,
+			name,
 			schedule {
 				price,
 				start,
