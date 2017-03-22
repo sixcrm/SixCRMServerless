@@ -17,11 +17,19 @@ class suggestController extends endpointController {
 	
 	suggest(suggestion_parameters){
 		
+		return this.retrieveSuggestions(suggestion_parameters).then((results) => this.flattenResults(results));
+		
+	}
+	
+	retrieveSuggestions(suggestion_parameters){
+	
 		return new Promise((resolve, reject) => {
 			
 			du.debug(suggestion_parameters);
 			
 			cloudsearchutilities.suggest(suggestion_parameters).then((results) => {
+					
+				du.debug('Raw Results:', results);
 				
 				return resolve(results);
 				
@@ -31,6 +39,50 @@ class suggestController extends endpointController {
 				
 			});
 			
+		});
+		
+	}
+	
+	flattenResults(results){
+		
+		return new Promise((resolve, reject) => {
+		
+			du.debug('Flattening Suggestion Results');
+			
+			if(_.has(results, 'suggest') && _.has(results.suggest, 'suggestions') && _.isArray(results.suggest.suggestions)){
+			
+				let flattened_suggestions = []
+			
+				results.suggest.suggestions.forEach((result) => {
+					
+					var flattened_suggestion = {};
+				
+					for(var k in result){
+						
+						if(k != 'suggestion'){
+							
+							flattened_suggestion[k] = result[k];
+						
+						}else{
+							
+							flattened_suggestion[k] = result[k].replace(/(^")|("$)/g, '');
+						
+						}
+					
+					}
+				
+					flattened_suggestions.push(flattened_suggestion);
+				
+				});
+				
+				results.suggest['suggestions'] = flattened_suggestions;
+			
+			}
+			
+			du.debug('Flattened Results', results);
+			
+			return resolve(results);
+		
 		});
 		
 	}
