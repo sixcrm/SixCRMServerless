@@ -234,13 +234,13 @@ describe('lib/indexing-utilities', () => {
         });
     });
 
-    describe('assureSuggestorFields', () => {
+    describe('assureSuggesterFields', () => {
         it('adds name if missing ', () => {
             // given
             let document = {};
 
             // when
-            IndexingUtilities.assureSuggestorFields(document);
+            IndexingUtilities.assureSuggesterFields(document);
 
             // then
             expect(document.name).to.equal('');
@@ -253,7 +253,7 @@ describe('lib/indexing-utilities', () => {
             };
 
             // when
-            IndexingUtilities.assureSuggestorFields(document);
+            IndexingUtilities.assureSuggesterFields(document);
 
             // then
             expect(document.name).to.equal('Alice');
@@ -266,7 +266,7 @@ describe('lib/indexing-utilities', () => {
             };
 
             // when
-            IndexingUtilities.assureSuggestorFields(document);
+            IndexingUtilities.assureSuggesterFields(document);
 
             // then
             expect(document.name).to.equal('Gilford');
@@ -279,7 +279,7 @@ describe('lib/indexing-utilities', () => {
             };
 
             // when
-            IndexingUtilities.assureSuggestorFields(document);
+            IndexingUtilities.assureSuggesterFields(document);
 
             // then
             expect(document.name).to.equal('Twatson');
@@ -293,7 +293,7 @@ describe('lib/indexing-utilities', () => {
             };
 
             // when
-            IndexingUtilities.assureSuggestorFields(document);
+            IndexingUtilities.assureSuggesterFields(document);
 
             // then
             expect(document.name).to.equal('Gilford Twatson');
@@ -306,7 +306,7 @@ describe('lib/indexing-utilities', () => {
             };
 
             // when
-            IndexingUtilities.assureSuggestorFields(document);
+            IndexingUtilities.assureSuggesterFields(document);
 
             // then
             expect(document.name).to.equal('123');
@@ -319,7 +319,7 @@ describe('lib/indexing-utilities', () => {
             };
 
             // when
-            IndexingUtilities.assureSuggestorFields(document);
+            IndexingUtilities.assureSuggesterFields(document);
 
             // then
             expect(document.name).to.equal('alias');
