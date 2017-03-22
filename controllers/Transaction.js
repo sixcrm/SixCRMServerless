@@ -129,8 +129,6 @@ class transactionController extends entityController {
 		
 		let alias = random.createRandomString(9);
 		
-		du.highlight('Alias', alias);
-		
 		return 'T'+alias;
 		
 	}
