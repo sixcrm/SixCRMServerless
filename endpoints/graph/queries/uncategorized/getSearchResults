@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		search (search: {query: \"Test\"}) { 
+		search (search: {query: \"testing2\"}) { 
 			status {
 				timems,
 				rid
