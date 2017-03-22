@@ -234,4 +234,96 @@ describe('lib/indexing-utilities', () => {
         });
     });
 
+    describe('assureSuggestorFields', () => {
+        it('adds name if missing ', () => {
+            // given
+            let document = {};
+
+            // when
+            IndexingUtilities.assureSuggestorFields(document);
+
+            // then
+            expect(document.name).to.equal('');
+        });
+
+        it('uses name if exists', () => {
+            // given
+            let document = {
+                name: 'Alice'
+            };
+
+            // when
+            IndexingUtilities.assureSuggestorFields(document);
+
+            // then
+            expect(document.name).to.equal('Alice');
+        });
+
+        it('it calculates name based on first name', () => {
+            // given
+            let document = {
+                firstname: 'Gilford'
+            };
+
+            // when
+            IndexingUtilities.assureSuggestorFields(document);
+
+            // then
+            expect(document.name).to.equal('Gilford');
+        });
+
+        it('it calculates name based on last name', () => {
+            // given
+            let document = {
+                lastname: 'Twatson'
+            };
+
+            // when
+            IndexingUtilities.assureSuggestorFields(document);
+
+            // then
+            expect(document.name).to.equal('Twatson');
+        });
+
+        it('it calculates name based on first and last name', () => {
+            // given
+            let document = {
+                firstname: 'Gilford',
+                lastname: 'Twatson'
+            };
+
+            // when
+            IndexingUtilities.assureSuggestorFields(document);
+
+            // then
+            expect(document.name).to.equal('Gilford Twatson');
+        });
+
+        it('it calculates name based on tracking number', () => {
+            // given
+            let document = {
+                trackingnumber: '123'
+            };
+
+            // when
+            IndexingUtilities.assureSuggestorFields(document);
+
+            // then
+            expect(document.name).to.equal('123');
+        });
+
+        it('it calculates name based on alias', () => {
+            // given
+            let document = {
+                alias: 'alias'
+            };
+
+            // when
+            IndexingUtilities.assureSuggestorFields(document);
+
+            // then
+            expect(document.name).to.equal('alias');
+        });
+    });
+
 });
