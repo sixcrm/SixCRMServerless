@@ -392,6 +392,8 @@ module.exports = class entityController {
 				
 				});
 				
+			}).catch((error) => {
+				reject(error);
 			});
 			
         });
@@ -647,7 +649,9 @@ module.exports = class entityController {
 				
 				}
 				
-			});
+			}).catch((error) => {
+                reject(error);
+            });
 			
 		});
 			
