@@ -325,6 +325,10 @@ describe('controllers/Rebill.js', () => {
     });
 
     describe('sendMessageAndMarkRebill', () => {
+        after(() => {
+            mockery.deregisterAll();
+        });
+
         it('should resolve', () => {
             // given
             let aRebill = {};
@@ -378,6 +382,45 @@ describe('controllers/Rebill.js', () => {
                 expect(error.message).to.be.equal('Sending message failed.');
             });
         });
+    });
+
+    describe('updateRebillTransactions', () => {
+        after(() => {
+            mockery.deregisterAll();
+        });
+
+        it('updates timestamp', () => {
+            // given
+            let originalTimestamp = 1490283307; // 2017-03-23T15:35:06
+            let aRebill = {
+                modified: originalTimestamp
+            };
+
+            let rebillController = require('../../../controllers/Rebill');
+
+            // when
+            return rebillController.updateRebillTransactions(aRebill, []).then(() => {
+                // then
+                expect(aRebill.modified).to.be.above(originalTimestamp);
+
+            });
+        });
+
+        it('merges transactions', () => {
+            // given
+            let aRebill = {
+                transactions: ['1', '2']
+            };
+
+            let rebillController = require('../../../controllers/Rebill');
+
+            // when
+            return rebillController.updateRebillTransactions(aRebill, ['3', '4']).then((savedRebill) => {
+                // then
+                expect(aRebill.transactions).to.deep.equal(['1', '2', '3', '4']);
+            });
+        });
+
     });
 
     function givenAnySession() {
