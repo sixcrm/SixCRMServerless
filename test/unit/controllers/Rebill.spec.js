@@ -273,6 +273,10 @@ describe('controllers/Rebill.js', () => {
     });
 
     describe('addRebillToQueue', () => {
+        after(() => {
+            mockery.deregisterAll();
+        });
+
         it('should add a rebill to bill queue', () => {
             // given
             let aRebill = {};
@@ -316,6 +320,62 @@ describe('controllers/Rebill.js', () => {
                 // then
                 expect(aRebill.processing).to.be.equal('true');
                 expect(aRebill.entity_type).to.be.equal('rebill');
+            });
+        });
+    });
+
+    describe('sendMessageAndMarkRebill', () => {
+        it('should resolve', () => {
+            // given
+            let aRebill = {};
+
+            // mock sqs utilities that always succeed
+            mockery.registerMock('../lib/sqs-utilities.js', {
+                sendMessage: (parameters, callback) => {
+                    callback(null, {});
+                }
+
+            });
+
+            // mock dynamodb utilities that return a single rebill and save always succeeds
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, [aRebill]);
+                },
+                saveRecord: (table, entity, callback) => {
+                    callback(null, entity);
+                }
+            });
+
+            let rebillController = require('../../../controllers/Rebill');
+
+            // when
+            return rebillController.sendMessageAndMarkRebill(aRebill).then(() => {
+                // then
+                expect(aRebill.processing).to.be.equal('true');
+                expect(aRebill.entity_type).to.be.equal('rebill');
+            });
+        });
+
+        it('should reject when sending message fails', () => {
+            // given
+            let aRebill = {};
+
+            // mock sqs utilities that always fails
+            mockery.registerMock('../lib/sqs-utilities.js', {
+                sendMessage: (parameters, callback) => {
+                    callback(new Error('Sending message failed.'), null);
+                }
+
+            });
+
+            let rebillController = require('../../../controllers/Rebill');
+
+            // when
+            return rebillController.sendMessageAndMarkRebill(aRebill).catch((error) => {
+                // then
+                expect(aRebill.processing).not.to.be.equal('true');
+                expect(error.message).to.be.equal('Sending message failed.');
             });
         });
     });

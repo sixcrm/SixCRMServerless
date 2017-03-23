@@ -265,15 +265,15 @@ class rebillController extends entityController {
 			
 			sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: process.env.bill_queue_url}, (error, data) =>{
 				
-				if(_.isError(error)){ reject(error);}
+				if(_.isError(error)){ return reject(error);}
 				
 				this.markRebillProcessing(rebill).then((rebill) => {
 			
-					resolve(rebill);
+					return resolve(rebill);
 					
 				}).catch((error) => {
 				
-					reject(error);
+					return reject(error);
 				
 				});
 			
