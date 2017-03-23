@@ -25,7 +25,7 @@ class suggestController extends endpointController {
 	
 		return new Promise((resolve, reject) => {
 			
-			du.debug(suggestion_parameters);
+			du.debug('Suggestion Parameters:', suggestion_parameters);
 			
 			cloudsearchutilities.suggest(suggestion_parameters).then((results) => {
 					

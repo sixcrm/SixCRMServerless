@@ -3133,7 +3133,7 @@ var mutationType = new GraphQLObjectType({
 				transaction: { type: transactionInputType }
 			},
 			resolve: (value, transaction) => {
-				return transactionController.update(transaction.transaction);
+				return transactionController.updateTransaction(transaction.transaction);
 			}
 		},
 		deletetransaction:{

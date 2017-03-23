@@ -133,6 +133,22 @@ class transactionController extends entityController {
 		
 	}
 	
+	updateTransaction(entity){
+		
+		if(!_.has(entity, 'alias')){
+			
+			let alias = this.createAlias();
+			
+			entity['alias'] = alias;
+			
+		}
+		
+		du.highlight(entity);
+		
+		return this.update(entity);
+		
+	}
+	
 	createTransaction(entity){
 		
 		if(!_.has(entity, 'alias')){
