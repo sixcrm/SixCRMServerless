@@ -149,7 +149,7 @@ describe('lib/indexing-utilities', () => {
             // given
             let entity = {
                 index_action: 'add',
-                entity_type: 'user' // indexable type
+                entity_type: 'customer' // indexable type
             };
             process.env.search_indexing_queue_url = 'url';
 
@@ -170,7 +170,7 @@ describe('lib/indexing-utilities', () => {
             // given
             let entity = {
                 index_action: 'add',
-                entity_type: 'user' // indexable type
+                entity_type: 'customer'
             };
             process.env.search_indexing_queue_url = 'url';
 
@@ -192,7 +192,7 @@ describe('lib/indexing-utilities', () => {
         it('should resolve to true', () => {
             // given
             let entity = {
-                entity_type: 'user'
+                entity_type: 'customer'
             };
             process.env.search_indexing_queue_url = 'url';
 
@@ -215,7 +215,7 @@ describe('lib/indexing-utilities', () => {
         it('should resolve to true', () => {
             // given
             let entity = {
-                entity_type: 'user'
+                entity_type: 'customer'
             };
             process.env.search_indexing_queue_url = 'url';
 
@@ -235,7 +235,7 @@ describe('lib/indexing-utilities', () => {
     });
 
     describe('assureSuggesterFields', () => {
-        it('adds name if missing ', () => {
+        it('does nothing when object does not have "fields" property', () => {
             // given
             let document = {};
 
@@ -243,86 +243,114 @@ describe('lib/indexing-utilities', () => {
             IndexingUtilities.assureSuggesterFields(document);
 
             // then
-            expect(document.name).to.equal('');
+            expect(document.fields).to.equal(undefined);
+        });
+
+        it('preserves original suggestion field', () => {
+            // given
+            let document = {
+                fields: {
+                    name: 'Bob',
+                    suggestion_field_1: 'foo'
+                }
+            };
+
+            // when
+            IndexingUtilities.assureSuggesterFields(document);
+
+            // then
+            expect(document.fields.suggestion_field_1).to.equal('foo');
         });
 
         it('uses name if exists', () => {
             // given
             let document = {
-                name: 'Alice'
+                fields: {
+                    name: 'Alice'
+                }
             };
 
             // when
             IndexingUtilities.assureSuggesterFields(document);
 
             // then
-            expect(document.name).to.equal('Alice');
+            expect(document.fields.suggestion_field_1).to.equal('Alice');
         });
 
         it('it calculates name based on first name', () => {
             // given
             let document = {
-                firstname: 'Gilford'
+                fields: {
+                    firstname: 'Gilford'
+                }
             };
 
             // when
             IndexingUtilities.assureSuggesterFields(document);
 
             // then
-            expect(document.name).to.equal('Gilford');
+            expect(document.fields.suggestion_field_1).to.equal('Gilford');
         });
 
         it('it calculates name based on last name', () => {
             // given
             let document = {
-                lastname: 'Twatson'
+                fields: {
+                    lastname: 'Twatson'
+                }
             };
 
             // when
             IndexingUtilities.assureSuggesterFields(document);
 
             // then
-            expect(document.name).to.equal('Twatson');
+            expect(document.fields.suggestion_field_1).to.equal('Twatson');
         });
 
         it('it calculates name based on first and last name', () => {
             // given
             let document = {
-                firstname: 'Gilford',
-                lastname: 'Twatson'
+                fields: {
+                    firstname: 'Gilford',
+                    lastname: 'Twatson'
+                }
             };
 
             // when
             IndexingUtilities.assureSuggesterFields(document);
 
             // then
-            expect(document.name).to.equal('Gilford Twatson');
+            expect(document.fields.suggestion_field_1).to.equal('Gilford Twatson');
         });
 
         it('it calculates name based on tracking number', () => {
             // given
             let document = {
-                trackingnumber: '123'
+                fields: {
+                    trackingnumber: '123'
+                }
             };
 
             // when
             IndexingUtilities.assureSuggesterFields(document);
 
             // then
-            expect(document.name).to.equal('123');
+            expect(document.fields.suggestion_field_1).to.equal('123');
         });
 
         it('it calculates name based on alias', () => {
             // given
             let document = {
-                alias: 'alias'
+                fields: {
+                    alias: 'alias'
+                }
             };
 
             // when
             IndexingUtilities.assureSuggesterFields(document);
 
             // then
-            expect(document.name).to.equal('alias');
+            expect(document.fields.suggestion_field_1).to.equal('alias');
         });
     });
 
@@ -378,7 +406,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             expect(response)
-                .to.equal('[{"id":1,"fields":{"foo":"bar","name":"Alice"},"type":"add"}]');
+                .to.equal('[{"id":1,"fields":{"foo":"bar","name":"Alice","suggestion_field_1":"Alice"},"type":"add"}]');
         });
 
         it('succeeds for objects', () => {
@@ -400,7 +428,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             expect(response)
-                .to.equal('[{"id":1,"fields":{"foo":"{\\"obj\\":\\"val\\"}","name":"Alice"},"type":"add"}]');
+                .to.equal('[{"id":1,"fields":{"foo":"{\\"obj\\":\\"val\\"}","name":"Alice","suggestion_field_1":"Alice"},"type":"add"}]');
         });
 
         it('succeeds for multiple entities', () => {
@@ -430,8 +458,8 @@ describe('lib/indexing-utilities', () => {
             // then
             expect(response)
                 .to.equal('[' +
-                '{"id":1,"fields":{"foo":"bar","firstname":"Gilford","lastname":"Twatson","name":"Gilford Twatson"},"type":"add"},' +
-                '{"id":2,"fields":{"foo":"baz","name":"Bob"},"type":"delete"}' +
+                '{"id":1,"fields":{"foo":"bar","firstname":"Gilford","lastname":"Twatson","suggestion_field_1":"Gilford Twatson"},"type":"add"},' +
+                '{"id":2,"fields":{"foo":"baz","name":"Bob","suggestion_field_1":"Bob"},"type":"delete"}' +
                 ']');
         });
     });
