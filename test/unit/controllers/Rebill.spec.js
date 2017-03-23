@@ -272,6 +272,54 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
+    describe('addRebillToQueue', () => {
+        it('should add a rebill to bill queue', () => {
+            // given
+            let aRebill = {};
+
+            process.env.bill_queue_url = 'tesbill';
+            process.env.bill_failed_queue_url = 'testfailbill';
+            process.env.hold_queue_url = 'testhold';
+            process.env.search_indexing_queue_url = 'url';
+
+            // mock sqs utilities that always succeed
+            mockery.registerMock('../lib/sqs-utilities.js', {
+                sendMessage: (parameters, callback) => {
+                    callback(null, {});
+                    expect(parameters.queue_url).to.equal(process.env.bill_queue_url); // expect queue url to be correct
+                }
+
+            });
+
+            // mock permission utilities that always allow the action
+            mockery.registerMock('../lib/permission-utilities.js', {
+                validatePermissions: (action, entity) => {
+                    return new Promise((resolve) => resolve(true));
+                }
+
+            });
+
+            // mock dynamodb utilities that return a single rebill and save always succeeds
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, [aRebill]);
+                },
+                saveRecord: (table, entity, callback) => {
+                    callback(null, entity);
+                }
+            });
+
+            let rebillController = require('../../../controllers/Rebill');
+
+            // when
+            return rebillController.addRebillToQueue(aRebill, 'bill').then(() => {
+                // then
+                expect(aRebill.processing).to.be.equal('true');
+                expect(aRebill.entity_type).to.be.equal('rebill');
+            });
+        });
+    });
+
     function givenAnySession() {
         return {
             "id": "668ad918-0d09-4116-a6fe-0e8a9eda36f7"
