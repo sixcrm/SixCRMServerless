@@ -332,6 +332,8 @@ describe('controllers/Rebill.js', () => {
         it('should resolve', () => {
             // given
             let aRebill = {};
+            PermissionTestGenerators.givenUserWithAllowed('update', 'rebill');
+            process.env.search_indexing_queue_url = 'url';
 
             // mock sqs utilities that always succeed
             mockery.registerMock('../lib/sqs-utilities.js', {
@@ -387,6 +389,10 @@ describe('controllers/Rebill.js', () => {
     describe('updateRebillTransactions', () => {
         after(() => {
             mockery.deregisterAll();
+        });
+
+        before(() => {
+            PermissionTestGenerators.givenUserWithAllowed('create', 'rebill');
         });
 
         it('updates timestamp', () => {
