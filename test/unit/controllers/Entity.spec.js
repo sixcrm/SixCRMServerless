@@ -41,6 +41,10 @@ describe('controllers/Entity.js', () => {
     });
 
     describe('create', () => {
+        before(() => {
+            entityController = new EntityController('table_name', 'descriptive_name');
+        });
+
         it('fails when user is not defined', () => {
             // when
             return entityController.create({}).catch((error) => {
@@ -51,6 +55,10 @@ describe('controllers/Entity.js', () => {
     });
 
     describe('update', () => {
+        before(() => {
+            entityController = new EntityController('table_name', 'descriptive_name');
+        });
+
         it('fails when user is not defined', () => {
             // when
             return entityController.update({}).catch((error) => {
@@ -61,6 +69,10 @@ describe('controllers/Entity.js', () => {
     });
 
     describe('delete', () => {
+        before(() => {
+            entityController = new EntityController('table_name', 'descriptive_name');
+        });
+
         it('fails when user is not defined', () => {
             // when
             return entityController.delete({}).catch((error) => {
@@ -71,6 +83,10 @@ describe('controllers/Entity.js', () => {
     });
 
     describe('get', () => {
+        before(() => {
+            entityController = new EntityController('table_name', 'descriptive_name');
+        });
+
         it('fails when user is not defined', () => {
             // when
             return entityController.get(1).catch((error) => {
