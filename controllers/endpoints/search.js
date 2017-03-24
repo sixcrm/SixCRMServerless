@@ -168,7 +168,7 @@ class searchController {
 					
 					results = this.serializeFacets(results);
 					
-					results = this.flattenResults(results);
+					//results = this.flattenResults(results);
 					
 					du.highlight('Flattened Results', results);
 				
