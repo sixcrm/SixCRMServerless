@@ -6,13 +6,26 @@ const querystring = require('querystring');
 var timestamp = require('../../lib/timestamp.js');
 const du = require('../../lib/debug-utilities.js');
 const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
+const permissionutilities = require('../../lib/permission-utilities.js');
 
 var endpointController = require('./endpoint.js');
 
 class searchController {
 	
 	constructor(){
-
+		
+		//Technical Debt:  This needs to be configured.
+		this.entity_types = {
+			product: 'product', 
+			campaign: 'campaign', 
+			creditcard: 'credit_card', 
+			customer: 'customer', 
+			productschedule: 'product_schedule', 
+			merchantprovider: 'merchant_provider',
+			shippingreceipt: 'shipping_receipt',
+			transaction: 'transaction'
+		};
+		
 	}
 	
 	search(search_input){
@@ -21,26 +34,117 @@ class searchController {
 		
 	}
 	
+	appendFilters(search_input){
+		
+		return new Promise((resolve, reject) => {
+		
+			let promises = [];
+			promises.push(this.createAccountFilter());
+			promises.push(this.createActionFilter());
+			
+			Promise.all(promises).then((promises) => {
+				
+				let account_filter = promises[0];
+				let action_filter = promises[1];
+				
+				du.debug('account_filter', account_filter);
+				du.debug('action_filter', action_filter);
+				
+				search_input['filterQuery'] = '(and '+account_filter+' '+action_filter+')';
+				du.highlight('Search Input with filters', search_input);
+				//assemble these.
+				return resolve(search_input);
+				
+			});
+			
+		});
+		
+	}
+	
+	createActionFilter(){
+		
+		du.debug('Append Action Filter');
+		
+		return new Promise((resolve, reject) => { 
+			
+			let promises = [];
+			
+			for(var key in this.entity_types){
+			
+				promises.push(permissionutilities.validatePermissions('read', key));
+			
+			}
+			
+			Promise.all(promises).then((promises) => {
+				
+				let entity_type_keys = Object.keys(this.entity_types);
+				
+				let action_filters = [];
+				
+				for(var i in promises){
+					if(promises[i]){
+						action_filters.push('(term field=entity_type \''+this.entity_types[entity_type_keys[i]]+'\')');
+					}
+				}
+				
+				du.warning(action_filters);
+				
+				let action_filter = '(or '+action_filters.join('')+')';	
+				
+				return resolve(action_filter);			
+	
+			});
+				
+		});
+		
+	}
+	
+	createAccountFilter(){
+		
+		du.debug('Create Account Filter.');
+		
+		return new Promise((resolve, reject) => {	
+		
+			let account_filter = false;
+		
+			if(_.has(global, 'account') && global.account !== '*'){
+	
+				account_filter = '(term field=account \''+global.account+'\')';
+		
+			}
+	
+			du.debug('Account Filter:', account_filter);
+	
+			return resolve(account_filter);
+		
+		});
+			
+	}
+	
 	retrieveResults(search_input){
 		
 		return new Promise((resolve, reject) => {
 			
-			cloudsearchutilities.search(search_input).then((results) => {
+			this.appendFilters(search_input).then((search_input) => {
 				
-				du.highlight(results);
+				cloudsearchutilities.search(search_input).then((results) => {
 				
-				results = this.flattenResults(results);
+					du.highlight(results);
 				
-				du.highlight('Flattened Results', results);
+					results = this.flattenResults(results);
 				
-				return resolve(results);
+					du.highlight('Flattened Results', results);
 				
-			}).catch((error) => {
+					return resolve(results);
 				
-				du.warning('Search Error: '+error);
+				}).catch((error) => {
 				
-				return reject(error);
+					du.warning('Search Error: '+error);
 				
+					return reject(error);
+				
+				});
+			
 			});
 			
 		});
