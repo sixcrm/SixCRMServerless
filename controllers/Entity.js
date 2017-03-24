@@ -326,7 +326,7 @@ module.exports = class entityController {
 					
 				if(permission != true){
 				
-					resolve(null);
+					return resolve(null);
 				
 				}
 				
@@ -364,7 +364,7 @@ module.exports = class entityController {
 						
 						du.warning(error);
 													
-						reject(error);
+						return reject(error);
 					
 					}
 				
@@ -372,7 +372,7 @@ module.exports = class entityController {
 					
 						if(data.length == 1){
 						
-							resolve(data[0]);
+							return resolve(data[0]);
 						
 						}else{
 						
@@ -382,7 +382,7 @@ module.exports = class entityController {
 							
 							}else{
 							
-								resolve(null);
+								return resolve(null);
 							
 							}
 						
@@ -393,7 +393,7 @@ module.exports = class entityController {
 				});
 				
 			}).catch((error) => {
-				reject(error);
+				return reject(error);
 			});
 			
         });
@@ -503,7 +503,7 @@ module.exports = class entityController {
 			
 				if(permission != true){ 
 					
-					resolve(null);
+					return resolve(null);
 					
 				}
 				
