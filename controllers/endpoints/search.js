@@ -46,18 +46,37 @@ class searchController {
 				
 				let account_filter = promises[0];
 				let action_filter = promises[1];
+				let complete_filter = '';
 				
 				du.debug('account_filter', account_filter);
 				du.debug('action_filter', action_filter);
 				
-				search_input['filterQuery'] = '(and '+account_filter+' '+action_filter+')';
-				du.highlight('Search Input with filters', search_input);
-				//assemble these.
+				if(_.has(search_input, 'filterQuery')){
+					complete_filter = this.assembleFilter([account_filter, action_filter, search_input['filterQuery']]);
+				}else{
+					complete_filter = this.assembleFilter([account_filter, action_filter]);
+				}
+				
+				search_input['filterQuery'] = complete_filter;
+				
 				return resolve(search_input);
 				
 			});
 			
 		});
+		
+	}
+	
+	//Technical Debt:  What happens when all arguments are empty strings?
+	assembleFilter(string_arguments){
+		
+		if(string_arguments.length > 0){
+						
+			let filter_arguments = '(and '+string_arguments.join('')+')';
+			
+			return filter_arguments;
+			
+		}
 		
 	}
 	
@@ -89,10 +108,18 @@ class searchController {
 				
 				du.warning(action_filters);
 				
-				let action_filter = '(or '+action_filters.join('')+')';	
+				if(action_filters.length > 0){
 				
-				return resolve(action_filter);			
-	
+					let action_filter = '(or '+action_filters.join('')+')';	
+					
+					return resolve(action_filter);			
+					
+				}else{
+				
+					return resolve('');
+					
+				}
+
 			});
 				
 		});
@@ -114,9 +141,17 @@ class searchController {
 			}
 	
 			du.debug('Account Filter:', account_filter);
-	
-			return resolve(account_filter);
-		
+			
+			if(account_filter == false){
+			
+				return resolve('');	
+				
+			}else{
+			
+				return resolve(account_filter);
+				
+			}
+			
 		});
 			
 	}
@@ -130,9 +165,11 @@ class searchController {
 				cloudsearchutilities.search(search_input).then((results) => {
 				
 					du.highlight(results);
-				
+					
+					results = this.serializeFacets(results);
+					
 					results = this.flattenResults(results);
-				
+					
 					du.highlight('Flattened Results', results);
 				
 					return resolve(results);
@@ -151,6 +188,19 @@ class searchController {
 		
 	}
 	
+	serializeFacets(results){
+		
+		if(_.has(results, 'facets')){
+			
+			results['facets'] = JSON.stringify(results.facets);
+			
+		}
+		
+		return results;
+		
+	}
+	
+	//Technical Debt:  This method has lost quite a lot of utility...
 	flattenResults(results){
 		
 		return new Promise((resolve, reject) => {
@@ -169,32 +219,12 @@ class searchController {
 						
 						if(k != 'fields'){
 							
-							
 							flattened_hit[k] = result[k];
 						
 						}else{
 							
-							for(var j in result[k]){
-								
-								if(_.isArray(result[k][j])){
-								
-									if(result[k][j].length == 1){
-										
-										flattened_hit.fields[j] = result[k][j][0].replace (/(^")|("$)/g, '');
-										
-									}else{
-										
-										flattened_hit.fields[j] = result[k][j];
-										
-									}
-									
-								}else{
-								
-									flattened_hit.fields[j] = result[k][j];
-									
-								}
-											
-							}
+							//Technical Debt:  Note that AWS returns some strange data types here...
+							flattened_hit[k] = JSON.stringify(result[k]);
 						
 						}
 					

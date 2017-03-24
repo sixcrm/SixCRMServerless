@@ -1366,10 +1366,15 @@ var searchResultsType = new GraphQLObjectType({
     hits: {
       type: new GraphQLNonNull(searchHitsType),
       description: 'Search Result Hits',
+    },
+    facets: {
+      type: GraphQLString,
+      description: 'Search Result Faceting'
     }
   }),
   interfaces: []
 });
+
 
 var searchStatusType = new GraphQLObjectType({
   name: 'SearchStatus',
@@ -1416,7 +1421,7 @@ var searchHitType = new GraphQLObjectType({
       description: 'Search Result ID',
     },
     fields: {
-    	type: new GraphQLNonNull(searchResultFieldsType),
+    	type: GraphQLString,
     	description: 'Search Result fields.'
     }
   }),
@@ -1424,6 +1429,7 @@ var searchHitType = new GraphQLObjectType({
 });
 
 //Note:  These are exactly what's present in the CloudSearch implementation
+/*
 var searchResultFieldsType = new GraphQLObjectType({
   name: 'SearchResultFields',
   description: 'Search Result Fields.',
@@ -1491,6 +1497,7 @@ var searchResultFieldsType = new GraphQLObjectType({
   }),
   interfaces: []
 });
+*/
 
 /* 
 * Search Suggester 
