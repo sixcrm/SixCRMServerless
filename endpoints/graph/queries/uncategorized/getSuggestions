@@ -3,21 +3,14 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		suggest (suggest: {query: \"Tes\", suggester:\"suggestion_field_1\"}) { 
-			status {
-				timems,
-				rid
-			},
-			suggest {
-				query,
+		search (search: {query: \"pro*\", queryOptions:\"{fields:['suggestion_field_1']}\", return:\"suggestion_field_1\", sort:\"_score desc\", size:\"10\"}) { 
+			hits {
 				found,
-				suggestions {
-					suggestion,
-					score,
-					id
+				start,
+				hit {
+					fields 
 				}
 			}
 		} 
 	}"
 }
-

@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		search (search: {query: \"product\", facet:\"{entity_type:{}}\"}) { 
+		search (search: {query: \"product')\", facet:\"{entity_type:{}}\"}) { 
 			status {
 				timems,
 				rid

@@ -1347,6 +1347,8 @@ const searchInputType = new GraphQLInputObjectType({
     filterQuery: 			{ type: GraphQLString },
     highlight: 				{ type: GraphQLString },
 	partial: 				{ type: GraphQLString },
+	queryOptions:			{ type: GraphQLString },
+  	queryParser: 			{ type: GraphQLString },
 	return: 				{ type: GraphQLString },
 	size: 					{ type: GraphQLString },
 	sort: 					{ type: GraphQLString },

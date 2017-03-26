@@ -200,7 +200,6 @@ class searchController {
 		
 	}
 	
-	//Technical Debt:  This method has lost quite a lot of utility...
 	flattenResults(results){
 		
 		return new Promise((resolve, reject) => {
