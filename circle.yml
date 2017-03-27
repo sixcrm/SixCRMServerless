@@ -1,0 +1,34 @@
+general:
+  branches:
+    only:
+      - production
+      - staging
+      - development
+      
+machine:
+  timezone:
+    America/Los_Angeles
+  node:
+    version: 7.2.0
+
+dependencies:
+  override:
+    - npm install --dev
+
+test:
+  override:
+    - npm run test-unit
+
+deployment:
+  production:
+    branch: production
+    commands:
+      - ./deployment/deploy_production.sh
+  staging:
+    branch: production
+    commands:
+      - ./deployment/deploy_staging.sh
+  development:
+    branch: development
+    commands:
+      - ./deployment/deploy_development.sh
