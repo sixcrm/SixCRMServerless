@@ -412,6 +412,26 @@ describe('controllers/Entity.js', () => {
             });
         });
 
+        it('throws an error when data is not an object', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                scanRecordsFull: (table, parameters, callback) => {
+                    callback(null, 'result');
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.list(0, 10).catch((error) => {
+                // then
+                expect(error.message).to.equal('Data is not an object.');
+            });
+        });
+
         it('throws an error when scanning data fails', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -431,5 +451,99 @@ describe('controllers/Entity.js', () => {
                 expect(error.message).to.equal('Scanning failed.');
             });
         });
+
+        it('returns empty data when there are none', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                scanRecordsFull: (table, parameters, callback) => {
+                    callback(null, {
+                        Count: 0,
+                        Items: []
+                    });
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.list(0, 10).then((response) => {
+                // then
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 0,
+                        end_cursor: '',
+                        has_next_page: 'false'
+                    },
+                    entitys: null
+                });
+            });
+        });
+
+        it('returns data when there is any', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                scanRecordsFull: (table, parameters, callback) => {
+                    callback(null, {
+                        Count: 10,
+                        Items: [{},{},{},{},{},{},{},{},{},{}]
+                    });
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.list(0, 10).then((response) => {
+                // then
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 10,
+                        end_cursor: '',
+                        has_next_page: 'false'
+                    },
+                    entitys: [{},{},{},{},{},{},{},{},{},{}]
+                });
+            });
+        });
+
+        it('correctly sets end_cursor', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                scanRecordsFull: (table, parameters, callback) => {
+                    callback(null, {
+                        LastEvaluatedKey: {
+                            id: 9
+                        },
+                        Count: 10,
+                        Items: [{},{},{},{},{},{},{},{},{},{}]
+                    });
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.list(0, 10).then((response) => {
+                // then
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 10,
+                        end_cursor: 9,
+                        has_next_page: 'true'
+                    },
+                    entitys: [{},{},{},{},{},{},{},{},{},{}]
+                });
+            });
+        });
+
     });
 });
