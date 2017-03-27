@@ -28,10 +28,13 @@ describe('controllers/Entity.js', () => {
             entityController = new EntityController('table_name', 'entity');
         });
 
+        afterEach(() => {
+            delete global.user;
+        });
+
         it('fails when user is not defined', () => {
             // given
             let anAction = 'create';
-            global.user = null;
 
             // when
             return entityController.can(anAction).catch((error) => {
@@ -39,6 +42,46 @@ describe('controllers/Entity.js', () => {
                 expect(error.message).to.equal('Missing request parameters');
             });
         });
+
+        it('fails when user is denied for action', () => {
+            // given
+            let anAction = 'create';
+            let anEntity = 'entity';
+            PermissionTestGenerators.givenUserWithDenied(anAction, anEntity);
+
+            // when
+            return entityController.can(anAction).then((can) => {
+                // then
+                expect(can).to.equal(false);
+            });
+        });
+
+        it('fails when user is not allowed for action', () => {
+            // given
+            let anAction = 'create';
+            let anEntity = 'entity';
+            PermissionTestGenerators.givenUserWithNoPermissions();
+
+            // when
+            return entityController.can(anAction).then((can) => {
+                // then
+                expect(can).to.equal(false);
+            });
+        });
+
+        it('succeeds when user is allowed for action', () => {
+            // given
+            let anAction = 'create';
+            let anEntity = 'entity';
+            PermissionTestGenerators.givenUserWithAllowed(anAction, anEntity);
+
+            // when
+            return entityController.can(anAction).then((can) => {
+                // then
+                expect(can).to.equal(true);
+            });
+        });
+
     });
 
     describe('create', () => {
