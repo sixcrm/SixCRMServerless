@@ -689,4 +689,39 @@ describe('controllers/Entity.js', () => {
             }
         });
     });
+
+    describe('isUUID', () => {
+        let entityController;
+
+        before(() => {
+            entityController = new EntityController('table_name', 'entity');
+        });
+
+        it('should allow valid UUID', () => {
+            let validUUIDs = [];
+
+            validUUIDs.push('dbf6cbca-12fa-11e7-93ae-92361f002671');  //v1
+            validUUIDs.push('2e9b9869-f0f6-4de9-b62e-ce511acd71de'); //v4
+
+            for (let uuid of validUUIDs) {
+                expect(entityController.isUUID(uuid)).to.equal(true, `'${uuid}' should be considered a valid UUID but is not.`)
+            }
+        });
+
+        it('should disallow invalid UUID', () => {
+            let invalidUUIDs = [];
+
+            invalidUUIDs.push('abcd');
+            invalidUUIDs.push('dbf6cbca-12fa-11e7-93ae-');
+            invalidUUIDs.push('-');
+            invalidUUIDs.push(null);
+            invalidUUIDs.push();
+            invalidUUIDs.push({});
+            invalidUUIDs.push(['email@example.com']);
+
+            for (let uuid of invalidUUIDs) {
+                expect(entityController.isUUID(uuid)).to.equal(false, `'${uuid}' should not be considered valid.`)
+            }
+        });
+    });
 });
