@@ -1,3 +1,6 @@
+# Technical Debt: AWS user is over-permissioned
+# Technical Debt: AWS user needs cross account access
+# Technical Debt: 
 general:
   branches:
     only:
@@ -28,5 +31,5 @@ deployment:
     branch: development
     commands:
       - serverless deploy --stage development
-      - npm run test-integration && return 1;
+      - npm run test-integration
       - ./deployment/deploy_development.sh
