@@ -364,4 +364,72 @@ describe('controllers/Entity.js', () => {
             });
         });
     });
+
+    describe('list', () => {
+        afterEach(() => {
+            mockery.resetCache();
+        });
+
+        after(() => {
+            mockery.deregisterAll();
+        });
+
+        it('can\'t list without permissions', () => {
+            // given
+            PermissionTestGenerators.givenUserWithDenied('read', 'entity');
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.list(0, 10).then((response) => {
+                // then
+                expect(response).to.equal(null);
+            });
+        });
+
+        it('throws an error when data has no Items', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                scanRecordsFull: (table, parameters, callback) => {
+                    callback(null, {
+                        LastEvaluatedKey: {
+                            id: 1
+                        }
+                    });
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.list(0, 10).catch((error) => {
+                // then
+                expect(error.message).to.equal('Data has no items.');
+            });
+        });
+
+        it('throws an error when scanning data fails', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                scanRecordsFull: (table, parameters, callback) => {
+                    callback(new Error('Scanning failed.'), null);
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.list(0, 10).catch((error) => {
+                // then
+                expect(error.message).to.equal('Scanning failed.');
+            });
+        });
+    });
 });

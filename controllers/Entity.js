@@ -95,7 +95,9 @@ module.exports = class entityController {
 
 				dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 					
-					if(_.isError(error)){ reject(error);}
+					if(_.isError(error)){
+						return reject(error);
+					}
 						
 					if(_.isObject(data)){
 
@@ -104,7 +106,9 @@ module.exports = class entityController {
 							end_cursor: '',
 							has_next_page: 'true'
 						}
-					
+
+						// Technical Debt: We should improve the way we validate the data, either by using dedicated
+						// response objects, JSON schema validation or both.
 						if(_.has(data, "Count")){
 							pagination_object.count = data.Count;
 						}
@@ -118,6 +122,10 @@ module.exports = class entityController {
 						if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
 							pagination_object.has_next_page = 'false';
 						}
+
+						if (!_.has(data, "Items") || (!_.isArray(data.Items))) {
+                            return reject(new Error('Data has no items.'));
+						}
 					
 						if(data.Items.length < 1){
 							data.Items = null;
@@ -128,8 +136,10 @@ module.exports = class entityController {
 						};
 						resolve_object[this.descriptive_name+'s'] = data.Items;
 					
-						resolve(resolve_object);
+						return resolve(resolve_object);
 					
+					} else {
+						return reject(new Error('Data is not an object.'));
 					}
 	
 				});
