@@ -11,10 +11,6 @@ machine:
   node:
     version: 7.2.0
 
-dependencies:
-  override:
-    - npm install
-
 test:
   override:
     - npm run test-unit
