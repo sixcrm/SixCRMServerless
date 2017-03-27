@@ -210,7 +210,7 @@ describe('controllers/Entity.js', () => {
                 id: 1
             };
 
-            PermissionTestGenerators.givenUserWithAllowed('delete', 'entity');
+            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
 
             mockery.registerMock('../lib/dynamodb-utilities.js', {
                 queryRecords: (table, parameters, index, callback) => {
@@ -225,6 +225,116 @@ describe('controllers/Entity.js', () => {
             return entityController.delete(anEntity.id).catch((error) => {
                 // then
                 expect(error.message).to.equal('Reading failed.');
+            });
+        });
+
+        it('throws error when deleting from database fails', () => {
+            // given
+            let anEntity = {
+                id: 1
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, [anEntity]);
+                },
+                deleteRecord: (table, key, expression, expression_params, callback) => {
+                    callback(new Error('Deleting failed.'), null);
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.delete(anEntity.id).catch((error) => {
+                // then
+                expect(error.message).to.equal('Deleting failed.');
+            });
+        });
+
+        it('throws error when there are no entities with given id', () => {
+            // given
+            let anEntity = {
+                id: 1
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, []);
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.delete(anEntity.id).catch((error) => {
+                // then
+                expect(error.message).to.equal(
+                    `Unable to delete entity with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
+            });
+        });
+
+        it('throws error when there are multiple entities with given id', () => {
+            // given
+            let anEntity = {
+                id: 1
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, [anEntity, anEntity]);
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.delete(anEntity.id).catch((error) => {
+                // then
+                expect(error.message).to.equal(
+                    `Unable to delete entity with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
+            });
+        });
+
+        it('succeeds when deleting succeeds', () => {
+            // given
+            let anEntity = {
+                id: 1
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, [anEntity]);
+                },
+                deleteRecord: (table, key, expression, expression_params, callback) => {
+                    callback(null, anEntity);
+                }
+            });
+
+            mockery.registerMock('../lib/indexing-utilities.js', {
+                removeFromSearchIndex: (entity) => {
+                    return new Promise((resolve) => resolve(true));
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.delete(anEntity.id).catch((error) => {
+                // then
+                expect(error.message).to.equal('Deleting failed.');
             });
         });
     });
@@ -700,7 +810,7 @@ describe('controllers/Entity.js', () => {
         it('should allow valid UUID', () => {
             let validUUIDs = [];
 
-            validUUIDs.push('dbf6cbca-12fa-11e7-93ae-92361f002671');  //v1
+            validUUIDs.push('dbf6cbca-12fa-11e7-93ae-92361f002671'); //v1
             validUUIDs.push('2e9b9869-f0f6-4de9-b62e-ce511acd71de'); //v4
 
             for (let uuid of validUUIDs) {
