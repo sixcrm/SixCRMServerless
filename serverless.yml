@@ -474,6 +474,13 @@ functions:
 
 resources:
   Resources:
+    SearchIndexing:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-searchindex
+        MessageRetentionPeriod: '345,600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262,144'
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
       Properties:
