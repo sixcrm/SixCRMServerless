@@ -651,4 +651,42 @@ describe('controllers/Entity.js', () => {
         });
 
     });
+
+    describe('isEmail', () => {
+        let entityController;
+
+        before(() => {
+            entityController = new EntityController('table_name', 'entity');
+        });
+
+        it('should allow valid mail', () => {
+            let validEmails = [];
+
+            validEmails.push('test@example.com');
+            validEmails.push('test@example.co.uk');
+
+            for (let email of validEmails) {
+                expect(entityController.isEmail(email)).to.equal(true, `'${email}' should be considered a valid email but is not.`)
+            }
+        });
+
+        it('should disallow invalid mail', () => {
+            let invalidEmails = [];
+
+            invalidEmails.push('test@');
+            invalidEmails.push('example.co.uk');
+            invalidEmails.push('@');
+            invalidEmails.push('a@b');
+            invalidEmails.push('test.@example.com');
+            invalidEmails.push('test@.example.com');
+            invalidEmails.push(null);
+            invalidEmails.push();
+            invalidEmails.push({});
+            invalidEmails.push(['email@example.com']);
+
+            for (let email of invalidEmails) {
+                expect(entityController.isEmail(email)).to.equal(false, `'${email}' should not be considered valid.`)
+            }
+        });
+    });
 });
