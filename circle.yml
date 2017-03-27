@@ -1,6 +1,9 @@
 # Technical Debt: AWS user is over-permissioned
 # Technical Debt: AWS user needs cross account access
-# Technical Debt: 
+# Technical Debt: Add SES deployment (with SQS, SNS & Lambda)
+# Technical Debt: Add CloudSearch configuration
+# Technical Debt: Add merge to higher environments
+
 general:
   branches:
     only:
@@ -33,3 +36,4 @@ deployment:
       - serverless deploy --stage development
       - npm run test-integration
       - ./deployment/deploy_development.sh
+      # - merge to staging

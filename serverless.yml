@@ -474,13 +474,76 @@ functions:
 
 resources:
   Resources:
-    SearchIndexing:
+    ShippedQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-shipped
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    RecoverQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-recover
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    RebillFailedQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-rebill-failed
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    RebillQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-rebill
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    PendingFailedQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-pending-failed
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    PendingQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-pending
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    HoldQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-hold
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    DeliveredQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-delivered
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    BillingQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-bill
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '30'
+        MaximumMessageSize: '262144'
+    SearchIndexingQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${opt:stage}-searchindex
-        MessageRetentionPeriod: '345,600'
+        MessageRetentionPeriod: '345600'
         VisibilityTimeout: '30'
-        MaximumMessageSize: '262,144'
+        MaximumMessageSize: '262144'
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
       Properties:
