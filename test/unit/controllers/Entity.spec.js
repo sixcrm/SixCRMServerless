@@ -546,4 +546,109 @@ describe('controllers/Entity.js', () => {
         });
 
     });
+
+    describe('listBySecondaryIndex', () => {
+        afterEach(() => {
+            mockery.resetCache();
+        });
+
+        after(() => {
+            mockery.deregisterAll();
+        });
+
+        it('can\'t list without permissions', () => {
+            // given
+            PermissionTestGenerators.givenUserWithDenied('read', 'entity');
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
+                // then
+                expect(response).to.equal(null);
+            });
+        });
+
+        it('returns null when result is not an array', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, 'result');
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((result) => {
+                // then
+                expect(result).to.equal(null);
+            });
+        });
+
+        it('throws an error when querying data fails', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(new Error('Query failed.'), null);
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
+                // then
+                expect(error.message).to.equal('Query failed.');
+            });
+        });
+
+        it('returns null when there are no results', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, []);
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
+                // then
+                expect(response).to.equal(null);
+            });
+        });
+
+        it('returns data when there is any', () => {
+            // given
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, [{},{}]);
+                }
+            });
+
+            const EC = require('../../../controllers/Entity');
+            let entityController = new EC('table_name', 'entity');
+
+            // when
+            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
+                // then
+                expect(response).to.deep.equal([{}, {}]);
+            });
+        });
+
+    });
 });
