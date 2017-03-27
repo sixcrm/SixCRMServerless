@@ -31,4 +31,5 @@ deployment:
   development:
     branch: development
     commands:
+      - serverless deploy --stage development
       - ./deployment/deploy_development.sh
