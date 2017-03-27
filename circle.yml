@@ -28,5 +28,5 @@ deployment:
     branch: development
     commands:
       - serverless deploy --stage development
-      - npm run test-integration
+      - npm run test-integration && return 1;
       - ./deployment/deploy_development.sh
