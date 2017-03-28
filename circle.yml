@@ -33,7 +33,8 @@ deployment:
   development:
     branch: development
     commands:
-      - npm run lint
+      #- npm run lint
+      - ./deployment/dynamodb/deploy_tables.sh
       - serverless deploy --stage development
       - npm run test-integration
       - ./deployment/deploy_development.sh
