@@ -2,7 +2,6 @@
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
 
 var productScheduleController = require('./ProductSchedule.js');

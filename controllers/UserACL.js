@@ -1,7 +1,6 @@
 'use strict';
 const _ = require('underscore');
 
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
 const du = require('../lib/debug-utilities.js');
 
 var accountController = require('./Account.js');

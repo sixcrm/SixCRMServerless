@@ -1,6 +1,4 @@
 'use strict';
-const _ = require('underscore');
-
 var entityController = require('./Entity.js');
 
 class fulfillmentProviderController extends entityController {

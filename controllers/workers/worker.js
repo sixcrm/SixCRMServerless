@@ -1,8 +1,5 @@
 'use strict';
-const fs = require('fs');
-const validator = require('validator');
 const Validator = require('jsonschema').Validator;
-const v = new Validator();
 var _ = require("underscore");
 
 var rebillController = require('../../controllers/Rebill.js');

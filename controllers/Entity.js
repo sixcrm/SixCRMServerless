@@ -1,14 +1,12 @@
 'use strict';
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
-var fs = require('fs');
 var validator = require('validator');
 var Validator = require('jsonschema').Validator;
 
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
 const permissionutilities = require('../lib/permission-utilities.js');
 const du = require('../lib/debug-utilities.js');
-const sqs = require('../lib/sqs-utilities.js');
 const indexingutilities = require('../lib/indexing-utilities.js');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype

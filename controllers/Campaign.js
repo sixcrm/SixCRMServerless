@@ -1,9 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
-
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
-var timestamp = require('../lib/timestamp.js');
 
 var productController = require('./Product.js');
 var loadBalancerController = require('./LoadBalancer.js');

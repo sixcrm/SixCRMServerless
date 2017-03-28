@@ -1,6 +1,5 @@
 'use strict';
 const jwt = require('jsonwebtoken');
-var AWS = require("aws-sdk");
 const _ = require("underscore");
 
 var timestamp = require('../../lib/timestamp.js');

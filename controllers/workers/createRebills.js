@@ -1,8 +1,4 @@
 'use strict';
-var _ = require("underscore");
-
-var timestamp = require('../../lib/timestamp.js');
-
 var rebillController = require('../Rebill.js');
 var productScheduleController = require('../ProductSchedule.js');
 var workerController = require('./worker.js');

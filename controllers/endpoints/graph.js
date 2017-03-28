@@ -2,7 +2,6 @@
 const _ = require("underscore");
 const graphql =  require('graphql').graphql;
 
-var timestamp = require('../../lib/timestamp.js');
 const du = require('../../lib/debug-utilities.js');
 
 let userController = require('../User.js');

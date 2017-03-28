@@ -1,15 +1,9 @@
 'use strict';
 //note not all of these are required...
 const _ = require("underscore");
-const request = require('request');
 const querystring = require('querystring');
 
-var timestamp = require('../../lib/timestamp.js');
-
 var sessionController = require('../../controllers/Session.js');
-var customerController = require('../../controllers/Customer.js');
-var productController = require('../../controllers/Product.js');
-var transactionController = require('../../controllers/Transaction.js');
 
 class confirmOrderController {
 	

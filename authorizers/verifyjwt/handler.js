@@ -1,5 +1,4 @@
 'use strict';
-const _ = require("underscore");
 const validator = require('validator');
 
 var policy_response = require('../../lib/policy_response.js');

@@ -3,8 +3,6 @@ const _ = require('underscore');
 const request = require('request');
 const querystring = require('querystring');
 
-var dynamoutilities = require('../../lib/dynamodb-utilities.js');
-
 class NMIController {
 
 	constructor(parameters){

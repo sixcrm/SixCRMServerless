@@ -4,7 +4,6 @@ const _ = require("underscore");
 var timestamp = require('../../lib/timestamp.js');
 var signature = require('../../lib/signature.js');
 
-var accessKeyController = require('../../controllers/AccessKey.js');
 var userController = require('../../controllers/User.js');
 
 class verifySignatureController {

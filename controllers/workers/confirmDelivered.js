@@ -5,7 +5,6 @@ var rebillController = require('../../controllers/Rebill.js');
 var transactionController = require('../../controllers/Transaction.js');
 var shippingStatusController = require('../../controllers/shippingproviders/ShippingStatus.js');
 var workerController = require('./worker.js');
-var util = require('util');
 
 class confirmDeliveredController extends workerController {
 	

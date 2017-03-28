@@ -1,7 +1,4 @@
 'use strict';
-const _ = require('underscore');
-
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var merchantProviderController = require('./MerchantProvider.js');
 var entityController = require('./Entity.js');
 

@@ -1,8 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
-
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var entityController = require('./Entity.js');
 
 class creditCardController extends entityController {

@@ -1,6 +1,4 @@
 'use strict';
-var _ = require("underscore");
-
 var rebillController = require('../../controllers/Rebill.js');
 var transactionController = require('../../controllers/Transaction.js');
 var shippingReceiptController = require('../../controllers/ShippingReceipt.js');

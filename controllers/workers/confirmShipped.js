@@ -3,9 +3,7 @@ var _ = require("underscore");
 
 var rebillController = require('../../controllers/Rebill.js');
 var transactionController = require('../../controllers/Transaction.js');
-var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 var workerController = require('./worker.js');
-var util = require('util');
 
 class confirmShippedController extends workerController {
 	

@@ -1,6 +1,4 @@
 'use strict';
-const _ = require('underscore');
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var entityController = require('./Entity.js');
 
 class accessKeyController extends entityController {

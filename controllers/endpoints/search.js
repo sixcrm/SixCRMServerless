@@ -1,14 +1,8 @@
 'use strict';
 const _ = require("underscore");
-const request = require('request');
-const querystring = require('querystring');
-
-var timestamp = require('../../lib/timestamp.js');
 const du = require('../../lib/debug-utilities.js');
 const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
 const permissionutilities = require('../../lib/permission-utilities.js');
-
-var endpointController = require('./endpoint.js');
 
 class searchController {
 	

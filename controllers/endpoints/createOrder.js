@@ -1,14 +1,7 @@
 'use strict';
 const _ = require("underscore");
-const fs = require('fs');
 const validator = require('validator');
 const Validator = require('jsonschema').Validator;
-const v = new Validator();
-const request = require('request');
-const querystring = require('querystring');
-const uuidV4 = require('uuid/v4');
-
-var timestamp = require('../../lib/timestamp.js');
 
 var sessionController = require('../../controllers/Session.js');
 var customerController = require('../../controllers/Customer.js');

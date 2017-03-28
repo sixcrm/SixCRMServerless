@@ -1,6 +1,4 @@
 'use strict';
-var _ = require('underscore');
-var request = require('request');
 var fulfillmentProviderController = require('./FulfillmentProvider');
 
 class HashtagController extends fulfillmentProviderController {

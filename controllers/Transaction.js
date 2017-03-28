@@ -1,8 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
-
-var dynamoutilities = require('../lib/dynamodb-utilities.js');
 var timestamp = require('../lib/timestamp.js');
 var random = require('../lib/random.js');
 const du = require('../lib/debug-utilities.js');

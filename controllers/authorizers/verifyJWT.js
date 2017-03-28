@@ -1,11 +1,7 @@
 'use strict'
 const _ = require("underscore");
 const jwt = require("jsonwebtoken");
-
-var timestamp = require('../../lib/timestamp.js');
 const du = require('../../lib/debug-utilities.js');
-
-var userController = require('../../controllers/User.js');
 
 class verifyJWTController {
 	

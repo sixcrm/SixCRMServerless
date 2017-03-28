@@ -1,10 +1,7 @@
 'use strict';
 const _ = require('underscore');
-const validator = require('validator');
 const uuidV4 = require('uuid/v4');
 
-const slackutilities = require('../lib/slack-utilities.js');
-const dynamoutilities = require('../lib/dynamodb-utilities.js');
 const du = require('../lib/debug-utilities.js');
 const inviteutilities = require('../lib/invite-utilities.js');
 
