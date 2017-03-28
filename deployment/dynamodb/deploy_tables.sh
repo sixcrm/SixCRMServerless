@@ -13,5 +13,6 @@ while [ $# -gt 0 ]; do
   shift
 done
 
+echo "Stage: $STAGE";
 serverless dynamodb install
-serverless dynamodb executeAll --stage $STAGE
+serverless dynamodb executeAll --stage development

@@ -34,7 +34,7 @@ deployment:
     branch: development
     commands:
       #- npm run lint
-      - ./deployment/dynamodb/deploy_tables.sh --stage=$CIRCLE_BRANCH
+      - serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
       - serverless deploy --stage $CIRCLE_BRANCH
       - npm run test-integration
       - ./deployment/deploy_development.sh
