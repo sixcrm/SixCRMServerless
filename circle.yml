@@ -34,8 +34,8 @@ deployment:
     branch: development
     commands:
       #- npm run lint
-      - ./deployment/dynamodb/deploy_tables.sh
-      - serverless deploy --stage development
+      - ./deployment/dynamodb/deploy_tables.sh --stage=$CIRCLE_BRANCH
+      - serverless deploy --stage $CIRCLE_BRANCH
       - npm run test-integration
       - ./deployment/deploy_development.sh
       # - merge to staging

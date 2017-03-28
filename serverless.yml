@@ -22,6 +22,7 @@ provider:
 
 plugins:
   - serverless-dynamodb-local
+  - serverless-plugin-external-sns-events
       
 custom:
   dynamodb:
@@ -260,6 +261,16 @@ functions:
       ses_notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.ses_notifications_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
   
+  slackalarm:
+    handler: workers/slackalarm/exports.handler
+    events:
+      - externalSNS: 'SlackAlarm'
+    environment:
+      stage: ${opt:stage}
+      slackChannel: '#lambdas'
+      kmsEncryptedHookUrl: AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ==
+      
+      
   indexentities:
     handler: workers/indexentities/handler.indexentities
     events:
