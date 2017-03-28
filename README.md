@@ -104,6 +104,12 @@ commit. You can access the code coverage report at `coverage/lcov-report/index.h
 1. Make sure local dynamodb is running
 1. execute `npm run test-functional`
 
+## Running linter
+We're using ESLint (http://eslint.org/) for linting. Initial set of rules is fairly relaxed, and we should slowly
+add more rules as the codebase and style stabilizes.
+
+In order to run linter, execute `npm run lint`. Results will be written to `coverage/lint.html`.
+
 ## Known Issues
 
 5.  CC record missing from the transaction. *Confirm*
