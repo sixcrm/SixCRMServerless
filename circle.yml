@@ -15,7 +15,7 @@ machine:
   timezone:
     America/Los_Angeles
   node:
-    version: 7.2.0
+    version: 7.6.0
 
 test:
   override:
