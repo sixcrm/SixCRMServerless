@@ -38,4 +38,4 @@ deployment:
       - serverless deploy --stage $CIRCLE_BRANCH
       - npm run test-integration
       - ./deployment/deploy_development.sh
-      # - merge to staging
+      - ./deployment/utilities/merge_branches.sh development staging
