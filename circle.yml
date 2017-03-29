@@ -29,7 +29,7 @@ deployment:
       #- npm run test-integration
       - ./deployment/deploy_production.sh
   staging:
-    branch: production
+    branch: staging
     commands:
       #- serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
       #- serverless deploy --stage $CIRCLE_BRANCH
