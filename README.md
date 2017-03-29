@@ -108,7 +108,7 @@ commit. You can access the code coverage report at `coverage/lcov-report/index.h
 We're using ESLint (http://eslint.org/) for linting. Initial set of rules is fairly relaxed, and we should slowly
 add more rules as the codebase and style stabilizes.
 
-In order to run linter, execute `npm run lint`. Results will be written to `coverage/lint.html`.
+In order to run linter, execute `npm run lint`.
 
 ## Known Issues
 
