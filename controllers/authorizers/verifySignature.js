@@ -33,15 +33,11 @@ class verifySignatureController {
  	
  	createTokenObject(tokens){
  		
- 		return new Promise((resolve, reject) => {
- 		
- 			return resolve({
- 				access_key: tokens[0],
- 				timestamp: tokens[1],
- 				signature: tokens[2]
- 			});
- 		
- 		});
+ 		return Promise.resolve({
+            access_key: tokens[0],
+            timestamp: tokens[1],
+            signature: tokens[2]
+        });
  		
  	}
 	
