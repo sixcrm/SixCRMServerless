@@ -113,7 +113,7 @@ class campaignController extends entityController {
 					
 				}).then((campaign) => {
 					
-					resolve(campaign);
+					return resolve(campaign);
 					
 					/*
 					controller_instance.getAffiliate(campaign).then((affiliate) => {
@@ -150,14 +150,14 @@ class campaignController extends entityController {
 				
 				this.hydrate(campaign).then((campaign) => {	
 
-					resolve(campaign);
+					return resolve(campaign);
 					
 				}).catch((error) => {
-					reject(error);
+					return reject(error);
 				});
 			
 			}).catch((error) => {
-				reject(error);
+				return reject(error);
 			});
 			
 		});

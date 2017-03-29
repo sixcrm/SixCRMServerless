@@ -48,7 +48,7 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			this.can('read').then((permission) => {
+			return this.can('read').then((permission) => {
 				
 				if(permission != true){
 					
