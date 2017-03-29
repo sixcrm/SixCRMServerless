@@ -1,8 +1,7 @@
 # Technical Debt: AWS user is over-permissioned
 # Technical Debt: AWS user needs cross account access
-# Technical Debt: Add SES deployment (with SQS, SNS & Lambda)
+# Technical Debt: Add SES deployment
 # Technical Debt: Add CloudSearch configuration
-# Technical Debt: Add merge to higher environments
 
 general:
   branches:
@@ -25,11 +24,17 @@ deployment:
   production:
     branch: production
     commands:
+      #- serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
+      #- serverless deploy --stage $CIRCLE_BRANCH
+      #- npm run test-integration
       - ./deployment/deploy_production.sh
   staging:
     branch: production
     commands:
-      - ./deployment/deploy_staging.sh
+      #- serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
+      #- serverless deploy --stage $CIRCLE_BRANCH
+      #- npm run test-integration
+      - ./deployment/utilities/merge_branches.sh staging production
   development:
     branch: development
     commands:
