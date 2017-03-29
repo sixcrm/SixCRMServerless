@@ -95,9 +95,9 @@ class campaignController extends entityController {
 		
 		var controller_instance = this;
 		
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			
-			controller_instance.getLoadBalancerHydrated(campaign).then((loadbalancer) => {
+			return controller_instance.getLoadBalancerHydrated(campaign).then((loadbalancer) => {
 				
 				campaign.loadbalancer = loadbalancer;
 				
@@ -105,7 +105,7 @@ class campaignController extends entityController {
 				
 			}).then((campaign) =>{
 				
-				controller_instance.getProductSchedulesHydrated(campaign).then((product_schedules) => {
+				return controller_instance.getProductSchedulesHydrated(campaign).then((product_schedules) => {
 					
 					campaign.productschedules = product_schedules;
 					
@@ -127,14 +127,9 @@ class campaignController extends entityController {
 					});
 					*/
 					
-				}).catch((error) => {
-					throw error;
 				});
-				
 			}).then((campaign) => {
 				return campaign;
-			}).catch((error) => {
-				throw error;
 			});
 			
 		});
