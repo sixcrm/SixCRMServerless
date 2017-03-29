@@ -68,14 +68,13 @@ class verifySignatureController {
 			
 			userController.disableACLs();
 					
-			userController.getUserByAccessKeyId(access_key.id).then((user) => {
+			return userController.getUserByAccessKeyId(access_key.id).then((user) => {
 				
 				userController.enableACLs();
 				
 				return resolve(user);
 			
 			});
-			
 
 		});
 		
