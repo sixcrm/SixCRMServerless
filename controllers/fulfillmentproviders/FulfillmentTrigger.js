@@ -41,7 +41,7 @@ class fulfillmentTriggerController {
 				
 				default:
 					
-					reject(new Error('Unknown fulfillment provider: '+provider));
+					reject(new Error('Unknown fulfillment provider: ' + transaction_product.product.fulfillment_provider.provider));
 					
 					break;
 					
