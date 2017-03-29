@@ -11,9 +11,7 @@ class creditCardController extends entityController {
 	}
 	
 	getAddress(creditcard){
-		return new Promise((resolve, reject) => {
-			resolve(creditcard.address);
-		});	
+		return Promise.resolve(creditcard.address);
 	}
 	
 	storeCreditCard(creditcard){
