@@ -136,27 +136,14 @@ class campaignController extends entityController {
 		
 	}	
 	
-	//is there a better way?
-	getHydratedCampaign(id){
+	getHydratedCampaign(id) {
 		
-		return new Promise((resolve, reject) => {
-					
-			this.get(id).then((campaign) => {
-				
-				this.hydrate(campaign).then((campaign) => {	
+		return this.get(id).then((campaign) => {
 
-					return resolve(campaign);
-					
-				}).catch((error) => {
-					return reject(error);
-				});
-			
-			}).catch((error) => {
-				return reject(error);
-			});
-			
+			return this.hydrate(campaign);
+
 		});
-		
+			
 	}
 	
     validateProductSchedules(product_schedules, campaign){
