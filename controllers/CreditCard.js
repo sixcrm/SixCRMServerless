@@ -84,21 +84,15 @@ class creditCardController extends entityController {
 	
 	createCreditCardObject(input_object){
 		
-		return new Promise((resolve, reject) => {
-		
-			var creditcard = {
-				ccnumber: input_object.ccnumber,
-				expiration: input_object.ccexpiration,
-				ccv: input_object.ccccv,
-				name: input_object.name,
-				address: input_object.address
-			};
-			
-			resolve(creditcard);
-			
-		});
-		
-		//return Promise.resolve(creditcard);
+		var creditcard = {
+			ccnumber: input_object.ccnumber,
+			expiration: input_object.ccexpiration,
+			ccv: input_object.ccccv,
+			name: input_object.name,
+			address: input_object.address
+		};
+
+		return Promise.resolve(creditcard);
 	
 	}
 

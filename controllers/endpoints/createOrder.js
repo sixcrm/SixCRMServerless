@@ -35,18 +35,14 @@ class createOrderController {
 
 	acquireBody(event){
 
-		return new Promise((resolve, reject) => {
+		var duplicate_body;
+		try {
+			duplicate_body = JSON.parse(event['body']);
+		} catch (e) {
+			duplicate_body = event.body;
+		}
 
-			var duplicate_body;
-			try {
-				duplicate_body = JSON.parse(event['body']);
-			} catch (e) {
-				duplicate_body = event.body;
-			}
-
-			resolve(duplicate_body);
-
-		});
+		return Promise.resolve(duplicate_body);
 
 	}
 
@@ -200,7 +196,7 @@ class createOrderController {
 				!_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'
 			) {
 				throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
-			};
+			}
 
 			info.processor = processor;
 

@@ -9,15 +9,10 @@ class HashtagController extends fulfillmentProviderController {
 		
 	}
 	
-	triggerFulfillment(transaction_product){
+	triggerFulfillment(){
 		
-		return new Promise((resolve, reject) => {
-			
-			resolve(this.stati.success);
-			
-		});
-		
-		
+		return Promise.resolve(this.stati.success);
+
 	}
         
 }

@@ -12,31 +12,26 @@ module.exports = class endpointController {
 	
 	parseEvent(event){
 		
-		return new Promise((resolve, reject) => {
+		if(!_.isObject(event)){
+
+			event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
+
+		}
+
+		if(_.has(event, 'requestContext') && !_.isObject(event.requestContext)){
+
+			event.requestContext = JSON.parse(event.requestContext);
+
+		}
+
+		if(_.has(event, 'pathParameters') && !_.isObject(event.pathParameters)){
+
+			event.pathParameters = JSON.parse(event.pathParameters);
+
+		}
 			
-			if(!_.isObject(event)){
-			
-				event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
-				
-			}
-			
-			if(_.has(event, 'requestContext') && !_.isObject(event.requestContext)){
-			
-				event.requestContext = JSON.parse(event.requestContext);
-			
-			}
-			
-			if(_.has(event, 'pathParameters') && !_.isObject(event.pathParameters)){
-			
-				event.pathParameters = JSON.parse(event.pathParameters);
-			
-			}
-			
-			resolve(event);
-			
-		});
-		
-		
+		return Promise.resolve(event);
+
 	}
 	
 	acquireUser(event){
@@ -99,53 +94,44 @@ module.exports = class endpointController {
 	
 	acquireAccount(event){
 		
-		return new Promise((resolve, reject) => {
-		
-			var account; 
-			var pathParameters;
-			
-			if(_.isObject(event) && _.has(event, "pathParameters")){
-				
-				pathParameters = event.pathParameters;
-				
-			}
-			
+		var pathParameters;
+
+		if(_.isObject(event) && _.has(event, "pathParameters")){
+
+			pathParameters = event.pathParameters;
+
+		}
+
+		if(_.isObject(pathParameters) && _.has(pathParameters, 'account')){
+
+			event.account = pathParameters.account;
+
+		}else if(_.isString(pathParameters)){
+
+			pathParameters = JSON.parse(pathParameters);
+
 			if(_.isObject(pathParameters) && _.has(pathParameters, 'account')){
-	
+
 				event.account = pathParameters.account;
-					
-			}else if(_.isString(pathParameters)){
-			
-				pathParameters = JSON.parse(pathParameters);
-					
-				if(_.isObject(pathParameters) && _.has(pathParameters, 'account')){
-	
-					event.account = pathParameters.account;
-				
-				}
-				
+
 			}
-		
-			return resolve(event);
-			
-		});
-			
+
+		}
+
+		return Promise.resolve(event);
+
 	}
 	
 	setGlobalAccount(event){
 
-		return new Promise((resolve, reject) => {
+		if(_.has(event, 'account')){
+
+			global.account = event.account;
+
+		}
+
+		return Promise.resolve(event);
 			
-			if(_.has(event, 'account')){
-					
-				global.account = event.account;
-				
-			}
-			
-			resolve(event);
-			
-		});
-		
 	}
 	
 	
