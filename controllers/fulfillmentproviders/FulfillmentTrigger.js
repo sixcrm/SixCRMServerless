@@ -31,8 +31,10 @@ class fulfillmentTriggerController {
 			
 					HashtagController.triggerFulfillment(transaction_product).then((fulfillment_response) => {
 						
-						resolve(fulfillment_response);
+						return resolve(fulfillment_response);
 						
+					}).catch((error) => {
+						return reject(error);
 					});
 					
 					break;
@@ -52,18 +54,14 @@ class fulfillmentTriggerController {
 	//Technical Debt:  It'd be better if the object that was coming through the pipe was hydrated...
 	getFulfillmentProvider(transaction_product){
 
-		return new Promise((resolve, reject) => {
-			
-			fulfillmentProviderController.get(transaction_product.product.fulfillment_provider).then((fulfillment_provider) => {
-				
-				transaction_product.product.fulfillment_provider = fulfillment_provider;
-				
-				resolve(transaction_product);
-				
-			}).catch(reject);
+		return fulfillmentProviderController.get(transaction_product.product.fulfillment_provider).then((fulfillment_provider) => {
+
+			transaction_product.product.fulfillment_provider = fulfillment_provider;
+
+			return transaction_product;
 
 		});
-		
+
 	}
         
 }

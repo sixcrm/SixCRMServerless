@@ -91,7 +91,7 @@ module.exports = class entityController {
 					
 				}
 
-				dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+				return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 					
 					if(_.isError(error)){
 						return reject(error);
@@ -140,7 +140,7 @@ module.exports = class entityController {
 						return reject(new Error('Data is not an object.'));
 					}
 	
-				});
+				}));
 			
 			});
 			
@@ -153,11 +153,9 @@ module.exports = class entityController {
 		
 		du.debug('Listing by secondary index', field, index_value, index_name);
 		
-		var controller_instance = this;
-		
 		return new Promise((resolve, reject) => {
 			
-			this.can('read').then((permission) => {
+			return this.can('read').then((permission) => {
 				
 				if(permission !== true){
 				
@@ -206,7 +204,7 @@ module.exports = class entityController {
 				
 				du.debug(query_parameters);
 				
-				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+				return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 					
 					if(_.isError(error)){ 
 
@@ -224,7 +222,7 @@ module.exports = class entityController {
 					
 					}				
 	
-				});
+				}));
 			
 			});
 		
@@ -237,13 +235,11 @@ module.exports = class entityController {
 		
 		du.highlight('here');
 		
-		var controller_instance = this;
-		
 		du.debug(Array.from(arguments));
 		
 		return new Promise((resolve, reject) => {	
 			
-			this.can('read').then((permission) => {
+			return this.can('read').then((permission) => {
 				
 				if(permission != true){ 
 					
@@ -289,7 +285,7 @@ module.exports = class entityController {
 				
 				du.debug(query_parameters);
 				
-				dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+				return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 					
 					if(_.isError(error)){ reject(error);}
 				
@@ -315,7 +311,7 @@ module.exports = class entityController {
 					
 					}
 	
-				});
+				}));
 				
 			});
 			
@@ -326,11 +322,9 @@ module.exports = class entityController {
 	//ACL enabled
 	get(id){
 		
-		var controller_instance = this;
-		
 		return new Promise((resolve, reject) => {
 			
-			this.can('read').then((permission) => {
+			return this.can('read').then((permission) => {
 					
 				if(permission != true){
 				
@@ -366,7 +360,7 @@ module.exports = class entityController {
 					
 				}
 			
-				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+				return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 					
 					if(_.isError(error)){ 
 						
@@ -398,7 +392,7 @@ module.exports = class entityController {
 					
 					}
 				
-				});
+				}));
 				
 			}).catch((error) => {
 				return reject(error);
@@ -414,7 +408,7 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			this.can('create').then((permission) => {
+			return this.can('create').then((permission) => {
 				
 				if(permission != true){ 
 				
@@ -458,7 +452,7 @@ module.exports = class entityController {
 				
 					}
 
-					dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+					return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
 						if(_.isError(error)){ 
 							
@@ -489,7 +483,7 @@ module.exports = class entityController {
 				
 						});
 			
-					});	
+					}));
 					
 				}	
 				
@@ -507,7 +501,7 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			this.can('update').then((permission) => {
+			return this.can('update').then((permission) => {
 			
 				if(permission != true){ 
 					
@@ -547,7 +541,7 @@ module.exports = class entityController {
 				
 				du.debug('Update query validation', this.table_name, query_parameters);
 			
-				dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+				return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
 					if(_.isError(error)){ reject(error);}
 				
@@ -575,7 +569,7 @@ module.exports = class entityController {
 					
 					}
 			
-				});		
+				}));
 				
 			}).catch((error) => {
 				reject(error);
@@ -590,7 +584,7 @@ module.exports = class entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			this.can('update').then((permission) => {
+			return this.can('update').then((permission) => {
 				
 				if(permission != true){ 
 				
@@ -621,7 +615,7 @@ module.exports = class entityController {
 					}
 
 			
-					dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+					return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
 						if(_.isError(error)){ reject(error);}
 				
@@ -653,7 +647,7 @@ module.exports = class entityController {
 					
 						}
 				
-					});
+					}));
 				
 				}
 				
@@ -706,7 +700,7 @@ module.exports = class entityController {
 			var validation;
 
 			try{
-				var v = new Validator();
+				v = new Validator();
 				validation = v.validate(object, schema);
 			}catch(e){
 				return reject(new Error('Unable to instantiate validator.'));
