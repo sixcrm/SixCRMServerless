@@ -10,19 +10,13 @@ class accountController extends entityController {
 	}
 	
 	getMasterAccount(){
-	
-		return new Promise((resolve, reject) => {
-		
-			let master_account = {
-				"id":"*",
-				"name": "Master Account",
-				"active":"true"
-			};
-			
-			resolve(master_account);
-			
-		});
-		
+
+		return Promise.resolve({
+            "id":"*",
+            "name": "Master Account",
+            "active":"true"
+        });
+
 	}
 	
 }

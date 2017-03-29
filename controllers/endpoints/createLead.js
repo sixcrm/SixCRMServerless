@@ -21,18 +21,14 @@ class createLeadController {
 
 	acquireBody(event){
 
-		return new Promise((resolve, reject) => {
+		var duplicate_body;
+		try {
+			duplicate_body = JSON.parse(event['body']);
+		} catch (e) {
+			duplicate_body = event.body;
+		}
 
-			var duplicate_body;
-			try {
-				duplicate_body = JSON.parse(event['body']);
-			} catch (e) {
-				duplicate_body = event.body;
-			}
-
-			resolve(duplicate_body);
-
-		});
+		return Promise.resolve(duplicate_body);
 
 	}
 

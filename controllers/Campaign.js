@@ -95,9 +95,9 @@ class campaignController extends entityController {
 		
 		var controller_instance = this;
 		
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			
-			controller_instance.getLoadBalancerHydrated(campaign).then((loadbalancer) => {
+			return controller_instance.getLoadBalancerHydrated(campaign).then((loadbalancer) => {
 				
 				campaign.loadbalancer = loadbalancer;
 				
@@ -105,7 +105,7 @@ class campaignController extends entityController {
 				
 			}).then((campaign) =>{
 				
-				controller_instance.getProductSchedulesHydrated(campaign).then((product_schedules) => {
+				return controller_instance.getProductSchedulesHydrated(campaign).then((product_schedules) => {
 					
 					campaign.productschedules = product_schedules;
 					
@@ -113,7 +113,7 @@ class campaignController extends entityController {
 					
 				}).then((campaign) => {
 					
-					resolve(campaign);
+					return resolve(campaign);
 					
 					/*
 					controller_instance.getAffiliate(campaign).then((affiliate) => {
@@ -127,41 +127,23 @@ class campaignController extends entityController {
 					});
 					*/
 					
-				}).catch((error) => {
-					throw error;
 				});
-				
 			}).then((campaign) => {
 				return campaign;
-			}).catch((error) => {
-				throw error;
 			});
 			
 		});
 		
 	}	
 	
-	//is there a better way?
-	getHydratedCampaign(id){
+	getHydratedCampaign(id) {
 		
-		return new Promise((resolve, reject) => {
-					
-			this.get(id).then((campaign) => {
-				
-				this.hydrate(campaign).then((campaign) => {	
+		return this.get(id).then((campaign) => {
 
-					resolve(campaign);
-					
-				}).catch((error) => {
-					reject(error);
-				});
-			
-			}).catch((error) => {
-				reject(error);
-			});
-			
+			return this.hydrate(campaign);
+
 		});
-		
+			
 	}
 	
     validateProductSchedules(product_schedules, campaign){

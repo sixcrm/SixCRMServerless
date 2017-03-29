@@ -25,41 +25,32 @@ class graphController {
 	
 	validateInput(event){
 
-		return new Promise((resolve, reject) => {
-			
-			resolve(event);
-			
-		});
-		
+		// Technical Debt: We might want to do some actual validation here.
+		return Promise.resolve(event);
 	}
 	
 	parseEvent(event){
 
-		return new Promise((resolve, reject) => {
-			
-			if(!_.isObject(event)){
-			
-				event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
-				
-			}
-			
-			if(_.has(event, 'requestContext') && !_.isObject(event.requestContext)){
-			
-				event.requestContext = JSON.parse(event.requestContext);
-			
-			}
-			
-			if(_.has(event, 'pathParameters') && !_.isObject(event.pathParameters)){
-			
-				event.pathParameters = JSON.parse(event.pathParameters);
-			
-			}
-			
-			resolve(event);
-			
-		});
-		
-		
+		if(!_.isObject(event)){
+
+			event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
+
+		}
+
+		if(_.has(event, 'requestContext') && !_.isObject(event.requestContext)){
+
+			event.requestContext = JSON.parse(event.requestContext);
+
+		}
+
+		if(_.has(event, 'pathParameters') && !_.isObject(event.pathParameters)){
+
+			event.pathParameters = JSON.parse(event.pathParameters);
+
+		}
+
+		return Promise.resolve(event);
+
 	}
 	
 	acquireUser(event){
@@ -122,77 +113,64 @@ class graphController {
 	
 	acquireAccount(event){
 		
-		return new Promise((resolve, reject) => {
-		
-			var account; 
-			var pathParameters;
-			
-			if(_.isObject(event) && _.has(event, "pathParameters")){
-				
-				pathParameters = event.pathParameters;
-				
-			}
-			
+		var pathParameters;
+
+		if(_.isObject(event) && _.has(event, "pathParameters")){
+
+			pathParameters = event.pathParameters;
+
+		}
+
+		if(_.isObject(pathParameters) && _.has(pathParameters, 'account')){
+
+			event.account = pathParameters.account;
+
+		}else if(_.isString(pathParameters)){
+
+			pathParameters = JSON.parse(pathParameters);
+
 			if(_.isObject(pathParameters) && _.has(pathParameters, 'account')){
-	
+
 				event.account = pathParameters.account;
-					
-			}else if(_.isString(pathParameters)){
-			
-				pathParameters = JSON.parse(pathParameters);
-					
-				if(_.isObject(pathParameters) && _.has(pathParameters, 'account')){
-	
-					event.account = pathParameters.account;
-				
-				}
-				
+
 			}
-		
-			return resolve(event);
-			
-		});
+
+		}
+
+		return Promise.resolve(event);
 			
 	}
 	
 	setGlobalAccount(event){
 
-		return new Promise((resolve, reject) => {
+		if(_.has(event, 'account')){
+
+			global.account = event.account;
+
+		}
+
+		return Promise.resolve(event);
 			
-			if(_.has(event, 'account')){
-					
-				global.account = event.account;
-				
-			}
-			
-			resolve(event);
-			
-		});
-		
 	}
 	
 	acquireQuery(event){
 
-		return new Promise((resolve, reject) => {
-		
-			var query; 
-	
-			if(_.isObject(event) && _.has(event, "body")){
-				query = event.body;
-			}
-			
-			//what is this??
-			if (_.has(event,"query") && _.has(event.query, "query")) {
-				query = event.query.query.replace(/[\n\r\t]+/g, '');
-			}
-			
-			//add the query explicitly to the event object
-			event.parsed_query = query;
-			
-			return resolve(event);
-			
-		});
-			
+		var query;
+
+		if(_.isObject(event) && _.has(event, "body")){
+			query = event.body;
+		}
+
+		//what is this??
+		if (_.has(event,"query") && _.has(event.query, "query")) {
+			query = event.query.query.replace(/[\n\r\t]+/g, '');
+		}
+
+		//add the query explicitly to the event object
+		event.parsed_query = query;
+
+		return Promise.resolve(event);
+
 	}
 	
 	graphQuery(event) {

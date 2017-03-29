@@ -41,45 +41,41 @@ class suggestController extends endpointController {
 	
 	flattenResults(results){
 		
-		return new Promise((resolve, reject) => {
-		
-			du.debug('Flattening Suggestion Results');
-			
-			if(_.has(results, 'suggest') && _.has(results.suggest, 'suggestions') && _.isArray(results.suggest.suggestions)){
-			
-				let flattened_suggestions = []
-			
-				results.suggest.suggestions.forEach((result) => {
-					
-					var flattened_suggestion = {};
-				
-					for(var k in result){
-						
-						if(k != 'suggestion'){
-							
-							flattened_suggestion[k] = result[k];
-						
-						}else{
-							
-							flattened_suggestion[k] = result[k].replace(/(^")|("$)/g, '');
-						
-						}
-					
+		du.debug('Flattening Suggestion Results');
+
+		if(_.has(results, 'suggest') && _.has(results.suggest, 'suggestions') && _.isArray(results.suggest.suggestions)){
+
+			let flattened_suggestions = [];
+
+			results.suggest.suggestions.forEach((result) => {
+
+				var flattened_suggestion = {};
+
+				for(var k in result){
+
+					if(k != 'suggestion'){
+
+						flattened_suggestion[k] = result[k];
+
+					}else{
+
+						flattened_suggestion[k] = result[k].replace(/(^")|("$)/g, '');
+
 					}
-				
-					flattened_suggestions.push(flattened_suggestion);
-				
-				});
-				
-				results.suggest['suggestions'] = flattened_suggestions;
-			
-			}
-			
-			du.debug('Flattened Results', results);
-			
-			return resolve(results);
-		
-		});
+
+				}
+
+				flattened_suggestions.push(flattened_suggestion);
+
+			});
+
+			results.suggest['suggestions'] = flattened_suggestions;
+
+		}
+
+		du.debug('Flattened Results', results);
+
+		return Promise.resolve(results);
 		
 	}
 	

@@ -39,7 +39,7 @@ class verifyJWTController {
 		
 		du.debug('Validate Token');
 		
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			
 			if(!_.has(process.env, 'secret_key')){ return resolve(false); }
 			

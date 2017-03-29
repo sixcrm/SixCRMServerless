@@ -19,7 +19,7 @@ module.exports.verifysignature = (event, context, callback) => {
 			return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 		}
 		
-	}).catch((error) =>{
+	}).catch(() =>{
 	
 		return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 		

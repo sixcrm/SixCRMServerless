@@ -12,9 +12,7 @@ class customerController extends entityController {
 	}
 
 	getAddress(customer){
-		return new Promise((resolve, reject) => {
-			resolve(customer.address);
-		});
+		return Promise.resolve(customer.address);
 	}
 
 	getCreditCards(customer){

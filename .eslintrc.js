@@ -4,12 +4,21 @@ module.exports = {
         "es6": true,
         "mocha": true
     },
-    "extends": "eslint:recommended",
+    "plugins": [
+        "promise"
+    ],
+    "extends": [
+        "eslint:recommended"
+    ],
     "rules": {
         "linebreak-style": [ "error", "unix" ],
         "no-mixed-spaces-and-tabs": "off",
         "no-console": [ "warn" ],
         "no-unused-vars": [ "warn" ],
-        "no-extra-semi": [ "warn" ]
+        "no-extra-semi": [ "warn" ],
+        "promise/catch-or-return": "warn",
+        "promise/no-return-wrap": "warn",
+        "promise/param-names": "warn",
+        "promise/always-return": "warn"
     }
 };
