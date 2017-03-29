@@ -14,7 +14,7 @@ class acquireTokenController {
 	
 	validateInput(event){
 		
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			
 			if(_.has(event, "requestContext") && _.has(event.requestContext, "authorizer") && _.has(event.requestContext.authorizer, "user")){
 			

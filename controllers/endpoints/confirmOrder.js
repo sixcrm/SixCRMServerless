@@ -19,7 +19,7 @@ class confirmOrderController {
 	
 	acquireQuerystring(event){
 		
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 		
 			var duplicate_querystring = event.queryStringParameters;
 			
