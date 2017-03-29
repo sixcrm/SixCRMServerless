@@ -74,6 +74,9 @@ Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot 
 region=us-east-1
 output=json
 ```
+When pushing to the repository, the commit will not be deployed to production unless it has been tagged with a appropriate version number.  Version numbers are provided as `v\d+.*`
+In order to push a commit with a tag, use git syntax as follows: `git push --follow-tags`.  You may also configure your local git instantiation as follows if you choose: `git config --global push.followTags true`.
+
 
 To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}` (where `{stage}` is `local`, `development` or `production`).
 
