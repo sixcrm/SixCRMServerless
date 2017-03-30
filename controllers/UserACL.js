@@ -20,26 +20,20 @@ class userACLController extends entityController {
 	//this is called specifically from the UserController.  Hence the partial hydration...
 	getPartiallyHydratedACLObject(useracl){
 		
-		var controller_instance = this;
-		
-		return new Promise((resolve, reject) => {
-			
-			let promises = [];
-			
-			promises.push(this.getAccount(useracl));
-			promises.push(this.getRole(useracl));
-			
-			return Promise.all(promises).then(promises => {
-				
-				useracl.account = promises[0];
-				useracl.role = promises[1];
-				
-				return resolve(useracl);
-				
-			})
-			
-		});
-		
+		let promises = [];
+
+		promises.push(this.getAccount(useracl));
+		promises.push(this.getRole(useracl));
+
+		return Promise.all(promises).then(promises => {
+
+			useracl.account = promises[0];
+			useracl.role = promises[1];
+
+			return Promise.resolve(useracl);
+
+		})
+
 	}
 	
 	getACLByUser(user){
@@ -120,7 +114,7 @@ class userACLController extends entityController {
 					return resolve(identified_acl);
 				}else{
 					du.highlight('Unable to identify ACL');
-					this.create(useracl).then((acl) => {
+					return this.create(useracl).then((acl) => {
 						du.highlight('ACL created: ', acl);
 						return resolve(acl);
 					}).catch((error) => {
