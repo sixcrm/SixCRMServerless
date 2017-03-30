@@ -27,22 +27,10 @@ class archiveController extends workerController {
 		
 	}	
 	
-	confirmSecondAttempt(rebill){
-		
-		return new Promise((resolve, reject) => {
-			
-			if(_.has(rebill, 'second_attempt')){
-				
-				return resolve(true);
-				
-			}else{
-				
-				return resolve(false);
-				
-			}
-			
-		});
-		
+	confirmSecondAttempt(rebill) {
+
+		return Promise.resolve(_.has(rebill, 'second_attempt'));
+
 	}
 	
 	confirmNoShip(rebill){
