@@ -1,6 +1,5 @@
 'use strict';
 var _  = require('underscore');
-const du = require('../../lib/debug-utilities.js');
 
 var GraphQLEnumType = require('graphql').GraphQLEnumType;
 var GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;

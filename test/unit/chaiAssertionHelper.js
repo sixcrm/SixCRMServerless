@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-module.exports = function(chai, utils) {
+module.exports = function(chai) {
 	var Assertion = chai.Assertion;
 	Assertion.addChainableMethod('deepEqualProcessor', assertProcessor);
 

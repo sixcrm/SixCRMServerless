@@ -14,7 +14,8 @@ class TestUtils {
                 }
             }]
         };
-        global.account = user.acl[0].account.id;
+
+        global.account = global.user.acl[0].account.id;
     }
 
     /**
