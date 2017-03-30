@@ -1,47 +1,43 @@
-# SixCRM Transaction Lambdas
+# SixCRM
 
-## Todo:
+## MVP Todo:
+
+### Deployment
+Add Cross Account Serverless Deployment
+Production Deployment notification
+SES Deployment
+KMS Deployment
+Cloudsearch Deployment
+
+### Notifications
+Build them
+Test them
+
+### Search
+Testing 
+
+### UserACLs/Registration/Authentication
+Test them
+
+### Technical Debt
+Resolve mentions of `//Technical Debt:` in the codebase
+
+### Testing
+Unit Testing above 85%
+Functional Testing Complete
+Resolve Linting Issues
+
+### State Machine
+Hashtag integration
+DLQ's for all pertinent queues
+
+### Transaction Endpoints
+Re-open the Transaction Endpoints
+Integration Tests
 
 ### General
 
-#### Outstanding
-
--  Add fulfillment fields
--  Graph Mutations (Update, Create, Delete)
--  Handle "no-results" with Graph
--  Endpoint User validation (active, has access)
--  Add indexes "completed-index", "created-index" to transactions *(REEVALUATE)*
--  Think on the recurring transaction processor mechanism.
--  Add Unit Testing.
--  Add Affiliate to Session Create
-
-
-### Verify Signature
-
-Reminder:  Access Key is the SHA-1  of the customer's email address.
-Clean up the callback code...
-
-### Verify JWT
-
-### Acquire Token
-
-### Create Lead
-
-### Create Order
-
-* Add more validation
-
-### Confirm Order
-
-* Add more validation
-
-## Deployment
-
-## DynamoDB
-
 Configure your AWS credentials:
-<<<<<<< HEAD
-=======
 
 ~/.aws/credentials
 ```
@@ -112,18 +108,3 @@ We're using ESLint (http://eslint.org/) for linting. Initial set of rules is fai
 add more rules as the codebase and style stabilizes.
 
 In order to run linter, execute `npm run lint`.
-
-## Known Issues
-
-5.  CC record missing from the transaction. *Confirm*
-6.  Occasionally, the product is missing from the transaction. *Confirm*
-7.  Customer doesn't need a billing address. *Confirm*
-8.  Delete/Update methods need to check for existence first.
-
-## For immediate refinement:
-
-1.  The "hydrate" methods suck -  improve.
-2.  The error handling in the endpoints seems like garbage.
-3.  Graph endpoint should not return the data when there's an error, it should be a clear "error: message" sort of thing
-
-
