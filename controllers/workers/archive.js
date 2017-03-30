@@ -137,14 +137,10 @@ class archiveController extends workerController {
 		
 	}
 	
-	createForwardObject(event){
+	createForwardObject() {
 		
-		return new Promise((resolve, reject) => {
-		
-			resolve({forward: true});
-			
-		});
-		
+		return Promise.resolve({forward: true});
+
 	}
 
 }
