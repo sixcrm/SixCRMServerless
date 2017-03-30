@@ -8,6 +8,7 @@ Production Deployment notification
 SES Deployment
 KMS Deployment
 Cloudsearch Deployment
+Move R53
 
 ### Notifications
 Build them
@@ -34,6 +35,11 @@ DLQ's for all pertinent queues
 ### Transaction Endpoints
 Re-open the Transaction Endpoints
 Integration Tests
+
+### Assorted
+Test/Complete the Slack Lambda Error integration
+Test the SES Lambda integration
+Blacklist from the DynamoDB table
 
 ### General
 
