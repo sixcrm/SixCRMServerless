@@ -56,17 +56,17 @@ class sessionController extends entityController {
 
 			var session_transactions = [];
 
-			rebillController.getRebillsBySessionID(session.id).then((rebills) => {
+			return rebillController.getRebillsBySessionID(session.id).then((rebills) => {
 
-				Promise.all(rebills.map((rebill) => {
+				return Promise.all(rebills.map((rebill) => {
 
 					return new Promise((resolve, reject) => {
 
-						transactionController.getTransactionsByRebillID(rebill.id).then((transactions) => {
+						return transactionController.getTransactionsByRebillID(rebill.id).then((transactions) => {
 
 							if(_.isNull(transactions)){
 
-								resolve(null);
+								return resolve(null);
 
 							}else{
 
@@ -76,31 +76,31 @@ class sessionController extends entityController {
 
 								});
 
-								resolve(transactions);
+								return resolve(transactions);
 
 							}
 
 						}).catch((error) => {
 
-							reject(error)
+							return reject(error)
 
 						});
 
 					});
 
-				})).then((transactions) => {
+				})).then(() => {
 
-					resolve(session_transactions);
+					return resolve(session_transactions);
 
 				}).catch((error) => {
 
-					reject(error);
+					return reject(error);
 
 				});
 
 			}).catch((error) => {
 
-				reject(error);
+				return reject(error);
 
 			});
 
@@ -130,28 +130,28 @@ class sessionController extends entityController {
 
 			var session_products = [];
 
-			controller_instance.getRebills(session).then((rebills) => {
+			return controller_instance.getRebills(session).then((rebills) => {
 
-				Promise.all(rebills.map((rebill) => {
+				return Promise.all(rebills.map((rebill) => {
 
 					return new Promise((resolve, reject) => {
 
-						rebillController.getTransactions(rebill).then((transactions) => {
+						return rebillController.getTransactions(rebill).then((transactions) => {
 
 							//note that at the time of a createorder, there are lots of rebills, only one of which has a transaction
 							if(_.isNull(transactions)){
 
-								resolve([]);
+								return resolve([]);
 
 							}else{
 
-								Promise.all(transactions.map((transaction) => {
+								return Promise.all(transactions.map((transaction) => {
 
-									return new Promise((resolve, reject) => {
+									return new Promise((resolve) => {
 
-										transactionController.getProducts(transaction).then((products) => {
+										return transactionController.getProducts(transaction).then((products) => {
 
-											resolve(products);
+											return resolve(products);
 
 										});
 
@@ -159,11 +159,11 @@ class sessionController extends entityController {
 
 								})).then((products) => {
 
-									resolve(products);
+									return resolve(products);
 
 								}).catch((error) => {
 
-									reject(error);
+									return reject(error);
 
 								});
 
@@ -187,42 +187,27 @@ class sessionController extends entityController {
 						});
 					});
 
-					resolve(session_products);
+					return resolve(session_products);
 
 				}).catch((error) => {
-					reject(error);
+					return reject(error);
 				});
 
 			}).catch((error) => {
-				reject(error);
+				return reject(error);
 			});
 
-		}).catch((error) => {
-			reject(error);
 		});
 
 	}
 
 	getSessionHydrated(id){
 
-		return new Promise((resolve, reject) => {
+		return this.get(id).then((session) => {
 
-			this.get(id).then((session) => {
+			return this.hydrate(session);
 
-				this.hydrate(session).then((session) => {
-
-					resolve(session);
-
-				}).catch((error) => {
-
-					reject(error);
-
-				});
-
-			});
-
-
-        });
+		});
 
 	}
 
@@ -231,7 +216,7 @@ class sessionController extends entityController {
 
 		var controller_instance = this;
 
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 
 			if(!_.has(session, "campaign")){ return null; }
 
@@ -245,7 +230,7 @@ class sessionController extends entityController {
 
 				if(!_.has(session, "customer")){ return null; }
 
-				controller_instance.getCustomer(session).then((customer) => {
+				return controller_instance.getCustomer(session).then((customer) => {
 
 					session.customer = customer;
 
@@ -253,7 +238,7 @@ class sessionController extends entityController {
 
 				}).then((session) => {
 
-					resolve(session);
+					return resolve(session);
 
 				}).catch((error) => {
 
@@ -309,7 +294,7 @@ class sessionController extends entityController {
 
 	}
 
-	putSession(parameters, callback){
+	putSession(parameters){
 
 		var controller_instance = this;
 
@@ -327,7 +312,7 @@ class sessionController extends entityController {
 				parameters.affiliate_id = null;
 			}
 
-			this.getSessionByCustomerID(parameters.customer_id).then((sessions) => {
+			return this.getSessionByCustomerID(parameters.customer_id).then((sessions) => {
 
 				var session_found = false;
 
@@ -354,17 +339,19 @@ class sessionController extends entityController {
 						affiliate_id: parameters.affiliate_id
 					});
 
-					this.create(session).then((session) => {
+					return this.create(session).then((session) => {
 
-						resolve(session);
+						return resolve(session);
 
 					});
 
+				} else {
+					return reject(`Session with CustomerID '${parameters.customer_id}' not found`);
 				}
 
 			}).catch((error) => {
 
-				reject(error);
+				return reject(error);
 
 			});
 
