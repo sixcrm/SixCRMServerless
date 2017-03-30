@@ -48,7 +48,7 @@ class archiveController extends workerController {
 					
 				});
 				
-				Promise.all(transaction_products).then((transaction_products) => {
+				return Promise.all(transaction_products).then((transaction_products) => { // eslint-disable-line promise/always-return
 				
 					transaction_products.forEach((transaction_product_collection) => {
 						
@@ -68,10 +68,12 @@ class archiveController extends workerController {
 				
 				}).then(() => {
 				
-					resolve(confirmed);
+					return resolve(confirmed);
 					
 				});
 				
+			}).catch((error) => {
+				return reject(error);
 			});
 			
 		});
@@ -90,11 +92,9 @@ class archiveController extends workerController {
 
 						return resolve(this.messages.success);
 						
-						break;
-					
 					case this.archivefilters.noship:
 						
-						this.confirmNoShip(rebill).then((confirmed) => {
+						return this.confirmNoShip(rebill).then((confirmed) => {
 								
 							if(confirmed === true){
 								return resolve(this.messages.success);
@@ -104,11 +104,9 @@ class archiveController extends workerController {
 							
 						})
 						
-						break;
-					
 					case this.archivefilters.twoattempts:
 						
-						this.confirmSecondAttempt(rebill).then((confirmed) => {
+						return this.confirmSecondAttempt(rebill).then((confirmed) => {
 							
 							if(confirmed === true){
 								return resolve(this.messages.success);
@@ -118,17 +116,15 @@ class archiveController extends workerController {
 							
 						});
 						
-						break;
-					
 					default:
 						
-						reject(new Error('Unrecognized archive filter: '+process.env.archivefilter));	
+						return reject(new Error('Unrecognized archive filter: '+process.env.archivefilter));
 					
 				}
 				
 			}else{
 				
-				resolve(this.messages.success);
+				return resolve(this.messages.success);
 				
 			}
 			
