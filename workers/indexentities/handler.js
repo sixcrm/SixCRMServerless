@@ -3,6 +3,7 @@ var LambdaResponse = require('../../lib/lambda-response.js');
 var indexEntitiesController = require('../../controllers/workers/indexEntities.js');
 const du = require('../../lib/debug-utilities.js');
 
+/* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.indexentities = (event, context, callback) => {
 	
 	du.debug('Executing Index Entities');

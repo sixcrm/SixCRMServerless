@@ -2,6 +2,7 @@
 var LambdaResponse = require('../../lib/lambda-response.js');
 var shipProductController = require('../../controllers/workers/shipProduct.js');
 
+/* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.shipproduct = (event, context, callback) => {
 	
 	shipProductController.execute(event).then((shipped) => {

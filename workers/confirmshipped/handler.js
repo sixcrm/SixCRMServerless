@@ -2,6 +2,7 @@
 var LambdaResponse = require('../../lib/lambda-response.js');
 var confirmShippedController = require('../../controllers/workers/confirmShipped.js');
 
+/* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.confirmshipped = (event, context, callback) => {
 
 	confirmShippedController.execute(event).then((shipped) => {

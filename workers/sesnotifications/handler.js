@@ -6,6 +6,7 @@ const _ = require('underscore');
 //Technical Debt:  Configure the Table Name here...
 var ddb = new aws.DynamoDB({params: {TableName: process.env.ses_notifications_table}});
 
+/* eslint-disable promise/always-return, promise/catch-or-return, no-unused-vars */
 module.exports.sesnotifications = function(event, context, callback){
 		
 	  du.output('Received event:', JSON.stringify(event, null, 2));
