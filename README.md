@@ -2,44 +2,37 @@
 
 ## MVP Todo:
 
-### Deployment
-Add Cross Account Serverless Deployment
-Production Deployment notification
-SES Deployment
-KMS Deployment
-Cloudsearch Deployment
-Move R53
-
-### Notifications
-Build them
-Test them
-
-### Search
-Testing 
-
-### UserACLs/Registration/Authentication
-Test them
-
-### Technical Debt
-Resolve mentions of `//Technical Debt:` in the codebase
-
-### Testing
-Unit Testing above 85%
-Functional Testing Complete
-Resolve Linting Issues
-
-### State Machine
-Hashtag integration
-DLQ's for all pertinent queues
-
-### Transaction Endpoints
-Re-open the Transaction Endpoints
-Integration Tests
-
-### Assorted
-Test/Complete the Slack Lambda Error integration
-Test the SES Lambda integration
-Blacklist from the DynamoDB table
+1. Deployment
+- Add Cross Account Serverless Deployment
+- Production Deployment notification
+- SES Deployment
+- KMS Deployment
+- Cloudsearch Deployment
+- Move R53
+2. Notifications
+- Build them
+- Test them
+3. Search
+- Unit Testing 
+- Integration Testing
+4. UserACLs/Registration/Authentication
+- E2E Tests
+5. Technical Debt
+- Resolve mentions of `//Technical Debt:` in the codebase
+6. Testing
+- Unit Testing above 85%
+- Functional Testing Complete
+- Resolve Linting Issues
+7. State Machine
+- Hashtag integration
+- DLQ's for all pertinent queues
+8. Transaction Endpoints
+- Re-open the Transaction Endpoints
+- Integration Tests
+9. Assorted
+- Test/Complete the Slack Lambda Error integration
+- Test the SES Lambda integration
+- Blacklist from the DynamoDB table
 
 ### General
 
