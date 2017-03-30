@@ -97,7 +97,7 @@ class productScheduleController extends entityController {
 								
 							}
 							
-							resolve(product_schedule);
+							return resolve(product_schedule);
 							
 						}).catch((error) => {
 							reject(error);

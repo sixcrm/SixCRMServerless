@@ -40,44 +40,32 @@ class loadBalancerController extends entityController {
 		
 		var controller_instance = this;
 		
-		return new Promise((resolve, reject) => {
-			
-			controller_instance.get(id).then((loadbalancer) => {
-				
-				controller_instance.getMerchantProviders(loadbalancer).then((merchant_providers) =>{
-					
-					for(var i = 0; i < loadbalancer.merchantproviders.length; i++){
-						
-						for(var j = 0; j < merchant_providers.length; j++){
-							
-							if(loadbalancer.merchantproviders[i].id == merchant_providers[j].id){
-								
-								var distribution = loadbalancer.merchantproviders[i].distribution;
-								
-								loadbalancer.merchantproviders[i] = {merchantprovider: merchant_providers[j], distribution: distribution};
-								
-							}
-							
+		return controller_instance.get(id).then((loadbalancer) => {
+
+			return controller_instance.getMerchantProviders(loadbalancer).then((merchant_providers) =>{
+
+				for(var i = 0; i < loadbalancer.merchantproviders.length; i++){
+
+					for(var j = 0; j < merchant_providers.length; j++){
+
+						if(loadbalancer.merchantproviders[i].id == merchant_providers[j].id){
+
+							var distribution = loadbalancer.merchantproviders[i].distribution;
+
+							loadbalancer.merchantproviders[i] = {merchantprovider: merchant_providers[j], distribution: distribution};
+
 						}
-					
+
 					}
-					
-					resolve(loadbalancer);
-					
-				}).catch((error) => {
-					
-					reject(error);
-					
-				});
-				
-			}).catch((error) => {
-				
-				reject(error);
-				
+
+				}
+
+				return loadbalancer;
+
 			});
-			
+
 		});
-		
+
 	}
     
     selectMerchantProvider(loadbalancer){
@@ -139,8 +127,6 @@ class loadBalancerController extends entityController {
     
     pickMerchantProvider(roll, loadbalancer){
     	
-    	var controller_instance = this;
-    	
     	return new Promise((resolve, reject) => {
     	
 			var merchantproviders = this.sortMerchantProviders(loadbalancer.merchantproviders);
@@ -190,7 +176,7 @@ class loadBalancerController extends entityController {
 				});
 				
 				return _nmi;
-				
+
     			break;
     		default:
     			throw new Error('Unrecognized merchant provider: '+merchantprovider.processor);
@@ -203,30 +189,14 @@ class loadBalancerController extends entityController {
     	
     	var controller_instance = this;
 		
-		return new Promise((resolve, reject) => {
-			
-			controller_instance.selectMerchantProvider(loadbalancer).then((merchantprovider) => {
-				
-				var processor = this.createProcessorClass(merchantprovider);
-				
-				processor.process(params).then((processor_response) => {
-					
-					resolve(processor_response);
-						
-				}).catch((error) => {
-				
-					reject(error);
-					
-				});
-			
-			}).catch((error) => {
-				
-				reject(error);
-				
-			});
-			
+		return controller_instance.selectMerchantProvider(loadbalancer).then((merchantprovider) => {
+
+			var processor = this.createProcessorClass(merchantprovider);
+
+			return processor.process(params);
+
 		});
-    	
+
     }
     
     sumLoadBalancerDistributions(merchantproviders){
