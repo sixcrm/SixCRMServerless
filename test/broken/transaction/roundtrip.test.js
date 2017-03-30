@@ -5,6 +5,7 @@ var assert = require('chai').assert
 var fs = require('fs');
 var yaml = require('js-yaml');
 var crypto = require('crypto');
+const du = require('../../../lib/debug-utilities.js');
 
 try {
   var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
@@ -23,8 +24,14 @@ describe('Round Trip Test', function() {
 		var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
     	var authorization_string = config.access_key+':'+request_time+':'+signature;
 		
+		du.highlight('Request Time: ', request_time);
+		du.highlight('Signature: ', signature);
+		du.highlight('Authorization String: ', authorization_string);
+		
 		var this_request = request(endpoint);
+		
 		console.log(appropriate_spacing+'Acquiring Token');
+		
     	this_request.get('token/acquire/')
 			.set('Content-Type', 'application/json')
 			.set('Authorization', authorization_string)
@@ -34,6 +41,7 @@ describe('Round Trip Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
+				du.debug(response.body);
 				//console.log(response.body);
 				assert.isObject(response.body);
 				assert.property(response.body, "message");

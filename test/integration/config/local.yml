@@ -1,4 +1,4 @@
 endpoint: 'http://localhost:3000/'
 jwt: 'fake'
-access_key: 'fake'
+access_key: '13edf909931d0f37000e438e9d67a2e165fad5d0'
 secret_key: 'fake'

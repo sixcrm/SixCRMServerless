@@ -341,7 +341,10 @@ class userController extends entityController {
 	}
 	
 	getAccessKey(id){
+	
+		du.debug('Get Access Key');
 		return accessKeyController.get(id);
+		
 	}
 	
 	getAccessKeyByKey(id){
