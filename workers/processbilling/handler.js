@@ -2,6 +2,7 @@
 var LambdaResponse = require('../../lib/lambda-response.js');
 var processBillingController = require('../../controllers/workers/processBilling.js');
 
+/* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.processbilling = (event, context, callback) => {
 	
 	processBillingController.execute(event).then((result) => {

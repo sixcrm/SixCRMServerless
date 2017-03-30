@@ -3,6 +3,7 @@ var LambdaResponse = require('../../lib/lambda-response.js');
 
 var createRebillsController = require('../../controllers/workers/createRebills.js');
 
+/* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.createrebills = (event, context, callback) => {
 	
 	createRebillsController.execute(event).then((result) => {

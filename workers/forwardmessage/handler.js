@@ -2,6 +2,7 @@
 var LambdaResponse = require('../../lib/lambda-response.js');
 var forwardMessageController = require('../../controllers/workers/forwardMessage.js');
 
+/* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.forwardmessage = (event, context, callback) => {
 	
 	forwardMessageController.execute().then((response) => {

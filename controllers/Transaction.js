@@ -97,7 +97,7 @@ class transactionController extends entityController {
 		
 	}
 	
-	putTransaction(params, processor_response, callback){
+	putTransaction(params, processor_response){
 		
 		var transaction = this.createTransactionObject(params, processor_response);
 		

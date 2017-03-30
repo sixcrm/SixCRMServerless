@@ -2,12 +2,13 @@
 var LambdaResponse = require('../../lib/lambda-response.js');
 var archiveController = require('../../controllers/workers/archive.js');
 
+/* eslint-disable promise/always-return */
 module.exports.archive = (event, context, callback) => {
 	
 	archiveController.execute(event).then((response) => {
 		
 		switch(response){
-			
+            // eslint-disable-next-line promise/always-return
 			case archiveController.messages.success:
 				
 				new LambdaResponse().issueResponse(200, {

@@ -39,7 +39,7 @@ class userController extends entityController {
 					//Technical Debt:  This seems like very light validation...
 					if(_.has(user, 'id')){
 						
-						this.getHydrated(user.id).then((user) => {
+						return this.getHydrated(user.id).then((user) => {
 								
 							this.enableACLs();
 							
@@ -92,7 +92,7 @@ class userController extends entityController {
 					this.createProfile(global.user).then((user) => {
 						
 						//Technical Debt:  Let's make sure that it's a appropriate object before we set it as the global user here...
-						this.isPartiallyHydratedUser(user).then((validated) => {
+						return this.isPartiallyHydratedUser(user).then((validated) => {
 							
 							if(validated == true){
 							
@@ -163,14 +163,14 @@ class userController extends entityController {
 					//Technical Debt:  This should be a lookup, not a hardcoded string
 					promises.push(roleController.get('cae614de-ce8a-40b9-8137-3d3bdff78039'));
 			
-					Promise.all(promises).then((promises) => {
+					return Promise.all(promises).then((promises) => {
 				
 						let account = promises[0];
 						let user = promises[1];
 						let role = promises[2];
 				
 						if(!_.has(account, 'id') || !_.has(user, 'id') || !_.has(role, 'id')){
-							reject(new Error('Unable to create new profile'));
+							return reject(new Error('Unable to create new profile'));
 						}
 				
 						du.debug('User', user);
@@ -185,7 +185,7 @@ class userController extends entityController {
 				
 						du.debug('ACL object to create:', acl_object);
 				
-						userACLController.create(acl_object).then((acl) => {
+						return userACLController.create(acl_object).then((acl) => {
 					
 					
 							acl.account = account;
@@ -198,18 +198,18 @@ class userController extends entityController {
 							user.acl = [acl];
 					
 					
-							resolve(user);
+							return resolve(user);
 					
 						}).catch((error) => {
 					
 							du.warning(error);
-							reject(error);
+							return reject(error);
 					
 						});
 	
 					}).catch((error) => {
 				
-						reject(error);
+						return reject(error);
 				
 					});
 			
@@ -227,8 +227,6 @@ class userController extends entityController {
 	
 	getHydrated(id){
 		
-		var controller_instance = this;
-		
 		return new Promise((resolve, reject) => {
 			
 			this.get(id).then((user) => {
@@ -237,7 +235,7 @@ class userController extends entityController {
 				
 				if(_.has(user, 'id')){
 				
-					this.getACLPartiallyHydrated(user).then((acl) => {
+					return this.getACLPartiallyHydrated(user).then((acl) => {
 						
 						du.debug('Partially hydrated User ACL object:', acl);
 							
@@ -245,7 +243,7 @@ class userController extends entityController {
 						
 						du.debug(this);
 						
-						this.isPartiallyHydratedUser(user).then((validated) => {
+						return this.isPartiallyHydratedUser(user).then((validated) => {
 								
 							if(validated){
 								
@@ -299,8 +297,6 @@ class userController extends entityController {
 		
 		return new Promise((resolve, reject) => {
 		
-			var acls = [];
-			
 			du.debug('User: ', user.id);
 			
 			userACLController.listBySecondaryIndex('user', user.id, 'user-index').then((acls) => {
@@ -315,15 +311,17 @@ class userController extends entityController {
 				
 				let acl_promises = acls.map(acl => userACLController.getPartiallyHydratedACLObject(acl));
 				
-				Promise.all(acl_promises).then((acl_promises) => {
+				return Promise.all(acl_promises).then((acl_promises) => {
 
-					resolve(acl_promises);
+					return resolve(acl_promises);
 					
 				}).catch((error) => {
 
-					reject(error);
+					return reject(error);
 				});
 				
+			}).catch((error) => {
+				return reject(error);
 			});
 			
 		});
@@ -382,11 +380,11 @@ class userController extends entityController {
 						
 						this.enableACLs();
 						
-						resolve(user);
+						return resolve(user);
 						
 					}).catch((error) => {
 					
-						reject(error);
+						return reject(error);
 					
 					});
 					
@@ -404,9 +402,9 @@ class userController extends entityController {
 		
 	}
 	
-	isPartiallyHydratedUser(user){
+	isPartiallyHydratedUser(user){ // eslint-disable-line no-unused-vars
 		
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
 				
 			return resolve(true);
 			
@@ -468,7 +466,7 @@ class userController extends entityController {
 					
 					du.highlight('New User', user_object);
 					
-					this.create(user_object).then((user) => {
+					return this.create(user_object).then((user) => {
 						
 						if(_.has(user, 'id')){
 						
@@ -498,13 +496,13 @@ class userController extends entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			inviteutilities.decodeAndValidate(invite.token, invite.parameters).then((invite_parameters) => {
+			return inviteutilities.decodeAndValidate(invite.token, invite.parameters).then((invite_parameters) => {
 				
 				du.highlight('Invite Parameters', invite_parameters);
 				
 				this.disableACLs();
 				
-				this.assureUser(invite_parameters.email).then((user) => {
+				return this.assureUser(invite_parameters.email).then((user) => {
 					
 					du.highlight('User to Accept Invite:', user);
 					
@@ -514,19 +512,19 @@ class userController extends entityController {
 						user: user.id
 					}
 					
-					userACLController.assure(user_acl_object).then((useracl) => {
+					return userACLController.assure(user_acl_object).then((useracl) => {
 						
 						du.highlight("Assured UserACL", useracl);
 						
 						//Technical Debt:  we need to return some sort of success message here and force the user to login rather than returning the user as an object.
-						this.getHydrated(user.id).then((user) => {
-							
+						return this.getHydrated(user.id).then((user) => {
+
 							return resolve(user);
-						
+
 						}).catch((error) => {
-						
+
 							return reject(error);
-							
+
 						});
 						
 					}).catch((error) => {
@@ -563,7 +561,7 @@ class userController extends entityController {
 			promises.push(roleController.get(userinvite.role));
 			promises.push(this.get(userinvite.email));
 			
-			Promise.all(promises).then((promises) => {
+			return Promise.all(promises).then((promises) => {
 			
 				let account = promises[0];
 				let role = promises[1];
@@ -588,7 +586,7 @@ class userController extends entityController {
 				
 				let invite_parameters = {email:userinvite.email, account: account.id, role: role.id};
 				
-				inviteutilities.invite(invite_parameters).then((link) => {
+				return inviteutilities.invite(invite_parameters).then((link) => {
 						
 					return resolve({link:link});
 						

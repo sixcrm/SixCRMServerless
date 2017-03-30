@@ -40,16 +40,18 @@ class creditCardController extends entityController {
 				
 				if(card_identified == false){
 				
-					controller_instance.create(creditcard).then((data) => {
-						
-						resolve(data);
-		
+					return controller_instance.create(creditcard).then((data) => {
+
+						return resolve(data);
+
 					}).catch((error) => {
-					
-						reject(error);
-						
+
+						return reject(error);
+
 					});
 			
+				} else {
+					return reject(new Error('Card not identified.'));
 				}
 				
 			}).catch((error) => {

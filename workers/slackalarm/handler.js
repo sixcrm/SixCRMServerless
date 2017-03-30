@@ -98,10 +98,10 @@ function processEvent(event, callback) {
 
     postMessage(slackMessage, (response) => {
         if (response.statusCode < 400) {
-            console.info('Message posted successfully');
+            console.info('Message posted successfully'); // eslint-disable-line no-console
             callback(null);
         } else if (response.statusCode < 500) {
-            console.error(`Error posting message to Slack API: ${response.statusCode} - ${response.statusMessage}`);
+            console.error(`Error posting message to Slack API: ${response.statusCode} - ${response.statusMessage}`); // eslint-disable-line no-console
             callback(null);  // Don't retry because the error is due to a problem with the request
         } else {
             // Let Lambda retry
@@ -122,7 +122,7 @@ exports.handler = (event, context, callback) => {
         const kms = new AWS.KMS();
         kms.decrypt(cipherText, (err, data) => {
             if (err) {
-                console.log('Decrypt error:', err);
+                console.log('Decrypt error:', err); // eslint-disable-line no-console
                 return callback(err);
             }
             hookUrl = `https://${data.Plaintext.toString('ascii')}`;

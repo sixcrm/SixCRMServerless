@@ -3,6 +3,7 @@ var LambdaResponse = require('../../lib/lambda-response.js');
 
 var pickRebillController = require('../../controllers/workers/pickRebill.js');
 
+/* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.pickrebill = (event, context, callback) => {
 	
 	pickRebillController.execute().then((result) => {
