@@ -30,26 +30,18 @@ class rebillController extends entityController {
         
 	}
 	
-	getProductSchedules(rebill){
+	getProductSchedules(rebill) {
 		
 		if(!_.has(rebill, 'product_schedules')){ return null; }
 		
-		return new Promise((resolve, reject) => {
-			
-			var promises = [];
-			
-			rebill.product_schedules.map((id) => {
-				promises.push(productScheduleController.get(id));
-			});
-			
-			Promise.all(promises).then((promises) => {
-				
-				resolve(promises);
-				
-			});
-			
+		var promises = [];
+
+		rebill.product_schedules.map((id) => {
+			promises.push(productScheduleController.get(id));
 		});
-        
+
+		return Promise.all(promises);
+
 	}
 	
 	getTransactions(rebill){
@@ -140,45 +132,33 @@ class rebillController extends entityController {
 	//the product schedule needs to be a part of the rebill, not the product
 	createRebill(session, product_schedule, day_in_cycle){
 	
-		return new Promise((resolve, reject) => {
-			
-			if(!_.isNumber(day_in_cycle)){
-				
-				day_in_cycle = this.calculateDayInCycle(session.created);
-				
-			}
-			
-			var rebill_parameters = this.calculateRebill(day_in_cycle, product_schedule);
-			
-			var rebill_object = this.buildRebillObject({
-				parentsession: session.id,
-				billdate: rebill_parameters.billdate,
-				product_schedules: [product_schedule.id],
-				amount: rebill_parameters.amount
-			});
-			
-			this.create(rebill_object).then((rebill) => {
-			
-				resolve(rebill);
-				
-			}).catch((error) => {
-				
-				reject(error);
-				
-			});
-			
+		if(!_.isNumber(day_in_cycle)){
+
+			day_in_cycle = this.calculateDayInCycle(session.created);
+
+		}
+
+		var rebill_parameters = this.calculateRebill(day_in_cycle, product_schedule);
+
+		var rebill_object = this.buildRebillObject({
+			parentsession: session.id,
+			billdate: rebill_parameters.billdate,
+			product_schedules: [product_schedule.id],
+			amount: rebill_parameters.amount
 		});
+
+		return this.create(rebill_object);
 			
 	}
 	
 	addRebillToQueue(rebill, queue_name){
 		
 		return new Promise((resolve, reject) => {
-			
+
 			var queue_url = '';
-			
+
 			switch(queue_name){
-				
+
 				case 'bill':
 					queue_url = process.env.bill_queue_url;
 					break;
@@ -191,27 +171,27 @@ class rebillController extends entityController {
 				default:
 					reject(new Error('Bad queue name.'));
 					break;
-				
+
 			}
-			
-			sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: queue_url}, (error, data) =>{
-				
+
+			return sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: queue_url}, (error) =>{
+
 				if(_.isError(error)){ reject(error);}
-				
+
 				this.markRebillProcessing(rebill).then((rebill) => {
-			
-					resolve(rebill);
-					
+
+					return resolve(rebill);
+
 				}).catch((error) => {
-				
-					reject(error);
-				
+
+					return reject(error);
+
 				});
-			
+
 			});
 			
 		});
-		
+
 	}
         
 	getRebillsBySessionID(id){
@@ -246,11 +226,11 @@ class rebillController extends entityController {
 			dynamoutilities.scanRecords(process.env.rebills_table, query_parameters, (error, data) => {
 
 				if(_.isError(error)){ 
-					reject(error);
+					return reject(error);
 				}
 				
 				if(_.isArray(data)){
-					resolve(data);
+					return resolve(data);
 				}
 	
 			});
@@ -263,18 +243,18 @@ class rebillController extends entityController {
 
 		return new Promise((resolve, reject) => {
 			
-			sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: process.env.bill_queue_url}, (error, data) =>{
+			sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: process.env.bill_queue_url}, (error) =>{
 				
 				if(_.isError(error)){ return reject(error);}
 				
 				this.markRebillProcessing(rebill).then((rebill) => {
-			
+
 					return resolve(rebill);
-					
+
 				}).catch((error) => {
-				
+
 					return reject(error);
-				
+
 				});
 			
 			});
