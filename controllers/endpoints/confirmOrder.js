@@ -55,7 +55,7 @@ class confirmOrderController {
 	
 	validateInput(querystring){
 		
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			
 			if(!_.isObject(querystring) || !_.has(querystring, 'session_id')){
 				throw new Error('The session_id must be set in the querystring.');
