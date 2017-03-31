@@ -17,18 +17,19 @@ class pickRebillController extends workerController {
 	}	
 	
 	pickRebill(){
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			
 			var now = timestamp.createTimestampSeconds();
 	
-			rebillController.getRebillsAfterTimestamp(now).then((rebills) => {
-				Promise.all(rebills.map(rebill => rebillController.sendMessageAndMarkRebill(rebill))).then((values) => {
+			return rebillController.getRebillsAfterTimestamp(now).then((rebills) => {
+				return Promise.all(rebills.map(rebill => rebillController.sendMessageAndMarkRebill(rebill))).then(() => {
 					
-					//do something here?		
+					//do something here?
+					return;
 					
 				}).then(() => {
 					
-					resolve(true);
+					return resolve(true);
 					
 				});
 				
