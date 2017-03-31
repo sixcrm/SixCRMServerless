@@ -1,3 +1,4 @@
+/* eslint-disable */
 var SessionController = require('./controllers/Session.js');
 
 module.exports = { 

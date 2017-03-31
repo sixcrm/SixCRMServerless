@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable */
 //var { graphql, buildSchema } = require('graphql'); breaks Lambda
 const _ = require('underscore');
 const graphql = require('graphql').graphql;
