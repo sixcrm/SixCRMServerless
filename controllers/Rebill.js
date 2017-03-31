@@ -214,7 +214,8 @@ class rebillController extends entityController {
 		return new Promise((resolve, reject) => {
 			
 			var query_parameters = {filter_expression: 'billdate < :timestampv AND processing <> :processingv', expression_attribute_values: {':timestampv':timestamp, ':processingv':'true'}};
-			
+
+			/* eslint-disable no-undef */
 			if(typeof cursor  !== 'undefined'){
 				query_parameters.ExclusiveStartKey = cursor;
 			}
@@ -222,6 +223,7 @@ class rebillController extends entityController {
 			if(typeof limit  !== 'undefined'){
 				query_parameters['limit'] = limit;
 			}
+			/* eslint-enable */
 			
 			dynamoutilities.scanRecords(process.env.rebills_table, query_parameters, (error, data) => {
 
