@@ -176,12 +176,9 @@ class loadBalancerController extends entityController {
 				});
 				
 				return _nmi;
-
-    			break;
     		default:
     			throw new Error('Unrecognized merchant provider: '+merchantprovider.processor);
-    			break;
-    			
+
     	}
     }
     
