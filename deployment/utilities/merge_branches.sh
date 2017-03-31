@@ -15,7 +15,7 @@ case "$2" in
 		echo $TAGS;
 		
 		echo "$TAGS" | grep -q "tags/v\d\+.*"
-		if [ $? -eq 0 ];then
+		if [ $? -eq 0 ]; then
 		  echo "Version tag present.  Merging to production."
 		  git checkout $2
 		  git merge $1

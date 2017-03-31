@@ -55,6 +55,8 @@ class transactionController extends entityController {
 	
 	getTransactionProduct(transaction_product){
 		
+		du.debug('Get Transaction Product');
+		
 		var promises = [];
 		
 		if(_.has(transaction_product, "product")){
@@ -70,7 +72,7 @@ class transactionController extends entityController {
 		}
 		
 		return Promise.all(promises).then((promises) => {
-			
+
 			transaction_product['product'] = promises[0];
 			
 			if(_.has(transaction_product, 'shippingreceipt')){
@@ -85,7 +87,11 @@ class transactionController extends entityController {
 	
 	getProducts(transaction){
 		
+		du.debug('Get Products');
+		
 		if(!_.has(transaction, "products")){ return null; }
+		
+		du.debug('Transaction Products', transaction.products);
 		
 		return Promise.all(transaction.products.map(transaction_product => this.getTransactionProduct(transaction_product)));
 		

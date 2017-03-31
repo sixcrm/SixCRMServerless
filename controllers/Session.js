@@ -3,6 +3,7 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 var timestamp = require('../lib/timestamp.js');
+var du = require('../lib/debug-utilities.js');
 
 var productScheduleController = require('./ProductSchedule.js');
 var rebillController = require('./Rebill.js');
@@ -122,22 +123,26 @@ class sessionController extends entityController {
 
 	}
 
+	//Technical Debt: This function is a mess...
 	getTransactionProducts(session){
-
+		
+		du.warning(1);
 		var controller_instance = this;
 
 		return new Promise((resolve, reject) => {
-
+			
 			var session_products = [];
-
+			
 			return controller_instance.getRebills(session).then((rebills) => {
-
+				
+				du.warning(2);
 				return Promise.all(rebills.map((rebill) => {
 
 					return new Promise((resolve, reject) => {
 
 						return rebillController.getTransactions(rebill).then((transactions) => {
-
+							
+							du.warning(3);
 							//note that at the time of a createorder, there are lots of rebills, only one of which has a transaction
 							if(_.isNull(transactions)){
 
@@ -148,9 +153,13 @@ class sessionController extends entityController {
 								return Promise.all(transactions.map((transaction) => {
 
 									return new Promise((resolve) => {
-
+										
+										du.warning('3.5');
+										
 										return transactionController.getProducts(transaction).then((products) => {
-
+											
+											du.warning(4);
+											
 											return resolve(products);
 
 										});

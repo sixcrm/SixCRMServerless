@@ -30,7 +30,7 @@ describe('Round Trip Test', function() {
 		
 		var this_request = request(endpoint);
 		
-		console.log(appropriate_spacing+'Acquiring Token');
+		du.output(appropriate_spacing+'Acquiring Token');
 		
     	this_request.get('token/acquire/')
 			.set('Content-Type', 'application/json')
@@ -78,7 +78,7 @@ describe('Round Trip Test', function() {
 				
 				du.debug('Post data', post_body);
 				
-				console.log(appropriate_spacing+'Creating Lead');
+				du.output(appropriate_spacing+'Creating Lead');
 				this_request.post('lead/create/')
 					.send(post_body)
 					.set('Content-Type', 'application/json')
@@ -89,7 +89,7 @@ describe('Round Trip Test', function() {
 					.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 					.end(function(err, response){
-						du.debug('Lead Response', response.body);
+						du.debug('Create Lead Response', response.body);
 						assert.property(response.body, "message");
 						assert.equal(response.body.message, "Success");
 						assert.property(response.body, "results");
@@ -122,7 +122,7 @@ describe('Round Trip Test', function() {
 						
 						du.debug('Order Create JSON', order_create);
 					  	
-					  	console.log(appropriate_spacing+'Creating Order');
+					  	du.output(appropriate_spacing+'Creating Order');
 					  	this_request.post('order/create/')
 							.send(order_create)
 							.set('Content-Type', 'application/json')
@@ -133,12 +133,10 @@ describe('Round Trip Test', function() {
 							.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
-								//console.log(response.body);
+								du.debug('Create Order Response:', response.body);
 								assert.property(response.body, "message");
 								assert.equal(response.body.message, "Success");
-								assert.property(response.body, "results");
-//								assert.property(response.body.results, "parentsession");
-//								assert.isString(response.body.results.parentsession);								
+								assert.property(response.body, "results");							
 								assert.property(response.body.results, "processor_response");
 								try{
 									var processor_response = JSON.parse(response.body.results.processor_response);
@@ -173,7 +171,10 @@ describe('Round Trip Test', function() {
 									}
 								};
 								
-								console.log(appropriate_spacing+'Creating Another Order');
+								du.debug('Upsell Post Data:', upsell_create);
+								
+								du.output(appropriate_spacing+'Creating Another Order');
+								
 								this_request.post('order/create/')
 									.send(upsell_create)
 									.set('Content-Type', 'application/json')
@@ -184,7 +185,7 @@ describe('Round Trip Test', function() {
 									.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 									.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 									.end(function(err, response){
-										//console.log(response.body);
+										du.debug('Upsell Result: ', response.body);
 										assert.property(response.body, "message");
 										assert.equal(response.body.message, "Success");
 										assert.property(response.body, "results");
@@ -203,8 +204,9 @@ describe('Round Trip Test', function() {
 										assert.property(processor_response.results, 'response');
 										assert.equal(processor_response.results.response, '1');
 										
-										//console.log('Session ID: '+session_id);
-										console.log(appropriate_spacing+'Confirming Order');
+										du.output(appropriate_spacing+'Confirming Order');
+										du.debug('Confirmation params: ', 'session_id='+session_id);
+										
 										this_request.get('order/confirm/')
 											.query('session_id='+session_id)
 											.set('Content-Type', 'application/json')
@@ -215,7 +217,7 @@ describe('Round Trip Test', function() {
 											.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 											.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 											.end(function(err, response){
-												//console.log(response.body);
+												du.debug('Confirm Order results', response.body);
 												assert.property(response.body, "message");
 												assert.equal(response.body.message, "Success");
 												assert.property(response.body, "results");

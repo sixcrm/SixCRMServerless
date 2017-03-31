@@ -2,24 +2,25 @@
 //note not all of these are required...
 const _ = require("underscore");
 const querystring = require('querystring');
+const du = require('../../lib/debug-utilities.js');
 
 var sessionController = require('../../controllers/Session.js');
 
 class confirmOrderController {
 	
-	constructor(){
-	
-	}
-	
 	execute(event){
 		
-		return this.acquireQuerystring(event).then(this.validateInput).then(this.confirmOrder);
+		return this.acquireQuerystring(event)
+			.then(this.validateInput)
+			.then(this.confirmOrder);
 		
 	}	
 	
 	acquireQuerystring(event){
 		
-		return new Promise((resolve) => {
+		du.debug('Acquire Querystring');
+		
+		return new Promise((resolve, reject) => {
 		
 			var duplicate_querystring = event.queryStringParameters;
 			
@@ -28,10 +29,12 @@ class confirmOrderController {
 				if(_.isString(duplicate_querystring)){
 	
 					try{
+						
 						duplicate_querystring = querystring.parse(duplicate_querystring);	
+						
 					}catch(error){
 						
-						throw new Error('Unable to parse querystring.');						
+						return reject(error);						
 						
 					}
 					
@@ -39,13 +42,13 @@ class confirmOrderController {
 					
 				}else{
 		
-					throw new Error('Request querystring is an unexpected format.');
+					return reject(new Error('Request querystring is an unexpected format.'));
 	
 				}
 		
 			}else{
 				
-				resolve(duplicate_querystring);
+				return resolve(duplicate_querystring);
 				
 			}
 			
@@ -55,13 +58,17 @@ class confirmOrderController {
 	
 	validateInput(querystring){
 		
-		return new Promise((resolve) => {
+		du.debug('Validate Input');
+		
+		return new Promise((resolve, reject) => {
 			
 			if(!_.isObject(querystring) || !_.has(querystring, 'session_id')){
-				throw new Error('The session_id must be set in the querystring.');
+			
+				return reject(new Error('The session_id must be set in the querystring.'));
+				
 			}
 		
-			resolve(querystring);
+			return resolve(querystring);
 			
 		});
 		
@@ -69,13 +76,23 @@ class confirmOrderController {
 	
 	confirmOrder (querystring) {
 		
+		du.debug('Confirm Order');
+		
 		var promises = [];
-	
+		
+		/* Warning */
+		sessionController.disableACLs();
+		
 		return sessionController.get(querystring['session_id']).then((session) => {
+			
+			sessionController.enableACLs();
 			
 			if(_.isNull(session)){ throw new Error('The specified session is unavailable.'); }
 			if(session.completed == 'true'){ throw new Error('The specified session is already complete.'); }
 	
+			/* Warning */
+			sessionController.disableACLs();
+		
 			var getCustomer = sessionController.getCustomer(session);
 			var getTransactions = sessionController.getTransactions(session);
 			var getTransactionProducts = sessionController.getTransactionProducts(session);
@@ -85,13 +102,20 @@ class confirmOrderController {
 			promises.push(getTransactionProducts);
 			
 			return Promise.all(promises).then((promises) => {
-
+				
+				sessionController.enableACLs();
+				
 				var customer = promises[0];
 				var transactions = promises[1];
 				var transaction_products = promises[2];
-
+				
+				/* Warning */
+				sessionController.disableACLs();
+			
 				return sessionController.closeSession(session).then(() => {
-
+						
+					sessionController.enableACLs();
+					
 					var results = {session: session, customer: customer, transactions: transactions, transaction_products: transaction_products};
 
 					return results;
