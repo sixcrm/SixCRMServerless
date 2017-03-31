@@ -3,6 +3,7 @@ const yaml = require('js-yaml');
 
 const tu = require('../lib/test-utilities.js');
 const timestamp = require('../lib/timestamp.js');
+const du = require('../lib/debug-utilities.js');
 
 let site_config = yaml.safeLoad(fs.readFileSync(__dirname+'/../config/development/site.yml', 'utf8'));
 let now = timestamp.createTimestampSeconds();
@@ -24,4 +25,4 @@ let jwt_contents = {
 	"iat": now
 };
 
-console.log(tu.generateJWT(jwt_contents, secret_key));
+du.output(tu.generateJWT(jwt_contents, secret_key));

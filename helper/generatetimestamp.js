@@ -1,2 +1,3 @@
 var timestamp = require('./timestamp.js');
-console.log(timestamp.createTimestampSeconds());
+const du = require('../lib/debug-utilities.js');
+du.output(timestamp.createTimestampSeconds());

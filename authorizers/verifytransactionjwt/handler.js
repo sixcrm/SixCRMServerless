@@ -1,6 +1,4 @@
 'use strict';
-const validator = require('validator');
-
 var policy_response = require('../../lib/policy_response.js');
 
 var verifyTransactionJWTController = require('../../controllers/authorizers/verifyTransactionJWT.js');
@@ -17,7 +15,7 @@ module.exports.verifyjwt = (event, context, callback) => {
 		
 		return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, null));
 		
-	}).catch((error) =>{
+	}).catch(() =>{
 		
 		return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 		

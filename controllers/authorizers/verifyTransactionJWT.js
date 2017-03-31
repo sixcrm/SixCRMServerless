@@ -61,7 +61,7 @@ class verifyTransactionJWTController {
 		
 		du.debug('Validate Token');
 		
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			
 			jwt.verify(token, process.env.secret_key, function(error, decoded) {
 				

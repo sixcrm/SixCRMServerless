@@ -1,3 +1,4 @@
+const du = require('../lib/debug-utilities.js');
 var rebill_object = {
   "amount": "34.99",
   "billdate": 1485842247,
@@ -12,4 +13,4 @@ var rebill_object = {
   ]
 }
 
-console.log(JSON.stringify(rebill_object));
+du.output(JSON.stringify(rebill_object));

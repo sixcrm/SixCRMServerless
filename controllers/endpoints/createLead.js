@@ -113,26 +113,34 @@ class createLeadController {
 		return new Promise((resolve, reject) => {
 			
 			customerController.getCustomerByEmail(event.email).then((customer) => {
-			
-				if(_.has(customer, 'id')){
+				
+				if(!_.has(customer, 'id')){
 					
+					return customerController.create(event).then((created_customer) => {
+					
+						if(_.has(created_customer, 'id')){
+						
+							return resolve(event);
+						
+						}
+					
+						return reject(new Error('Unable to create a new customer.'));
+				
+					}).catch((error) => {
+				
+						return reject(error);
+				
+					});
+				
+				}else{
+				
 					return resolve(event);
 					
-				}else{
-					
-					customerController.create(event).then((customer) => {
-						
-						if(_.has(customer, 'id')){
-							
-							return resolve(event);
-							
-						}
-						
-						return reject(new Error('Unable to create a new customer.'));
-					
-					});
-					
 				}
+				
+			}).catch((error) => {
+				
+				return reject(error);
 				
 			});
 
@@ -167,12 +175,12 @@ class createLeadController {
 				
 				if(promises.length > 2){
 					affiliate = promises[2];
-					if(!_.has(affiliate, 'id')){ return resolve(new Error('A invalid affiliate id is specified.')); }
+					if(!_.has(affiliate, 'id')){ return reject(new Error('A invalid affiliate id is specified.')); }
 				}
 				
-				if(!_.has(campaign, 'id')){ return resolve(new Error('A invalid campaign id is specified.')); }
+				if(!_.has(campaign, 'id')){ return reject(new Error('A invalid campaign id is specified.')); }
 				
-				if(!_.has(customer, "id")){ return resolve(new Error('A invalid customer id is specified.')); }
+				if(!_.has(customer, "id")){ return reject(new Error('A invalid customer id is specified.')); }
 					
 				let session_object = {
 					customer_id: customer.id,
