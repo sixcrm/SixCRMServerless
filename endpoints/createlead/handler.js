@@ -4,10 +4,10 @@ var createLeadController = require('../../controllers/endpoints/createLead.js');
 
 module.exports.createlead = (event, context, callback) => {
 	
-	createLeadController.execute(event).then((resp) => {
+	createLeadController.execute(event).then((response) => {
 		return new LambdaResponse().issueResponse(200, {
 			message: 'Success',
-			results: resp
+			results: response
 		}, callback);
 	}).catch((error) =>{
 		return new LambdaResponse().issueError(error.message, 500, event, error, callback);

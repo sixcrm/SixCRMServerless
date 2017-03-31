@@ -2,6 +2,7 @@
 const _ = require("underscore");
 const validator = require('validator');
 const Validator = require('jsonschema').Validator;
+const du = require('../../lib/debug-utilities.js');
 
 var sessionController = require('../../controllers/Session.js');
 var customerController = require('../../controllers/Customer.js');
@@ -13,10 +14,6 @@ var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var rebillController = require('../../controllers/Rebill.js');
 
 class createOrderController {
-
-	constructor(){
-
-	}
 
 	execute(event){
 
@@ -34,7 +31,9 @@ class createOrderController {
 	}
 
 	acquireBody(event){
-
+		
+		du.debug('Acquire Body');
+		
 		var duplicate_body;
 		try {
 			duplicate_body = JSON.parse(event['body']);
@@ -47,9 +46,10 @@ class createOrderController {
 	}
 
 	validateInput(event){
-
+		
+		du.debug('Validate Input');
+		
 		return new Promise((resolve, reject) => {
-
 
 			var order_schema;
 			try{
@@ -69,12 +69,12 @@ class createOrderController {
 			}
 
 
-			//Are these ever attached?
+			//Technical Debt: Are these ever attached?
 			if(params.email && !validator.isEmail(params.email)){
 				validation.errors.push({message: '"email" field must be a email address.'});
 			}
 
-			//Are these ever attached?
+			//Technical Debt: Are these ever attached?
 			if(params.shipping_email && !validator.isEmail(params.shipping_email)){
 				validation.errors.push({message: '"shipping_email" field must be a email address.'});
 			}
@@ -103,25 +103,33 @@ class createOrderController {
 
 
 	getOrderInfo(event_body) {
-
+		
+		du.debug('Get Order Info');
+		
 		var promises = [];
+		
+		/* Warning! */
+		sessionController.disableACLs();
+		
 		var getSession = sessionController.get(event_body['session_id']);
 		var getCampaign = campaignController.getHydratedCampaign(event_body['campaign_id']);
 		var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
 		var getCreditCard	= creditCardController.createCreditCardObject(event_body).then((creditcard) => { return creditCardController.storeCreditCard(creditcard) });
-
+		
 		promises.push(getSession);
 		promises.push(getCampaign);
 		promises.push(getProductSchedules);
 		promises.push(getCreditCard);
 
 		return Promise.all(promises).then((promises) => {
-
+			
+			sessionController.enableACLs();
+			
 			var info = {
 				session: promises[0],
-			  campaign:  promises[1],
-			  schedulesToPurchase: promises[2],
-			  creditcard: promises[3]
+				campaign:  promises[1],
+				schedulesToPurchase: promises[2],
+				creditcard: promises[3]
 			};
 
 			if(!_.isObject(info.session) || !_.has(info.session, 'id')){
@@ -149,22 +157,31 @@ class createOrderController {
 			campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
 
 			return info;
+			
 		})
 
 	}
 
 
 	getTransactionInfo(info) {
-
+		
+		du.debug('Get Transaction Info');
+		
 		var promises = [];
+		
+		/* Warning */
+		customerController.disableACLs();
 		var getCustomer = customerController.get(info.session.customer);
 		var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.schedulesToPurchase);
 		var getRebills = rebillController.createRebills(info.session, info.schedulesToPurchase, 0);
+		
 		promises.push(getCustomer);
 		promises.push(getTransactionProducts);
 		promises.push(getRebills);
 
 		return Promise.all(promises).then((promises) => {
+			
+			customerController.enableACLs();
 
 			info.customer = promises[0];
 			info.transactionProducts = promises[1];
@@ -176,7 +193,7 @@ class createOrderController {
 			}
 
 
-			//note refactor this to use the transaction products above....
+			//Technical Debt: refactor this to use the transaction products above....
 			info.amount = productScheduleController.productSum(0, info.schedulesToPurchase);
 
 			return info;
@@ -186,10 +203,17 @@ class createOrderController {
 
 
 	createOrder(info) {
-
+		
+		du.debug('Create Order');
+		
+		/* Warning */
+		loadBalancerController.disableACLs();
+		
 		return loadBalancerController.process( info.campaign.loadbalancer, {customer: info.customer, creditcard: info.creditcard, amount: info.amount})
 		.then((processor) => {
-			//Technical Debt:  What happens if this is denied?!
+			loadBalancerController.enableACLs();
+			
+			//Technical Debt:  Are there further actions to take if a transaction is denied?
 
 			//validate processor
 			if( !_.has(processor, "message") || processor.message !== 'Success' ||
@@ -199,27 +223,38 @@ class createOrderController {
 			}
 
 			info.processor = processor;
-
+			
+			/* Warning */
+			transactionController.disableACLs();
 			return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
-
-				//TODO:validate transaction above
+				transactionController.enableACLs();
+				
+				//Techincal Debt: validate transaction above
+				
 				info.transaction = transaction;
-				console.log(info);
+				
+				du.debug('Info:', info);
 
 				return info;
+				
 			});
+			
 		});
 
 	}
 
 	postOrderProcessing(info) {
-
-		//this looks like a hack as well
+		
+		du.debug('Post Order Processing');
+		
+		//Technical Debt: this looks like a hack as well
 		var transactions = [info.transaction.id];
 
-		//hack, we need to support multiple schedules in a single order
+		//Technical Debt: hack, we need to support multiple schedules in a single order
 		var rebill = info.rebills[0];
-
+		
+		/* Warning */
+		rebillController.disableACLs();
 		var promises = [];
 		var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
 		var updateSession = sessionController.updateSessionProductSchedules(info.session, info.schedulesToPurchase);
@@ -234,7 +269,9 @@ class createOrderController {
 		promises.push(rebillUpdates);
 
 		return Promise.all(promises).then((promises) => {
-
+			
+			rebillController.enableACLs();
+			
 			var rebills_added_to_queue = promises[0];
 			var next_rebills = promises[1];
 			var updated_session = promises[2];
@@ -245,6 +282,7 @@ class createOrderController {
 			return info.transaction;
 
 		});
+		
 	}
 
 }

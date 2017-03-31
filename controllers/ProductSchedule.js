@@ -62,13 +62,48 @@ class productScheduleController extends entityController {
 		
 	}
 	
-	//Is there a better way?
+	//Technical Debt:  This seems odd...
 	getProductScheduleHydrated(id){
 		
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
 				
+			this.get(id).then((product_schedule) => {
+						
+				this.getProducts(product_schedule).then((products) => {
+				
+					for(var i = 0; i < product_schedule.schedule.length; i++){
+					
+						for(var j = 0; j < products.length; j++){
+						
+							if(product_schedule.schedule[i].product_id == products[j].id){
+							
+								product_schedule.schedule[i].product = products[j];
+							
+								delete product_schedule.schedule[i].product_id;
+							
+							}
+						
+						}
+					
+					}
+							
+					return resolve(product_schedule);
+							
+				}).catch((error) => {
+				
+					return reject(error);
+					
+				});
+				
+			}).catch((error) => {
+				
+				return reject(error);
+				
+			});
+			
+			/*
 			dynamoutilities.queryRecords(process.env.product_schedules_table, 'id = :idv', {':idv': id}, null, (error, data) => {
 				
 				if(_.isError(error)){ reject(error);}
@@ -119,7 +154,7 @@ class productScheduleController extends entityController {
 					
 				}
 				
-			});
+			});*/
 			
         });
         

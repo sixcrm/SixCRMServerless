@@ -90,17 +90,15 @@ describe('Round Trip Test', function() {
 					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 					.end(function(err, response){
 						du.debug('Lead Response', response.body);
-						//console.log(response.body);
 						assert.property(response.body, "message");
 						assert.equal(response.body.message, "Success");
 						assert.property(response.body, "results");
-						assert.property(response.body.results, "session");
+						assert.property(response.body.results, "id");
 						assert.property(response.body.results, "customer");
-						assert.isString(response.body.results.session.id);
-						assert.isObject(response.body.results.customer);
-				
-						var session_id = response.body.results.session.id;
-						var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
+						//Technical Debt:  Let's dig in here a little further.  This is pretty light testing.
+						
+						var session_id = response.body.results.id;
+						var campaign_id = response.body.results.campaign;
 					  	var product_schedules = ["12529a17-ac32-4e46-b05b-83862843055d"]
 					  	
 					  	var order_create = {
@@ -121,6 +119,8 @@ describe('Round Trip Test', function() {
 								"country":"USA"
 							}
 						};
+						
+						du.debug('Order Create JSON', order_create);
 					  	
 					  	console.log(appropriate_spacing+'Creating Order');
 					  	this_request.post('order/create/')

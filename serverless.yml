@@ -433,6 +433,7 @@ functions:
         campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         stage: ${opt:stage}
+        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
 
   createorder:
     handler: endpoints/createorder/handler.createorder
@@ -462,6 +463,7 @@ functions:
         hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
         bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
         stage: ${opt:stage}
+        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
 
   confirmorder:
     handler: endpoints/confirmorder/handler.confirmorder
@@ -482,6 +484,7 @@ functions:
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
         stage: ${opt:stage}
+        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
 
 ########################
 # Resource definitions for required system resources
