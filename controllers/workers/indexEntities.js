@@ -38,7 +38,7 @@ class indexEntitiesController extends workerController {
 					return resolve(this.messages.successnoaction);
 				}
 		
-			}).catch((error) => {
+			}).catch(() => {
 				return reject(this.messages.failure);
 			});
 		
