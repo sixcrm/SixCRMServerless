@@ -42,7 +42,6 @@ describe('Round Trip Test', function() {
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
 				du.debug(response.body);
-				//console.log(response.body);
 				assert.isObject(response.body);
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
@@ -50,6 +49,8 @@ describe('Round Trip Test', function() {
 				assert.isString(response.body.token);
 				
 				var jwt = response.body.token;		
+				
+				du.debug('Acquired JWT:', jwt);
 				
 				var post_body = {
 					"campaign_id":"70a6689a-5814-438b-b9fd-dd484d0812f9",
@@ -75,6 +76,8 @@ describe('Round Trip Test', function() {
 					}
 				};
 				
+				du.debug('Post data', post_body);
+				
 				console.log(appropriate_spacing+'Creating Lead');
 				this_request.post('lead/create/')
 					.send(post_body)
@@ -86,6 +89,7 @@ describe('Round Trip Test', function() {
 					.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 					.end(function(err, response){
+						du.debug('Lead Response', response.body);
 						//console.log(response.body);
 						assert.property(response.body, "message");
 						assert.equal(response.body.message, "Success");

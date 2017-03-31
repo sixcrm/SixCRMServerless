@@ -2,24 +2,32 @@
 const _ = require('underscore');
 const validator = require('validator');
 const Validator = require('jsonschema').Validator;
+const du = require('../../lib/debug-utilities.js');
 
 var customerController = require('../../controllers/Customer.js');
 var affiliateController = require('../../controllers/Affiliate.js');
 var campaignController = require('../../controllers/Campaign.js');
 var sessionController = require('../../controllers/Session.js');
 
+//Technical Debt:  We need the account global set.
+//Technical Debt:  We may need to make a transaction endpoint parent class.
+
 class createLeadController {
 
-	constructor(){
-
-	}
-
 	execute(event){
-
-		return this.acquireBody(event).then(this.validateInput).then(this.createLead);
+		
+		return this.acquireBody(event)
+			.then((event) => this.validateInput(event))
+			.then((event) => this.disableACLs(event))
+			.then((event) => this.assureCustomer(event))
+			.then((event) => this.createSessionObject(event))
+			.then((session_object) => this.persistSession(session_object));
+			
 	}
 
-	acquireBody(event){
+	acquireBody(event){	
+	
+		du.debug('Acquire Body');
 
 		var duplicate_body;
 		try {
@@ -33,7 +41,9 @@ class createLeadController {
 	}
 
 	validateInput(event){
-
+		
+		du.debug('Validate Input');
+		
 		return new Promise((resolve, reject) => {
 
 			var customer_schema;
@@ -68,6 +78,10 @@ class createLeadController {
 			if(params.email && !validator.isEmail(params.email)){
 				validation.errors.push({message:'"email" field must be an email address.'});
 			}
+			
+			if(!params.campaign_id || !_.isString(params.campaign_id)){
+				validation.errors.push({message:'A lead must be associated with a campaign'});
+			}
 
 			if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
 
@@ -84,82 +98,113 @@ class createLeadController {
 		});
 
 	}
-
-	createLead (event) {
-
-		var params = event || {};
-		var promises = [];
-
-		if(!params.campaign_id || !_.isString(params.campaign_id)){
-			throw new Error('A lead must be associated with a campaign');
-		}
-
-		var getCampaign = campaignController.get(params.campaign_id);
-		var getCustomer = customerController.getCustomerByEmail(params.email);
-
-		promises.push(getCampaign);
-		promises.push(getCustomer);
-
-		// NOTE is this really what we wanted here what happenes when there isn't an affiliate?
-		if(params.affiliate_id){
-			var getAffiliate = affiliateController.get(params.affiliate_id);
-			promises.push(getAffiliate);
-		}
-
-
-		return Promise.all(promises).then((promises) => {
-			var campaign = promises[0];
-			var customer = promises[1];
-			var affiliate = promises[2];
-
-			if(!_.has(affiliate, 'id')){
-				throw new Error('A invalid affiliate id is specified.');
-			}
-			if(!_.has(campaign, 'id')){
-				throw new Error('A invalid campaign id is specified.');
-			}
-
-			//If a customer exists, return the payload
-			if(_.has(customer, "id")){
-
-				return sessionController.putSession({
-					customer_id: customer.id,
-					campaign_id: campaign.id,
-					affiliate_id: params.affiliate_id
-				}).then((session) => {
-					return {
-						session: session,
-						customer: customer,
-						campaign: campaign,
-						affiliate: affiliate
-					};
-
-				});
-
-			} else {
-				// Customer does not exist, lets create the customer and return the session payload
-				return this.createNewCustomerWithSession(params, campaign);
-			}
-
-		});
-
+	
+	//Technical Debt:  We still need to be setting the account_id for the objects that we create...
+	disableACLs(event){
+		
+		campaignController.disableACLs();
+		
+		return Promise.resolve(event);
+			
 	}
-
-
-	createNewCustomerAndSession(params, campaign) {
-
-		return customerController.create(params).then((customer) => {
-
-			return sessionController.putSession({customer_id: customer.id, campaign_id: campaign.id, affiliate_id: params.affiliate_id}).then((session) => {
-
-				//note that the customer here appears to be a id value.  We want a complete customer object...
-				return {
-					session: session,
-					customer: customer
-				};
-
+	
+	assureCustomer(event){
+		
+		return new Promise((resolve, reject) => {
+			
+			customerController.getCustomerByEmail(event.email).then((customer) => {
+			
+				if(_.has(customer, 'id')){
+					
+					return resolve(event);
+					
+				}else{
+					
+					customerController.create(event).then((customer) => {
+						
+						if(_.has(customer, 'id')){
+							
+							return resolve(event);
+							
+						}
+						
+						return reject(new Error('Unable to create a new customer.'));
+					
+					});
+					
+				}
+				
 			});
 
+		});
+		
+	}
+	
+	createSessionObject(event){
+		
+		du.debug('Create Session Object');
+		
+		return new Promise((resolve, reject) => {
+		
+			var promises = [];
+			
+			var getCampaign = campaignController.get(event.campaign_id);
+			var getCustomer = customerController.getCustomerByEmail(event.email);
+			
+			promises.push(getCampaign);
+			promises.push(getCustomer);
+			
+			if(_.has(event, 'affiliate_id')){
+				var getAffiliate = affiliateController.get(event.affiliate_id);
+				promises.push(getAffiliate);
+			}
+			
+			return Promise.all(promises).then((promises) => {
+				
+				let campaign = promises[0];
+				let customer = promises[1];
+				let affiliate = {};
+				
+				if(promises.length > 2){
+					affiliate = promises[2];
+					if(!_.has(affiliate, 'id')){ return resolve(new Error('A invalid affiliate id is specified.')); }
+				}
+				
+				if(!_.has(campaign, 'id')){ return resolve(new Error('A invalid campaign id is specified.')); }
+				
+				if(!_.has(customer, "id")){ return resolve(new Error('A invalid customer id is specified.')); }
+					
+				let session_object = {
+					customer_id: customer.id,
+					campaign_id: campaign.id,
+				};
+					
+				if(_.has(affiliate, 'id')){
+					session_object['affiliate_id'] = affiliate.id;
+				}
+					
+				return resolve(session_object);
+				
+			});
+			
+		});
+		
+	}
+	
+	persistSession(session_object){
+		
+		return new Promise((resolve, reject) => {
+		
+			sessionController.putSession(session_object).then((session) => {
+				
+				return resolve(session);
+
+			}).catch((error) => {
+			
+				return reject(error);
+				
+			});
+			
 		});
 
 	}

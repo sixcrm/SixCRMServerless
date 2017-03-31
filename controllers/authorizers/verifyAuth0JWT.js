@@ -3,7 +3,7 @@ const _ = require("underscore");
 const jwt = require("jsonwebtoken");
 const du = require('../../lib/debug-utilities.js');
 
-class verifyJWTController {
+class verifyAuth0JWTController {
 	
 	constructor(){
 		this.messages = {
@@ -66,6 +66,8 @@ class verifyJWTController {
 	
 	verifyJWT(token){
 		
+		du.debug('Verify JWT');
+		
 		return new Promise((resolve, reject) => {
 			
 			if(this.developmentBypass(token) == true){
@@ -73,8 +75,6 @@ class verifyJWTController {
 				return resolve(this.messages.bypass);
 				
 			}
-			
-			du.debug('Token:', token);
 			 
 			this.validateToken(token).then((decoded_token) => {
 			
@@ -83,10 +83,16 @@ class verifyJWTController {
 				du.debug('Decoded Token:', decoded_token);
 					
 				if(_.has(decoded_token, 'email')){
+					
+					du.debug('Email present, returning');
 					return resolve(decoded_token.email);
+					
+				}else{
+					
+					du.debug('Missing Email in token');
+					return resolve(false);
+					
 				}
-				
-				return resolve(false);
 				
 			}).catch((error) =>{
 				return reject(error);
@@ -114,4 +120,4 @@ class verifyJWTController {
 	
 }
 
-module.exports = new verifyJWTController();
+module.exports = new verifyAuth0JWTController();

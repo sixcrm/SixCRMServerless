@@ -49,8 +49,8 @@ functions:
       stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
-  verifyjwt:
-    handler: authorizers/verifyjwt/handler.verifyjwt
+  verifytransactionjwt:
+    handler: authorizers/verifytransactionjwt/handler.verifyjwt
     environment:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction_key}
@@ -59,7 +59,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   verifyauth0jwt:
-    handler: authorizers/verifyjwt/handler.verifyjwt
+    handler: authorizers/verifyauth0jwt/handler.verifyjwt
     environment:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       secret_key: ${file(./config/${opt:stage}/site.yml):jwt.auth0.secret_key}
@@ -423,7 +423,7 @@ functions:
          method: post
          cors: true
          authorizer:
-           name: verifyjwt
+           name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
@@ -442,7 +442,7 @@ functions:
          method: post
          cors: true
          authorizer:
-           name: verifyjwt
+           name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
@@ -471,7 +471,7 @@ functions:
          method: get
          cors: true
          authorizer:
-           name: verifyjwt
+           name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
