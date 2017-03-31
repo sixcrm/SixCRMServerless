@@ -1,6 +1,8 @@
 var GraphQLObjectType = require('graphql').GraphQLObjectType;
 var GraphQLNonNull = require('graphql').GraphQLNonNull;
-var GraphQLNonNull = require('graphql').GraphQLString;
+var GraphQLString = require('graphql').GraphQLString;
+var productController = require('../../../controllers/Product');
+var fulfillmentProviderType = require('../schema');
 
 module.exports.productType = new GraphQLObjectType({
   name: 'Product',

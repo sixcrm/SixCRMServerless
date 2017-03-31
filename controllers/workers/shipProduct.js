@@ -5,6 +5,7 @@ var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
 var fulfillmentTriggerController = require('../../controllers/fulfillmentproviders/FulfillmentTrigger.js');
 var workerController = require('./worker.js');
 var util = require('util');
+var _ =  require('underscore');
 
 class shipProductController extends workerController {
 	
