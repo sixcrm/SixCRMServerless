@@ -22,12 +22,8 @@ class createRebillsController extends workerController {
 	
 	createForwardMessage(event){
 		
-		return new Promise((resolve, reject) => {
-			
-			return resolve({message: "Rebills created.  Archive."});
-			
-		});
-		
+		return Promise.resolve({message: "Rebills created.  Archive."});
+
 	}
 	
 	createRebills(session){
