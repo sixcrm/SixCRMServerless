@@ -1,4 +1,4 @@
-function(user, context, callback) {
+function execute(user, context, callback) {
   // short-circuit if the user signed up already
   //if (context.stats.loginsCount > 1) return callback(null, user, context);
 
