@@ -124,3 +124,8 @@ We're using ESLint (http://eslint.org/) for linting. Initial set of rules is fai
 add more rules as the codebase and style stabilizes.
 
 In order to run linter, execute `npm run lint`.
+
+Rules are defined in `.eslintrs.js` file in the project root. You can check the available rules at http://eslint.org/docs/rules/
+Rules with level `warn` will not break the deploy, but `error` will.
+
+In order to disable rules in code (for example for false positives, or old deprecated code) read http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments 
