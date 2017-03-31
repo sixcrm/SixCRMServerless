@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable no-unused-vars */
 var _  = require('underscore');
 
 var GraphQLEnumType = require('graphql').GraphQLEnumType;
