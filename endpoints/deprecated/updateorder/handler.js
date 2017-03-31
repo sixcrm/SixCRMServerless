@@ -26,7 +26,7 @@ module.exports.createorder= (event, context, callback) => {
 	try{
 		orderjson = JSON.parse(fs.readFileSync('./endpoints/createorder/schema/order.json','utf8'));
 	} catch(e){
-		console.log(e);
+		console.log(e); // eslint-disable-line no-console
 		lambda_response.body = JSON.stringify(
 			{message: 'Unable to load schema'}
 		);
@@ -108,12 +108,12 @@ module.exports.createorder= (event, context, callback) => {
 	  body:    querystring.stringify(duplicate_body)
 	};
 	
-	console.log(request_options);
+	console.log(request_options); // eslint-disable-line no-console
 	
 	request.post(request_options, (error, response, body) => {
 		if(_.isError(error)){
 		
-			console.log(error);
+			console.log(error); // eslint-disable-line no-console
 
 		}
 		
