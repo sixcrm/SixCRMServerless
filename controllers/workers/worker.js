@@ -70,69 +70,41 @@ module.exports = class workerController {
 	}
 	
 	createForwardMessage(event){
-		return new Promise((resolve, reject) => {
-			this.parseInputEvent(event).then((id) => {
-				resolve(JSON.stringify({id:id}));
-			}).catch((error) => {
-				reject(error);
-			});
+		return this.parseInputEvent(event).then((id) => {
+			return JSON.stringify({id:id});
 		});
 	}
 	
 	acquireRebill(event){
 		
-		return new Promise((resolve, reject) => {
-			
-			this.parseInputEvent(event).then((id) => {
-				
-				//let's add a hydration method here...
-				rebillController.get(id).then((rebill) => {
-					
-					this.validateRebill(rebill).then((rebill) => {
-						
-						resolve(rebill);
-					
-					}).catch((error) => {
-						reject(error);
-					});
-					
-				}).catch((error) => {
-					reject(error);
-				});
-			
-			}).catch((error) => {
-				reject(error);
+		return this.parseInputEvent(event).then((id) => {
+
+			//let's add a hydration method here...
+			return rebillController.get(id).then((rebill) => {
+
+				return this.validateRebill(rebill);
+
 			});
-			
+
 		});
-		
+			
+
 	}	
 	
 	acquireSession(event){
 
-		return new Promise((resolve, reject) => {
-			
-			this.parseInputEvent(event).then((id) => {
-				//let's add a hydration method here...
-				sessionController.get(id).then((session) => {
-				
-					this.validateSession(session).then((session) => {
-						resolve(session);
-					}).catch((error) => {
-						reject(error);
-					});
-					
-				}).catch((error) => {
-					reject(error);
-				});
-			
-			}).catch((error) => {
-				reject(error);
+		return this.parseInputEvent(event).then((id) => {
+
+			//let's add a hydration method here...
+			return sessionController.get(id).then((session) => {
+
+				return this.validateSession(session);
+
 			});
-			
+
 		});
-		
-	}	
+			
+	}
 	
 	validateRebill(rebill){
 
