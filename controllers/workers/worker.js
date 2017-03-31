@@ -29,7 +29,7 @@ module.exports = class workerController {
 				
 					try{
 					
-						var parsed_event = JSON.parse(event.Body);
+						let parsed_event = JSON.parse(event.Body);
 						if(_.has(parsed_event, 'id')){
 							resolve(parsed_event.id);
 						}
@@ -50,7 +50,7 @@ module.exports = class workerController {
 			}else if(_.isString(event)){
 				
 				try{
-					var parsed_event = JSON.parse(event);
+					let parsed_event = JSON.parse(event);
 					if(_.has(parsed_event, 'id')){
 						resolve(parsed_event.id);
 					}

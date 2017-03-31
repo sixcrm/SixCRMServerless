@@ -46,7 +46,7 @@ module.exports.createorder= (event, context, callback) => {
 	}
 	
 	if(validation['errors'].length > 0){		
-		var error_response = {'validation_errors':validation['errors']};		
+		let error_response = {'validation_errors':validation['errors']};
 		lambda_response['body'] = JSON.stringify({
 			message: 'One or more validation errors occurred.',
 			input: event,
@@ -93,7 +93,7 @@ module.exports.createorder= (event, context, callback) => {
 	duplicate_body['password'] = 'password'; //config
 	
 	if(validation['errors'].length > 0){		
-		var error_response = {'validation_errors':validation['errors']};		
+		let error_response = {'validation_errors':validation['errors']};
 		lambda_response['body'] = JSON.stringify({
 			message: 'One or more validation errors occurred.',
 			input: event,

@@ -164,7 +164,7 @@ class forwardMessagesController extends workerController {
 							
 							if(!_.has(response, 'statusCode')){
 								
-								var error_message = ' Worker data object has unrecognized structure.';
+								let error_message = ' Worker data object has unrecognized structure.';
 								if(_.has(response, 'body')){
 									error_message += response.body;
 								}
@@ -174,7 +174,7 @@ class forwardMessagesController extends workerController {
 							
 							if( response.statusCode !== 200){ 
 								
-								var error_message = 'Non-200 Status Code returned in workerdata object: ';
+								let error_message = 'Non-200 Status Code returned in workerdata object: ';
 								if(_.has(response, 'body')){
 									error_message += response.body;
 								}
