@@ -9,14 +9,21 @@ var affiliateController = require('../../controllers/Affiliate.js');
 var campaignController = require('../../controllers/Campaign.js');
 var sessionController = require('../../controllers/Session.js');
 
+var endpointController = require('../../controllers/endpoints/endpoint.js');
+
 //Technical Debt:  We need the account global set.
 //Technical Debt:  We may need to make a transaction endpoint parent class.
 
-class createLeadController {
-
+class createLeadController extends endpointController{
+	
+	constructor(){
+		super();
+	}
+	
 	execute(event){
 		
-		return this.acquireBody(event)
+		return this.preprocessing((event))
+			.then((event) => this.acquireBody(event))
 			.then((event) => this.validateInput(event))
 			.then((event) => this.disableACLs(event))
 			.then((event) => this.assureCustomer(event))
@@ -102,6 +109,7 @@ class createLeadController {
 	//Technical Debt:  We still need to be setting the account_id for the objects that we create...
 	disableACLs(event){
 		
+		/* Warning */
 		campaignController.disableACLs();
 		
 		return Promise.resolve(event);

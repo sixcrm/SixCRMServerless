@@ -404,7 +404,7 @@ functions:
     handler: endpoints/acquiretoken/handler.acquiretoken
     events:
       - http:
-         path: token/acquire
+         path: token/acquire/{account}
          method: get
          cors: true
          authorizer:
@@ -419,7 +419,7 @@ functions:
     handler: endpoints/createlead/handler.createlead
     events:
       - http:
-         path: lead/create
+         path: lead/create/{account}
          method: post
          cors: true
          authorizer:
@@ -439,7 +439,7 @@ functions:
     handler: endpoints/createorder/handler.createorder
     events:
       - http:
-         path: order/create
+         path: order/create/{account}
          method: post
          cors: true
          authorizer:
@@ -470,7 +470,7 @@ functions:
     handler: endpoints/confirmorder/handler.confirmorder
     events:
       - http:
-         path: order/confirm
+         path: order/confirm/{account}
          method: get
          cors: true
          authorizer:

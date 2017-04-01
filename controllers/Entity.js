@@ -422,12 +422,25 @@ module.exports = class entityController {
 				
 					}
 					
-					if(!_.has(entity, 'account') && _.has(global, 'account')){
+					//if(!_.has(entity, 'account') && _.has(global, 'account')){
+					if(!_.has(entity, 'account')){
+						
+						du.debug('No account specified in the entity record');
+						
+						if(_.has(global, 'account')){
+							
+							du.debug('Global account identified.  Appending to the entity.');
+							
+							if(!_.contains(this.nonaccounts, this.descriptive_name)){
 				
-						if(!_.contains(this.nonaccounts, this.descriptive_name)){
-				
-							entity.account = global.account;
+								entity.account = global.account;
 					
+							}
+							
+						}else{
+							
+							du.debug('No global account value available.');
+							
 						}
 				
 					}
