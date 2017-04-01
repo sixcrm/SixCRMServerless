@@ -3,12 +3,19 @@ const jwt = require('jsonwebtoken');
 const _ = require("underscore");
 
 var timestamp = require('../../lib/timestamp.js');
+var endpointController = require('../../controllers/endpoints/endpoint.js');
 
-class acquireTokenController {
+class acquireTokenController extends endpointController {
+	
+	constructor(){
+		super();
+	}
 	
 	execute(event){
 		
-		return this.validateInput(event).then(this.acquireToken);
+		return this.preprocessing(event)
+			.then(this.validateInput)
+			.then(this.acquireToken);
 		
 	}	
 	
@@ -16,6 +23,7 @@ class acquireTokenController {
 		
 		return new Promise((resolve) => {
 			
+			//Technical Debt:  Why is there a user object here?
 			if(_.has(event, "requestContext") && _.has(event.requestContext, "authorizer") && _.has(event.requestContext.authorizer, "user")){
 			
 				resolve(event);

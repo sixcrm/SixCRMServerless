@@ -5,12 +5,18 @@ const querystring = require('querystring');
 const du = require('../../lib/debug-utilities.js');
 
 var sessionController = require('../../controllers/Session.js');
+var endpointController = require('../../controllers/endpoints/endpoint.js');
 
-class confirmOrderController {
+class confirmOrderController extends endpointController{
+	
+	constructor(){
+		super();
+	}
 	
 	execute(event){
 		
-		return this.acquireQuerystring(event)
+		return this.preprocessing((event))
+			.then(this.acquireQuerystring)
 			.then(this.validateInput)
 			.then(this.confirmOrder);
 		

@@ -12,12 +12,18 @@ var transactionController = require('../../controllers/Transaction.js');
 var creditCardController = require('../../controllers/CreditCard.js');
 var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var rebillController = require('../../controllers/Rebill.js');
+var endpointController = require('../../controllers/endpoints/endpoint.js');
 
-class createOrderController {
-
+class createOrderController extends endpointController{
+	
+	constructor(){
+		super();
+	}
+	
 	execute(event){
 
-		return this.acquireBody(event)
+		return this.preprocessing((event))
+		.then(this.acquireBody)
 		.then(this.validateInput)
 		.then(this.getOrderInfo)
 		.then(this.getTransactionInfo)

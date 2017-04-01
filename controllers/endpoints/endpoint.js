@@ -71,6 +71,8 @@ module.exports = class endpointController {
 			
 	}
 	
+	//Technical Debt:  Need to validate that the account and the user which granted the JWT are paired.
+	
 	setGlobalAccount(event){
 		
 		du.debug('Set Global Account');
