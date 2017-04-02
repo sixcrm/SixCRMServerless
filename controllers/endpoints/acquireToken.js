@@ -10,7 +10,7 @@ const endpointController = require('../../controllers/endpoints/endpoint.js');
 class acquireTokenController extends endpointController {
 	
 	constructor(){
-		super({required_permissions: ['user/introspection','account/read']});
+		super({required_permissions: ['user/read','account/read']});
 	}
 	
 	execute(event){

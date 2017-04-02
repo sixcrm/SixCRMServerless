@@ -14,7 +14,20 @@ var endpointController = require('../../controllers/endpoints/endpoint.js');
 class createLeadController extends endpointController{
 	
 	constructor(){
-		super();
+		super({
+			required_permissions: [
+				'user/read',
+				'account/read',
+				'customer/read',
+				'customer/create',
+				'customer/update',
+				'session/create',
+				'session/update',
+				'session/read',
+				'campaign/read',
+				'affiliate/read'
+			]
+		});
 	}
 	
 	execute(event){
@@ -22,7 +35,6 @@ class createLeadController extends endpointController{
 		return this.preprocessing((event))
 			.then((event) => this.acquireBody(event))
 			.then((event) => this.validateInput(event))
-			.then((event) => this.disableACLs(event))
 			.then((event) => this.assureCustomer(event))
 			.then((event) => this.createSessionObject(event))
 			.then((session_object) => this.persistSession(session_object));

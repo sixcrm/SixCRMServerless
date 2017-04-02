@@ -213,9 +213,17 @@ module.exports = class endpointController {
 		
 		return new Promise((resolve, reject) => {
 		
-			permissionutilities.validatePermissionsArray(this.required_permissions).then((validation) => {
+			permissionutilities.validatePermissionsArray(this.required_permissions).then((permission_object) => {
 				
-				if(validation !== true){ return reject(new Error(validation)); }
+				du.debug('Permission Object: ', permission_object);
+				
+				if(permission_object.has_permission !== true){ 
+				
+					let error_string = 'Unable to execute action - user lacks permissions: '+permission_object.permission_failures.join(', ');
+					
+					return reject(new Error(error_string)); 
+					
+				}
 				
 				return resolve(event);		
 				
