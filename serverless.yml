@@ -414,6 +414,10 @@ functions:
     environment:
       transaction_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
+      user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
+      accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
+      roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       stage: ${opt:stage}
 
   createlead:

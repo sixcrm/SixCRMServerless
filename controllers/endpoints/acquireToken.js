@@ -2,8 +2,10 @@
 const jwt = require('jsonwebtoken');
 const _ = require("underscore");
 
-var timestamp = require('../../lib/timestamp.js');
-var endpointController = require('../../controllers/endpoints/endpoint.js');
+const timestamp = require('../../lib/timestamp.js');
+const du = require('../../lib/debug-utilities.js');
+
+const endpointController = require('../../controllers/endpoints/endpoint.js');
 
 class acquireTokenController extends endpointController {
 	
@@ -29,6 +31,8 @@ class acquireTokenController extends endpointController {
 	}
 	
 	acquireToken (event) {
+		
+		du.debug('Validate Token');
 		
 		//Note:  The presence of this has already been assured in the endpoint.js class in the preprocessing event
 		let user_id = global.user.id;

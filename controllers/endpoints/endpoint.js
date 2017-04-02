@@ -32,7 +32,7 @@ module.exports = class endpointController {
 			.then(this.parseEvent)
 			.then(this.acquireAccount)
 			.then(this.acquireUser)
-			.then(this.validateRequiredPermissions);
+			.then((event) => this.validateRequiredPermissions(event));
 	
 	}
 	
@@ -213,7 +213,7 @@ module.exports = class endpointController {
 		
 		return new Promise((resolve, reject) => {
 		
-			permissionutilities.validatePermissionsArray(this.necessary_actions).then((validation) => {
+			permissionutilities.validatePermissionsArray(this.required_permissions).then((validation) => {
 				
 				if(validation !== true){ return reject(new Error(validation)); }
 				
