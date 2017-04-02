@@ -86,18 +86,10 @@ class confirmOrderController extends endpointController{
 		
 		var promises = [];
 		
-		/* Warning */
-		sessionController.disableACLs();
-		
 		return sessionController.get(querystring['session_id']).then((session) => {
-			
-			sessionController.enableACLs();
 			
 			if(_.isNull(session)){ throw new Error('The specified session is unavailable.'); }
 			if(session.completed == 'true'){ throw new Error('The specified session is already complete.'); }
-	
-			/* Warning */
-			sessionController.disableACLs();
 		
 			var getCustomer = sessionController.getCustomer(session);
 			var getTransactions = sessionController.getTransactions(session);
@@ -109,18 +101,11 @@ class confirmOrderController extends endpointController{
 			
 			return Promise.all(promises).then((promises) => {
 				
-				sessionController.enableACLs();
-				
 				var customer = promises[0];
 				var transactions = promises[1];
 				var transaction_products = promises[2];
-				
-				/* Warning */
-				sessionController.disableACLs();
 			
 				return sessionController.closeSession(session).then(() => {
-						
-					sessionController.enableACLs();
 					
 					var results = {session: session, customer: customer, transactions: transactions, transaction_products: transaction_products};
 

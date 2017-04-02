@@ -8,7 +8,7 @@ var endpointController = require('../../controllers/endpoints/endpoint.js');
 class acquireTokenController extends endpointController {
 	
 	constructor(){
-		super();
+		super({required_permissions: ['user/introspection','account/read']});
 	}
 	
 	execute(event){
@@ -19,66 +19,35 @@ class acquireTokenController extends endpointController {
 		
 	}	
 	
+	//Note: This is the sort of thing that is likely to be necessary however all functionality has been abstracted to other classes for the time being
 	validateInput(event){
 		
-		return new Promise((resolve) => {
-			
-			//Technical Debt:  Why is there a user object here?
-			if(_.has(event, "requestContext") && _.has(event.requestContext, "authorizer") && _.has(event.requestContext.authorizer, "user")){
-			
-				resolve(event);
-				
-			}else{
-			
-				throw new Error('Unset user object in the JWT.');
-				
-			}
-
-			resolve(event);
-			
-			
-		});
+		du.debug('Validate Input');
+		
+		return Promise.resolve(event);
 		
 	}
 	
 	acquireToken (event) {
 		
-		//Technical Debt:  why is this here?  We only want user JWT's for the graph endpoint...
-		var user_id = event.requestContext.authorizer.user;
+		//Note:  The presence of this has already been assured in the endpoint.js class in the preprocessing event
+		let user_id = global.user.id;
 
-		var _timestamp = timestamp.createTimestampSeconds() + (60 * 60);
+		//Note: The transaction JWT is only valida for one hour
+		let _timestamp = timestamp.createTimestampSeconds() + (60 * 60);
 
-		var payload = {
+		let payload = {
 			iat: _timestamp,
 			exp: _timestamp,
 			user_id: user_id
 		}
-	
-		return jwt.sign(payload, process.env.site_secret_jwt_key);
+		
+		let transaction_jwt = jwt.sign(payload, process.env.transaction_secret_key);
+		
+		return Promise.resolve(transaction_jwt);
 				
 	}
 	
 }
 
 module.exports = new acquireTokenController();
-
-/*
-console.log(event.requestContext.authorizer.user);
-	
-	var user_id = event.requestContext.authorizer.user;
-	
-	var _timestamp = timestamp.createTimestampSeconds() + (60 * 60);
-
-	var payload = {
-		iat: _timestamp,
-		exp: _timestamp,
-		user_id: user_id
-	}
-	
-	var created_token = jwt.sign(payload, process.env.site_secret_jwt_key);
-	
-	lr.issueResponse(200, {
-		message: 'Success',
-		token: created_token
-	}, callback);
-*/

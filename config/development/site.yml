@@ -1,10 +1,12 @@
 jwt:
-  transaction_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
-  site_key: 'anwdadawdjaklwdlakd'
   development_bypass: 'deathstalker'
-  auth0: 
+  auth0: #This is the key for all graph requests (AKA Six users)
     secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
     domain: ''
+  transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
+    secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+  #Technical Debt:  The site key may be deprecated...
+  site_key: 'anwdadawdjaklwdlakd'
   
 dynamodb:
   access_keys_table: 'access_keys'

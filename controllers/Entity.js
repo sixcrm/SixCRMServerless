@@ -739,8 +739,11 @@ module.exports = class entityController {
 	isUUID(string, version){
 		
 		if(_.isString(string)){
+		
 			return validator.isUUID(string, version);
+			
 		}
+		
 		return false;
 		
 	}
@@ -748,20 +751,18 @@ module.exports = class entityController {
 	isEmail(string){
 		
 		if(_.isString(string)){
+		
 			return validator.isEmail(string);	
+			
 		}
+		
 		return false;
 		
 	}
 	
 	disableACLs(argument){
 	
-		//Technical Debt:  This function isn't scoped to the child class unless we provide the argument
-		
-		du.warning('Disabling ACLs');
-		
-		global.disableactionchecks = true;
-		global.disableaccountfilter = true;
+		permissionutilities.disableACLs();
 		
 		return;
 		
@@ -769,33 +770,30 @@ module.exports = class entityController {
 	
 	enableACLs(argument){
 	
-		//Technical Debt:  This function isn't scoped to the child class unless we provide the argument
-		
-		du.warning('Re-Enabling ACLs');
-		
-		global.disableactionchecks = false;
-		global.disableaccountfilter = false;
+		permissionutilities.enableACLs();
 		
 		return;
 		
 	}
-
+	
 	unsetGlobalUser(){
 	
-		global.user = undefined;
+		permissionutilities.unsetGlobalUser();
+		
+		return;
 		
 	}
 	
 	setGlobalUser(user){
-		
-		du.debug('Setting global user:', user);
 							
 		if(_.has(user, 'id') || this.isEmail(user)){
 		
-			global.user = user;
+			permissionutilities.setGlobalUser();
 			
 		}
-							
+		
+		return;
+						
 	}
 	
 	acquireGlobalUser(){

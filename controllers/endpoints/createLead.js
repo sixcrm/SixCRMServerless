@@ -11,9 +11,6 @@ var sessionController = require('../../controllers/Session.js');
 
 var endpointController = require('../../controllers/endpoints/endpoint.js');
 
-//Technical Debt:  We need the account global set.
-//Technical Debt:  We may need to make a transaction endpoint parent class.
-
 class createLeadController extends endpointController{
 	
 	constructor(){
@@ -104,16 +101,6 @@ class createLeadController extends endpointController{
 
 		});
 
-	}
-	
-	//Technical Debt:  We still need to be setting the account_id for the objects that we create...
-	disableACLs(event){
-		
-		/* Warning */
-		campaignController.disableACLs();
-		
-		return Promise.resolve(event);
-			
 	}
 	
 	assureCustomer(event){
