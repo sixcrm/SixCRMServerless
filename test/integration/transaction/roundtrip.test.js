@@ -23,6 +23,7 @@ describe('Round Trip Test', function() {
     	var request_time = new Date().getTime();
 		var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
     	var authorization_string = config.access_key+':'+request_time+':'+signature;
+		let account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
 		
 		du.highlight('Request Time: ', request_time);
 		du.highlight('Signature: ', signature);
@@ -32,7 +33,7 @@ describe('Round Trip Test', function() {
 		
 		du.output(appropriate_spacing+'Acquiring Token');
 		
-    	this_request.get('token/acquire/')
+    	this_request.get('token/acquire/'+account)
 			.set('Content-Type', 'application/json')
 			.set('Authorization', authorization_string)
 			.expect(200)
@@ -79,7 +80,7 @@ describe('Round Trip Test', function() {
 				du.debug('Post data', post_body);
 				
 				du.output(appropriate_spacing+'Creating Lead');
-				this_request.post('lead/create/')
+				this_request.post('lead/create/'+account)
 					.send(post_body)
 					.set('Content-Type', 'application/json')
 					.set('Authorization', jwt)
@@ -123,7 +124,7 @@ describe('Round Trip Test', function() {
 						du.debug('Order Create JSON', order_create);
 					  	
 					  	du.output(appropriate_spacing+'Creating Order');
-					  	this_request.post('order/create/')
+					  	this_request.post('order/create/'+account)
 							.send(order_create)
 							.set('Content-Type', 'application/json')
 							.set('Authorization', jwt)
@@ -175,7 +176,7 @@ describe('Round Trip Test', function() {
 								
 								du.output(appropriate_spacing+'Creating Another Order');
 								
-								this_request.post('order/create/')
+								this_request.post('order/create/'+account)
 									.send(upsell_create)
 									.set('Content-Type', 'application/json')
 									.set('Authorization', jwt)
@@ -207,7 +208,7 @@ describe('Round Trip Test', function() {
 										du.output(appropriate_spacing+'Confirming Order');
 										du.debug('Confirmation params: ', 'session_id='+session_id);
 										
-										this_request.get('order/confirm/')
+										this_request.get('order/confirm/'+account)
 											.query('session_id='+session_id)
 											.set('Content-Type', 'application/json')
 											.set('Authorization', jwt)
@@ -217,6 +218,7 @@ describe('Round Trip Test', function() {
 											.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 											.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 											.end(function(err, response){
+											
 												du.debug('Confirm Order results', response.body);
 												assert.property(response.body, "message");
 												assert.equal(response.body.message, "Success");
