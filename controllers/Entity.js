@@ -788,7 +788,7 @@ module.exports = class entityController {
 							
 		if(_.has(user, 'id') || this.isEmail(user)){
 		
-			permissionutilities.setGlobalUser();
+			permissionutilities.setGlobalUser(user);
 			
 		}
 		
