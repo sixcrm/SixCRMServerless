@@ -175,33 +175,59 @@ module.exports = class endpointController {
 			
 			let user_string = event.requestContext.authorizer.user;
 			
-			du.debug('Event Request Context Authorizer User:', user_string);
+			du.debug('Event Request Context Authorizer User Alias:', user_string);
 			
-			if(!_.isString(user_string) || !validator.isEmail(user_string)){
+			if(!_.isString(user_string)){
 				
 				return reject(new Error('Event request context authorizer user is an unrecognized format.'));
 				
 			}
 			
-			userController.getUserStrict(user_string).then((user) => {
+			if(validator.isEmail(user_string)){
+			
+				userController.getUserStrict(user_string).then((user) => {
 				
-				if(_.has(user, 'id')){
+					if(_.has(user, 'id')){
 				
-					permissionutilities.setGlobalUser(user);
+						permissionutilities.setGlobalUser(user);
 					
-				}else if(user == false){
+					}else if(user == false){
 					
-					return reject(new Error('Unknown user.  Please contact the system administrator.'));
+						return reject(new Error('Unknown user.  Please contact the system administrator.'));
 					
-				}
+					}
 				
-				return resolve(event);
+					return resolve(event);
 				
-			}).catch((error) => {
+				}).catch((error) => {
 				
-				return reject(error);
+					return reject(error);
 				
-			});
+				});
+			
+			}else{
+			
+				userController.getUserByAlias(user_string).then((user) => {
+				
+					if(_.has(user, 'id')){
+				
+						permissionutilities.setGlobalUser(user);
+					
+					}else if(user == false){
+					
+						return reject(new Error('Unknown user.  Please contact the system administrator.'));
+					
+					}
+				
+					return resolve(event);
+				
+				}).catch((error) => {
+				
+					return reject(error);
+				
+				});
+				
+			}
 			
 		});
 		

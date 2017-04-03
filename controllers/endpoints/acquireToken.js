@@ -35,15 +35,16 @@ class acquireTokenController extends endpointController {
 		du.debug('Validate Token');
 		
 		//Note:  The presence of this has already been assured in the endpoint.js class in the preprocessing event
-		let user_id = global.user.id;
+		let user_alias = global.user.alias;
 
-		//Note: The transaction JWT is only valida for one hour
+		//Note: The transaction JWT is only valid for one hour
 		let _timestamp = timestamp.createTimestampSeconds() + (60 * 60);
 
+		//Technical Debt:  we want the account in the JWT too...
 		let payload = {
 			iat: _timestamp,
 			exp: _timestamp,
-			user_id: user_id
+			user_alias: user_alias
 		}
 		
 		let transaction_jwt = jwt.sign(payload, process.env.transaction_secret_key);

@@ -1,8 +1,5 @@
 {
-	"body":{
-		"request_time":123
-	},
 	"Authorization":"ae31c39cb9c30a027cf6c0a612a813d33bc23b6e:1483824904139:476d523132b619457a726d1792baeaec8b1221d4",
-	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"requestContext":"{\"authorizer\":{\"user\":\"4ee23a8f5c8661612075a89e72a56a3c6d00df90\"}}",
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }"
 }

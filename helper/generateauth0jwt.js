@@ -25,4 +25,5 @@ let jwt_contents = {
 	"iat": now
 };
 
+du.output('Note:  The Auth0 JWT gereated is similiar, but not identical.');
 du.output(tu.generateJWT(jwt_contents, secret_key));

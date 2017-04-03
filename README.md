@@ -50,6 +50,7 @@
 - Test/Complete the Slack Lambda Error integration
 - Test the SES Lambda integration
 - Blacklist from the DynamoDB table
+- Add Sort Key to tables in DynamoDB
 
 ### General
 

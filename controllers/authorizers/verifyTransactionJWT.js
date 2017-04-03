@@ -61,28 +61,6 @@ class verifyTransactionJWTController {
 		
 	}
 	
-	validateToken(token){
-		
-		du.debug('Validate Token');
-		
-		return new Promise((resolve, reject) => {
-			
-			jwt.verify(token, process.env.secret_key, function(error, decoded) {
-				
-				du.debug('Decoded Token: ', decoded);	
-				
-				if(_.isError(error)){ return reject(error); }
-				
-				if(!_.isObject(decoded)){ return resolve(false); }
-					
-				return resolve(decoded);
-			
-			});
-			
-		});
-		
-	}
-	
 	verifyJWT(token){
 		
 		du.debug('Verify JWT');
@@ -101,7 +79,16 @@ class verifyTransactionJWTController {
 				
 				if(decoded_token == false){ return resolve(false); }
 				
-				return resolve(decoded_token.user_id);
+				if(_.has(decoded_token, 'user_alias')){
+				
+					return resolve(decoded_token.user_alias);
+					
+				}else{
+					
+					return reject(new Error('Token missing user_alias property'));
+					
+				}
+				
 				
 			}).catch((error) =>{
 			
@@ -130,6 +117,28 @@ class verifyTransactionJWTController {
 		}
 		
 		return false;
+		
+	}
+	
+	validateToken(token){
+		
+		du.debug('Validate Token');
+		
+		return new Promise((resolve, reject) => {
+			
+			jwt.verify(token, process.env.secret_key, function(error, decoded) {
+				
+				du.debug('Decoded Token: ', decoded);	
+				
+				if(_.isError(error)){ return reject(error); }
+				
+				if(!_.isObject(decoded)){ return resolve(false); }
+					
+				return resolve(decoded);
+			
+			});
+			
+		});
 		
 	}
 	

@@ -3,6 +3,7 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 const du = require('../lib/debug-utilities.js');
+const mungeutilities = require('../lib/munge-utilities.js');
 const inviteutilities = require('../lib/invite-utilities.js');
 
 const accountController = require('./Account.js');
@@ -19,7 +20,46 @@ class userController extends entityController {
 		this.descriptive_name = 'user';
 	}
 	
-	//returns a user, false or an error
+	getUserByAlias(user_alias){
+		
+		du.debug('Get User By Alias');
+		
+		return new Promise((resolve, reject) => {
+			
+			this.disableACLs();
+			
+			this.getBySecondaryIndex('alias', user_alias, 'alias-index').then((user) => {
+				
+				if(_.has(user, 'id')){
+					
+					return this.getHydrated(user.id).then((user) => {
+								
+						this.enableACLs();
+					
+						return resolve(user);
+		
+					}).catch((error) => {
+						
+						return reject(error);
+			
+					});	
+					
+				}else{
+					
+					return resolve(false);
+					
+				}
+				
+			}).catch((error) => {
+			
+				return reject(error);
+			
+			});
+			
+		});
+		
+	}
+	
 	getUserStrict(user_string){
 	
 		return new Promise((resolve, reject) => {
@@ -43,6 +83,7 @@ class userController extends entityController {
 								
 							this.enableACLs();
 							
+							//Technical Debt:  This is questionable...
 							this.setGlobalUser(user);
 						
 							return resolve(user);
@@ -57,6 +98,7 @@ class userController extends entityController {
 						
 					}else{
 						
+						//Technical Debt:  This is questionable...
 						this.unsetGlobalUser();
 						
 						return resolve(false);
@@ -155,10 +197,22 @@ class userController extends entityController {
 				}else{
 					
 					let account_id = uuidV4();
-			
+					let proto_account = {
+						id: account_id,
+						name: email+'-pending-name', 
+						active: 'false'
+					};
+					let proto_user = {
+						id: email, 
+						name: email, 
+						active: "false"
+					};
+					
+					proto_user = this.appendAlias(proto_user);
+					
 					let promises = [];
-					promises.push(accountController.create({id: account_id,name: email+'-pending-name', active: 'false'}));
-					promises.push(this.create({id:email, name:email, active:"false"}));
+					promises.push(accountController.create(proto_account));
+					promises.push(this.create(proto_user));
 			
 					//Technical Debt:  This should be a lookup, not a hardcoded string
 					promises.push(roleController.get('cae614de-ce8a-40b9-8137-3d3bdff78039'));
@@ -376,6 +430,8 @@ class userController extends entityController {
 					
 					this.disableACLs();
 					
+					user = this.appendAlias(user);
+					
 					this.create(user).then((user) => {
 						
 						this.enableACLs();
@@ -395,6 +451,18 @@ class userController extends entityController {
 		});
 		
 	}	
+	
+	appendAlias(user){
+		
+		if(!_.has(user, 'alias')){
+			
+			user['alias'] = mungeutilities.munge(user.id);
+			
+		}
+		
+		return user;
+		
+	}
 	
 	getUserByAccessKeyId(access_key_id){
 	
@@ -463,6 +531,8 @@ class userController extends entityController {
 						auth0id: "-",
 						name: "-"
 					};
+					
+					user_object = this.appendAlias(user_object);
 					
 					du.highlight('New User', user_object);
 					
