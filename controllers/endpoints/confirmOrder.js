@@ -10,7 +10,25 @@ var endpointController = require('../../controllers/endpoints/endpoint.js');
 class confirmOrderController extends endpointController{
 	
 	constructor(){
-		super();
+		super({
+			required_permissions: [
+				'user/read',
+				'account/read',
+				'session/create',
+				'session/read',
+				'session/update',
+				'campaign/read',
+				'creditcard/create',
+				'creditcard/update',
+				'creditcard/read',
+				'productschedule/read',
+				'loadbalancer/read',
+				'product/read',
+				'affiliate/read',
+				'transaction/read',
+				'rebill/read'
+			]
+		});
 	}
 	
 	execute(event){

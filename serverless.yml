@@ -436,6 +436,10 @@ functions:
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
         campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
+        accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
+        users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
+        user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
+        roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         stage: ${opt:stage}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
@@ -467,8 +471,12 @@ functions:
         rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
         hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
         bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
-        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
+        accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
+        users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
+        user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
+        roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
+        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         stage: ${opt:stage}
         
   confirmorder:
@@ -492,6 +500,10 @@ functions:
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
         stage: ${opt:stage}
+        accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
+        users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
+        user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
+        roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
         
 ########################
 # Resource definitions for required system resources
