@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
-var entityController = require('./Entity.js');
+const entityController = require('./Entity.js');
+const du = require('../lib/debug-utilities');
 
 class creditCardController extends entityController {
 
@@ -14,8 +15,10 @@ class creditCardController extends entityController {
 		return Promise.resolve(creditcard.address);
 	}
 	
-	storeCreditCard(creditcard){
-	
+	storeCreditCard(creditcard) {
+
+		du.debug('Storing credit card.');
+
 		var controller_instance = this;
 		
 		return new Promise((resolve, reject) => {
