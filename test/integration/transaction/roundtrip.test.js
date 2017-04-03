@@ -20,17 +20,18 @@ describe('Round Trip Test', function() {
   describe('Confirms a sales funnel purchase with partial and multiple upsells.', function() {
     it('Return a confirmed sale', function (done) {
     	
-    	var request_time = new Date().getTime();
-		var signature = crypto.createHash('sha1').update(config.secret_key+request_time).digest('hex');
-    	var authorization_string = config.access_key+':'+request_time+':'+signature;
-		let account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
-		
+    	let request_time = new Date().getTime();
+    	let secret_key = config.access_keys.super_user.secret_key;
+    	let access_key = config.access_keys.super_user.access_key;
+    	let account = config.account;
+    	
+		let signature = crypto.createHash('sha1').update(secret_key+request_time).digest('hex');
+    	let authorization_string = access_key+':'+request_time+':'+signature;
+		let this_request = request(endpoint);
+			
 		du.highlight('Request Time: ', request_time);
 		du.highlight('Signature: ', signature);
 		du.highlight('Authorization String: ', authorization_string);
-		
-		var this_request = request(endpoint);
-		
 		du.output(appropriate_spacing+'Acquiring Token');
 		
     	this_request.get('token/acquire/'+account)

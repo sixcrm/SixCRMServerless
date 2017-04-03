@@ -1,3 +1,9 @@
 endpoint: 'https://api.sixcrm.com/'
-access_key: '13edf909931d0f37000e438e9d67a2e165fad5d0'
-secret_key: 'MzM1YWE2YTYyYzZjMGMxYzYyOGFlZjEzYTk3ZTFlNjNiYTNhMTYxMg=='
+account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
+access_keys:
+  customerservice_user:
+    access_key: '13edf909931d0f37000e438e9d67a2e165fad5d0'
+    secret_key: 'Y3VzdG9tZXJzZXJ2aWNlLnVzZXJAdGVzdC5jb20='
+  super_user:
+    access_key: '1ud98uhc9h989811ud01yd81u2d1289duu1du1a0d9uula'
+    secret_key: 'c3VwZXIudXNlckB0ZXN0LmNvbQ=='

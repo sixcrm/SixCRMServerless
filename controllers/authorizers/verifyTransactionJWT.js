@@ -3,6 +3,10 @@ const _ = require("underscore");
 const jwt = require("jsonwebtoken");
 const du = require('../../lib/debug-utilities.js');
 
+/* 
+*  Note:  This is slightly different than the Auth0JWT verification method, and particularly around the decoded token structure.
+*/
+
 class verifyTransactionJWTController {
 	
 	constructor(){
@@ -94,10 +98,10 @@ class verifyTransactionJWTController {
 			}
 				 
 			this.validateToken(token).then((decoded_token) => {
-			
+				
 				if(decoded_token == false){ return resolve(false); }
 				
-				return resolve(true);
+				return resolve(decoded_token.user_id);
 				
 			}).catch((error) =>{
 			

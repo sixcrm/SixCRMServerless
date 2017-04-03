@@ -98,6 +98,7 @@
     {
     	"name":"Super Test User",
     	"auth0_id":"google-oauth2|115021313586107803846",
+    	"access_key_id":"4b6b3ddc-a7b7-40e0-bc9b-02b425370448",
     	"id":"super.user@test.com",
     	"active":"true",
     	"termsandconditions":"0.1"
