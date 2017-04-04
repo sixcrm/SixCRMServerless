@@ -720,6 +720,71 @@ var roleType = new GraphQLObjectType({
   interfaces: []
 });
 
+var notificationCountType = new GraphQLObjectType({
+    name: 'NotificationCount',
+    description: 'Number of unseen notifications.',
+    fields: () => ({
+        count: {
+            type: new GraphQLNonNull(GraphQLInt),
+            description: 'Number of unseen notifications.',
+        }
+    }),
+    interfaces: []
+});
+
+var readNotificationType = new GraphQLObjectType({
+    name: 'ReadNotification',
+    description: 'Mark the notification as read.',
+    fields: () => ({
+        status: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'Always returns \'ok\'.',
+            resolve: notification => Promise.resolve('ok')
+        }
+    }),
+    interfaces: []
+});
+
+var notificationListType = new GraphQLObjectType({
+    name: 'NotificationList',
+    description: 'Notifications.',
+    fields: () => ({
+        notifications: {
+            type: new GraphQLList(notificationType),
+            description: 'Notifications.',
+        }
+    }),
+    interfaces: []
+});
+
+var notificationType = new GraphQLObjectType({
+    name: 'Notification',
+    description: 'A notification.',
+    fields: () => ({
+        id: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The id of the notification.',
+        },
+        type: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The type of the notification.',
+        },
+        action: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The action associated with the notification.',
+        },
+        message: {
+          type: GraphQLString,
+          description: 'Notification message.'
+        },
+        read_at: {
+            type: GraphQLString,
+            description: 'Time at which the user has read the notification.',
+        },
+    }),
+    interfaces: []
+});
+
 var permissionsType = new GraphQLObjectType({
   name: 'Permissions',
   description: 'A role permissions object.',
@@ -2253,6 +2318,41 @@ var queryType = new GraphQLObjectType({
 		}else{
 			return null;
 		}
+      }
+    },
+    notificationcount: {
+  	  type: notificationCountType,
+      resolve: function() {
+          return Promise.resolve({ count: 42 });
+      }
+    },
+    notificationlist: {
+      type: notificationListType,
+      resolve: function() {
+        let result = [];
+
+        for (let i = 0; i < 5; i++) {
+          result.push({
+            id: 1,
+            type: 'payment',
+            action: 'failed',
+            message: 'Payment failed.'
+          });
+        }
+
+        return Promise.resolve({ notifications: result });
+      }
+    },
+    readnotification: {
+      type: readNotificationType,
+      args: {
+          id: {
+              description: 'id of the notification',
+              type: new GraphQLNonNull(GraphQLString)
+          }
+      },
+      resolve: function(root, id) {
+        return Promise.resolve({});
       }
     }
   })

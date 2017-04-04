@@ -1,0 +1,17 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	{ 
+		notificationlist {
+			notifications {
+			    id,
+			    type,
+			    action,
+			    message,
+			    read_at
+			}
+		}
+	}"
+}
+
