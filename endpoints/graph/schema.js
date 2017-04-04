@@ -1,5 +1,6 @@
 'use strict';
 /* eslint-disable no-unused-vars */
+//Technical Debt:  This script is enormous.  Refactor.
 var _  = require('underscore');
 
 var GraphQLEnumType = require('graphql').GraphQLEnumType;

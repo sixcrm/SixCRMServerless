@@ -24,7 +24,7 @@ class pickRebillController extends workerController {
 			return rebillController.getRebillsAfterTimestamp(now).then((rebills) => {
 				return Promise.all(rebills.map(rebill => rebillController.sendMessageAndMarkRebill(rebill))).then(() => {
 					
-					//do something here?
+					//Technical Debt: do something here?
 					return;
 					
 				}).then(() => {
