@@ -1,0 +1,11 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"nikola.bosic@toptal.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		notificationcount {
+			count
+		} 
+	}"
+}
+

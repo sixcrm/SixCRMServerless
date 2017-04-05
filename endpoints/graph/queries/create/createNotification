@@ -1,0 +1,15 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation { 
+		createnotification (notification: { id: \"3\", user: \"super.user@test.com\", account: \"*\", type: \"message\", action: \"received\", message: \"You received a message\"}) {
+			id,
+            user,
+            account,
+            type,
+            action,
+            message
+		} 
+	}"
+}
