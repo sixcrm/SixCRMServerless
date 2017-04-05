@@ -324,7 +324,7 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    describe('sendMessageAndMarkRebill', () => {
+    xdescribe('sendMessageAndMarkRebill', () => {
         after(() => {
             mockery.deregisterAll();
         });

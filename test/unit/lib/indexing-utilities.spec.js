@@ -188,7 +188,7 @@ describe('lib/indexing-utilities', () => {
         });
     });
 
-    describe('removeFromSearchIndex', () => {
+    xdescribe('removeFromSearchIndex', () => {
         it('should resolve to true', () => {
             // given
             let entity = {
@@ -211,7 +211,7 @@ describe('lib/indexing-utilities', () => {
         });
     });
 
-    describe('addToSearchIndex', () => {
+    xdescribe('addToSearchIndex', () => {
         it('should resolve to true', () => {
             // given
             let entity = {
