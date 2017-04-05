@@ -128,8 +128,6 @@ function parseTableName(json_object){
 	
 	throw new Error('Unable to identify table name in DynamoDB migration JSON.');
 	
-	return false;
-	
 }
 
 function buildFullyQualifiedTableName(proto_table_name){
