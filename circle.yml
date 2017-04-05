@@ -18,6 +18,7 @@ machine:
   environment:
     AWS_ACCOUNT: '068070110666'
     AWS_REGION: 'us-east-1'
+    SIX_VERBOSE: '2'
 
 test:
   override:
@@ -44,7 +45,7 @@ deployment:
       - npm run lint
       - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
       # Truncate the databases
-      # Truncate search index
+      - node ./deployment/cloudsearch/purge_index.js
       - serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
       - serverless deploy --stage $CIRCLE_BRANCH
       - npm run test-integration
