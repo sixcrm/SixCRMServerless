@@ -3,9 +3,16 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		notificationcount {
-			count
-		} 
+		notificationlist {
+			notifications {
+			    id,
+			    type,
+			    action,
+			    message,
+			    created,
+			    read
+			}
+		}
 	}"
 }
 

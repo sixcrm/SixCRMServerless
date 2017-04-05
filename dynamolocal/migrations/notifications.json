@@ -1,0 +1,59 @@
+{
+  "Table": {
+    "TableName": "notifications",
+    "KeySchema": [{
+      "AttributeName": "id",
+      "KeyType": "HASH"
+    }],
+    "AttributeDefinitions": [{
+      "AttributeName": "id",
+      "AttributeType": "S"
+    }, {
+      "AttributeName": "account",
+      "AttributeType": "S"
+    }],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "account-index",
+        "KeySchema": [
+          {
+            "AttributeName": "account",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    ],
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 1,
+      "WriteCapacityUnits": 1
+    }
+  },
+  "Seeds": [
+    {
+      "id": "1",
+      "user": "nikola.bosic@toptal.com",
+      "account": "*",
+      "type": "payment",
+      "action": "failed",
+      "message": "Payment failed.",
+      "created": "1491401809144",
+      "read": "1491401809145"
+    },
+    {
+      "id": "2",
+      "user": "nikola.bosic@toptal.com",
+      "account": "*",
+      "type": "payment",
+      "action": "succeeded",
+      "message": "Payment succeeded.",
+      "created": "1491401809144"
+    }
+  ]
+}

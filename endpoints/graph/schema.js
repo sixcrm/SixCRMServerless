@@ -36,6 +36,7 @@ var accountController = require('../../controllers/Account.js');
 var roleController = require('../../controllers/Role.js');
 const searchController = require('../../controllers/endpoints/search.js');
 const suggestController = require('../../controllers/endpoints/suggest.js');
+const notificationController = require('../../controllers/Notification');
 
 const emailTemplateTypeEnum = new GraphQLEnumType({
 	name: 'EmailTemplateTypeEnumeration',
@@ -732,19 +733,6 @@ var notificationCountType = new GraphQLObjectType({
     interfaces: []
 });
 
-var readNotificationType = new GraphQLObjectType({
-    name: 'ReadNotification',
-    description: 'Mark the notification as read.',
-    fields: () => ({
-        status: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'Always returns \'ok\'.',
-            resolve: notification => Promise.resolve('ok')
-        }
-    }),
-    interfaces: []
-});
-
 var notificationListType = new GraphQLObjectType({
     name: 'NotificationList',
     description: 'Notifications.',
@@ -765,6 +753,14 @@ var notificationType = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the notification.',
         },
+        user: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The id of the user who is an owner of the notification.',
+        },
+        account: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The id of the account notification is associated with.',
+        },
         type: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The type of the notification.',
@@ -774,13 +770,17 @@ var notificationType = new GraphQLObjectType({
             description: 'The action associated with the notification.',
         },
         message: {
-          type: GraphQLString,
-          description: 'Notification message.'
+            type: GraphQLString,
+            description: 'Notification message.'
         },
-        read_at: {
+        created: {
+            type: GraphQLString,
+            description: 'Time at which the notification was created.',
+        },
+        read: {
             type: GraphQLString,
             description: 'Time at which the user has read the notification.',
-        },
+        }
     }),
     interfaces: []
 });
@@ -2328,31 +2328,18 @@ var queryType = new GraphQLObjectType({
     },
     notificationlist: {
       type: notificationListType,
-      resolve: function() {
-        let result = [];
-
-        for (let i = 0; i < 5; i++) {
-          result.push({
-            id: 1,
-            type: 'payment',
-            action: 'failed',
-            message: 'Payment failed.'
-          });
-        }
-
-        return Promise.resolve({ notifications: result });
-      }
-    },
-    readnotification: {
-      type: readNotificationType,
       args: {
-          id: {
-              description: 'id of the notification',
-              type: new GraphQLNonNull(GraphQLString)
-          }
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
       },
-      resolve: function(root, id) {
-        return Promise.resolve({});
+      resolve: function(root, notification) {
+        return notificationController.listForCurrentAccount(notification.limit, notification.cursor);
       }
     }
   })
@@ -2647,6 +2634,19 @@ const sessionInputType = new GraphQLInputObjectType({
     affiliate:			{ type: GraphQLString },
     product_schedules:	{ type: new GraphQLList(GraphQLString) }
   })
+});
+
+var notificationInputType = new GraphQLInputObjectType({
+    name: 'NotificationInput',
+    fields: () => ({
+        id:			{ type: new GraphQLNonNull(GraphQLString) },
+        user:		{ type: new GraphQLNonNull(GraphQLString) },
+        account:	{ type: new GraphQLNonNull(GraphQLString) },
+        type: 	    { type: new GraphQLNonNull(GraphQLString) },
+        action: 	{ type: new GraphQLNonNull(GraphQLString) },
+        message:	{ type: new GraphQLNonNull(GraphQLString) },
+        read:		{ type: GraphQLString }
+    })
 });
 
 var mutationType = new GraphQLObjectType({
@@ -3362,6 +3362,39 @@ var mutationType = new GraphQLObjectType({
 				return shippingReceiptController.delete(id);
 			}
 		},
+        createnotification:{
+            type: notificationType,
+            description: 'Creates a new notification.',
+            args: {
+                notification: { type: notificationInputType }
+            },
+            resolve: (value, notification) => {
+                return notificationController.create(notification.notification);
+            }
+        },
+        updatenotification:{
+            type: notificationType,
+            description: 'Updates a notification.',
+            args: {
+                notification: { type: notificationInputType }
+            },
+            resolve: (value, notification) => {
+                return notificationController.update(notification.notification);
+            }
+        },
+        deletenotification:{
+            type: deleteOutputType,
+            description: 'Deletes a notification.',
+            args: {
+                id: {
+                    description: 'id of the notification',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, notification) => {
+                return notificationController.delete(notification.id);
+            }
+        }
 	})
 });
 
