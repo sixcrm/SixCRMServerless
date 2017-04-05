@@ -44,7 +44,7 @@ deployment:
     commands:
       - npm run lint
       - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
-      # Truncate the databases
+      - node ./deployment/dynamodb/purge_database.js $CIRCLE_BRANCH 
       - node ./deployment/cloudsearch/purge_index.js
       - serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
       - serverless deploy --stage $CIRCLE_BRANCH

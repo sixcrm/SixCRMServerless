@@ -15,4 +15,4 @@ done
 
 echo "Stage: $STAGE";
 serverless dynamodb install
-serverless dynamodb executeAll --stage development
+serverless dynamodb executeAll --stage $STAGE

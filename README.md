@@ -39,10 +39,12 @@
 
 - Hashtag integration
 - DLQ's for all pertinent queues
+- Integrate Rebill Queue
+- Finish
+- Test
 
 8. Transaction Endpoints
 
-- Re-open the Transaction Endpoints
 - Integration Tests
 
 9. Assorted
