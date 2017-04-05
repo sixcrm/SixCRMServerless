@@ -22,7 +22,6 @@ machine:
 test:
   override:
     - npm run test-unit
-    - ./deployment/get_properties.sh
 
 deployment:
   production:
