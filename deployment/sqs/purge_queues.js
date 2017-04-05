@@ -10,7 +10,7 @@ let environment_account_id = process.argv[3];
 let region = process.argv[4];
 
 try {
-  var serverless_config = yaml.safeLoad(fs.readFileSync('../../serverless.yml', 'utf8'));
+  var serverless_config = yaml.safeLoad(fs.readFileSync(__dirname+'/../../serverless.yml', 'utf8'));
 } catch (e) {
   du.warning(e);
 }
@@ -18,6 +18,8 @@ try {
 du.highlight('Executing SQS Purge');
 
 let purge_promises = [];
+
+du.debug('Serverless Config: ', serverless_config);
 
 for(const resource in serverless_config.resources.Resources) {
 
