@@ -9,15 +9,15 @@
       "AttributeName": "id",
       "AttributeType": "S"
     }, {
-      "AttributeName": "account",
+      "AttributeName": "user",
       "AttributeType": "S"
     }],
     "GlobalSecondaryIndexes": [
       {
-        "IndexName": "account-index",
+        "IndexName": "user-index",
         "KeySchema": [
           {
-            "AttributeName": "account",
+            "AttributeName": "user",
             "KeyType": "HASH"
           }
         ],

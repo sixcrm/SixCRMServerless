@@ -2438,7 +2438,7 @@ var queryType = new GraphQLObjectType({
         }
       },
       resolve: function(root, notification) {
-        return notificationController.listForCurrentAccount(notification.limit, notification.cursor);
+        return notificationController.listForCurrentUser(notification.limit, notification.cursor);
       }
     }
   })
