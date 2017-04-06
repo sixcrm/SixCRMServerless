@@ -272,7 +272,7 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    describe('addRebillToQueue', () => {
+    xdescribe('addRebillToQueue', () => {
         after(() => {
             mockery.deregisterAll();
         });
