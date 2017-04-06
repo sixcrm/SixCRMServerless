@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createaccesskey (accesskey: { id: \"testing\", access_key: \"test\", secret_key: \"testing\"}) { 
+		createaccesskey (accesskey: { id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\", access_key: \"test\", secret_key: \"testing\"}) { 
 			id,
 			access_key,
 			secret_key

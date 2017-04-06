@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		deleterebill (id: \"Testing-ID\") { 
+		deleterebill (id: \"016e6326-f6a5-4780-a49a-331e49b79cc6\") { 
 			id
 		} 
 	}"

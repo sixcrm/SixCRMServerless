@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		deleteloadbalancer (id: \"Testing-ID\") { 
+		deleteloadbalancer (id: \"b7d15779-88e5-485c-b372-6dc9c9c7c58c\") { 
 			id
 		} 
 	}"

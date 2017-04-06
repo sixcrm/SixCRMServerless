@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createnotification (notification: { id: \"3\", user: \"super.user@test.com\", account: \"*\", type: \"message\", action: \"received\", message: \"You received a message\"}) {
+		createnotification (notification: { id: \"d93afb42-dfe1-4ff5-ae7e-2e7b0bb2cb02\", user: \"super.user@test.com\", account: \"*\", type: \"message\", action: \"received\", message: \"You received a message\"}) {
 			id,
             user,
             account,

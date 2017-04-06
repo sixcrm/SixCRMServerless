@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		deletesmtpprovider (id: \"testing\") { 
+		deletesmtpprovider (id: \"8363bc50-a409-4503-93f8-1f50965ff87a\") { 
 			id
 		} 
 	}"

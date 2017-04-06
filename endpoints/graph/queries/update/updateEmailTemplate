@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		updateemailtemplate (emailtemplate: { id: \"testing\", name: \"test2\", subject: \"test\", body: \"test\", type: \"initialfulfillment\", smtp_provider:\"18213d0b-cd6d-4cea-91b9-993d7443468b\"}) { 
+		updateemailtemplate (emailtemplate: { id: \"5480e718-af9b-45e7-8cd4-f0eaf5feccd1\", name: \"test2\", subject: \"test\", body: \"test\", type: \"initialfulfillment\", smtp_provider:\"18213d0b-cd6d-4cea-91b9-993d7443468b\"}) { 
 			id,
 			name,
 			subject,

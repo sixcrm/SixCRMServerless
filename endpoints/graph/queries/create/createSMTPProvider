@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createsmtpprovider (smtpprovider: { id: \"testing\", name: \"test\", hostname: \"test\", ip_address: \"test\", username: \"test\", password: \"test\", port: \"test\"}) { 
+		createsmtpprovider (smtpprovider: { id: \"8363bc50-a409-4503-93f8-1f50965ff87a\", name: \"test\", hostname: \"test\", ip_address: \"test\", username: \"test\", password: \"test\", port: \"test\"}) { 
 			id,
 			name,
 			hostname,

@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createrebill ( rebill: { id: \"Testing-ID\", billdate:1485842247, parentsession: \"668ad918-0d09-4116-a6fe-0e8a9eda36f7\", amount:\"30000.00\", product_schedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"] } ) { 
+		createrebill ( rebill: { id: \"016e6326-f6a5-4780-a49a-331e49b79cc6\", billdate:1485842247, parentsession: \"668ad918-0d09-4116-a6fe-0e8a9eda36f7\", amount:\"30000.00\", product_schedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"] } ) { 
 			id,
 			billdate,
 			amount,

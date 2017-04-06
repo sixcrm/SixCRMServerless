@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createrole (role: { id: \"testing\", name: \"testingrole\", active: \"true\"}) { 
+		createrole (role: { id: \"995e1a67-6bb5-48a8-9d7a-2fe9bb391401\", name: \"testingrole\", active: \"true\"}) { 
 			id,
 			name,
 			active

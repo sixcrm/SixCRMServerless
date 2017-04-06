@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createloadbalancer ( loadbalancer: {id: \"Testing-ID\", merchantproviders: [{id:\"6c40761d-8919-4ad6-884d-6a46a776cfb9\", distribution:\"1.0\" } ] } ) { 
+		createloadbalancer ( loadbalancer: {id: \"b7d15779-88e5-485c-b372-6dc9c9c7c58c\", merchantproviders: [{id:\"6c40761d-8919-4ad6-884d-6a46a776cfb9\", distribution:\"1.0\" } ] } ) { 
 			id,
 			merchantproviderconfigurations {
 				merchantprovider {

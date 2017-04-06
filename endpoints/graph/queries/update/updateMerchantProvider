@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		updatemerchantprovider (merchantprovider: { id: \"testing\", name: \"test\", username: \"test\", password: \"test\", endpoint: \"test\", processor: \"NMI\"}) { 
+		updatemerchantprovider (merchantprovider: { id: \"45f3af80-f313-4008-ac9d-48d80aa921b4\", name: \"test\", username: \"test\", password: \"test\", endpoint: \"test\", processor: \"NMI\"}) { 
 			id,
 			name,
 			username,

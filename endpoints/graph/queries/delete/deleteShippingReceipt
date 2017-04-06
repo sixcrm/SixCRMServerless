@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		deleteshippingreceipt (id: \"testing\") { 
+		deleteshippingreceipt (id: \"dd6f3955-ba78-4092-a41d-28e1e726a1e4\") { 
 			id
 		} 
 	}"

@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createaffiliate (affiliate: { id: \"testing\", affiliate_id: \"test\", sub_id_1: \"test\", sub_id_2: \"test\", sub_id_3: \"test\", sub_id_4: \"test\", sub_id_5: \"test\", click_id: \"test\"}) { 
+		createaffiliate (affiliate: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", affiliate_id: \"test\", sub_id_1: \"test\", sub_id_2: \"test\", sub_id_3: \"test\", sub_id_4: \"test\", sub_id_5: \"test\", click_id: \"test\"}) { 
 			id,
 			affiliate_id,
 			sub_id_1,
