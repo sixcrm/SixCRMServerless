@@ -1,0 +1,41 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query { 
+		customernotelist {
+			customernotes {
+				id,
+				customer {
+					id,
+					email,
+					firstname,
+					lastname,
+					phone,
+					address {
+						line1,
+						city,
+						state,
+						zip,
+						country
+					}
+				},
+				user {
+					id,
+					name,
+					auth0_id,
+					active
+				},
+				account,
+				body,
+				datetime
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
+

@@ -17,6 +17,7 @@ var GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 var sessionController = require('../../controllers/Session.js');
 var productController = require('../../controllers/Product.js');
 var customerController = require('../../controllers/Customer.js');
+var customerNoteController = require('../../controllers/CustomerNote.js');
 var transactionController = require('../../controllers/Transaction.js');
 var rebillController = require('../../controllers/Rebill.js');
 var creditCardController = require('../../controllers/CreditCard.js');
@@ -555,6 +556,22 @@ var customerListType = new GraphQLObjectType({
   interfaces: []
 });
 
+var customerNoteListType = new GraphQLObjectType({
+  name: 'CustomerNotes',
+  description: 'Customer Notes',
+  fields: () => ({
+    customernotes: {
+      type: new GraphQLList(customerNoteType),
+      description: 'The customer notes',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
+});
+
 var loadBalancerListType = new GraphQLObjectType({
   name: 'LoadBalancers',
   description: 'Load Balancers',
@@ -931,6 +948,40 @@ var affiliateType = new GraphQLObjectType({
     click_id: {
       type: new GraphQLNonNull(GraphQLString),
       description: '.',
+    }
+  }),
+  interfaces: []
+});
+    		
+var customerNoteType = new GraphQLObjectType({
+  name: 'CustomerNote',
+  description: 'A customer note.',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the customer note.',
+    },
+    body: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The body of the customer note.',
+    },
+    account: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The account that the customer note belongs to.'
+    },
+    datetime: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The datetime of the customer note.'
+    },
+	customer: {
+      type: new GraphQLNonNull(customerType),
+      description: 'The customer that the note pertains to.',
+      resolve: customernote => customerNoteController.getCustomer(customernote),
+    },
+    user: {
+      type: new GraphQLNonNull(userType),
+      description: 'The user that created the customer note.',
+      resolve: customernote => customerNoteController.getUser(customernote),
     }
   }),
   interfaces: []
@@ -1731,6 +1782,19 @@ var queryType = new GraphQLObjectType({
       	return customerController.get(id);
       }
     },
+    customernote: {
+      type: customerNoteType,
+      args: {
+        id: {
+          description: 'id of the customer note',
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: function(root, customernote){
+      	var id = customernote.id; 
+      	return customerNoteController.get(id);
+      }
+    },
     product: {
       type: productType,
       args: {
@@ -2055,6 +2119,25 @@ var queryType = new GraphQLObjectType({
 		var cursor = customer.cursor; 
 		var limit = customer.limit; 
       	return customerController.list(cursor, limit);
+      }
+    },
+    
+    customernotelist: {
+      type: customerNoteListType,
+      args: {
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, customernote){
+		var cursor = customernote.cursor; 
+		var limit = customernote.limit; 
+      	return customerNoteController.list(cursor, limit);
       }
     },
     
@@ -2523,6 +2606,18 @@ const customerInputType = new GraphQLInputObjectType({
     phone:				{ type: new GraphQLNonNull(GraphQLString) },
     address:			{ type: new GraphQLNonNull(addressInputType) },
     creditcards:		{ type: new GraphQLList(GraphQLString) }
+  })
+});
+
+const customerNoteInputType = new GraphQLInputObjectType({
+  name: 'CustomerNoteInputType',
+  fields: () => ({
+    id:					{ type: new GraphQLNonNull(GraphQLString) },
+    user:				{ type: new GraphQLNonNull(GraphQLString) },
+    customer:			{ type: new GraphQLNonNull(GraphQLString) },
+    account:			{ type: GraphQLString },
+    body:				{ type: new GraphQLNonNull(GraphQLString) },
+    datetime:			{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -3124,9 +3219,43 @@ var mutationType = new GraphQLObjectType({
 				return customerController.delete(id);
 			}
 		},
+		createcustomernote:{
+			type: customerNoteType,
+			description: 'Adds a new customernote.',
+			args: {
+				customernote: { type: customerNoteInputType }
+			},
+			resolve: (value, customernote) => {
+				return customerNoteController.create(customernote.customernote);
+			}
+		},
+		updatecustomernote:{
+			type: customerNoteType,
+			description: 'Updates a customer note.',
+			args: {
+				customernote: { type: customerNoteInputType }
+			},
+			resolve: (value, customernote) => {
+				return customerNoteController.update(customernote.customernote);
+			}
+		},
+		deletecustomernote:{
+			type: deleteOutputType,
+			description: 'Deletes a customer note.',
+			args: {
+				id: {
+				  description: 'id of the customer note',
+				  type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, customernote) => {
+				var id = customernote.id;
+				return customerNoteController.delete(id);
+			}
+		},
 		createloadbalancer:{
 			type: loadBalancerType,
-			description: 'Adds a new customer.',
+			description: 'Adds a new loadbalancer.',
 			args: {
 				loadbalancer: { type: loadBalancerInputType }
 			},

@@ -1,6 +1,8 @@
 'use strict';
 const _ = require('underscore');
 var entityController = require('./Entity.js');
+var userController = require('./User.js');
+var customerController = require('./Customer.js');
 
 class customerNoteController extends entityController {
 
@@ -10,6 +12,18 @@ class customerNoteController extends entityController {
 		this.descriptive_name = 'customernote';
 	}
 	
+	getCustomer(customer_note){
+		
+		return customerController.get(customer_note.customer);
+		
+	}
+	
+	getUser(customer_note){
+		
+		return userController.get(customer_note.user);
+		
+	}
+		
 }
 
 module.exports = new customerNoteController();
