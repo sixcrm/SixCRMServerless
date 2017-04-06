@@ -563,6 +563,16 @@ module.exports = class entityController {
 				
 					if(_.isObject(data) && _.isArray(data) && data.length == 1){
 						
+						if(_.has(data[0], 'created_at')){
+						
+							entity = this.setCreatedAt(entity, data[0].created_at);
+							
+						}else{
+							
+							return reject(new Error('Entity lacks a "created_at" property'));
+							
+						}
+
 						entity = this.setUpdatedAt(entity);
 						
 						dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
@@ -831,9 +841,17 @@ module.exports = class entityController {
 		
 	}
 	
-	setCreatedAt(entity){
+	setCreatedAt(entity, created_at){
 		
-		entity['created_at'] = timestamp.getISO8601();
+		if(typeof created_at === "undefined"){
+			
+			entity['created_at'] = timestamp.getISO8601();
+			
+		}else{
+		
+			entity['created_at'] = created_at;
+			
+		}
 		
 		entity['updated_at'] = entity['created_at'];
 		
