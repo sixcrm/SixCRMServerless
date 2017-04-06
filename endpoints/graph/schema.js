@@ -2403,6 +2403,22 @@ var queryType = new GraphQLObjectType({
 		}
       }
     },
+    notification: {
+        type: notificationType,
+        args: {
+            id: {
+                description: 'id of the notification',
+                type: GraphQLString
+            }
+        },
+        resolve: (root, notification) => {
+            if (_.has(notification, 'id')) {
+                return notificationController.get(notification.id);
+            } else {
+                return null;
+            }
+        }
+    },
     notificationcount: {
   	  type: notificationCountType,
       resolve: function() {

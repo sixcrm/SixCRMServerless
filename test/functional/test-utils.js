@@ -48,7 +48,7 @@ class TestUtils {
         process.env.campaigns_table = 'localcampaigns';
         process.env.merchant_providers_table = 'localmerchant_providers';
         process.env.fulfillment_providers_table = 'localfulfillment_providers';
-        process.env.notifications_table = 'notifications_table';
+        process.env.notifications_table = 'localnotifications';
         process.env.emails_table = 'localemails';
         process.env.smtp_providers_table = 'localsmtp_providers';
         process.env.shipping_receipts_table = 'localshipping_receipts';
