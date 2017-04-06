@@ -48,10 +48,11 @@ class TestUtils {
         process.env.campaigns_table = 'localcampaigns';
         process.env.merchant_providers_table = 'localmerchant_providers';
         process.env.fulfillment_providers_table = 'localfulfillment_providers';
-        process.env.notifications_table = 'notifications_table';
+        process.env.notifications_table = 'localnotifications';
         process.env.emails_table = 'localemails';
         process.env.smtp_providers_table = 'localsmtp_providers';
         process.env.shipping_receipts_table = 'localshipping_receipts';
+        process.env.customer_notes_table = 'localcustomer_notes';
 
         process.env.bill_queue_url = 'http://localhost:9324/queue/bill';
         process.env.recover_queue_url = 'http://localhost:9324/queue/recover';
