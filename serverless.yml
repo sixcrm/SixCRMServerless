@@ -86,6 +86,7 @@ functions:
       SIX_VERBOSE: 2
       stage: ${opt:stage}
       customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
+      customer_notes_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customer_notes_table}
       sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
       products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
       credit_cards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.credit_cards_table}
