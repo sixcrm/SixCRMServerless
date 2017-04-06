@@ -28,7 +28,9 @@
 				},
 				account,
 				body,
-				datetime
+				datetime,
+				created_at,
+				updated_at
 			},
 			pagination {
 				count,

@@ -9,6 +9,8 @@
     		firstname,
     		lastname,
     		phone,
+			created_at,
+			updated_at,
     		address {
     			line1,
     			city,

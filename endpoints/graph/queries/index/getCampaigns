@@ -7,6 +7,8 @@
 			campaigns {
 				id,
 				name,
+				created_at,
+				updated_at,
 				productschedules { 
 					id,
 					schedule {

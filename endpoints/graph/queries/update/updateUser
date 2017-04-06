@@ -8,6 +8,8 @@
 			name,
 			auth0_id,
 			active,
+			created_at,
+			updated_at,
 			address {
 				line1,
 				line2,

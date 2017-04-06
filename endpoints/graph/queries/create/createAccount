@@ -6,7 +6,9 @@
 		createaccount (account: { id: \"14821fc6-9d18-4ced-a5cd-d968d2e630ff\", name: \"testingaccount\", active: \"true\"}) { 
 			id,
 			name,
-			active
+			active,
+			created_at,
+			updated_at
 		} 
 	}"
 }

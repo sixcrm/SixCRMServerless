@@ -9,7 +9,9 @@
             account,
             type,
             action,
-            message
+            message,
+			created_at,
+			updated_at
 		} 
 	}"
 }

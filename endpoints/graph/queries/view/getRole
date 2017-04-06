@@ -10,7 +10,9 @@
 			permissions {
 				allow,
 				deny
-			}
+			},
+			created_at,
+			updated_at
 		} 
 	}"
 }

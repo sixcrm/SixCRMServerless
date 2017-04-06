@@ -39,7 +39,9 @@
 				date,
 				amount,
 				processor_response
-			}
+			},
+			created_at,
+			updated_at
 		} 
 	}"
 }

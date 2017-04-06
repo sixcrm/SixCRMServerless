@@ -11,7 +11,9 @@
 				ip_address,
 				username,
 				password,
-				port
+				port,
+				created_at,
+				updated_at
 			},
 			pagination {
 				count,

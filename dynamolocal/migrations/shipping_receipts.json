@@ -20,20 +20,26 @@
         "created": "1487091265",
         "status": "pending",
         "trackingnumber":"9200190131860422449607",
-        "trackingstatus":"Departed USPS Origin Facility"
+        "trackingstatus":"Departed USPS Origin Facility",
+        "created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
     },{
         "id": "00000000-0000-0000-0000-000000000001",
         "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
         "created": "1488394830",
         "status": "shipped",
         "trackingnumber":"09812304981039480219358",
-        "trackingstatus":"TEST Departed USPS Origin Facility"
+        "trackingstatus":"TEST Departed USPS Origin Facility",
+        "created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
     },{
 		"id": "00000000-0000-0000-0000-000000000003",
 		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"created": "1488394830",
 		"status": "delivered",
 		"trackingnumber":"0909012312139134134134",
-		"trackingstatus":"TEST 3 Departed USPS Origin Facility"
+		"trackingstatus":"TEST 3 Departed USPS Origin Facility",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
 	}]
 }

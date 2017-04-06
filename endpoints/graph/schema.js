@@ -93,6 +93,24 @@ const fulfillmentProviderProviderEnum = new GraphQLEnumType({
   }
 });
 
+/*
+Technical Debt:  Add this interface to all entities
+var dateInterface = new GraphQLInterfaceType({
+	name: 'date',
+	description: 'Date interface',
+	fields: () => ({
+	  created_at: { 
+	  	type: new GraphQLNonNull(GraphQLString),
+      	description: 'The id of the product.'
+      },
+      updated_at: {
+      	type: new GraphQLNonNull(GraphQLString),
+      	description: 'The id of the product.'
+      }
+	})
+});
+*/
+
 var productInterface = new GraphQLInterfaceType({
   name: 'product',
   description: 'A product',
@@ -241,6 +259,14 @@ var sessionType = new GraphQLObjectType({
       resolve: function(session){
       	return sessionController.getCampaign(session);
       }
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: [sessionInterface]
@@ -277,6 +303,14 @@ var rebillType = new GraphQLObjectType({
 	  type: new GraphQLList(transactionType),
       description: 'The transactions associated with the rebill',
       resolve: rebill => rebillController.getTransactions(rebill),	
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -310,6 +344,14 @@ var productType = new GraphQLObjectType({
 		type: fulfillmentProviderType,
 		description: 'The session associated with the transaction.',
 		resolve: product => productController.getFulfillmentProvider(product),    
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -688,6 +730,14 @@ var accessKeyType = new GraphQLObjectType({
     secret_key: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The secret_key of the accesskey.',
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -708,6 +758,14 @@ var accountType = new GraphQLObjectType({
     active: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The active status of the account.',
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -733,6 +791,14 @@ var roleType = new GraphQLObjectType({
       type: new GraphQLNonNull(permissionsType),
       description: 'The permsissions associated with the role.',
       resolve: role => roleController.getPermissions(role)
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -797,7 +863,15 @@ var notificationType = new GraphQLObjectType({
         read: {
             type: GraphQLString,
             description: 'Time at which the user has read the notification.',
-        }
+        },
+		created_at: {
+		  type: new GraphQLNonNull(GraphQLString),
+		  description: 'ISO8601 datetime when the entity was created.',
+		},
+		updated_at: {
+		  type: new GraphQLNonNull(GraphQLString),
+		  description: 'ISO8601 datetime when the entity was updated.',
+		}
     }),
     interfaces: []
 });
@@ -846,10 +920,20 @@ var userACLType = new GraphQLObjectType({
       resolve: (user_acl) => {
       	return userACLController.getRole(user_acl);
       }
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   })
 });
 
+
+//Technical Debt:  Is this in use?
 var userInviteType = new GraphQLObjectType({
   name: 'UserInvite',
   description: 'A user unvite.',
@@ -908,6 +992,14 @@ var userType = new GraphQLObjectType({
       resolve: (user) => {
       	return userController.getAddress(user);
       }
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -948,6 +1040,14 @@ var affiliateType = new GraphQLObjectType({
     click_id: {
       type: new GraphQLNonNull(GraphQLString),
       description: '.',
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -982,6 +1082,14 @@ var customerNoteType = new GraphQLObjectType({
       type: new GraphQLNonNull(userType),
       description: 'The user that created the customer note.',
       resolve: customernote => customerNoteController.getUser(customernote),
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1020,6 +1128,14 @@ var customerType = new GraphQLObjectType({
 	  type: new GraphQLList(creditCardType),
       description:'The creditcards associated with the customer',
 	  resolve: customer => customerController.getCreditCards(customer)
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: [ customerInterface ]
@@ -1042,6 +1158,14 @@ var productScheduleType = new GraphQLObjectType({
 	  type: new GraphQLList(scheduleType),
       description:'The schedules associated with the product schedule',
 	  resolve: productschedule => productScheduleController.getSchedule(productschedule)
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1071,6 +1195,14 @@ var scheduleType = new GraphQLObjectType({
 	  type: productType,
       description:'The product associated with the schedule',
 	  resolve: schedule => productScheduleController.getProduct(schedule)
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1103,6 +1235,14 @@ var merchantProviderType = new GraphQLObjectType({
     endpoint: {
 	  type: new GraphQLNonNull(GraphQLString),
       description:'The product associated with the schedule'
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1135,6 +1275,14 @@ var fulfillmentProviderType = new GraphQLObjectType({
     endpoint: {
 	  type: new GraphQLNonNull(GraphQLString),
       description:'The provider endpoint.'
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1191,6 +1339,14 @@ var shippingReceiptType = new GraphQLObjectType({
       type: GraphQLString,
       description: 'A tracking number for the shipment',
     },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
+    }
   }),
   interfaces: []
 });
@@ -1225,6 +1381,14 @@ var loadBalancerType = new GraphQLObjectType({
       type: new GraphQLList(merchantProviderConfigurationType),
       description: 'The configured merchant providers associated with the load balancer',
       resolve: loadbalancer => loadBalancerController.getMerchantProviderConfigurations(loadbalancer)
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1263,6 +1427,14 @@ var transactionType = new GraphQLObjectType({
 	  type: new GraphQLList(transactionProductType),
 	  description: 'Products associated with the transaction',
 	  resolve: transaction => transactionController.getTransactionProducts(transaction)
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: [transactionInterface]
@@ -1294,6 +1466,14 @@ var campaignType = new GraphQLObjectType({
       type: new GraphQLList(emailTemplateType),
       descsription: 'Email templates configured and associated with the campaign',
       resolve: campaign => campaignController.getEmailTemplates(campaign)
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1327,6 +1507,14 @@ var emailTemplateType = new GraphQLObjectType({
       type: SMTPProviderType,
       description: 'The SMTP Provider for the email template.',
       resolve: emailtemplate => emailTemplateController.getSMTPProvider(emailtemplate)
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1363,6 +1551,14 @@ var SMTPProviderType = new GraphQLObjectType({
     port: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The SMTP port for the the SMTP Provider',
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1413,6 +1609,14 @@ var creditCardType = new GraphQLObjectType({
       type: addressType,
       description: 'The customer\'s shipping address.',
       resolve: creditcard => creditCardController.getAddress(creditcard),
+    },
+    created_at: {
+	  type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was created.',
+    },
+    updated_at: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'ISO8601 datetime when the entity was updated.',
     }
   }),
   interfaces: []
@@ -1547,79 +1751,9 @@ var searchHitType = new GraphQLObjectType({
   interfaces: []
 });
 
-//Note:  These are exactly what's present in the CloudSearch implementation
-/*
-var searchResultFieldsType = new GraphQLObjectType({
-  name: 'SearchResultFields',
-  description: 'Search Result Fields.',
-  fields: () => ({
-	entity_type: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'Search Result ID',
-    },
-    account: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    active: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    address: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    alias: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    amount: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    email: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    first_six: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    firstname: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    last_four: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    lastname: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    name: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    phone: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    sku: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    },
-    tracking_number: {
-      type: GraphQLString,
-      description: 'Search Result ID',
-    }
-  }),
-  interfaces: []
-});
-*/
-
 /* 
 * Search Suggester 
+* Technical Debt:  This is not currently in use...
 */
 
 const suggestInputType = new GraphQLInputObjectType({

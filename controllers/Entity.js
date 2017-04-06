@@ -4,6 +4,7 @@ const uuidV4 = require('uuid/v4');
 var validator = require('validator');
 var Validator = require('jsonschema').Validator;
 
+const timestamp = require('../lib/timestamp.js');
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
 const permissionutilities = require('../lib/permission-utilities.js');
 const du = require('../lib/debug-utilities.js');
@@ -464,7 +465,7 @@ module.exports = class entityController {
 						}
 				
 					}
-
+					
 					return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 				
 						if(_.isError(error)){ 
@@ -479,7 +480,9 @@ module.exports = class entityController {
 							return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
 					
 						}				
-
+						
+						entity = this.setCreatedAt(entity);
+						
 						dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {		
 
 							if(_.isError(error)){ reject(error);}
@@ -531,7 +534,7 @@ module.exports = class entityController {
 					}
 			
 				}
-			
+				
 				let query_parameters = {
 					condition_expression: 'id = :idv',
 					expression_attribute_values: {':idv': entity.id}
@@ -559,7 +562,9 @@ module.exports = class entityController {
 					if(_.isError(error)){ reject(error);}
 				
 					if(_.isObject(data) && _.isArray(data) && data.length == 1){
-					
+						
+						entity = this.setUpdatedAt(entity);
+						
 						dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
 							
 							if(_.isError(error)){ reject(error);}
@@ -572,7 +577,7 @@ module.exports = class entityController {
 								
 								return reject(error);
 								
-							});
+							}); 
 				
 						});
 					
@@ -826,4 +831,21 @@ module.exports = class entityController {
 		
 	}
 	
+	setCreatedAt(entity){
+		
+		entity['created_at'] = timestamp.getISO8601();
+		
+		entity['updated_at'] = entity['created_at'];
+		
+		return entity;
+		
+	}
+	
+	setUpdatedAt(entity){
+		
+		entity['updated_at'] = timestamp.getISO8601();
+		
+		return entity;
+		
+	}
 }

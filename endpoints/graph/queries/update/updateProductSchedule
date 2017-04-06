@@ -6,6 +6,8 @@
 		updateproductschedule ( productschedule: {id: \"e751afbd-f314-4e71-8afc-6469e9ffe9b3\", name:\"Testing Name\", schedule: [ { product_id:\"668ad918-0d09-4116-a6fe-0e7a9eda36f8\", start:\"0\", end:\"30\", price:\"49.00\", period: \"30\" } , { product_id:\"4d3419f6-526b-4a68-9050-fc3ffcb552b4\", start:\"30\", end:\"90\", price:\"102.00\", period: \"30\" } ] } ) { 
 			id,
 			name,
+			created_at,
+			updated_at,
 			schedule {
 				price,
 				start,

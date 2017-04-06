@@ -52,7 +52,9 @@
     			"zip":"97213",
     			"country":"US"
     		},
-    		"creditcards":["df84f7bb-06bd-4daa-b1a3-6a2c113edd72"]
+    		"creditcards":["df84f7bb-06bd-4daa-b1a3-6a2c113edd72"],
+			"created_at":"2017-04-06T18:40:41.405Z",
+			"updated_at":"2017-04-06T18:41:12.521Z"
     	}
     ]
 }

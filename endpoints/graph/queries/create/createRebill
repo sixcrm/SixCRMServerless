@@ -7,6 +7,8 @@
 			id,
 			billdate,
 			amount,
+			created_at,
+			updated_at,
 			parentsession {
 				id, 
 				customer { 

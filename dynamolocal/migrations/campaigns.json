@@ -20,6 +20,8 @@
     	"name": "Example Campaign",
     	"productschedules":["12529a17-ac32-4e46-b05b-83862843055d","8d1e896f-c50d-4a6b-8c84-d5661c16a046"],
     	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-    	"emailtemplates":["b44ce483-861c-4843-a7d6-b4c649d6bdde","8108d6a3-2d10-4013-9e8e-df71e2dc578b"]
+    	"emailtemplates":["b44ce483-861c-4843-a7d6-b4c649d6bdde","8108d6a3-2d10-4013-9e8e-df71e2dc578b"],
+        "created_at":"2017-04-06T18:40:41.405Z",
+        "updated_at":"2017-04-06T18:41:12.521Z"
     }]
 }

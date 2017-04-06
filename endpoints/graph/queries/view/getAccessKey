@@ -6,7 +6,9 @@
 		accesskey (id: \"82478014-c96f-49ef-b31c-5408e99df66e\") { 
 			id,
 			access_key,
-			secret_key
+			secret_key,
+			created_at,
+			updated_at
 		} 
 	}"
 }

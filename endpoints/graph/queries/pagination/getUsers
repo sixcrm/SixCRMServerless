@@ -9,6 +9,8 @@
 				auth0_id,
 				name,
 				active,
+				created_at,
+				updated_at,
 				termsandconditions,
 				address {
 					line1,

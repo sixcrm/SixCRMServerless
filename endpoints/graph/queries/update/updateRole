@@ -6,7 +6,9 @@
 		updaterole (role: { id: \"995e1a67-6bb5-48a8-9d7a-2fe9bb391401\", name: \"testingrole-updated\", active: \"false\"}) { 
 			id,
 			name,
-			active
+			active,
+			created_at,
+			updated_at
 		} 
 	}"
 }

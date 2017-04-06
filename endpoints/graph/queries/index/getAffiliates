@@ -12,7 +12,9 @@
 				sub_id_3,
 				sub_id_4,
 				sub_id_5,
-				click_id
+				click_id,
+				created_at,
+				updated_at
 			},
 			pagination {
 				count,

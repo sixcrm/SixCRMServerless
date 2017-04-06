@@ -8,6 +8,8 @@
 				id,
 				date,
 				amount,
+				created_at,
+				updated_at,
 				rebill {
 					id,
 					billdate,

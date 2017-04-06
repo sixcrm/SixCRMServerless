@@ -48,6 +48,8 @@
   		"ccnumber": "4111111111111111",
   		"ccv": "999",
   		"expiration": "1025",
-  		"name": "Rama Damunaste"
+  		"name": "Rama Damunaste",
+        "created_at":"2017-04-06T18:40:41.405Z",
+        "updated_at":"2017-04-06T18:41:12.521Z"
 	}]
 }

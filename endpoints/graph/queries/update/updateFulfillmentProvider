@@ -9,7 +9,9 @@
 			provider,
 			username,
 			password,
-			endpoint
+			endpoint,
+			created_at,
+			updated_at
 		} 
 	}"
 }

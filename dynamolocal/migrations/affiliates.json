@@ -23,6 +23,8 @@
     	"sub_id_3":"c",
     	"sub_id_4":"d",
     	"sub_id_5":"e",
-    	"click_id":"f"
+    	"click_id":"f",
+        "created_at":"2017-04-06T18:40:41.405Z",
+        "updated_at":"2017-04-06T18:41:12.521Z"
     }]
 }

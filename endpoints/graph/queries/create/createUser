@@ -28,7 +28,9 @@
 					active
 				}
 			},
-			termsandconditions
+			termsandconditions,
+			created_at,
+			updated_at
 		} 
 	}"
 }

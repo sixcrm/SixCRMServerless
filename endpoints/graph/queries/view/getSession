@@ -17,6 +17,8 @@
 					zip 
 				} 
 			},
+			created_at,
+			updated_at,
 			product_schedules {
 				id,
 				schedule {

@@ -10,7 +10,9 @@
 			    action,
 			    message,
 			    created,
-			    read
+			    read,
+				created_at,
+				updated_at
 			}
 		}
 	}"

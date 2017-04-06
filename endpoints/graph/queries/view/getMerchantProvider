@@ -9,7 +9,9 @@
 			username,
 			password,
 			endpoint,
-			processor
+			processor,
+			created_at,
+			updated_at
 		} 
 	}"
 }

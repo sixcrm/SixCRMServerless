@@ -5,7 +5,9 @@
 	query { 
 		sessionlist {
 			sessions {
-				id, 
+				id,
+				created_at,
+				updated_at, 
 				customer { 
 					id, 
 					firstname, 

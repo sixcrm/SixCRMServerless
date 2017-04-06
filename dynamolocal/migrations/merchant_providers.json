@@ -22,7 +22,9 @@
 			"processor":"NMI",
 			"username":"demo",
 			"password":"password",
-			"endpoint":"https://secure.networkmerchants.com/api/transact.php"
+			"endpoint":"https://secure.networkmerchants.com/api/transact.php",
+			"created_at":"2017-04-06T18:40:41.405Z",
+			"updated_at":"2017-04-06T18:41:12.521Z"
     	},
     	{
 			"id":"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
@@ -31,7 +33,9 @@
 			"processor":"NMI",
 			"username":"demo",
 			"password":"password",
-			"endpoint":"https://secure.networkmerchants.com/api/transact.php"
+			"endpoint":"https://secure.networkmerchants.com/api/transact.php",
+			"created_at":"2017-04-06T18:40:41.405Z",
+			"updated_at":"2017-04-06T18:41:12.521Z"
     	}
     ]
 }

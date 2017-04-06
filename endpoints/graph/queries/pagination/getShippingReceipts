@@ -9,7 +9,9 @@
 				created,
 				modified,
 				status,
-				trackingnumber
+				trackingnumber,
+				created_at,
+				updated_at
 			},
 			pagination {
 				count,

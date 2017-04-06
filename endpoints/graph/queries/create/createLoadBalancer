@@ -15,7 +15,9 @@
 					processor
 				},
 				distribution
-			}
+			},
+			created_at,
+			updated_at
 		} 
 	}"
 }

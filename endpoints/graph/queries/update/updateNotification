@@ -10,7 +10,9 @@
             type,
             action,
             message,
-            read
+            read,
+			created_at,
+			updated_at
 		} 
 	}"
 }

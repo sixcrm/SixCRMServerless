@@ -23,7 +23,9 @@
 			"ip_address":"b",
 			"username":"c",
 			"password":"d",
-			"port":"e"
+			"port":"e",
+			"created_at":"2017-04-06T18:40:41.405Z",
+			"updated_at":"2017-04-06T18:41:12.521Z"
     	}
     ]
 }
