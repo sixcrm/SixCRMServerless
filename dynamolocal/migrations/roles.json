@@ -50,7 +50,7 @@
 				"account/read",
 				"user/read",
 				"useracl/*",
-				"notifications/*"
+				"notification/*"
         	],
         	"deny":["*"]
         }
@@ -69,7 +69,8 @@
 				"session/*",
 				"shippingreceipt/*",
 				"transaction/*",
-				"role/read"
+				"role/read",
+				"notification/read"
         	],
         	"deny":["*"]
         }
