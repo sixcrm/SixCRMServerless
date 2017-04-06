@@ -52,6 +52,7 @@ class TestUtils {
         process.env.emails_table = 'localemails';
         process.env.smtp_providers_table = 'localsmtp_providers';
         process.env.shipping_receipts_table = 'localshipping_receipts';
+        process.env.customer_notes_table = 'localcustomer_notes';
 
         process.env.bill_queue_url = 'http://localhost:9324/queue/bill';
         process.env.recover_queue_url = 'http://localhost:9324/queue/recover';
