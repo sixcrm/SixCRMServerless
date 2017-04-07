@@ -1,0 +1,13 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query { 
+		customernotelistbycustomer (customer:\"24f7c851-29d4-4af9-87c5-0298fa74c689\"){
+			customernotes {
+				id
+			}
+		}
+	}"
+}
+

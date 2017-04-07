@@ -353,7 +353,7 @@ class userController extends entityController {
 		
 			du.debug('User: ', user.id);
 			
-			userACLController.listBySecondaryIndex('user', user.id, 'user-index').then((acls) => {
+			userACLController.queryBySecondaryIndex('user', user.id, 'user-index').then((acls) => {
 				
 				du.debug('ACLs: ', acls);
 				

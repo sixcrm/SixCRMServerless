@@ -23,7 +23,7 @@ class creditCardController extends entityController {
 		
 		return new Promise((resolve, reject) => {
 			
-			controller_instance.listBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
+			controller_instance.queryBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
 
 				var card_identified = false;
 

@@ -130,7 +130,7 @@ describe('lib/notification-utilities', () => {
                 }
             });
             mockery.registerMock('../controllers/UserACL', {
-                listBySecondaryIndex: () => {
+                queryBySecondaryIndex: () => {
                     return Promise.resolve([{
                         user: 'user@example.com'
                     }]);

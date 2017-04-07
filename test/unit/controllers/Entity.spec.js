@@ -700,7 +700,7 @@ describe('controllers/Entity.js', () => {
 
     });
 
-    describe('listBySecondaryIndex', () => {
+    describe('queryBySecondaryIndex', () => {
         afterEach(() => {
             mockery.resetCache();
         });
@@ -717,7 +717,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
+            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
                 expect(response).to.equal(null);
             });
@@ -737,7 +737,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((result) => {
+            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((result) => {
                 // then
                 expect(result).to.equal(null);
             });
@@ -757,7 +757,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
+            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
                 // then
                 expect(error.message).to.equal('Query failed.');
             });
@@ -777,7 +777,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
+            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
                 expect(response).to.equal(null);
             });
@@ -797,7 +797,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.listBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
+            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
                 expect(response).to.deep.equal([{}, {}]);
             });

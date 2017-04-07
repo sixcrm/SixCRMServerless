@@ -1,5 +1,8 @@
 'use strict';
 const _ = require('underscore');
+
+const du = require('../lib/debug-utilities.js');
+
 var entityController = require('./Entity.js');
 var userController = require('./User.js');
 var customerController = require('./Customer.js');
@@ -22,6 +25,13 @@ class customerNoteController extends entityController {
 		
 		return userController.get(customer_note.user);
 		
+	}
+	
+	listByCustomer(customer, cursor, limit){
+		
+		return this.queryBySecondaryIndex('customer', customer, 'customer-index', cursor, limit).then((result) => {
+			return { customernotes: result }
+		});
 	}
 		
 }

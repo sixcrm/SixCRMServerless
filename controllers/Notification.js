@@ -19,7 +19,7 @@ class notificationController extends entityController {
     	// Technical Debt: This should also update the last seen time, once we figure out where to store it.
 		du.debug(`Listing notifications by secondary index for user '${global.user.id}'.`);
 
-		return this.listBySecondaryIndex('user', global.user.id, 'user-index', cursor, limit)
+		return this.queryBySecondaryIndex('user', global.user.id, 'user-index', cursor, limit)
 			.then(result => {
 				return { notifications: result }
             });
@@ -34,7 +34,7 @@ class notificationController extends entityController {
         // Technical Debt: This should also update the last seen time, once we figure out where to store it.
         du.debug(`Listing notifications by secondary index for user '${global.user.id}' and account '${global.account}'.`);
 
-        return this.listBySecondaryIndex('user', global.user.id, 'user-index', cursor, limit)
+        return this.queryBySecondaryIndex('user', global.user.id, 'user-index', cursor, limit)
             .then(result => {
             	// Technical Debt: Should this be filtered in the database query instead of here? Is this even needed?
                 return { notifications: result.filter((notification) => notification.account === global.account)}

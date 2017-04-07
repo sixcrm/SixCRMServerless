@@ -150,9 +150,9 @@ module.exports = class entityController {
 	}
 	
 	//ACL enabled
-	listBySecondaryIndex(field, index_value, index_name, cursor, limit){
+	queryBySecondaryIndex(field, index_value, index_name, cursor, limit){
 		
-		du.debug('Listing by secondary index', field, index_value, index_name);
+		du.debug('Listing by secondary index', field, index_value, index_name, cursor, limit);
 		
 		return new Promise((resolve, reject) => {
 			
@@ -203,7 +203,7 @@ module.exports = class entityController {
 					
 				}
 				
-				du.debug(query_parameters);
+				du.debug('Query Parameters: ', query_parameters);
 				
 				return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 					
@@ -212,9 +212,9 @@ module.exports = class entityController {
 						return reject(error);
 						
 					}
-				
-					if(_.isArray(data) && data.length > 0){
 					
+					if(_.isArray(data) && data.length > 0){
+						
 						return resolve(data);
 					
 					}else{

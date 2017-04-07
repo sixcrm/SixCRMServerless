@@ -2275,6 +2275,30 @@ var queryType = new GraphQLObjectType({
       }
     },
     
+    customernotelistbycustomer: {
+      type: customerNoteListType,
+      args: {
+      	customer: {
+      		description: 'The customer identifier',
+      		type: new GraphQLNonNull(GraphQLString)
+      	},
+        limit: {
+          description: 'limit',
+          type: GraphQLString
+        },
+        cursor: {
+          description: 'cursor',
+          type: GraphQLString
+        }
+      },
+      resolve: function(root, customernote){
+        var customer = customernote.customer;
+		var cursor = customernote.cursor; 
+		var limit = customernote.limit; 
+      	return customerNoteController.listByCustomer(customer, cursor, limit);
+      }
+    },
+    
     loadbalancerlist: {
       type: loadBalancerListType,
       args: {
