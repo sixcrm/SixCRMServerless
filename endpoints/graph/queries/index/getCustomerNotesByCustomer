@@ -5,7 +5,32 @@
 	query { 
 		customernotelistbycustomer (customer:\"24f7c851-29d4-4af9-87c5-0298fa74c689\"){
 			customernotes {
-				id
+				id,
+				customer {
+					id,
+					email,
+					firstname,
+					lastname,
+					phone,
+					address {
+						line1,
+						city,
+						state,
+						zip,
+						country
+					}
+				},
+				user {
+					id,
+					name,
+					auth0_id,
+					active
+				},
+				account,
+				body,
+				datetime,
+				created_at,
+				updated_at
 			}
 		}
 	}"

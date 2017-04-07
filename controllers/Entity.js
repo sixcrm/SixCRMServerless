@@ -44,6 +44,8 @@ module.exports = class entityController {
 		
 	}
 	
+	//Technical Debt:  We need a listBySecondaryIndex method.
+	
 	//ACL enabled
 	list(cursor, limit){
 		
