@@ -72,7 +72,6 @@
 				},
 				transactions {
 					id,
-					date,
 					processor_response,
 					amount
 				}

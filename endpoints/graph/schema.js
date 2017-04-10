@@ -1386,10 +1386,6 @@ var transactionType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The amount of the transaction.',
     },
-    date: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The date of the transaction.',
-    },
     processor_response: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The date of the transaction.',
@@ -2828,7 +2824,6 @@ const transactionInputType = new GraphQLInputObjectType({
   name: 'TransactionInputType',
   fields: () => ({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
-    date:				{ type: new GraphQLNonNull(GraphQLString) },
     rebill_id:			{ type: new GraphQLNonNull(GraphQLString) },
     amount:				{ type: new GraphQLNonNull(GraphQLFloat) },
     processor_response:	{ type: new GraphQLList(GraphQLString) },
