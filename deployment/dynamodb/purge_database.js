@@ -13,8 +13,9 @@ let table_names = getDynamoDBTableNames().then((table_names) => {
 	
 	if(table_names.length > 0){
 		
+		//Technical Debt:  these need to happen in batches of 10	
 		let promises = [];
-		
+	
 		table_names.forEach((table_name) => {
 			
 			du.debug(table_name);
@@ -27,6 +28,7 @@ let table_names = getDynamoDBTableNames().then((table_names) => {
 			
 			Promise.all(promises.map(p => p.catch(e => e)))
 			.then((results) => {
+				du.debug(results);
 				du.highlight('Tables purged.');
 			}).catch((error) => {
 				du.warning(error);
@@ -134,6 +136,6 @@ function buildFullyQualifiedTableName(proto_table_name){
 	
 	du.debug('Build Fully Qualified Table Name');
 	
-	return environment+'-'+proto_table_name;
+	return environment+proto_table_name;
 
 }

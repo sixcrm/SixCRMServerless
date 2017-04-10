@@ -1069,10 +1069,6 @@ var customerNoteType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The account that the customer note belongs to.'
     },
-    datetime: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The datetime of the customer note.'
-    },
 	customer: {
       type: new GraphQLNonNull(customerType),
       description: 'The customer that the note pertains to.',
@@ -2790,8 +2786,7 @@ const customerNoteInputType = new GraphQLInputObjectType({
     user:				{ type: new GraphQLNonNull(GraphQLString) },
     customer:			{ type: new GraphQLNonNull(GraphQLString) },
     account:			{ type: GraphQLString },
-    body:				{ type: new GraphQLNonNull(GraphQLString) },
-    datetime:			{ type: new GraphQLNonNull(GraphQLString) }
+    body:				{ type: new GraphQLNonNull(GraphQLString) }
   })
 });
 
