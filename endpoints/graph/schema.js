@@ -1307,17 +1307,9 @@ var shippingReceiptType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The id of the shipping receipt.',
     },
-    created: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'A timestamp when the receipt is generated.',
-    },
     status: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'A shipping status',
-    },
-    modified: {
-      type: GraphQLString,
-      description: 'A timestamp when the receipt is generated.',
     },
     trackingnumber: {
       type: GraphQLString,
@@ -2867,9 +2859,7 @@ const shippingReceiptInputType = new GraphQLInputObjectType({
   name: 'ShippingReceiptInputType',
   fields: () => ({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
-    created:			{ type: new GraphQLNonNull(GraphQLString) },
     status:				{ type: new GraphQLNonNull(GraphQLString) },
-    modified:			{ type: GraphQLString },
     trackingnumber:		{ type: GraphQLString }
   })
 });

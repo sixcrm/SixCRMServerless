@@ -17,7 +17,6 @@
     "Seeds": [{
         "id": "041b21cc-ab64-4460-a886-c31805d55e9e",
         "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "created": "1487091265",
         "status": "pending",
         "trackingnumber":"9200190131860422449607",
         "trackingstatus":"Departed USPS Origin Facility",
@@ -26,7 +25,6 @@
     },{
         "id": "00000000-0000-0000-0000-000000000001",
         "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "created": "1488394830",
         "status": "shipped",
         "trackingnumber":"09812304981039480219358",
         "trackingstatus":"TEST Departed USPS Origin Facility",
@@ -35,7 +33,6 @@
     },{
 		"id": "00000000-0000-0000-0000-000000000003",
 		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		"created": "1488394830",
 		"status": "delivered",
 		"trackingnumber":"0909012312139134134134",
 		"trackingstatus":"TEST 3 Departed USPS Origin Facility",

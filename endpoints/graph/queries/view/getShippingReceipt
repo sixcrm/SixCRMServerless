@@ -5,8 +5,6 @@
 	{ 
 		shippingreceipt (id: \"041b21cc-ab64-4460-a886-c31805d55e9e\") { 
 			id,
-			created,
-			modified,
 			status,
 			trackingnumber,
 			created_at,

@@ -3,10 +3,8 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		updateshippingreceipt (shippingreceipt: { id: \"dd6f3955-ba78-4092-a41d-28e1e726a1e4\", created:\"123123\", modified:\"123456\", status:\"delivered\", trackingnumber:\"abc123\"}) { 
+		updateshippingreceipt (shippingreceipt: { id: \"dd6f3955-ba78-4092-a41d-28e1e726a1e4\", status:\"delivered\", trackingnumber:\"abc123\"}) { 
 			id,
-			created,
-			modified,
 			status,
 			trackingnumber,
 			created_at,

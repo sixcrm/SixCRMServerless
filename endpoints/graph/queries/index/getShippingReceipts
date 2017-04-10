@@ -6,8 +6,6 @@
 		shippingreceiptlist {
 			shippingreceipts {
 				id,
-				created,
-				modified,
 				status,
 				trackingnumber,
 				created_at,
