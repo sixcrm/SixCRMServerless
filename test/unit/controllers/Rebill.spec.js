@@ -26,7 +26,7 @@ describe('controllers/Rebill.js', () => {
         mockery.deregisterAll();
     });
 
-    describe('calculate rebill', () => {
+    xdescribe('calculate rebill', () => {
         let rebillController;
 
         before(() => {
@@ -163,7 +163,7 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    describe('create rebill', () => {
+    xdescribe('create rebill', () => {
         it('fails when user is not set', () => {
             // given
             global.user = null;
@@ -227,7 +227,7 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    describe('buildRebillObject', () => {
+    xdescribe('buildRebillObject', () => {
         it('returns an object with correct parameters', () => {
             // given
             let parameters = {
@@ -386,7 +386,7 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    describe('updateRebillTransactions', () => {
+    xdescribe('updateRebillTransactions', () => {
         after(() => {
             mockery.deregisterAll();
         });
