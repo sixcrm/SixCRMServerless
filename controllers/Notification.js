@@ -30,7 +30,7 @@ class notificationController extends entityController {
             });
 	}
 
-    numberOfUnseenNotifications() {
+    numberOfUnseenNotifications(cursor, limit) {
         let field = 'user';
         let index_name = 'user-index';
         du.debug('Counting number of unseen messages.');
@@ -54,7 +54,7 @@ class notificationController extends entityController {
 
                 query_parameters.expression_attribute_names['#'+field] = field;
 
-                if(typeof cursor  !== 'undefined'){
+                if(typeof cursor  !== 'undefined') {
                     query_parameters.ExclusiveStartKey = cursor;
                 }
 
