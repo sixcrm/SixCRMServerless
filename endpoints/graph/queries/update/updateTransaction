@@ -3,10 +3,9 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		updatetransaction ( transaction: { id: \"3e0fda0a-a64b-4752-bed8-152a98285be7\", date: \"Mon, 16 Jan 2017 20:48:53 GMT\", rebill_id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\", amount:30001.00, processor_response:\"Test2\", products: [{amount:\"4.79\", product: \"616cc994-9480-4640-b26c-03810a679fe3\"}] } ) { 
+		updatetransaction ( transaction: { id: \"3e0fda0a-a64b-4752-bed8-152a98285be7\", rebill_id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\", amount:30001.00, processor_response:\"Test2\", products: [{amount:\"4.79\", product: \"616cc994-9480-4640-b26c-03810a679fe3\"}] } ) { 
 			id,
 			alias,
-			date,
 			amount,
 			created_at,
 			updated_at,

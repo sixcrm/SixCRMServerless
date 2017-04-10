@@ -119,7 +119,6 @@ class transactionController extends entityController {
 			rebill_id: params.rebill.id,
 			processor_response: JSON.stringify(processor_response),
 			amount: params.amount,
-			date: timestamp.createDate(),
 			products: params.products,
 			alias: this.createAlias()
 		}

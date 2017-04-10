@@ -7,7 +7,6 @@
 			transactions {
 				id,
 				alias,
-				date,
 				amount,
 				created_at,
 				updated_at,
@@ -63,8 +62,8 @@
 					},
 					shippingreceipt {
 						id,
-						created,
-						modified,
+						created_at,
+						updated_at,
 						status,
 						trackingnumber
 					}

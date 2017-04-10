@@ -8,13 +8,16 @@
 			"items":{"$ref": "/Product"}
 			"minItems": 1,
 		},
-		"created":{
+		"created_at":{
+			"type":"string"
+		},
+		"updated_at":{
 			"type":"string"
 		},
 		"processorresult":{
 			"type":"object"
 		}
 	},
-	"required":["uuid", "session", "products", "created", "processorresult"]
+	"required":["uuid", "session", "products", "created_at", "updated_at", "processorresult"]
 }
 

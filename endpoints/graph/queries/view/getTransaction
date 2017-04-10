@@ -6,7 +6,6 @@
 		transaction (id: \"cf3cd926-b321-453a-99be-591611f07e3d\") { 
 			id,
 			alias,
-			date,
 			amount,
 			processor_response,
 			created_at,
@@ -59,10 +58,10 @@
 				},
 				shippingreceipt {
 					id,
-					created,
-					modified,
 					status,
-					trackingnumber
+					trackingnumber,
+					created_at,
+					updated_at
 				}
 			}	
 		} 
