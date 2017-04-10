@@ -8,8 +8,9 @@
             type,
             action,
             message,
-            created,
-            read
+            created_at,
+            read_at,
+            updated_at
 		} 
 	}"
 }

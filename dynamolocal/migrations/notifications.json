@@ -11,6 +11,9 @@
     }, {
       "AttributeName": "user",
       "AttributeType": "S"
+    }, {
+      "AttributeName": "created_at",
+      "AttributeType": "S"
     }],
     "GlobalSecondaryIndexes": [
       {
@@ -21,6 +24,23 @@
             "KeyType": "HASH"
           }
         ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      },
+      {
+        "IndexName": "created_at-index",
+        "KeySchema": [{
+          "AttributeName": "id",
+          "KeyType": "HASH"
+        }, {
+          "AttributeName": "created_at",
+          "KeyType": "RANGE"
+        }],
         "Projection": {
           "ProjectionType": "ALL"
         },
@@ -43,8 +63,7 @@
       "type": "payment",
       "action": "failed",
       "message": "Payment failed.",
-      "created": "1491401809144",
-      "read": "1491401809145",
+      "read_at": "2017-04-06T18:41:12.521Z",
       "created_at":"2017-04-06T18:40:41.405Z",
 	  "updated_at":"2017-04-06T18:41:12.521Z"
     },
@@ -55,7 +74,6 @@
       "type": "payment",
       "action": "succeeded",
       "message": "Payment succeeded.",
-      "created": "1491401809144",
       "created_at":"2017-04-06T18:40:41.405Z",
 	  "updated_at":"2017-04-06T18:41:12.521Z"
     },
@@ -66,8 +84,7 @@
       "type": "payment",
       "action": "failed",
       "message": "Payment failed.",
-      "created": "1491401809144",
-      "read": "1491401809145",
+      "read_at": "2017-04-06T18:41:12.521Z",
       "created_at":"2017-04-06T18:40:41.405Z",
 	  "updated_at":"2017-04-06T18:41:12.521Z"
     },
@@ -78,7 +95,6 @@
       "type": "payment",
       "action": "succeeded",
       "message": "Payment succeeded.",
-      "created": "1491401809144",
       "created_at":"2017-04-06T18:40:41.405Z",
 	  "updated_at":"2017-04-06T18:41:12.521Z"
     }

@@ -856,13 +856,9 @@ var notificationType = new GraphQLObjectType({
             type: GraphQLString,
             description: 'Notification message.'
         },
-        created: {
+        read_at: {
             type: GraphQLString,
-            description: 'Time at which the notification was created.',
-        },
-        read: {
-            type: GraphQLString,
-            description: 'Time at which the user has read the notification.',
+            description: 'ISO8601 datetime at which the user has read the notification.',
         },
 		created_at: {
 		  type: new GraphQLNonNull(GraphQLString),
@@ -2580,7 +2576,7 @@ var queryType = new GraphQLObjectType({
     notificationcount: {
   	  type: notificationCountType,
       resolve: function() {
-          return Promise.resolve({ count: 42 });
+  	    return notificationController.numberOfUnseenNotifications();
       }
     },
     notificationlist: {
@@ -2908,13 +2904,13 @@ const sessionInputType = new GraphQLInputObjectType({
 var notificationInputType = new GraphQLInputObjectType({
     name: 'NotificationInput',
     fields: () => ({
-        id:			{ type: new GraphQLNonNull(GraphQLString) },
+        id:			{ type: GraphQLString },
         user:		{ type: new GraphQLNonNull(GraphQLString) },
         account:	{ type: new GraphQLNonNull(GraphQLString) },
         type: 	    { type: new GraphQLNonNull(GraphQLString) },
         action: 	{ type: new GraphQLNonNull(GraphQLString) },
         message:	{ type: new GraphQLNonNull(GraphQLString) },
-        read:		{ type: GraphQLString }
+        read_at:		{ type: GraphQLString }
     })
 });
 
