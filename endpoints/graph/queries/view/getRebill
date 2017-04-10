@@ -36,7 +36,6 @@
 			},
 			transactions {
 				id,
-				date,
 				amount,
 				processor_response
 			},
