@@ -280,7 +280,7 @@ var rebillType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The id of the transaction.',
     },
-    billdate: {
+    bill_at: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The date of the rebill.',
     },
@@ -2833,7 +2833,7 @@ const rebillInputType = new GraphQLInputObjectType({
   name: 'RebillInputType',
   fields: () => ({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
-    billdate:			{ type: new GraphQLNonNull(GraphQLInt) },
+    bill_at:			{ type: new GraphQLNonNull(GraphQLString) },
     parentsession:		{ type: new GraphQLNonNull(GraphQLString) },
     amount:				{ type: new GraphQLNonNull(GraphQLString) },
     product_schedules:	{ type: new GraphQLList(GraphQLString) }

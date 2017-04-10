@@ -8,8 +8,8 @@
 		"amount":{
 			"type":["string","integer","float"]
 		},
-		"billdate":{
-			"type":["string","integer"]
+		"bill_at":{
+			"type":["string"]
 		},
 		"modified":{
 			"type":["string","boolean"]
@@ -34,5 +34,5 @@
 		}
 		
 	},
-	"required":["amount", "billdate", "id", "parentsession", "product_schedules"]
+	"required":["amount", "bill_at", "id", "parentsession", "product_schedules"]
 }

@@ -74,7 +74,7 @@ class rebillController extends entityController {
 		
 		return {
 			id: uuidV4(),
-			billdate: parameters.billdate,
+			bill_at: parameters.bill_at,
 			parentsession: parameters.parentsession,
 			product_schedules: parameters.product_schedules,
 			amount: parameters.amount
@@ -99,9 +99,11 @@ class rebillController extends entityController {
 				
 				if(!_.has(scheduled_product, "end") || (parseInt(day_in_cycle) < parseInt(scheduled_product.end))){
 					
-					var billdate = timestamp.createTimestampSeconds() + (scheduled_product.period * oneDayInSeconds);
+					let bill_timestamp = timestamp.createTimestampSeconds() + (scheduled_product.period * oneDayInSeconds);
 					
-					calculated_rebill = {product: scheduled_product.product_id, billdate: billdate, amount: scheduled_product.price, product_schedule: product_schedule};
+					let bill_at = timestamp.toISO8601(bill_timestamp);
+					
+					calculated_rebill = {product: scheduled_product.product_id, bill_at: bill_at, amount: scheduled_product.price, product_schedule: product_schedule};
 					
 					return true;
 						
@@ -142,7 +144,7 @@ class rebillController extends entityController {
 
 		var rebill_object = this.buildRebillObject({
 			parentsession: session.id,
-			billdate: rebill_parameters.billdate,
+			billat: rebill_parameters.bill_at,
 			product_schedules: [product_schedule.id],
 			amount: rebill_parameters.amount
 		});
@@ -209,11 +211,13 @@ class rebillController extends entityController {
 	}
 	
 	//Technical Debt:  This shouldn't go here...
-	getRebillsAfterTimestamp(timestamp){
+	getRebillsAfterTimestamp(a_timestamp){
 		
 		return new Promise((resolve, reject) => {
 			
-			var query_parameters = {filter_expression: 'billdate < :timestampv AND processing <> :processingv', expression_attribute_values: {':timestampv':timestamp, ':processingv':'true'}};
+			let timestamp_iso8601 = timestamp.toISO8601(a_timestamp);
+			
+			var query_parameters = {filter_expression: 'bill_at < :timestamp_iso8601v AND processing <> :processingv', expression_attribute_values: {':timestamp_iso8601v':timestamp_iso8601, ':processingv':'true'}};
 
 			/* eslint-disable no-undef */
 			if(typeof cursor  !== 'undefined'){
@@ -276,8 +280,6 @@ class rebillController extends entityController {
 		rebill_transactions = _.union(rebill.transactions, transactions);
 		
 		rebill.transactions = rebill_transactions;
-		
-		rebill.modified = timestamp.createTimestampSeconds().toString();
 			
 		return this.update(rebill);
 		

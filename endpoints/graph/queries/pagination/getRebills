@@ -6,7 +6,7 @@
 		rebilllist ({argumentation}) {
 			rebills {
 				id,
-				billdate,
+				bill_at,
 				amount,
 				created_at,
 				updated_at,

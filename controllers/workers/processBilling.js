@@ -35,7 +35,9 @@ class processBillingController extends workerController {
 		
 		return new Promise((resolve, reject) => {
 			
-			if(timestamp.getTimeDifference(rebill.billdate) < 0){ return reject(new Error('Rebill is not eligible for processing at this time.')); }
+			let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
+			
+			if(timestamp.getTimeDifference(bill_at_timestamp) < 0){ return reject(new Error('Rebill is not eligible for processing at this time.')); }
 			
 			if(_.has(rebill, 'second_attempt')){  return reject(new Error('The rebill has already been attempted three times.')); }
 			

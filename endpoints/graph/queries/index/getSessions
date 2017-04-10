@@ -46,7 +46,7 @@
 				},
 				rebills {
 					id,
-					billdate,
+					bill_at,
 					product_schedules {
 						id,
 						schedule {

@@ -1,7 +1,7 @@
 const du = require('../lib/debug-utilities.js');
 var rebill_object = {
   "amount": "34.99",
-  "billdate": 1485842247,
+  "bill_at": "2017-04-10T19:26:58.026Z",
   "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
   "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
   "processing": "true",

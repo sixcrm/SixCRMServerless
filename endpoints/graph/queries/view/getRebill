@@ -5,8 +5,8 @@
 	{ 
 		rebill (id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\") { 
 			id,
-			billdate,
 			amount,
+			bill_at,
 			parentsession {
 				id,
 				customer { 
