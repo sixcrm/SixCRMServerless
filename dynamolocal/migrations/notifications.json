@@ -39,7 +39,7 @@
           "KeyType": "HASH"
         }, {
           "AttributeName": "created_at",
-          "KeyType": "RANGE"
+          "KeyType": "HASH"
         }],
         "Projection": {
           "ProjectionType": "ALL"

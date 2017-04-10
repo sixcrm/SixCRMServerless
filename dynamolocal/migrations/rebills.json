@@ -13,7 +13,7 @@
             "AttributeType": "S"
         }, {
             "AttributeName": "bill_at",
-            "AttributeType": "N"
+            "AttributeType": "S"
         }],
         "GlobalSecondaryIndexes": [{
             "IndexName": "parentsession-index",
@@ -31,11 +31,8 @@
         }, {
             "IndexName": "bill_at-index",
             "KeySchema": [{
-                "AttributeName": "id",
-                "KeyType": "HASH"
-            }, {
                 "AttributeName": "bill_at",
-                "KeyType": "RANGE"
+                "KeyType": "HASH"
             }],
             "Projection": {
                 "ProjectionType": "ALL"
