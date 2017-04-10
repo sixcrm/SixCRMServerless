@@ -20,15 +20,15 @@
 				"type":["string", "object"]
 			}
 		},
-		"created":{
+		"created_at":{
 			"type":"string"
 		},
-		"modified":{
+		"updated_at":{
 			"type":"string"
 		},
 		"completed":{
 			"type":"string"
 		}
 	},
-	"required":["id", "customer", "campaign", "created", "completed"]
+	"required":["id", "customer", "campaign", "created_at", "updated_at", "completed"]
 }

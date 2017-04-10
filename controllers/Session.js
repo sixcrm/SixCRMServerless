@@ -283,9 +283,7 @@ class sessionController extends entityController {
 			id: uuidV4(),
 			customer: params.customer_id,
 			campaign: params.campaign_id,
-			completed: 'false',
-			created: timestamp.createTimestampSeconds(),
-			modified: 'false'
+			completed: 'false'
 		};
 
 		if(_.has(params, 'affiliate_id') && _.isString(params.affiliate_id)){
@@ -328,8 +326,9 @@ class sessionController extends entityController {
 				if(_.isArray(sessions) && sessions.length > 0){
 					sessions.forEach((session) => {
 						if(_.has(session, 'completed') && session.completed == 'false'){
-							if(_.has(session, "created")){
-								var time_difference = timestamp.getTimeDifference(session.created);
+							if(_.has(session, "created_at")){
+								let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);
+								var time_difference = timestamp.getTimeDifference(created_at_timestamp);
 								if(time_difference < this.session_length){
 									resolve(session);
 									session_found = true;
@@ -380,7 +379,6 @@ class sessionController extends entityController {
 		session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
 
 		session.product_schedules = session_product_schedules;
-		session.modified = timestamp.createTimestampSeconds().toString();
 
 		return this.update(session);
 
@@ -389,8 +387,6 @@ class sessionController extends entityController {
 	closeSession(session){
 
 		session.completed = 'true';
-
-		session.modified = timestamp.createTimestampSeconds().toString();
 
 		return this.update(session);
 

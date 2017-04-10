@@ -233,14 +233,6 @@ var sessionType = new GraphQLObjectType({
       description: 'The customer record that the session references.',
       resolve: session => sessionController.getCustomer(session),
     },
-    created: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The timestamp when the Session was created.',
-    },
-    modified: {
-      type: GraphQLString,
-      description: 'The timestamp when the Session was modified.',
-    },
     product_schedules: {
       type: new GraphQLList(productScheduleType),
       description: 'The product schedules associated with the session',
@@ -2888,8 +2880,6 @@ const sessionInputType = new GraphQLInputObjectType({
     id:					{ type: new GraphQLNonNull(GraphQLString) },
     customer:			{ type: new GraphQLNonNull(GraphQLString) },
     campaign:			{ type: new GraphQLNonNull(GraphQLString) },
-    modified:			{ type: new GraphQLNonNull(GraphQLString) },
-    created:			{ type: new GraphQLNonNull(GraphQLString) },
     completed:			{ type: new GraphQLNonNull(GraphQLString) },
     affiliate:			{ type: GraphQLString },
     product_schedules:	{ type: new GraphQLList(GraphQLString) }
