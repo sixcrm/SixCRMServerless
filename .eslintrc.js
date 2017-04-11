@@ -16,6 +16,7 @@ module.exports = {
         "no-console": [ "warn" ],
         "no-unused-vars": [ "warn" ],
         "no-extra-semi": [ "off" ],
+        "no-trailing-spaces": [ "warn" ],
         "promise/catch-or-return": "warn",
         "promise/no-return-wrap": "warn",
         "promise/param-names": "warn",
