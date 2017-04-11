@@ -1,13 +1,20 @@
 global.disableactionchecks = true;
-process.env.notifications_table = 'localnotifications';
-process.env.stage = 'local';
 
+if (process.env.stage === 'local') {
+    const TestUtilities = require('../test/functional/test-utils');
+    TestUtilities.setEnvironmentVariables();
+}
 const NotificationUtilities = require('../lib/notification-utilities');
 const du = require('../lib/debug-utilities.js');
 
+// Parameters: message account [user]
+//
 // Examples:
-// AWS_PROFILE=six SIX_VERBOSE=2 node helper/generatenotification.js 'hi' '*'
-// AWS_PROFILE=six SIX_VERBOSE=2 node helper/generatenotification.js 'hi' '*' 'nikola.bosic@toptal.com'
+// Create a notification with a given message for a specific user of an account:
+// stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/generatenotification.js 'hi' '*' 'nikola.bosic@toptal.com'
+//
+// Create a notification with a given message for all users of an account:
+// stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/generatenotification.js 'hi' '*'
 
 let message = process.argv[2];
 let account = process.argv[3];
