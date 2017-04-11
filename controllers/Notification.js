@@ -5,7 +5,7 @@ const dynamoutilities = require('../lib/dynamodb-utilities');
 const _ = require('underscore');
 
 // Technical Debt: figure out where to store this
-const hardcoded_date = '2017-04-06T18:40:41.500Z'; // when the user has seen  notifications for the last time
+const hardcoded_date = '2017-04-06T18:40:41.000Z'; // when the user has seen  notifications for the last time
 
 class notificationController extends entityController {
 
@@ -49,7 +49,7 @@ class notificationController extends entityController {
                     condition_expression: '#'+field+' = :index_valuev',
                     expression_attribute_values: {':index_valuev': global.user.id, ':createdv': hardcoded_date},
                     expression_attribute_names: {},
-                    filter_expression: 'created_at < :createdv'
+                    filter_expression: 'created_at > :createdv'
                 };
 
                 query_parameters.expression_attribute_names['#'+field] = field;
