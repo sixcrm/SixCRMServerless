@@ -35,9 +35,6 @@
       {
         "IndexName": "created_at-index",
         "KeySchema": [{
-          "AttributeName": "id",
-          "KeyType": "HASH"
-        }, {
           "AttributeName": "created_at",
           "KeyType": "HASH"
         }],
