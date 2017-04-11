@@ -815,6 +815,10 @@ var notificationListType = new GraphQLObjectType({
         notifications: {
             type: new GraphQLList(notificationType),
             description: 'Notifications.',
+        },
+        pagination: {
+            type: new GraphQLNonNull(paginationType),
+            description: 'Query pagination',
         }
     }),
     interfaces: []

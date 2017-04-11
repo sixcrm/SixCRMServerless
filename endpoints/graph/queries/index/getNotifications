@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	query {
-		notificationlist ({argumentation}) {
+		notificationlist {
 			notifications {
 			    id,
 			    type,
@@ -12,12 +12,7 @@
 			    read_at,
 				created_at,
 				updated_at
-			},
-            pagination {
-                count,
-                end_cursor,
-                has_next_page
-            }
+			}
 		}
 	}"
 }
