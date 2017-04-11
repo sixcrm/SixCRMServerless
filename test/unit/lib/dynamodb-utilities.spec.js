@@ -148,6 +148,27 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
+        it('should count records', (done) => {
+            // given
+            let aTableName = anyTableName;
+            let anyResults = { Count: 2};
+            let anyParams = {};
+            let anyConditionExpression = '';
+
+            DynamoDBUtilities.dynamodb = {
+                query: (params, callback) => {
+                    callback(null, anyResults);
+                }
+            };
+
+            // when
+            DynamoDBUtilities.countRecords(aTableName, anyParams, anyIndex = 0, (err, data) => {
+                // then
+                expect(data).to.deep.equal(anyResults.Count);
+                done();
+            });
+        });
+
         it('should update records', (done) => {
             // given
             let aTableName = anyTableName;

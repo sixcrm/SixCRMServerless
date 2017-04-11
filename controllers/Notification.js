@@ -72,7 +72,7 @@ class notificationController extends entityController {
 
                         }else{
 
-                            query_parameters.filter_expression += 'AND account = :accountv';
+                            query_parameters.filter_expression += ' AND account = :accountv';
                             query_parameters.expression_attribute_values[':accountv'] = global.account;
 
                         }
