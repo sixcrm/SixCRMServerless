@@ -20,6 +20,7 @@ describe('controllers/Notification.js', () => {
 
         after(() => {
             mockery.deregisterAll();
+            global.disableactionchecks = false;
         });
 
         it('should return number of notifications after last seen date', () => {
