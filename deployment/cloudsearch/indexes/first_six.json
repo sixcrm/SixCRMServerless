@@ -1,0 +1,12 @@
+{
+	"IndexField": {
+		"IndexFieldName": "first_six", 
+		"IndexFieldType": "literal",
+		"LiteralOptions": {
+			"FacetEnabled": false,
+			"ReturnEnabled": true,
+			"SearchEnabled": true,
+			"SortEnabled": true
+		}
+	}
+}

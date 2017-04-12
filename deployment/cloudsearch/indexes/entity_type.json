@@ -1,0 +1,12 @@
+{
+	"IndexField": {
+		"IndexFieldName": "entity_type", 
+		"IndexFieldType": "literal",
+		"LiteralOptions": {
+			"FacetEnabled": true,
+			"ReturnEnabled": true,
+			"SearchEnabled": true,
+			"SortEnabled": true
+		}
+	}
+}

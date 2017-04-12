@@ -1,0 +1,11 @@
+{
+	"IndexField": {
+		"IndexFieldName": "suggestion_field_1", 
+		"IndexFieldType": "text",
+		"TextOptions": {
+			"HighlightEnabled":true,
+			"ReturnEnabled":true,
+			"SortEnabled":true
+		}
+	}
+}

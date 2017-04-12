@@ -1,0 +1,11 @@
+{
+	"IndexField": {
+		"IndexFieldName": "email", 
+		"IndexFieldType": "text",
+		"TextOptions": {
+			"HighlightEnabled":true,
+			"ReturnEnabled":true,
+			"SortEnabled":false
+		}
+	}
+}

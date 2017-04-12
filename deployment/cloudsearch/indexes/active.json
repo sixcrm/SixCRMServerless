@@ -1,0 +1,11 @@
+{
+	"IndexField": {
+		"IndexFieldName": "active", 
+		"IndexFieldType": "text",
+		"TextOptions": {
+			"HighlightEnabled":false,
+			"ReturnEnabled":true,
+			"SortEnabled":true
+		}
+	}
+}

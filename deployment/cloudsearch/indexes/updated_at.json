@@ -1,0 +1,12 @@
+{
+	"IndexField": {
+		"IndexFieldName": "updated_at", 
+		"IndexFieldType": "date",
+		"DateOptions": {
+			"FacetEnabled": true,
+			"ReturnEnabled": true,
+			"SearchEnabled": true,
+			"SortEnabled": true
+		}
+	}
+}

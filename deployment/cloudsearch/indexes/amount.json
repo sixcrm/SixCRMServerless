@@ -1,0 +1,12 @@
+{
+	"IndexField": {
+		"IndexFieldName": "amount", 
+		"IndexFieldType": "double",
+		"DoubleOptions": {
+			"FacetEnabled": false,
+			"ReturnEnabled": true,
+			"SearchEnabled": true,
+			"SortEnabled": true
+		}
+	}
+}

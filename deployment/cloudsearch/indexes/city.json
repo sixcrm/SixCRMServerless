@@ -1,0 +1,11 @@
+{
+	"IndexField": {
+		"IndexFieldName":"city", 
+		"IndexFieldType":"text",
+		"TextOptions": {
+			"HighlightEnabled":true,
+			"ReturnEnabled":true,
+			"SortEnabled":true
+		}
+	}
+}

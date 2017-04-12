@@ -1,0 +1,12 @@
+{
+	"IndexField": {
+		"IndexFieldName": "account", 
+		"IndexFieldType": "literal",
+		"LiteralOptions": {
+			"FacetEnabled": true,
+			"ReturnEnabled": true,
+			"SearchEnabled": true,
+			"SortEnabled": true
+		}
+	}
+}
