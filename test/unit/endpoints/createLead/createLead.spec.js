@@ -5,8 +5,7 @@ var chai = require('chai');
 var expect = chai.expect;
 chai.use(require('../../chaiAssertionHelper'));
 
-// Technical Debt: Determine why this test fails and re-enable it.
-xdescribe('endpoints/createLead', function () {
+describe('endpoints/createLead', function () {
 	describe('validateInputs', function () {
 		it('should not be valid with null input', function () {
 			var actual = createLead.validateInput();
@@ -15,6 +14,7 @@ xdescribe('endpoints/createLead', function () {
 				return expect(err).to.deepEqualProcessor(__dirname, 'validateInput.empty');
 			})
 		});
+
 		it('should not be valid with empty object input', function () {
 			var actual = createLead.validateInput({});
 
@@ -37,7 +37,8 @@ xdescribe('endpoints/createLead', function () {
 	});
 
 	describe('createLead', function () {
-		it('should throw err when not given a campaign_id', function() {
+        // Technical Debt: Determine why this test fails and re-enable it.
+		xit('should throw err when not given a campaign_id', function() {
 			var expected =	'A lead must be associated with a campaign';
 
 			return expect(() => { createLead.createLead(require('./fixtures/noCampaign')); }).to.throw(expected);

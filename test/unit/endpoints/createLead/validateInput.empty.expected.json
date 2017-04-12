@@ -3,6 +3,7 @@
 	"issues": [
 		"requires property \"email\"",
 		"requires property \"firstname\"",
-		"requires property \"lastname\""
+		"requires property \"lastname\"",
+		"A lead must be associated with a campaign"
 	]
 }
