@@ -164,7 +164,7 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    xdescribe('create rebill', () => {
+    describe('create rebill', () => {
         it('fails when user is not set', () => {
             // given
             global.user = null;
@@ -223,7 +223,7 @@ describe('controllers/Rebill.js', () => {
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
                 expect(rebill.id).to.have.lengthOf(36);
-                expect(rebill.billdate).to.equal(nowInSeconds() + aProductSchedule.schedule[0].period * oneDayInSeconds);
+                expect(rebill.bill_at).to.equal(TimestampUtils.toISO8601(nowInSeconds() + aProductSchedule.schedule[0].period * oneDayInSeconds));
             });
         });
     });

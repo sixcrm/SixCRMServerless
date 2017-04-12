@@ -144,7 +144,7 @@ class rebillController extends entityController {
 
 		var rebill_object = this.buildRebillObject({
 			parentsession: session.id,
-			billat: rebill_parameters.bill_at,
+			bill_at: rebill_parameters.bill_at,
 			product_schedules: [product_schedule.id],
 			amount: rebill_parameters.amount
 		});
