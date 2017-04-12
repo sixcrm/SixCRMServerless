@@ -228,11 +228,11 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    xdescribe('buildRebillObject', () => {
+    describe('buildRebillObject', () => {
         it('returns an object with correct parameters', () => {
             // given
             let parameters = {
-                billdate: Date.now(),
+                bill_at: TimestampUtils.getISO8601(),
                 parentsession: '1',
                 product_schedules: [],
                 amount: 100
@@ -246,7 +246,7 @@ describe('controllers/Rebill.js', () => {
 
             // then
             expect(rebillObject.id).to.have.lengthOf(36); // UUIDv4 is 36 characters long
-            expect(rebillObject.billdate).to.equal(parameters.billdate);
+            expect(rebillObject.bill_at).to.equal(parameters.bill_at);
             expect(rebillObject.parentsession).to.equal(parameters.parentsession);
             expect(rebillObject.product_schedules).to.equal(parameters.product_schedules);
             expect(rebillObject.amount).to.equal(parameters.amount);
@@ -273,14 +273,14 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    xdescribe('addRebillToQueue', () => {
+    describe('addRebillToQueue', () => {
         after(() => {
             mockery.deregisterAll();
         });
 
         it('should add a rebill to bill queue', () => {
             // given
-            let aRebill = {};
+            let aRebill = { created_at: TimestampUtils.getISO8601() };
 
             process.env.bill_queue_url = 'tesbill';
             process.env.bill_failed_queue_url = 'testfailbill';
@@ -325,14 +325,14 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    xdescribe('sendMessageAndMarkRebill', () => {
+    describe('sendMessageAndMarkRebill', () => {
         after(() => {
             mockery.deregisterAll();
         });
 
         it('should resolve', () => {
             // given
-            let aRebill = {};
+            let aRebill = { id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7', created_at: TimestampUtils.getISO8601() };
             PermissionTestGenerators.givenUserWithAllowed('update', 'rebill');
             process.env.search_indexing_queue_url = 'url';
 
@@ -387,30 +387,13 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    xdescribe('updateRebillTransactions', () => {
+    describe('updateRebillTransactions', () => {
         after(() => {
             mockery.deregisterAll();
         });
 
         before(() => {
             PermissionTestGenerators.givenUserWithAllowed('create', 'rebill');
-        });
-
-        it('updates timestamp', () => {
-            // given
-            let originalTimestamp = 1490283307; // 2017-03-23T15:35:06
-            let aRebill = {
-                modified: originalTimestamp
-            };
-
-            let rebillController = require('../../../controllers/Rebill');
-
-            // when
-            return rebillController.updateRebillTransactions(aRebill, []).then(() => {
-                // then
-                expect(aRebill.modified).to.be.above(originalTimestamp);
-
-            });
         });
 
         it('merges transactions', () => {
