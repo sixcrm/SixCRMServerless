@@ -29,20 +29,18 @@ describe('endpoints/createLead', function () {
 				return expect(err).to.deepEqualProcessor(__dirname, 'validateInput.badEmail');
 			})
 		});
+        it('should throw err when not given a campaign_id', function () {
+            var actual = createLead.validateInput(require('./fixtures/noCampaign.json'));
+
+            return actual.catch((err) => {
+                return expect(err).to.deepEqualProcessor(__dirname, 'validateInput.noCampaign');
+            })
+        });
 		it('should pass validations and be returned unchanged', function () {
 			var actual = createLead.validateInput(require('./fixtures/validLead'));
 
 			return expect(actual).to.deepEqualProcessor(__dirname, 'validateInput.valid');
 		});
-	});
-
-	describe('createLead', function () {
-        // Technical Debt: Determine why this test fails and re-enable it.
-		xit('should throw err when not given a campaign_id', function() {
-			var expected =	'A lead must be associated with a campaign';
-
-			return expect(() => { createLead.createLead(require('./fixtures/noCampaign')); }).to.throw(expected);
-		})
 	});
 });
 
