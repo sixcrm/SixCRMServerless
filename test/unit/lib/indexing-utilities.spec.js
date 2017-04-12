@@ -188,10 +188,11 @@ describe('lib/indexing-utilities', () => {
         });
     });
 
-    xdescribe('removeFromSearchIndex', () => {
+    describe('removeFromSearchIndex', () => {
         it('should resolve to true', () => {
             // given
             let entity = {
+                id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7',
                 entity_type: 'customer'
             };
             process.env.search_indexing_queue_url = 'url';
@@ -211,10 +212,11 @@ describe('lib/indexing-utilities', () => {
         });
     });
 
-    xdescribe('addToSearchIndex', () => {
+    describe('addToSearchIndex', () => {
         it('should resolve to true', () => {
             // given
             let entity = {
+                id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7',
                 entity_type: 'customer'
             };
             process.env.search_indexing_queue_url = 'url';
