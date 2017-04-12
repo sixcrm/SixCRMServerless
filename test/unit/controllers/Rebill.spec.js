@@ -1,4 +1,5 @@
 const PermissionTestGenerators = require('../lib/permission-test-generators');
+const TimestampUtils = require('../../../lib/timestamp');
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
@@ -26,7 +27,7 @@ describe('controllers/Rebill.js', () => {
         mockery.deregisterAll();
     });
 
-    xdescribe('calculate rebill', () => {
+    describe('calculate rebill', () => {
         let rebillController;
 
         before(() => {
@@ -52,7 +53,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = rebillController.calculateRebill(aDayInCycle, aProductSchedule);
 
             // then
-            expect(rebill.billdate).to.equal((aProductSchedule.schedule[0].period * oneDayInSeconds) + nowInSeconds());
+            expect(rebill.bill_at).to.equal(TimestampUtils.toISO8601((aProductSchedule.schedule[0].period * oneDayInSeconds) + nowInSeconds()));
             expect(rebill.product).to.be.equal(aProductSchedule.schedule[0].product_id);
             expect(rebill.amount).to.be.equal(aProductSchedule.schedule[0].price);
         });
@@ -75,7 +76,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = rebillController.calculateRebill(aDayInCycle, aProductSchedule);
 
             // then
-            expect(rebill.billdate).to.equal((aProductSchedule.schedule[0].period * oneDayInSeconds) + nowInSeconds());
+            expect(rebill.bill_at).to.equal(TimestampUtils.toISO8601((aProductSchedule.schedule[0].period * oneDayInSeconds) + nowInSeconds()));
             expect(rebill.product).to.be.equal(aProductSchedule.schedule[0].product_id);
             expect(rebill.amount).to.be.equal(aProductSchedule.schedule[0].price);
         });
@@ -113,7 +114,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = rebillController.calculateRebill(aDayInCycle, aProductSchedule);
 
             // then
-            expect(rebill.billdate).to.equal((aProductSchedule.schedule[2].period * oneDayInSeconds) + nowInSeconds());
+            expect(rebill.bill_at).to.equal(TimestampUtils.toISO8601((aProductSchedule.schedule[2].period * oneDayInSeconds) + nowInSeconds()));
             expect(rebill.product).to.be.equal(aProductSchedule.schedule[2].product_id);
             expect(rebill.amount).to.be.equal(aProductSchedule.schedule[2].price);
         });
