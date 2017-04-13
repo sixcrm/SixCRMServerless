@@ -13,6 +13,7 @@ var creditCardController = require('../../controllers/CreditCard.js');
 var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var rebillController = require('../../controllers/Rebill.js');
 var endpointController = require('../../controllers/endpoints/endpoint.js');
+var notificationUtils = require('../../lib/notification-utilities');
 
 class createOrderController extends endpointController{
 	
@@ -266,6 +267,7 @@ class createOrderController extends endpointController{
 		var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
 		var updateSession = sessionController.updateSessionProductSchedules(info.session, info.schedulesToPurchase);
 		var rebillUpdates = rebillController.updateRebillTransactions(rebill, transactions);
+		var notify = this.createNotification();
 		
 		//Technical Debt:  This is deprecated.  Instead, add the session id object to the rebill queue
 		var createNextRebills = rebillController.createRebills(info.session, info.schedulesToPurchase);
@@ -274,6 +276,7 @@ class createOrderController extends endpointController{
 		promises.push(createNextRebills);
 		promises.push(updateSession);
 		promises.push(rebillUpdates);
+		promises.push(notify);
 
 		return Promise.all(promises).then((promises) => {
 			
@@ -289,6 +292,16 @@ class createOrderController extends endpointController{
 		});
 		
 	}
+
+    createNotification(){
+
+        return notificationUtils.createNotificationObject(
+            global.account,
+            "order",
+            "processed",
+            "Your order has been processed."
+        ).then((notification_object) => notificationUtils.createNotificationsForAccount(notification_object));
+    }
 
 }
 

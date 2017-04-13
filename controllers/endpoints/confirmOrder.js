@@ -6,6 +6,7 @@ const du = require('../../lib/debug-utilities.js');
 
 var sessionController = require('../../controllers/Session.js');
 var endpointController = require('../../controllers/endpoints/endpoint.js');
+var notificationUtils = require('../../lib/notification-utilities');
 
 class confirmOrderController extends endpointController{
 	
@@ -126,6 +127,13 @@ class confirmOrderController extends endpointController{
 				return sessionController.closeSession(session).then(() => {
 					
 					var results = {session: session, customer: customer, transactions: transactions, transaction_products: transaction_products};
+
+                    notificationUtils.createNotificationObject(
+                        global.account,
+                        "session",
+                        "closed",
+                        `Session '${session.id}' has been closed.`
+                    ).then((notification_object) => notificationUtils.createNotificationsForAccount(notification_object));
 
 					return results;
 					
