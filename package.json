@@ -42,9 +42,11 @@
     "test-functional": "ENV=local AWS_PROFILE=six istanbul cover node_modules/.bin/_mocha --recursive './test/functional/*.test.js'",
     "test-workers": "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
     "test-endpoints": "istanbul cover _mocha  -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'",
-    "lint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '**/*.js'"
+    "lint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '**/*.js'",
+    "lintCommit": "./tools/lintCommit.sh"
   },
   "pre-commit": [
+    "lintCommit",
     "test-unit"
   ],
   "repository": {

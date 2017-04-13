@@ -8,8 +8,8 @@ var customerController = require('../../controllers/Customer.js');
 var affiliateController = require('../../controllers/Affiliate.js');
 var campaignController = require('../../controllers/Campaign.js');
 var sessionController = require('../../controllers/Session.js');
-
 var endpointController = require('../../controllers/endpoints/endpoint.js');
+var notificationUtils = require('../../lib/notification-utilities');
 
 class createLeadController extends endpointController{
 	
@@ -32,13 +32,16 @@ class createLeadController extends endpointController{
 	
 	execute(event){
 		
-		return this.preprocessing((event))
+		let mainOperaion =  this.preprocessing((event))
 			.then((event) => this.acquireBody(event))
 			.then((event) => this.validateInput(event))
 			.then((event) => this.assureCustomer(event))
 			.then((event) => this.createSessionObject(event))
 			.then((session_object) => this.persistSession(session_object));
-			
+
+		let notificationCreation = this.createNotification(event);
+
+		return Promise.all([mainOperaion, notificationCreation]).then(results => results[0]); // return the results of mainOperation
 	}
 
 	acquireBody(event){	
@@ -223,6 +226,17 @@ class createLeadController extends endpointController{
 		});
 
 	}
+
+    createNotification(event){
+
+		return notificationUtils.createNotificationObject(
+			global.account,
+            "lead",
+            "created",
+            "New lead has been created."
+        ).then((notification_object) => notificationUtils.createNotificationsForAccount(notification_object)
+			.then(() => event));
+    }
 
 }
 
