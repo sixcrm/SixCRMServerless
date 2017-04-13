@@ -4,8 +4,6 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
-    "aws-sdk": "^2.7.13",
-    "chai-as-promised": "^6.0.0",
     "chalk": "^1.1.3",
     "crypto": "0.0.3",
     "graphql": "^0.8.2",
@@ -22,6 +20,8 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+  	"aws-sdk": "^2.7.13",
+    "chai-as-promised": "^6.0.0",
     "chai": "^3.5.0",
     "chai-json-schema": "^1.4.0",
     "eslint": "^3.18.0",

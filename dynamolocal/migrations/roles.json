@@ -38,13 +38,14 @@
 				"campaign/*",
 				"creditcard/*",
 				"customer/*",
+				"customernote/*",
 				"emailtemplate/*",
 				"loadbalancer/*",
 				"merchantprovider/*",
 				"productschedule/*",
 				"product/*",
 				"rebill/*",
-				"role/view",
+				"role/read",
 				"session/*",
 				"shippingreceipt/*",
 				"smtprovider/*",
@@ -66,6 +67,7 @@
         "permissions":{
         	"allow":[
 				"customer/*",
+				"customernote/*",
 				"productschedule/*",
 				"product/*",
 				"role/read",
@@ -74,7 +76,9 @@
 				"shippingreceipt/*",
 				"transaction/*",
 				"role/read",
-				"notification/read"
+				"notification/read",
+				"user/read",
+				"account/read"
         	],
         	"deny":["*"]
         },
