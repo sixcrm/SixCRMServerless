@@ -1,6 +1,8 @@
 const expect = require('chai').expect;
 const SqSTestUtils = require('./sqs-test-utils');
 const TestUtils = require('./test-utils');
+const TimestampUtils = require('../../lib/timestamp');
+const uuidV4 = require('uuid/v4');
 const mockery = require('mockery');
 
 describe('Pick Rebill', function () {
@@ -47,7 +49,7 @@ describe('Pick Rebill', function () {
 
     it('should move eligible messages to bill queue', function () {
         // given
-        let rebill = { id: 42};
+        let rebill = { id: uuidV4(), created_at: TimestampUtils.getISO8601() };
         mockery.registerMock('../lib/dynamodb-utilities.js', {
             scanRecords: (table, parameters, callback) => {
                 callback(null, [rebill]);
