@@ -404,6 +404,82 @@ module.exports = class entityController {
         });
         
     }
+
+    touch(key){
+
+        return new Promise((resolve, reject) => {
+
+            return this.can('read').then((permission) => {
+
+                if(permission != true){
+
+                    return resolve(null);
+
+                }
+
+                return Promise.resolve(dynamoutilities.touchRecord(this.table_name, key, (error, data) => {
+
+                    if(_.isError(error)){
+
+                        du.warning(error);
+
+                        return reject(error);
+
+                    }
+
+                    return resolve(data);
+
+                }));
+
+            }).catch((error) => {
+                return reject(error);
+            });
+
+        });
+
+    }
+
+    getByKey(key){
+
+        return new Promise((resolve, reject) => {
+
+            return this.can('read').then((permission) => {
+
+                if(permission != true){
+
+                    return resolve(null);
+
+                }
+
+                return Promise.resolve(dynamoutilities.get(this.table_name, key, (error, data) => {
+
+                    if(_.isError(error)){
+
+                        du.warning(error);
+
+                        return reject(error);
+
+                    }
+
+                    if(_.isObject(data)){
+
+                        if (_.has(data, "Item")) {
+                        	resolve(data.Item);
+						} else {
+                        	resolve(null);
+						}
+
+                    }
+
+                }));
+
+            }).catch((error) => {
+                return reject(error);
+            });
+
+        });
+
+    }
     
     //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
     //ACL enabled

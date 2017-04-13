@@ -32,6 +32,7 @@ dynamodb:
   roles_table: 'roles'
   ses_notifications_table: 'ses_notifications'
   notifications_table: 'notifications'
+  notifications_read_table: 'notifications_read'
   endpoint: 'http://localhost:8001'
   
 lambda:

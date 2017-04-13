@@ -106,6 +106,7 @@ functions:
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
       notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
+      notifications_read_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_read_table}
       roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}

@@ -28,9 +28,20 @@ describe('controllers/Notification.js', () => {
             global.disableactionchecks = true;
             PermissionTestGenerators.givenAnyUser();
 
-            mockery.registerMock('../lib/dynamodb-utilities', {
+            mockery.registerMock('../lib/dynamodb-utilities.js', {
                 countRecords: (table, parameters, index, callback) => {
                     callback(null, 2);
+                },
+                touchRecord: (table, key, callback) => {
+                    callback(null, {});
+                },
+                get: (table, key, callback) => {
+                    callback(null, {
+                        user: "nikola.bosic@toptal.com",
+                        account: "*",
+                        created_at: "2017-04-06T18:40:41.405Z",
+                        updated_at: "2017-04-06T18:41:12.521Z"
+                    })
                 }
             });
             mockery.registerMock('../lib/indexing-utilities.js', {
