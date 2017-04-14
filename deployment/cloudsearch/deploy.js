@@ -1,169 +1,113 @@
-"use strict"
-const AWS = require("aws-sdk");
+const AWS = require('aws-sdk');
 const _ = require('underscore');
 const fs = require('fs');
-const yaml = require('js-yaml');
-
 const du = require('../../lib/debug-utilities.js');
 
-let cs = new AWS.CloudSearch({
-	region: 'us-east-1', 
-	apiVersion: '2013-01-01'
+const cs = new AWS.CloudSearch({
+    region: 'us-east-1',
+    apiVersion: '2013-01-01',
+});
+const environment = process.argv[2];
+const domainName = `sixcrm-${environment}`;
+
+du.highlight(`Executing CloudSearch Deployment: ${domainName}`);
+
+// Start the creation
+createDomain()
+.then(createIndexes)
+.then(indexDocuments)
+.then(du.highlight('Complete'))
+.catch((error) => {
+  throw new Error(error);
 });
 
-let environment = process.argv[2];
-let domain_name = 'sixcrm-'+environment;
+function createDomain() {
+    du.debug('Create Domain');
 
-du.highlight('Executing CloudSearch Deployment: '+domain_name);
+    return new Promise((resolve, reject) => {
+        const params = {
+            DomainName: domainName,
+        };
 
-createDomain()
-	.then(createIndexes)
-	.then(indexDocuments)
-	.then(() => {
-		du.highlight('Complete');
-	}).catch((error) => {
-		throw new Error(error);
-	});
-
-
-function createDomain(){
-	
-	du.debug('Create Domain');
-	
-	return new Promise((resolve, reject) => {
-		
-		let params = {
-			DomainName: domain_name
-		};
-		
-		cs.createDomain(params, (error, data) => {
-			
-			if(error){ return reject(error); }
-			
-			return resolve(data);
-			
-		});
-		
-	});
-
+        cs.createDomain(params, (error, data) => {
+            if (error) {
+                du.warn('Error creating domain', error);
+                return reject(error);
+            }
+            return resolve(data);
+        });
+    });
 }
 
-function createIndexes(){
-	
-	du.debug('Create Indexes');
-	
-	return new Promise((resolve, reject) => {
-	
-		getIndexObjects().then(index_objects => {
-				
-			let promises = [];
-			
-			for(var i = 0; i < index_objects.length; i++){
-				
-				index_objects[i]['DomainName'] = domain_name;
-				
-				let create_index_promise = createIndex(index_objects[i]).catch((error) => {  return reject(error); });
-				
-				promises.push(create_index_promise);
-				
-			}
-			
-			Promise.all(promises).then((promises) => {
-				
-				du.debug('Resolved Promises: ', promises);
-				
-				return resolve(promises);
-			
-			}).catch((error) => {
-			
-				return reject(error);
-			
-			});
-		
-		});		
-		
-	});
-	
+function getIndexObjects() {
+    const indexDir = `${__dirname}/indexes/`;
+    const files = fs.readdirSync(indexDir);
+    const indexObjects = files.map((file) => {
+        du.debug(`Index File: ${file}`);
+        const indexObj = require(`${indexDir}${file}`);
+
+        indexObj.DomainName = domainName;
+        return indexObj;
+    });
+
+    return indexObjects;
 }
 
-function getIndexObjects(){
-	
-	return new Promise((resolve, reject) => {
-		
-		let response_objects = [];
-		
-		let index_directory = __dirname+'/indexes/';
-		
-		fs.readdir(index_directory, (error, files) => {
-			
-			if(error){ return reject(error); }
-			
-			files.forEach(file => {
-					
-				du.debug('Index File: '+file);
-				
-				let file_contents = fs.readFileSync(index_directory+file, 'utf8');
-				
-				let obj = JSON.parse(file_contents);
+function createIndex(indexObject) {
+    return new Promise((resolve, reject) => {
+        if (!_.has(indexObject, 'IndexField')) {
+            du.warning(indexObject);
+            return reject('Index Object lacks IndexField');
+        }
 
-				response_objects.push(obj);
+        if (!_.has(indexObject.IndexField, 'IndexFieldName')) {
+            du.warning(indexObject);
+            return reject('Index Object lacks IndexField.IndexFieldName');
+        }
 
-			});
-
-			return resolve(response_objects);
-
-		});
-	
-	});
-	
+        cs.defineIndexField(indexObject, (error, data) => {
+            if (error) {
+                du.warn('Failed to create index:', indexObject, error);
+                return reject(error);
+            }
+            return resolve(data);
+        });
+    });
 }
 
-function createIndex(index_object){
-	
-	return new Promise((resolve, reject) => {
-		
-		if(!_.has(index_object, 'IndexField')){ 
-			
-			du.warning(index_object);	
-			return reject('Index Object lacks IndexField');
-			
-		}
-		
-		if(!_.has(index_object.IndexField, 'IndexFieldName')){
-			
-			du.warning(index_object);	
-			return reject('Index Object lacks IndexField.IndexFieldName');
-			
-		}
-	
-		cs.defineIndexField(index_object, (error, data) => {
-	
-			if(error){ return reject(error); }
-		
-			return resolve(data);
+function createIndexes() {
+    du.debug('Create Indexes');
 
-		});
-		
-	});
-	
+    const indexObjects = getIndexObjects();
+    const results = [];
+
+  // Chain createIndex promises together to run one at a time
+    return indexObjects.reduce((promise, indexObject) => promise.then(() => {
+        du.debug(`Index created for: '${indexObject.IndexField.IndexFieldName}'`);
+        return createIndex(indexObject)
+      .then(val => results.push(val));
+    }), Promise.resolve())
+  .then(() => {
+      du.debug('Resolved Promises: ', results);
+      return results;
+  });
 }
 
-function indexDocuments(){
 
-	return new Promise((resolve, reject) => {
-	
-		var params = {
-			DomainName: domain_name
-		};
-		
-		cs.indexDocuments(params, (error, data) => {
-			
-			if(error){ return reject(error); }
-			
-			return resolve(data);
-			
-		});
-		
-	});
-	
+function indexDocuments() {
+    return new Promise((resolve, reject) => {
+        const params = {
+            DomainName: domainName,
+        };
+
+        cs.indexDocuments(params, (error, data) => {
+            if (error) {
+                du.warn('Error on indexDocuments', error);
+                return reject(error);
+            }
+            return resolve(data);
+        });
+    });
 }
+
+

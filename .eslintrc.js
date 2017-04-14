@@ -11,15 +11,18 @@ module.exports = {
         "eslint:recommended"
     ],
     "rules": {
+        "indent": ["warn", 4],
         "linebreak-style": [ "error", "unix" ],
-        "no-mixed-spaces-and-tabs": "off",
+        "newline-after-var": ["warn", "always"],
+        "newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }]
         "no-console": [ "warn" ],
-        "no-unused-vars": [ "warn" ],
         "no-extra-semi": [ "off" ],
         "no-trailing-spaces": [ "warn" ],
+        "no-mixed-spaces-and-tabs": "off",
+        "no-unused-vars": [ "warn" ],
+        "promise/always-return": "warn",
         "promise/catch-or-return": "warn",
         "promise/no-return-wrap": "warn",
         "promise/param-names": "warn",
-        "promise/always-return": "warn"
     }
 };
