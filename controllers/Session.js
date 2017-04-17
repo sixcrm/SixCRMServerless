@@ -32,12 +32,19 @@ class sessionController extends entityController {
 	}
 
 	getCampaign(session){
-
+		
 		if(!_.has(session, "campaign")){ return null; }
-
-
+		
 		return campaignController.get(session.campaign);
 
+	}
+	
+	getSessionCreditCard(session){
+		
+		if(!_.has(session, 'customer')){ return null; }
+		
+		return customerController.getMostRecentCreditCard(session.customer);
+		
 	}
 
 	getCampaignHydrated(session){

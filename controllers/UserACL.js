@@ -5,8 +5,9 @@ const du = require('../lib/debug-utilities.js');
 
 var accountController = require('./Account.js');
 var roleController = require('./Role.js');
+
 //Technical Debt: This is null when the UserACLController is included from the context of the UserController
-let userController = require('./User.js');
+var userController = require('./User.js');
 var entityController = require('./Entity.js');
 
 class userACLController extends entityController {

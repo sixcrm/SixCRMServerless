@@ -5,6 +5,7 @@ const validator = require('validator');
 
 const du = require('../../lib/debug-utilities.js');
 const permissionutilities = require('../../lib/permission-utilities.js');
+const notificationutilities = require('../../lib/notification-utilities');
 
 const userController = require('../User.js');
 	
@@ -262,5 +263,34 @@ module.exports = class endpointController {
 		});
 	
 	}
+	
+	issueNotifications(parameters){
+		
+		if(!_.has(parameters, 'action')){
+			
+			return Promise.reject(new Error('Notification object missing "action" property'));
+			
+		}
+		
+		if(!_.has(parameters, 'type')){
+			
+			return Promise.reject(new Error('Notification object missing "type" property'));
+			
+		}
+		
+		if(!_.has(parameters, 'message')){
+			
+			return Promise.reject(new Error('Notification object missing "message" property'));
+			
+		}
+		
+        return notificationutilities.createNotificationObject(
+        	global.account, 
+        	parameters.type, 
+        	parameters.action, 
+        	parameters.message
+        ).then((notification_object) => notificationutilities.createNotificationsForAccount(notification_object));
+				
+    }
 	
 }

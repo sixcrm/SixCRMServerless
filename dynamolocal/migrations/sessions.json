@@ -42,7 +42,7 @@
 			"customer": "24f7c851-29d4-4af9-87c5-0298fa74c689",
 			"affiliate": "6b6331f6-7f84-437a-9ac6-093ba301e455",
 			"campaign":"70a6689a-5814-438b-b9fd-dd484d0812f9",
-        	"product_schedules":["8d1e896f-c50d-4a6b-8c84-d5661c16a046"],
+        	"product_schedules":[],
             "completed": "false",
             "created_at":"2017-04-06T18:40:41.405Z",
 			"updated_at":"2017-04-06T18:41:12.521Z"

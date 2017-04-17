@@ -4,6 +4,7 @@ const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
 const du = require('../../lib/debug-utilities.js');
+const notificationutilities = require('../../lib/notification-utilities');
 
 var sessionController = require('../../controllers/Session.js');
 var customerController = require('../../controllers/Customer.js');
@@ -15,7 +16,7 @@ var loadBalancerController = require('../../controllers/LoadBalancer.js');
 var rebillController = require('../../controllers/Rebill.js');
 var endpointController = require('../../controllers/endpoints/endpoint.js');
 
-class createOrderController extends endpointController{
+class createUpsellController extends endpointController{
 	
 	constructor(){
 		super({
@@ -43,7 +44,7 @@ class createOrderController extends endpointController{
 		this.notification_parameters = {
 			type: 'order',
 			action: 'added',
-			message: 'A new order has been created.'
+			message: 'A new order (upsell) has been created.'
 		};
 		
 	}
@@ -53,10 +54,11 @@ class createOrderController extends endpointController{
 		return this.preprocessing((event))
 		.then(this.acquireBody)
 		.then(this.validateInput)
-		.then(this.getOrderInfo)
+		.then(this.getUpsellProperties)
+		.then(this.getUpsellAssociatedProperties)
 		.then(this.getTransactionInfo)
-		.then(this.createOrder)
-		.then(this.postOrderProcessing)
+		.then(this.createUpsell)
+		.then(this.postUpsellProcessing)
 		.then((pass_through) => this.handleNotifications(pass_through))
 		.catch((error) => {
 			du.error(error);
@@ -86,9 +88,9 @@ class createOrderController extends endpointController{
 		
 		return new Promise((resolve, reject) => {
 
-			var order_schema;
+			var upsell_schema;
 			try{
-				order_schema = require('../../model/order');
+				upsell_schema = require('../../model/upsell');
 			} catch(e){
 				return reject(new Error('Unable to load validation schemas.'));
 			}
@@ -98,28 +100,9 @@ class createOrderController extends endpointController{
 
 			try{
 				var v = new Validator();
-				validation = v.validate(params, order_schema);
+				validation = v.validate(params, upsell_schema);
 			}catch(e){
 				return reject(new Error('Unable to instantiate validator.'));
-			}
-
-
-			//Technical Debt: Are these ever attached?
-			if(params.email && !validator.isEmail(params.email)){
-				validation.errors.push({message: '"email" field must be a email address.'});
-			}
-
-			//Technical Debt: Are these ever attached?
-			if(params.shipping_email && !validator.isEmail(params.shipping_email)){
-				validation.errors.push({message: '"shipping_email" field must be a email address.'});
-			}
-
-			if(!validator.isCreditCard(params.ccnumber || '')){
-
-				if(process.env.stage == 'production'){
-					validation.errors.push({message: '"ccnumber" must be a credit card number.'});
-				}
-
 			}
 
 			if(validation['errors'].length > 0) {
@@ -135,37 +118,72 @@ class createOrderController extends endpointController{
 		});
 
 	}
-
-
-	getOrderInfo(event_body) {
+	
+	getUpsellProperties(event_body){
 		
-		du.debug('Get Order Info');
-		
+		du.debug('Get Upsell Properties');
+			 
 		var promises = [];
-		
+
 		var getSession = sessionController.get(event_body['session_id']);
-		var getCampaign = campaignController.getHydratedCampaign(event_body['campaign_id']);
 		var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
-		var getCreditCard	= creditCardController.createCreditCardObject(event_body).then((creditcard) => { return creditCardController.storeCreditCard(creditcard) });
+		
+		du.debug('Product Schedules', event_body['product_schedules']);
+		du.debug(getProductSchedules);
 		
 		promises.push(getSession);
-		promises.push(getCampaign);
 		promises.push(getProductSchedules);
-		promises.push(getCreditCard);
-
+		
 		return Promise.all(promises).then((promises) => {
 			
 			var info = {
 				session: promises[0],
-				campaign:  promises[1],
-				schedulesToPurchase: promises[2],
-				creditcard: promises[3]
+				campaign:  {},
+				schedulesToPurchase: promises[1],
+				creditcard: {}
 			};
-
+			
+			du.debug('Info Object:', info);
+			
 			if(!_.isObject(info.session) || !_.has(info.session, 'id')){
- 			 	throw new Error('No available session.');
- 		 	}
+				throw new Error('No available session.');
+			}
 
+			if(info.session.completed == 'true'){
+				throw new Error('The specified session is already complete.');
+			}
+
+			if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
+				throw new Error('No available schedules to purchase.');
+			}
+
+			sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
+
+			return info;
+		
+		});
+		
+	}
+	
+	getUpsellAssociatedProperties(info){
+		
+		du.debug('Get Associated Upsell Properties');
+		
+		var promises = [];
+		
+		var getCampaign = campaignController.getHydratedCampaign(info.session.campaign);
+		var getCreditCard = sessionController.getSessionCreditCard(info.session);
+	
+		promises.push(getCampaign);
+		promises.push(getCreditCard);	
+		
+		return Promise.all(promises).then((promises) => {
+			
+			info['campaign'] = promises[0];
+			info['creditcard'] = promises[1];
+			
+			du.debug('Info', info);
+			
 			if(!_.isObject(info.campaign) || !_.has(info.campaign, 'id')){
  			 	throw new Error('No available campaign.');
 			}
@@ -174,24 +192,13 @@ class createOrderController extends endpointController{
  			 	throw new Error('No available creditcard.');
 			}
 
-			if(info.session.completed == 'true'){
- 			 	throw new Error('The specified session is already complete.');
-			}
-
-			if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
- 			 	throw new Error('No available schedules to purchase.');
-			}
-
-			sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
-
 			campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
 
 			return info;
-			
-		})
-
+		
+		});
+		
 	}
-
 
 	getTransactionInfo(info) {
 		
@@ -218,19 +225,18 @@ class createOrderController extends endpointController{
  			 	throw new Error('No available customer.');
 			}
 
-
 			//Technical Debt: refactor this to use the transaction products above....
 			info.amount = productScheduleController.productSum(0, info.schedulesToPurchase);
 
 			return info;
+			
 		});
+		
 	}
 
-
-
-	createOrder(info) {
+	createUpsell(info) {
 		
-		du.debug('Create Order');
+		du.debug('Create Upsell');
 		
 		return loadBalancerController.process( info.campaign.loadbalancer, {customer: info.customer, creditcard: info.creditcard, amount: info.amount})
 		.then((processor) => {
@@ -262,14 +268,14 @@ class createOrderController extends endpointController{
 
 	}
 
-	postOrderProcessing(info) {
+	postUpsellProcessing(info) {
 		
-		du.debug('Post Order Processing');
+		du.debug('Post Upsell Processing');
 		
 		//Technical Debt: this looks like a hack as well
 		var transactions = [info.transaction.id];
 
-		//Technical Debt: hack, we need to support multiple schedules in a single order
+		//Technical Debt: hack, we need to support multiple schedules in a single upsell
 		var rebill = info.rebills[0];
 		
 		var promises = [];
@@ -292,14 +298,14 @@ class createOrderController extends endpointController{
 			var updated_session = promises[2];
 			var updateRebills = promises[3];
 
-			//Technical Debt: add some validation here...
+			//add some validation here...
 
 			return info.transaction;
 
 		});
 		
 	}
-	
+
 	handleNotifications(pass_through){
 
 		return this.issueNotifications(this.notification_parameters)
@@ -309,4 +315,4 @@ class createOrderController extends endpointController{
 
 }
 
-module.exports = new createOrderController();
+module.exports = new createUpsellController();

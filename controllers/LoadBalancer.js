@@ -1,4 +1,8 @@
 'use strict';
+const _ = require('underscore');
+
+const du = require('../lib/debug-utilities.js');
+
 var merchantProviderController = require('./MerchantProvider.js');
 var entityController = require('./Entity.js');
 
@@ -70,24 +74,26 @@ class loadBalancerController extends entityController {
     
     selectMerchantProvider(loadbalancer){
     	
-    	return new Promise((resolve, reject) => {
-    		
-			var distribution_sum = this.sumLoadBalancerDistributions(loadbalancer.merchantproviders);
-			
-			if(distribution_sum > 0){
-			
-				var roll = this.randomRoll(distribution_sum);
-				
-				var mp = this.pickMerchantProvider(roll, loadbalancer);
-					
-				resolve(mp);
-			
-			}else{
-			
-				reject(new Error('Distribution sum must be greater than 0.'));
-				
-			}
+    	du.debug('Select Merchant Provider');
     	
+    	return new Promise((resolve, reject) => {
+			
+			var distribution_sum = this.sumLoadBalancerDistributions(loadbalancer.merchantproviders);
+		
+			if(distribution_sum > 0){
+		
+				var roll = this.randomRoll(distribution_sum);
+			
+				var mp = this.pickMerchantProvider(roll, loadbalancer);
+				
+				return resolve(mp);
+		
+			}else{
+		
+				return reject(new Error('Distribution sum must be greater than 0.'));
+			
+			}
+			    	
     	});
     	
     }
@@ -183,11 +189,11 @@ class loadBalancerController extends entityController {
     }
     
     process(loadbalancer, params){
-    	
-    	var controller_instance = this;
 		
-		return controller_instance.selectMerchantProvider(loadbalancer).then((merchantprovider) => {
-
+		du.debug('Process');
+		
+		return this.selectMerchantProvider(loadbalancer).then((merchantprovider) => {
+			
 			var processor = this.createProcessorClass(merchantprovider);
 
 			return processor.process(params);

@@ -11,6 +11,8 @@ const du = require('../lib/debug-utilities.js');
 const indexingutilities = require('../lib/indexing-utilities.js');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
+//Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
+//Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 
 module.exports = class entityController {
 	
@@ -235,8 +237,6 @@ module.exports = class entityController {
 
 	//ACL enabled
 	getBySecondaryIndex(field, index_value, index_name, cursor, limit){
-		
-		du.highlight('here');
 		
 		du.debug(Array.from(arguments));
 		

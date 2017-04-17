@@ -1,9 +1,11 @@
 'use strict';
-const du = require('../lib/debug-utilities.js');
-const entityController = require('./Entity.js');
-const notificationReadController = require('./NotificationRead');
-const dynamoutilities = require('../lib/dynamodb-utilities.js');
 const _ = require('underscore');
+
+const du = require('../lib/debug-utilities.js');
+const dynamoutilities = require('../lib/dynamodb-utilities.js');
+
+const notificationReadController = require('./NotificationRead');
+const entityController = require('./Entity.js');
 
 class notificationController extends entityController {
 

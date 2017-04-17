@@ -81,6 +81,9 @@ describe('Round Trip Test', function() {
 				du.debug('Post data', post_body);
 				
 				du.output(appropriate_spacing+'Creating Lead');
+				
+				du.debug('lead/create/'+account);
+				
 				this_request.post('lead/create/'+account)
 					.send(post_body)
 					.set('Content-Type', 'application/json')
@@ -156,28 +159,14 @@ describe('Round Trip Test', function() {
 								
 								var upsell_create = {
 									"session_id":session_id,
-									"campaign_id":campaign_id,
-									"product_schedules":upsell_product_schedules,
-									"type":"sale",
-									"ccnumber":"4111111111111111",
-									"ccexpiration":"1025",
-									"ccccv":"999",
-									"name":"Rama Damunaste",
-									"address":{
-										"line1":"10 Skid Rw.",
-										"line2":"Suite 100",
-										"city":"Portland",
-										"state":"Oregon",
-										"zip":"97213",
-										"country":"USA"
-									}
+									"product_schedules":upsell_product_schedules
 								};
 								
 								du.debug('Upsell Post Data:', upsell_create);
 								
 								du.output(appropriate_spacing+'Creating Another Order');
 								
-								this_request.post('order/create/'+account)
+								this_request.post('upsell/create/'+account)
 									.send(upsell_create)
 									.set('Content-Type', 'application/json')
 									.set('Authorization', jwt)

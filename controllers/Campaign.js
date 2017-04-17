@@ -1,6 +1,8 @@
 'use strict';
 const _ = require('underscore');
 
+const du = require('../lib/debug-utilities.js');
+
 var productController = require('./Product.js');
 var loadBalancerController = require('./LoadBalancer.js');
 var productScheduleController = require('./ProductSchedule.js');
@@ -156,6 +158,11 @@ class campaignController extends entityController {
 		
 		var campaign_product_schedules = campaign.productschedules;
 		
+		du.highlight('Product Schedules');
+		du.highlight(product_schedules);
+		
+		du.highlight('Campaign Product Schedules');
+		du.highlight(campaign_product_schedules);
 		
 		for(var i = 0; i < product_schedules.length; i++){
 			
@@ -163,7 +170,15 @@ class campaignController extends entityController {
 				
 			for(var j = 0; j < campaign_product_schedules.length; j++){
 				
-				if(product_schedules[i].id == campaign_product_schedules[j].id){
+				let campaign_product_schedule = campaign_product_schedules[j];
+				
+				if(!this.isUUID(campaign_product_schedule) && _.has(campaign_product_schedules[j], 'id')){
+					
+					campaign_product_schedule = campaign_product_schedules[j].id;
+					
+				}
+				
+				if(product_schedules[i].id == campaign_product_schedule){
 					
 					schedule_found = true;
 					

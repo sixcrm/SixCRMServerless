@@ -9,7 +9,7 @@ var affiliateController = require('../../controllers/Affiliate.js');
 var campaignController = require('../../controllers/Campaign.js');
 var sessionController = require('../../controllers/Session.js');
 var endpointController = require('../../controllers/endpoints/endpoint.js');
-var notificationUtils = require('../../lib/notification-utilities');
+var notificationutilities = require('../../lib/notification-utilities');
 
 class createLeadController extends endpointController{
 	
@@ -25,23 +25,31 @@ class createLeadController extends endpointController{
 				'session/update',
 				'session/read',
 				'campaign/read',
-				'affiliate/read'
+				'affiliate/read',
+				'notification/create'
 			]
 		});
+		
+		this.notification_parameters = {
+			type: 'lead',
+			action: 'created',
+			message: 'A new lead has been created.'	
+		};
+		
 	}
 	
 	execute(event){
 		
-		let mainOperaion =  this.preprocessing((event))
+		du.debug('Execute');
+		
+		return this.preprocessing((event))
 			.then((event) => this.acquireBody(event))
 			.then((event) => this.validateInput(event))
 			.then((event) => this.assureCustomer(event))
 			.then((event) => this.createSessionObject(event))
-			.then((session_object) => this.persistSession(session_object));
+			.then((session_object) => this.persistSession(session_object))
+			.then((session_object) => this.handleNotifications(session_object));
 
-		let notificationCreation = this.createNotification(event);
-
-		return Promise.all([mainOperaion, notificationCreation]).then(results => results[0]); // return the results of mainOperation
 	}
 
 	acquireBody(event){	
@@ -119,6 +127,8 @@ class createLeadController extends endpointController{
 	}
 	
 	assureCustomer(event){
+		
+		du.debug('Assure Customer');
 		
 		return new Promise((resolve, reject) => {
 			
@@ -211,6 +221,8 @@ class createLeadController extends endpointController{
 	
 	persistSession(session_object){
 		
+		du.debug('Persist Session');
+		
 		return new Promise((resolve, reject) => {
 		
 			sessionController.putSession(session_object).then((session) => {
@@ -226,16 +238,13 @@ class createLeadController extends endpointController{
 		});
 
 	}
-
-    createNotification(event){
-
-		return notificationUtils.createNotificationObject(
-			global.account,
-            "lead",
-            "created",
-            "New lead has been created."
-        ).then((notification_object) => notificationUtils.createNotificationsForAccount(notification_object)
-			.then(() => event));
+	
+    handleNotifications(pass_through){
+    
+		du.warning('Handle Notifications');
+		
+		return this.issueNotifications(this.notification_parameters).then(() => pass_through);
+			
     }
 
 }

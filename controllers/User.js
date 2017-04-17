@@ -353,6 +353,9 @@ class userController extends entityController {
 		
 			du.debug('User: ', user.id);
 			
+			//Technical Debt:  This is required.  Must be extended by the UserACL controller itself?
+			var userACLController = require('./UserACL.js');
+			
 			userACLController.queryBySecondaryIndex('user', user.id, 'user-index').then((acls) => {
 				
 				du.debug('ACLs: ', acls);

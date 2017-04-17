@@ -28,7 +28,7 @@ class productScheduleController extends entityController {
 			});
 			
 		});
-		//console.log(transaction_products);
+
 		return transaction_products;
 	}
 	

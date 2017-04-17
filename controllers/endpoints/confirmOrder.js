@@ -1,12 +1,11 @@
 'use strict';
-//note not all of these are required...
 const _ = require("underscore");
 const querystring = require('querystring');
+
 const du = require('../../lib/debug-utilities.js');
 
 var sessionController = require('../../controllers/Session.js');
 var endpointController = require('../../controllers/endpoints/endpoint.js');
-var notificationUtils = require('../../lib/notification-utilities');
 
 class confirmOrderController extends endpointController{
 	
@@ -27,9 +26,17 @@ class confirmOrderController extends endpointController{
 				'product/read',
 				'affiliate/read',
 				'transaction/read',
-				'rebill/read'
+				'rebill/read',
+				'notifications/create'
 			]
 		});
+		
+		this.notification_parameters = {
+			type: 'session',
+			action: 'closed',
+			message: 'A customer has completed a session.'	
+		};
+		
 	}
 	
 	execute(event){
@@ -37,7 +44,8 @@ class confirmOrderController extends endpointController{
 		return this.preprocessing((event))
 			.then(this.acquireQuerystring)
 			.then(this.validateInput)
-			.then(this.confirmOrder);
+			.then(this.confirmOrder)
+			.then((results) => this.handleNotifications(results));
 		
 	}	
 	
@@ -128,13 +136,6 @@ class confirmOrderController extends endpointController{
 					
 					var results = {session: session, customer: customer, transactions: transactions, transaction_products: transaction_products};
 
-                    notificationUtils.createNotificationObject(
-                        global.account,
-                        "session",
-                        "closed",
-                        `Session '${session.id}' has been closed.`
-                    ).then((notification_object) => notificationUtils.createNotificationsForAccount(notification_object));
-
 					return results;
 					
 				});
@@ -145,6 +146,14 @@ class confirmOrderController extends endpointController{
 		});
 				
 	}
+	
+	handleNotifications(pass_through){
+    
+		du.warning('Handle Notifications');
+		
+		return this.issueNotifications(this.notification_parameters).then(() => pass_through);
+			
+    }
 	
 }
 
