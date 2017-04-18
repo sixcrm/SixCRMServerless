@@ -1,0 +1,23 @@
+{
+  "title": "CreateNotification",
+  "type": "object",
+  "properties": {
+    "user":{
+      "type":"string"
+    },
+    "account":{
+      "type":"string"
+    },
+    "type":{
+      "type":"string"
+    },
+    "action":{
+      "type":"string"
+    },
+    "message":{
+      "type":"string"
+    }
+
+  },
+  "required":["account", "type", "action", "message"]
+}
