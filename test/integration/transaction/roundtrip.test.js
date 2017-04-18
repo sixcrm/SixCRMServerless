@@ -9,7 +9,7 @@ var crypto = require('crypto');
 const du = require('../../../lib/debug-utilities.js');
 
 try {
-    var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
+    var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));
 } catch (e) {
     console.log(e);
 }
@@ -145,11 +145,8 @@ describe('Round Trip Test', function() {
     assert.equal(response.body.message, "Success");
     assert.property(response.body, "results");
     assert.property(response.body.results, "processor_response");
-    try{
-        var processor_response = JSON.parse(response.body.results.processor_response);
-    }catch(e){
+    var processor_response = JSON.parse(response.body.results.processor_response);
 
-    }
     assert.isObject(processor_response);
     assert.property(processor_response, "message");
     assert.equal(processor_response.message, "Success");
@@ -187,11 +184,9 @@ describe('Round Trip Test', function() {
 //										assert.property(response.body.results, "parentsession");
 //										assert.isString(response.body.results.parentsession);
     assert.property(response.body.results, "processor_response");
-    try{
-        var processor_response = JSON.parse(response.body.results.processor_response);
-    }catch(e){
 
-    }
+    var processor_response = JSON.parse(response.body.results.processor_response);
+
     assert.isObject(processor_response);
     assert.property(processor_response, "message");
     assert.equal(processor_response.message, "Success");
