@@ -14,411 +14,408 @@ var entityController = require('./Entity.js');
 
 class sessionController extends entityController {
 
-	constructor(){
-		super(process.env.sessions_table, 'session');
-		this.table_name = process.env.sessions_table;
-		this.descriptive_name = 'session';
+    constructor(){
+        super(process.env.sessions_table, 'session');
+        this.table_name = process.env.sessions_table;
+        this.descriptive_name = 'session';
 
-		this.session_length = 3600;
+        this.session_length = 3600;
 
-	}
+    }
 
-	getCustomer(session){
+    getCustomer(session){
 
-		if(!_.has(session, "customer")){ return null; }
+        if(!_.has(session, "customer")){ return null; }
 
-		return customerController.get(session.customer);
+        return customerController.get(session.customer);
 
-	}
+    }
 
-	getCampaign(session){
-		
-		if(!_.has(session, "campaign")){ return null; }
-		
-		return campaignController.get(session.campaign);
+    getCampaign(session){
 
-	}
-	
-	getSessionCreditCard(session){
-		
-		if(!_.has(session, 'customer')){ return null; }
-		
-		return customerController.getMostRecentCreditCard(session.customer);
-		
-	}
+        if(!_.has(session, "campaign")){ return null; }
 
-	getCampaignHydrated(session){
+        return campaignController.get(session.campaign);
 
-		var id = session;
-		if(_.has(session, "id")){
-			id = session.id;
-		}
-		return campaignController.getHydratedCampaign(id);
+    }
 
-	}
+    getSessionCreditCard(session){
+
+        if(!_.has(session, 'customer')){ return null; }
+
+        return customerController.getMostRecentCreditCard(session.customer);
+
+    }
+
+    getCampaignHydrated(session){
+
+        var id = session;
+
+        if(_.has(session, "id")){
+            id = session.id;
+        }
+        return campaignController.getHydratedCampaign(id);
+
+    }
 
 	//used in Create Order
-	getTransactions(session){
+    getTransactions(session){
 
-		return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-			var session_transactions = [];
+            var session_transactions = [];
 
-			return rebillController.getRebillsBySessionID(session.id).then((rebills) => {
+            return rebillController.getRebillsBySessionID(session.id).then((rebills) => {
 
-				return Promise.all(rebills.map((rebill) => {
+                return Promise.all(rebills.map((rebill) => {
 
-					return new Promise((resolve, reject) => {
+                    return new Promise((resolve, reject) => {
 
-						return transactionController.getTransactionsByRebillID(rebill.id).then((transactions) => {
+                        return transactionController.getTransactionsByRebillID(rebill.id).then((transactions) => {
 
-							if(_.isNull(transactions)){
+                            if(_.isNull(transactions)){
 
-								return resolve(null);
+                                return resolve(null);
 
-							}else{
+                            }else{
 
-								transactions.map((transaction) => {
+                                transactions.map((transaction) => {
 
-									session_transactions.push(transaction)
+                                    session_transactions.push(transaction)
 
-								});
+                                });
 
-								return resolve(transactions);
+                                return resolve(transactions);
 
-							}
+                            }
 
-						}).catch((error) => {
+                        }).catch((error) => {
 
-							return reject(error)
+                            return reject(error)
 
-						});
+                        });
 
-					});
+                    });
 
-				})).then(() => {
+                })).then(() => {
 
-					return resolve(session_transactions);
+                    return resolve(session_transactions);
 
-				}).catch((error) => {
+                }).catch((error) => {
 
-					return reject(error);
+                    return reject(error);
 
-				});
+                });
 
-			}).catch((error) => {
+            }).catch((error) => {
 
-				return reject(error);
+                return reject(error);
 
-			});
+            });
 
-		});
+        });
 
-	}
+    }
 
-	getRebills(session){
+    getRebills(session){
 
-		return rebillController.getRebillsBySessionID(session.id);
+        return rebillController.getRebillsBySessionID(session.id);
 
-	}
+    }
 
-	getProductSchedules(session){
+    getProductSchedules(session){
 
-		if(!_.has(session, "product_schedules")){ return null; }
+        if(!_.has(session, "product_schedules")){ return null; }
 
-		return session.product_schedules.map(schedule => productScheduleController.get(schedule));
+        return session.product_schedules.map(schedule => productScheduleController.get(schedule));
 
-	}
+    }
 
 	//Technical Debt: This function is a mess...
-	getTransactionProducts(session){
-		
-		du.warning(1);
-		var controller_instance = this;
+    getTransactionProducts(session){
 
-		return new Promise((resolve, reject) => {
-			
-			var session_products = [];
-			
-			return controller_instance.getRebills(session).then((rebills) => {
-				
-				du.warning(2);
-				return Promise.all(rebills.map((rebill) => {
+        var controller_instance = this;
 
-					return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-						return rebillController.getTransactions(rebill).then((transactions) => {
-							
-							du.warning(3);
+            var session_products = [];
+
+            return controller_instance.getRebills(session).then((rebills) => {
+
+                return Promise.all(rebills.map((rebill) => {
+
+                    return new Promise((resolve, reject) => {
+
+                        return rebillController.getTransactions(rebill).then((transactions) => {
+
 							//note that at the time of a createorder, there are lots of rebills, only one of which has a transaction
-							if(_.isNull(transactions)){
+                            if(_.isNull(transactions)){
 
-								return resolve([]);
+                                return resolve([]);
 
-							}else{
+                            }else{
 
-								return Promise.all(transactions.map((transaction) => {
+                                return Promise.all(transactions.map((transaction) => {
 
-									return new Promise((resolve) => {
-										
-										du.warning('3.5');
-										
-										return transactionController.getProducts(transaction).then((products) => {
-											
-											du.warning(4);
-											
-											return resolve(products);
+                                    return new Promise((resolve) => {
 
-										});
+                                        return transactionController.getProducts(transaction).then((products) => {
 
-									});
+                                    return resolve(products);
 
-								})).then((products) => {
+                                });
 
-									return resolve(products);
+                                    });
 
-								}).catch((error) => {
+                                })).then((products) => {
 
-									return reject(error);
+                                    return resolve(products);
 
-								});
+                                }).catch((error) => {
 
-							}
+                            return reject(error);
 
-						});
+                        });
 
-					});
+                            }
 
-				})).then((products) => {
+                        });
 
-					products.forEach((c1) => {
+                    });
 
-						c1.forEach((c2) => {
+                })).then((products) => {
 
-							c2.forEach((product) => {
+                    products.forEach((c1) => {
 
-								session_products.push(product);
+                        c1.forEach((c2) => {
 
-							});
-						});
-					});
+                            c2.forEach((product) => {
 
-					return resolve(session_products);
+                                session_products.push(product);
 
-				}).catch((error) => {
-					return reject(error);
-				});
+                            });
+                        });
+                    });
 
-			}).catch((error) => {
-				return reject(error);
-			});
+                    return resolve(session_products);
 
-		});
+                }).catch((error) => {
+                    return reject(error);
+                });
 
-	}
+            }).catch((error) => {
+                return reject(error);
+            });
 
-	getSessionHydrated(id){
+        });
 
-		return this.get(id).then((session) => {
+    }
 
-			return this.hydrate(session);
+    getSessionHydrated(id){
 
-		});
+        return this.get(id).then((session) => {
 
-	}
+            return this.hydrate(session);
+
+        });
+
+    }
 
 	//Technical Debt:  This needs to move to a prototype
-	hydrate(session){
+    hydrate(session){
 
-		var controller_instance = this;
+        var controller_instance = this;
 
-		return new Promise((resolve) => {
+        return new Promise((resolve) => {
 
-			if(!_.has(session, "campaign")){ return null; }
+            if(!_.has(session, "campaign")){ return null; }
 
-			controller_instance.getCampaignHydrated(session.campaign).then((campaign) => {
+            controller_instance.getCampaignHydrated(session.campaign).then((campaign) => {
 
-				session.campaign = campaign;
+                session.campaign = campaign;
 
-				return session;
+                return session;
 
-			}).then((session) => {
+            }).then((session) => {
 
-				if(!_.has(session, "customer")){ return null; }
+                if(!_.has(session, "customer")){ return null; }
 
-				return controller_instance.getCustomer(session).then((customer) => {
+                return controller_instance.getCustomer(session).then((customer) => {
 
-					session.customer = customer;
+                    session.customer = customer;
 
-					return session;
+                    return session;
 
-				}).then((session) => {
+                }).then((session) => {
 
-					return resolve(session);
+                    return resolve(session);
 
-				}).catch((error) => {
+                }).catch((error) => {
 
-					throw error;
+                    throw error;
 
-				});
+                });
 
-			}).catch((error) => {
+            }).catch((error) => {
 
-				throw error;
+                throw error;
 
-			});
+            });
 
-		});
+        });
 
-	}
+    }
 
-	createSessionObject(params){
+    createSessionObject(params){
 
-		if(!_.has(params,'customer_id')){
+        if(!_.has(params,'customer_id')){
 
-			return new Error('A session must be associated with a Customer ID.');
+            return new Error('A session must be associated with a Customer ID.');
 
-		}
+        }
 
-		if(!_.has(params,'campaign_id')){
+        if(!_.has(params,'campaign_id')){
 
-			return new Error('A session must be associated with a Campaign ID.');
+            return new Error('A session must be associated with a Campaign ID.');
 
-		}
+        }
 
-		var session = {
-			id: uuidV4(),
-			customer: params.customer_id,
-			campaign: params.campaign_id,
-			completed: 'false'
-		};
+        var session = {
+            id: uuidV4(),
+            customer: params.customer_id,
+            campaign: params.campaign_id,
+            completed: 'false'
+        };
 
-		if(_.has(params, 'affiliate_id') && _.isString(params.affiliate_id)){
-			session.affiliate = params.affiliate_id;
-		}
+        if(_.has(params, 'affiliate_id') && _.isString(params.affiliate_id)){
+            session.affiliate = params.affiliate_id;
+        }
 
-		return session;
+        return session;
 
-	}
+    }
 
 	//Technical Debt:  This needs to use a Entity method
-	getSessionByCustomerID(customer_id){
+    getSessionByCustomerID(customer_id){
 
-		return this.queryBySecondaryIndex('customer', customer_id, 'customer-index');
+        return this.queryBySecondaryIndex('customer', customer_id, 'customer-index');
 
-	}
+    }
 
-	putSession(parameters){
+    putSession(parameters){
 
-		var controller_instance = this;
+        var controller_instance = this;
 
-		return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-			if(!_.has(parameters, 'customer_id')){
-				reject(new Error('Parameters object must have a customer_id'));
-			}
+            if(!_.has(parameters, 'customer_id')){
+                reject(new Error('Parameters object must have a customer_id'));
+            }
 
-			if(!_.has(parameters, 'campaign_id')){
-				reject(new Error('Parameters object must have a customer_id'));
-			}
+            if(!_.has(parameters, 'campaign_id')){
+                reject(new Error('Parameters object must have a customer_id'));
+            }
 
-			if(!_.has(parameters, 'affiliate_id')){
-				parameters.affiliate_id = null;
-			}
+            if(!_.has(parameters, 'affiliate_id')){
+                parameters.affiliate_id = null;
+            }
 
-			return this.getSessionByCustomerID(parameters.customer_id).then((sessions) => {
+            return this.getSessionByCustomerID(parameters.customer_id).then((sessions) => {
 
-				var session_found = false;
+                var session_found = false;
 
-				if(_.isArray(sessions) && sessions.length > 0){
-					sessions.forEach((session) => {
-						if(_.has(session, 'completed') && session.completed == 'false'){
-							if(_.has(session, "created_at")){
-								let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);
-								var time_difference = timestamp.getTimeDifference(created_at_timestamp);
-								if(time_difference < this.session_length){
-									resolve(session);
-									session_found = true;
-									return false;
-								}
-							}
-						}
-					});
-				}
+                if(_.isArray(sessions) && sessions.length > 0){
+                    sessions.forEach((session) => {
+                        if(_.has(session, 'completed') && session.completed == 'false'){
+                            if(_.has(session, "created_at")){
+                                let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);
+                                var time_difference = timestamp.getTimeDifference(created_at_timestamp);
 
-				if(session_found == false){
+                                if(time_difference < this.session_length){
+                                    resolve(session);
+                                    session_found = true;
+                                    return false;
+                                }
+                            }
+                        }
+                    });
+                }
 
-					var session = controller_instance.createSessionObject({
-						customer_id: parameters.customer_id,
-						campaign_id: parameters.campaign_id,
-						affiliate_id: parameters.affiliate_id
-					});
+                if(session_found == false){
 
-					return this.create(session).then((session) => {
+                    var session = controller_instance.createSessionObject({
+                        customer_id: parameters.customer_id,
+                        campaign_id: parameters.campaign_id,
+                        affiliate_id: parameters.affiliate_id
+                    });
 
-						return resolve(session);
+                    return this.create(session).then((session) => {
 
-					});
+                        return resolve(session);
 
-				} else {
-					return reject(`Session with CustomerID '${parameters.customer_id}' not found`);
-				}
+                    });
 
-			}).catch((error) => {
+                } else {
+                    return reject(`Session with CustomerID '${parameters.customer_id}' not found`);
+                }
 
-				return reject(error);
+            }).catch((error) => {
 
-			});
+                return reject(error);
 
-		});
+            });
 
-	}
+        });
 
-	updateSessionProductSchedules(session, product_schedules){
+    }
 
-		var session_product_schedules = session.product_schedules;
+    updateSessionProductSchedules(session, product_schedules){
 
-		var purchased_product_schedules = [];
-		product_schedules.forEach((schedule) => {
-			purchased_product_schedules.push(schedule.id);
-		});
+        var session_product_schedules = session.product_schedules;
 
-		session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
+        var purchased_product_schedules = [];
 
-		session.product_schedules = session_product_schedules;
+        product_schedules.forEach((schedule) => {
+            purchased_product_schedules.push(schedule.id);
+        });
 
-		return this.update(session);
+        session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
 
-	}
+        session.product_schedules = session_product_schedules;
 
-	closeSession(session){
+        return this.update(session);
 
-		session.completed = 'true';
+    }
 
-		return this.update(session);
+    closeSession(session){
 
-	}
+        session.completed = 'true';
 
-	validateProductSchedules(product_schedules, session){
+        return this.update(session);
 
-		if(!_.has(session, 'product_schedules') || !_.isArray(session.product_schedules) || session.product_schedules.length < 1){
+    }
 
-			return true;
+    validateProductSchedules(product_schedules, session){
 
-		}
+        if(!_.has(session, 'product_schedules') || !_.isArray(session.product_schedules) || session.product_schedules.length < 1){
 
-		for(var i = 0; i < product_schedules.length; i++){
-			var product_schedule_id = product_schedules[i].id;
-			for(var j = 0; j < session.product_schedules.length; j++){
-				if(_.isEqual(product_schedule_id, session.product_schedules[j])){
-					throw new Error('Product schedule already belongs to this session');
-				}
-			}
-		}
+            return true;
 
-		return true;
+        }
 
-	}
+        for(var i = 0; i < product_schedules.length; i++){
+            var product_schedule_id = product_schedules[i].id;
+
+            for(var j = 0; j < session.product_schedules.length; j++){
+                if(_.isEqual(product_schedule_id, session.product_schedules[j])){
+                    throw new Error('Product schedule already belongs to this session');
+                }
+            }
+        }
+
+        return true;
+
+    }
 
 }
 

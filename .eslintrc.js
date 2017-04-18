@@ -14,7 +14,7 @@ module.exports = {
         "indent": ["warn", 4],
         "linebreak-style": [ "error", "unix" ],
         "newline-after-var": ["warn", "always"],
-        "newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }]
+        "newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }],
         "no-console": [ "warn" ],
         "no-extra-semi": [ "off" ],
         "no-trailing-spaces": [ "warn" ],
@@ -23,6 +23,6 @@ module.exports = {
         "promise/always-return": "warn",
         "promise/catch-or-return": "warn",
         "promise/no-return-wrap": "warn",
-        "promise/param-names": "warn",
+        "promise/param-names": "warn"
     }
 };

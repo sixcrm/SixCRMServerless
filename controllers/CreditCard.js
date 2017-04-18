@@ -5,101 +5,103 @@ const du = require('../lib/debug-utilities');
 
 class creditCardController extends entityController {
 
-	constructor(){
-		super(process.env.credit_cards_table, 'creditcard');
-		this.table_name = process.env.credit_cards_table;
-		this.descriptive_name = 'creditcard';
-	}
-	
-	getAddress(creditcard){
-		return Promise.resolve(creditcard.address);
-	}
-	
-	storeCreditCard(creditcard) {
+    constructor(){
+        super(process.env.credit_cards_table, 'creditcard');
+        this.table_name = process.env.credit_cards_table;
+        this.descriptive_name = 'creditcard';
+    }
 
-		du.debug('Storing credit card.');
+    getAddress(creditcard){
+        return Promise.resolve(creditcard.address);
+    }
 
-		var controller_instance = this;
-		
-		return new Promise((resolve, reject) => {
-			
-			controller_instance.queryBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
+    storeCreditCard(creditcard) {
 
-				var card_identified = false;
+        du.debug('Store Credit Card.');
 
-				creditcards.forEach(function(item){
-						
-					if(controller_instance.isSameCreditCard(creditcard, item)){
-						
-						resolve(item);
-						
-						card_identified = true;
-						
-						return;
-						
-					}
-					
-				});
-				
-				if(card_identified == false){
-				
-					return controller_instance.create(creditcard).then((data) => {
+        var controller_instance = this;
 
-						return resolve(data);
+        return new Promise((resolve, reject) => {
 
-					}).catch((error) => {
+            controller_instance.queryBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
 
-						return reject(error);
+                var card_identified = false;
 
-					});
-			
-				} else {
-					return reject(new Error('Card not identified.'));
-				}
-				
-			}).catch((error) => {
-				reject(error);
-			});
-	
-		});
-	
-	}
-	
-	isSameCreditCard(creditcard1, creditcard2){
-	
-		if(!_.isEqual(creditcard1.ccv, creditcard2.ccv)){
-			return false;
-		}
-	
-		if(!_.isEqual(creditcard1.ccnumber, creditcard2.ccnumber)){
-			return false;
-		}
-	
-		if(!_.isEqual(creditcard1.expiration, creditcard2.expiration)){
-			return false;
-		}
-	
-		if(!_.isEqual(creditcard1.address, creditcard2.address)){
+                creditcards.forEach(function(item){
 
-			return false;
-		}
-	
-		return true;
-	}
-	
-	createCreditCardObject(input_object){
-		
-		var creditcard = {
-			ccnumber: input_object.ccnumber,
-			expiration: input_object.ccexpiration,
-			ccv: input_object.ccccv,
-			name: input_object.name,
-			address: input_object.address
-		};
+                    if(card_identified == false && controller_instance.isSameCreditCard(creditcard, item)){
 
-		return Promise.resolve(creditcard);
-	
-	}
+                        card_identified = item;
+
+                    }
+
+                });
+
+                if(_.has(card_identified, 'id')){
+
+                    return resolve(card_identified);
+
+                }else if(card_identified == false){
+
+                    return controller_instance.create(creditcard).then((data) => {
+
+                        return resolve(data);
+
+                    }).catch((error) => {
+
+                        return reject(error);
+
+                    });
+
+                } else {
+
+                    return reject(new Error('Card not identified.'));
+
+                }
+
+            }).catch((error) => {
+                reject(error);
+            });
+
+        });
+
+    }
+
+    isSameCreditCard(creditcard1, creditcard2){
+
+        if(!_.isEqual(creditcard1.ccv, creditcard2.ccv)){
+            return false;
+        }
+
+        if(!_.isEqual(creditcard1.ccnumber, creditcard2.ccnumber)){
+            return false;
+        }
+
+        if(!_.isEqual(creditcard1.expiration, creditcard2.expiration)){
+            return false;
+        }
+
+        if(!_.isEqual(creditcard1.address, creditcard2.address)){
+
+            return false;
+        }
+
+        return true;
+    }
+
+    createCreditCardObject(input_object){
+
+        var creditcard = {
+            ccnumber: input_object.ccnumber,
+            expiration: input_object.ccexpiration,
+            ccv: input_object.ccccv,
+            name: input_object.name,
+            address: input_object.address
+        };
+
+        return Promise.resolve(creditcard);
+
+    }
 
 }
 
