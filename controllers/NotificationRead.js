@@ -6,19 +6,21 @@ const _ = require('underscore');
 
 class notificationReadController extends entityController {
 
-	constructor() {
-		super(process.env.notifications_read_table, 'notification_read');
-		this.table_name = process.env.notifications_read_table;
-		this.descriptive_name = 'notification_read';
-	}
+    constructor() {
+        super(process.env.notifications_read_table, 'notification_read');
+        this.table_name = process.env.notifications_read_table;
+        this.descriptive_name = 'notification_read';
+    }
 
      /**
      * Save the time the current user has seen the notifications for the current account.
      */
     markNotificationsAsSeen() {
+        du.debug('Mark notifications as seen.');
+
         let key = {
-          user: global.user.id,
-          account: global.account
+            user: global.user.id,
+            account: global.account
         };
 
         return this.touch(key);

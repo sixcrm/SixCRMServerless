@@ -12,7 +12,8 @@ class TestUtils {
                         deny: []
                     }
                 }
-            }]
+            }],
+            id: 'admin.user@test.com'
         };
 
         global.account = global.user.acl[0].account.id;
