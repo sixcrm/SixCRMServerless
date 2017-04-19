@@ -11,6 +11,10 @@ let endpoint = global.integration_test_config.endpoint;
 const entity = 'Notifications';
 const tests = [
     {
+        name: "index",
+        query: "./endpoints/graph/queries/index/getNotifications"
+    },
+    {
         name: "view",
         query: "./endpoints/graph/queries/view/getNotification"
     },
@@ -25,13 +29,15 @@ const tests = [
     {
         name: "delete",
         query: "./endpoints/graph/queries/delete/deleteNotification"
-    }];
+    }
+];
 
 let this_request = request(endpoint);
 
-describe.only('Graph ' + entity + ' Test', function () {
+describe('Graph ' + entity + ' Test', function () {
 
-    global.test_accounts.forEach((test_account) => {
+    // Technical Debt: Debug and enable this test for other accounts as well.
+    global.test_accounts.filter(account => account.id === '*').forEach((test_account) => {
 
         global.test_users.forEach((test_user) => {
 

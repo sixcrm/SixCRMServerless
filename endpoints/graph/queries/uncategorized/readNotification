@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{ 
-		readnotification (id: \"1\") {
+		readnotification (id: \"63263dc0-acc6-4c6f-8949-bc97eeafc58c\") {
             status
 		} 
 	}"

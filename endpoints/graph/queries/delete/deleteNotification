@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		deletenotification (id: \"d93afb42-dfe1-4ff5-ae7e-2e7b0bb2cb02\") {
+		deletenotification (id: \"63263dc0-acc6-4c6f-8949-bc97eeafc58c\") {
 			id
 		} 
 	}"
