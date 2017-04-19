@@ -46,9 +46,9 @@ module.exports = class entityController {
 
     }
 
-	//Technical Debt:  We need a listBySecondaryIndex method.
+		//Technical Debt:  We need a listBySecondaryIndex method.
 
-	//ACL enabled
+		//ACL enabled
     list(cursor, limit){
 
         return new Promise((resolve, reject) => {
@@ -58,7 +58,7 @@ module.exports = class entityController {
                 if(permission != true){
 
                     return resolve(null);
-					//resolve(permissionutilities.messages.nopermission);
+										//resolve(permissionutilities.messages.nopermission);
 
                 }
 
@@ -79,7 +79,7 @@ module.exports = class entityController {
 
                         if(global.account == '*'){
 
-							//for now, do nothing
+													//for now, do nothing
 
                         }else{
 
@@ -110,8 +110,8 @@ module.exports = class entityController {
                             has_next_page: 'true'
                         }
 
-						// Technical Debt: We should improve the way we validate the data, either by using dedicated
-						// response objects, JSON schema validation or both.
+												// Technical Debt: We should improve the way we validate the data, either by using dedicated
+												// response objects, JSON schema validation or both.
                         if(_.has(data, "Count")){
                             pagination_object.count = data.Count;
                         }
@@ -154,7 +154,7 @@ module.exports = class entityController {
 
     }
 
-	//ACL enabled
+		//ACL enabled
     queryBySecondaryIndex(field, index_value, index_name, cursor, limit){
 
         du.debug('Listing by secondary index', field, index_value, index_name, cursor, limit);
@@ -191,7 +191,7 @@ module.exports = class entityController {
 
                         if(global.account == '*'){
 
-							//for now, do nothing
+													//for now, do nothing
 
                         }else{
 
@@ -236,7 +236,7 @@ module.exports = class entityController {
 
     }
 
-	//ACL enabled
+		//ACL enabled
     getBySecondaryIndex(field, index_value, index_name, cursor, limit){
 
         du.debug(Array.from(arguments));
@@ -270,7 +270,7 @@ module.exports = class entityController {
 
                         if(global.account == '*'){
 
-							//for now, do nothing
+													//for now, do nothing
 
                         }else{
 
@@ -323,7 +323,7 @@ module.exports = class entityController {
 
     }
 
-	//ACL enabled
+		//ACL enabled
     get(id){
 
         return new Promise((resolve, reject) => {
@@ -347,7 +347,7 @@ module.exports = class entityController {
 
                         if(global.account == '*'){
 
-							//for now, do nothing
+													//for now, do nothing
 
                         }else{
 
@@ -482,6 +482,77 @@ module.exports = class entityController {
 
     }
 
+    countCreatedAfterBySecondaryIndex(date_time, field, index_name, cursor, limit) {
+
+        return new Promise((resolve, reject) => {
+
+            return this.can('read').then((permission) => {
+
+                if(permission !== true){
+
+                    return resolve(null);
+
+                }
+
+                let query_parameters = {
+                    condition_expression: '#'+field+' = :index_valuev',
+                    expression_attribute_values: {':index_valuev': global.user.id, ':createdv': date_time},
+                    expression_attribute_names: {},
+                    filter_expression: 'created_at > :createdv'
+                };
+
+                query_parameters.expression_attribute_names['#'+field] = field;
+
+                if(typeof cursor  !== 'undefined') {
+                    query_parameters.ExclusiveStartKey = cursor;
+                }
+
+                if(typeof limit  !== 'undefined'){
+                    query_parameters['limit'] = limit;
+                }
+
+                if(global.disableaccountfilter !== true){
+
+                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+
+                        if(global.account == '*'){
+
+                            //for now, do nothing
+
+                        }else{
+
+                            query_parameters.filter_expression += ' AND account = :accountv';
+                            query_parameters.expression_attribute_values[':accountv'] = global.account;
+
+                        }
+
+                    }
+
+                }else{
+
+                    du.warning('Global Account Filter Disabled');
+
+                }
+
+                du.debug(query_parameters);
+
+                return Promise.resolve(dynamoutilities.countRecords(this.table_name, query_parameters, index_name, (error, data) => {
+
+                    if(_.isError(error)){
+
+                        return reject(error);
+
+                    }
+
+                    return resolve({ count: data});
+
+                }));
+
+            });
+
+        });
+    }
+
     //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
     //ACL enabled
     create(entity){
@@ -502,7 +573,7 @@ module.exports = class entityController {
 
                     }
 
-					//if(!_.has(entity, 'account') && _.has(global, 'account')){
+										//if(!_.has(entity, 'account') && _.has(global, 'account')){
                     if(!_.has(entity, 'account')){
 
                         du.debug('No account specified in the entity record');
@@ -534,7 +605,7 @@ module.exports = class entityController {
 
                         if(global.account == '*'){
 
-							//for now, do nothing
+													//for now, do nothing
 
                         }else{
 
@@ -590,8 +661,8 @@ module.exports = class entityController {
 
     }
 
-	//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
-	//ACL enabled
+		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
+		//ACL enabled
     update(entity){
 
         return new Promise((resolve, reject) => {
@@ -623,7 +694,7 @@ module.exports = class entityController {
 
                     if(global.account == '*'){
 
-						//for now, do nothing
+											//for now, do nothing
 
                     }else{
 
@@ -686,7 +757,7 @@ module.exports = class entityController {
 
     }
 
-	//NOT ACL enabled
+		//NOT ACL enabled
     delete(id){
 
         return new Promise((resolve, reject) => {
@@ -710,7 +781,7 @@ module.exports = class entityController {
 
                         if(global.account == '*'){
 
-							//for now, do nothing
+													//for now, do nothing
 
                         }else{
 
@@ -766,7 +837,7 @@ module.exports = class entityController {
 
     }
 
-	//ACL enabled
+		//ACL enabled
     validate(object, object_type){
 
         du.debug('Validating:', object_type, object);
@@ -779,13 +850,7 @@ module.exports = class entityController {
 
                 du.debug('Is not a string: ', object_type);
 
-                object_type = this.descriptive_name;
-
-            }
-
-            if(object_type.length > 5 && (object_type.substr(object_type.length - 5) !== '.json')){
-
-                object_type += '.json';
+                var object_type = this.descriptive_name;
 
             }
 

@@ -21,7 +21,7 @@ describe('lib/notification-utilities', () => {
         mockery.deregisterAll();
     });
 
-    describe('validateNotificationObject', () => {
+    describe('validateCreateNotificationObject', () => {
         let valid_object = {
             account: '*',
             type: 'any',
@@ -36,10 +36,9 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.account;
 
-            return NotificationUtilities.validateNotificationObject(notification_object).then((result) => {
+            return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
-                expect(result.valid).to.be.false;
-                return expect(result.errors[0]).to.equal('account is mandatory.');
+                return expect(error.message).to.equal('One or more validation errors occurred.');
             });
         });
 
@@ -50,10 +49,9 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.type;
 
-            return NotificationUtilities.validateNotificationObject(notification_object).then((result) => {
+            return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
-                expect(result.valid).to.be.false;
-                return expect(result.errors[0]).to.equal('type is mandatory.');
+                return expect(error.message).to.equal('One or more validation errors occurred.');
             });
         });
 
@@ -64,10 +62,9 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.action;
 
-            return NotificationUtilities.validateNotificationObject(notification_object).then((result) => {
+            return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
-                expect(result.valid).to.be.false;
-                return expect(result.errors[0]).to.equal('action is mandatory.');
+                return expect(error.message).to.equal('One or more validation errors occurred.');
             });
         });
 
@@ -78,16 +75,15 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.message;
 
-            return NotificationUtilities.validateNotificationObject(notification_object).then((result) => {
+            return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
-                expect(result.valid).to.be.false;
-                return expect(result.errors[0]).to.equal('message is mandatory.');
+                return expect(error.message).to.equal('One or more validation errors occurred.');
             });
         });
 
         it('should allow valid object', () => {
-            return NotificationUtilities.validateNotificationObject(valid_object).then((result) => {
-                expect(result.valid).to.be.true;
+            return NotificationUtilities.validateCreateNotificationObject(valid_object).then((result) => {
+                expect(result).to.be.defined;
             });
         });
 
@@ -116,7 +112,7 @@ describe('lib/notification-utilities', () => {
 
             return NotificationUtilities.createNotificationsForAccount(notification_object).catch((error) => {
                 // then
-                return expect(error.message).to.equal('account is mandatory.');
+                return expect(error.message).to.equal('One or more validation errors occurred.');
             });
         });
 
@@ -169,7 +165,7 @@ describe('lib/notification-utilities', () => {
 
             return NotificationUtilities.createNotificationForAccountAndUser(notification_object).catch((error) => {
                 // then
-                return expect(error.message).to.equal('user is mandatory.');
+                return expect(error.message).to.equal('User is mandatory.');
             });
         });
 
@@ -179,7 +175,6 @@ describe('lib/notification-utilities', () => {
                 create: (notification_object) => {
                     expect(notification_object).to.be.defined;
                     expect(notification_object.id).to.be.defined;
-                    expect(notification_object.created).to.be.defined;
                     expect(notification_object.user).to.equal(valid_object.user);
                     expect(notification_object.account).to.equal(valid_object.account);
                     expect(notification_object.type).to.equal(valid_object.type);
