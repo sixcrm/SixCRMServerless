@@ -51,18 +51,18 @@ class createOrderController extends endpointController{
     execute(event){
 
         return this.preprocessing((event))
-		.then(this.acquireBody)
-		.then(this.validateInput)
-		.then(this.getOrderInfo)
-		.then(this.updateCustomer)
-		.then(this.getTransactionInfo)
-		.then(this.createOrder)
-		.then(this.postOrderProcessing)
-		.then((pass_through) => this.handleNotifications(pass_through))
-		.catch((error) => {
-    du.error(error);
-    throw error;
-});
+      		.then(this.acquireBody)
+      		.then(this.validateInput)
+      		.then(this.getOrderInfo)
+      		.then(this.updateCustomer)
+      		.then(this.getTransactionInfo)
+      		.then(this.createOrder)
+      		.then(this.postOrderProcessing)
+      		.then((pass_through) => this.handleNotifications(pass_through))
+      		.catch((error) => {
+          du.error(error);
+          throw error;
+      });
 
     }
 
@@ -108,12 +108,12 @@ class createOrderController extends endpointController{
             }
 
 
-			//Technical Debt: Are these ever attached?
+			      //Technical Debt: Are these ever attached?
             if(params.email && !validator.isEmail(params.email)){
                 validation.errors.push({message: '"email" field must be a email address.'});
             }
 
-			//Technical Debt: Are these ever attached?
+			      //Technical Debt: Are these ever attached?
             if(params.shipping_email && !validator.isEmail(params.shipping_email)){
                 validation.errors.push({message: '"shipping_email" field must be a email address.'});
             }
@@ -229,7 +229,7 @@ class createOrderController extends endpointController{
         var getCustomer = customerController.get(info.session.customer);
         var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.schedulesToPurchase);
 
-		// Note:  This creates the rebill for NOW such that we have a rebill to append the transaction to.
+		    // Note:  This creates the rebill for NOW such that we have a rebill to append the transaction to.
         var getRebills = rebillController.createRebills(info.session, info.schedulesToPurchase, 0);
 
         promises.push(getCustomer);
@@ -242,16 +242,18 @@ class createOrderController extends endpointController{
             info.transactionProducts = promises[1];
             info.rebills = promises[2];
 
-			//more validation
+			      //more validation
             if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
- 			 	throw new Error('No available customer.');
+ 			 	        throw new Error('No available customer.');
             }
 
-			//Technical Debt: refactor this to use the transaction products above....
+			      //Technical Debt: refactor this to use the transaction products above....
             info.amount = productScheduleController.productSum(0, info.schedulesToPurchase);
 
             return info;
+
         });
+
     }
 
 
@@ -300,23 +302,25 @@ class createOrderController extends endpointController{
 		//Technical Debt: hack, we need to support multiple schedules in a single order
         var rebill = info.rebills[0];
 
+        du.info(rebill);
+
         var promises = [];
         var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
         var updateSession = sessionController.updateSessionProductSchedules(info.session, info.schedulesToPurchase);
         var rebillUpdates = rebillController.updateRebillTransactions(rebill, transactions);
 
-		//Technical Debt:  This is deprecated.  Instead, add the session id object to the rebill queue
-        var createNextRebills = rebillController.createRebills(info.session, info.schedulesToPurchase);
+		    //Technical Debt:  This is deprecated.  Instead, add the session id object to the rebill queue
+        //var createNextRebills = rebillController.createRebills(info.session, info.schedulesToPurchase);
 
         promises.push(addRebillToQueue);
-        promises.push(createNextRebills);
+        //promises.push(createNextRebills);
         promises.push(updateSession);
         promises.push(rebillUpdates);
 
         return Promise.all(promises).then((promises) => {
 
             var rebills_added_to_queue = promises[0];
-            var next_rebills = promises[1];
+            //var next_rebills = promises[1];
             var updated_session = promises[2];
             var updateRebills = promises[3];
 

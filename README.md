@@ -18,7 +18,7 @@
 
 3. Search
 
-- Unit Testing 
+- Unit Testing
 - Integration Testing
 
 4. UserACLs/Registration/Authentication
@@ -64,7 +64,7 @@ Configure your AWS credentials:
 aws_access_key_id=XXX
 aws_secret_access_key=YYY
 ```
-Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot you.
+Where XXX and YYY are your actual credentials. Ask Timothy to generate them for you.
 
 ~/.aws/config
 ```
@@ -98,7 +98,7 @@ To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb exec
 To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  Note that you will need to specify the `endpoint-url`, i.e. `aws dynamodb list-tables --endpoint-url http://localhost:8001`.
 
 If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --stage {stage}`.
- 
+
 To start a local SQS server, make sure the file `tools/elasticmq/runLocalSqs.sh` in the project root is executable (`chmod u+x tools/elasticmq/runLocalSqs.sh`)
 and run it (`tools/elasticmq/runLocalSqs.sh`). It will download and run the local ElasticMQ server which is compatible with SQS.
 You can use it as an Amazon SQS instance, including calling methods documented in the Amazon SQS API Reference: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/Welcome.html
@@ -131,4 +131,4 @@ In order to run linter, execute `npm run lint`.
 Rules are defined in `.eslintrs.js` file in the project root. You can check the available rules at http://eslint.org/docs/rules/
 Rules with level `warn` will not break the deploy, but `error` will.
 
-In order to disable rules in code (for example for false positives, or old deprecated code) read http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments 
+In order to disable rules in code (for example for false positives, or old deprecated code) read http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments
