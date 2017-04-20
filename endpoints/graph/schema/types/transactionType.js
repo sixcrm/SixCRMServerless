@@ -1,3 +1,4 @@
+'use strict';
 const GraphQLList = require('graphql').GraphQLList;
 const transactionController = require('../../../../controllers/Transaction.js');
 const GraphQLString = require('graphql').GraphQLString;

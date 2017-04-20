@@ -1,3 +1,4 @@
+'use strict';
 let searchHitType = require('./searchHitType');
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInt = require('graphql').GraphQLInt;

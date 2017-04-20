@@ -1,3 +1,4 @@
+'use strict';
 const roleController = require('../../../../controllers/Role.js');
 let permissionsType = require('./permissionsType');
 const GraphQLString = require('graphql').GraphQLString;

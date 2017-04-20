@@ -1,3 +1,4 @@
+'use strict';
 let notificationInputType = require('./notificationInputType');
 let notificationType = require('./notificationType');
 let shippingReceiptInputType = require('./shippingReceiptInputType');

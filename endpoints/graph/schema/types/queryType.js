@@ -1,3 +1,4 @@
+'use strict';
 let notificationListType = require('./notificationListType');
 let notificationCountType = require('./notificationCountType');
 let notificationType = require('./notificationType');

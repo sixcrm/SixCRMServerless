@@ -1,3 +1,4 @@
+'use strict';
 let merchantProviderType = require('./merchantProviderType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

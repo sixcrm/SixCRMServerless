@@ -1,3 +1,4 @@
+'use strict';
 const shippingReceiptController = require('../../../../controllers/ShippingReceipt.js');
 const _  = require('underscore');
 const transactionController = require('../../../../controllers/Transaction.js');

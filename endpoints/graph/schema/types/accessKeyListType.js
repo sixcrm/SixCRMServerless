@@ -1,3 +1,4 @@
+'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 let accessKeyType = require('./accessKeyType');

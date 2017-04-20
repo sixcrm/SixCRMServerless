@@ -1,3 +1,4 @@
+'use strict';
 let paginationType = require('./paginationType');
 let notificationType = require('./notificationType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;

@@ -1,3 +1,4 @@
+'use strict';
 let merchantProviderConfigurationType = require('./merchantProviderConfigurationType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;

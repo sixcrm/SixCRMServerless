@@ -1,3 +1,4 @@
+'use strict';
 let paginationType = require('./paginationType');
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 let roleType = require('./roleType');

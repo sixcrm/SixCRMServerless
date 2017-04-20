@@ -1,3 +1,4 @@
+'use strict';
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;

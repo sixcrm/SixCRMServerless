@@ -1,3 +1,4 @@
+'use strict';
 const GraphQLList = require('graphql').GraphQLList;
 const sessionController = require('../../../../controllers/Session.js');
 const GraphQLString = require('graphql').GraphQLString;

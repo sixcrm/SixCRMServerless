@@ -1,3 +1,4 @@
+'use strict';
 let merchantProviderConfigurationInputType = require('./merchantProviderConfigurationInputType');
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

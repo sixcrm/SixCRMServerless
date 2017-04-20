@@ -1,3 +1,4 @@
+'use strict';
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;

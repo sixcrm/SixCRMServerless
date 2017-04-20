@@ -1,3 +1,4 @@
+'use strict';
 let paginationType = require('./paginationType');
 let fulfillmentProviderType = require('./fulfillmentProviderType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;

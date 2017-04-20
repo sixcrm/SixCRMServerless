@@ -1,3 +1,4 @@
+'use strict';
 let merchantProviderProcessorsEnum = require('./merchantProviderProcessorsEnum');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

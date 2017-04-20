@@ -1,3 +1,4 @@
+'use strict';
 let transactionType = require('./transactionType');
 let productScheduleType = require('./productScheduleType');
 let sessionType = require('./sessionType');

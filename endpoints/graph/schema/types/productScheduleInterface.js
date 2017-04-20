@@ -1,3 +1,4 @@
+'use strict';
 let productScheduleType = require('./productScheduleType');
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

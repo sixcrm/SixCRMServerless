@@ -1,3 +1,4 @@
+'use strict';
 const productScheduleController = require('../../../../controllers/ProductSchedule.js');
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

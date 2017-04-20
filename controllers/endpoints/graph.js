@@ -181,7 +181,7 @@ class graphController {
 
         return new Promise((resolve, reject) => {
 
-            var SixSchema = require('../../endpoints/graph/schema.js');
+            var SixSchema = require('../../endpoints/graph/schema');
 
             graphql(SixSchema, query).then((result) => {
 
