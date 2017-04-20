@@ -18,7 +18,7 @@ createDomain()
 .then(indexDocuments)
 .then(du.highlight('Complete'))
 .catch((error) => {
-  throw new Error(error);
+    throw new Error(error);
 });
 
 function createDomain() {

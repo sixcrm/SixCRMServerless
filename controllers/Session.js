@@ -161,9 +161,9 @@ class sessionController extends entityController {
 
                                         return transactionController.getProducts(transaction).then((products) => {
 
-                                    return resolve(products);
+                                            return resolve(products);
 
-                                });
+                                        });
 
                                     });
 
@@ -173,9 +173,9 @@ class sessionController extends entityController {
 
                                 }).catch((error) => {
 
-                            return reject(error);
+                                    return reject(error);
 
-                        });
+                                });
 
                             }
 

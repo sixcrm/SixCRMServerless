@@ -5,224 +5,225 @@ const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
 const permissionutilities = require('../../lib/permission-utilities.js');
 
 class searchController {
-	
-	constructor(){
-		
+
+    constructor(){
+
 		//Technical Debt:  This needs to be configured.
-		this.entity_types = {
-			product: 'product', 
-			campaign: 'campaign', 
-			creditcard: 'credit_card', 
-			customer: 'customer', 
-			productschedule: 'product_schedule', 
-			merchantprovider: 'merchant_provider',
-			shippingreceipt: 'shipping_receipt',
-			transaction: 'transaction'
-		};
-		
-	}
-	
-	search(search_input){
-		
-		return this.retrieveResults(search_input).then((results) => this.flattenResults(results));
-		
-	}
-	
-	appendFilters(search_input){
-		
-		let promises = [];
-		promises.push(this.createAccountFilter());
-		promises.push(this.createActionFilter());
+        this.entity_types = {
+            product: 'product',
+            campaign: 'campaign',
+            creditcard: 'credit_card',
+            customer: 'customer',
+            productschedule: 'product_schedule',
+            merchantprovider: 'merchant_provider',
+            shippingreceipt: 'shipping_receipt',
+            transaction: 'transaction'
+        };
 
-		return Promise.all(promises).then((promises) => {
+    }
 
-			let account_filter = promises[0];
-			let action_filter = promises[1];
-			let complete_filter = '';
+    search(search_input){
 
-			du.debug('account_filter', account_filter);
-			du.debug('action_filter', action_filter);
+        return this.retrieveResults(search_input).then((results) => this.flattenResults(results));
 
-			if(_.has(search_input, 'filterQuery')){
-				complete_filter = this.assembleFilter([account_filter, action_filter, search_input['filterQuery']]);
-			}else{
-				complete_filter = this.assembleFilter([account_filter, action_filter]);
-			}
+    }
 
-			search_input['filterQuery'] = complete_filter;
+    appendFilters(search_input){
 
-			return search_input;
+        let promises = [];
 
-		});
+        promises.push(this.createAccountFilter());
+        promises.push(this.createActionFilter());
 
-	}
-	
+        return Promise.all(promises).then((promises) => {
+
+            let account_filter = promises[0];
+            let action_filter = promises[1];
+            let complete_filter = '';
+
+            du.debug('account_filter', account_filter);
+            du.debug('action_filter', action_filter);
+
+            if(_.has(search_input, 'filterQuery')){
+                complete_filter = this.assembleFilter([account_filter, action_filter, search_input['filterQuery']]);
+            }else{
+                complete_filter = this.assembleFilter([account_filter, action_filter]);
+            }
+
+            search_input['filterQuery'] = complete_filter;
+
+            return search_input;
+
+        });
+
+    }
+
 	//Technical Debt:  What happens when all arguments are empty strings?
-	assembleFilter(string_arguments){
-		
-		if(string_arguments.length > 0){
-						
-			let filter_arguments = '(and '+string_arguments.join('')+')';
-			
-			return filter_arguments;
-			
-		}
-		
-	}
-	
-	createActionFilter(){
-		
-		du.debug('Append Action Filter');
-		
-		let promises = [];
+    assembleFilter(string_arguments){
 
-		for(var key in this.entity_types){
+        if(string_arguments.length > 0){
 
-			promises.push(permissionutilities.validatePermissions('read', key));
+            let filter_arguments = '(and '+string_arguments.join('')+')';
 
-		}
+            return filter_arguments;
 
-		return Promise.all(promises).then((promises) => {
+        }
 
-			let entity_type_keys = Object.keys(this.entity_types);
+    }
 
-			let action_filters = [];
+    createActionFilter(){
 
-			for(var i in promises){
-				if(promises[i]){
-					action_filters.push('(term field=entity_type \''+this.entity_types[entity_type_keys[i]]+'\')');
-				}
-			}
+        du.debug('Append Action Filter');
 
-			du.warning(action_filters);
+        let promises = [];
 
-			if(action_filters.length > 0){
+        for(var key in this.entity_types){
 
-				let action_filter = '(or '+action_filters.join('')+')';
+            promises.push(permissionutilities.validatePermissions('read', key));
 
-				return action_filter;
+        }
 
-			}else{
+        return Promise.all(promises).then((promises) => {
 
-				return '';
+            let entity_type_keys = Object.keys(this.entity_types);
 
-			}
+            let action_filters = [];
 
-		});
-				
-	}
-	
-	createAccountFilter(){
-		
-		du.debug('Create Account Filter.');
-		
-		let account_filter = false;
+            for(var i in promises){
+                if(promises[i]){
+                    action_filters.push('(term field=entity_type \''+this.entity_types[entity_type_keys[i]]+'\')');
+                }
+            }
 
-		if(_.has(global, 'account') && global.account !== '*'){
+            du.warning(action_filters);
 
-			account_filter = '(term field=account \''+global.account+'\')';
+            if(action_filters.length > 0){
 
-		}
+                let action_filter = '(or '+action_filters.join('')+')';
 
-		du.debug('Account Filter:', account_filter);
+                return action_filter;
 
-		if(account_filter == false){
+            }else{
 
-			return Promise.resolve('');
+                return '';
 
-		}else{
+            }
 
-			return Promise.resolve(account_filter);
+        });
 
-		}
-			
-	}
-	
-	retrieveResults(search_input){
-		
-		return new Promise((resolve, reject) => {
-			
-			return this.appendFilters(search_input).then((search_input) => {
-				
-				return cloudsearchutilities.search(search_input).then((results) => {
-				
-					du.highlight(results);
-					
-					results = this.serializeFacets(results);
-					
+    }
+
+    createAccountFilter(){
+
+        du.debug('Create Account Filter.');
+
+        let account_filter = false;
+
+        if(_.has(global, 'account') && global.account !== '*'){
+
+            account_filter = '(term field=account \''+global.account+'\')';
+
+        }
+
+        du.debug('Account Filter:', account_filter);
+
+        if(account_filter == false){
+
+            return Promise.resolve('');
+
+        }else{
+
+            return Promise.resolve(account_filter);
+
+        }
+
+    }
+
+    retrieveResults(search_input){
+
+        return new Promise((resolve, reject) => {
+
+            return this.appendFilters(search_input).then((search_input) => {
+
+                return cloudsearchutilities.search(search_input).then((results) => {
+
+                    du.highlight(results);
+
+                    results = this.serializeFacets(results);
+
 					//results = this.flattenResults(results);
-					
-					du.highlight('Flattened Results', results);
-				
-					return resolve(results);
-				
-				}).catch((error) => {
-				
-					du.warning('Search Error: '+error);
-				
-					return reject(error);
-				
-				});
-			
-			});
-			
-		});
-		
-	}
-	
-	serializeFacets(results){
-		
-		if(_.has(results, 'facets')){
-			
-			results['facets'] = JSON.stringify(results.facets);
-			
-		}
-		
-		return results;
-		
-	}
-	
-	flattenResults(results){
-		
-		du.debug('Flattening Search Results');
 
-		if(_.has(results, 'hits') && _.has(results.hits, 'hit') && _.isArray(results.hits.hit)){
+                    du.highlight('Flattened Results', results);
 
-			let flattened_hits = [];
+                    return resolve(results);
 
-			results.hits.hit.forEach((result) => {
+                }).catch((error) => {
 
-				var flattened_hit = {id:null, fields:{}};
+                    du.warning('Search Error: '+error);
 
-				for(var k in result){
+                    return reject(error);
 
-					if(k != 'fields'){
+                });
 
-						flattened_hit[k] = result[k];
+            });
 
-					}else{
+        });
+
+    }
+
+    serializeFacets(results){
+
+        if(_.has(results, 'facets')){
+
+            results['facets'] = JSON.stringify(results.facets);
+
+        }
+
+        return results;
+
+    }
+
+    flattenResults(results){
+
+        du.debug('Flattening Search Results');
+
+        if(_.has(results, 'hits') && _.has(results.hits, 'hit') && _.isArray(results.hits.hit)){
+
+            let flattened_hits = [];
+
+            results.hits.hit.forEach((result) => {
+
+                var flattened_hit = {id:null, fields:{}};
+
+                for(var k in result){
+
+                    if(k != 'fields'){
+
+                        flattened_hit[k] = result[k];
+
+                    }else{
 
 						//Technical Debt:  Note that AWS returns some strange data types here...
-						flattened_hit[k] = JSON.stringify(result[k]);
+                        flattened_hit[k] = JSON.stringify(result[k]);
 
-					}
+                    }
 
-				}
+                }
 
-				flattened_hits.push(flattened_hit);
+                flattened_hits.push(flattened_hit);
 
-			});
+            });
 
-			results.hits['hit'] = flattened_hits;
+            results.hits['hit'] = flattened_hits;
 
-		}
+        }
 
-		du.debug('Flattened Results', results);
+        du.debug('Flattened Results', results);
 
-		return Promise.resolve(results);
-		
-	}
-	
+        return Promise.resolve(results);
+
+    }
+
 }
 
 module.exports = new searchController();
