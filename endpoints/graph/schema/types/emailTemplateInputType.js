@@ -1,0 +1,15 @@
+const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLString = require('graphql').GraphQLString;
+const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
+
+module.exports.graphObj = new GraphQLInputObjectType({
+    name: 'EmailTemplateInput',
+    fields: () => ({
+        id:					{ type: new GraphQLNonNull(GraphQLString) },
+        name:				{ type: new GraphQLNonNull(GraphQLString) },
+        subject:			{ type: new GraphQLNonNull(GraphQLString) },
+        body:				{ type: new GraphQLNonNull(GraphQLString) },
+        type:				{ type: new GraphQLNonNull(GraphQLString) },
+        smtp_provider:		{ type: new GraphQLNonNull(GraphQLString) }
+    })
+});
