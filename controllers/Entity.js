@@ -46,7 +46,112 @@ module.exports = class entityController {
 
     }
 
-		//Technical Debt:  We need a listBySecondaryIndex method.
+    listBySecondaryIndex(field, index_value, index_name, cursor, limit){
+
+        return new Promise((resolve, reject) => {
+
+            return this.can('read').then((permission) => {
+
+                if(permission != true){
+
+                    return resolve(null);
+									//resolve(permissionutilities.messages.nopermission);
+
+                }
+
+                var query_parameters = {filter_expression: null, expression_attribute_values: null};
+
+                if(typeof cursor  !== 'undefined'){
+                    query_parameters.ExclusiveStartKey = { id: cursor };
+                }
+
+                if(typeof limit  !== 'undefined'){
+                    query_parameters['limit'] = limit;
+                }
+
+                if(global.disableaccountfilter !== true){
+
+                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+
+
+                        if(global.account == '*'){
+
+												//for now, do nothing
+
+                        }else{
+
+                            query_parameters.filter_expression = 'account = :accountv';
+                            query_parameters.expression_attribute_values = {':accountv':global.account};
+
+                        }
+
+                    }
+
+                }else{
+
+                    du.warning('Global Account Filter Disabled');
+
+                }
+
+							//update the query parameters here...
+
+                return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+
+                    if(_.isError(error)){
+                        return reject(error);
+                    }
+
+                    if(_.isObject(data)){
+
+                        var pagination_object = {
+                            count: '',
+                            end_cursor: '',
+                            has_next_page: 'true'
+                        }
+
+											// Technical Debt: We should improve the way we validate the data, either by using dedicated
+											// response objects, JSON schema validation or both.
+                        if(_.has(data, "Count")){
+                            pagination_object.count = data.Count;
+                        }
+
+                        if(_.has(data, "LastEvaluatedKey")){
+                            if(_.has(data.LastEvaluatedKey, "id")){
+                                pagination_object.end_cursor = data.LastEvaluatedKey.id;
+                            }
+                        }
+
+                        if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
+                            pagination_object.has_next_page = 'false';
+                        }
+
+                        if (!_.has(data, "Items") || (!_.isArray(data.Items))) {
+                            return reject(new Error('Data has no items.'));
+                        }
+
+                        if(data.Items.length < 1){
+                            data.Items = null;
+                        }
+
+                        var resolve_object = {
+                            pagination: pagination_object
+                        };
+
+                        resolve_object[this.descriptive_name+'s'] = data.Items;
+
+                        return resolve(resolve_object);
+
+                    } else {
+                        return reject(new Error('Data is not an object.'));
+                    }
+
+                }));
+
+            });
+
+        });
+
+    }
 
 		//ACL enabled
     list(cursor, limit){

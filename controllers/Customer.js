@@ -5,7 +5,9 @@ const du =  require('../lib/debug-utilities.js');
 
 const entityController = require('./Entity.js');
 const creditCardController = require('./CreditCard.js');
-
+const sessionController = require('./Session.js');
+const rebillController = require('./Rebill.js');
+const transactionController = require('./Transaction.js');
 
 class customerController extends entityController {
 
@@ -178,6 +180,70 @@ class customerController extends entityController {
     getCustomerByEmail(email){
 
         return this.getBySecondaryIndex('email', email, 'email-index');
+
+    }
+
+    getCustomerSessions(customer){
+
+        let customer_id = customer;
+
+        if(_.has(customer, 'id')){
+
+            customer_id = customer.id;
+
+        }
+
+        return sessionController.getSessionByCustomerID(customer_id);
+
+    }
+
+    getCustomerRebills(customer){
+
+        let customer_id = customer;
+
+        if(_.has(customer, 'id')){
+
+            customer_id = customer.id;
+
+        }
+
+        return this.getCustomerSessions(customer).then((sessions) => {
+
+            let rebill_promises = sessions.map((session) => rebillController.getRebillsBySessionID(session.id));
+
+            return Promise.all(rebill_promises);
+
+        });
+
+    }
+
+    listTransactionsByCustomer(customer, cursor, limit){
+
+        let customer_id = customer;
+
+        if(_.has(customer, 'id')){
+
+            customer_id = customer.id;
+
+        }
+
+        return this.getCustomerSessions(customer).then((sessions) => {
+
+            let rebill_promises = sessions.map((session) => rebillController.getRebillsBySessionID(session.id));
+
+            return Promise.all(rebill_promises).then((rebills) => {
+
+                let rebill_ids = rebills.map((rebill) => {return rebill.id});
+
+                return transactionController.listBySecondaryIndex('rebill', rebill_ids, 'rebill-index', cursor, limit).then((result) => {
+
+                    return { transactions: result }
+
+          		});
+
+            });
+
+        });
 
     }
 

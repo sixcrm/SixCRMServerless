@@ -1,0 +1,79 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		transactionlistbycustomer (customer:\"24f7c851-29d4-4af9-87c5-0298fa74c689\"){
+			transactions {
+				id,
+				alias,
+				amount,
+				created_at,
+				updated_at,
+				rebill {
+					id,
+					bill_at,
+					amount,
+					parentsession {
+						id,
+						customer {
+							id,
+							firstname,
+							lastname,
+							address {
+								line1,
+								line2,
+								city,
+								state,
+								zip
+							}
+						}
+					},
+					product_schedules {
+						id,
+						schedule {
+							price,
+							start,
+							end,
+							period,
+							product {
+								id
+							}
+						}
+					}
+				},
+				processor_response,
+				products {
+					amount,
+					product {
+						id,
+						name,
+						sku,
+						ship,
+						shipping_delay,
+						fulfillment_provider {
+							id,
+							name,
+							provider,
+							username,
+							password,
+							endpoint
+						}
+					},
+					shippingreceipt {
+						id,
+						created_at,
+						updated_at,
+						status,
+						trackingnumber
+					}
+				}
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}
