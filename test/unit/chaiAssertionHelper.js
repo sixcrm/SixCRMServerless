@@ -1,28 +1,30 @@
 var fs = require('fs');
 
 module.exports = function(chai) {
-	var Assertion = chai.Assertion;
-	Assertion.addChainableMethod('deepEqualProcessor', assertProcessor);
+    var Assertion = chai.Assertion;
 
-	function assertProcessor(basePath, fileName) {
-		var expectedPath = basePath + '/' + fileName + '.expected.json';
-		var expected = require(expectedPath);
+    Assertion.addChainableMethod('deepEqualProcessor', assertProcessor);
 
-		if (this._obj && this._obj.then) {
-			return this._obj.then(saveProcessedAndAssert);
-		} else {
-			return saveProcessedAndAssert(this._obj);
-		}
+    function assertProcessor(basePath, fileName) {
+        var expectedPath = basePath + '/' + fileName + '.expected.json';
+        var expected = require(expectedPath);
 
-		function saveProcessedAndAssert(actual) {
-			var data = actual;
-			if (typeof actual !== 'string') {
-				data = JSON.stringify(actual, null, '	');
-			}
-			fs.writeFileSync(basePath + '/' + fileName + '.processed.json', data);
+        if (this._obj && this._obj.then) {
+            return this._obj.then(saveProcessedAndAssert);
+        } else {
+            return saveProcessedAndAssert(this._obj);
+        }
 
-			chai.assert.deepEqual(actual, expected, "Expected data to equal contents of " + expectedPath);
-		}
-	}
+        function saveProcessedAndAssert(actual) {
+            var data = actual;
+
+            if (typeof actual !== 'string') {
+                data = JSON.stringify(actual, null, '	');
+            }
+            fs.writeFileSync(basePath + '/' + fileName + '.processed.json', data);
+
+            chai.assert.deepEqual(actual, expected, "Expected data to equal contents of " + expectedPath);
+        }
+    }
 };
 

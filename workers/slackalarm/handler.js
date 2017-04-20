@@ -57,6 +57,7 @@ let hookUrl;
 function postMessage(message, callback) {
     const body = JSON.stringify(message);
     const options = url.parse(hookUrl);
+
     options.method = 'POST';
     options.headers = {
         'Content-Type': 'application/json',
@@ -65,6 +66,7 @@ function postMessage(message, callback) {
 
     const postReq = https.request(options, (res) => {
         const chunks = [];
+
         res.setEncoding('utf8');
         res.on('data', (chunk) => chunks.push(chunk));
         res.on('end', () => {
@@ -120,6 +122,7 @@ exports.handler = (event, context, callback) => {
         const cipherText = { CiphertextBlob: encryptedBuf };
 
         const kms = new AWS.KMS();
+
         kms.decrypt(cipherText, (err, data) => {
             if (err) {
                 console.log('Decrypt error:', err); // eslint-disable-line no-console

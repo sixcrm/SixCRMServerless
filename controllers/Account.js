@@ -3,22 +3,22 @@ var entityController = require('./Entity.js');
 
 class accountController extends entityController {
 
-	constructor(){
-		super(process.env.accounts_table, 'account');
-		this.table_name = process.env.accounts_table;
-		this.descriptive_name = 'account';  
-	}
-	
-	getMasterAccount(){
+    constructor(){
+        super(process.env.accounts_table, 'account');
+        this.table_name = process.env.accounts_table;
+        this.descriptive_name = 'account';
+    }
 
-		return Promise.resolve({
+    getMasterAccount(){
+
+        return Promise.resolve({
             "id":"*",
             "name": "Master Account",
             "active":"true"
         });
 
-	}
-	
+    }
+
 }
 
 module.exports = new accountController();

@@ -10,19 +10,20 @@ let now = timestamp.createTimestampSeconds();
 
 let secret_key = site_config.jwt.auth0.secret_key;
 let email = process.argv[2];
+
 if(typeof email == 'undefined'){
-	email = 'super.user@test.com';
+    email = 'super.user@test.com';
 }
 
 let jwt_contents = {
-	"email": "test@test.com",
-	"email_verified": true,
-	"picture": "",
-	"iss": "https://sixcrm.auth0.com/",
-	"sub": "",
-	"aud": "",
-	"exp": (now+3600),
-	"iat": now
+    "email": "test@test.com",
+    "email_verified": true,
+    "picture": "",
+    "iss": "https://sixcrm.auth0.com/",
+    "sub": "",
+    "aud": "",
+    "exp": (now+3600),
+    "iat": now
 };
 
 du.output('Note:  The Auth0 JWT gereated is similiar, but not identical.');

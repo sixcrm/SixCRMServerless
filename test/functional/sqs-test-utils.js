@@ -40,6 +40,7 @@ class SqsTestUtils {
             let result = 0;
 
             let match = regexp.exec(text);
+
             while (match != null) {
                 result += Number(match[1]);
                 match = regexp.exec(text);

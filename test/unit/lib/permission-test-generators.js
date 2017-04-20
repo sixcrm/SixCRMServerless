@@ -34,6 +34,7 @@ class PermissionTestGenerators {
                 }
             }]
         };
+
         PermissionTestGenerators.setGlobalUser(user);
         return user;
     }
@@ -57,6 +58,7 @@ class PermissionTestGenerators {
                 }
             }]
         };
+
         PermissionTestGenerators.setGlobalUser(user);
 
         return user;
@@ -64,6 +66,7 @@ class PermissionTestGenerators {
 
     static givenUserWithDenied(action, entity) {
         let user = PermissionTestGenerators.givenUserWithNoPermissions();
+
         user.acl[0].role.permissions.deny.push(`${entity}/${action}`);
         PermissionTestGenerators.setGlobalUser(user);
 
@@ -72,6 +75,7 @@ class PermissionTestGenerators {
 
     static givenUserWithAllowed(action, entity) {
         let user = PermissionTestGenerators.givenUserWithNoPermissions();
+
         user.acl[0].role.permissions.allow.push(`${entity}/${action}`);
         PermissionTestGenerators.setGlobalUser(user);
 
