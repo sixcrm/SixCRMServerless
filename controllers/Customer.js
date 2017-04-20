@@ -193,7 +193,18 @@ class customerController extends entityController {
 
         }
 
-        return sessionController.getSessionByCustomerID(customer_id);
+      //Technical Debt:  Observe the inelegance of the below solution!
+        if(!_.contains(_.functions(sessionController), 'getSessionByCustomerID')){
+
+            let sessionController = require('./Session.js');
+
+            return sessionController.getSessionByCustomerID(customer_id);
+
+        }else{
+
+            return sessionController.getSessionByCustomerID(customer_id);
+
+        }
 
     }
 
@@ -227,7 +238,10 @@ class customerController extends entityController {
 
         }
 
+        du.info('here');
         return this.getCustomerSessions(customer).then((sessions) => {
+
+            du.info(sessions);
 
             let rebill_promises = sessions.map((session) => rebillController.getRebillsBySessionID(session.id));
 
@@ -235,11 +249,7 @@ class customerController extends entityController {
 
                 let rebill_ids = rebills.map((rebill) => {return rebill.id});
 
-                return transactionController.listBySecondaryIndex('rebill', rebill_ids, 'rebill-index', cursor, limit).then((result) => {
-
-                    return { transactions: result }
-
-          		});
+                return transactionController.listBySecondaryIndex('rebill', rebill_ids, 'rebill-index', cursor, limit);
 
             });
 

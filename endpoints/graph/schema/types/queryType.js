@@ -617,6 +617,30 @@ module.exports.graphObj = new GraphQLObjectType({
       	return transactionController.list(cursor, limit);
             }
         },
+        transactionlistbycustomer: {
+            type: transactionListType.graphObj,
+            args: {
+                customer: {
+                    description: 'The customer identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                limit: {
+                    description: 'limit',
+                    type: GraphQLString
+                },
+                cursor: {
+                    description: 'cursor',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, transaction){
+                var customer = transaction.customer;
+                var cursor = transaction.cursor;
+                var limit = transaction.limit;
+
+                return customerController.listTransactionsByCustomer(customer, cursor, limit);
+            }
+        },
         campaignlist: {
             type: campaignListType.graphObj,
             args: {
