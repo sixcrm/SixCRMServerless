@@ -1,0 +1,47 @@
+const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLObjectType = require('graphql').GraphQLObjectType;
+const GraphQLString = require('graphql').GraphQLString;
+const userACLController = require('../../../../controllers/UserACL.js');
+let accountType = require('./accountType');
+let roleType = require('./roleType');
+let userType = require('./userType');
+
+module.exports.graphObj = new GraphQLObjectType({
+    name: 'UserACL',
+    description: 'A user access control list object.',
+    fields: () => ({
+  	id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the role.',
+  },
+        user:{
+            type: new GraphQLNonNull(userType.graphObj),
+            description: 'The user related to user ACL object',
+            resolve: (user_acl) => {
+                return userACLController.getUser(user_acl);
+            }
+        },
+  	account:{
+      type: new GraphQLNonNull(accountType.graphObj),
+      description: 'The account related to user ACL object',
+      resolve: (user_acl) => {
+      	return userACLController.getAccount(user_acl);
+      }
+  },
+        role:{
+            type: new GraphQLNonNull(roleType.graphObj),
+            description: 'The role related to user ACL object',
+            resolve: (user_acl) => {
+      	return userACLController.getRole(user_acl);
+            }
+        },
+        created_at: {
+	    type: new GraphQLNonNull(GraphQLString),
+            description: 'ISO8601 datetime when the entity was created.',
+        },
+        updated_at: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'ISO8601 datetime when the entity was updated.',
+        }
+    })
+});
