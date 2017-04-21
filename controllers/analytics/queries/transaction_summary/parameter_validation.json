@@ -1,0 +1,16 @@
+{
+	"title": "TransactionSummary",
+	"type": ["object", "array"],
+	"properties": {
+		"start":{
+			"type":"string"
+		},
+		"account":{
+			"type":"string"
+		},
+		"end":{
+			"type":"string"
+		}
+	},
+	"required":["start", "account", "end"]
+}
