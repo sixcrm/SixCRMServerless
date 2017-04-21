@@ -46,7 +46,7 @@ deployment:
       - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
       #- node ./deployment/dynamodb/purge_database.js $CIRCLE_BRANCH 
       - node ./deployment/cloudsearch/deploy.js sixcrm-$CIRCLE_BRANCH
-      - serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
+      - serverless dynamodb install --stage $CIRCLE_BRANCH && node ./deployment/dynamodb/deploy_tables.js $CIRCLE_BRANCH $AWS_REGION
       - serverless deploy --stage $CIRCLE_BRANCH
       - export SIX_VERBOSE=0 && npm run test-integration
       - ./deployment/deploy_development.sh
