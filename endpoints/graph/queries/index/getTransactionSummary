@@ -1,0 +1,17 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		transactionsummary (){
+			transaction_summary {
+				datetime,
+				byprocessorresult {
+					processor_result,
+					sum,
+					count
+				}
+			}
+		}
+	}"
+}

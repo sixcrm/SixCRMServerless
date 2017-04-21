@@ -29,17 +29,17 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The date of the transaction.',
         },
         rebill: {
-	    type: rebillType.graphObj,
+	        type: rebillType.graphObj,
             description: 'The rebill of the transaction.',
             resolve: transaction => transactionController.getParentRebill(transaction)
         },
         products: {
-	    type: new GraphQLList(transactionProductType.graphObj),
-	    description: 'Products associated with the transaction',
-	    resolve: transaction => transactionController.getTransactionProducts(transaction)
+            type: new GraphQLList(transactionProductType.graphObj),
+            description: 'Products associated with the transaction',
+            resolve: transaction => transactionController.getTransactionProducts(transaction)
         },
         created_at: {
-	    type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',
         },
         updated_at: {

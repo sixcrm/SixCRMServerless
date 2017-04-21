@@ -22,7 +22,7 @@ provider:
 
 plugins:
   - serverless-dynamodb-local
-      
+
 custom:
   dynamodb:
     start:
@@ -70,7 +70,7 @@ functions:
 ########################
 # Backend Graph Endpoint renders entity data to the website
 ########################
-      
+
   graph:
     handler: endpoints/graph/handler.graph
     events:
@@ -109,14 +109,21 @@ functions:
       notifications_read_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_read_table}
       roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
+      redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
+      redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
+      redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
+      redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
+      redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
+      redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
       search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
 
 ########################
 # State Machine Lambdas
 ########################
 
-# Movement Managers 
- 
+# Movement Managers
+
   billtohold:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -129,7 +136,7 @@ functions:
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billtohold}
-      
+
   recovertohold:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -141,7 +148,7 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
-      
+
   holdtopending:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -154,7 +161,7 @@ functions:
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
       failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
-      
+
   pendingfailedtopending:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -166,7 +173,7 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
-      
+
   pendingtoshipped:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -205,7 +212,7 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint} #Technical Debt:  Why is this here?
       archivefilter: 'ALL'
-      
+
   holdtoarchive:
     handler: workers/forwardmessage/handler.forwardmessage
     events:
@@ -253,7 +260,7 @@ functions:
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
       archivefilter: 'ALL'
-      
+
 # Workers
 
   sesnotifications:
@@ -266,7 +273,7 @@ functions:
       stage: ${opt:stage}
       ses_notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.ses_notifications_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-  
+
   slackalarm:
     handler: workers/slackalarm/exports.handler
     events:
@@ -276,8 +283,8 @@ functions:
     environment:
       stage: ${opt:stage}
       slackChannel: '#lambdas'
-      kmsEncryptedHookUrl: AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ==  
-      
+      kmsEncryptedHookUrl: AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ==
+
   indexentities:
     handler: workers/indexentities/handler.indexentities
     events:
@@ -286,7 +293,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
-      
+
   createrebills:
     handler: workers/createrebills/handler.createrebills
     events:
@@ -300,7 +307,7 @@ functions:
       sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
       product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      
+
   pickrebill:
     handler: workers/pickrebill/handler.pickrebill
     events:
@@ -353,7 +360,7 @@ functions:
       products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      
+
   confirmdelivered:
     handler: workers/confirmdelivered/handler.confirmdelivered
     environment:
@@ -365,7 +372,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
       usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
-  
+
   archivedelivered:
     handler: workers/archive/handler.archive
     environment:
@@ -376,7 +383,7 @@ functions:
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'ALL'
-  
+
   archivehold:
     handler: workers/archive/handler.archive
     environment:
@@ -387,7 +394,7 @@ functions:
       shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'NOSHIP'
-      
+
   archiverecover:
     handler: workers/archive/handler.archive
     environment:
@@ -483,7 +490,7 @@ functions:
         notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         stage: ${opt:stage}
-  
+
   createupsell:
     handler: endpoints/createupsell/handler.createupsell
     events:
@@ -519,7 +526,7 @@ functions:
         notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         stage: ${opt:stage}
-        
+
   confirmorder:
     handler: endpoints/confirmorder/handler.confirmorder
     events:
@@ -546,7 +553,7 @@ functions:
         notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         stage: ${opt:stage}
-        
+
 ########################
 # Resource definitions for required system resources
 ########################
@@ -623,28 +630,28 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '30'
         MaximumMessageSize: '262144'
-    SixEncryptionKey: 
+    SixEncryptionKey:
         Type: AWS::KMS::Key
-        Properties: 
+        Properties:
           Description: 'A sample key'
-          KeyPolicy: 
+          KeyPolicy:
             Version: '2012-10-17'
             Id: 'key-default-1'
-            Statement: 
-              - 
+            Statement:
+              -
                 Sid: 'Allow administration of the key'
                 Effect: 'Allow'
-                Principal: 
+                Principal:
                   AWS: 'arn:aws:iam::068070110666:user/TimothyDalbey'
-                Action: 
+                Action:
                   - 'kms:*'
                 Resource: '*'
-              - 
+              -
                 Sid: 'Allow use of the key'
                 Effect: 'Allow'
-                Principal: 
+                Principal:
                   AWS: 'arn:aws:iam::068070110666:role/sixtransaction-development-us-east-1-lambdaRole'
-                Action: 
+                Action:
                   - 'kms:Encrypt'
                   - 'kms:Decrypt'
                   - 'kms:ReEncrypt*'

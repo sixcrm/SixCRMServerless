@@ -24,13 +24,13 @@ class graphController {
     }
 
     validateInput(event){
-
+        du.debug('Validate Input');
 		// Technical Debt: We might want to do some actual validation here.
         return Promise.resolve(event);
     }
 
     parseEvent(event){
-
+        du.debug('Parse Event');
         if(!_.isObject(event)){
 
             event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
@@ -54,7 +54,7 @@ class graphController {
     }
 
     acquireUser(event){
-
+        du.debug('Acquire User');
         return new Promise((resolve, reject) => {
 
 			//event coming from Lambda authorizer
@@ -112,7 +112,7 @@ class graphController {
     }
 
     acquireAccount(event){
-
+        du.debug('Acquire Account');
         var pathParameters;
 
         if(_.isObject(event) && _.has(event, "pathParameters")){
@@ -142,7 +142,7 @@ class graphController {
     }
 
     setGlobalAccount(event){
-
+        du.debug('Set Global Account');
         if(_.has(event, 'account')){
 
             global.account = event.account;
@@ -154,7 +154,7 @@ class graphController {
     }
 
     acquireQuery(event){
-
+        du.debug('Acquire Query');
         var query;
 
         if(_.isObject(event) && _.has(event, "body")){
@@ -174,15 +174,14 @@ class graphController {
     }
 
     graphQuery(event) {
-
+        du.debug('Graph Query');
         var query = event.parsed_query;
 
-        du.debug('graph query', query);
-
         return new Promise((resolve, reject) => {
-
+            du.info('here2');
             var SixSchema = require('../../endpoints/graph/schema');
 
+            du.info('here');
             graphql(SixSchema, query).then((result) => {
 
                 if(_.has(result, "errors")){

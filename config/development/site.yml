@@ -7,7 +7,7 @@ jwt:
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
   #Technical Debt:  The site key may be deprecated...
   site_key: 'anwdadawdjaklwdlakd'
-  
+
 dynamodb:
   access_keys_table: 'access_keys'
   sessions_table: 'sessions'
@@ -22,7 +22,7 @@ dynamodb:
   loadbalancers_table: 'loadbalancers'
   product_schedules_table: 'product_schedules'
   affiliates_table: 'affiliates'
-  campaigns_table: 'campaigns' 
+  campaigns_table: 'campaigns'
   merchant_providers_table: 'merchant_providers'
   fulfillment_providers_table: 'fulfillment_providers'
   email_templates_table: 'email_templates'
@@ -34,7 +34,7 @@ dynamodb:
   notifications_table: 'notifications'
   notifications_read_table: 'notifications_read'
   endpoint: ''
-  
+
 lambda:
   endpoint: ''
   function_names:
@@ -49,7 +49,7 @@ lambda:
     createrebillstoarchive: 'sixtransaction-development-createrebills'
     recovertoarchive: 'sixtransaction-development-archiverecover'
     indextoarchive: 'sixtransaction-development-indexentities'
-    
+
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill'
   bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill-failed'
@@ -62,13 +62,22 @@ sqs:
   rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
   rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure'
   search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchindex'
-  
+
 nmi:
   username: 'demo'
   password: 'password'
   endpoint: 'https://secure.networkmerchants.com/api/transact.php'
-  
+
 shipping_providers:
   usps:
     user_id: '005SIXCR2114'
     password: '392VM80MW850'
+
+redshift:
+  user: 'admin'
+  database: 'dev'
+  password: 'Jagodica9'
+  host: 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com'
+  port: 5439
+  max: 10
+  idleTimeoutMillis: 30000

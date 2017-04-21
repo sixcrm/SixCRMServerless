@@ -6,6 +6,7 @@ var Validator = require('jsonschema').Validator;
 
 const timestamp = require('../lib/timestamp.js');
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
+const redshiftutilities = require('../lib/redshift-utilities.js');
 const permissionutilities = require('../lib/permission-utilities.js');
 const du = require('../lib/debug-utilities.js');
 const indexingutilities = require('../lib/indexing-utilities.js');

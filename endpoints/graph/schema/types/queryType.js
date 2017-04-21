@@ -42,6 +42,7 @@ let sessionType = require('./sessionType');
 let rebillType = require('./rebillType');
 let shippingReceiptType = require('./shippingReceiptType');
 let transactionType = require('./transactionType');
+let transactionSummaryType = require('./transactionSummaryType');
 let userType = require('./userType');
 let suggestInputType = require('./suggestInputType');
 let suggestResultsType = require('./suggestResultsType');
@@ -76,6 +77,8 @@ const roleController = require('../../../../controllers/Role.js');
 const searchController = require('../../../../controllers/endpoints/search.js');
 const suggestController = require('../../../../controllers/endpoints/suggest.js');
 const notificationController = require('../../../../controllers/Notification');
+
+const analyticsController = require('../../../../controllers/analytics/Analytics.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -615,6 +618,45 @@ module.exports.graphObj = new GraphQLObjectType({
                 var limit = transaction.limit;
 
       	return transactionController.list(cursor, limit);
+            }
+        },
+        transactionsummary: {
+            type: transactionSummaryType.graphObj,
+            args: {
+                start: {
+                  description: 'The transaction summary start daytime.',
+                  type: GraphQLString,
+                end: {
+                  description: 'The transaction summary start daytime.',
+                  type: GraphQLString,
+                },
+                campaigns:{
+                  description: 'The transaction summary campaign filter list.',
+                  type: new GraphQLList(GraphQLString)
+                },
+                affiliates:{
+                  description: 'The transaction summary affiliate filter list.',
+                  type: new GraphQLList(GraphQLString)
+                },
+                merchantproviders:{
+                  description: 'The transaction summary merchant provider filter list.',
+                  type: new GraphQLList(GraphQLString)
+                },
+                productschedules:{
+                  description: 'The transaction summary product schedule filter list.',
+                  type: new GraphQLList(GraphQLString)
+                },
+                transactiontype:{
+                  description: 'The transaction summary product transaction type filter list.',
+                  type: new GraphQLList(GraphQLString)
+                },
+                processorresult:{
+                  description: 'The transaction summary processor result filter list.',
+                  type: new GraphQLList(GraphQLString)
+                }
+            },
+            resolve: function(root, transaction_summary_args){
+      	       return analyticsController.getTransactionSummary(transaction_summary_args);
             }
         },
         transactionlistbycustomer: {
