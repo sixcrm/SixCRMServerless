@@ -3,12 +3,12 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		transactionsummary (){
-			transaction_summary {
+		transactionsummary {
+			transactions {
 				datetime,
 				byprocessorresult {
 					processor_result,
-					sum,
+					amount,
 					count
 				}
 			}

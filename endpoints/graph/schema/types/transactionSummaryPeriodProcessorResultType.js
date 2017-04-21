@@ -6,14 +6,14 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'TransactionSummaryPeriodProcessorResultType',
+    name: 'transactionSummaryPeriodProcessorResultType',
     description: 'Transaction summary period processor result.',
     fields: () => ({
         processor_result:{
             type: new GraphQLNonNull(GraphQLString),
             description: 'Processor response type.',
         },
-        sum:{
+        amount:{
             type: new GraphQLNonNull(GraphQLFloat),
             description: 'The dollar sum of the transactions processed.',
         },

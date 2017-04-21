@@ -178,10 +178,13 @@ class graphController {
         var query = event.parsed_query;
 
         return new Promise((resolve, reject) => {
+
             du.info('here2');
+
             var SixSchema = require('../../endpoints/graph/schema');
 
             du.info('here');
+
             graphql(SixSchema, query).then((result) => {
 
                 if(_.has(result, "errors")){
