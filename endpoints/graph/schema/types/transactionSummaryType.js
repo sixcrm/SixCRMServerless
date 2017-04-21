@@ -7,7 +7,7 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'TransactionSummaryType',
     description: 'Transaction summary',
     fields: () => ({
-        transaction_summary: {
+        transactions: {
             type: new GraphQLList(transactionSummaryPeriodType.graphObj),
             description: 'The transaction period summaries',
         }

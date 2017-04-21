@@ -13,7 +13,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The period datetime (end) for the summary.',
         },
-        byprocessorresult:{
+        byprocessorresult: {
             type: new GraphQLList(transactionSummaryPeriodProcessorResultType.graphObj),
             description: 'A transaction period processor result summary.',
         },
