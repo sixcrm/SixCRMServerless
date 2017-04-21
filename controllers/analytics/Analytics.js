@@ -4,7 +4,7 @@ const _ = require('underscore');
 var timestamp = require('../../lib/timestamp.js');
 
 const du = require('../../lib/debug-utilities.js');
-const redshift = require('../../lib/redshift-utilities.js');
+const redshiftutilities = require('../../lib/redshift-utilities.js');
 
 class AnalyticsController {
 
@@ -14,52 +14,56 @@ class AnalyticsController {
 
     getTransactionSummary(){
 
-        du.debug('Get Transaction Summary');
+      du.debug('Get Transaction Summary');
+
+      return redshiftutilities.query('',{}).then((results) => {
 
         return Promise.resolve({
-            transactions:[
+          transactions:[
+            {
+              datetime: "2017-04-20T20:57:32.802Z",
+              byprocessorresult: [
                 {
-                    datetime: "2017-04-20T20:57:32.802Z",
-                    byprocessorresult: [
-                        {
-                            processor_result: "success",
-                            count: 14,
-                            amount: 450.99
-                        },
-                        {
-                            processor_result: "decline",
-                            count: 2,
-                            amount: 32.98
-                        },
-                        {
-                            processor_result: "error",
-                            count: 2,
-                            amount: 32.98
-                        }
-                    ]
+                  processor_result: "success",
+                  count: 14,
+                  amount: 450.99
                 },
                 {
-                    datetime: "2017-04-21T17:41:41.117Z",
-                    byprocessorresult: [
-                        {
-                            processor_result: "success",
-                            count: 14,
-                            amount: 450.99
-                        },
-                        {
-                            processor_result: "decline",
-                            count: 2,
-                            amount: 32.98
-                        },
-                        {
-                            processor_result: "error",
-                            count: 2,
-                            amount: 32.98
-                        }
-                    ]
+                  processor_result: "decline",
+                  count: 2,
+                  amount: 32.98
+                },
+                {
+                  processor_result: "error",
+                  count: 2,
+                  amount: 32.98
                 }
-            ]
+              ]
+            },
+            {
+              datetime: "2017-04-21T17:41:41.117Z",
+              byprocessorresult: [
+                {
+                  processor_result: "success",
+                  count: 14,
+                  amount: 450.99
+                },
+                {
+                  processor_result: "decline",
+                  count: 2,
+                  amount: 32.98
+                },
+                {
+                  processor_result: "error",
+                  count: 2,
+                  amount: 32.98
+                }
+              ]
+            }
+          ]
         });
+
+      });
 
     }
 
