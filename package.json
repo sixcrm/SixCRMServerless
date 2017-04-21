@@ -20,9 +20,10 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
-  	"aws-sdk": "^2.7.13",
-    "chai-as-promised": "^6.0.0",
+    "aws-sdk": "^2.7.13",
+    "bluebird": "^3.5.0",
     "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
     "chai-json-schema": "^1.4.0",
     "eslint": "^3.18.0",
     "eslint-plugin-promise": "^3.5.0",
