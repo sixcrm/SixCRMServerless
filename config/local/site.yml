@@ -82,3 +82,8 @@ redshift:
   port: 5439
   max: 10
   idleTimeoutMillis: 30000
+
+#kinesis:
+  #firehose:
+  #  redshift:
+  #  elasticsearch:  

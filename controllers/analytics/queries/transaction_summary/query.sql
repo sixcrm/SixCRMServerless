@@ -1,7 +1,10 @@
-select /* Aggregation by processor amount  */
-result, sum(amount) as sum_amount , count(*) as transaction_count
-from
-f_transactions
-where account = $1::text
-and stamp between date'3.1.2017' and date'3.31.2017'
-group by result
+SELECT result,
+      SUM(amount) AS sum_amount,
+      COUNT(*) AS transaction_count,
+      DATE_TRUNC('month', stamp) AS day
+FROM f_transactions
+WHERE account = '{{account}}'
+AND   stamp BETWEEN DATE '{{start}}' AND DATE '{{end}}'
+GROUP BY result,
+        DATE_TRUNC('month',stamp)
+ORDER BY 4

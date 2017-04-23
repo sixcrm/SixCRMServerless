@@ -1,7 +1,6 @@
 'use strict';
 const _ = require('underscore');
 const fs = require('fs');
-var validator = require('validator');
 var Validator = require('jsonschema').Validator;
 
 var timestamp = require('../../lib/timestamp.js');
@@ -13,14 +12,14 @@ const redshiftutilities = require('../../lib/redshift-utilities.js');
 
 class AnalyticsController {
 
+    //Technical Debt: pick meaningful query (day, minute, month) based on the period (difference between the start and end dates) queried.
     getTransactionSummary(parameters){
+
+        du.debug('Get Transaction Summary');
 
         return new Promise((resolve, reject) => {
 
-        //Technical Debt: pick meaningful query based on the period (difference between the start and end date) queried.
             let query_name = 'transaction_summary';
-
-            du.debug('Get Transaction Summary');
 
             this.getQueryString(query_name).then((query) => {
 
@@ -28,15 +27,11 @@ class AnalyticsController {
 
                 this.validateQueryParameters(query_name, parameters).then((validated) => {
 
-            //Technical Debt:
-            //add additional validation: start and end adhere to some date format
-            //assume account is a UUIDv4 and the user has access to it (graph controller assures us..., I think)
+                    query = this.parseQueryParameters(query, parameters);
 
-                    let ordered_parameters = [parameters.account, parameters.start, parameters.end];
+                    du.highlight('Query:', query);
 
-                    du.highlight('Query:', query, 'Parameters:', ordered_parameters);
-
-                    redshiftutilities.query(query, ordered_parameters).then((results) => {
+                    redshiftutilities.query(query, []).then((results) => {
 
                         du.debug('Query Results:', results);
 
@@ -100,6 +95,22 @@ class AnalyticsController {
 
     }
 
+    parseQueryParameters(query, parameters){
+
+        du.debug('Parse Query Parameters');
+
+        for (var parameter_name in parameters) {
+
+            var re = new RegExp('{{'+parameter_name+'}}',"g");
+
+            query = query.replace(re, parameters[parameter_name]);
+
+        }
+
+        return query;
+
+    }
+
     validateQueryParameters(query_name, object){
 
         du.debug('Validating:', query_name+' query parameters', object);
@@ -108,13 +119,14 @@ class AnalyticsController {
 
             return this.getQueryParameterValidationString(query_name).then((query_validation_string) => {
 
-                var v = new Validator();
+                var v, validation;
 
-                var validation;
+                du.highlight(object, query_validation_string);
 
                 try{
 
                     v = new Validator();
+
                     validation = v.validate(object, query_validation_string);
 
                 }catch(e){
@@ -123,18 +135,22 @@ class AnalyticsController {
 
                 }
 
-                du.info(validation);
-
                 if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
 
                     var error = {
                         message: 'One or more validation errors occurred.',
-                        issues: validation.errors.map((e) => { return e.message; })
+                        issues: validation.errors.map((e) => { return e.property+' '+e.message; })
                     };
+
+                    du.warning('Input parameters do not validate.', error);
 
                     return reject(error);
 
                 }
+
+                du.debug(validation);
+
+                du.highlight('Input parameters validate.');
 
                 return resolve(true);
 

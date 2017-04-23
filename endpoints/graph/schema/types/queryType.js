@@ -626,11 +626,11 @@ module.exports.graphObj = new GraphQLObjectType({
             args: {
                 start: {
                     description: 'The transaction summary start daytime.',
-                    type: GraphQLString
+                    type: new GraphQLNonNull(GraphQLString)
                 },
                 end: {
                     description: 'The transaction summary start daytime.',
-                    type: GraphQLString,
+                    type: new GraphQLNonNull(GraphQLString)
                 },
                 campaigns:{
                     description: 'The transaction summary campaign filter list.',

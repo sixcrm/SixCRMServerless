@@ -1,9 +1,9 @@
 {
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
-	"pathParameters": "{ \"account\": \"*\" }",
+	"pathParameters": "{ \"account\": \"6d444eee-9eb6-4fe9-97dd-b8a3dacd7a6d\" }",
 	"body":"
 	query {
-		transactionsummary (start:\"3.1.2017\", end:\"3.31.2017\") {
+		transactionsummary (start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-31T17:23:43.043Z\") {
 			transactions {
 				datetime,
 				byprocessorresult {
