@@ -41,21 +41,21 @@ d2 = datetime.strptime('4/21/2017 10:00 AM', '%m/%d/%Y %I:%M %p')
 
 # Generate random number of distinct entites customers, credit_card
 
-customers = [uuid.uuid1() for x in range(1000)]
-credit_card = [uuid.uuid1() for x in range(10000)]
-merch_processor = [uuid.uuid1() for x in range(10000)]
-campaign = [uuid.uuid1() for x in range(10000)]
-affiliate = [uuid.uuid1() for x in range(10000)]
-account = [uuid.uuid1() for x in range(10000)]
-schedule = [uuid.uuid1() for x in range(10000)]
+customers = [uuid.uuid4() for x in range(1000)]
+credit_card = [uuid.uuid4() for x in range(10000)]
+merch_processor = [uuid.uuid4() for x in range(10000)]
+campaign = [uuid.uuid4() for x in range(10000)]
+affiliate = [uuid.uuid4() for x in range(10000)]
+account = [uuid.uuid4() for x in range(10000)]
+schedule = [uuid.uuid4() for x in range(10000)]
 
 
-g=open("test1.csv","w",newline="\n", encoding="utf-8")
+g=open("test.csv","w",newline="\n", encoding="utf-8")
 w=csv.writer(g)
 w.writerow(('id','stamp','customer','creditcard','merchprocessor','campaign','affiliate','amount','result','account','type','schedule'))
 
 for i in range(12):
-    w.writerow((uuid.uuid1(),random_date(d1,d2),random.choice(customers),random.choice(credit_card),
+    w.writerow((uuid.uuid4(),random_date(d1,d2),random.choice(customers),random.choice(credit_card),
       random.choice(merch_processor),random.choice(campaign),random.choice(affiliate),random.uniform(1, 10000),
       random.choice(["success", "decline", "error"]),random.choice(account),random.choice(["rebill", "new"]),random.choice(schedule) ))
 g.close()
