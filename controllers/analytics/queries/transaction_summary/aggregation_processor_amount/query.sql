@@ -12,7 +12,7 @@ FROM (SELECT *
               GROUP BY RESULT,
                        DATE_TRUNC('{{period}}',stamp) sw) rt
           ON (ft.result = rt.result
-         AND DATE_TRUNC ('day',ft.stamp) = rt_stamp)
+         AND DATE_TRUNC ('{{period}}',ft.stamp) = rt_stamp)
 WHERE rt.rt_stamp BETWEEN DATE '{{start}}' AND DATE '{{end}}'
 GROUP BY rt.result,
          rt_stamp
