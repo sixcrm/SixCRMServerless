@@ -647,6 +647,14 @@ module.exports.graphObj = new GraphQLObjectType({
                 customer: {
                     description: 'The customer identifier',
                     type: new GraphQLNonNull(GraphQLString)
+                },
+                limit: {
+                    description: 'limit',
+                    type: GraphQLString
+                },
+                cursor: {
+                    description: 'cursor',
+                    type: GraphQLString
                 }
             },
             resolve: function(root, session){
