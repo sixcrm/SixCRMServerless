@@ -257,6 +257,30 @@ class customerController extends entityController {
 
     }
 
+    listCustomerSessions(customer, cursor, limit) {
+        let customer_id = customer;
+
+        if(_.has(customer, 'id')){
+
+            customer_id = customer.id;
+
+        }
+
+        // Technical Debt:  Observe the inelegance of the below solution!
+        // For some reason graph is unable to call 'listSessionsByCustomerID' unless we do this. Why?
+        if(!_.contains(_.functions(sessionController), 'listSessionsByCustomerID')){
+
+            let sessionController = require('./Session.js');
+
+            return sessionController.listSessionsByCustomerID(customer_id, cursor, limit);
+
+        }else{
+
+            return sessionController.listSessionsByCustomerID(customer_id, cursor, limit);
+
+        }
+
+    }
 }
 
 module.exports = new customerController();

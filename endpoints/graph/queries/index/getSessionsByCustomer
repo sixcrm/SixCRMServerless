@@ -1,0 +1,129 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		sessionlistbycustomer (customer:\"24f7c851-29d4-4af9-87c5-0298fa74c689\"){
+			sessions {
+                id,
+                created_at,
+                updated_at,
+                customer {
+                    id,
+                    firstname,
+                    lastname,
+                    address {
+                        line1,
+                        line2,
+                        city,
+                        state,
+                        zip
+                    }
+                },
+                product_schedules {
+                    id,
+                    schedule {
+                        price,
+                        start,
+                        end,
+                        period,
+                        product {
+                            id,
+                            name,
+                            sku,
+                            ship,
+                            shipping_delay,
+                            fulfillment_provider {
+                                id,
+                                name,
+                                provider,
+                                username,
+                                password,
+                                endpoint
+                            }
+                        }
+                    }
+                },
+                rebills {
+                    id,
+                    bill_at,
+                    product_schedules {
+                        id,
+                        schedule {
+                            price,
+                            start,
+                            end,
+                            period,
+                            product {
+                                id,
+                                name,
+                                sku,
+                                ship,
+                                shipping_delay,
+                                fulfillment_provider {
+                                    id,
+                                    name,
+                                    provider,
+                                    username,
+                                    password,
+                                    endpoint
+                                }
+                            }
+                        }
+                    },
+                    transactions {
+                        id,
+                        processor_response,
+                        amount
+                    }
+                },
+                campaign {
+                    id,
+                    name,
+                    productschedules {
+                        id,
+                        schedule {
+                            price,
+                            start,
+                            end,
+                            period,
+                            product {
+                                id,
+                                name,
+                                sku,
+                                ship,
+                                shipping_delay,
+                                fulfillment_provider {
+                                    id,
+                                    name,
+                                    provider,
+                                    username,
+                                    password,
+                                    endpoint
+                                }
+                            }
+                        }
+                    }
+                    loadbalancer {
+                        id,
+                        merchantproviderconfigurations {
+                            merchantprovider {
+                                id,
+                                username,
+                                password,
+                                endpoint,
+                                processor
+                            },
+                            distribution
+                        }
+                    }
+                }
+            },
+            pagination {
+                count,
+                end_cursor,
+                has_next_page
+            }
+		},
+	}"
+}

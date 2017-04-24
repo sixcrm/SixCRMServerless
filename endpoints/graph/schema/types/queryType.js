@@ -641,6 +641,22 @@ module.exports.graphObj = new GraphQLObjectType({
                 return customerController.listTransactionsByCustomer(customer, cursor, limit);
             }
         },
+        sessionlistbycustomer: {
+            type: sessionListType.graphObj,
+            args: {
+                customer: {
+                    description: 'The customer identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, session){
+                let customer = session.customer;
+                let cursor = session.cursor;
+                let limit = session.limit;
+
+                return customerController.listCustomerSessions(customer, cursor, limit);
+            }
+        },
         campaignlist: {
             type: campaignListType.graphObj,
             args: {
