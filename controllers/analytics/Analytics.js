@@ -16,12 +16,12 @@ class AnalyticsController {
 
         this.period_options = [
         {name:"minute", seconds: 60},
-        {name:"5-minute", seconds: 300},
-        {name:"30-minute", seconds: 1800},
         {name:"hour", seconds: 3600},
         {name:"day",seconds: 86400},
         {name:"week", seconds: 604800},
-        {name:"month", second: 2678400}
+        {name:"month", second: 2678400},
+        {name:"quarter", second: 7776000},
+        {name:"year", second: 30412800}
         ];
 
     }
@@ -32,15 +32,17 @@ class AnalyticsController {
 
         return new Promise((resolve, reject) => {
 
-            let query_name = 'transaction_summary';
+            const query_name = 'transaction_summary';
 
             let period_selection = this.periodSelection(parameters.start, parameters.end, 30);
 
-            this.getQueryString(query_name).then((query) => {
+            parameters = this.appendPeriod(parameters, period_selection);
 
-                parameters = this.appendAccount(parameters);
+            parameters = this.appendAccount(parameters);
 
-                this.validateQueryParameters(query_name, parameters).then((validated) => {
+            this.validateQueryParameters(query_name, parameters).then((validated) => {
+
+                this.getQueryString(query_name).then((query) => {
 
                     query = this.parseQueryParameters(query, parameters);
 
@@ -265,6 +267,16 @@ class AnalyticsController {
         du.debug('Append Account');
 
         parameters['account'] = global.account;
+
+        return parameters;
+
+    }
+
+    appendPeriod(parameters, period){
+
+        du.debug('Append Period');
+
+        parameters['period'] = period.name;
 
         return parameters;
 
