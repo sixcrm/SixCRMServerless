@@ -10,7 +10,7 @@ FROM (SELECT *
               FROM d_dates,
                    d_results
               GROUP BY RESULT,
-                       DATE_TRUNC('{{period}}',stamp) sw) rt
+                       DATE_TRUNC('{{period}}',stamp)) rt
           ON (ft.result = rt.result
          AND DATE_TRUNC ('{{period}}',ft.stamp) = rt_stamp)
 WHERE rt.rt_stamp BETWEEN DATE '{{start}}' AND DATE '{{end}}'
