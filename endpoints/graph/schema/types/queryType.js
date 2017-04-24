@@ -632,19 +632,39 @@ module.exports.graphObj = new GraphQLObjectType({
                     description: 'The transaction summary start daytime.',
                     type: new GraphQLNonNull(GraphQLString)
                 },
-                campaigns:{
+                campaign:{
                     description: 'The transaction summary campaign filter list.',
                     type: new GraphQLList(GraphQLString)
                 },
-                affiliates:{
+                affiliate:{
                     description: 'The transaction summary affiliate filter list.',
                     type: new GraphQLList(GraphQLString)
                 },
-                merchantproviders:{
+                subaffiliate_1:{
+                    description: 'The transaction summary subaffiliate 1 filter list.',
+                    type: new GraphQLList(GraphQLString)
+                },
+                subaffiliate_2:{
+                    description: 'The transaction summary subaffiliate 2 filter list.',
+                    type: new GraphQLList(GraphQLString)
+                },
+                subaffiliate_3:{
+                    description: 'The transaction summary subaffiliate 3 filter list.',
+                    type: new GraphQLList(GraphQLString)
+                },
+                subaffiliate_4:{
+                    description: 'The transaction summary subaffiliate 4 filter list.',
+                    type: new GraphQLList(GraphQLString)
+                },
+                subaffiliate_5:{
+                    description: 'The transaction summary subaffiliate 5 filter list.',
+                    type: new GraphQLList(GraphQLString)
+                },
+                merchantprovider:{
                     description: 'The transaction summary merchant provider filter list.',
                     type: new GraphQLList(GraphQLString)
                 },
-                productschedules:{
+                productschedule:{
                     description: 'The transaction summary product schedule filter list.',
                     type: new GraphQLList(GraphQLString)
                 },
