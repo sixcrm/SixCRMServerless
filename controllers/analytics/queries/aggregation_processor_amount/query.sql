@@ -1,7 +1,7 @@
 SELECT rt.result,
        COALESCE(SUM(amount),0) AS sum_amount,
        COALESCE(COUNT(*),0) AS transaction_count,
-       DATE_TRUNC('{{period}}',rt.rt_stamp) AS hour
+       DATE_TRUNC('{{period}}',rt.rt_stamp) AS {{period}}
 FROM (SELECT *
       FROM f_transactions
       WHERE account = '{{account}}') ft
