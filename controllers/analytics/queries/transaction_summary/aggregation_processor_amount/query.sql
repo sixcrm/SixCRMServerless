@@ -1,4 +1,4 @@
-SELECT /* Aggregation by result and data spoofing */ rt.result,
+SELECT rt.result,
        COALESCE(SUM(amount),0) AS sum_amount,
        COALESCE(COUNT(*),0) AS transaction_count,
        DATE_TRUNC('{{period}}',rt.rt_stamp) AS hour
