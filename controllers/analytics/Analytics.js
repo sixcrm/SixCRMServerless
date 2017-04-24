@@ -12,7 +12,20 @@ const redshiftutilities = require('../../lib/redshift-utilities.js');
 
 class AnalyticsController {
 
-    //Technical Debt: pick meaningful query (day, minute, month) based on the period (difference between the start and end dates) queried.
+    constructor(){
+
+        this.period_options = [
+        {name:"minute", seconds: 60},
+        {name:"5-minute", seconds: 300},
+        {name:"30-minute", seconds: 1800},
+        {name:"hour", seconds: 3600},
+        {name:"day",seconds: 86400},
+        {name:"week", seconds: 604800},
+        {name:"month", second: 2678400}
+        ];
+
+    }
+
     getTransactionSummary(parameters){
 
         du.debug('Get Transaction Summary');
@@ -20,6 +33,8 @@ class AnalyticsController {
         return new Promise((resolve, reject) => {
 
             let query_name = 'transaction_summary';
+
+            let period_selection = this.periodSelection(parameters.start, parameters.end, 30);
 
             this.getQueryString(query_name).then((query) => {
 
@@ -92,6 +107,35 @@ class AnalyticsController {
             });
 
         });
+
+    }
+
+    periodSelection(start, end, target_period_count){
+
+        du.debug('Period Selection');
+
+        let start_timestamp = timestamp.dateToTimestamp(start);
+        let end_timestamp = timestamp.dateToTimestamp(end);
+        let best_period = null;
+        let best_period_score = null;
+
+        this.period_options.forEach((period) => {
+
+            let this_period_delta = Math.abs((((end_timestamp - start_timestamp)/period.seconds) - target_period_count));
+
+            if(_.isNull(best_period_score) || this_period_delta < best_period_score){
+
+                best_period_score = this_period_delta;
+
+                best_period = period;
+
+            }
+
+        });
+
+        du.debug('Selected Period: ', best_period);
+
+        return best_period;
 
     }
 
@@ -217,6 +261,8 @@ class AnalyticsController {
     }
 
     appendAccount(parameters){
+
+        du.debug('Append Account');
 
         parameters['account'] = global.account;
 
