@@ -54,7 +54,7 @@ g=open("test.csv","w",newline="\n", encoding="utf-8")
 w=csv.writer(g)
 w.writerow(('id','stamp','customer','creditcard','merchprocessor','campaign','affiliate','amount','result','account','type','schedule'))
 
-for i in range(12):
+for i in range(1000000):
     w.writerow((uuid.uuid4(),random_date(d1,d2),random.choice(customers),random.choice(credit_card),
       random.choice(merch_processor),random.choice(campaign),random.choice(affiliate),random.uniform(1, 10000),
       random.choice(["success", "decline", "error"]),random.choice(account),random.choice(["rebill", "new"]),random.choice(schedule) ))

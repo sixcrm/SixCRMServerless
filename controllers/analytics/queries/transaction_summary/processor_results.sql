@@ -54,3 +54,23 @@ AND   stamp BETWEEN DATE '03.01.2017' AND DATE '03.31.2017'
 GROUP BY result,
          DATE_TRUNC('month',stamp)
 ORDER BY 4;
+
+SELECT /* Aggregation by result and data spoofing */ rt.result,
+       COALESCE(SUM(amount),0) AS sum_amount,
+       COALESCE(COUNT(*),0) AS transaction_count,
+       DATE_TRUNC('day',rt.rt_stamp) AS hour
+FROM (SELECT *
+      FROM f_transactions
+      WHERE account = 'ffdb91c2-d2dc-4301-86a4-a48f64c6c503') ft
+  RIGHT JOIN (SELECT RESULT,
+                     DATE_TRUNC('day',stamp) rt_stamp
+              FROM d_dates,
+                   d_results
+              GROUP BY RESULT,
+                       DATE_TRUNC('day',stamp) sw) rt
+          ON (ft.result = rt.result
+         AND DATE_TRUNC ('day',ft.stamp) = rt_stamp)
+WHERE rt.rt_stamp BETWEEN DATE '03.01.2017' AND DATE '03.31.2017'
+GROUP BY rt.result,
+         rt_stamp
+ORDER BY 4;
