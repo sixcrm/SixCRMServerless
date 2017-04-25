@@ -1,6 +1,13 @@
 'use strict';
+const _  = require('underscore');
+const GraphQLObjectType = require('graphql').GraphQLObjectType;
+const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
+
 let notificationSettingListType = require('./notificationSettingListType');
 let notificationSettingType = require('./notificationSettingType');
+let notificationSettingDefaultType = require('./notificationSettingDefaultType');
 let notificationListType = require('./notificationListType');
 let notificationCountType = require('./notificationCountType');
 let notificationType = require('./notificationType');
@@ -51,11 +58,7 @@ let suggestResultsType = require('./suggestResultsType');
 let searchInputType = require('./searchInputType');
 let searchResultsType = require('./searchResultsType');
 let customerType = require('./customerType');
-const _  = require('underscore');
-const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLString = require('graphql').GraphQLString;
-const GraphQLList = require('graphql').GraphQLList;
+
 const sessionController = require('../../../../controllers/Session.js');
 const productController = require('../../../../controllers/Product.js');
 const customerController = require('../../../../controllers/Customer.js');
@@ -1019,7 +1022,12 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, notification_setting) {
                 return notificationSettingController.list(notification_setting.limit, notification_setting.cursor);
             }
+        },
+        notificationsettingdefault: {
+            type: notificationSettingDefaultType.graphObj,
+            resolve: (root, notificationdefault) => {
+                return notificationSettingController.getDefaultProfile();
+            }
         }
-
     })
 });

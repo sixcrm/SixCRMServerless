@@ -176,7 +176,7 @@ class graphController {
     graphQuery(event) {
 
         du.debug('Graph Query');
-        
+
         var query = event.parsed_query;
 
         return new Promise((resolve, reject) => {
