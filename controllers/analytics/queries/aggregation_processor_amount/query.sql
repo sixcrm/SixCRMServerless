@@ -11,7 +11,7 @@ FROM (SELECT *
                    d_results
               GROUP BY RESULT,
                        DATE_TRUNC('{{period}}',stamp)) rt
-          ON (ft.result = rt.result
+          ON (ft.result = rt.result)
          AND DATE_TRUNC ('{{period}}',ft.stamp) = rt_stamp)
 WHERE rt.rt_stamp BETWEEN DATE '{{start}}' AND DATE '{{end}}'
 GROUP BY rt.result,
