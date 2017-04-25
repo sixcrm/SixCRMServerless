@@ -1,0 +1,16 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		notificationsettinglist {
+			notificationsettings {
+		    id,
+		    user,
+		   	settings,
+				created_at,
+				updated_at
+			}
+		}
+	}"
+}

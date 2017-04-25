@@ -1,0 +1,14 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	{
+		notificationsetting (user: \"timothy.dalbey@sixcrm.com\") {
+			id,
+      user,
+			settings,
+			created_at,
+			updated_at
+		}
+	}"
+}

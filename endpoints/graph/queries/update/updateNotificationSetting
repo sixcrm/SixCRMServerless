@@ -1,0 +1,14 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation {
+		updatenotificationsetting (notificationsetting: { user: \"super.user@test.com\", settings:\"{}\"}) {
+			id,
+			user,
+      settings
+			created_at,
+			updated_at
+		}
+	}"
+}

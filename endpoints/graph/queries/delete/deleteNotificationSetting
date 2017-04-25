@@ -1,0 +1,10 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation {
+		deletenotificationsetting (user: \"super.user@test.com\") {
+			id
+		}
+	}"
+}
