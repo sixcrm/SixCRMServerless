@@ -21,7 +21,7 @@ class notificationSettingController extends entityController {
                     key: 'account',
                     name:'Account',
                     description: 'Account related notifications',
-                    default: true,
+                    display: true,
                     notifications: [
                         {
                             key: 'invitation_sent',
@@ -41,7 +41,7 @@ class notificationSettingController extends entityController {
                     key: 'crm',
                     name:"CRM",
                     description: "CRM related notifications",
-                    default: true,
+                    display: true,
                     notifications:[
                         {
                             key:'lead',

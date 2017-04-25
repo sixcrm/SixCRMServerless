@@ -8,7 +8,7 @@
 				key,
 	      name,
 	      description,
-	      default,
+	      display,
 	      notifications {
 					key,
 		      name,

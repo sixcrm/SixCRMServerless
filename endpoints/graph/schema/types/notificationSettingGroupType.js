@@ -23,9 +23,9 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The notification description.'
         },
-        default: {
+        display: {
             type: new GraphQLNonNull(GraphQLBoolean),
-            description: 'The notification setting (boolean on/off).'
+            description: 'The notification group display setting.'
         },
         notifications:{
             type: new GraphQLList(notificationSettingSubGroupType.graphObj),
