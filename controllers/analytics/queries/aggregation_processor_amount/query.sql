@@ -4,7 +4,9 @@ SELECT rt.result,
        DATE_TRUNC('{{period}}',rt.rt_stamp) AS {{period}}
 FROM (SELECT *
       FROM f_transactions
-      WHERE account = '{{account}}') ft
+      WHERE 1
+      {{filter}}
+      AND account = '{{account}}') ft
   RIGHT JOIN (SELECT RESULT,
                      DATE_TRUNC('{{period}}',stamp) rt_stamp
               FROM d_dates,
@@ -16,4 +18,4 @@ FROM (SELECT *
 WHERE rt.rt_stamp BETWEEN DATE '{{start}}' AND DATE '{{end}}'
 GROUP BY rt.result,
          rt_stamp
-ORDER BY 4;
+ORDER BY {{period}}
