@@ -3,7 +3,7 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const transactionSummaryPeriodProcessorResultType = require('./TransactionSummaryPeriodProcessorResultType');
+const transactionSummaryPeriodProcessorResultType = require('./transactionSummaryPeriodProcessorResultType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'TransactionSummaryPeriodType',
