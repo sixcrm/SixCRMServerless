@@ -28,7 +28,7 @@ let searchGraph = {
 
 let this_request = request(endpoint);
 
-describe.only('Customer indexing test', function() {
+describe('Customer indexing test', function() {
 
     let test_user = global.test_users[0];
     let test_account = global.test_accounts[0];
