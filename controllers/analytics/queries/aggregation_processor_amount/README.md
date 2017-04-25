@@ -26,8 +26,8 @@ ____
 ### Query notes
 
 Connection to two dimensional tables :
-* `d_dates` - Dimensional table of dates from 01.01.2017 to 01.01.2027
-* `d_results` - Dimensional table of processor results [`success`, `decline`, `error`]
+* `d_datetime` - Dimensional table of dates from 01.01.2017 to 01.01.2027
+* `d_processor_result` - Dimensional table of processor results [`success`, `decline`, `error`]
 
 This is needed to get the empty date list for dates with zero transactions.
 
