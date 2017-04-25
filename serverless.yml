@@ -107,6 +107,7 @@ functions:
       accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
       notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
       notifications_read_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_read_table}
+      notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
       roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}

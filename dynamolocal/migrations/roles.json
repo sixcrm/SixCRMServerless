@@ -53,7 +53,8 @@
 				"account/read",
 				"user/read",
 				"useracl/*",
-				"notification/*"
+				"notification/*",
+        "notificationsetting/*"
         	],
         	"deny":["*"]
         },

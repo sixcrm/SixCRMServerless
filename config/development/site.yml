@@ -33,6 +33,7 @@ dynamodb:
   ses_notifications_table: 'ses_notifications'
   notifications_table: 'notifications'
   notifications_read_table: 'notifications_read'
+  notification_settings_table: 'notification_settings'
   endpoint: ''
 
 lambda:

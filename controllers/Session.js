@@ -301,6 +301,12 @@ class sessionController extends entityController {
 
     }
 
+    listSessionsByCustomerID(customer_id, cursor, limit) {
+
+        return this.listBySecondaryIndex('customer', customer_id, 'customer-index', cursor, limit);
+
+    }
+
     putSession(parameters){
 
         var controller_instance = this;

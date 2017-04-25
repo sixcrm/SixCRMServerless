@@ -20,7 +20,7 @@ module.exports = class entityController {
     constructor(table_name, descriptive_name){
         this.table_name = table_name;
         this.descriptive_name = descriptive_name;
-        this.nonaccounts = ['user', 'role', 'accesskey', 'account', 'fulfillmentprovider'];
+        this.nonaccounts = ['user', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting'];
     }
 
     can(action){
@@ -430,9 +430,11 @@ module.exports = class entityController {
     }
 
 		//ACL enabled
-    get(id){
+    get(id, primary_key){
 
         return new Promise((resolve, reject) => {
+
+            if(_.isNull(primary_key) || _.isUndefined(primary_key)){ primary_key = 'id'; }
 
             return this.can('read').then((permission) => {
 
@@ -443,8 +445,8 @@ module.exports = class entityController {
                 }
 
                 let query_parameters = {
-                    condition_expression: 'id = :idv',
-                    expression_attribute_values: {':idv': id}
+                    condition_expression: primary_key+' = :primary_keyv',
+                    expression_attribute_values: {':primary_keyv': id}
                 };
 
                 if(global.disableaccountfilter !== true){

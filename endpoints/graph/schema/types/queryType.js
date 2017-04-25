@@ -1,4 +1,6 @@
 'use strict';
+let notificationSettingListType = require('./notificationSettingListType');
+let notificationSettingType = require('./notificationSettingType');
 let notificationListType = require('./notificationListType');
 let notificationCountType = require('./notificationCountType');
 let notificationType = require('./notificationType');
@@ -78,6 +80,7 @@ const roleController = require('../../../../controllers/Role.js');
 const searchController = require('../../../../controllers/endpoints/search.js');
 const suggestController = require('../../../../controllers/endpoints/suggest.js');
 const notificationController = require('../../../../controllers/Notification');
+const notificationSettingController = require('../../../../controllers/NotificationSetting');
 
 const analyticsController = require('../../../../controllers/analytics/Analytics.js');
 
@@ -705,6 +708,30 @@ module.exports.graphObj = new GraphQLObjectType({
                 return customerController.listTransactionsByCustomer(customer, cursor, limit);
             }
         },
+        sessionlistbycustomer: {
+            type: sessionListType.graphObj,
+            args: {
+                customer: {
+                    description: 'The customer identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                limit: {
+                    description: 'limit',
+                    type: GraphQLString
+                },
+                cursor: {
+                    description: 'cursor',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, session){
+                let customer = session.customer;
+                let cursor = session.cursor;
+                let limit = session.limit;
+
+                return customerController.listCustomerSessions(customer, cursor, limit);
+            }
+        },
         campaignlist: {
             type: campaignListType.graphObj,
             args: {
@@ -936,9 +963,9 @@ module.exports.graphObj = new GraphQLObjectType({
             }
         },
         notificationcount: {
-  	  type: notificationCountType.graphObj,
+  	       type: notificationCountType.graphObj,
             resolve: function() {
-  	    return notificationController.numberOfUnseenNotifications();
+                return notificationController.numberOfUnseenNotifications();
             }
         },
         notificationlist: {
@@ -956,6 +983,43 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, notification) {
                 return notificationController.listForCurrentUser(notification.limit, notification.cursor);
             }
+        },
+        notificationsetting: {
+            type: notificationSettingType.graphObj,
+            args: {
+                user: {
+                    description: 'user email associated of the notification settings',
+                    type: GraphQLString
+                },
+                id: {
+                    description: 'id of the notification settings',
+                    type: GraphQLString
+                }
+            },
+            resolve: (root, notificationsetting) => {
+                if (_.has(notificationsetting, 'user')) {
+                    return notificationSettingController.get(notificationsetting.user, 'user');
+                } else {
+                    return notificationSettingController.get(notificationsetting.id, 'id');
+                }
+            }
+        },
+        notificationsettinglist: {
+            type: notificationSettingListType.graphObj,
+            args: {
+                limit: {
+                    description: 'limit',
+                    type: GraphQLString
+                },
+                cursor: {
+                    description: 'cursor',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, notification_setting) {
+                return notificationSettingController.list(notification_setting.limit, notification_setting.cursor);
+            }
         }
+
     })
 });

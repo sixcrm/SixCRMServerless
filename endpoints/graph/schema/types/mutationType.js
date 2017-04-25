@@ -1,6 +1,8 @@
 'use strict';
 let notificationInputType = require('./notificationInputType');
 let notificationType = require('./notificationType');
+let notificationSettingType = require('./notificationSettingType');
+let notificationSettingInputType = require('./notificationSettingInputType');
 let shippingReceiptInputType = require('./shippingReceiptInputType');
 let shippingReceiptType = require('./shippingReceiptType');
 let sessionInputType = require('./sessionInputType');
@@ -47,6 +49,7 @@ let userInviteInputType = require('./userInviteInputType');
 let userInviteType = require('./userInviteType');
 let inviteInputType = require('./inviteInputType');
 let userType = require('./userType');
+
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
@@ -72,6 +75,7 @@ const shippingReceiptController = require('../../../../controllers/ShippingRecei
 const accountController = require('../../../../controllers/Account.js');
 const roleController = require('../../../../controllers/Role.js');
 const notificationController = require('../../../../controllers/Notification');
+const notificationSettingController = require('../../../../controllers/NotificationSetting');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Mutation',
@@ -872,6 +876,39 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, notification) => {
                 return notificationController.delete(notification.id);
+            }
+        },
+        createnotificationsetting:{
+            type: notificationSettingType.graphObj,
+            description: 'Creates a new notification setting.',
+            args: {
+                notificationsetting: { type: notificationSettingInputType.graphObj }
+            },
+            resolve: (value, notificationsetting) => {
+                return notificationSettingController.create(notificationsetting.notificationsetting);
+            }
+        },
+        updatenotificationsetting:{
+            type: notificationSettingType.graphObj,
+            description: 'Updates a notification setting.',
+            args: {
+                notificationsetting: { type: notificationSettingInputType.graphObj }
+            },
+            resolve: (value, notificationsetting) => {
+                return notificationSettingController.update(notificationsetting.notificationsetting);
+            }
+        },
+        deletenotificationsetting:{
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a notification setting.',
+            args: {
+                id: {
+                    description: 'User associated with the notification setting',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, notificationsetting) => {
+                return notificationSettingController.delete(notificationsetting.id);
             }
         }
     })
