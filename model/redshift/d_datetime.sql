@@ -1,16 +1,16 @@
 /*
- 24.04.2017 A.Zelen Results dimensional table
- Set distribution style to all, recommended for dimensional tables
+ 24.04.2017 A.Zelen Date dimensional table
+ Set distribution style to all, recommended for dimensional table
  
 */
 
-create table d_processor_result(
-processor_result varchar(16)
-) DISTSTYLE all;
+drop table d_datetime;
+create table d_datetime(
+  datetime TIMESTAMP
+) DISTSTYLE all sortkey (stamp);
 
-COMMENT ON TABLE d_processor_result IS ' 24.04.2017 A.Zelen Results dimensional table Set distribution style to all, recommended for dimensional tables';
-
-insert into d_processor_result(processor_result) values('success');
-insert into d_processor_result(processor_result) values('decline');
-insert into d_processor_result(processor_result) values('error');
+COMMENT ON TABLE d_datetime IS '24.04.2017 A.Zelen Date dimensional table
+ Set distribution style to all, recommended for dimensional table';
+ 
+alter table d_datetimes rename to d_datetime
 
