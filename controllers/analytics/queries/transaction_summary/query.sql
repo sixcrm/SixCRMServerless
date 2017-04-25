@@ -1,13 +1,13 @@
-SELECT result,
-      SUM(amount) AS sum_amount,
-      COUNT(*) AS transaction_count,
-      DATE_TRUNC('{{period}}', stamp) AS {{period}}
+SELECT
+  processor_result,
+  SUM(amount) AS sum_amount,
+  COUNT(*) AS transaction_count,
+  DATE_TRUNC('{{period}}', datetime) AS {{period}}
 FROM f_transactions
 WHERE 1
-{{filter}}
-AND account = '{{account}}'
-AND   stamp BETWEEN DATE '{{start}}' AND DATE '{{end}}'
-AND   ({{campaign}} IS NULL OR campaign IN ({{campaign}}))
-GROUP BY result,
-        DATE_TRUNC('{{period}}',stamp)
+  {{filter}}
+  AND account = '{{account}}'
+  AND   datetime BETWEEN DATE '{{start}}' AND DATE '{{end}}'
+GROUP BY processor_result,
+  DATE_TRUNC('{{period}}',datetime)
 ORDER BY {{period}}

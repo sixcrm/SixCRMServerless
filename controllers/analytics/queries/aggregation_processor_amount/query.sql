@@ -1,8 +1,8 @@
 SELECT
-  rt.result,
+  rt.processor_result,
   COALESCE(SUM(amount),0) AS sum_amount,
   COALESCE(COUNT(*),0) AS transaction_count,
-  DATE_TRUNC('{{period}}',rt.rt_stamp) AS {{period}}
+  DATE_TRUNC('{{period}}',rt.rt_datetime) AS {{period}}
 FROM
   (
     SELECT
@@ -17,21 +17,21 @@ FROM
   RIGHT JOIN
   (
     SELECT
-      RESULT,
-      DATE_TRUNC('{{period}}',stamp) rt_stamp
+      processor_result,
+      DATE_TRUNC('{{period}}',datetime) rt_datetime
     FROM
-      d_dates,
-      d_results
+      d_datetime,
+      d_processor_result
     GROUP BY
-      RESULT,
-      DATE_TRUNC('{{period}}',stamp)
+      processor_result,
+      DATE_TRUNC('{{period}}',datetime)
   ) rt
   ON
-    (ft.result = rt.result AND DATE_TRUNC ('{{period}}',ft.stamp) = rt_stamp)
+    (ft.processor_result = rt.processor_result AND DATE_TRUNC ('{{period}}',ft.datetime) = rt_datetime)
 WHERE
-  rt.rt_stamp BETWEEN DATE '{{start}}' AND DATE '{{end}}'
+  rt.rt_datetime BETWEEN DATE '{{start}}' AND DATE '{{end}}'
 GROUP BY
-  rt.result,
-  rt_stamp
+  rt.processor_result,
+  rt_datetime
 ORDER BY
   {{period}}
