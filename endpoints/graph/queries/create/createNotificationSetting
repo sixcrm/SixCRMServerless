@@ -3,10 +3,9 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation {
-		createnotificationsetting (notificationsetting: { user: \"super.user@test.com\", settings:\"{}\"}) {
+		createnotificationsetting (notificationsetting: { id: \"super.user@test.com\", settings:\"{}\"}) {
 			id,
-			user,
-      settings
+      settings,
 			created_at,
 			updated_at
 		}

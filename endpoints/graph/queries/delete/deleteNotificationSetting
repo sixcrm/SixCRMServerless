@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation {
-		deletenotificationsetting (user: \"super.user@test.com\") {
+		deletenotificationsetting (id: \"super.user@test.com\") {
 			id
 		}
 	}"

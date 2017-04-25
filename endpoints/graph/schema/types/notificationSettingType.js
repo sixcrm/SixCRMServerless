@@ -11,10 +11,6 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the notification.',
         },
-        user: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The id of the user who is an owner of the notification.',
-        },
         settings: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The serialized notification settings for the user .',

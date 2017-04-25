@@ -3,9 +3,8 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	{
-		notificationsetting (user: \"timothy.dalbey@sixcrm.com\") {
+		notificationsetting (id: \"timothy.dalbey@sixcrm.com\") {
 			id,
-      user,
 			settings,
 			created_at,
 			updated_at

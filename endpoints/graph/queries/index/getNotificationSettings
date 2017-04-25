@@ -6,7 +6,6 @@
 		notificationsettinglist {
 			notificationsettings {
 		    id,
-		    user,
 		   	settings,
 				created_at,
 				updated_at
