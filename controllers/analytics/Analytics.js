@@ -15,13 +15,13 @@ class AnalyticsController {
     constructor(){
 
         this.period_options = [
-        {name:"minute", seconds: 60},
-        {name:"hour", seconds: 3600},
-        {name:"day",seconds: 86400},
-        {name:"week", seconds: 604800},
-        {name:"month", second: 2678400},
-        {name:"quarter", second: 7776000},
-        {name:"year", second: 30412800}
+          {name:"minute", seconds: 60},
+          {name:"hour", seconds: 3600},
+          {name:"day",seconds: 86400},
+          {name:"week", seconds: 604800},
+          {name:"month", second: 2678400},
+          {name:"quarter", second: 7776000},
+          {name:"year", second: 30412800}
         ];
 
     }
@@ -43,6 +43,8 @@ class AnalyticsController {
             parameters = this.appendPeriod(parameters, period_selection);
 
             parameters = this.appendAccount(parameters);
+
+            parameters = this.createQueryFilter(parameters, ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5']);
 
             this.validateQueryParameters(query_name, parameters).then((validated) => {
 
@@ -142,6 +144,30 @@ class AnalyticsController {
         du.debug('Selected Period: ', best_period);
 
         return best_period;
+
+    }
+
+    createQueryFilter(parameters, filters_array){
+
+        let filter_array = [];
+
+        filters_array.forEach((filter) => {
+
+            if(_.has(parameters, filter)){
+
+                filter_array.push('AND '+filter+' IN (\''+parameters[filter].join('\',\'')+'\')');
+
+            }
+
+        });
+
+        if(filter_array.length > 0){
+            parameters['filter'] = filter_array.join(' ');
+        }else{
+            parameters['filter'] = ' AND 1 '
+        }
+
+        return parameters;
 
     }
 
