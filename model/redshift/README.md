@@ -4,6 +4,8 @@ ____
 
 ## Model:
 
+![alttext](https://bitbucket.org/sixcrm/sixcrmserverless/src/5aecb04a2e88a370caf9fd20d179de6acc1212f5/model/redshift/?at=enableanalytics/datamart.png)
+
 ### Fact tables
 * `f_transactions` - main fact table of transactional type holds data on transaction level of granularity
 * `f_products` - **IN WORK** fact table of products in transactions
