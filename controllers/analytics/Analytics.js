@@ -26,6 +26,10 @@ class AnalyticsController {
 
     }
 
+    /*
+    * Technical Debt:  Filters need to be integrated into the query
+    */
+
     getTransactionSummary(parameters){
 
         du.debug('Get Transaction Summary');
@@ -52,7 +56,7 @@ class AnalyticsController {
 
                         du.debug('Query Results:', results);
 
-              // Technical Debt: Once the query is of acceptable structure, transform structure into the following JSON structure...
+                        // Technical Debt: Once the query is of acceptable structure, transform structure into the following JSON structure...
                         return resolve({
                             transactions:[
                                 {
