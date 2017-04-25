@@ -31,6 +31,8 @@ Redshift is a pure column store analytical database and as such lacks fatures fo
 * `uuid_functions.sql` - UDF in Redshift Python for generation UUID identifiers
 
 ### Data Definition Language (DDL) scripts
-* `f_transactions` - main fact table of transactional type holds data on transaction level of granularity
-* `d_dates` - Dimensional table of *minutes* from 01.01.2017 to 01.01.2027
-* `d_results` - Dimensional table of processor results [`success`, `decline`, `error`]
+* `f_transactions.sql` - main fact table creation
+* `d_dates.sql` - dimensional table creation
+* `d_results.sql` - dimensional table creation and row insertion
+
+**IN WORK** Change the compression type on columns for better performance
