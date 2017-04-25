@@ -1,7 +1,7 @@
 SELECT
   rt.processor_result,
   COALESCE(SUM(amount),0) AS sum_amount,
-  COALESCE(COUNT(*),0) AS transaction_count,
+  COALESCE(COUNT(ft.id),0) AS transaction_count,
   DATE_TRUNC('{{period}}',rt.rt_datetime) AS {{period}}
 FROM
   (
@@ -34,4 +34,4 @@ GROUP BY
   rt.processor_result,
   rt_datetime
 ORDER BY
-  {{period}}
+  {{period}},processor_result
