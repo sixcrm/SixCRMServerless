@@ -898,6 +898,16 @@ module.exports.graphObj = new GraphQLObjectType({
                 return notificationSettingController.update(notificationsetting.notificationsetting);
             }
         },
+        storenotificationsetting:{
+            type: notificationSettingType.graphObj,
+            description: 'Updates a notification setting.',
+            args: {
+                notificationsetting: { type: notificationSettingInputType.graphObj }
+            },
+            resolve: (value, notificationsetting) => {
+                return notificationSettingController.store(notificationsetting.notificationsetting);
+            }
+        },
         deletenotificationsetting:{
             type: deleteOutputType.graphObj,
             description: 'Deletes a notification setting.',
