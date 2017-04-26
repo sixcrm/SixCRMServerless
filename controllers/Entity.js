@@ -441,9 +441,9 @@ module.exports = class entityController {
 		//ACL enabled
     get(id, primary_key){
 
-        return new Promise((resolve, reject) => {
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
-            if(_.isNull(primary_key) || _.isUndefined(primary_key)){ primary_key = 'id'; }
+        return new Promise((resolve, reject) => {
 
             return this.can('read').then((permission) => {
 
@@ -675,7 +675,9 @@ module.exports = class entityController {
 
     //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
     //ACL enabled
-    create(entity, primary_key = 'id'){
+    create(entity, primary_key){
+
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         return new Promise((resolve, reject) => {
 
@@ -731,7 +733,9 @@ module.exports = class entityController {
     }
 
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
-    update(entity, primary_key = 'id'){
+    update(entity, primary_key){
+
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         return new Promise((resolve, reject) => {
 
@@ -782,7 +786,9 @@ module.exports = class entityController {
 
     }
 
-    store(entity, primary_key = 'id'){
+    store(entity, primary_key){
+
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(!_.has(entity, primary_key)){
 
@@ -814,9 +820,11 @@ module.exports = class entityController {
 		//NOT ACL enabled
     delete(id, primary_key){
 
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+
         return new Promise((resolve, reject) => {
 
-            if(_.isNull(primary_key) || _.isUndefined(primary_key)){ primary_key = 'id'; }
+
 
             //Technical Debt:  Why is this "update"?
             return this.can('update').then((permission) => {
@@ -897,7 +905,9 @@ module.exports = class entityController {
 
     }
 
-    exists(entity, primary_key = 'id'){
+    exists(entity, primary_key){
+
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(!_.has(entity, primary_key)){
 
@@ -1109,7 +1119,7 @@ module.exports = class entityController {
 
         du.warning('Created At:', created_at);
 
-        if(typeof created_at === "undefined"){
+        if(_.isUndefined(created_at)){
 
             entity['created_at'] = timestamp.getISO8601();
 
@@ -1166,20 +1176,21 @@ module.exports = class entityController {
 
     assignPrimaryKey(entity, primary_key){
 
-        if(_.isNull)
-            if(!_.has(entity, primary_key)){
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
-                if(primary_key == 'id'){
+        if(!_.has(entity, primary_key)){
 
-                    entity.id = uuidV4();
+            if(primary_key == 'id'){
 
-                }else{
+                entity.id = uuidV4();
 
-                    du.warning('Unable to assign primary key "'+primary_key+'" property');
+            }else{
 
-                }
+                du.warning('Unable to assign primary key "'+primary_key+'" property');
 
             }
+
+        }
 
         return entity;
 
