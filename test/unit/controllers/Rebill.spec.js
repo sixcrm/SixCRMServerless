@@ -332,7 +332,8 @@ describe('controllers/Rebill.js', () => {
 
         it('should resolve', () => {
             // given
-            let aRebill = { id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7', created_at: TimestampUtils.getISO8601() };
+            let rebill_datetime = TimestampUtils.getISO8601();
+            let aRebill = { id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7', created_at: rebill_datetime, updated_at: rebill_datetime};
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'rebill');
             process.env.search_indexing_queue_url = 'url';
