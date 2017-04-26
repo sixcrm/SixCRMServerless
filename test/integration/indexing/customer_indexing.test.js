@@ -61,7 +61,7 @@ describe('Customer indexing test', function() {
                     let results = response.body.data.search.hits.hit;
 
                     expect(results[0]).to.be.defined;
-                    expect(results.length).to.equal(1);
+                    expect(results.length).to.equal(1, 'Search index should have the entity.');
                     expect(results[0].id).to.equal('b5803b28-c584-4bb3-8fac-3315b91686b3');
 
                     // delete a customer
@@ -88,7 +88,7 @@ describe('Customer indexing test', function() {
 
                     let results = response.body.data.search.hits.hit;
 
-                    expect(results.length).to.equal(0);
+                    expect(results.length).to.equal(0, 'Search index should not have the entity anymore.');
 
                     done();
                 });
