@@ -747,6 +747,8 @@ module.exports = class entityController {
 
                     if(exists === false){ return reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
 
+                    entity = this.marryCreatedUpdated(entity, exists);
+
                     entity = this.setUpdatedAt(entity);
 
                     return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
@@ -911,7 +913,9 @@ module.exports = class entityController {
             if(_.has(global, 'account')){
 
                 if(global.account == '*'){
-            //for now, do nothing
+
+                  //for now, do nothing
+
                 }else{
 
                     query_parameters.filter_expression = 'account = :accountv';
@@ -929,7 +933,7 @@ module.exports = class entityController {
 
                     if(_.isObject(data) && _.isArray(data) && data.length == 1){
 
-                        return resolve(data);
+                        return resolve(data[0]);
 
                     }else if(data.length > 1){
 
@@ -1103,6 +1107,8 @@ module.exports = class entityController {
 
     setCreatedAt(entity, created_at){
 
+        du.warning('Created At:', created_at);
+
         if(typeof created_at === "undefined"){
 
             entity['created_at'] = timestamp.getISO8601();
@@ -1113,7 +1119,7 @@ module.exports = class entityController {
 
         }
 
-        entity['updated_at'] = entity['created_at'];
+        entity = this.setUpdatedAt(entity);
 
         return entity;
 
@@ -1127,7 +1133,32 @@ module.exports = class entityController {
 
         }
 
-        entity['updated_at'] = timestamp.getISO8601();
+        if(!_.has(entity, 'updated_at')){
+
+            entity['updated_at'] = entity.created_at;
+
+        }else{
+
+            entity['updated_at'] = timestamp.getISO8601();
+
+        }
+
+        return entity;
+
+    }
+
+    marryCreatedUpdated(entity, exists){
+
+        if(!_.has(exists, 'created_at')){
+            throw new Error('Entity lacks "created_at" property.');
+        }
+
+        if(!_.has(exists, 'updated_at')){
+            throw new Error('Entity lacks "created_at" property.');
+        }
+
+        entity['created_at'] = exists.created_at;
+        entity['updated_at'] = exists.updated_at;
 
         return entity;
 

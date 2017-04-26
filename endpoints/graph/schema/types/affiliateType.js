@@ -15,32 +15,8 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: '.',
         },
-        sub_id_1: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: '.',
-        },
-        sub_id_2: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: '.',
-        },
-        sub_id_3: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: '.',
-        },
-        sub_id_4: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: '.',
-        },
-        sub_id_5: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: '.',
-        },
-        click_id: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: '.',
-        },
         created_at: {
-	  type: new GraphQLNonNull(GraphQLString),
+	        type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',
         },
         updated_at: {

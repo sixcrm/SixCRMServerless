@@ -2,19 +2,12 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
-	{ 
-		affiliate (id: \"6b6331f6-7f84-437a-9ac6-093ba301e455\") { 
+	{
+		affiliate (id: \"6b6331f6-7f84-437a-9ac6-093ba301e455\") {
 			id,
 			affiliate_id,
-			sub_id_1,
-			sub_id_2,
-			sub_id_3,
-			sub_id_4,
-			sub_id_5,
-			click_id,
 			created_at,
 			updated_at
-		} 
+		}
 	}"
 }
-
