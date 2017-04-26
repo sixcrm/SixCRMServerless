@@ -273,7 +273,7 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    describe('addRebillToQueue', () => {
+    xdescribe('addRebillToQueue', () => {
         after(() => {
             mockery.deregisterAll();
         });
@@ -315,7 +315,7 @@ describe('controllers/Rebill.js', () => {
             });
 
             let rebillController = require('../../../controllers/Rebill');
-            
+
             // when
             return rebillController.addRebillToQueue(aRebill, 'bill').then(() => {
                 // then
@@ -333,6 +333,7 @@ describe('controllers/Rebill.js', () => {
         it('should resolve', () => {
             // given
             let aRebill = { id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7', created_at: TimestampUtils.getISO8601() };
+
             PermissionTestGenerators.givenUserWithAllowed('update', 'rebill');
             process.env.search_indexing_queue_url = 'url';
 

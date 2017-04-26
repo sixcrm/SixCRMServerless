@@ -6,7 +6,6 @@ var Validator = require('jsonschema').Validator;
 
 const timestamp = require('../lib/timestamp.js');
 const dynamoutilities = require('../lib/dynamodb-utilities.js');
-const redshiftutilities = require('../lib/redshift-utilities.js');
 const permissionutilities = require('../lib/permission-utilities.js');
 const du = require('../lib/debug-utilities.js');
 const indexingutilities = require('../lib/indexing-utilities.js');
@@ -35,7 +34,8 @@ module.exports = class entityController {
 
                 return resolve(permission);
 
-            }).catch((error) => {
+            })
+            .catch((error) => {
 
                 du.debug(error);
 
@@ -506,7 +506,8 @@ module.exports = class entityController {
 
                 }));
 
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 return reject(error);
             });
 
@@ -540,7 +541,8 @@ module.exports = class entityController {
 
                 }));
 
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 return reject(error);
             });
 
@@ -582,7 +584,8 @@ module.exports = class entityController {
 
                 }));
 
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 return reject(error);
             });
 
@@ -663,112 +666,55 @@ module.exports = class entityController {
 
     //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
     //ACL enabled
-    create(entity, primary_key){
+    create(entity, primary_key = 'id'){
 
         return new Promise((resolve, reject) => {
 
-            if(_.isNull(primary_key) || _.isUndefined(primary_key)){ primary_key = 'id'; }
-
             return this.can('create').then((permission) => {
 
-                if(permission != true){
+                if(permission != true){ return resolve(null); }
 
-                    return resolve(null);
+                entity = this.assignPrimaryKey(entity, primary_key);
 
-                }else{
+                entity = this.assignAccount(entity);
 
-                    entity = this.assignPrimaryKey(entity, primary_key);
+                if(!_.has(entity, primary_key)){ return reject(new Error('Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
 
-										//if(!_.has(entity, 'account') && _.has(global, 'account')){
-                    if(!_.has(entity, 'account')){
+                return this.exists(entity, primary_key).then((exists) => {
 
-                        du.debug('No account specified in the entity record');
+                    if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
 
-                        if(_.has(global, 'account')){
+                    entity = this.setCreatedAt(entity);
 
-                            du.debug('Global account identified.  Appending to the entity.');
+                    return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
-                            if(!_.contains(this.nonaccounts, this.descriptive_name)){
+                        if(_.isError(error)){ return reject(error);}
 
-                                entity.account = global.account;
+                        this.addToSearchIndex(entity, this.descriptive_name).then(() => {
 
-                            }
+                            return resolve(entity);
 
-                        }else{
+                        })
+                        .catch((error) => {
 
-                            du.debug('No global account value available.');
+                            return reject(error);
 
-                        }
+                        });
 
-                    }
+                    });
 
-                    if(!_.has(entity, primary_key)){
+                })
+                .catch((error) => {
 
-                        return reject(new Error('Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"'));
+                    return reject(error);
 
-                    }else{
+                });
 
-                        let query_parameters = {
-                            condition_expression: primary_key+' = :primary_keyv',
-                            expression_attribute_values: {':primary_keyv': entity[primary_key]}
-                        };
+            })
+            .catch((error) => {
 
-                        if(_.has(global, 'account')){
-
-                            if(global.account == '*'){
-
-  													//for now, do nothing
-
-                            }else{
-
-                                query_parameters.filter_expression = 'account = :accountv';
-                                query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                            }
-
-                        }
-
-                        return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
-
-                            if(_.isError(error)){
-
-                                reject(error);
-                                return;
-
-                            }
-
-                            if(_.isObject(data) && _.isArray(data) && data.length > 0){
-
-                                return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"'));
-
-                            }
-
-                            entity = this.setCreatedAt(entity);
-
-                            dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
-
-                                if(_.isError(error)){ reject(error);}
-
-                                this.addToSearchIndex(entity, this.descriptive_name).then((indexed) => {
-
-                                    return resolve(entity);
-
-                                }).catch((error) => {
-
-                                    return reject(error);
-
-                                });
-
-                            });
-
-                        }));
-
-                    }
-
-                }
-
-            }).catch((error) => {
                 return reject(error);
+
             });
 
         });
@@ -776,178 +722,81 @@ module.exports = class entityController {
     }
 
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
-		//ACL enabled
-    update(entity, primary_key){
+    update(entity, primary_key = 'id'){
 
         return new Promise((resolve, reject) => {
 
-            if(_.isNull(primary_key) || _.isUndefined(primary_key)){ primary_key = 'id'; }
-
             return this.can('update').then((permission) => {
 
-                if(permission != true){
+                if(permission != true){ return resolve(null); }
 
-                    return resolve(null);
+                entity = this.assignAccount(entity);
 
-                }
+                if(!_.has(entity, primary_key)){ return reject(new Error('Unable to update '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
 
-                if(_.has(global, 'account')){
+                return this.exists(entity, primary_key).then((exists) => {
 
-                    if(!_.contains(this.nonaccounts, this.descriptive_name)){
+                    if(exists === false){ return reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
 
-                        entity.account = global.account;
+                    entity = this.setUpdatedAt(entity);
 
-                    }
+                    return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
-                }
+                        if(_.isError(error)){ return reject(error);}
 
-                if(!_.has(entity, primary_key)){
+                        this.addToSearchIndex(entity, this.descriptive_name).then(() => {
 
-                    return reject(new Error('Unable to update '+this.descriptive_name+'. Missing property "'+primary_key+'"'));
+                            return resolve(entity);
 
-                }else{
+                        })
+              .catch((error) => {
 
-                    let query_parameters = {
-                        condition_expression: primary_key+' = :primary_keyv',
-                        expression_attribute_values: {':primary_keyv': entity[primary_key]}
-                    };
+                  return reject(error);
 
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+              });
 
-                        if(global.account == '*'){
+                    });
 
-  											//for now, do nothing
+                })
+          .catch((error) => {
+              return reject(error);
+          });
 
-                        }else{
-
-                            query_parameters.filter_expression = 'account = :accountv';
-                            query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                        }
-
-                    }
-
-                    du.debug('Update query validation', this.table_name, query_parameters);
-
-                    return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
-
-                        if(_.isError(error)){ reject(error);}
-
-                        if(_.isObject(data) && _.isArray(data) && data.length == 1){
-
-                            if(_.has(data[0], 'created_at')){
-
-                                entity = this.setCreatedAt(entity, data[0].created_at);
-
-                            }else{
-
-                                return reject(new Error('Entity lacks a "created_at" property'));
-
-                            }
-
-                            entity = this.setUpdatedAt(entity);
-
-                            dynamoutilities.saveRecord(this.table_name, entity, (error, data) => {
-
-                                if(_.isError(error)){ reject(error);}
-
-                                this.addToSearchIndex(entity, this.descriptive_name).then((indexed) => {
-
-                                    return resolve(entity);
-
-                                }).catch((error) => {
-
-                                    return reject(error);
-
-                                });
-
-                            });
-
-                        }else{
-
-                            reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.'));
-
-                        }
-
-                    }));
-
-                }
-
-            }).catch((error) => {
-                reject(error);
-            });
+            })
+        .catch((error) => {
+            return reject(error);
+        });
 
         });
 
     }
 
-    store(entity, primary_key){
+    store(entity, primary_key = 'id'){
 
-        return new Promise((resolve, reject) => {
+        if(!_.has(entity, primary_key)){
 
-            if(_.isNull(primary_key) || _.isUndefined(primary_key)){ primary_key = 'id'; }
+        //User is relying on the entity class's ability to auto-assign identifiers...
+            return this.create(entity, primary_key);
 
-            if(_.has(global, 'account')){
+        }else{
 
-                if(!_.contains(this.nonaccounts, this.descriptive_name)){
+            entity = this.assignAccount(entity);
 
-                    entity.account = global.account;
+            return this.exists(entity, primary_key).then((exists) => {
 
-                }
+                if(exists === false){
 
-            }
+                    return this.create(entity, primary_key);
 
+                }else{
 
-            if(!_.has(entity, primary_key)){
-
-              //User is relying on the entity class's ability to auto-assign identifiers...
-                return this.create(entity, primary_key);
-
-            }else{
-
-                let query_parameters = {
-                    condition_expression: primary_key+' = :idv',
-                    expression_attribute_values: {':idv': entity[primary_key]}
-                };
-
-                if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
-
-                    if(global.account == '*'){
-
-  									//for now, do nothing
-
-                    }else{
-
-                        query_parameters.filter_expression = 'account = :accountv';
-                        query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                    }
+                    return this.update(entity, primary_key);
 
                 }
 
-                return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+            });
 
-                    if(_.isError(error)){ reject(error);}
-
-                    if(_.isObject(data) && _.isArray(data) && data.length == 1){
-
-                        return this.update(entity, primary_key);
-
-                    }else if(data.length == 0){
-
-                        return this.create(entity, primary_key);
-
-                    }else{
-
-                        return reject(new Error('Non-distinct records for primary key: "'+primary_key+'".'));
-
-                    }
-
-                }));
-
-            }
-
-        });
+        }
 
     }
 
@@ -991,14 +840,13 @@ module.exports = class entityController {
 
                     }
 
-
                     return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
                         if(_.isError(error)){ reject(error);}
 
                         if(_.isObject(data) && _.isArray(data) && data.length == 1){
 
-                            dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error, data) => {
+                            dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
 
                                 if(_.isError(error)){ reject(error);}
 
@@ -1008,7 +856,8 @@ module.exports = class entityController {
 
                                     return resolve(delete_parameters);
 
-                                }).catch((error) => {
+                                })
+                                .catch((error) => {
 
                                     du.debug('Rejecting:', id);
 
@@ -1028,11 +877,64 @@ module.exports = class entityController {
 
                 }
 
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 reject(error);
             });
 
         });
+
+    }
+
+    exists(entity, primary_key = 'id'){
+
+        if(!_.has(entity, primary_key)){
+
+            return Promise.reject(new Error('Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"'));
+
+        }else{
+
+            let query_parameters = {
+                condition_expression: primary_key+' = :primary_keyv',
+                expression_attribute_values: {':primary_keyv': entity[primary_key]}
+            };
+
+            if(_.has(global, 'account')){
+
+                if(global.account == '*'){
+            //for now, do nothing
+                }else{
+
+                    query_parameters.filter_expression = 'account = :accountv';
+                    query_parameters.expression_attribute_values[':accountv'] = global.account;
+
+                }
+
+            }
+
+            return new Promise((resolve, reject) => {
+
+                dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+
+                    if(_.isError(error)){ return reject(error);}
+
+                    if(_.isObject(data) && _.isArray(data) && data.length == 1){
+
+                        return resolve(data);
+
+                    }else if(data.length > 1){
+
+                        return reject(new Error('Non-unique data present in the database for '+primary_key+': '+entity[primary_key]));
+
+                    }
+
+                    return resolve(false);
+
+                });
+
+            });
+
+        }
 
     }
 
@@ -1124,7 +1026,7 @@ module.exports = class entityController {
 
     }
 
-    disableACLs(argument){
+    disableACLs(){
 
         permissionutilities.disableACLs();
 
@@ -1132,7 +1034,7 @@ module.exports = class entityController {
 
     }
 
-    enableACLs(argument){
+    enableACLs(){
 
         permissionutilities.enableACLs();
 
@@ -1210,6 +1112,12 @@ module.exports = class entityController {
 
     setUpdatedAt(entity){
 
+        if(!_.has(entity, 'created_at')){
+
+            throw new Error('Entity lacks a "created_at" property');
+
+        }
+
         entity['updated_at'] = timestamp.getISO8601();
 
         return entity;
@@ -1218,17 +1126,54 @@ module.exports = class entityController {
 
     assignPrimaryKey(entity, primary_key){
 
-        if(!_.has(entity, primary_key)){
+        if(_.isNull)
+            if(!_.has(entity, primary_key)){
 
-            if(primary_key == 'id'){
+                if(primary_key == 'id'){
 
-                entity.id = uuidV4();
+                    entity.id = uuidV4();
+
+                }else{
+
+                    du.warning('Unable to assign primary key "'+primary_key+'" property');
+
+                }
+
+            }
+
+        return entity;
+
+    }
+
+    assignAccount(entity){
+
+        if(!_.has(entity, 'account')){
+
+            du.debug('No account specified in the entity record');
+
+            if(_.has(global, 'account')){
+
+                du.debug('Global account identified.  Appending to the entity.');
+
+                if(!_.contains(this.nonaccounts, this.descriptive_name)){
+
+                    entity.account = global.account;
+
+                }else{
+
+                    du.debug('Entity exists in the non-account list.');
+
+                }
 
             }else{
 
-                du.warning('Unable to assign primary key "'+primary_key+'" property');
+                du.debug('No global account value available.');
 
             }
+
+        }else{
+
+            du.debug('Entity already bound to a account.');
 
         }
 
