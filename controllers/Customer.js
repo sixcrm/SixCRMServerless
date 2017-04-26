@@ -281,6 +281,16 @@ class customerController extends entityController {
         }
 
     }
+
+    listCustomerRebills(customer, cursor, limit) {
+        let customer_id = customer;
+
+        if (_.has(customer, 'id')) {
+            customer_id = customer.id;
+        }
+
+        return rebillController.listBySecondaryIndex('customer', customer_id, 'customer-index', cursor, limit);
+    }
 }
 
 module.exports = new customerController();

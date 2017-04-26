@@ -735,6 +735,30 @@ module.exports.graphObj = new GraphQLObjectType({
                 return customerController.listCustomerSessions(customer, cursor, limit);
             }
         },
+        rebilllistbycustomer: {
+            type: rebillListType.graphObj,
+            args: {
+                customer: {
+                    description: 'The customer identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                limit: {
+                    description: 'limit',
+                    type: GraphQLString
+                },
+                cursor: {
+                    description: 'cursor',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, rebill){
+                let customer = rebill.customer;
+                let cursor = rebill.cursor;
+                let limit = rebill.limit;
+
+                return customerController.listCustomerRebills(customer, cursor, limit);
+            }
+        },
         campaignlist: {
             type: campaignListType.graphObj,
             args: {
