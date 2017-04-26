@@ -295,7 +295,9 @@ class customerController extends entityController {
                 let pagination = {};
 
                 rebill_lists.forEach((rebill_list) => {
-                    rebills.push(...rebill_list.rebills);
+                    rebill_list.rebills.forEach((rebill) => {
+                        rebills.push(rebill);
+                    });
                 });
 
                 pagination.count = rebills.length;
