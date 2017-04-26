@@ -216,6 +216,12 @@ class rebillController extends entityController {
 
     }
 
+    listRebillsBySessionID(id, cursor, limit){
+
+        return this.listBySecondaryIndex('parentsession', id, 'parentsession-index', cursor, limit);
+
+    }
+
     markRebillProcessing(rebill){
 
         rebill.processing = "true";
