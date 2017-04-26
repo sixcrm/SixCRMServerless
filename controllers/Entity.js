@@ -47,7 +47,7 @@ module.exports = class entityController {
 
     }
 
-    listBySecondaryIndex(field, index_value, index_name, cursor, limit){
+    listBySecondaryIndex(field, index_value, index_name, cursor, limit) {
 
         return new Promise((resolve, reject) => {
 
@@ -60,7 +60,7 @@ module.exports = class entityController {
 
                 }
 
-                var query_parameters = {filter_expression: null, expression_attribute_values: null};
+                var query_parameters = {filter_expression: '', expression_attribute_values: ''};
 
                 if(typeof cursor  !== 'undefined'){
                     query_parameters.ExclusiveStartKey = { id: cursor };
@@ -94,7 +94,16 @@ module.exports = class entityController {
 
                 }
 
-							//update the query parameters here...
+                if (query_parameters.filter_expression) {
+                    query_parameters.filter_expression += ' AND ';
+                }
+
+                if (!query_parameters.expression_attribute_values) {
+                    query_parameters.expression_attribute_values = {};
+                }
+
+                query_parameters.filter_expression += `${field} = :indexv`;
+                query_parameters.expression_attribute_values[':indexv'] = index_value;
 
                 return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
