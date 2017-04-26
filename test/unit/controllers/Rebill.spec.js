@@ -315,7 +315,7 @@ describe('controllers/Rebill.js', () => {
             });
 
             let rebillController = require('../../../controllers/Rebill');
-
+            
             // when
             return rebillController.addRebillToQueue(aRebill, 'bill').then(() => {
                 // then
