@@ -1,0 +1,20 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		userdevicetokenlist {
+			userdevicetokens {
+				id,
+				user,
+				created_at,
+				updated_at
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		},
+	}"
+}

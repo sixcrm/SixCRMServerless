@@ -18,6 +18,7 @@ dynamodb:
   products_table: 'products'
   credit_cards_table: 'credit_cards'
   users_table: 'users'
+  user_device_tokens_table: 'user_device_tokens'
   user_acls_table: 'useracls'
   loadbalancers_table: 'loadbalancers'
   product_schedules_table: 'product_schedules'

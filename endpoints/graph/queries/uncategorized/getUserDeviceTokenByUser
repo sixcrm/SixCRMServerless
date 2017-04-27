@@ -1,0 +1,15 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	{
+		userdevicetokensbyuserlist (user: \"timothy.dalbey@sixcrm.com\") {
+			userdevicetokens {
+				id,
+				user,
+				created_at,
+				updated_at
+			}
+		}
+	}"
+}
