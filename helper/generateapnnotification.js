@@ -20,6 +20,7 @@ if (!user) {
 return apnutilities.sendNotifications(user, message).then((result) => {
     du.output('Notification Result', result);
     return result;
-}).catch((error) => {
+})
+.catch((error) => {
     du.warning('Error:', error);
 });
