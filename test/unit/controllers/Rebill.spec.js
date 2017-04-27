@@ -273,14 +273,14 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    xdescribe('addRebillToQueue', () => {
+    describe('addRebillToQueue', () => {
         after(() => {
             mockery.deregisterAll();
         });
 
         it('should add a rebill to bill queue', () => {
             // given
-            let aRebill = { created_at: TimestampUtils.getISO8601() };
+            let aRebill = { id: '4b67d096-7404-42b2-94f8-78e6304c6527', created_at: TimestampUtils.getISO8601(), updated_at: TimestampUtils.getISO8601() };
 
             process.env.bill_queue_url = 'tesbill';
             process.env.bill_failed_queue_url = 'testfailbill';
@@ -317,6 +317,7 @@ describe('controllers/Rebill.js', () => {
             let rebillController = require('../../../controllers/Rebill');
 
             // when
+
             return rebillController.addRebillToQueue(aRebill, 'bill').then(() => {
                 // then
                 expect(aRebill.processing).to.be.equal('true');
