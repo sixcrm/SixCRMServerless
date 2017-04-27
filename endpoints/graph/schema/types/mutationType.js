@@ -49,6 +49,8 @@ let userInviteInputType = require('./userInviteInputType');
 let userInviteType = require('./userInviteType');
 let inviteInputType = require('./inviteInputType');
 let userType = require('./userType');
+let userDeviceTokenType = require('./userDeviceTokenType');
+let userDeviceTokenInputType = require('./userDeviceTokenInputType');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -76,6 +78,7 @@ const accountController = require('../../../../controllers/Account.js');
 const roleController = require('../../../../controllers/Role.js');
 const notificationController = require('../../../../controllers/Notification');
 const notificationSettingController = require('../../../../controllers/NotificationSetting');
+const userDeviceTokenController = require('../../../../controllers/UserDeviceToken.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Mutation',
@@ -919,6 +922,49 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, notificationsetting) => {
                 return notificationSettingController.delete(notificationsetting.id);
+            }
+        },
+        createuserdevicetoken:{
+            type: userDeviceTokenType.graphObj,
+            description: 'Creates a new user device token.',
+            args: {
+                userdevicetoken: { type: userDeviceTokenInputType.graphObj }
+            },
+            resolve: (value, userdevicetoken) => {
+                return userDeviceTokenController.create(userdevicetoken.userdevicetoken);
+            }
+        },
+        updateuserdevicetoken:{
+            type: userDeviceTokenType.graphObj,
+            description: 'Updates a user device token.',
+            args: {
+                userdevicetoken : { type: userDeviceTokenInputType.graphObj }
+            },
+            resolve: (value, userdevicetoken) => {
+                return userDeviceTokenController.update(userdevicetoken.userdevicetoken);
+            }
+        },
+        storeuserdevicetoken:{
+            type: userDeviceTokenType.graphObj,
+            description: 'Stores a user device token.',
+            args: {
+                userdevicetoken: { type: userDeviceTokenInputType.graphObj }
+            },
+            resolve: (value, userdevicetoken) => {
+                return userDeviceTokenController.store(userdevicetoken.userdevicetoken);
+            }
+        },
+        deleteuserdevicetoken:{
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a user device token.',
+            args: {
+                id: {
+                    description: 'ID associated with a user device token.',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, userdevicetoken) => {
+                return userDeviceTokenController.delete(userdevicetoken.id);
             }
         }
     })

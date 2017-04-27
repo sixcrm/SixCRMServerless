@@ -80,10 +80,10 @@ class notificationSettingController extends entityController {
                             name: 'Rebill'
                         },
                         {
-                            key: 'rebill',
+                            key: 'mid',
                             description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
                             default: true,
-                            name: 'Lead'
+                            name: 'Merchant Processor'
                         }
                     ]
                 }

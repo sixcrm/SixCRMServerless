@@ -1,0 +1,13 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation {
+		storeuserdevicetoken (userdevicetoken: {id:\"12345678 12312312 12312312 12312312 12312312 12312312 12312312 12312312\", user: \"super.user@test.com\"}) {
+			id,
+      user,
+			created_at,
+			updated_at
+		}
+	}"
+}
