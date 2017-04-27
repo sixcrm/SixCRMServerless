@@ -1,5 +1,8 @@
 'use strict';
 const _  = require('underscore');
+
+const du = require('../../../../lib/debug-utilities.js');
+
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
@@ -58,6 +61,8 @@ let suggestResultsType = require('./suggestResultsType');
 let searchInputType = require('./searchInputType');
 let searchResultsType = require('./searchResultsType');
 let customerType = require('./customerType');
+let userDeviceTokenListType = require('./userDeviceTokenListType');
+let userDeviceTokenType = require('./userDeviceTokenType');
 
 const sessionController = require('../../../../controllers/Session.js');
 const productController = require('../../../../controllers/Product.js');
@@ -84,6 +89,7 @@ const searchController = require('../../../../controllers/endpoints/search.js');
 const suggestController = require('../../../../controllers/endpoints/suggest.js');
 const notificationController = require('../../../../controllers/Notification');
 const notificationSettingController = require('../../../../controllers/NotificationSetting');
+const userDeviceTokenController = require('../../../../controllers/UserDeviceToken');
 
 const analyticsController = require('../../../../controllers/analytics/Analytics.js');
 
@@ -1052,6 +1058,56 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (root, notificationdefault) => {
                 return notificationSettingController.getDefaultProfile();
             }
-        }
+        },
+        userdevicetokenlist: {
+            type: userDeviceTokenListType.graphObj,
+            args: {
+                limit: {
+                    description: 'limit',
+                    type: GraphQLString
+                },
+                cursor: {
+                    description: 'cursor',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, user_device_token) {
+
+                return userDeviceTokenController.list(user_device_token.limit, user_device_token.cursor);
+
+            }
+        },
+        userdevicetokensbyuserlist: {
+            type: userDeviceTokenListType.graphObj,
+            args: {
+                user: {
+                    description: 'A user_id.',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, user_device_token) {
+                return userDeviceTokenController.getUserDeviceTokensByUser(user_device_token.user);
+            }
+        },
+        userdevicetoken: {
+            type: userDeviceTokenType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the user device token',
+                    type: GraphQLString
+                },
+                user: {
+                    description: 'user associated with the user device token',
+                    type: GraphQLString
+                }
+            },
+            resolve: (root, user_device_token) => {
+                if (_.has(user_device_token, 'id')) {
+                    return userDeviceTokenController.get(user_device_token.id);
+                }else{
+                    return null;
+                }
+            }
+        },
     })
 });
