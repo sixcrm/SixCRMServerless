@@ -73,29 +73,16 @@ region=us-east-1
 output=json
 ```
 
-To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}` (where `{stage}` is `local`, `development` or `production`).
-
-~/.aws/credentials
-```
-[six]
-aws_access_key_id=XXX
-aws_secret_access_key=YYY
-```
-Where XXX and YYY are your actual credentials. Ask Timothy to generate them fot you.
-
-~/.aws/config
-```
-[six]
-region=us-east-1
-output=json
-```
 When pushing to the repository, the commit will not be deployed to production unless it has been tagged with a appropriate version number.  Version numbers are provided as `v\d+.*`
 In order to push a commit with a tag, use git syntax as follows: `git push --follow-tags`.  You may also configure your local git instantiation as follows if you choose: `git config --global push.followTags true`.
 
 
-To add remote fixtures execute `export AWS_PROFILE=six; serverless dynamodb executeAll --stage {stage}` (where `{stage}` is `local`, `development` or `production`).
 
 To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  Note that you will need to specify the `endpoint-url`, i.e. `aws dynamodb list-tables --endpoint-url http://localhost:8001`.
+
+To add all dynamodb tables to AWS for a stage execute: `npm run deploy-tables -- {stage}` (where `{stage}` is `local`, `development`, or `production`).
+
+To remove all dynamoDB tables for a stage execute: `npm run purge-tables -- {stage}` (where `{stage}` is `local`, `development`, or `production`).
 
 If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --stage {stage}`.
 

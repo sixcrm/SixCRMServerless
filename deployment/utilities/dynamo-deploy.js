@@ -37,7 +37,7 @@ class DynamoDeploy {
 
         return Promise.map(tables, (table) => {
             return this.deployTable(table, env, region);
-        }, {concurrency: 10})
+        }, {concurrency: 7})
         .then((vals) => {
             du.debug(vals);
             return vals;
@@ -76,7 +76,7 @@ class DynamoDeploy {
 
         return Promise.map(tables, (table) => {
             return this.deleteTable(env+table);
-        }, {concurrency: 10})
+        }, {concurrency: 7})
         .then((vals) => {
             du.debug(vals);
             return vals;
