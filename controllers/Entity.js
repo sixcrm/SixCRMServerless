@@ -1164,7 +1164,7 @@ module.exports = class entityController {
         }
 
         if(!_.has(exists, 'updated_at')){
-            throw new Error('Entity lacks "created_at" property.');
+            throw new Error('Entity lacks "updated_at" property.');
         }
 
         entity['created_at'] = exists.created_at;
