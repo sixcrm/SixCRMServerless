@@ -85,6 +85,13 @@ redshift:
   max: 10
   idleTimeoutMillis: 30000
 
+notifications:
+  apn:
+    token_key: ''
+    token_key_id: ''
+    token_team_id: ''
+    production: false
+
 #kinesis:
   #firehose:
   #  redshift:
