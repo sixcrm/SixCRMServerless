@@ -228,6 +228,8 @@ class customerController extends entityController {
 
     }
 
+    // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
+    // we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
     listTransactionsByCustomer(customer, cursor, limit){
 
         let customer_id = customer;
@@ -245,11 +247,43 @@ class customerController extends entityController {
 
             let rebill_promises = sessions.map((session) => rebillController.getRebillsBySessionID(session.id));
 
-            return Promise.all(rebill_promises).then((rebills) => {
+            return Promise.all(rebill_promises).then((rebill_lists) => {
 
-                let rebill_ids = rebills.map((rebill) => {return rebill.id});
+                let rebill_ids = [];
 
-                return transactionController.listBySecondaryIndex('rebill', rebill_ids, 'rebill-index', cursor, limit);
+                rebill_lists.forEach((rebill_list) => {
+                    rebill_list.forEach((rebill) => {
+                        rebill_ids.push(rebill.id);
+                    });
+                });
+
+                let transaction_promises = [];
+
+                rebill_ids.forEach((rebill_id) => {
+                    transaction_promises.push(transactionController.listBySecondaryIndex('rebill_id', rebill_id, 'rebill-index'));
+                });
+
+                return Promise.all(transaction_promises).then(transaction_responses => {
+
+                    let transactions = [];
+                    let pagination = {};
+
+                    transaction_responses.forEach((transaction_response) => {
+                        transaction_response.transactions.forEach((transaction) => {
+                            transactions.push(transaction);
+                        });
+                    });
+
+                    pagination.count = transactions.length;
+                    pagination.end_cursor = '';
+                    pagination.has_next_page = false;
+
+                    return {
+                        transactions: transactions,
+                        pagination: pagination
+                    }
+
+                });
 
             });
 
