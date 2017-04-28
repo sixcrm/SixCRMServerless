@@ -126,6 +126,11 @@ class AnalyticsController {
 
                 });
 
+            })
+            .catch((error) => {
+
+                return reject(error);
+
             });
 
         });
