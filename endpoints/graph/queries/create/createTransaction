@@ -3,12 +3,13 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createtransaction ( transaction: { id: \"3e0fda0a-a64b-4752-bed8-152a98285be7\", rebill_id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\", amount:30000.00, processor_response:\"Test\", products: [{amount:\"4.99\", product: \"616cc994-9480-4640-b26c-03810a679fe3\"}]} ) { 
+		createtransaction ( transaction: { id: \"3e0fda0a-a64b-4752-bed8-152a98285be7\", rebill_id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\", amount:30000.00, processor_response:\"Test\", merchant_provider: \"6c40761d-8919-4ad6-884d-6a46a776cfb9\", products: [{amount:\"4.99\", product: \"616cc994-9480-4640-b26c-03810a679fe3\"}]} ) {
 			id,
 			alias,
 			amount,
 			created_at,
 			updated_at,
+			merchant_provider,
 			rebill {
 				id,
 				bill_at,

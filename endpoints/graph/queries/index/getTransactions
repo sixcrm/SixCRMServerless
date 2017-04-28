@@ -10,6 +10,7 @@
 				amount,
 				created_at,
 				updated_at,
+				merchant_provider,
 				rebill {
 					id,
 					bill_at,

@@ -8,6 +8,7 @@
 			alias,
 			amount,
 			processor_response,
+			merchant_provider,
 			created_at,
 			updated_at,
 			rebill {
