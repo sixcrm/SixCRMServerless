@@ -38,13 +38,15 @@ class AnalyticsController {
 
             const query_name = 'aggregation_processor_amount';
 
+            let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+
             let period_selection = this.periodSelection(parameters.start, parameters.end, 30);
 
             parameters = this.appendPeriod(parameters, period_selection);
 
             parameters = this.appendAccount(parameters);
 
-            parameters = this.createQueryFilter(parameters, ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5']);
+            parameters = this.createQueryFilter(parameters, query_filters);
 
             this.validateQueryParameters(query_name, parameters).then((validated) => {
 
@@ -56,52 +58,53 @@ class AnalyticsController {
 
                     redshiftutilities.query(query, []).then((results) => {
 
-                        du.debug('Query Results:', results);
+                        //Technical Debt:  This is somewhat clumsy...
+                        let return_object = [];
+
+                        results.forEach((result) => {
+
+                            let result_date_iso8601 = timestamp.convertToISO8601(result[period_selection.name].toString());
+
+                            let match_identified = false;
+
+                            if(return_object.length > 0){
+
+                                for(var i = 0; i < return_object.length; i++){
+
+                                    if(_.has(return_object[i], 'datetime') && return_object[i].datetime == result_date_iso8601){
+
+                                        match_identified = true;
+
+                                        return return_object[i].byprocessorresult.push({
+                                            processor_result: result.processor_result.toString(),
+                                            count: result.transaction_count.toString(),
+                                            amount: result.sum_amount.toString()
+                                        });
+
+                                    }
+
+                                };
+
+                            }
+
+                            if(match_identified == false){
+
+                                return_object.push({
+                                    datetime: result_date_iso8601,
+                                    byprocessorresult: [{
+                                        processor_result: result.processor_result.toString(),
+                                        count: 1,
+                                        amount: 1.00
+                                    }]
+                                });
+
+                            }
+
+                        });
 
                         // Technical Debt: Once the query is of acceptable structure, transform structure into the following JSON structure...
                         return resolve({
-                            transactions:[
-                                {
-                                    datetime: "2017-04-20T20:57:32.802Z",
-                                    byprocessorresult: [
-                                        {
-                                            processor_result: "success",
-                                            count: 14,
-                                            amount: 450.99
-                                        },
-                                        {
-                                            processor_result: "decline",
-                                            count: 2,
-                                            amount: 32.98
-                                        },
-                                        {
-                                            processor_result: "error",
-                                            count: 2,
-                                            amount: 32.98
-                                        }
-                                    ]
-                                },
-                                {
-                                    datetime: "2017-04-21T17:41:41.117Z",
-                                    byprocessorresult: [
-                                        {
-                                            processor_result: "success",
-                                            count: 14,
-                                            amount: 450.99
-                                        },
-                                        {
-                                            processor_result: "decline",
-                                            count: 2,
-                                            amount: 32.98
-                                        },
-                                        {
-                                            processor_result: "error",
-                                            count: 2,
-                                            amount: 32.98
-                                        }
-                                    ]
-                                }
-                            ]
+                            transactions:return_object
                         });
 
                     });
@@ -161,6 +164,8 @@ class AnalyticsController {
 
         });
 
+        du.info(filter_array);
+
         if(filter_array.length > 0){
             parameters['filter'] = filter_array.join(' ');
         }else{
@@ -200,7 +205,7 @@ class AnalyticsController {
 
                 var v, validation;
 
-                du.highlight(object, query_validation_string);
+                du.debug(object, query_validation_string);
 
                 try{
 
@@ -293,11 +298,16 @@ class AnalyticsController {
 
     }
 
+    //Technical Debt:  This does not allow for multi-account filters...
     appendAccount(parameters){
 
         du.debug('Append Account');
 
-        parameters['account'] = global.account;
+        if(global.account !== '*'){
+
+            parameters['account'] = [global.account];
+
+        }
 
         return parameters;
 

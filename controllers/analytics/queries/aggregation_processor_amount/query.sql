@@ -11,8 +11,6 @@ FROM
       f_transactions
     WHERE 1
       {{filter}}
-    AND
-      account = '{{account}}'
   ) ft
   RIGHT JOIN
   (

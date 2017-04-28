@@ -6,7 +6,6 @@ SELECT
 FROM f_transactions
 WHERE 1
   {{filter}}
-  AND account = '{{account}}'
   AND   datetime BETWEEN DATE '{{start}}' AND DATE '{{end}}'
 GROUP BY processor_result,
   DATE_TRUNC('{{period}}',datetime)
