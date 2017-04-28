@@ -40,7 +40,9 @@ class AnalyticsController {
 
             let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
 
-            let period_selection = this.periodSelection(parameters.start, parameters.end, 30);
+            let period_selection = this.periodSelection(parameters.start, parameters.end, 60);
+
+            du.info('Selected Period: ', period_selection);
 
             parameters = this.appendPeriod(parameters, period_selection);
 
@@ -57,6 +59,8 @@ class AnalyticsController {
                     du.highlight('Query:', query);
 
                     redshiftutilities.query(query, []).then((results) => {
+
+                        du.debug(results);
 
                         //Technical Debt:  This is somewhat clumsy...
                         let return_object = [];
@@ -102,6 +106,7 @@ class AnalyticsController {
 
                         });
 
+                        du.info("Observation Count: "+return_object.length);
                         // Technical Debt: Once the query is of acceptable structure, transform structure into the following JSON structure...
                         return resolve({
                             transactions:return_object
@@ -133,6 +138,8 @@ class AnalyticsController {
         this.period_options.forEach((period) => {
 
             let this_period_delta = Math.abs((((end_timestamp - start_timestamp)/period.seconds) - target_period_count));
+
+            du.warning(period.name, this_period_delta);
 
             if(_.isNull(best_period_score) || this_period_delta < best_period_score){
 
