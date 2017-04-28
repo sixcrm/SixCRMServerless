@@ -196,7 +196,11 @@ class loadBalancerController extends entityController {
 
             var processor = this.createProcessorClass(merchantprovider);
 
-            return processor.process(params);
+            let response = processor.process(params);
+
+            response.merchant_provider = merchantprovider.id;
+
+            return response;
 
         });
 

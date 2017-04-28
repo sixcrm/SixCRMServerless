@@ -123,7 +123,8 @@ class transactionController extends entityController {
             processor_response: JSON.stringify(processor_response),
             amount: params.amount,
             products: params.products,
-            alias: this.createAlias()
+            alias: this.createAlias(),
+            merchant_provider: processor_response.merchant_provider
         }
 
         return return_object;
