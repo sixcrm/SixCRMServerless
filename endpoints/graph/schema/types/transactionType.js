@@ -38,6 +38,10 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'Products associated with the transaction',
             resolve: transaction => transactionController.getTransactionProducts(transaction)
         },
+        merchant_provider: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'Id of the merchant provider.',
+        },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',
