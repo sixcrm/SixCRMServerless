@@ -52,13 +52,13 @@ class AnalyticsController {
 
             this.validateQueryParameters(query_name, parameters).then(() => {
 
-                this.getQueryString(query_name).then((query) => {
+                return this.getQueryString(query_name).then((query) => {
 
                     query = this.parseQueryParameters(query, parameters);
 
                     du.highlight('Query:', query);
 
-                    redshiftutilities.query(query, []).then((results) => {
+                    return redshiftutilities.query(query, []).then((results) => {
 
                         du.debug(results);
 
@@ -111,6 +111,11 @@ class AnalyticsController {
                         return resolve({
                             transactions:return_object
                         });
+
+                    })
+                    .catch((error) => {
+
+                        return reject(error);
 
                     });
 
@@ -276,7 +281,7 @@ class AnalyticsController {
 
         du.debug('Get Query Parameter Validation String');
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
 
             let query_validation_filepath = this.getQueryParameterValidationFilepath(query_name);
 
