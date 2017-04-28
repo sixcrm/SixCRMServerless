@@ -50,7 +50,7 @@ class AnalyticsController {
 
             parameters = this.createQueryFilter(parameters, query_filters);
 
-            this.validateQueryParameters(query_name, parameters).then((validated) => {
+            this.validateQueryParameters(query_name, parameters).then(() => {
 
                 this.getQueryString(query_name).then((query) => {
 
@@ -114,7 +114,8 @@ class AnalyticsController {
 
                     });
 
-                }).catch((error) => {
+                })
+                .catch((error) => {
 
                     return reject(error);
 
