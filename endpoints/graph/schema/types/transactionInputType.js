@@ -13,6 +13,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         rebill_id:			{ type: new GraphQLNonNull(GraphQLString) },
         amount:				{ type: new GraphQLNonNull(GraphQLFloat) },
         processor_response:	{ type: new GraphQLList(GraphQLString) },
+        merchant_provider:  { type: new GraphQLNonNull(GraphQLString) },
         products:			{ type: new GraphQLList(transactionProductInputType.graphObj) }
     })
 });
