@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		transactionsummary (start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-01T18:23:43.043Z\", campaign:[\"70a6689a-5814-438b-b9fd-dd484d0812f9\"]) {
+		transactionsummary (start:\"2017-03-01T17:23:43.043Z\", end:\"2017-04-08T17:23:43.043Z\", campaign:[\"70a6689a-5814-438b-b9fd-dd484d0812f9\"]) {
 			transactions {
 				datetime,
 				byprocessorresult {

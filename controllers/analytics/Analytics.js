@@ -17,11 +17,11 @@ class AnalyticsController {
         this.period_options = [
           {name:"minute", seconds: 60},
           {name:"hour", seconds: 3600},
-          {name:"day",seconds: 86400},
+          {name:"day", seconds: 86400},
           {name:"week", seconds: 604800},
-          {name:"month", second: 2678400},
-          {name:"quarter", second: 7776000},
-          {name:"year", second: 30412800}
+          {name:"month", seconds: 2678400},
+          {name:"quarter", seconds: 7776000},
+          {name:"year", seconds: 30412800}
         ];
 
     }
@@ -148,9 +148,11 @@ class AnalyticsController {
 
         this.period_options.forEach((period) => {
 
-            let this_period_delta = Math.abs((((end_timestamp - start_timestamp)/period.seconds) - target_period_count));
+            let seconds_difference = (end_timestamp - start_timestamp);
 
-            du.warning(period.name, this_period_delta);
+            let period_seconds = period.seconds;
+
+            let this_period_delta = Math.pow(((seconds_difference/period_seconds) - target_period_count), 2);
 
             if(_.isNull(best_period_score) || this_period_delta < best_period_score){
 

@@ -27,9 +27,10 @@ FROM
   ON
     (ft.processor_result = rt.processor_result AND DATE_TRUNC ('{{period}}',ft.datetime) = rt_datetime)
 WHERE
-  rt.rt_datetime BETWEEN DATE '{{start}}' AND DATE '{{end}}'
+  rt.rt_datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 GROUP BY
   rt.processor_result,
   rt_datetime
 ORDER BY
-  {{period}},processor_result
+  {{period}},
+  processor_result
