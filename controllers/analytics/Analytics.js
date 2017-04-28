@@ -40,7 +40,7 @@ class AnalyticsController {
 
             let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
 
-            let period_selection = this.periodSelection(parameters.start, parameters.end, 60);
+            let period_selection = this.periodSelection(parameters.start, parameters.end, 30);
 
             du.info('Selected Period: ', period_selection);
 
