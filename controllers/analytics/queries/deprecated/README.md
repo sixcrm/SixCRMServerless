@@ -1,10 +1,10 @@
 # Deprecated queries
 ____
 
-Sample queries to be run directly against the Redshift database
+Sample and test queries to be run directly against the Redshift database
 
 ---
-### Query notes
+### Deprecated query notes
 
 Connection to two dimensional tables :
 * `processor_results` - Queries with processor statuses
