@@ -46,8 +46,6 @@ class AnalyticsController {
 
             let period_selection = this.periodSelection(parameters.start, parameters.end, target_period_count);
 
-            du.info('Selected Period: ', period_selection);
-
             parameters = this.appendPeriod(parameters, period_selection);
 
             parameters = this.appendAccount(parameters);
