@@ -4,3 +4,4 @@ test/**/*.processed.*
 coverage/*
 bin/*
 npm-debug.log
+extra/aws/redshift/*.csv
