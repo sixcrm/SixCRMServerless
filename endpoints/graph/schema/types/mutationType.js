@@ -55,6 +55,7 @@ let userDeviceTokenInputType = require('./userDeviceTokenInputType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+
 const sessionController = require('../../../../controllers/Session.js');
 const productController = require('../../../../controllers/Product.js');
 const customerController = require('../../../../controllers/Customer.js');

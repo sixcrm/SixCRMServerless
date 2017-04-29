@@ -24,6 +24,8 @@ class AnalyticsController {
           {name:"year", seconds: 30412800}
         ];
 
+        this.period_count_default = 30;
+
     }
 
     /*
@@ -40,7 +42,9 @@ class AnalyticsController {
 
             let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
 
-            let period_selection = this.periodSelection(parameters.start, parameters.end, 30);
+            let target_period_count = this.getTargetPeriodCount(parameters);
+
+            let period_selection = this.periodSelection(parameters.start, parameters.end, target_period_count);
 
             du.info('Selected Period: ', period_selection);
 
@@ -137,9 +141,22 @@ class AnalyticsController {
 
     }
 
+    getTargetPeriodCount(parameters){
+
+        if(_.has(parameters,'targetperiodcount')){
+
+            return parameters.targetperiodcount;
+
+        }
+
+        return this.period_count_default;
+
+    }
+
     periodSelection(start, end, target_period_count){
 
         du.debug('Period Selection');
+        du.debug('Parameters: ', start, end, target_period_count);
 
         let start_timestamp = timestamp.dateToTimestamp(start);
         let end_timestamp = timestamp.dateToTimestamp(end);

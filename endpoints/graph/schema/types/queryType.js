@@ -64,6 +64,8 @@ let customerType = require('./customerType');
 let userDeviceTokenListType = require('./userDeviceTokenListType');
 let userDeviceTokenType = require('./userDeviceTokenType');
 
+let analyticsFilterInputType = require('./analyticsFilterInputType');
+
 const sessionController = require('../../../../controllers/Session.js');
 const productController = require('../../../../controllers/Product.js');
 const customerController = require('../../../../controllers/Customer.js');
@@ -636,61 +638,10 @@ module.exports.graphObj = new GraphQLObjectType({
         transactionsummary: {
             type: transactionSummaryType.graphObj,
             args: {
-                start: {
-                    description: 'The transaction summary start daytime.',
-                    type: new GraphQLNonNull(GraphQLString)
-                },
-                end: {
-                    description: 'The transaction summary start daytime.',
-                    type: new GraphQLNonNull(GraphQLString)
-                },
-                campaign:{
-                    description: 'The transaction summary campaign filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                affiliate:{
-                    description: 'The transaction summary affiliate filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                subaffiliate_1:{
-                    description: 'The transaction summary subaffiliate 1 filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                subaffiliate_2:{
-                    description: 'The transaction summary subaffiliate 2 filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                subaffiliate_3:{
-                    description: 'The transaction summary subaffiliate 3 filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                subaffiliate_4:{
-                    description: 'The transaction summary subaffiliate 4 filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                subaffiliate_5:{
-                    description: 'The transaction summary subaffiliate 5 filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                merchantprovider:{
-                    description: 'The transaction summary merchant provider filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                productschedule:{
-                    description: 'The transaction summary product schedule filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                transactiontype:{
-                    description: 'The transaction summary product transaction type filter list.',
-                    type: new GraphQLList(GraphQLString)
-                },
-                processorresult:{
-                    description: 'The transaction summary processor result filter list.',
-                    type: new GraphQLList(GraphQLString)
-                }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj }
             },
-            resolve: function(root, transaction_summary_args){
-      	       return analyticsController.getTransactionSummary(transaction_summary_args);
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getTransactionSummary(analyticsfilter.analyticsfilter);
             }
         },
         transactionlistbycustomer: {
