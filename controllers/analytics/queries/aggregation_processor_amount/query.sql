@@ -30,6 +30,8 @@ FROM
     (ft.processor_result = rt.processor_result AND DATE_TRUNC ('{{period}}',ft.datetime) = rt_datetime)
 WHERE
   rt.rt_datetime BETWEEN DATE '{{start}}' AND DATE '{{end}}'
+AND
+  ft.datetime BETWEEN DATE '{{start}}' AND DATE '{{end}}'
 GROUP BY
   rt.processor_result,
   rt_datetime
