@@ -92,8 +92,16 @@ notifications:
     token_team_id: ''
     production: false
 
+#Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
+cache:
+  usecache: 1
+  cachebuster: 'somerandomthing1'
+
 elasticache:
-  endpoint: 'sixcrm-dev.mmka6q.clustercfg.use1.cache.amazonaws.com'
+  max_attempts: 5
+  retry_time: 1800000
+  endpoint: 'localhost'
+  port: 6379
 
 #kinesis:
   #firehose:

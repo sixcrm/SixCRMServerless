@@ -62,9 +62,10 @@ class AnalyticsController {
 
                     du.highlight('Query:', query);
 
-                    let redshift_query = redshiftutilities.query(query, []);
+                    //Note:  This is a deferred Promise, it does not execute here...
+                    let redshift_query = () => redshiftutilities.query(query, []);
 
-                    cacheController.useCache(query, redshift_query).then((results) => {
+                    return cacheController.useCache(query, redshift_query).then((results) => {
 
                         du.debug(results);
                         //Technical Debt:  This is somewhat clumsy...

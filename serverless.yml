@@ -85,6 +85,8 @@ functions:
     environment:
       SIX_VERBOSE: 2
       stage: ${opt:stage}
+      usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
+      cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
       customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
       customer_notes_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customer_notes_table}
       sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
@@ -120,6 +122,9 @@ functions:
       redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
       search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
       elasticache_endpoint: ${file(./config/${opt:stage}/site.yml):elasticache.endpoint}
+      elasticache_retry_time: ${file(./config/${opt:stage}/site.yml):elasticache.retry_time}
+      elasticache_max_attempts: ${file(./config/${opt:stage}/site.yml):elasticache.max_attempts}
+
 
 ########################
 # State Machine Lambdas
