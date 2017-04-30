@@ -8,6 +8,8 @@ var timestamp = require('../../lib/timestamp.js');
 const du = require('../../lib/debug-utilities.js');
 const redshiftutilities = require('../../lib/redshift-utilities.js');
 
+const cacheController = require('../Cache.js');
+
 //Technical Debt:  We need a caching strategy.
 
 class AnalyticsController {
@@ -60,10 +62,11 @@ class AnalyticsController {
 
                     du.highlight('Query:', query);
 
-                    return redshiftutilities.query(query, []).then((results) => {
+                    let redshift_query = redshiftutilities.query(query, []);
+
+                    cacheController.useCache(query, redshift_query).then((results) => {
 
                         du.debug(results);
-
                         //Technical Debt:  This is somewhat clumsy...
                         let return_object = [];
 
@@ -113,11 +116,6 @@ class AnalyticsController {
                         return resolve({
                             transactions:return_object
                         });
-
-                    })
-                    .catch((error) => {
-
-                        return reject(error);
 
                     });
 

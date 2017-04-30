@@ -92,6 +92,9 @@ notifications:
     token_team_id: ''
     production: false
 
+elasticache:
+  endpoint: 'sixcrm-dev.mmka6q.clustercfg.use1.cache.amazonaws.com'
+
 #kinesis:
   #firehose:
   #  redshift:

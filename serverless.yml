@@ -119,6 +119,7 @@ functions:
       redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
       redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
       search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
+      elasticache_endpoint: ${file(./config/${opt:stage}/site.yml):elasticache.endpoint}
 
 ########################
 # State Machine Lambdas
