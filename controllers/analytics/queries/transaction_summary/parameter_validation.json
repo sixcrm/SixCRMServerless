@@ -125,5 +125,5 @@
 			}
 		}
 	},
-	"required":["start", "end", "period"]
+	"required":["start", "end"]
 }

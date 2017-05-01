@@ -54,7 +54,6 @@ let sessionType = require('./sessionType');
 let rebillType = require('./rebillType');
 let shippingReceiptType = require('./shippingReceiptType');
 let transactionType = require('./transactionType');
-let transactionSummaryType = require('./transactionSummaryType');
 let userType = require('./userType');
 let suggestInputType = require('./suggestInputType');
 let suggestResultsType = require('./suggestResultsType');
@@ -63,6 +62,9 @@ let searchResultsType = require('./searchResultsType');
 let customerType = require('./customerType');
 let userDeviceTokenListType = require('./userDeviceTokenListType');
 let userDeviceTokenType = require('./userDeviceTokenType');
+
+let transactionSummaryType = require('./transactionSummaryType');
+let transactionOverviewType =  require('./transactionOverviewType');
 
 let analyticsFilterInputType = require('./analyticsFilterInputType');
 
@@ -642,6 +644,15 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, analyticsfilter){
                 return analyticsController.getTransactionSummary(analyticsfilter.analyticsfilter);
+            }
+        },
+        transactionoverview: {
+            type: transactionOverviewType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getTransactionOverview(analyticsfilter.analyticsfilter);
             }
         },
         transactionlistbycustomer: {
