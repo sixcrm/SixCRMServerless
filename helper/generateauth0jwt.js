@@ -1,5 +1,6 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
+const _ = require('underscore');
 
 const tu = require('../lib/test-utilities.js');
 const timestamp = require('../lib/timestamp.js');
@@ -11,12 +12,12 @@ let now = timestamp.createTimestampSeconds();
 let secret_key = site_config.jwt.auth0.secret_key;
 let email = process.argv[2];
 
-if(typeof email == 'undefined'){
+if(_.isUndefined(email) || _.isNull(email)){
     email = 'super.user@test.com';
 }
 
 let jwt_contents = {
-    "email": "test@test.com",
+    "email": email,
     "email_verified": true,
     "picture": "",
     "iss": "https://sixcrm.auth0.com/",

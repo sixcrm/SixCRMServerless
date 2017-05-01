@@ -8,6 +8,8 @@ var timestamp = require('../../lib/timestamp.js');
 const du = require('../../lib/debug-utilities.js');
 const redshiftutilities = require('../../lib/redshift-utilities.js');
 
+const cacheController = require('../Cache.js');
+
 //Technical Debt:  We need a caching strategy.
 
 class AnalyticsController {
@@ -46,8 +48,6 @@ class AnalyticsController {
 
             let period_selection = this.periodSelection(parameters.start, parameters.end, target_period_count);
 
-            du.info('Selected Period: ', period_selection);
-
             parameters = this.appendPeriod(parameters, period_selection);
 
             parameters = this.appendAccount(parameters);
@@ -62,10 +62,12 @@ class AnalyticsController {
 
                     du.highlight('Query:', query);
 
-                    return redshiftutilities.query(query, []).then((results) => {
+                    //Note:  This is a deferred Promise, it does not execute here...
+                    let redshift_query = () => redshiftutilities.query(query, []);
+
+                    return cacheController.useCache(query, redshift_query).then((results) => {
 
                         du.debug(results);
-
                         //Technical Debt:  This is somewhat clumsy...
                         let return_object = [];
 
@@ -115,11 +117,6 @@ class AnalyticsController {
                         return resolve({
                             transactions:return_object
                         });
-
-                    })
-                    .catch((error) => {
-
-                        return reject(error);
 
                     });
 
