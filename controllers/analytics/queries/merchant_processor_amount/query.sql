@@ -8,7 +8,7 @@ FROM f_transactions
 WHERE 1
   {{filter}}
   AND account = '{{account}}'
-  AND   datetime BETWEEN DATE '{{start}}' AND DATE '{{end}}'
+  AND   datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 GROUP BY
   processor_result,
   merchant_processor,
