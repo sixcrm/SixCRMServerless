@@ -17,7 +17,7 @@ CREATE TABLE f_transactions
   processor_result                                  VARCHAR(16) NOT NULL,
   account                                           VARCHAR(36) NOT NULL,
   transaction_type                                  VARCHAR(6) NOT NULL,
-  transaction_subtype                                  VARCHAR(6) NOT NULL,
+  transaction_subtype                               VARCHAR(6) NOT NULL,
   product_schedule                                  VARCHAR(36),
   subaffiliate_1                                    VARCHAR(128),
   subaffiliate_2                                    VARCHAR(128),
