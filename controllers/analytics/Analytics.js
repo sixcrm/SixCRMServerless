@@ -30,10 +30,6 @@ class AnalyticsController {
 
     }
 
-    /*
-    * Technical Debt:  Filters need to be integrated into the query
-    */
-
     getTransactionSummary(parameters){
 
         du.debug('Get Transaction Summary');
