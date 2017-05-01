@@ -30,10 +30,6 @@ class AnalyticsController {
 
     }
 
-    /*
-    * Technical Debt:  Filters need to be integrated into the query
-    */
-
     getTransactionSummary(parameters){
 
         du.debug('Get Transaction Summary');
@@ -66,6 +62,8 @@ class AnalyticsController {
                     let redshift_query = () => redshiftutilities.query(query, []);
 
                     return cacheController.useCache(query, redshift_query).then((results) => {
+
+                        //Technical Debt:  Validate the query results here.
 
                         du.debug(results);
                         //Technical Debt:  This is somewhat clumsy...
@@ -117,6 +115,86 @@ class AnalyticsController {
                         return resolve({
                             transactions:return_object
                         });
+
+                    });
+
+                })
+                .catch((error) => {
+
+                    return reject(error);
+
+                });
+
+            })
+            .catch((error) => {
+
+                return reject(error);
+
+            });
+
+        });
+
+    }
+
+    getTransactionOverview(parameters){
+
+        du.debug('Get Transaction Overview');
+
+        return new Promise((resolve, reject) => {
+
+            const query_name = 'transaction_summary';
+
+            let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+
+            parameters = this.appendAccount(parameters);
+
+            parameters = this.createQueryFilter(parameters, query_filters);
+
+            this.validateQueryParameters(query_name, parameters).then(() => {
+
+                return this.getQueryString(query_name).then((query) => {
+
+                    query = this.parseQueryParameters(query, parameters);
+
+                    du.highlight('Query:', query);
+
+                    //Note:  This is a deferred Promise, it does not execute here...
+                    let redshift_query = () => redshiftutilities.query(query, []);
+
+                    return cacheController.useCache(query, redshift_query).then((results) => {
+
+                        //Technical Debt:  Validate the query results here.
+
+                        let return_object = {
+                            overview: {
+                                newsale: {
+                                    count: results[0].new_sale_count,
+                                    amount: results[0].new_sale_amount
+                                },
+                                rebill: {
+                                    count: results[0].rebill_sale_count,
+                                    amount: results[0].rebill_sale_amount
+                                },
+                                decline: {
+                                    count: results[0].declines_count,
+                                    amount: results[0].declines_amount
+                                },
+                                error: {
+                                    count: results[0].error_count,
+                                    amount: results[0].error_amount
+                                },
+                                main: {
+                                    count: results[0].main_sale_count,
+                                    amount: results[0].main_sale_amount
+                                },
+                                upsell: {
+                                    count: results[0].upsell_sale_count,
+                                    amount: results[0].upsell_sale_amount
+                                }
+                            }
+                        };
+
+                        return resolve(return_object);
 
                     });
 
