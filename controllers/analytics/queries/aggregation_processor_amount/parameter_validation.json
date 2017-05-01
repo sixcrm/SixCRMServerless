@@ -114,6 +114,15 @@
 				"type":"string",
 				"enum": ["new", "rebill"]
 			}
+		},
+		"transaction_subtype":{
+			"type": "array",
+			"minItems": 1,
+			"uniqueItems": true,
+			"items": {
+				"type":"string",
+				"enum": ["main", "upsell"]
+			}
 		}
 	},
 	"required":["start", "end", "period"]
