@@ -45,6 +45,7 @@ w.writerow(('id',
  'result',
  'account',
  'type',
+ 'subtype',
  'schedule',
  'subaffiliate_1'
 ,'subaffiliate_2'
@@ -56,5 +57,5 @@ w.writerow(('id',
 for i in range(1000000):
     w.writerow((uuid.uuid4(),random_date(d1,d2),random.choice(customers),random.choice(credit_card),
       random.choice(merch_processor),random.choice(campaign),random.choice(affiliate),random.uniform(1, 10000),
-      random.choice(["success", "decline", "error"]),random.choice(account),random.choice(["rebill", "new"]),random.choice(schedule), '','','','',''))
+      random.choice(["success", "decline", "error"]),random.choice(account),random.choice(["rebill", "new"]),random.choice(["upsell", "main"]),random.choice(schedule), '','','','',''))
 g.close()
