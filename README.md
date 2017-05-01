@@ -102,3 +102,9 @@ Rules are defined in `.eslintrs.js` file in the project root. You can check the 
 Rules with level `warn` will not break the deploy, but `error` will.
 
 In order to disable rules in code (for example for false positives, or old deprecated code) read http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments
+
+## Deployment
+
+Currently deployment is (mostly) handled via CircleCI.  There are a few issues:
+
+* API Gateway requires some manual configuration - certificates, custom domain names for example.

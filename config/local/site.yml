@@ -94,11 +94,11 @@ notifications:
 
 #Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
 cache:
-  usecache: 1
+  usecache: 0
   cachebuster: 'somerandomthing1'
 
 elasticache:
-  max_attempts: 5
+  max_attempts: 3
   retry_time: 1800000
   endpoint: 'localhost'
   port: 6379
