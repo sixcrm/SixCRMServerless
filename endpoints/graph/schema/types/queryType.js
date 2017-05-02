@@ -65,6 +65,7 @@ let userDeviceTokenType = require('./userDeviceTokenType');
 
 let transactionSummaryType = require('./transactionSummaryType');
 let transactionOverviewType =  require('./transactionOverviewType');
+let eventFunnelType =  require('./eventFunnelType');
 
 let analyticsFilterInputType = require('./analyticsFilterInputType');
 
@@ -653,6 +654,15 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, analyticsfilter){
                 return analyticsController.getTransactionOverview(analyticsfilter.analyticsfilter);
+            }
+        },
+        eventfunnel: {
+            type: eventFunnelType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getEventFunnel(analyticsfilter.analyticsfilter);
             }
         },
         transactionlistbycustomer: {

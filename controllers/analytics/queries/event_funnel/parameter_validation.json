@@ -90,8 +90,7 @@
 			"minItems": 1,
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
-		  }
-		}
-	},
+		 }
+	 },
 	"required":["start", "end"]
 }

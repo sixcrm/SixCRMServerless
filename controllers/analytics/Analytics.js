@@ -1,12 +1,12 @@
 'use strict';
 const _ = require('underscore');
 const fs = require('fs');
-var Validator = require('jsonschema').Validator;
+const Validator = require('jsonschema').Validator;
 
-var timestamp = require('../../lib/timestamp.js');
-
+const timestamp = require('../../lib/timestamp.js');
 const du = require('../../lib/debug-utilities.js');
 const redshiftutilities = require('../../lib/redshift-utilities.js');
+const mathutilities =  require('../../lib/math-utilities.js');
 
 const cacheController = require('../Cache.js');
 
@@ -191,6 +191,93 @@ class AnalyticsController {
                                     count: results[0].upsell_sale_count,
                                     amount: results[0].upsell_sale_amount
                                 }
+                            }
+                        };
+
+                        return resolve(return_object);
+
+                    });
+
+                })
+                .catch((error) => {
+
+                    return reject(error);
+
+                });
+
+            })
+            .catch((error) => {
+
+                return reject(error);
+
+            });
+
+        });
+
+    }
+
+    getEventFunnel(parameters){
+
+        du.debug('Get Event Funnel');
+
+        return new Promise((resolve, reject) => {
+
+            const query_name = 'event_funnel';
+
+            let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+
+            parameters = this.appendAccount(parameters);
+
+            parameters = this.createQueryFilter(parameters, query_filters);
+
+            this.validateQueryParameters(query_name, parameters).then(() => {
+
+                return this.getQueryString(query_name).then((query) => {
+
+                    query = this.parseQueryParameters(query, parameters);
+
+                    du.highlight('Query:', query);
+
+                    //Note:  This is a deferred Promise, it does not execute here...
+                    let redshift_query = () => redshiftutilities.query(query, []);
+
+                    return cacheController.useCache(query, redshift_query).then((results) => {
+
+                        //Technical Debt:  Validate the query results here.
+
+                        let click = results[0].count_click;
+                        let lead = results[0].count_lead;
+                        let main = results[0].count_order;
+                        let upsell = results[0].count_upsell;
+                        let confirm = results[0].count_confirm;
+
+                        let return_object = {
+                            funnel: {
+                                click: {
+                                    count: click,
+                                    percentage: mathutilities.safePercentage(click, click),
+                                    relative_percentage: mathutilities.safePercentage(0, click)
+                                },
+                                lead: {
+                                    count: lead,
+                                    percentage: mathutilities.safePercentage(lead, click),
+                                    relative_percentage: mathutilities.safePercentage(lead, click)
+                                },
+                                main: {
+                                    count: main,
+                                    percentage: mathutilities.safePercentage(main, click),
+                                    relative_percentage: mathutilities.safePercentage(main, lead)
+                                },
+                                upsell: {
+                                    count: upsell,
+                                    percentage: mathutilities.safePercentage(upsell, click),
+                                    relative_percentage: mathutilities.safePercentage(upsell, main),
+                                },
+                                confirm: {
+                                    count: results[0].count_confirm,
+                                    percentage: mathutilities.safePercentage(confirm, click),
+                                    relative_percentage: mathutilities.safePercentage(confirm, main),
+                                },
                             }
                         };
 
