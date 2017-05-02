@@ -39,9 +39,9 @@ Note that there are also pre-commit hooks enabled which will automatically lint 
 #### DynamoDB
 To start the local Dynamo instance: `sls dynamodb start --stage local -P 8001`.  To interact with the local DynamoDB instance, use the AWS Command Line Interface.  Note that you will need to specify the `endpoint-url`, i.e. `aws dynamodb list-tables --endpoint-url http://localhost:8001`.
 
-To add all dynamodb tables to AWS for a stage execute: `npm run deploy-tables -- {stage}` (where `{stage}` is `local`, `development`, or `production`).
+To add all dynamodb tables to AWS for a stage execute: `AWS_PROFILE=six npm run deploy-tables -- {stage}` (where `{stage}` is `local`, `development`, or `production`).
 
-To remove all dynamoDB tables for a stage execute: `npm run purge-tables -- {stage}` (where `{stage}` is `local`, `development`, or `production`).
+To remove all dynamoDB tables for a stage execute: `AWS_PROFILE=six npm run purge-tables -- {stage}` (where `{stage}` is `local`, `development`, or `production`).
 
 If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --stage {stage}`.
 

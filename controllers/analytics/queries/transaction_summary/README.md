@@ -24,15 +24,16 @@ ____
 ### Query notes
 
 Query returns six variables that represent :
-* `New Sale` -  Transactions that have processor_result = ‘success’ and transaction_type = ‘new’
-* `Rebill` - Transactions that have processor_result = ‘success’ and transaction_type = ‘rebill’
-* `Declines` - Transactions that have processor_result = ‘decline’
-* `Error` - Transactions that have processor_result = error’
-* `Upsell` - Transactions that have processor_result = ‘success’ and transaction_type = ‘new’ and transaction_subtype = ‘upsell’
-* `Main` - Transactions that have processor_result = ‘success’ and transaction_type = ‘new’ and transaction_subtype = ‘main’
+* `New Sale` -  Transactions that have processor_result = 'success’ and transaction_type = 'new’
+* `Rebill` - Transactions that have processor_result = 'success’ and transaction_type = 'rebill’
+* `Declines` - Transactions that have processor_result = 'decline’
+* `Error` - Transactions that have processor_result = 'error'
+* `Upsell` - Transactions that have processor_result = 'success’ and transaction_type = 'new’ and transaction_subtype = 'upsell’
+* `Main` - Transactions that have processor_result = 'success’ and transaction_type = 'new’ and transaction_subtype = 'main’
 
 
 ---
 ## Results:
 
+```
 ```
