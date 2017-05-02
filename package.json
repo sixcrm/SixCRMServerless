@@ -48,8 +48,8 @@
     "test-endpoints": "istanbul cover _mocha  -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'",
     "lint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '**/*.js'",
     "lintCommit": "./tools/lintCommit.sh",
-    "deploy-tables": "export SIX_VERBOSE=6; export AWS_PROFILE=six; node ./deployment/dynamodb/deploy_tables.js",
-    "purge-tables": "export SIX_VERBOSE=6; export AWS_PROFILE=six; node ./deployment/dynamodb/purge_tables.js"
+    "deploy-tables": "export SIX_VERBOSE=6; node ./deployment/dynamodb/deploy_tables.js",
+    "purge-tables": "export SIX_VERBOSE=6; node ./deployment/dynamodb/purge_tables.js"
   },
   "pre-commit": [
     "lintCommit",
