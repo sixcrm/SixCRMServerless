@@ -43,7 +43,7 @@ function setEnvironmentVariables(){
 
 }
 
-return kinesisfirehoseutilities.putRecord('six-development-transactions', createRandomKinesisTransactionRecord()).then((result) => {
+return kinesisfirehoseutilities.putRecord('six-development-transactions', createRandomKinesisTransactionRecord(), 'transactions').then((result) => {
     du.output('Kinesis Firehose Result', result);
     return result;
 })
