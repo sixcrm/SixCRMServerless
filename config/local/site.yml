@@ -103,7 +103,9 @@ elasticache:
   endpoint: 'localhost'
   port: 6379
 
-#kinesis:
-  #firehose:
-  #  redshift:
-  #  elasticsearch:
+kinesis:
+  firehose:
+    streams: 'six-development-transaction'
+
+aws:
+  region: 'us-east-1'
