@@ -2,10 +2,25 @@ import csv
 import uuid
 import random
 from datetime import *
-
+from bisect import bisect
 
 # 21.04.2017 Simple Python script for generating random dataset
 
+def weighted_choice(choices):
+    """
+    Returns an object based on the predefined probabilty
+    weighted_choice([("WHITE",90), ("RED",8), ("GREEN",2)])
+    90+9+2 = 100
+    """
+    values, weights = zip(*choices)
+    total = 0
+    cum_weights = []
+    for w in weights:
+        total += w
+        cum_weights.append(total)
+    x = random.random() * total
+    i = bisect(cum_weights, x)
+    return values[i]
 
 def random_date(start, end):
     """
@@ -47,7 +62,8 @@ w.writerow((
 for i in range(1000000):
     w.writerow((
        random.choice(session),
-       random.choice(["Click", "Lead", "Order","Upsell","Confirm"]),
+       #random.choice(["Click", "Lead", "Order","Upsell","Confirm"]),
+       weighted_choice([("Click",52), ("Lead",26), ("Order",11),("Upsell",6), ("Confirm",5)]),
        random_date(d1,d2),
        random.choice(account),
        random.choice(campaign),
