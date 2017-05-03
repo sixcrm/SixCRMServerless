@@ -39,7 +39,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: transaction => transactionController.getTransactionProducts(transaction)
         },
         merchant_provider: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: GraphQLString,
             description: 'Id of the merchant provider.',
         },
         created_at: {
