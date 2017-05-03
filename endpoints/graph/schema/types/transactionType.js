@@ -43,7 +43,13 @@ module.exports.graphObj = new GraphQLObjectType({
         merchant_provider: {
             type: merchantProviderType.graphObj,
             description: 'Merchant provider associated with the transaction.',
-            resolve: transaction => merchantProviderControler.get(transaction.merchant_provider)
+            resolve: transaction => {
+                if (transaction.merchant_provider) {
+                    return merchantProviderControler.get(transaction.merchant_provider);
+                } else {
+                    return null;
+                }
+            }
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),
