@@ -42,7 +42,7 @@ class userACLController extends entityController {
     getACLByUser(user){
 
         du.debug('getACLByUser', user);
-        return this.querySecondaryIndex('user', user, 'user-index').then(this.getResult);
+        return this.queryBySecondaryIndex('user', user, 'user-index').then(this.getResult);
 
     }
 
