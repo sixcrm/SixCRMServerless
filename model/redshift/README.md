@@ -8,6 +8,7 @@ ____
 
 ### Fact tables
 * `f_transactions` - main fact table of transactional type holds data on transaction level of granularity
+* `f_events` - fact table of events types holds data on events level of granularity
 * `f_products` - **IN WORK** fact table of products in transactions
 
 Transactional tables are defined with the distribution key based on the account.
@@ -34,6 +35,7 @@ Redshift is a pure column store analytical database and as such lacks fatures fo
 
 ### Data Definition Language (DDL) scripts
 * `f_transactions.sql` - main fact table creation
+* `f_events.sql` - fact table of events creation
 * `d_datetimes.sql` - dimensional table creation
 * `d_resultimes.sql` - dimensional table creation and row insertion
 
