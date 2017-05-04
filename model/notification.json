@@ -1,0 +1,32 @@
+{
+	"title": "Notification",
+	"type": "object",
+	"properties": {
+		"id":{
+			"type":"string"
+		},
+		"user":{
+			"type":"string"
+		},
+		"account":{
+			"type":"string"
+		},
+		"type":{
+			"type":"string"
+		},
+		"action":{
+			"type":"string"
+		},
+		"message":{
+			"type":"string"
+		},
+		"created_at":{
+			"type":"string"
+		},
+		"updated_at":{
+			"type":"string"
+		}
+
+	},
+	"required":["account", "type", "action", "message", "created_at", "updated_at"]
+}

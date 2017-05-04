@@ -5,15 +5,14 @@
 	query {
 		notificationlist {
 			notifications {
-			    id,
-			    type,
-			    action,
-			    message,
-			    read_at,
+		    id,
+		    type,
+		    action,
+		    message,
+		    read_at,
 				created_at,
 				updated_at
 			}
 		}
 	}"
 }
-

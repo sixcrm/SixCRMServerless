@@ -102,7 +102,7 @@ class transactionController extends entityController {
 
     getTransactionsByRebillID(id){
 
-        return this.queryBySecondaryIndex('rebill_id', id, 'rebill-index');
+        return this.queryBySecondaryIndex('rebill_id', id, 'rebill-index').then(this.getResult);
 
     }
 

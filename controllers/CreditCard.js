@@ -23,45 +23,47 @@ class creditCardController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            controller_instance.queryBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index').then((creditcards) => {
+            controller_instance.queryBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index')
+              .then((result) => this.getResult(result))
+              .then((creditcards) => {
 
-                var card_identified = false;
+                  var card_identified = false;
 
-                creditcards.forEach(function(item){
+                  creditcards.forEach(function(item){
 
-                    if(card_identified == false && controller_instance.isSameCreditCard(creditcard, item)){
+                      if(card_identified == false && controller_instance.isSameCreditCard(creditcard, item)){
 
-                        card_identified = item;
+                          card_identified = item;
 
-                    }
+                      }
 
-                });
+                  });
 
-                if(_.has(card_identified, 'id')){
+                  if(_.has(card_identified, 'id')){
 
-                    return resolve(card_identified);
+                      return resolve(card_identified);
 
-                }else if(card_identified == false){
+                  }else if(card_identified == false){
 
-                    return controller_instance.create(creditcard).then((data) => {
+                      return controller_instance.create(creditcard).then((data) => {
 
-                        return resolve(data);
+                          return resolve(data);
 
-                    }).catch((error) => {
+                      }).catch((error) => {
 
-                        return reject(error);
+                          return reject(error);
 
-                    });
+                      });
 
-                } else {
+                  } else {
 
-                    return reject(new Error('Card not identified.'));
+                      return reject(new Error('Card not identified.'));
 
-                }
+                  }
 
-            }).catch((error) => {
-                reject(error);
-            });
+              }).catch((error) => {
+                  reject(error);
+              });
 
         });
 

@@ -354,33 +354,35 @@ class userController extends entityController {
 
             du.debug('User: ', user.id);
 
-			//Technical Debt:  This is required.  Must be extended by the UserACL controller itself?
+			      //Technical Debt:  This is required.  Must be extended by the UserACL controller itself?
             var userACLController = require('./UserACL.js');
 
-            userACLController.queryBySecondaryIndex('user', user.id, 'user-index').then((acls) => {
+            userACLController.queryBySecondaryIndex('user', user.id, 'user-index')
+              .then((response) => this.getResult(response, 'useracls'))
+              .then((acls) => {
 
-                du.debug('ACLs: ', acls);
+                  du.debug('ACLs: ', acls);
 
-                if(_.isNull(acls)){
-                    return resolve(null);
-                }
+                  if(_.isNull(acls)){
+                      return resolve(null);
+                  }
 
-                du.debug('ACLs: ', acls);
+                  du.debug('ACLs: ', acls);
 
-                let acl_promises = acls.map(acl => userACLController.getPartiallyHydratedACLObject(acl));
+                  let acl_promises = acls.map(acl => userACLController.getPartiallyHydratedACLObject(acl));
 
-                return Promise.all(acl_promises).then((acl_promises) => {
+                  return Promise.all(acl_promises).then((acl_promises) => {
 
-                    return resolve(acl_promises);
+                      return resolve(acl_promises);
 
-                }).catch((error) => {
+                  }).catch((error) => {
 
-                    return reject(error);
-                });
+                      return reject(error);
+                  });
 
-            }).catch((error) => {
-                return reject(error);
-            });
+              }).catch((error) => {
+                  return reject(error);
+              });
 
         });
 

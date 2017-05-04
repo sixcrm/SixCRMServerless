@@ -32,6 +32,8 @@ function createRandomKinesisTransactionRecord(){
         subtype: random.selectRandomFromArray(['main', 'upsell']),
     };
 
+    du.debug('Spoofed Record:', spoofed_record);
+
     return spoofed_record;
 
 }

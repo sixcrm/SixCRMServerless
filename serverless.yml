@@ -638,34 +638,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '30'
         MaximumMessageSize: '262144'
-#    SixEncryptionKey:
-#        Type: AWS::KMS::Key
-#        Properties:
-#          Description: 'A sample key'
-#          KeyPolicy:
-#            Version: '2012-10-17'
-#            Id: 'key-default-1'
-#            Statement:
-#              -
-#                Sid: 'Allow administration of the key'
-#                Effect: 'Allow'
-#                Principal:
-#                  AWS: 'arn:aws:iam::068070110666:user/TimothyDalbey'
-#                Action:
-#                  - 'kms:*'
-#                Resource: '*'
-#              -
-#                Sid: 'Allow use of the key'
-#                Effect: 'Allow'
-#                Principal:
-#                  AWS: 'arn:aws:iam::068070110666:role/sixtransaction-development-us-east-1-lambdaRole'
-#                Action:
-#                  - 'kms:Encrypt'
-#                  - 'kms:Decrypt'
-#                  - 'kms:ReEncrypt*'
-#                  - 'kms:GenerateDataKey*'
-#                  - 'kms:DescribeKey'
-#                Resource: '*'
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
       Properties:
@@ -695,3 +667,31 @@ resources:
              Resource: 	arn:aws:cloudsearch:us-east-1:*:*
         Roles:
           - Ref: IamRoleLambdaExecution
+#    SixEncryptionKey:
+#        Type: AWS::KMS::Key
+#        Properties:
+#          Description: 'A sample key'
+#          KeyPolicy:
+#            Version: '2012-10-17'
+#            Id: 'key-default-1'
+#            Statement:
+#              -
+#                Sid: 'Allow administration of the key'
+#                Effect: 'Allow'
+#                Principal:
+#                  AWS: 'arn:aws:iam::068070110666:user/TimothyDalbey'
+#                Action:
+#                  - 'kms:*'
+#                Resource: '*'
+#              -
+#                Sid: 'Allow use of the key'
+#                Effect: 'Allow'
+#                Principal:
+#                  AWS: 'arn:aws:iam::068070110666:role/sixtransaction-development-us-east-1-lambdaRole'
+#                Action:
+#                  - 'kms:Encrypt'
+#                  - 'kms:Decrypt'
+#                  - 'kms:ReEncrypt*'
+#                  - 'kms:GenerateDataKey*'
+#                  - 'kms:DescribeKey'
+#                Resource: '*'

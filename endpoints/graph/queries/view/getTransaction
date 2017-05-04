@@ -8,7 +8,16 @@
 			alias,
 			amount,
 			processor_response,
-			merchant_provider,
+            merchant_provider {
+                id,
+                name,
+                username,
+                password,
+                endpoint,
+                processor,
+                created_at,
+                updated_at
+            },
 			created_at,
 			updated_at,
 			rebill {

@@ -497,7 +497,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 var cursor = account.cursor;
                 var limit = account.limit;
 
-      	return accountController.list(cursor, limit);
+      	        return accountController.list(cursor, limit);
             }
         },
         rolelist: {
@@ -986,7 +986,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, notification) {
-                return notificationController.listForCurrentUser(notification.limit, notification.cursor);
+                return notificationController.listForCurrentUser(notification.cursor, notification.limit);
             }
         },
         notificationsetting: {

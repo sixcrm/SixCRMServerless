@@ -9,7 +9,7 @@ general:
       - production
       - staging
       - development
-      
+
 machine:
   timezone:
     America/Los_Angeles
@@ -19,6 +19,14 @@ machine:
     AWS_ACCOUNT: '068070110666'
     AWS_REGION: 'us-east-1'
     SIX_VERBOSE: '2'
+  services:
+    - redis
+    - elasticsearch
+    # Add dynamoDB
+
+dependencies:
+  post:
+    - serverless dynamodb install --stage $CIRCLE_BRANCH
 
 test:
   override:
@@ -28,25 +36,21 @@ deployment:
   production:
     branch: production
     commands:
-      #- serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
-      #- serverless deploy --stage $CIRCLE_BRANCH
-      #- npm run test-integration
       - ./deployment/deploy_production.sh
   staging:
     branch: staging
     commands:
-      #- serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
-      #- serverless deploy --stage $CIRCLE_BRANCH
-      #- npm run test-integration
       - ./deployment/utilities/merge_branches.sh staging production
   development:
     branch: development
     commands:
       - npm run lint
       - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
-      #- npm run purge-tables $CIRCLE_BRANCH
+      - npm run purge-tables $CIRCLE_BRANCH
       - node ./deployment/cloudsearch/deploy.js sixcrm-$CIRCLE_BRANCH
-      - serverless dynamodb install --stage $CIRCLE_BRANCH && npm run deploy-tables $CIRCLE_BRANCH $AWS_REGION
+      - npm run deploy-tables $CIRCLE_BRANCH $AWS_REGION
+      # Technical Debt:
+      #   - API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
       - serverless deploy --stage $CIRCLE_BRANCH
       - export SIX_VERBOSE=0 && npm run test-integration
       - ./deployment/deploy_development.sh
