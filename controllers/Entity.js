@@ -53,109 +53,35 @@ module.exports = class entityController {
 
             return this.can('read').then((permission) => {
 
-                if(permission != true){
+                if(permission != true){ return resolve(null); }
 
-                    return resolve(null);
-									//resolve(permissionutilities.messages.nopermission);
-
+                let query_parameters = {
+                    condition_expression: {},
+                    expression_attribute_names: {},
+                    expression_attribute_values: {}
                 }
 
-                var query_parameters = {filter_expression: '', expression_attribute_values: ''};
-
-                if(typeof cursor  !== 'undefined'){
-                    query_parameters.ExclusiveStartKey = { id: cursor };
-                }
-
-                if(typeof limit  !== 'undefined'){
-                    query_parameters['limit'] = limit;
-                }
-
-                if(global.disableaccountfilter !== true){
-
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
-
-
-                        if(global.account == '*'){
-
-												//for now, do nothing
-
-                        }else{
-
-                            query_parameters.filter_expression = 'account = :accountv';
-                            query_parameters.expression_attribute_values = {':accountv':global.account};
-
-                        }
-
-                    }
-
-                }else{
-
-                    du.warning('Global Account Filter Disabled');
-
-                }
-
-                if (query_parameters.filter_expression) {
-                    query_parameters.filter_expression += ' AND ';
-                }
-
-                if (!query_parameters.expression_attribute_values) {
-                    query_parameters.expression_attribute_values = {};
-                }
-
-                query_parameters.filter_expression += `${field} = :indexv`;
+                query_parameters.condition_expression['#'+field] = ':indexv';
+                query_parameters.expression_attribute_names['#'+field] = field;
                 query_parameters.expression_attribute_values[':indexv'] = index_value;
 
-                return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+                query_parameters = this.appendFilterExpression(query_parameters, '#'+field+' = :indexv');
+                query_parameters = this.appendCursor(query_parameters, cursor);
+                query_parameters = this.appendLimit(query_parameters, limit);
+                query_parameters = this.appendAccountFilter(query_parameters);
 
-                    if(_.isError(error)){
-                        return reject(error);
-                    }
+                return dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
-                    if(_.isObject(data)){
+                    if(_.isError(error)){ return reject(error); }
 
-                        var pagination_object = {
-                            count: '',
-                            end_cursor: '',
-                            has_next_page: 'true'
-                        }
+                    return this.buildResponse(data, (error, response) => {
 
-											// Technical Debt: We should improve the way we validate the data, either by using dedicated
-											// response objects, JSON schema validation or both.
-                        if(_.has(data, "Count")){
-                            pagination_object.count = data.Count;
-                        }
+                        if(error){ return reject(error); }
+                        return resolve(response);
 
-                        if(_.has(data, "LastEvaluatedKey")){
-                            if(_.has(data.LastEvaluatedKey, "id")){
-                                pagination_object.end_cursor = data.LastEvaluatedKey.id;
-                            }
-                        }
+                    });
 
-                        if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
-                            pagination_object.has_next_page = 'false';
-                        }
-
-                        if (!_.has(data, "Items") || (!_.isArray(data.Items))) {
-                            return reject(new Error('Data has no items.'));
-                        }
-
-                        if(data.Items.length < 1){
-                            data.Items = null;
-                        }
-
-                        var resolve_object = {
-                            pagination: pagination_object
-                        };
-
-                        resolve_object[this.descriptive_name+'s'] = data.Items;
-
-                        return resolve(resolve_object);
-
-                    } else {
-                        return reject(new Error('Data is not an object.'));
-                    }
-
-                }));
+                });
 
             });
 
@@ -1231,5 +1157,165 @@ module.exports = class entityController {
         return entity;
 
     }
+
+    appendAccountFilter(query_parameters){
+
+        if(global.disableaccountfilter !== true){
+
+            if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+
+                if(global.account == '*'){
+
+                    du.warning('Master account in use.');
+
+                }else{
+
+                    query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
+
+                  // If the query already has expression attribute values, add :accountv if it doesn't already exist.
+                  // Barf if different :accountv exists
+                    if(_.has(query_parameters, 'expression_attribute_values')){
+
+
+
+                        if(_.has(query_parameters.expression_attribute_values, ':accountv')){
+
+                            if(query_parameters.expression_attribute_values[':accountv'] != global.account){
+
+                                throw new Error('Account value already present in the query parameters that does not match specified account.');
+
+                            }
+
+                        }else{
+
+                            query_parameters.expression_attribute_values[':accountv'] = global.account;
+
+                        }
+
+                    }else{
+
+                        query_parameters.expression_attribute_values = {':accountv':global.account};
+
+                    }
+
+                }
+
+            }
+
+        }else{
+
+            du.warning('Global Account Filter Disabled');
+
+        }
+
+        return query_parameters;
+
+    }
+
+    appendLimit(query_parameters, limit){
+
+        if(!_.isUndefined(limit)){
+          //Technical Debt:  validate limit (integer, non-negative, less than global maximum)
+            query_parameters['limit'] = limit;
+        }
+
+        return query_parameters;
+
+    }
+
+    appendCursor(query_parameters, cursor){
+
+        if(!_.isUndefined(cursor)){
+          //Technical Debt: string, appropriate structure...
+            query_parameters.ExclusiveStartKey = { id: cursor };
+        }
+
+        return query_parameters;
+
+    }
+
+    appendFilterExpression(query_parameters, filter_expression){
+
+        if (_.has(query_parameters, 'filter_expression')){
+
+            if(_.isString(query_parameters.filter_expression)){
+
+                query_parameters.filter_expression += ' AND '+filter_expression;
+
+            }else{
+
+                throw new Error('Unrecognized query parameter filter expression type.');
+
+            }
+
+        }else{
+
+            query_parameters.filter_expression = filter_expression;
+
+        }
+
+        return query_parameters;
+
+    }
+
+    buildPaginationObject(data){
+
+        var pagination_object = {
+            count: '',
+            end_cursor: '',
+            has_next_page: 'true'
+        }
+
+      // Technical Debt: We should improve the way we validate the data, either by using dedicated
+      // response objects, JSON schema validation or both.
+        if(_.has(data, "Count")){
+            pagination_object.count = data.Count;
+        }
+
+        if(_.has(data, "LastEvaluatedKey")){
+            if(_.has(data.LastEvaluatedKey, "id")){
+                pagination_object.end_cursor = data.LastEvaluatedKey.id;
+            }
+        }
+
+      //Technical Debt:  This doesn't appear to be working correctly
+        if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
+            pagination_object.has_next_page = 'false';
+        }
+
+        return pagination_object;
+
+    }
+
+    buildResponse(data, callback){
+
+        if(_.isObject(data)){
+
+            let pagination_object = this.buildPaginationObject(data);
+
+            if (!_.has(data, "Items") || (!_.isArray(data.Items))) {
+                return callback(new Error('Data has no items.'), null);
+            }
+
+            if(data.Items.length < 1){
+                data.Items = null;
+            }
+
+            var resolve_object = {
+                pagination: pagination_object
+            };
+
+            resolve_object[this.descriptive_name+'s'] = data.Items;
+
+            return callback(null, resolve_object);
+
+        } else {
+
+            return callback(new Error('Data is not an object.'), null);
+
+        }
+
+    }
+
 
 }

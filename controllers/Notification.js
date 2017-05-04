@@ -20,14 +20,17 @@ class notificationController extends entityController {
      * @returns {Promise}
      */
     listForCurrentUser(cursor, limit) {
+
         du.debug(`Listing notifications by secondary index for user '${global.user.id}'.`);
 
         notificationReadController.markNotificationsAsSeen(); // Update the time the user has listed notifications.
 
-        return this.queryBySecondaryIndex('user', global.user.id, 'user-index', cursor, limit)
-			.then(result => {
-    return { notifications: result }
-});
+        return this.listBySecondaryIndex('user', global.user.id, 'user-index', cursor, limit)
+  			.then(result => {
+          //du.warning('Result:', result);
+      return result;
+  });
+
     }
 
     /**
