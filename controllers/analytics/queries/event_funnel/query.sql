@@ -7,30 +7,30 @@ SELECT
 FROM (
   SELECT
     sum(
-        CASE WHEN TYPE = 'Click'
+        CASE WHEN TYPE = 'click'
           THEN 1
         ELSE 0
         END
     )        count_click,
     sum(
-        CASE WHEN TYPE = 'Lead'
+        CASE WHEN TYPE = 'lead'
           THEN 1
         ELSE 0
         END
     )        count_lead,
     sum(
-        CASE WHEN TYPE = 'Order'
+        CASE WHEN TYPE = 'order'
           THEN 1
         ELSE 0
         END
     )        count_order,
     sum(
-        CASE WHEN TYPE = 'Confirm'
+        CASE WHEN TYPE = 'confirm'
           THEN 1
         ELSE 0
         END
     )        count_confirm,
-    max(CASE WHEN TYPE = 'Upsell'
+    max(CASE WHEN TYPE = 'upsell'
       THEN 1
         ELSE 0
         END) m_upsell

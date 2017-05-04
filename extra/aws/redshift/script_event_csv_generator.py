@@ -35,7 +35,7 @@ def random_date(start, end):
 d1 = datetime.strptime('1/1/2017 10:00 AM', '%m/%d/%Y %I:%M %p')
 d2 = datetime.strptime('4/21/2017 10:00 AM', '%m/%d/%Y %I:%M %p')
 
-session = [uuid.uuid4() for x in range(100)]
+sessions = [uuid.uuid4() for x in range(1000)]
 schedule = [uuid.uuid4() for x in range(100)]
 campaign = [uuid.uuid4() for x in range(1000)]
 affiliate = [uuid.uuid4() for x in range(100)]
@@ -59,15 +59,68 @@ w.writerow((
   'subaffiliate_5'
 ))
 
-for i in range(1000000):
-    w.writerow((
-       random.choice(session),
-       #random.choice(["Click", "Lead", "Order","Upsell","Confirm"]),
-       weighted_choice([("Click",52), ("Lead",26), ("Order",11),("Upsell",6), ("Confirm",5)]),
-       random_date(d1,d2),
-       random.choice(account),
-       random.choice(campaign),
-       random.choice(schedule),
-       random.choice(affiliate),
-        '','','','',''))
+
+for session in sessions:
+    seed = random.randrange(200,1000)
+    for _ in range(0,int(seed*0.52)):
+        w.writerow((
+           session,
+           "click",
+           random_date(d1,d2),
+           random.choice(account),
+           random.choice(campaign),
+           random.choice(schedule),
+           random.choice(affiliate),
+            '','','','',''))
+    for _ in range(0,int(seed*0.26)):
+        w.writerow((
+           session,
+           "lead",
+           random_date(d1,d2),
+           random.choice(account),
+           random.choice(campaign),
+           random.choice(schedule),
+           random.choice(affiliate),
+            '','','','',''))
+    for _ in range(0,int(seed*0.11)):
+        w.writerow((
+           session,
+           "order",
+           random_date(d1,d2),
+           random.choice(account),
+           random.choice(campaign),
+           random.choice(schedule),
+           random.choice(affiliate),
+            '','','','',''))
+    for _ in range(0,random.randrange(0,3)):
+        w.writerow((
+           session,
+           "upsell",
+           random_date(d1,d2),
+           random.choice(account),
+           random.choice(schedule),
+           random.choice(affiliate),
+           random.choice(campaign),
+            '','','','',''))
+    for _ in range(0,random.randrange(0,2)):
+        w.writerow((
+           session,
+           "confirm",
+           random_date(d1,d2),
+           random.choice(account),
+           random.choice(campaign),
+           random.choice(schedule),
+           random.choice(affiliate),
+            '','','','',''))
+    ##for i in range(100):
+        ##w.writerow((
+           ##random.choice(session),
+           #random.choice(["Click", "Lead", "Order","Upsell","Confirm"]),
+           ##weighted_choice([("Click",52), ("Lead",26), ("Order",11),("Upsell",6), ("Confirm",5)]),
+           ##random_date(d1,d2),
+           ##random.choice(account),
+           ##random.choice(campaign),
+           ##random.choice(schedule),
+           ##random.choice(affiliate),
+            ##'','','','',''))
 g.close()
