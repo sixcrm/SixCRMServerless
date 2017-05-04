@@ -2,40 +2,40 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		transactionlist ({argumentation}) {
 			transactions {
 				id,
 				amount,
 				created_at,
 				updated_at,
-                merchant_provider {
-                    id,
-                    name,
-                    username,
-                    password,
-                    endpoint,
-                    processor,
-                    created_at,
-                    updated_at
-                },
+        merchant_provider {
+            id,
+            name,
+            username,
+            password,
+            endpoint,
+            processor,
+            created_at,
+            updated_at
+        },
 				rebill {
 					id,
 					bill_at,
 					amount,
 					parentsession {
 						id,
-						customer { 
-							id, 
-							firstname, 
-							lastname, 
-							address { 
-								line1, 
-								line2, 
-								city, 
-								state, 
-								zip 
-							} 
+						customer {
+							id,
+							firstname,
+							lastname,
+							address {
+								line1,
+								line2,
+								city,
+								state,
+								zip
+							}
 						}
 					},
 					product_schedules {
@@ -86,4 +86,3 @@
 		},
 	}"
 }
-

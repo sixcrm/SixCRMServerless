@@ -29,6 +29,7 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chai-json-schema": "^1.4.0",
+    "child-process-promise": "^2.2.1",
     "eslint": "^3.18.0",
     "eslint-plugin-promise": "^3.5.0",
     "istanbul": "^0.4.5",
