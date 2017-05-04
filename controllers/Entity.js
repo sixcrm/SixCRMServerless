@@ -56,12 +56,12 @@ module.exports = class entityController {
                 if(permission != true){ return resolve(null); }
 
                 let query_parameters = {
-                    condition_expression: {},
+                    key_condition_expression: {},
                     expression_attribute_names: {},
                     expression_attribute_values: {}
                 }
 
-                query_parameters.condition_expression['#'+field] = ':indexv';
+                query_parameters.key_condition_expression['#'+field] = ':indexv';
                 query_parameters.expression_attribute_names['#'+field] = field;
                 query_parameters.expression_attribute_values[':indexv'] = index_value;
 
@@ -204,54 +204,23 @@ module.exports = class entityController {
 
             return this.can('read').then((permission) => {
 
-                if(permission !== true){
-
-                    return resolve(null);
-
-                }
+                if(permission !== true){ return resolve(null); }
 
                 let query_parameters = {
-                    condition_expression: '#'+field+' = :index_valuev',
+                    key_condition_expression: '#'+field+' = :index_valuev',
                     expression_attribute_values: {':index_valuev': index_value},
                     expression_attribute_names: {}
                 }
 
                 query_parameters.expression_attribute_names['#'+field] = field;
 
-                if(typeof cursor  !== 'undefined'){
-                    query_parameters.ExclusiveStartKey = cursor;
-                }
-
-                if(typeof limit  !== 'undefined'){
-                    query_parameters['limit'] = limit;
-                }
-
-                if(global.disableaccountfilter !== true){
-
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
-
-                        if(global.account == '*'){
-
-													//for now, do nothing
-
-                        }else{
-
-                            query_parameters.filter_expression = 'account = :accountv';
-                            query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                        }
-
-                    }
-
-                }else{
-
-                    du.warning('Global Account Filter Disabled');
-
-                }
+                query_parameters = this.appendCursor(query_parameters, cursor);
+                query_parameters = this.appendLimit(query_parameters, limit);
+                query_parameters = this.appendAccountFilter(query_parameters);
 
                 du.debug('Query Parameters: ', query_parameters);
 
-                return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+                return Promise.resolve(dynamoutilities.queryRecordsFull(this.table_name, query_parameters, index_name, (error, data) => {
 
                     if(_.isError(error)){
 
@@ -259,15 +228,12 @@ module.exports = class entityController {
 
                     }
 
-                    if(_.isArray(data) && data.length > 0){
+                    return this.buildResponse(data, (error, response) => {
 
-                        return resolve(data);
+                        if(error){ return reject(error); }
+                        return resolve(response);
 
-                    }else{
-
-                        return resolve(null);
-
-                    }
+                    });
 
                 }));
 
@@ -293,7 +259,7 @@ module.exports = class entityController {
                 }
 
                 let query_parameters = {
-                    condition_expression: field+' = :index_valuev',
+                    key_condition_expression: field+' = :index_valuev',
                     expression_attribute_values: {':index_valuev': index_value},
                 }
 
@@ -380,7 +346,7 @@ module.exports = class entityController {
                 }
 
                 let query_parameters = {
-                    condition_expression: primary_key+' = :primary_keyv',
+                    key_condition_expression: primary_key+' = :primary_keyv',
                     expression_attribute_values: {':primary_keyv': id}
                 };
 
@@ -541,7 +507,7 @@ module.exports = class entityController {
                 }
 
                 let query_parameters = {
-                    condition_expression: '#'+field+' = :index_valuev',
+                    key_condition_expression: '#'+field+' = :index_valuev',
                     expression_attribute_values: {':index_valuev': global.user.id, ':createdv': date_time},
                     expression_attribute_names: {},
                     filter_expression: 'created_at > :createdv'
@@ -762,7 +728,7 @@ module.exports = class entityController {
                 }else{
 
                     let query_parameters = {
-                        condition_expression: primary_key+' = :primary_keyv',
+                        key_condition_expression: primary_key+' = :primary_keyv',
                         expression_attribute_values: {':primary_keyv': id}
                     };
 
@@ -842,7 +808,7 @@ module.exports = class entityController {
         }else{
 
             let query_parameters = {
-                condition_expression: primary_key+' = :primary_keyv',
+                key_condition_expression: primary_key+' = :primary_keyv',
                 expression_attribute_values: {':primary_keyv': entity[primary_key]}
             };
 
@@ -1317,5 +1283,24 @@ module.exports = class entityController {
 
     }
 
+    getResult(result, field){
+
+        du.debug('Get Result');
+        du.info(result, field);
+        if(_.isUndefined(field)){
+            field = this.descriptive_name+'s';
+        }
+
+        if(_.has(result, field)){
+
+            return Promise.resolve(result[field]);
+
+        }else{
+
+            return Promise.resolve(null);
+
+        }
+
+    }
 
 }

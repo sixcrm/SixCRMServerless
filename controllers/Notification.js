@@ -26,11 +26,7 @@ class notificationController extends entityController {
 
         notificationReadController.markNotificationsAsSeen(); // Update the time the user has listed notifications.
 
-        return this.listBySecondaryIndex('user', global.user.id, 'user-index', cursor, limit)
-  			.then(result => {
-          //du.warning('Result:', result);
-      return result;
-  });
+        return this.queryBySecondaryIndex('user', global.user.id, 'user-index', cursor, limit);
 
     }
 

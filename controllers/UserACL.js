@@ -21,6 +21,8 @@ class userACLController extends entityController {
 	//this is called specifically from the UserController.  Hence the partial hydration...
     getPartiallyHydratedACLObject(useracl){
 
+        du.debug('Get Partially Hydrated ACL Object');
+
         let promises = [];
 
         promises.push(this.getAccount(useracl));
@@ -40,11 +42,12 @@ class userACLController extends entityController {
     getACLByUser(user){
 
         du.debug('getACLByUser', user);
-        return this.queryBySecondaryIndex('user', user, 'user-index');
+        return this.querySecondaryIndex('user', user, 'user-index');
 
     }
 
     getACLByAccount(account){
+
         du.debug('getACLByAccount');
         return this.queryBySecondaryIndex('account', account, 'account-index');
 
@@ -53,7 +56,6 @@ class userACLController extends entityController {
     getUser(useracl){
 
         du.debug('getUser', useracl);
-
         if(_.has(useracl, 'user') && _.has(useracl.user, 'id')){
             return useracl.user;
         }
@@ -66,6 +68,8 @@ class userACLController extends entityController {
     }
 
     getAccount(useracl){
+
+        du.debug('Get Account');
 
         if(_.has(useracl, 'account') && _.has(useracl.account, 'id')){
             return useracl.account;
