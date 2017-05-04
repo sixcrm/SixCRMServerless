@@ -36,26 +36,19 @@ deployment:
   production:
     branch: production
     commands:
-      #- serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
-      #- serverless deploy --stage $CIRCLE_BRANCH
-      #- npm run test-integration
       - ./deployment/deploy_production.sh
   staging:
     branch: staging
     commands:
-      #- serverless dynamodb install --stage $CIRCLE_BRANCH && serverless dynamodb executeAll --stage $CIRCLE_BRANCH
-      #- serverless deploy --stage $CIRCLE_BRANCH
-      #- npm run test-integration
       - ./deployment/utilities/merge_branches.sh staging production
   development:
     branch: development
     commands:
       - npm run lint
       - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
-      #- npm run purge-tables $CIRCLE_BRANCH
+      - npm run purge-tables $CIRCLE_BRANCH
       - node ./deployment/cloudsearch/deploy.js sixcrm-$CIRCLE_BRANCH
-      # Technical Debt:  Move the install process to earlier in the circle process chain...
-      - serverless dynamodb install --stage $CIRCLE_BRANCH && npm run deploy-tables $CIRCLE_BRANCH $AWS_REGION
+      - npm run deploy-tables $CIRCLE_BRANCH $AWS_REGION
       - serverless deploy --stage $CIRCLE_BRANCH
       - export SIX_VERBOSE=0 && npm run test-integration
       - ./deployment/deploy_development.sh
