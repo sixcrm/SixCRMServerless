@@ -1,5 +1,6 @@
 'use strict';
 const _ = require('underscore');
+const Validator = require('jsonschema').Validator;
 
 const du = require('../lib/debug-utilities.js');
 
@@ -47,6 +48,47 @@ class notificationController extends entityController {
 
             return this.countCreatedAfterBySecondaryIndex(last_seen_time, field, index_name);
         });
+    }
+
+
+    /**
+     * Whether a given object is a valid notification.
+     *
+     * @param notification_object
+     * @returns {Promise}
+     */
+    isValidNotification(notification_object) {
+        let schema;
+
+        try {
+            schema = require('../model/notification.json');
+        } catch(e){
+            return Promise.reject(new Error('Unable to load validation schemas.'));
+        }
+
+        let validation;
+        let params = JSON.parse(JSON.stringify(notification_object || {}));
+
+        try{
+            let v = new Validator();
+
+            validation = v.validate(params, schema);
+        }catch(e){
+            return Promise.reject(new Error('Unable to instantiate validator.'));
+        }
+
+        if(validation['errors'].length > 0) {
+            let error = {
+                message: 'One or more validation errors occurred.',
+                issues: validation.errors.map(e => e.message)
+            };
+
+            du.warning(error);
+
+            return Promise.reject(error);
+        }
+
+        return Promise.resolve(params);
     }
 }
 
