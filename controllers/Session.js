@@ -297,7 +297,7 @@ class sessionController extends entityController {
 
     getSessionByCustomerID(customer_id){
 
-        return this.queryBySecondaryIndex('customer', customer_id, 'customer-index');
+        return this.queryBySecondaryIndex('customer', customer_id, 'customer-index').then(this.getResult);
 
     }
 

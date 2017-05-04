@@ -20,27 +20,29 @@ class userDeviceTokenController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            return this.queryBySecondaryIndex('user', user, 'user-index').then((user_device_tokens) => {
+            return this.queryBySecondaryIndex('user', user, 'user-index')
+              .then((results) => this.getResult(results))
+              .then((user_device_tokens) => {
 
-                if(_.isArray(user_device_tokens)){
+                  if(_.isArray(user_device_tokens)){
 
-                    let resolve_object = {};
+                      let resolve_object = {};
 
-                    resolve_object[this.descriptive_name+'s'] = user_device_tokens;
+                      resolve_object[this.descriptive_name+'s'] = user_device_tokens;
 
-                    return resolve(resolve_object);
+                      return resolve(resolve_object);
 
-                }else{
+                  }else{
 
-                    return resolve(null);
+                      return resolve(null);
 
-                }
+                  }
 
-            }).catch((error) => {
+              }).catch((error) => {
 
-                return reject(error);
+                  return reject(error);
 
-            });
+              });
 
         });
 

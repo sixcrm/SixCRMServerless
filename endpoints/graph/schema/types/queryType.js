@@ -497,7 +497,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 var cursor = account.cursor;
                 var limit = account.limit;
 
-      	return accountController.list(cursor, limit);
+      	        return accountController.list(cursor, limit);
             }
         },
         rolelist: {
