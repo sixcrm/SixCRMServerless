@@ -1,32 +1,39 @@
 SELECT
   campaign,
-  percent_change_count,
-  percent_change_amount
+  percent_change_amount,
+  percent_change_count
 FROM
-  (SELECT
-     main.campaign                                                                                 AS campaign,
-     ((main.sum_amount - coalesce(prior.sum_amount,0)) / main.sum_amount) *
-     100                                                                                           AS percent_change_amount,
-     ((main.transaction_count - coalesce(prior.transaction_count,0)) / main.transaction_count) *
-     100                                                                                           AS percent_change_count
-   FROM
-     (SELECT
-        campaign,
-        SUM(amount) AS sum_amount,
-        COUNT(*)    AS transaction_count
-      FROM f_transactions
-      WHERE 1
-        {{filter}}
-        AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-      GROUP BY campaign) main LEFT OUTER JOIN
-     (SELECT
-        campaign,
-        SUM(amount) AS sum_amount,
-        COUNT(*)    AS transaction_count
-      FROM f_transactions
-      WHERE 1
-        {{filter}}
-        AND datetime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND dateadd(microsec,-1,'{{start}}')
-      GROUP BY campaign) prior
-       ON (main.campaign = prior.campaign))
-ORDER BY abs(percent_change_count) DESC,percent_change_count,percent_change_amount;
+    (SELECT
+       campaign,
+       ((sum_amount_main - coalesce(sum_amount_prior, 0))*1.0 / coalesce(sum_amount_main, 1)) *
+       100.0 AS percent_change_amount,
+       ((transaction_count_main - coalesce(transaction_count_prior, 0))*1.0 / coalesce(transaction_count_main, 1)) *
+       100.0 AS percent_change_count
+     FROM
+       (SELECT
+          campaign,
+          SUM(
+              CASE WHEN datetime >= TIMESTAMP '{{start}}'
+                THEN amount
+              ELSE 0
+              END
+          )        AS sum_amount_main,
+          SUM(CASE WHEN datetime >= TIMESTAMP '{{start}}'
+            THEN 1
+              ELSE 0
+              END) AS transaction_count_main,
+          SUM(CASE WHEN datetime < TIMESTAMP '{{start}}'
+            THEN amount
+              ELSE 0
+              END) AS sum_amount_prior,
+          SUM(CASE WHEN datetime < TIMESTAMP '{{start}}'
+            THEN 1
+              ELSE 0
+              END) AS transaction_count_prior
+        FROM f_transactions
+        WHERE 1
+              {{filter}}
+              AND datetime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND '{{end}}'
+        GROUP BY campaign)
+    )
+     ORDER BY abs(percent_change_count) DESC, percent_change_count, percent_change_amount;
