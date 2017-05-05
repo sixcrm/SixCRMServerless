@@ -2,10 +2,10 @@
 	"title": "Transaction",
 	"type": "object",
 	"properties": {
-		"session":{"$ref": "/Session"}
+		"session":{"$ref": "/Session"},
 		"products":{
 			"type":"array",
-			"items":{"$ref": "/Product"}
+			"items":{"$ref": "/Product"},
 			"minItems": 1,
 		},
 		"created_at":{
@@ -20,4 +20,3 @@
 	},
 	"required":["uuid", "session", "products", "created_at", "updated_at", "processorresult"]
 }
-
