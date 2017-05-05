@@ -28,6 +28,45 @@ class AnalyticsController {
 
     }
 
+    //new
+    getMerchantProcessorAmount(parameters){
+
+        du.debug('Get Merchant Processor Amount');
+
+        let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+
+        parameters = this.appendAccount(parameters);
+
+        return this.getResults('merchant_processor_amount', parameters, query_filters);
+
+    }
+
+    //new
+    getEventsByAffiliate(parameters){
+
+        du.debug('Get Events By Affiliate');
+
+        let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+
+        parameters = this.appendAccount(parameters);
+
+        return this.getResults('events_by_affiliate', parameters, query_filters);
+
+    }
+
+    //new
+    getTransactionsByAffiliate(parameters){
+
+        du.debug('Get Transactions By Affiliate');
+
+        let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+
+        parameters = this.appendAccount(parameters);
+
+        return this.getResults('transactions_by_affiliate', parameters, query_filters);
+
+    }
+
     getTransactionOverview(parameters){
 
         du.debug('Get Transaction Overview');

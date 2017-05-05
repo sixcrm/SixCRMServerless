@@ -1,0 +1,10 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		merchantprocessoramount (analyticsfilter:{start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-02T17:23:43.043Z\"}) {
+			hello
+		}
+	}"
+}

@@ -1,5 +1,6 @@
 # Aggregation by merchant processor and processor result
 
+//Technical Debt:  This query is not functional yet.
 ____
 
 ## Arguments:

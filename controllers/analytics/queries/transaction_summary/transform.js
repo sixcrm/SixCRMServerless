@@ -1,6 +1,9 @@
 'use strict';
+let du = require('../../../../lib/debug-utilities.js');
+
 module.exports = function(results, parameters){
 
+    du.debug('Transformation Function');
     return new Promise((resolve, reject) => {
 
         let return_object = {

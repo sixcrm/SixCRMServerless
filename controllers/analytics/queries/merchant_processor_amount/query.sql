@@ -15,7 +15,7 @@ FROM
        FROM
          f_transactions
        WHERE 1
-             AND merchant_processor IN ({{merchant_processor_list}})
+             AND merchant_processor IN ({{merchant_processor}})
      ) ft
      CROSS JOIN d_processor_result dpr
      CROSS JOIN
@@ -35,7 +35,7 @@ FROM
                    FROM f_transactions
                    WHERE 1
                          {{filter}}
-                         AND merchant_processor IN ({{merchant_processor_list}})
+                         AND merchant_processor IN ({{merchant_processor}})
                          AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
                    GROUP BY
                      processor_result,

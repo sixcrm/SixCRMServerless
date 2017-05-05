@@ -6,8 +6,6 @@ module.exports = function(results, parameters){
 
     du.debug('Transformation Function');
 
-    du.info(results);
-
     let click = results[0].count_click;
     let lead = results[0].count_lead;
     let main = results[0].count_order;

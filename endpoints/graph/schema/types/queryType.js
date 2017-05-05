@@ -67,6 +67,9 @@ let transactionSummaryType = require('./transactionSummaryType');
 let transactionOverviewType =  require('./transactionOverviewType');
 let eventFunnelType =  require('./eventFunnelType');
 let campaignDeltaType =  require('./campaignDeltaType');
+let eventsByAffiliateType =  require('./eventsByAffiliateType');
+let transactionsByAffiliateType =  require('./transactionsByAffiliateType');
+let merchantProcessorAmountType =  require('./merchantProcessorAmountType');
 
 let analyticsFilterInputType = require('./analyticsFilterInputType');
 
@@ -673,6 +676,33 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, analyticsfilter){
                 return analyticsController.getCampaignDelta(analyticsfilter.analyticsfilter);
+            }
+        },
+        eventsbyaffiliate: {
+            type: eventsByAffiliateType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getEventsByAffiliate(analyticsfilter.analyticsfilter);
+            }
+        },
+        transactionsbyaffiliate: {
+            type: transactionsByAffiliateType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getTransactionsByAffiliate(analyticsfilter.analyticsfilter);
+            }
+        },
+        merchantprocessoramount: {
+            type: merchantProcessorAmountType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getMerchantProcessorAmount(analyticsfilter.analyticsfilter);
             }
         },
         transactionlistbycustomer: {

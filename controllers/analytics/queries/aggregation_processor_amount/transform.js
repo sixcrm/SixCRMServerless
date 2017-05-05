@@ -6,7 +6,7 @@ let timestamp = require('../../../../lib/timestamp.js');
 
 module.exports = function(results, parameters){
 
-    du.info(parameters);
+    du.debug('Transformation Function');
 
     return new Promise((resolve, reject) => {
 
@@ -55,7 +55,6 @@ module.exports = function(results, parameters){
 
         du.info("Observation Count: "+return_object.length);
 
-      // Technical Debt: Once the query is of acceptable structure, transform structure into the following JSON structure...
         return resolve({
             transactions:return_object
         });
