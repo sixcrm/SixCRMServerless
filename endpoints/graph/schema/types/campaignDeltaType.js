@@ -1,17 +1,17 @@
 'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
 
-//const eventFunnelGroupType = require('./eventFunnelGroupType');
+const campaignDeltaGroupType = require('./campaignDeltaGroupType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'campaignDeltaType',
     description: 'Campaign Delta',
     fields: () => ({
-        hello: {
-            type: GraphQLString,
-            description: 'placeholder',
+        campaigns: {
+            type: new GraphQLList(campaignDeltaGroupType.graphObj),
+            description: 'The campaigns',
         }
     }),
     interfaces: []

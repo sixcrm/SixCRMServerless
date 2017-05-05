@@ -218,7 +218,7 @@ class AnalyticsController {
 
     getCampaignDelta(parameters){
 
-        du.debug('Get Event Funnel');
+        du.debug('Get Campaign Delta');
 
         return new Promise((resolve, reject) => {
 

@@ -4,7 +4,12 @@
 	"body":"
 	query {
 		campaigndelta (analyticsfilter:{start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-02T17:23:43.043Z\"}) {
-				hello
+			campaigns {
+				campaign,
+				campaign_name,
+				percent_change_amount,
+				percent_change_count
+			}
 		}
 	}"
 }
