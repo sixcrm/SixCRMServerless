@@ -5,9 +5,9 @@ SELECT
 FROM
     (SELECT
        campaign,
-       ((sum_amount_main - coalesce(sum_amount_prior, 0))*1.0 / coalesce(sum_amount_main, 1)) *
+       ((coalesce(transaction_count_main, 0) - coalesce(sum_amount_prior, 0))*1.0 / coalesce(sum_amount_main, 1)) *
        100.0 AS percent_change_amount,
-       ((transaction_count_main - coalesce(transaction_count_prior, 0))*1.0 / coalesce(transaction_count_main, 1)) *
+       ((coalesce(transaction_count_main, 0) - coalesce(transaction_count_prior, 0))*1.0 / coalesce(transaction_count_main, 1)) *
        100.0 AS percent_change_count
      FROM
        (SELECT
