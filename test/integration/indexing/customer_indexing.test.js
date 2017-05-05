@@ -93,7 +93,7 @@ describe('Customer indexing test', function() {
                     done();
                 });
 
-        }, 4 * minute);
+        }, 5 * minute);
     });
 
 
