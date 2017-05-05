@@ -2,9 +2,9 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
+	mutation {
 		deleterole (id: \"995e1a67-6bb5-48a8-9d7a-2fe9bb391401\") { 
 			id
-		} 
+		}
 	}"
 }

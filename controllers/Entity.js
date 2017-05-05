@@ -736,6 +736,7 @@ module.exports = class entityController {
 
                     delete_parameters[primary_key] = id;
 
+                    //Technical Debt:  Refactor.
                     if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 
                         if(global.account == '*'){
@@ -812,20 +813,7 @@ module.exports = class entityController {
                 expression_attribute_values: {':primary_keyv': entity[primary_key]}
             };
 
-            if(_.has(global, 'account')){
-
-                if(global.account == '*'){
-
-                  //for now, do nothing
-
-                }else{
-
-                    query_parameters.filter_expression = 'account = :accountv';
-                    query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                }
-
-            }
+            query_parameters = this.appendAccountFilter(query_parameters)
 
             return new Promise((resolve, reject) => {
 
@@ -1141,8 +1129,6 @@ module.exports = class entityController {
                   // If the query already has expression attribute values, add :accountv if it doesn't already exist.
                   // Barf if different :accountv exists
                     if(_.has(query_parameters, 'expression_attribute_values')){
-
-
 
                         if(_.has(query_parameters.expression_attribute_values, ':accountv')){
 

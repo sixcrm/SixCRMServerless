@@ -28,6 +28,7 @@ let searchGraph = {
 
 let this_request = request(endpoint);
 
+// Technical Debt: This test is heavy with timeouts. Run it asynchronously so it doesn't block the others.
 describe('Customer indexing test', function() {
 
     let test_user = global.test_users[0];

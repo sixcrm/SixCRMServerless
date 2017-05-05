@@ -36,7 +36,7 @@ deployment:
   production:
     branch: production
     commands:
-      - ./deployment/deploy_production.sh
+      - ./deployment/environment/deploy_production.sh
   staging:
     branch: staging
     commands:
@@ -53,5 +53,5 @@ deployment:
       #   - API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
       - serverless deploy --stage $CIRCLE_BRANCH
       - export SIX_VERBOSE=0 && npm run test-integration
-      - ./deployment/deploy_development.sh
+      - ./deployment/environment/deploy_development.sh
       - ./deployment/utilities/merge_branches.sh development staging

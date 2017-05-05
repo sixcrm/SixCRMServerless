@@ -37,4 +37,4 @@ FROM
         GROUP BY campaign)
     )
      ORDER BY abs(percent_change_count) DESC, percent_change_count, percent_change_amount
-LIMIT {{limit_number}};
+LIMIT {{limit}};

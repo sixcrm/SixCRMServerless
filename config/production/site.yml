@@ -101,3 +101,11 @@ elasticache:
   retry_time: 1800000
   endpoint: 'sixcrm-dev.mmka6q.clustercfg.use1.cache.amazonaws.com'
   port: 6379
+
+kinesis:
+  firehose:
+    streams:
+      transactions: 'six-development-transactions'
+      events: 'sixcrm-firehose-events'
+aws:
+  region: 'us-east-1'

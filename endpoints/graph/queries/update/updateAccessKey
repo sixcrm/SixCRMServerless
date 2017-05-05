@@ -2,11 +2,11 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
-		updateaccesskey (accesskey: { id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\", access_key: \"test\", secret_key: \"testingname2\"}) { 
+	mutation {
+		updateaccesskey (accesskey: { id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\", access_key: \"test\", secret_key: \"testingname2\"}) {
 			id,
 			access_key,
 			secret_key
-		} 
+		}
 	}"
 }

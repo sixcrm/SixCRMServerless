@@ -105,7 +105,8 @@ elasticache:
 
 kinesis:
   firehose:
-    streams: 'six-development-transaction'
-
+    streams:
+      transactions: 'six-development-transactions'
+      events: 'sixcrm-firehose-events'
 aws:
   region: 'us-east-1'
