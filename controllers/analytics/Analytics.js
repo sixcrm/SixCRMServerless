@@ -216,6 +216,54 @@ class AnalyticsController {
 
     }
 
+    getCampaignDelta(parameters){
+
+        du.debug('Get Event Funnel');
+
+        return new Promise((resolve, reject) => {
+
+            const query_name = 'campaign_delta';
+
+            let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+
+            parameters = this.appendAccount(parameters);
+
+            parameters = this.createQueryFilter(parameters, query_filters);
+
+            this.validateQueryParameters(query_name, parameters).then(() => {
+
+                return this.getQueryString(query_name).then((query) => {
+
+                    query = this.parseQueryParameters(query, parameters);
+
+                    du.highlight('Query:', query);
+
+                    let redshift_query = () => redshiftutilities.query(query, []);
+
+                    let transformation_function = this.getTransformationFunction(query_name);
+
+                    return cacheController.useCache(query, redshift_query)
+                      .then((results) => transformation_function(results))
+                      .then((transformed_results) => { return resolve(transformed_results);});
+
+                })
+                .catch((error) => {
+
+                    return reject(error);
+
+                });
+
+            })
+            .catch((error) => {
+
+                return reject(error);
+
+            });
+
+        });
+
+    }
+
     getEventFunnel(parameters){
 
         du.debug('Get Event Funnel');
@@ -241,49 +289,11 @@ class AnalyticsController {
                     //Note:  This is a deferred Promise, it does not execute here...
                     let redshift_query = () => redshiftutilities.query(query, []);
 
-                    return cacheController.useCache(query, redshift_query).then((results) => {
+                    let transformation_function = this.getTransformationFunction(query_name);
 
-                        //Technical Debt:  Validate the query results here.
-
-                        let click = results[0].count_click;
-                        let lead = results[0].count_lead;
-                        let main = results[0].count_order;
-                        let upsell = results[0].count_upsell;
-                        let confirm = results[0].count_confirm;
-
-                        let return_object = {
-                            funnel: {
-                                click: {
-                                    count: click,
-                                    percentage: mathutilities.safePercentage(click, click),
-                                    relative_percentage: mathutilities.safePercentage(0, click)
-                                },
-                                lead: {
-                                    count: lead,
-                                    percentage: mathutilities.safePercentage(lead, click),
-                                    relative_percentage: mathutilities.safePercentage(lead, click)
-                                },
-                                main: {
-                                    count: main,
-                                    percentage: mathutilities.safePercentage(main, click),
-                                    relative_percentage: mathutilities.safePercentage(main, lead)
-                                },
-                                upsell: {
-                                    count: upsell,
-                                    percentage: mathutilities.safePercentage(upsell, click),
-                                    relative_percentage: mathutilities.safePercentage(upsell, main),
-                                },
-                                confirm: {
-                                    count: results[0].count_confirm,
-                                    percentage: mathutilities.safePercentage(confirm, click),
-                                    relative_percentage: mathutilities.safePercentage(confirm, main),
-                                },
-                            }
-                        };
-
-                        return resolve(return_object);
-
-                    });
+                    return cacheController.useCache(query, redshift_query)
+                      .then((results) => transformation_function(results))
+                      .then((transformed_results) => { return resolve(transformed_results);});
 
                 })
                 .catch((error) => {
@@ -489,11 +499,27 @@ class AnalyticsController {
 
     }
 
+    getTransformationFunctionFilepath(query_name){
+
+        du.debug('Get Query Filepath');
+
+        return __dirname+'/queries/'+query_name+'/transform.js';
+
+    }
+
     getQueryParameterValidationFilepath(query_name){
 
         du.debug('Get Query Parameter Validation Filepath');
 
         return __dirname+'/queries/'+query_name+'/parameter_validation.json';
+
+    }
+
+    getTransformationFunction(query_name){
+
+        let transformation_function_filepath = this.getTransformationFunctionFilepath(query_name);
+
+        return require(transformation_function_filepath);
 
     }
 
