@@ -17,7 +17,7 @@ FROM
       FROM f_transactions
       WHERE 1
         {{filter}}
-        AND TIMESTAMPtime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
+        AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
       GROUP BY campaign) main LEFT OUTER JOIN
      (SELECT
         campaign,
@@ -26,7 +26,7 @@ FROM
       FROM f_transactions
       WHERE 1
         {{filter}}
-        AND TIMESTAMPtime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND dateadd(microsec,-1,'{{start}}')
+        AND datetime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND dateadd(microsec,-1,'{{start}}')
       GROUP BY campaign) prior
        ON (main.campaign = prior.campaign))
 ORDER BY abs(percent_change_count) DESC,percent_change_count,percent_change_amount;
