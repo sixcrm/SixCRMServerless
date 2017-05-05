@@ -230,6 +230,8 @@ class AnalyticsController {
 
             parameters = this.createQueryFilter(parameters, query_filters);
 
+            parameters['limit'] = 20;
+
             this.validateQueryParameters(query_name, parameters).then(() => {
 
                 return this.getQueryString(query_name).then((query) => {

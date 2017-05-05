@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/AggregationProcessorAmountInput",
+	"id":"/CampaignDeltaInput",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -123,7 +123,14 @@
 				"type":"string",
 				"enum": ["main", "upsell"]
 			}
+		},
+		"limit":{
+			"type": ["integer"],
+			"minimum": 0,
+  		"maximum": 100,
+			"exclusiveMaximum": false,
+			"exclusiveMinimum": true
 		}
 	},
-	"required":["start", "end","limit_number"]
+	"required":["start", "end","limit"]
 }
