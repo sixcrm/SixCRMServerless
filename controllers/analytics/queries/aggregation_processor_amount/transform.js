@@ -1,3 +1,4 @@
+'use strict';
 let _ = require('underscore');
 let mathutilities = require('../../../../lib/math-utilities.js');
 let du = require('../../../../lib/debug-utilities.js');
