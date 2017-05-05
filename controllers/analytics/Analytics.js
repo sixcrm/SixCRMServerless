@@ -10,8 +10,6 @@ const mathutilities =  require('../../lib/math-utilities.js');
 
 const cacheController = require('../Cache.js');
 
-//Technical Debt:  We need a caching strategy.
-
 class AnalyticsController {
 
     constructor(){
@@ -30,189 +28,33 @@ class AnalyticsController {
 
     }
 
-    getTransactionSummary(parameters){
-
-        du.debug('Get Transaction Summary');
-
-        return new Promise((resolve, reject) => {
-
-            const query_name = 'aggregation_processor_amount';
-
-            let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
-
-            let target_period_count = this.getTargetPeriodCount(parameters);
-
-            let period_selection = this.periodSelection(parameters.start, parameters.end, target_period_count);
-
-            parameters = this.appendPeriod(parameters, period_selection);
-
-            parameters = this.appendAccount(parameters);
-
-            parameters = this.createQueryFilter(parameters, query_filters);
-
-            this.validateQueryParameters(query_name, parameters).then(() => {
-
-                return this.getQueryString(query_name).then((query) => {
-
-                    query = this.parseQueryParameters(query, parameters);
-
-                    du.highlight('Query:', query);
-
-                    //Note:  This is a deferred Promise, it does not execute here...
-                    let redshift_query = () => redshiftutilities.query(query, []);
-
-                    return cacheController.useCache(query, redshift_query).then((results) => {
-
-                        //Technical Debt:  Validate the query results here.
-
-                        du.debug(results);
-                        //Technical Debt:  This is somewhat clumsy...
-                        let return_object = [];
-
-                        results.forEach((result) => {
-
-                            let result_date_iso8601 = timestamp.convertToISO8601(result[period_selection.name].toString());
-
-                            let match_identified = false;
-
-                            if(return_object.length > 0){
-
-                                for(var i = 0; i < return_object.length; i++){
-
-                                    if(_.has(return_object[i], 'datetime') && return_object[i].datetime == result_date_iso8601){
-
-                                        match_identified = true;
-
-                                        return return_object[i].byprocessorresult.push({
-                                            processor_result: result.processor_result.toString(),
-                                            count: result.transaction_count.toString(),
-                                            amount: result.sum_amount.toString()
-                                        });
-
-                                    }
-
-                                };
-
-                            }
-
-                            if(match_identified == false){
-
-                                return_object.push({
-                                    datetime: result_date_iso8601,
-                                    byprocessorresult: [{
-                                        processor_result: result.processor_result.toString(),
-                                        count: 1,
-                                        amount: 1.00
-                                    }]
-                                });
-
-                            }
-
-                        });
-
-                        du.info("Observation Count: "+return_object.length);
-                        // Technical Debt: Once the query is of acceptable structure, transform structure into the following JSON structure...
-                        return resolve({
-                            transactions:return_object
-                        });
-
-                    });
-
-                })
-                .catch((error) => {
-
-                    return reject(error);
-
-                });
-
-            })
-            .catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
-
-    }
-
     getTransactionOverview(parameters){
 
         du.debug('Get Transaction Overview');
 
-        return new Promise((resolve, reject) => {
+        let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
 
-            const query_name = 'transaction_summary';
+        parameters = this.appendAccount(parameters);
 
-            let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+        return this.getResults('transaction_summary', parameters, query_filters);
 
-            parameters = this.appendAccount(parameters);
+    }
 
-            parameters = this.createQueryFilter(parameters, query_filters);
+    getTransactionSummary(parameters){
 
-            this.validateQueryParameters(query_name, parameters).then(() => {
+        du.debug('Get Campaign Delta');
 
-                return this.getQueryString(query_name).then((query) => {
+        let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
 
-                    query = this.parseQueryParameters(query, parameters);
+        let target_period_count = this.getTargetPeriodCount(parameters);
 
-                    du.highlight('Query:', query);
+        let period_selection = this.periodSelection(parameters.start, parameters.end, target_period_count);
 
-                    //Note:  This is a deferred Promise, it does not execute here...
-                    let redshift_query = () => redshiftutilities.query(query, []);
+        parameters = this.appendPeriod(parameters, period_selection);
 
-                    return cacheController.useCache(query, redshift_query).then((results) => {
+        parameters = this.appendAccount(parameters);
 
-                        //Technical Debt:  Validate the query results here.
-
-                        let return_object = {
-                            overview: {
-                                newsale: {
-                                    count: results[0].new_sale_count,
-                                    amount: results[0].new_sale_amount
-                                },
-                                rebill: {
-                                    count: results[0].rebill_sale_count,
-                                    amount: results[0].rebill_sale_amount
-                                },
-                                decline: {
-                                    count: results[0].declines_count,
-                                    amount: results[0].declines_amount
-                                },
-                                error: {
-                                    count: results[0].error_count,
-                                    amount: results[0].error_amount
-                                },
-                                main: {
-                                    count: results[0].main_sale_count,
-                                    amount: results[0].main_sale_amount
-                                },
-                                upsell: {
-                                    count: results[0].upsell_sale_count,
-                                    amount: results[0].upsell_sale_amount
-                                }
-                            }
-                        };
-
-                        return resolve(return_object);
-
-                    });
-
-                })
-                .catch((error) => {
-
-                    return reject(error);
-
-                });
-
-            })
-            .catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
+        return this.getResults('aggregation_processor_amount', parameters, query_filters);
 
     }
 
@@ -220,98 +62,26 @@ class AnalyticsController {
 
         du.debug('Get Campaign Delta');
 
-        return new Promise((resolve, reject) => {
+        //Technical Debt:  This should be incorporated with the parameters, I think...
+        parameters.limit = 20;
 
-            const query_name = 'campaign_delta';
+        parameters = this.appendAccount(parameters);
 
-            let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
+        let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
 
-            parameters = this.appendAccount(parameters);
-
-            parameters = this.createQueryFilter(parameters, query_filters);
-
-            parameters['limit'] = 20;
-
-            this.validateQueryParameters(query_name, parameters).then(() => {
-
-                return this.getQueryString(query_name).then((query) => {
-
-                    query = this.parseQueryParameters(query, parameters);
-
-                    du.highlight('Query:', query);
-
-                    let redshift_query = () => redshiftutilities.query(query, []);
-
-                    let transformation_function = this.getTransformationFunction(query_name);
-
-                    return cacheController.useCache(query, redshift_query)
-                      .then((results) => transformation_function(results))
-                      .then((transformed_results) => { return resolve(transformed_results);});
-
-                })
-                .catch((error) => {
-
-                    return reject(error);
-
-                });
-
-            })
-            .catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
+        return this.getResults('campaign_delta', parameters, query_filters);
 
     }
 
     getEventFunnel(parameters){
 
-        du.debug('Get Event Funnel');
+        du.debug('Get Campaign Delta');
 
-        return new Promise((resolve, reject) => {
+        parameters = this.appendAccount(parameters);
 
-            const query_name = 'event_funnel';
+        let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
 
-            let query_filters = ['campaign','merchant_processor','affiliate','s1','s2','s3','s4','s5','account'];
-
-            parameters = this.appendAccount(parameters);
-
-            parameters = this.createQueryFilter(parameters, query_filters);
-
-            this.validateQueryParameters(query_name, parameters).then(() => {
-
-                return this.getQueryString(query_name).then((query) => {
-
-                    query = this.parseQueryParameters(query, parameters);
-
-                    du.highlight('Query:', query);
-
-                    //Note:  This is a deferred Promise, it does not execute here...
-                    let redshift_query = () => redshiftutilities.query(query, []);
-
-                    let transformation_function = this.getTransformationFunction(query_name);
-
-                    return cacheController.useCache(query, redshift_query)
-                      .then((results) => transformation_function(results))
-                      .then((transformed_results) => { return resolve(transformed_results);});
-
-                })
-                .catch((error) => {
-
-                    return reject(error);
-
-                });
-
-            })
-            .catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
+        return this.getResults('event_funnel', parameters, query_filters);
 
     }
 
@@ -324,6 +94,48 @@ class AnalyticsController {
         }
 
         return this.period_count_default;
+
+    }
+
+    getResults(query_name, parameters, query_filters){
+
+        du.debug('Get Results');
+
+        return new Promise((resolve, reject) => {
+
+            parameters = this.createQueryFilter(parameters, query_filters);
+
+            this.validateQueryParameters(query_name, parameters).then(() => {
+
+                return this.getQueryString(query_name).then((query) => {
+
+                    query = this.parseQueryParameters(query, parameters);
+
+                    du.highlight('Query:', query);
+
+                    let redshift_query = () => redshiftutilities.query(query, []);
+
+                    let transformation_function = this.getTransformationFunction(query_name);
+
+                    return cacheController.useCache(query, redshift_query)
+                    .then((results) => transformation_function(results, parameters))
+                    .then((transformed_results) => { return resolve(transformed_results);});
+
+                })
+              .catch((error) => {
+
+                  return reject(error);
+
+              });
+
+            })
+          .catch((error) => {
+
+              return reject(error);
+
+          });
+
+        });
 
     }
 
@@ -362,6 +174,8 @@ class AnalyticsController {
     }
 
     createQueryFilter(parameters, filters_array){
+
+        du.debug('Create Query Filter');
 
         let filter_array = [];
 

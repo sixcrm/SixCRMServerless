@@ -1,7 +1,7 @@
 let mathutilities = require('../../../../lib/math-utilities.js');
 let du = require('../../../../lib/debug-utilities.js');
 
-module.exports = function(results){
+module.exports = function(results, parameters){
 
     du.debug('Transformation Function');
 
