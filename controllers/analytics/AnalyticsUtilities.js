@@ -109,6 +109,8 @@ module.exports = class AnalyticsUtilities {
 
     getTargetPeriodCount(parameters){
 
+        du.debug('Get Target Period Count');
+
         if(_.has(parameters,'targetperiodcount')){
 
             return parameters.targetperiodcount;
