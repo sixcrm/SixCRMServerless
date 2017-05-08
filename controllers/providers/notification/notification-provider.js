@@ -5,6 +5,7 @@ const Validator = require('jsonschema').Validator;
 const du = require('../../../lib/debug-utilities');
 const permissionUtils = require('../../../lib/permission-utilities');
 const emailNotificationUtils = require('../../../lib/email-notification-utilities');
+const smsNotificationUtils = require('../../../lib/sms-notification-utilities');
 const timestamp = require('../../../lib/timestamp');
 
 const notificationController = require('../../Notification');
@@ -87,7 +88,7 @@ class NotificationProvider {
 
 
     saveAndSendNotification(notification_parameters, account, user) {
-        let notificationTypes = ['dummy'];
+        let notificationTypes = ['dummy']; // 'dummy' is used in helper utilities
 
         du.debug('Save and send notification.');
 
@@ -96,9 +97,9 @@ class NotificationProvider {
                 notification_settings.notification_groups.forEach((group) => {
                     if (group.notifications) {
                         group.notifications.forEach((notification) => {
-                            // Technical Debt: check if we want to actually push the value. Where in the settings we see whether user wanted or not?
-
-                            notificationTypes.push(notification.key);
+                            if (notification.default) {
+                                notificationTypes.push(notification.key);
+                            }
                         })
                     }
                 });
@@ -112,8 +113,10 @@ class NotificationProvider {
                 "message": notification_parameters.message
             };
 
-            // if settings for six are off, mark it already read
-            createNotification.read_at = timestamp.getISO8601();
+            // Technical Debt: after we figure out where to read the settings from, update this to set the 'read_at'
+            // only if user chose not to receive Six notifications.
+
+            // createNotification.read_at = timestamp.getISO8601();
 
             du.debug('About to create notification', createNotification);
 
@@ -123,9 +126,12 @@ class NotificationProvider {
 
                 let notificationSendOperations = [];
 
-                // assuming user wants email notification
+                // Technical Debt: figure out where to read the settings from and choose which notification channels to use.
                 if (_.contains(notificationTypes, notification.type)) {
+                    // assuming user wants email notification
                     notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
+                    // assuming user wants SMS notification
+                    notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, '+381631025339'));
                 }
 
                 return Promise.all(notificationSendOperations).then(() => notification);
