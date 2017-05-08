@@ -3,8 +3,10 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const productScheduleController = require('../../../../controllers/ProductSchedule.js');
+
 let scheduleType = require('./scheduleType');
+
+const productScheduleController = require('../../../../../controllers/ProductSchedule.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'ProductSchedule',

@@ -4,6 +4,7 @@ const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
+
 let suggestionType = require('./suggestionType');
 
 module.exports.graphObj = new GraphQLObjectType({

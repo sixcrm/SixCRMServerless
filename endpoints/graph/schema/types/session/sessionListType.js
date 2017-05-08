@@ -3,16 +3,16 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
-let paginationType = require('./pagination/paginationType');
-let roleType = require('./roleType');
+let paginationType = require('../pagination/paginationType');
+let sessionType = require('./sessionType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Roles',
-    description: 'Roles',
+    name: 'Sessions',
+    description: 'Sessions',
     fields: () => ({
-        roles: {
-            type: new GraphQLList(roleType.graphObj),
-            description: 'The roles',
+        sessions: {
+            type: new GraphQLList(sessionType.graphObj),
+            description: 'The sessions',
         },
         pagination: {
             type: new GraphQLNonNull(paginationType.graphObj),

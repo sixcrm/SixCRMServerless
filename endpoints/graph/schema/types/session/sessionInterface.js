@@ -1,8 +1,9 @@
 'use strict';
-let sessionType = require('./sessionType');
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
+
+let sessionType = require('./sessionType');
 
 module.exports.graphObj = new GraphQLInterfaceType({
     name: 'session',

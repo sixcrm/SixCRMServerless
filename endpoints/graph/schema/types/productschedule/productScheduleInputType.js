@@ -1,17 +1,16 @@
 'use strict';
-
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
+let productScheduleProductConfigurationInputType = require('./productScheduleProductConfigurationInputType');
+
 module.exports.graphObj = new GraphQLInputObjectType({
-    name: 'RebillInputType',
+    name: 'ProductScheduleInputType',
     fields: () => ({
         id:					{ type: new GraphQLNonNull(GraphQLString) },
-        bill_at:			{ type: new GraphQLNonNull(GraphQLString) },
-        parentsession:		{ type: new GraphQLNonNull(GraphQLString) },
-        amount:				{ type: new GraphQLNonNull(GraphQLString) },
-        product_schedules:	{ type: new GraphQLList(GraphQLString) }
+        name:				{ type: GraphQLString },
+        schedule:			{ type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) }
     })
 });

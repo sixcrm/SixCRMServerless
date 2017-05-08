@@ -1,9 +1,10 @@
 'use strict';
-let searchHitType = require('./searchHitType');
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
+
+let searchHitType = require('./searchHitType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'SearchResultHits',

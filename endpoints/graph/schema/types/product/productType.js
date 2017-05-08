@@ -1,9 +1,11 @@
 'use strict';
-let fulfillmentProviderType = require('./fulfillmentProviderType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const productController = require('../../../../controllers/Product.js');
+
+let fulfillmentProviderType = require('../fulfillmentProviderType');
+
+const productController = require('../../../../../controllers/Product.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Product',

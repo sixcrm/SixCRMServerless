@@ -6,7 +6,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const userACLController = require('../../../../../controllers/UserACL.js');
 
 let accountType = require('../accountType');
-let roleType = require('../roleType');
+let roleType = require('../role/roleType');
 let userType = require('../user/userType');
 
 module.exports.graphObj = new GraphQLObjectType({

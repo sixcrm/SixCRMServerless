@@ -1,30 +1,36 @@
 'use strict';
-const roleController = require('../../../../controllers/Role.js');
-let permissionsType = require('./permissionsType');
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
+let productType = require('../product/productType');
+
+const productScheduleController = require('../../../../../controllers/ProductSchedule.js');
+
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Role',
-    description: 'A role.',
+    name: 'schedule',
+    description: 'A scheduled product.',
     fields: () => ({
-        id: {
+        price: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The id of the role.',
+            description: 'The price of schedule.',
         },
-        name: {
+        start: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The name of the role.',
+            description: 'The start of schedule.',
         },
-        active: {
+        end: {
+            type: GraphQLString,
+            description: 'The end of schedule.',
+        },
+        period: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The active status of the role.',
+            description: 'The period of schedule.',
         },
-        permissions:{
-            type: new GraphQLNonNull(permissionsType.graphObj),
-            description: 'The permsissions associated with the role.',
-            resolve: role => roleController.getPermissions(role)
+        product: {
+	        type: productType.graphObj,
+            description:'The product associated with the schedule',
+	        resolve: schedule => productScheduleController.getProduct(schedule)
         },
         created_at: {
 	        type: new GraphQLNonNull(GraphQLString),

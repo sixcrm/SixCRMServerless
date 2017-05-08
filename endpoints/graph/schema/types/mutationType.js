@@ -1,18 +1,6 @@
 'use strict';
-let notificationInputType = require('./notificationInputType');
-let notificationType = require('./notificationType');
-let notificationSettingType = require('./notificationSettingType');
-let notificationSettingInputType = require('./notificationSettingInputType');
-let shippingReceiptInputType = require('./shippingReceiptInputType');
-let shippingReceiptType = require('./shippingReceiptType');
-let sessionInputType = require('./sessionInputType');
 let campaignInputType = require('./campaignInputType');
-let sessionType = require('./sessionType');
 let campaignType = require('./campaignType');
-let rebillInputType = require('./rebillInputType');
-let rebillType = require('./rebillType');
-let productScheduleInputType = require('./productScheduleInputType');
-let productScheduleType = require('./productScheduleType');
 let loadBalancerInputType = require('./loadBalancerInputType');
 let loadBalancerType = require('./loadBalancerType');
 let customerNoteInputType = require('./customerNoteInputType');
@@ -27,20 +15,38 @@ let fulfillmentProviderInputType = require('./fulfillmentProviderInputType');
 let fulfillmentProviderType = require('./fulfillmentProviderType');
 let merchantProviderInputType = require('./merchantProviderInputType');
 let merchantProviderType = require('./merchantProviderType');
-let SMTPProviderInputType = require('./SMTPProviderInputType');
-let SMTPProviderType = require('./SMTPProviderType');
+let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
+let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 let affiliateInputType = require('./affiliateInputType');
 let affiliateType = require('./affiliateType');
-let roleInputType = require('./roleInputType');
-let roleType = require('./roleType');
+
 let accountInputType = require('./accountInputType');
 let accountType = require('./accountType');
 let accessKeyInputType = require('./accessKeyInputType');
 let accessKeyType = require('./accessKeyType');
-let productInputType = require('./productInputType');
-let productType = require('./productType');
-
 let deleteOutputType = require('./deleteOutputType');
+
+//Refactored
+let notificationInputType = require('./notification/notificationInputType');
+let notificationType = require('./notification/notificationType');
+
+let notificationSettingType = require('./notificationsetting/notificationSettingType');
+let notificationSettingInputType = require('./notificationsetting/notificationSettingInputType');
+
+let productInputType = require('./product/productInputType');
+let productType = require('./product/productType');
+
+let productScheduleInputType = require('./productschedule/productScheduleInputType');
+let productScheduleType = require('./productschedule/productScheduleType');
+
+let rebillInputType = require('./rebill/rebillInputType');
+let rebillType = require('./rebill/rebillType');
+
+let roleInputType = require('./role/roleInputType');
+let roleType = require('./role/roleType');
+
+let shippingReceiptInputType = require('./shippingreceipt/shippingReceiptInputType');
+let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 
 let inviteInputType = require('./inviteInputType');
 
@@ -55,6 +61,9 @@ let userInviteType = require('./userinvite/userInviteType');
 let userType = require('./user/userType');
 let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
 let userDeviceTokenInputType = require('./userdevicetoken/userDeviceTokenInputType');
+
+let sessionInputType = require('./session/sessionInputType');
+let sessionType = require('./session/sessionType');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

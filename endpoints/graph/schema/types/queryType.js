@@ -8,14 +8,41 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 
-let paginationInputType = require('./pagination/paginationInputType');
+let accountType = require('./accountType');
+let accessKeyType = require('./accessKeyType');
+let affiliateType = require('./affiliateType');
+let campaignType = require('./campaignType');
+let creditCardType = require('./creditCardType');
+let loadBalancerType = require('./loadBalancerType');
+let fulfillmentProviderType = require('./fulfillmentProviderType');
+let merchantProviderType = require('./merchantProviderType');
 
-let notificationSettingListType = require('./notificationSettingListType');
-let notificationSettingType = require('./notificationSettingType');
-let notificationSettingDefaultType = require('./notificationSettingDefaultType');
-let notificationListType = require('./notificationListType');
-let notificationCountType = require('./notificationCountType');
-let notificationType = require('./notificationType');
+let campaignListType = require('./campaignListType');
+let loadBalancerListType = require('./loadBalancerListType');
+let customerNoteListType = require('./customerNoteListType');
+let customerListType = require('./customerListType');
+
+let accountListType = require('./accountListType');
+let accessKeyListType = require('./accessKeyListType');
+let fulfillmentProviderListType = require('./fulfillmentProviderListType');
+let merchantProviderListType = require('./merchantProviderListType');
+let creditCardListType = require('./creditCardListType');
+let affiliateListType = require('./affiliateListType');
+
+let emailTemplateListType = require('./emailTemplateListType');
+let emailTemplateType = require('./emailTemplateType');
+let customerNoteType = require('./customerNoteType');
+
+let customerType = require('./customerType');
+
+//Refactored
+let notificationListType = require('./notification/notificationListType');
+let notificationCountType = require('./notification/notificationCountType');
+let notificationType = require('./notification/notificationType');
+
+let notificationSettingListType = require('./notificationsetting/notificationSettingListType');
+let notificationSettingType = require('./notificationsetting/notificationSettingType');
+let notificationSettingDefaultType = require('./notificationsetting/notificationSettingDefaultType');
 
 let userType = require('./user/userType');
 let userListType = require('./user/userListType');
@@ -29,49 +56,33 @@ let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
 let transactionListType = require('./transaction/transactionListType');
 let transactionType = require('./transaction/transactionType');
 
-let roleType = require('./roleType');
-let accountType = require('./accountType');
-let accessKeyType = require('./accessKeyType');
-let affiliateType = require('./affiliateType');
-let campaignType = require('./campaignType');
-let creditCardType = require('./creditCardType');
-let loadBalancerType = require('./loadBalancerType');
-let fulfillmentProviderType = require('./fulfillmentProviderType');
-let merchantProviderType = require('./merchantProviderType');
-let productScheduleType = require('./productScheduleType');
-let sessionListType = require('./sessionListType');
-let campaignListType = require('./campaignListType');
-let productScheduleListType = require('./productScheduleListType');
-let loadBalancerListType = require('./loadBalancerListType');
-let customerNoteListType = require('./customerNoteListType');
-let customerListType = require('./customerListType');
-let roleListType = require('./roleListType');
-let accountListType = require('./accountListType');
-let accessKeyListType = require('./accessKeyListType');
-let fulfillmentProviderListType = require('./fulfillmentProviderListType');
-let merchantProviderListType = require('./merchantProviderListType');
-let creditCardListType = require('./creditCardListType');
-let affiliateListType = require('./affiliateListType');
-let shippingReceiptListType = require('./shippingReceiptListType');
-let rebillListType = require('./rebillListType');
+let paginationInputType = require('./pagination/paginationInputType');
 
+let productType = require('./product/productType');
+let productListType = require('./product/productListType');
 
-let productListType = require('./productListType');
-let SMTPProviderListType = require('./SMTPProviderListType');
-let emailTemplateListType = require('./emailTemplateListType');
-let SMTPProviderType = require('./SMTPProviderType');
-let emailTemplateType = require('./emailTemplateType');
-let productType = require('./productType');
-let customerNoteType = require('./customerNoteType');
-let sessionType = require('./sessionType');
-let rebillType = require('./rebillType');
-let shippingReceiptType = require('./shippingReceiptType');
-let suggestInputType = require('./suggestInputType');
-let suggestResultsType = require('./suggestResultsType');
-let searchInputType = require('./searchInputType');
-let searchResultsType = require('./searchResultsType');
-let customerType = require('./customerType');
+let productScheduleListType = require('./productschedule/productScheduleListType');
+let productScheduleType = require('./productschedule/productScheduleType');
 
+let rebillListType = require('./rebill/rebillListType');
+let rebillType = require('./rebill/rebillType');
+
+let roleType = require('./role/roleType');
+let roleListType = require('./role/roleListType');
+
+let sessionListType = require('./session/sessionListType');
+let sessionType = require('./session/sessionType');
+
+let SMTPProviderListType = require('./smtpprovider/SMTPProviderListType');
+let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
+
+let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
+let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType');
+
+let suggestInputType = require('./search/suggestInputType');
+let suggestResultsType = require('./search/suggestResultsType');
+let searchInputType = require('./search/searchInputType');
+let searchResultsType = require('./search/searchResultsType');
 
 let transactionSummaryType = require('./analytics/transactionSummaryType');
 let transactionOverviewType =  require('./analytics/transactionOverviewType');

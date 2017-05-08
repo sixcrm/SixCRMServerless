@@ -6,7 +6,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const campaignController = require('../../../../controllers/Campaign.js');
 let emailTemplateType = require('./emailTemplateType');
 let loadBalancerType = require('./loadBalancerType');
-let productScheduleType = require('./productScheduleType');
+let productScheduleType = require('./productschedule/productScheduleType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'campaign',

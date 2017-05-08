@@ -1,8 +1,9 @@
 'use strict';
-let productScheduleType = require('./productScheduleType');
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+
+let productScheduleType = require('./productScheduleType');
 
 module.exports.graphObj = new GraphQLInterfaceType({
     name: 'productschedule',

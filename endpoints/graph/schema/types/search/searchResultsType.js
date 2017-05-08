@@ -1,20 +1,26 @@
 'use strict';
+const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
-let suggestTopLevelResultsType = require('./suggestTopLevelResultsType');
+
+let searchHitsType = require('./searchHitsType');
 let searchStatusType = require('./searchStatusType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'SuggestResults',
-    description: 'Suggest Results.',
+    name: 'SearchResults',
+    description: 'Search Results.',
     fields: () => ({
         status: {
             type: new GraphQLNonNull(searchStatusType.graphObj),
             description: 'Search Result Status',
         },
-        suggest: {
-            type: new GraphQLNonNull(suggestTopLevelResultsType.graphObj),
+        hits: {
+            type: new GraphQLNonNull(searchHitsType.graphObj),
             description: 'Search Result Hits',
+        },
+        facets: {
+            type: GraphQLString,
+            description: 'Search Result Faceting'
         }
     }),
     interfaces: []

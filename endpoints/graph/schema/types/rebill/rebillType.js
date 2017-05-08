@@ -4,11 +4,11 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
-let transactionType = require('./transaction/transactionType');
-let productScheduleType = require('./productScheduleType');
-let sessionType = require('./sessionType');
+let transactionType = require('../transaction/transactionType');
+let productScheduleType = require('../productschedule/productScheduleType');
+let sessionType = require('../session/sessionType');
 
-const rebillController = require('../../../../controllers/Rebill.js');
+const rebillController = require('../../../../../controllers/Rebill.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Rebill',

@@ -8,8 +8,8 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const shippingReceiptController = require('../../../../../controllers/ShippingReceipt.js');
 const transactionController = require('../../../../../controllers/Transaction.js');
 
-let productType = require('../productType');
-let shippingReceiptType = require('../shippingReceiptType');
+let productType = require('../product/productType');
+let shippingReceiptType = require('../shippingreceipt/shippingReceiptType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'transactionproduct',

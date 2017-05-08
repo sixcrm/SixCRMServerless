@@ -2,6 +2,7 @@
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+
 let productType = require('./productType');
 
 module.exports.graphObj = new GraphQLInterfaceType({
