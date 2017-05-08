@@ -1,9 +1,10 @@
 'use strict';
-let paginationType = require('./paginationType');
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
-let roleType = require('./roleType');
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
+
+let paginationType = require('./pagination/paginationType');
+let roleType = require('./roleType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Roles',

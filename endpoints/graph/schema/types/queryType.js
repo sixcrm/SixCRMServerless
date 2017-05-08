@@ -8,6 +8,8 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 
+let paginationInputType = require('./pagination/paginationInputType');
+
 let notificationSettingListType = require('./notificationSettingListType');
 let notificationSettingType = require('./notificationSettingType');
 let notificationSettingDefaultType = require('./notificationSettingDefaultType');
@@ -105,46 +107,44 @@ const analyticsController = require('../../../../controllers/analytics/Analytics
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
-  	search:{
-  	  type: searchResultsType.graphObj,
-	  description: 'Executes a search query.',
-	  args: {
-	    search: { type: searchInputType.graphObj }
-	  },
-	  resolve: function(root, search){
-      return searchController.search(search.search);
-	  }
-  	},
-  	suggest:{
-  	  type: suggestResultsType.graphObj,
-  	  description: 'Retrieves string suggestions.',
-	  args: {
-	    suggest: { type: suggestInputType.graphObj}
-	  },
-	  resolve: function(root, suggest){
-      return suggestController.suggest(suggest.suggest);
-	  }
-  	},
-  	userintrospection:{
-  	  type: userType.graphObj,
-	  resolve: function(){
-      return userController.introspection();
-	  }
-  	},
-  	transaction: {
-      type: transactionType.graphObj,
-      args: {
-          id: {
-              description: 'id of the transaction',
-              type: new GraphQLNonNull(GraphQLString)
+    	   search:{
+    	      type: searchResultsType.graphObj,
+  	        description: 'Executes a search query.',
+  	        args: {
+  	           search: { type: searchInputType.graphObj }
+  	        },
+        	  resolve: function(root, search){
+              return searchController.search(search.search);
+        	  }
+    	   },
+      	suggest:{
+      	  type: suggestResultsType.graphObj,
+      	  description: 'Retrieves string suggestions.',
+      	  args: {
+      	    suggest: { type: suggestInputType.graphObj}
+      	  },
+      	  resolve: function(root, suggest){
+            return suggestController.suggest(suggest.suggest);
+      	  }
+      	},
+      	userintrospection:{
+      	  type: userType.graphObj,
+    	    resolve: function(){
+            return userController.introspection();
+    	     }
+      	},
+      	transaction: {
+          type: transactionType.graphObj,
+          args: {
+              id: {
+                  description: 'id of the transaction',
+                  type: new GraphQLNonNull(GraphQLString)
+              }
+          },
+          resolve: function(root, transaction){
+              return transactionController.get(transaction.id);
           }
       },
-      resolve: function(root, transaction){
-      	var id = transaction.id;
-
-      	return transactionController.get(id);
-      }
-  },
         shippingreceipt: {
             type: shippingReceiptType.graphObj,
             args: {
@@ -154,9 +154,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, shippingreceipt){
-      	var id = shippingreceipt.id;
-
-      	return shippingReceiptController.get(id);
+                return shippingReceiptController.get(shippingreceipt.id);
             }
         },
         rebill: {
@@ -168,9 +166,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, rebill){
-      	var id = rebill.id;
-
-      	return rebillController.get(id);
+                return rebillController.get(rebill.id);
             }
         },
         session: {
@@ -182,9 +178,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, session){
-      	var id = session.id;
-
-      	return sessionController.get(id);
+                return sessionController.get(session.id);
             }
         },
         customer: {
@@ -196,9 +190,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, customer){
-      	var id = customer.id;
-
-      	return customerController.get(id);
+                return customerController.get(customer.id);
             }
         },
         customernote: {
@@ -210,9 +202,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, customernote){
-      	var id = customernote.id;
-
-      	return customerNoteController.get(id);
+                return customerNoteController.get(customernote.id);
             }
         },
         product: {
@@ -224,9 +214,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, product){
-                var id = product.id;
-
-      	return productController.get(id);
+                return productController.get(product.id);
             }
         },
         emailtemplate: {
@@ -238,9 +226,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, emailtemplate){
-                var id = emailtemplate.id;
-
-      	return emailTemplateController.get(id);
+                return emailTemplateController.get(emailtemplate.id);
             }
         },
         smtpprovider: {
@@ -252,394 +238,191 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, smtpprovider){
-                var id = smtpprovider.id;
-
-      	return SMTPProviderController.get(id);
+                return SMTPProviderController.get(smtpprovider.id);
             }
         },
         emailtemplatelist: {
             type: emailTemplateListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, emailtemplates){
-                var cursor = emailtemplates.cursor;
-                var limit = emailtemplates.limit;
-
-      	return emailTemplateController.list(cursor, limit);
+                return emailTemplateController.list(emailtemplates.pagination);
             }
         },
         smtpproviderlist: {
             type: SMTPProviderListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, smtpproviders){
-                var cursor = smtpproviders.cursor;
-                var limit = smtpproviders.limit;
-
-      	return SMTPProviderController.list(cursor, limit);
+                return SMTPProviderController.list(smtpproviders.pagination);
             }
         },
         productlist: {
             type: productListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, products){
-                var cursor = products.cursor;
-                var limit = products.limit;
-
-      	return productController.list(cursor, limit);
+                return productController.list(products.pagination);
             }
         },
         userlist: {
             type: userListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, user){
-                var cursor = user.cursor;
-                var limit = user.limit;
-
-      	return userController.list(cursor, limit);
+                return userController.list(user.pagination);
             }
         },
         useracllist: {
             type: userACLListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, useracl){
-                var cursor = useracl.cursor;
-                var limit = useracl.limit;
-
-      	return userACLController.list(cursor, limit);
+                return userACLController.list(useracl.pagination);
             }
         },
         rebilllist: {
             type: rebillListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, rebill){
-                var cursor = rebill.cursor;
-                var limit = rebill.limit;
-
-      	return rebillController.list(cursor, limit);
+      	       return rebillController.list(rebill.pagination);
             }
         },
         shippingreceiptlist: {
             type: shippingReceiptListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, shippingreceipt){
-                var cursor = shippingreceipt.cursor;
-                var limit = shippingreceipt.limit;
-
-      	return shippingReceiptController.list(cursor, limit);
-            }
+                return shippingReceiptController.list(shippingreceipt.pagination); }
         },
         affiliatelist: {
             type: affiliateListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, affiliate){
-                var cursor = affiliate.cursor;
-                var limit = affiliate.limit;
-
-      	return affiliateController.list(cursor, limit);
+                return affiliateController.list(affiliate.pagination);
             }
         },
         creditcardlist: {
             type: creditCardListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, creditcard){
-                var cursor = creditcard.cursor;
-                var limit = creditcard.limit;
-
-      	return creditCardController.list(cursor, limit);
+                return creditCardController.list(creditcard.pagination);
             }
         },
         merchantproviderlist: {
             type: merchantProviderListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, merchantprovider){
-                var cursor = merchantprovider.cursor;
-                var limit = merchantprovider.limit;
-
-      	return merchantProviderController.list(cursor, limit);
+      	       return merchantProviderController.list(merchantprovider.pagination);
             }
         },
         fulfillmentproviderlist: {
             type: fulfillmentProviderListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, fulfillmentprovider){
-                var cursor = fulfillmentprovider.cursor;
-                var limit = fulfillmentprovider.limit;
-
-      	return fulfillmentProviderController.list(cursor, limit);
+      	       return fulfillmentProviderController.list(fulfillmentprovider.pagination);
             }
         },
         accesskeylist: {
             type: accessKeyListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, accesskey){
-                var cursor = accesskey.cursor;
-                var limit = accesskey.limit;
-
-      	return accessKeyController.list(cursor, limit);
+      	       return accessKeyController.list(accesskey.pagination);
             }
         },
         accountlist: {
             type: accountListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, account){
-                var cursor = account.cursor;
-                var limit = account.limit;
-
-      	        return accountController.list(cursor, limit);
+                return accountController.list(account.pagination);
             }
         },
         rolelist: {
             type: roleListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, role){
-                var cursor = role.cursor;
-                var limit = role.limit;
-
-      	return roleController.list(cursor, limit);
+      	       return roleController.list(role.pagination);
             }
         },
         customerlist: {
             type: customerListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, customer){
-                var cursor = customer.cursor;
-                var limit = customer.limit;
-
-      	return customerController.list(cursor, limit);
+      	       return customerController.list(customer.pagination);
             }
         },
         customernotelist: {
             type: customerNoteListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, customernote){
-                var cursor = customernote.cursor;
-                var limit = customernote.limit;
-
-      	return customerNoteController.list(cursor, limit);
+                return customerNoteController.list(customernote.pagination);
             }
         },
         customernotelistbycustomer: {
             type: customerNoteListType.graphObj,
             args: {
-      	customer: {
-      		description: 'The customer identifier',
-      		type: new GraphQLNonNull(GraphQLString)
-      	},
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+      	       customer: {
+      		         description: 'The customer identifier',
+      		         type: new GraphQLNonNull(GraphQLString)
+      	        },
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, customernote){
-                var customer = customernote.customer;
-                var cursor = customernote.cursor;
-                var limit = customernote.limit;
-
-      	return customerNoteController.listByCustomer(customer, cursor, limit);
+      	      return customerNoteController.listByCustomer(customernote.customer, customernote.pagination);
             }
         },
+
         loadbalancerlist: {
             type: loadBalancerListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, loadbalancer){
-                var cursor = loadbalancer.cursor;
-                var limit = loadbalancer.limit;
-
-      	return loadBalancerController.list(cursor, limit);
+      	       return loadBalancerController.list(loadbalancer.pagination);
             }
         },
         productschedulelist: {
             type: productScheduleListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, productschedule){
-                var cursor = productschedule.cursor;
-                var limit = productschedule.limit;
-
-      	return productScheduleController.list(cursor, limit);
+      	       return productScheduleController.list(productschedule.pagination);
             }
         },
         transactionlist: {
             type: transactionListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, transaction){
-                var cursor = transaction.cursor;
-                var limit = transaction.limit;
-
-      	return transactionController.list(cursor, limit);
+      	       return transactionController.list(transaction.pagination);
             }
         },
         transactionsummary: {
@@ -687,6 +470,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 return analyticsController.getEventsByAffiliate(analyticsfilter.analyticsfilter);
             }
         },
+
         transactionsbyaffiliate: {
             type: transactionsByAffiliateType.graphObj,
             args: {
@@ -712,21 +496,10 @@ module.exports.graphObj = new GraphQLObjectType({
                     description: 'The customer identifier',
                     type: new GraphQLNonNull(GraphQLString)
                 },
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, transaction){
-                var customer = transaction.customer;
-                var cursor = transaction.cursor;
-                var limit = transaction.limit;
-
-                return customerController.listTransactionsByCustomer(customer, cursor, limit);
+                return customerController.listTransactionsByCustomer(transaction.customer, transaction.pagination.cursor, transaction.pagination.limit);
             }
         },
         sessionlistbycustomer: {
@@ -736,21 +509,10 @@ module.exports.graphObj = new GraphQLObjectType({
                     description: 'The customer identifier',
                     type: new GraphQLNonNull(GraphQLString)
                 },
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, session){
-                let customer = session.customer;
-                let cursor = session.cursor;
-                let limit = session.limit;
-
-                return customerController.listCustomerSessions(customer, cursor, limit);
+                return customerController.listCustomerSessions(session.customer, session.pagination.cursor, session.pagination.limit);
             }
         },
         rebilllistbycustomer: {
@@ -760,59 +522,30 @@ module.exports.graphObj = new GraphQLObjectType({
                     description: 'The customer identifier',
                     type: new GraphQLNonNull(GraphQLString)
                 },
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
+                pagination: {
+                    type: paginationInputType.graphObj
                 }
             },
             resolve: function(root, rebill){
-                let customer = rebill.customer;
-                let cursor = rebill.cursor;
-                let limit = rebill.limit;
-
-                return customerController.listCustomerRebills(customer, cursor, limit);
+                return customerController.listCustomerRebills(rebill.customer, rebill.pagination.cursor, rebill.pagination.limit);
             }
         },
         campaignlist: {
             type: campaignListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, campaign){
-                var cursor = campaign.cursor;
-                var limit = campaign.limit;
-
-      	return campaignController.list(cursor, limit);
+                return campaignController.list(campaign.pagination);
             }
         },
         sessionlist: {
             type: sessionListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, session){
-                var cursor = session.cursor;
-                var limit = session.limit;
-
-      	return sessionController.list(cursor, limit);
+                return sessionController.list(session.pagination);
             }
         },
         productschedule: {
@@ -824,9 +557,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, productschedule){
-      	var id = productschedule.id;
-
-      	return productScheduleController.get(id);
+            	return productScheduleController.get(productschedule.id);
             }
         },
         merchantprovider: {
@@ -838,9 +569,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, merchantprovider){
-      	var id = merchantprovider.id;
-
-      	return merchantProviderController.get(id);
+      	       return merchantProviderController.get(merchantprovider.id);
             }
         },
         fulfillmentprovider: {
@@ -852,9 +581,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, fulfillmentprovider){
-      	var id = fulfillmentprovider.id;
-
-      	return fulfillmentProviderController.get(id);
+                return fulfillmentProviderController.get(fulfillmentprovider.id);
             }
         },
         loadbalancer: {
@@ -866,9 +593,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, loadbalancer){
-      	var id = loadbalancer.id;
-
-      	return loadBalancerController.get(id);
+                return loadBalancerController.get(loadbalancer.id);
             }
         },
         creditcard: {
@@ -880,9 +605,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, creditcard){
-      	var id = creditcard.id;
-
-      	return creditCardController.get(id);
+                return creditCardController.get(creditcard.id);
             }
         },
         campaign: {
@@ -894,9 +617,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, campaign){
-      	var id = campaign.id;
-
-      	return campaignController.get(id);
+                return campaignController.get(campaign.id);
             }
         },
         affiliate: {
@@ -908,9 +629,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, affiliate){
-      	var id = affiliate.id;
-
-      	return affiliateController.get(id);
+                return affiliateController.get(affiliate.id);
             }
         },
         accesskey: {
@@ -922,9 +641,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, accesskey){
-      	var id = accesskey.id;
-
-      	return accessKeyController.get(id);
+                return accessKeyController.get(accesskey.id);
             }
         },
         account: {
@@ -936,9 +653,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, account){
-      	var id = account.id;
-
-      	return accountController.get(id);
+                return accountController.get(account.id);
             }
         },
         role: {
@@ -950,9 +665,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, role){
-      	var id = role.id;
-
-      	return roleController.get(id);
+                return roleController.get(role.id);
             }
         },
         user: {
@@ -964,13 +677,12 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, user){
-      	if(_.has(user,"id")){
-          var id = user.id;
-
-          return userController.get(id);
-      }else{
-          return null;
-      }
+              //Technical Debt:  What is this logic for?
+      	       if(_.has(user,"id")){
+                 return userController.get(user.id);
+             }else{
+                 return null;
+             }
             }
         },
         useracl: {
@@ -982,13 +694,12 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, useracl){
-      	if(_.has(useracl, 'id')){
-          var id = useracl.id;
-
-          return userACLController.get(id);
-      }else{
-          return null;
-      }
+              //Technical Debt:  What is this logic for?
+            	if(_.has(useracl, 'id')){
+                return userACLController.get(useracl.id);
+            }else{
+                return null;
+            }
             }
         },
         notification: {
@@ -1000,6 +711,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (root, notification) => {
+               //Technical Debt:  What is this logic for?
                 if (_.has(notification, 'id')) {
                     return notificationController.get(notification.id);
                 } else {
@@ -1016,17 +728,10 @@ module.exports.graphObj = new GraphQLObjectType({
         notificationlist: {
             type: notificationListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, notification) {
-                return notificationController.listForCurrentUser(notification.cursor, notification.limit);
+                return notificationController.listForCurrentUser(notification.pagination);
             }
         },
         notificationsetting: {
@@ -1052,17 +757,10 @@ module.exports.graphObj = new GraphQLObjectType({
         notificationsettinglist: {
             type: notificationSettingListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, notification_setting) {
-                return notificationSettingController.list(notification_setting.limit, notification_setting.cursor);
+                return notificationSettingController.list(notification_setting.pagination);
             }
         },
         notificationsettingdefault: {
@@ -1074,18 +772,11 @@ module.exports.graphObj = new GraphQLObjectType({
         userdevicetokenlist: {
             type: userDeviceTokenListType.graphObj,
             args: {
-                limit: {
-                    description: 'limit',
-                    type: GraphQLString
-                },
-                cursor: {
-                    description: 'cursor',
-                    type: GraphQLString
-                }
+                pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, user_device_token) {
 
-                return userDeviceTokenController.list(user_device_token.limit, user_device_token.cursor);
+                return userDeviceTokenController.list(user_device_token.pagination);
 
             }
         },
@@ -1114,6 +805,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (root, user_device_token) => {
+                //Technical Debt:  What is this logic for?
                 if (_.has(user_device_token, 'id')) {
                     return userDeviceTokenController.get(user_device_token.id);
                 }else{

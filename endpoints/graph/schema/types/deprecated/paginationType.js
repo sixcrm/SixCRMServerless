@@ -18,6 +18,10 @@ module.exports.graphObj = new GraphQLObjectType({
         has_next_page: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'Boolean that represents whether or not the query has more records available.',
+        },
+        last_evaluated: {
+            type: GraphQLString,
+            description: 'Serialized compound key'
         }
     }),
     interfaces: []

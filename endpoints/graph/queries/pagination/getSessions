@@ -2,23 +2,23 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		sessionlist ({argumentation}) {
 			sessions {
 				id,
 				created_at,
-				updated_at, 
-				customer { 
-					id, 
-					firstname, 
-					lastname, 
-					address { 
-						line1, 
-						line2, 
-						city, 
-						state, 
-						zip 
-					} 
+				updated_at,
+				customer {
+					id,
+					firstname,
+					lastname,
+					address {
+						line1,
+						line2,
+						city,
+						state,
+						zip
+					}
 				},
 				product_schedules {
 					id,
@@ -34,7 +34,7 @@
 							ship,
 							shipping_delay,
 							fulfillment_provider {
-								id, 
+								id,
 								name,
 								provider,
 								username,
@@ -61,7 +61,7 @@
 								ship,
 								shipping_delay,
 								fulfillment_provider {
-									id, 
+									id,
 									name,
 									provider,
 									username,
@@ -80,7 +80,7 @@
 				campaign {
 					id,
 					name,
-					productschedules { 
+					productschedules {
 						id,
 						schedule {
 							price,
@@ -94,7 +94,7 @@
 								ship,
 								shipping_delay,
 								fulfillment_provider {
-									id, 
+									id,
 									name,
 									provider,
 									username,
@@ -108,7 +108,7 @@
 						id,
 						merchantproviderconfigurations {
 							merchantprovider {
-								id, 
+								id,
 								username,
 								password,
 								endpoint,
@@ -122,9 +122,9 @@
 			pagination {
 				count,
 				end_cursor,
-				has_next_page
+				has_next_page,
+				last_evaluated
 			}
 		},
 	}"
 }
-

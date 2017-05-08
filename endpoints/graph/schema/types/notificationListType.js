@@ -1,9 +1,10 @@
 'use strict';
-let paginationType = require('./paginationType');
-let notificationType = require('./notificationType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
+
+let notificationType = require('./notificationType');
+let paginationType = require('./pagination/paginationType');
 
 module.exports.graphObj =  new GraphQLObjectType({
     name: 'NotificationList',
@@ -15,7 +16,7 @@ module.exports.graphObj =  new GraphQLObjectType({
         },
         pagination: {
             type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
+            description: 'Pagination',
         }
     }),
     interfaces: []

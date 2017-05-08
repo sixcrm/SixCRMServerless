@@ -1,9 +1,10 @@
 'use strict'
 const du = require('../../lib/debug-utilities.js');
-const dynamoDeployUtil = require('../utilities/dynamo-deploy');
+const dynamo_deployment_utilities = require('../utilities/dynamo-deploy.js');
 let environment = process.argv[2] || 'development';
 let region = process.argv[3] || process.env.AWS_REGION || 'us-east-1';
 
-du.highlight('Deploying DynamoDB Tables');
-dynamoDeployUtil.deployAll(environment, region);
+//Technical Debt:  Validate input parameters...
 
+du.highlight('Deploying DynamoDB Tables');
+dynamo_deployment_utilities.deployAll(environment, region);

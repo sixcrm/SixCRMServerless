@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		notificationlist ({argumentation}) {
+		notificationlist (pagination:{limit:\"1\", exclusive_start_key: \"{\\\"user\\\":\\\"super.user@test.com\\\",\\\"id\\\":\\\"6036d176-3d2b-4f4a-a343-c010cdc47cc8\\\"}\"}) {
 			notifications {
 		    id,
 		    type,

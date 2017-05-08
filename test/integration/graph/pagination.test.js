@@ -20,6 +20,7 @@ var entities = [
 	{camel:'FulfillmentProviders',lower:'fulfillmentprovider'},
 	{camel:'LoadBalancers',lower:'loadbalancer'},
 	{camel:'MerchantProviders',lower:'merchantprovider'},
+	{camel:'Notifications',lower:'notifications'},
 	{camel:'ProductSchedules',lower:'productschedule'},
 	{camel:'Products',lower:'product'},
 	{camel:'Rebills',lower:'rebill'},
@@ -43,7 +44,7 @@ entities.forEach((entity) => {
           let query_path = './endpoints/graph/queries/pagination/get'+entity.camel;
           var raw_query = tu.getQuery(query_path);
           var query = raw_query.split('{argumentation}');
-          var query_arguments = 'limit:"'+limit+'"';
+          var query_arguments = 'pagination:{limit:"'+limit+'"}';
 
         	query = query[0]+query_arguments+query[1];
 
@@ -86,7 +87,7 @@ entities.forEach((entity) => {
         assert.isAbove(response.body.data[entity.lower+'list'].pagination.end_cursor.length, 0);
 
         var query = raw_query.split('{argumentation}');
-        var query_arguments = 'limit:"'+limit+'", cursor: "'+cursor+'"';
+        var query_arguments = 'pagination:{limit:"'+limit+'", cursor: "'+cursor+'"}';
 
         query = query[0]+query_arguments+query[1];
 

@@ -81,7 +81,8 @@
 			pagination {
 				count,
 				end_cursor,
-				has_next_page
+				has_next_page,
+				last_evaluated
 			}
 		},
 	}"

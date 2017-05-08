@@ -1,9 +1,10 @@
 'use strict';
-let paginationType = require('./paginationType');
-let merchantProviderType = require('./merchantProviderType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
+
+let paginationType = require('./pagination/paginationType');
+let merchantProviderType = require('./merchantProviderType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'MerchantProviders',

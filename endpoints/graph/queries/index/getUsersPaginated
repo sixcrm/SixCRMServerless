@@ -2,8 +2,8 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
-		userlist (limit:\"1\") {
+	query {
+		userlist (pagination:{limit:\"1\"}) {
 			users {
 				id,
 				auth0_id,
@@ -24,10 +24,9 @@
 			pagination {
 				count,
 				end_cursor,
-				has_next_page
+				has_next_page,
+				last_evaluated
 			}
 		},
 	}"
 }
-
-
