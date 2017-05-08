@@ -3,8 +3,6 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
-const eventFunnelGroupResponseType = require('./eventFunnelGroupResponseType');
-
 module.exports.graphObj = new GraphQLObjectType({
     name: 'CampaingDeltaGroupType',
     description: 'The campaign delta campaigns',

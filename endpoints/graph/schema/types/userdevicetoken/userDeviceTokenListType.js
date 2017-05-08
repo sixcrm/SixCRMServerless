@@ -4,7 +4,7 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 let userDeviceTokenType = require('./userDeviceTokenType');
-let paginationType = require('./pagination/paginationType');
+let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'UserDeviceTokenList',

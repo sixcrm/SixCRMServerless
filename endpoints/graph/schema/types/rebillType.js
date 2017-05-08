@@ -1,11 +1,13 @@
 'use strict';
-let transactionType = require('./transactionType');
-let productScheduleType = require('./productScheduleType');
-let sessionType = require('./sessionType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+
+let transactionType = require('./transaction/transactionType');
+let productScheduleType = require('./productScheduleType');
+let sessionType = require('./sessionType');
+
 const rebillController = require('../../../../controllers/Rebill.js');
 
 module.exports.graphObj = new GraphQLObjectType({

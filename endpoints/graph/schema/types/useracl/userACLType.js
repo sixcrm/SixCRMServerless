@@ -2,10 +2,12 @@
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
-const userACLController = require('../../../../controllers/UserACL.js');
-let accountType = require('./accountType');
-let roleType = require('./roleType');
-let userType = require('./userType');
+
+const userACLController = require('../../../../../controllers/UserACL.js');
+
+let accountType = require('../accountType');
+let roleType = require('../roleType');
+let userType = require('../user/userType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'UserACL',

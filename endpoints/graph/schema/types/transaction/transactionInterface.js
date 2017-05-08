@@ -1,8 +1,9 @@
 'use strict';
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
-let transactionType = require('./transactionType').graphObj;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
+
+let transactionType = require('./transactionType').graphObj;
 
 module.exports.graphObj = new GraphQLInterfaceType({
     name: 'transaction',

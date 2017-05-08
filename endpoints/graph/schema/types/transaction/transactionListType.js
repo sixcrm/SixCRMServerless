@@ -1,18 +1,18 @@
 'use strict';
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
+const GraphQLList = require('graphql').GraphQLList;
 
-let userType = require('./userType');
-let paginationType = require('./pagination/paginationType');
+let paginationType = require('../pagination/paginationType');
+let transactionType = require('./transactionType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Users',
-    description: 'Users for sale.',
+    name: 'Transactions',
+    description: 'Transactions',
     fields: () => ({
-        users: {
-            type: new GraphQLList(userType.graphObj),
-            description: 'The products',
+        transactions: {
+            type: new GraphQLList(transactionType.graphObj),
+            description: 'The transactions',
         },
         pagination: {
             type: new GraphQLNonNull(paginationType.graphObj),

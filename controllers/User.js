@@ -68,16 +68,19 @@ class userController extends entityController {
 
                 du.debug('Is email: true');
 
-                this.disableACLs();
-
                 du.debug('Get User');
+
+                this.disableACLs();
 
                 this.get(user_string).then((user) => {
 
-                    du.debug('Have user:', user);
+                    this.enableACLs();
 
-					//Technical Debt:  This seems like very light validation...
                     if(_.has(user, 'id')){
+
+                        du.debug('Have user:', user);
+
+                        this.disableACLs();
 
                         return this.getHydrated(user.id).then((user) => {
 

@@ -1,8 +1,9 @@
 'use strict';
+const _ = require('underscore');
+
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
-const _ = require('underscore');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'UserDeviceToken',

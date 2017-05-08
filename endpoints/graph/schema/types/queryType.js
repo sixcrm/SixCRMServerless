@@ -16,7 +16,19 @@ let notificationSettingDefaultType = require('./notificationSettingDefaultType')
 let notificationListType = require('./notificationListType');
 let notificationCountType = require('./notificationCountType');
 let notificationType = require('./notificationType');
-let userACLType = require('./userACLType');
+
+let userType = require('./user/userType');
+let userListType = require('./user/userListType');
+
+let userACLType = require('./useracl/userACLType');
+let userACLListType = require('./useracl/userACLListType');
+
+let userDeviceTokenListType = require('./userdevicetoken/userDeviceTokenListType');
+let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
+
+let transactionListType = require('./transaction/transactionListType');
+let transactionType = require('./transaction/transactionType');
+
 let roleType = require('./roleType');
 let accountType = require('./accountType');
 let accessKeyType = require('./accessKeyType');
@@ -29,7 +41,6 @@ let merchantProviderType = require('./merchantProviderType');
 let productScheduleType = require('./productScheduleType');
 let sessionListType = require('./sessionListType');
 let campaignListType = require('./campaignListType');
-let transactionListType = require('./transactionListType');
 let productScheduleListType = require('./productScheduleListType');
 let loadBalancerListType = require('./loadBalancerListType');
 let customerNoteListType = require('./customerNoteListType');
@@ -43,8 +54,8 @@ let creditCardListType = require('./creditCardListType');
 let affiliateListType = require('./affiliateListType');
 let shippingReceiptListType = require('./shippingReceiptListType');
 let rebillListType = require('./rebillListType');
-let userACLListType = require('./userACLListType');
-let userListType = require('./userListType');
+
+
 let productListType = require('./productListType');
 let SMTPProviderListType = require('./SMTPProviderListType');
 let emailTemplateListType = require('./emailTemplateListType');
@@ -55,25 +66,21 @@ let customerNoteType = require('./customerNoteType');
 let sessionType = require('./sessionType');
 let rebillType = require('./rebillType');
 let shippingReceiptType = require('./shippingReceiptType');
-let transactionType = require('./transactionType');
-let userType = require('./userType');
 let suggestInputType = require('./suggestInputType');
 let suggestResultsType = require('./suggestResultsType');
 let searchInputType = require('./searchInputType');
 let searchResultsType = require('./searchResultsType');
 let customerType = require('./customerType');
-let userDeviceTokenListType = require('./userDeviceTokenListType');
-let userDeviceTokenType = require('./userDeviceTokenType');
 
-let transactionSummaryType = require('./transactionSummaryType');
-let transactionOverviewType =  require('./transactionOverviewType');
-let eventFunnelType =  require('./eventFunnelType');
-let campaignDeltaType =  require('./campaignDeltaType');
-let eventsByAffiliateType =  require('./eventsByAffiliateType');
-let transactionsByAffiliateType =  require('./transactionsByAffiliateType');
-let merchantProcessorAmountType =  require('./merchantProcessorAmountType');
 
-let analyticsFilterInputType = require('./analyticsFilterInputType');
+let transactionSummaryType = require('./analytics/transactionSummaryType');
+let transactionOverviewType =  require('./analytics/transactionOverviewType');
+let eventFunnelType =  require('./analytics/eventFunnelType');
+let campaignDeltaType =  require('./analytics/campaignDeltaType');
+let eventsByAffiliateType =  require('./analytics/eventsByAffiliateType');
+let transactionsByAffiliateType =  require('./analytics/transactionsByAffiliateType');
+let merchantProcessorAmountType =  require('./analytics/merchantProcessorAmountType');
+let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
 
 const sessionController = require('../../../../controllers/Session.js');
 const productController = require('../../../../controllers/Product.js');
@@ -89,8 +96,11 @@ const campaignController = require('../../../../controllers/Campaign.js');
 const affiliateController = require('../../../../controllers/Affiliate.js');
 const fulfillmentProviderController = require('../../../../controllers/FulfillmentProvider.js');
 const accessKeyController = require('../../../../controllers/AccessKey.js');
+
 const userController = require('../../../../controllers/User.js');
 const userACLController = require('../../../../controllers/UserACL.js');
+const userDeviceTokenController = require('../../../../controllers/UserDeviceToken');
+
 const emailTemplateController = require('../../../../controllers/EmailTemplate.js');
 const SMTPProviderController = require('../../../../controllers/SMTPProvider.js');
 const shippingReceiptController = require('../../../../controllers/ShippingReceipt.js');
@@ -100,7 +110,7 @@ const searchController = require('../../../../controllers/endpoints/search.js');
 const suggestController = require('../../../../controllers/endpoints/suggest.js');
 const notificationController = require('../../../../controllers/Notification');
 const notificationSettingController = require('../../../../controllers/NotificationSetting');
-const userDeviceTokenController = require('../../../../controllers/UserDeviceToken');
+
 
 const analyticsController = require('../../../../controllers/analytics/Analytics.js');
 

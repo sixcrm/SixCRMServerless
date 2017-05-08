@@ -4,7 +4,8 @@ const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
-let transactionProductInputType = require('./transactionProductInputType');
+
+let transactionProductInputType = require('../transactionproduct/transactionProductInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'TransactionInputType',

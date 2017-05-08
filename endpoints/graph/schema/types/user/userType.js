@@ -1,13 +1,16 @@
 'use strict';
+const _ = require('underscore');
+
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
-const userController = require('../../../../controllers/User.js');
-const _ = require('underscore');
-let userACLType = require('./userACLType');
-let accessKeyType = require('./accessKeyType');
-let addressType = require('./addressType');
+
+const userController = require('../../../../../controllers/User.js');
+
+let userACLType = require('../useracl/userACLType');
+let accessKeyType = require('../accessKeyType');
+let addressType = require('../addressType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'User',

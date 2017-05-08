@@ -1,14 +1,16 @@
 'use strict';
 const GraphQLList = require('graphql').GraphQLList;
-const transactionController = require('../../../../controllers/Transaction.js');
-const merchantProviderControler = require('../../../../controllers/MerchantProvider.js');
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
+
+const transactionController = require('../../../../../controllers/Transaction.js');
+const merchantProviderControler = require('../../../../../controllers/MerchantProvider.js');
+
 let transactionInterface = require('./transactionInterface');
-let transactionProductType = require('./transactionProductType');
-let rebillType = require('./rebillType');
-let merchantProviderType = require('./merchantProviderType');
+let transactionProductType = require('../transactionproduct/transactionProductType');
+let rebillType = require('../rebillType');
+let merchantProviderType = require('../merchantProviderType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Transaction',

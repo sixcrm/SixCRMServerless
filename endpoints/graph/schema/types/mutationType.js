@@ -9,8 +9,6 @@ let sessionInputType = require('./sessionInputType');
 let campaignInputType = require('./campaignInputType');
 let sessionType = require('./sessionType');
 let campaignType = require('./campaignType');
-let transactionInputType = require('./transactionInputType');
-let transactionType = require('./transactionType');
 let rebillInputType = require('./rebillInputType');
 let rebillType = require('./rebillType');
 let productScheduleInputType = require('./productScheduleInputType');
@@ -41,16 +39,22 @@ let accessKeyInputType = require('./accessKeyInputType');
 let accessKeyType = require('./accessKeyType');
 let productInputType = require('./productInputType');
 let productType = require('./productType');
-let userACLInputType = require('./userACLInputType');
-let userACLType = require('./userACLType');
+
 let deleteOutputType = require('./deleteOutputType');
-let userInputType  = require('./userInputType');
-let userInviteInputType = require('./userInviteInputType');
-let userInviteType = require('./userInviteType');
+
 let inviteInputType = require('./inviteInputType');
-let userType = require('./userType');
-let userDeviceTokenType = require('./userDeviceTokenType');
-let userDeviceTokenInputType = require('./userDeviceTokenInputType');
+
+let transactionInputType = require('./transaction/transactionInputType');
+let transactionType = require('./transaction/transactionType');
+
+let userACLInputType = require('./useracl/userACLInputType');
+let userACLType = require('./useracl/userACLType');
+let userInputType  = require('./user/userInputType');
+let userInviteInputType = require('./userinvite/userInviteInputType');
+let userInviteType = require('./userinvite/userInviteType');
+let userType = require('./user/userType');
+let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
+let userDeviceTokenInputType = require('./userdevicetoken/userDeviceTokenInputType');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

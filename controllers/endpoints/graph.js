@@ -95,8 +95,10 @@ class graphController {
                     du.debug('Is a user object.');
                     userController.setGlobalUser(user);
                 }else if(user == false){
-                    du.debug('Unable to acquire user, setting global user to email.');
+
+                    du.warning('Unable to acquire user, setting global user to email.');
                     userController.setGlobalUser(user_string);
+
                 }
 
                 return resolve(event);
@@ -112,7 +114,9 @@ class graphController {
     }
 
     acquireAccount(event){
+
         du.debug('Acquire Account');
+
         var pathParameters;
 
         if(_.isObject(event) && _.has(event, "pathParameters")){
@@ -142,7 +146,9 @@ class graphController {
     }
 
     setGlobalAccount(event){
+
         du.debug('Set Global Account');
+
         if(_.has(event, 'account')){
 
             global.account = event.account;
@@ -154,19 +160,20 @@ class graphController {
     }
 
     acquireQuery(event){
+
         du.debug('Acquire Query');
+
         var query;
 
         if(_.isObject(event) && _.has(event, "body")){
             query = event.body;
         }
 
-		//what is this??
+		//Technical Debt: what is this??
         if (_.has(event,"query") && _.has(event.query, "query")) {
             query = event.query.query.replace(/[\n\r\t]+/g, '');
         }
 
-		//add the query explicitly to the event object
         event.parsed_query = query;
 
         return Promise.resolve(event);

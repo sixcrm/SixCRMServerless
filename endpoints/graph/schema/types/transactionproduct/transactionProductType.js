@@ -1,12 +1,15 @@
 'use strict';
-const shippingReceiptController = require('../../../../controllers/ShippingReceipt.js');
 const _  = require('underscore');
-const transactionController = require('../../../../controllers/Transaction.js');
+
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
-let productType = require('./productType');
-let shippingReceiptType = require('./shippingReceiptType');
+
+const shippingReceiptController = require('../../../../../controllers/ShippingReceipt.js');
+const transactionController = require('../../../../../controllers/Transaction.js');
+
+let productType = require('../productType');
+let shippingReceiptType = require('../shippingReceiptType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'transactionproduct',

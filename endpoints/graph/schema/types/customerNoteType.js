@@ -4,7 +4,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const customerNoteController = require('../../../../controllers/CustomerNote.js');
 let customerType = require('./customerType');
-let userType = require('./userType');
+let userType = require('./user/userType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'CustomerNote',
