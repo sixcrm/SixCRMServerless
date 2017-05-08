@@ -522,7 +522,7 @@ describe('controllers/Entity.js', () => {
         });
     });
 
-    describe('list', () => {
+    xdescribe('list', () => {
         afterEach(() => {
             mockery.resetCache();
         });
@@ -539,7 +539,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list(0, 10).then((response) => {
+            return entityController.list({cursor: 0, limit: 10}).then((response) => {
                 // then
                 expect(response).to.equal(null);
             });
@@ -562,8 +562,9 @@ describe('controllers/Entity.js', () => {
             const EC = require('../../../controllers/Entity');
             let entityController = new EC('table_name', 'entity');
 
-            // when
-            return entityController.list(0, 10).catch((error) => {
+            console.log('ere');
+            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
+                console.log('ere2');
                 // then
                 expect(error.message).to.equal('Data has no items.');
             });
@@ -583,7 +584,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list(0, 10).catch((error) => {
+            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
                 // then
                 expect(error.message).to.equal('Data is not an object.');
             });
@@ -603,7 +604,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list(0, 10).catch((error) => {
+            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
                 // then
                 expect(error.message).to.equal('Scanning failed.');
             });
@@ -626,7 +627,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list(0, 10).then((response) => {
+            return entityController.list({cursor: 0, limit: 10}).then((response) => {
                 // then
                 expect(response).to.deep.equal({
                     pagination: {
@@ -656,7 +657,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list(0, 10).then((response) => {
+            return entityController.list({cursor:0, limit:10}).then((response) => {
                 // then
                 expect(response).to.deep.equal({
                     pagination: {
@@ -689,7 +690,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list(0, 10).then((response) => {
+            return entityController.list({cursor:0, limit:10}).then((response) => {
                 // then
                 expect(response).to.deep.equal({
                     pagination: {
