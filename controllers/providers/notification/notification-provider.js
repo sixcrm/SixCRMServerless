@@ -89,6 +89,7 @@ class NotificationProvider {
 
     saveAndSendNotification(notification_parameters, account, user) {
         let notificationTypes = ['dummy']; // 'dummy' is used in helper utilities
+        let phone_number = notification_parameters.phone_number;
 
         du.debug('Save and send notification.');
 
@@ -131,7 +132,7 @@ class NotificationProvider {
                     // assuming user wants email notification
                     notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
                     // assuming user wants SMS notification
-                    notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, '+381631025339'));
+                    notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, phone_number));
                 }
 
                 return Promise.all(notificationSendOperations).then(() => notification);
