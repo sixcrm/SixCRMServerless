@@ -12,7 +12,9 @@ ORDER BY le.starttime DESC LIMIT 100;
 
 SELECT *
 FROM stl_load_errors
-ORDER BY starttime desc limit 1;
+ORDER BY starttime DESC
+LIMIT 1;
+
 
 
 
