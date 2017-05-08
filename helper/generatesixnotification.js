@@ -5,6 +5,7 @@ const site_config = yaml.safeLoad(fs.readFileSync(__dirname+`/../config/${proces
 process.env.users_table = site_config.dynamodb.users_table;
 process.env.user_acls_table = site_config.dynamodb.user_acls_table;
 process.env.notifications_table = site_config.dynamodb.notifications_table;
+process.env.notification_settings_table = site_config.dynamodb.notification_settings_table;
 process.env.notifications_read_table = site_config.dynamodb.notifications_read_table;
 process.env.dynamo_endpoint = site_config.dynamodb.endpoint;
 process.env.search_indexing_queue_url = site_config.sqs.search_indexing_queue_url;
@@ -14,9 +15,10 @@ if (process.env.stage === 'local') {
     process.env.user_acls_table = 'local' + process.env.user_acls_table;
     process.env.notifications_table = 'local' + process.env.notifications_table;
     process.env.notifications_read_table = 'local' + process.env.notifications_read_table;
+    process.env.notification_settings_table = 'local' + process.env.notification_settings_table;
 }
 
-const NotificationUtilities = require('../lib/notification-utilities');
+const NotificationUtilities = require('../controllers/providers/notification/notification-provider.js');
 const PermissionUtilities = require('../lib/permission-utilities');
 const du = require('../lib/debug-utilities.js');
 
