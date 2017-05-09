@@ -8,6 +8,10 @@ var redshiftClient = require('./redshift.js');
 var myBucket = 'sixcrm-redshift-staging';
 var myKey = 'test_json_gen.json';
 
+if (typeof Promise === 'undefined') {
+  AWS.config.setPromisesDependency(require('bluebird'));
+  console.log("Console");
+}
 
 function createGuid()
 {
@@ -25,7 +29,7 @@ function choose(choices) {
 
 function generateJson() {
   var jsonArr =  [];
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 200; i++) {
       jsonArr.push({
         "id": createGuid(),
         "datetime": '2017-03-02T17:23:43.043Z',
@@ -52,25 +56,25 @@ function generateJson() {
       return JSON.stringify(e);
     });
 
-    return myJsonString = jsonArr.join(",");
+    return myJsonString = jsonArr.join("\n");
 }
 
 
-function loadBucket() {
+var putObjectPromise  = function loadBucket() {
   s3.createBucket({Bucket: myBucket}, function(err, data) {
   if (err) {
     console.log(err);
   } else {
      params = {Bucket: myBucket, Key: myKey, Body: generateJson()};
-     s3.putObject(params, function(err, data) {
+     return s3.putObject(params, function(err, data){
          if (err) {
              console.log(err)
          } else {
              console.log("Successfully uploaded data to myBucket/myKey");
          }
-      })
+      }).promise()
    }
  })
 };
 
-loadBucket() ;
+putObjectPromise();

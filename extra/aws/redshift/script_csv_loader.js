@@ -8,16 +8,17 @@ var myBucket = 'sixcrm-redshift-staging';
 var myKey = 'test_json_gen.json';
 
 redshiftClient.connect(function(err){
-  if(err) throw err;
-  else{
-    redshiftClient.query("copy f_transactions from 's3://sixcrm-redshift-staging/" + myKey + "' credentials 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'",
-      function(err, data){
-        if(err) throw err;
-        else{
-          console.log(data);
-          redshiftClient.close();
-      }
-    })
+  if(err) {
+    return console.error('error fetching client from pool', err);
   }
-  }
-);
+  redshiftClient.query("copy f_transactions from 's3://sixcrm-redshift-staging/" + myKey + "' credentials 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+      , function(err, result){
+          if(err) {
+            return console.error('Error running load', err);
+          }
+            console.log('Success running load');
+            redshiftClient.end(function (err) {
+              if (err) throw err;
+            });
+        });
+});
