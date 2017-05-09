@@ -2,10 +2,10 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		fulfillmentproviderlist ({argumentation}) {
 			fulfillmentproviders {
-				id, 
+				id,
 				name,
 				provider,
 				username,
@@ -17,9 +17,9 @@
 			pagination {
 				count,
 				end_cursor,
-				has_next_page
+				has_next_page,
+				last_evaluated
 			}
 		},
 	}"
 }
-

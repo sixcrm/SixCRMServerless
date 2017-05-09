@@ -61,11 +61,11 @@ module.exports = class entityController {
                     expression_attribute_values: {}
                 }
 
-                query_parameters.key_condition_expression['#'+field] = ':indexv';
-                query_parameters.expression_attribute_names['#'+field] = field;
-                query_parameters.expression_attribute_values[':indexv'] = index_value;
-
+                query_parameters = this.appendKeyConditionExpression(query_parameters, '#'+field, ':indexv');
+                query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
+                query_parameters = this.appendExpressionAttributeValues(query_parameters, ':indexv', index_value);
                 query_parameters = this.appendFilterExpression(query_parameters, '#'+field+' = :indexv');
+
                 query_parameters = this.appendCursor(query_parameters, cursor);
                 query_parameters = this.appendLimit(query_parameters, limit);
                 query_parameters = this.appendAccountFilter(query_parameters);
@@ -90,52 +90,20 @@ module.exports = class entityController {
     }
 
 		//ACL enabled
-    list(cursor, limit){
+    list(pagination, query_parameters){
 
         return new Promise((resolve, reject) => {
 
             return this.can('read').then((permission) => {
 
-                if(permission != true){
+                if(permission != true){ return resolve(null); }
 
-                    return resolve(null);
-										//resolve(permissionutilities.messages.nopermission);
-
+                if(_.isUndefined(query_parameters)){
+                    query_parameters = {filter_expression: null, expression_attribute_values: null};
                 }
 
-                var query_parameters = {filter_expression: null, expression_attribute_values: null};
-
-                if(typeof cursor  !== 'undefined'){
-                    query_parameters.ExclusiveStartKey = { id: cursor };
-                }
-
-                if(typeof limit  !== 'undefined'){
-                    query_parameters['limit'] = limit;
-                }
-
-                if(global.disableaccountfilter !== true){
-
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
-
-
-                        if(global.account == '*'){
-
-													//for now, do nothing
-
-                        }else{
-
-                            query_parameters.filter_expression = 'account = :accountv';
-                            query_parameters.expression_attribute_values = {':accountv':global.account};
-
-                        }
-
-                    }
-
-                }else{
-
-                    du.warning('Global Account Filter Disabled');
-
-                }
+                query_parameters = this.appendPagination(query_parameters, pagination);
+                query_parameters = this.appendAccountFilter(query_parameters);
 
                 return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
@@ -196,9 +164,10 @@ module.exports = class entityController {
     }
 
 		//ACL enabled
-    queryBySecondaryIndex(field, index_value, index_name, cursor, limit){
+    //Technical Debt:  You can only paginate against the index...
+    queryBySecondaryIndex(field, index_value, index_name, pagination){
 
-        du.debug('Listing by secondary index', field, index_value, index_name, cursor, limit);
+        du.debug('Listing by secondary index', field, index_value, index_name, pagination);
 
         return new Promise((resolve, reject) => {
 
@@ -212,10 +181,8 @@ module.exports = class entityController {
                     expression_attribute_names: {}
                 }
 
-                query_parameters.expression_attribute_names['#'+field] = field;
-
-                query_parameters = this.appendCursor(query_parameters, cursor);
-                query_parameters = this.appendLimit(query_parameters, limit);
+                query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
+                query_parameters = this.appendPagination(query_parameters, pagination);
                 query_parameters = this.appendAccountFilter(query_parameters);
 
                 du.debug('Query Parameters: ', query_parameters);
@@ -1164,6 +1131,30 @@ module.exports = class entityController {
 
     }
 
+    appendPagination(query_parameters, pagination){
+
+        du.debug('Append Pagination');
+
+        if(_.has(pagination, 'limit')){
+
+            query_parameters = this.appendLimit(query_parameters, pagination.limit);
+
+        }
+
+        if(_.has(pagination, 'exclusive_start_key')){
+
+            query_parameters = this.appendExclusiveStartKey(query_parameters, pagination.exclusive_start_key);
+
+        }else if(_.has(pagination, 'cursor')){
+
+            query_parameters = this.appendCursor(query_parameters, pagination.cursor);
+
+        }
+
+        return query_parameters;
+
+    }
+
     appendLimit(query_parameters, limit){
 
         if(!_.isUndefined(limit)){
@@ -1175,16 +1166,82 @@ module.exports = class entityController {
 
     }
 
-    appendCursor(query_parameters, cursor){
+    appendExclusiveStartKey(query_parameters, exclusive_start_key){
 
-        if(!_.isUndefined(cursor)){
-          //Technical Debt: string, appropriate structure...
-            query_parameters.ExclusiveStartKey = { id: cursor };
+        if(!_.isUndefined(exclusive_start_key)){
+
+            if(this.isUUID(exclusive_start_key) || this.isEmail(exclusive_start_key)){
+
+                query_parameters.ExclusiveStartKey = this.appendCursor(exclusive_start_key);
+
+            }else{
+
+                query_parameters.ExclusiveStartKey =  JSON.parse(exclusive_start_key);
+
+            }
+
+
         }
 
         return query_parameters;
 
     }
+
+
+    appendCursor(query_parameters, cursor){
+
+        if(!_.isUndefined(cursor)){
+          //Technical Debt: string, appropriate structure...
+            query_parameters.ExclusiveStartKey = { id: cursor };
+
+        }
+
+        return query_parameters;
+
+    }
+
+    appendExpressionAttributeNames(query_parameters, key, value){
+
+        if(!_.has(query_parameters, 'expression_attribute_names')){
+
+            query_parameters.expression_attribute_names = {};
+
+        }
+
+        query_parameters.expression_attribute_names[key] = value;
+
+        return query_parameters;
+
+    }
+
+    appendKeyConditionExpression(query_parameters, key, value){
+
+        if(!_.has(query_parameters, 'key_condition_expression')){
+
+            query_parameters.key_condition_expression = {};
+
+        }
+
+        query_parameters.key_condition_expression[key] = value;
+
+        return query_parameters;
+
+    }
+
+    appendExpressionAttributeValues(query_parameters, key, value){
+
+        if(!_.has(query_parameters, 'expression_attribute_values')){
+
+            query_parameters.expression_attribute_values = {};
+
+        }
+
+        query_parameters.expression_attribute_values[key] = value;
+
+        return query_parameters;
+
+    }
+
 
     appendFilterExpression(query_parameters, filter_expression){
 
@@ -1225,9 +1282,13 @@ module.exports = class entityController {
         }
 
         if(_.has(data, "LastEvaluatedKey")){
+
+            pagination_object.last_evaluated = JSON.stringify(data.LastEvaluatedKey);
+
             if(_.has(data.LastEvaluatedKey, "id")){
                 pagination_object.end_cursor = data.LastEvaluatedKey.id;
             }
+
         }
 
       //Technical Debt:  This doesn't appear to be working correctly

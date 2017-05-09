@@ -2,7 +2,7 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		productlist ({argumentation}) {
 			products {
 				id,
@@ -11,7 +11,7 @@
 				ship,
 				shipping_delay,
 				fulfillment_provider {
-					id, 
+					id,
 					name,
 					provider,
 					username,
@@ -24,9 +24,9 @@
 			pagination {
 				count,
 				end_cursor,
-				has_next_page
+				has_next_page,
+				last_evaluated
 			}
 		}
 	}"
 }
-

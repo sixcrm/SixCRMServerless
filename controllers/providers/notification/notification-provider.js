@@ -5,6 +5,8 @@ const Validator = require('jsonschema').Validator;
 const du = require('../../../lib/debug-utilities');
 const permissionUtils = require('../../../lib/permission-utilities');
 const emailNotificationUtils = require('../../../lib/email-notification-utilities');
+const smsNotificationUtils = require('../../../lib/sms-notification-utilities');
+const slackNotificationUtils = require('../../../lib/slack-notification-utilities');
 const timestamp = require('../../../lib/timestamp');
 
 const notificationController = require('../../Notification');
@@ -72,12 +74,6 @@ class NotificationProvider {
 
             du.debug(`Create notification for account '${create_notification_object.account}' and user '${create_notification_object.user}'.`);
 
-            // return notificationController.create({
-            //     "user": create_notification_object.user,
-            //     "account": create_notification_object.account,
-            //     "type": create_notification_object.type,
-            //     "action": create_notification_object.action,
-            //     "message": create_notification_object.message
             return this.saveAndSendNotification(
                 create_notification_object,
                 create_notification_object.account,
@@ -93,36 +89,58 @@ class NotificationProvider {
 
 
     saveAndSendNotification(notification_parameters, account, user) {
-        let notificationTypes = [];
+        let notificationTypes = ['dummy']; // 'dummy' is used in helper utilities
+        let phone_number = notification_parameters.phone_number;
+        let webhook = notification_parameters.webhook;
 
-        notificationSettingController.get(user).notification_groups.forEach((group) => {
-            group.notifications.forEach((notification) => {
-                // Technical Debt: check if we want to actually push the value. Where in the settings we see whether user wanted or not?
+        du.debug('Save and send notification.');
 
-                notificationTypes.push(notification.key);
-            })
-        });
-
-        let createNotification = {
-            "user": user,
-            "account": account,
-            "type": notification_parameters.type,
-            "action": notification_parameters.action,
-            "message": notification_parameters.message
-        };
-
-        // if settings for six are off, mark it already read
-        createNotification.read_at = timestamp.getISO8601();
-
-        return notificationController.create().then((notification) => {
-            let notificationSendOperations = [];
-
-            // assuming user wants email notification
-            if (_.contains(notificationTypes, notification.type)) {
-                notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
+        return notificationSettingController.get(user).then((notification_settings) => {
+            if (notification_settings && notification_settings.notification_groups) {
+                notification_settings.notification_groups.forEach((group) => {
+                    if (group.notifications) {
+                        group.notifications.forEach((notification) => {
+                            if (notification.default) {
+                                notificationTypes.push(notification.key);
+                            }
+                        })
+                    }
+                });
             }
 
-            return Promise.all(notificationSendOperations).then(() => notification);
+            let createNotification = {
+                "user": user,
+                "account": account,
+                "type": notification_parameters.type,
+                "action": notification_parameters.action,
+                "message": notification_parameters.message
+            };
+
+            // Technical Debt: after we figure out where to read the settings from, update this to set the 'read_at'
+            // only if user chose not to receive Six notifications.
+
+            // createNotification.read_at = timestamp.getISO8601();
+
+            du.debug('About to create notification', createNotification);
+
+            return notificationController.create(createNotification).then((notification) => {
+
+                du.debug('Saved notification', notification);
+
+                let notificationSendOperations = [];
+
+                // Technical Debt: figure out where to read the settings from and choose which notification channels to use.
+                if (_.contains(notificationTypes, notification.type)) {
+                    // assuming user wants email notification
+                    notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
+                    // assuming user wants SMS notification
+                    notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, phone_number));
+                    // assuming user wants Slack notification
+                    notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, webhook));
+                }
+
+                return Promise.all(notificationSendOperations).then(() => notification);
+            });
         });
 
     }
@@ -140,7 +158,7 @@ class NotificationProvider {
         let schema;
 
         try{
-            schema = require('../model/actions/create_notification.json');
+            schema = require('../../../model/actions/create_notification.json');
         } catch(e){
             return Promise.reject(new Error('Unable to load validation schemas.'));
         }

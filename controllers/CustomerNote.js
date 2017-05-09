@@ -27,9 +27,9 @@ class customerNoteController extends entityController {
 
     }
 
-    listByCustomer(customer, cursor, limit){
+    listByCustomer(customer, pagination){
 
-        return this.queryBySecondaryIndex('customer', customer, 'customer-index', cursor, limit)
+        return this.queryBySecondaryIndex('customer', customer, 'customer-index', pagination)
           .then((result) => this.getResult(result))
           //Technical Debt:  Redundancy?
           .then((result) => {

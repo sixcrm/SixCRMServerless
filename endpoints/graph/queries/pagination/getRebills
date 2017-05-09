@@ -2,7 +2,7 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		rebilllist ({argumentation}) {
 			rebills {
 				id,
@@ -11,18 +11,18 @@
 				created_at,
 				updated_at,
 				parentsession {
-					id, 
-					customer { 
-						id, 
-						firstname, 
-						lastname, 
-						address { 
-							line1, 
-							line2, 
-							city, 
-							state, 
-							zip 
-						} 
+					id,
+					customer {
+						id,
+						firstname,
+						lastname,
+						address {
+							line1,
+							line2,
+							city,
+							state,
+							zip
+						}
 					},
 					product_schedules {
 						id,
@@ -38,7 +38,7 @@
 								ship,
 								shipping_delay,
 								fulfillment_provider {
-									id, 
+									id,
 									name,
 									provider,
 									username,
@@ -63,7 +63,7 @@
 							ship,
 							shipping_delay,
 							fulfillment_provider {
-								id, 
+								id,
 								name,
 								provider,
 								username,
@@ -82,9 +82,9 @@
 			pagination {
 				count,
 				end_cursor,
-				has_next_page
+				has_next_page,
+				last_evaluated
 			}
 		},
 	}"
 }
-

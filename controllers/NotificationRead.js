@@ -16,6 +16,7 @@ class notificationReadController extends entityController {
      * Save the time the current user has seen the notifications for the current account.
      */
     markNotificationsAsSeen() {
+
         du.debug('Mark notifications as seen.');
 
         let key = {
@@ -24,6 +25,7 @@ class notificationReadController extends entityController {
         };
 
         return this.touch(key);
+
     }
 
     /**

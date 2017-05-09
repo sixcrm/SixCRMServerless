@@ -1,9 +1,9 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"timothy.dalbey@sixcrm.com\"}}",
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		notificationlist (limit:\"1\") {
+		notificationlist ({argumentation}) {
 			notifications {
 		    id,
 		    type,
@@ -16,7 +16,8 @@
       pagination {
           count,
           end_cursor,
-          has_next_page
+          has_next_page,
+					last_evaluated
       }
 		}
 	}"

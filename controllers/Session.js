@@ -27,6 +27,9 @@ class sessionController extends entityController {
 
         if(!_.has(session, "customer")){ return null; }
 
+        //Technincal Debt:  This is necessary?
+        var customerController = require('./Customer.js');
+
         return customerController.get(session.customer);
 
     }

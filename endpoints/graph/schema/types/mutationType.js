@@ -1,56 +1,79 @@
 'use strict';
-let notificationInputType = require('./notificationInputType');
-let notificationType = require('./notificationType');
-let notificationSettingType = require('./notificationSettingType');
-let notificationSettingInputType = require('./notificationSettingInputType');
-let shippingReceiptInputType = require('./shippingReceiptInputType');
-let shippingReceiptType = require('./shippingReceiptType');
-let sessionInputType = require('./sessionInputType');
-let campaignInputType = require('./campaignInputType');
-let sessionType = require('./sessionType');
-let campaignType = require('./campaignType');
-let transactionInputType = require('./transactionInputType');
-let transactionType = require('./transactionType');
-let rebillInputType = require('./rebillInputType');
-let rebillType = require('./rebillType');
-let productScheduleInputType = require('./productScheduleInputType');
-let productScheduleType = require('./productScheduleType');
-let loadBalancerInputType = require('./loadBalancerInputType');
-let loadBalancerType = require('./loadBalancerType');
-let customerNoteInputType = require('./customerNoteInputType');
-let customerNoteType = require('./customerNoteType');
-let customerInputType = require('./customerInputType');
-let customerType = require('./customerType');
-let creditCardInputType = require('./creditCardInputType');
-let creditCardType = require('./creditCardType');
-let emailTemplateInputType = require('./emailTemplateInputType');
-let emailTemplateType = require('./emailTemplateType');
-let fulfillmentProviderInputType = require('./fulfillmentProviderInputType');
-let fulfillmentProviderType = require('./fulfillmentProviderType');
-let merchantProviderInputType = require('./merchantProviderInputType');
-let merchantProviderType = require('./merchantProviderType');
-let SMTPProviderInputType = require('./SMTPProviderInputType');
-let SMTPProviderType = require('./SMTPProviderType');
-let affiliateInputType = require('./affiliateInputType');
-let affiliateType = require('./affiliateType');
-let roleInputType = require('./roleInputType');
-let roleType = require('./roleType');
-let accountInputType = require('./accountInputType');
-let accountType = require('./accountType');
-let accessKeyInputType = require('./accessKeyInputType');
-let accessKeyType = require('./accessKeyType');
-let productInputType = require('./productInputType');
-let productType = require('./productType');
-let userACLInputType = require('./userACLInputType');
-let userACLType = require('./userACLType');
-let deleteOutputType = require('./deleteOutputType');
-let userInputType  = require('./userInputType');
-let userInviteInputType = require('./userInviteInputType');
-let userInviteType = require('./userInviteType');
-let inviteInputType = require('./inviteInputType');
-let userType = require('./userType');
-let userDeviceTokenType = require('./userDeviceTokenType');
-let userDeviceTokenInputType = require('./userDeviceTokenInputType');
+let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
+let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
+
+let accessKeyInputType = require('./accesskey/accessKeyInputType');
+let accessKeyType = require('./accesskey/accessKeyType');
+
+let accountInputType = require('./account/accountInputType');
+let accountType = require('./account/accountType');
+
+let affiliateInputType = require('./affiliate/affiliateInputType');
+let affiliateType = require('./affiliate/affiliateType');
+
+let campaignInputType = require('./campaign/campaignInputType');
+let campaignType = require('./campaign/campaignType');
+
+let creditCardInputType = require('./creditcard/creditCardInputType');
+let creditCardType = require('./creditcard/creditCardType');
+
+let customerInputType = require('./customer/customerInputType');
+let customerType = require('./customer/customerType');
+
+let customerNoteInputType = require('./customernote/customerNoteInputType');
+let customerNoteType = require('./customernote/customerNoteType');
+
+let emailTemplateInputType = require('./emailtemplate/emailTemplateInputType');
+let emailTemplateType = require('./emailtemplate/emailTemplateType');
+
+let fulfillmentProviderInputType = require('./fulfillmentprovider/fulfillmentProviderInputType');
+let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
+
+let deleteOutputType = require('./general/deleteOutputType');
+
+let loadBalancerInputType = require('./loadbalancer/loadBalancerInputType');
+let loadBalancerType = require('./loadbalancer/loadBalancerType');
+
+let merchantProviderInputType = require('./merchantprovider/merchantProviderInputType');
+let merchantProviderType = require('./merchantprovider/merchantProviderType');
+
+let notificationInputType = require('./notification/notificationInputType');
+let notificationType = require('./notification/notificationType');
+
+let notificationSettingType = require('./notificationsetting/notificationSettingType');
+let notificationSettingInputType = require('./notificationsetting/notificationSettingInputType');
+
+let productInputType = require('./product/productInputType');
+let productType = require('./product/productType');
+
+let productScheduleInputType = require('./productschedule/productScheduleInputType');
+let productScheduleType = require('./productschedule/productScheduleType');
+
+let rebillInputType = require('./rebill/rebillInputType');
+let rebillType = require('./rebill/rebillType');
+
+let roleInputType = require('./role/roleInputType');
+let roleType = require('./role/roleType');
+
+let shippingReceiptInputType = require('./shippingreceipt/shippingReceiptInputType');
+let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
+
+let inviteInputType = require('./user/inviteInputType');
+
+let transactionInputType = require('./transaction/transactionInputType');
+let transactionType = require('./transaction/transactionType');
+
+let userACLInputType = require('./useracl/userACLInputType');
+let userACLType = require('./useracl/userACLType');
+let userInputType  = require('./user/userInputType');
+let userInviteInputType = require('./userinvite/userInviteInputType');
+let userInviteType = require('./userinvite/userInviteType');
+let userType = require('./user/userType');
+let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
+let userDeviceTokenInputType = require('./userdevicetoken/userDeviceTokenInputType');
+
+let sessionInputType = require('./session/sessionInputType');
+let sessionType = require('./session/sessionType');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -88,7 +111,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: userType.graphObj,
             description: 'Completes a user invite.',
             args: {
-                invite: { type: inviteInputType .graphObj}
+                invite: { type: inviteInputType.graphObj}
             },
             resolve: (value, invite) => {
                 return userController.acceptInvite(invite.invite);
