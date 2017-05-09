@@ -6,6 +6,7 @@ const du = require('../../../lib/debug-utilities');
 const permissionUtils = require('../../../lib/permission-utilities');
 const emailNotificationUtils = require('../../../lib/email-notification-utilities');
 const smsNotificationUtils = require('../../../lib/sms-notification-utilities');
+const slackNotificationUtils = require('../../../lib/slack-notification-utilities');
 const timestamp = require('../../../lib/timestamp');
 
 const notificationController = require('../../Notification');
@@ -90,11 +91,12 @@ class NotificationProvider {
     saveAndSendNotification(notification_parameters, account, user) {
         let notificationTypes = ['dummy']; // 'dummy' is used in helper utilities
         let phone_number = notification_parameters.phone_number;
+        let webhook = notification_parameters.webhook;
 
         du.debug('Save and send notification.');
 
         return notificationSettingController.get(user).then((notification_settings) => {
-            if (notification_settings) {
+            if (notification_settings && notification_settings.notification_groups) {
                 notification_settings.notification_groups.forEach((group) => {
                     if (group.notifications) {
                         group.notifications.forEach((notification) => {
@@ -133,6 +135,8 @@ class NotificationProvider {
                     notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
                     // assuming user wants SMS notification
                     notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, phone_number));
+                    // assuming user wants Slack notification
+                    notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, webhook));
                 }
 
                 return Promise.all(notificationSendOperations).then(() => notification);
