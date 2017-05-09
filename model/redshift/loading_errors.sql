@@ -8,13 +8,9 @@ SELECT le.starttime,
 FROM stl_loaderror_detail d,
      stl_load_errors le
 WHERE d.query = le.query
-ORDER BY le.starttime DESC LIMIT 100;
+ORDER BY le.starttime DESC ;
 
 SELECT *
 FROM stl_load_errors
-ORDER BY starttime desc limit 1;
-
-
-
-
-
+ORDER BY starttime DESC
+LIMIT 1;

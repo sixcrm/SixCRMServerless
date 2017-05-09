@@ -3,7 +3,7 @@
 
 */
 
-DROP TABLE f_transactions;
+DROP TABLE transactions;
 
 CREATE TABLE f_transactions
 (
