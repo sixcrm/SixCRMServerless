@@ -27,6 +27,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The action associated with the notification.',
         },
+        title:{
+            type: GraphQLString,
+            description: 'Notification title'
+        },
         message: {
             type: GraphQLString,
             description: 'Notification message.'
