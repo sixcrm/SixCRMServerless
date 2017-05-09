@@ -29,7 +29,7 @@ PermissionUtilities.disableACLs();
  *
  * Examples:
  * Create a notification with a given message for a specific user of an account and phone number and send it via all channels:
- * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/generatenotification.js 'hi' '*' 'ljubomir@toptal.com' '+381631025339'
+ * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/notifications/generateallnotifications.js 'hi' '*' 'ljubomir@toptal.com' '+381631025339' 'https://hooks.slack.com/services/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'
  *
 */
 
@@ -37,6 +37,7 @@ let message = process.argv[2];
 let account = process.argv[3];
 let user = process.argv[4];
 let phone_number = process.argv[5];
+let webhook = process.argv[6];
 
 if (!message) {
     du.output('Message is required');
@@ -62,13 +63,20 @@ if (!phone_number) {
     return;
 }
 
+if (!webhook) {
+    du.output('Webhook is required');
+    printHelp();
+    return;
+}
+
 let notification_object = {
     account: account,
     user: user,
     type: 'dummy',
     action: 'test',
     message: message,
-    phone_number: phone_number
+    phone_number: phone_number,
+    webhook: webhook
 };
 
 NotificationProvider.createNotificationForAccountAndUser(notification_object);
