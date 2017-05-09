@@ -11,10 +11,11 @@ FROM
      time_flag
    FROM
      (
-       SELECT DISTINCT merchant_processor AS merchant_processor
+       SELECT merchant_processor AS merchant_processor
        FROM
-         f_transactions
+         d_merchant_processor
        WHERE 1
+             AND activity_flag = true
              AND merchant_processor IN ({{merchant_processor}})
      ) ft
      CROSS JOIN d_processor_result dpr
