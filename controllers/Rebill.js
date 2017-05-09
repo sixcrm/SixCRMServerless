@@ -216,9 +216,9 @@ class rebillController extends entityController {
 
     }
 
-    listRebillsBySessionID(id, cursor, limit){
+    listRebillsBySessionID(id, pagination){
 
-        return this.listBySecondaryIndex('parentsession', id, 'parentsession-index', cursor, limit);
+        return this.listBySecondaryIndex('parentsession', id, 'parentsession-index', pagination);
 
     }
 

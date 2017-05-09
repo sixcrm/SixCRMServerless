@@ -47,7 +47,7 @@ module.exports = class entityController {
 
     }
 
-    listBySecondaryIndex(field, index_value, index_name, cursor, limit) {
+    listBySecondaryIndex(field, index_value, index_name, pagination) {
 
         return new Promise((resolve, reject) => {
 
@@ -55,6 +55,7 @@ module.exports = class entityController {
 
                 if(permission != true){ return resolve(null); }
 
+                /*
                 let query_parameters = {
                     key_condition_expression: {},
                     expression_attribute_names: {},
@@ -68,6 +69,18 @@ module.exports = class entityController {
 
                 query_parameters = this.appendCursor(query_parameters, cursor);
                 query_parameters = this.appendLimit(query_parameters, limit);
+                query_parameters = this.appendAccountFilter(query_parameters);
+
+                */
+
+                let query_parameters = {
+                    key_condition_expression: '#'+field+' = :index_valuev',
+                    expression_attribute_values: {':index_valuev': index_value},
+                    expression_attribute_names: {}
+                }
+
+                query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
+                query_parameters = this.appendPagination(query_parameters, pagination);
                 query_parameters = this.appendAccountFilter(query_parameters);
 
                 return dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
@@ -107,53 +120,14 @@ module.exports = class entityController {
 
                 return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
-                    if(_.isError(error)){
-                        return reject(error);
-                    }
+                    if(_.isError(error)){ return reject(error); }
 
-                    if(_.isObject(data)){
+                    return this.buildResponse(data, (error, response) => {
 
-                        var pagination_object = {
-                            count: '',
-                            end_cursor: '',
-                            has_next_page: 'true'
-                        }
+                        if(error){ return reject(error); }
+                        return resolve(response);
 
-												// Technical Debt: We should improve the way we validate the data, either by using dedicated
-												// response objects, JSON schema validation or both.
-                        if(_.has(data, "Count")){
-                            pagination_object.count = data.Count;
-                        }
-
-                        if(_.has(data, "LastEvaluatedKey")){
-                            if(_.has(data.LastEvaluatedKey, "id")){
-                                pagination_object.end_cursor = data.LastEvaluatedKey.id;
-                            }
-                        }
-
-                        if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
-                            pagination_object.has_next_page = 'false';
-                        }
-
-                        if (!_.has(data, "Items") || (!_.isArray(data.Items))) {
-                            return reject(new Error('Data has no items.'));
-                        }
-
-                        if(data.Items.length < 1){
-                            data.Items = null;
-                        }
-
-                        var resolve_object = {
-                            pagination: pagination_object
-                        };
-
-                        resolve_object[this.descriptive_name+'s'] = data.Items;
-
-                        return resolve(resolve_object);
-
-                    } else {
-                        return reject(new Error('Data is not an object.'));
-                    }
+                    });
 
                 }));
 
@@ -1023,6 +997,8 @@ module.exports = class entityController {
 
     assignPrimaryKey(entity, primary_key){
 
+        du.debug('Assign Primary Key');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(!_.has(entity, primary_key)){
@@ -1044,6 +1020,8 @@ module.exports = class entityController {
     }
 
     assignAccount(entity){
+
+        du.debug('Assign Account');
 
         if(!_.has(entity, 'account')){
 
@@ -1081,6 +1059,8 @@ module.exports = class entityController {
 
     appendAccountFilter(query_parameters){
 
+        du.debug('Append Account Filter');
+
         if(global.disableaccountfilter !== true){
 
             if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
@@ -1093,29 +1073,7 @@ module.exports = class entityController {
 
                     query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
 
-                  // If the query already has expression attribute values, add :accountv if it doesn't already exist.
-                  // Barf if different :accountv exists
-                    if(_.has(query_parameters, 'expression_attribute_values')){
-
-                        if(_.has(query_parameters.expression_attribute_values, ':accountv')){
-
-                            if(query_parameters.expression_attribute_values[':accountv'] != global.account){
-
-                                throw new Error('Account value already present in the query parameters that does not match specified account.');
-
-                            }
-
-                        }else{
-
-                            query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                        }
-
-                    }else{
-
-                        query_parameters.expression_attribute_values = {':accountv':global.account};
-
-                    }
+                    query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
 
                 }
 
@@ -1135,19 +1093,25 @@ module.exports = class entityController {
 
         du.debug('Append Pagination');
 
-        if(_.has(pagination, 'limit')){
+        du.debug('Pagination Object:', pagination);
 
-            query_parameters = this.appendLimit(query_parameters, pagination.limit);
+        if(!_.isUndefined(pagination) && _.isObject(pagination)){
 
-        }
+            if(_.has(pagination, 'limit')){
 
-        if(_.has(pagination, 'exclusive_start_key')){
+                query_parameters = this.appendLimit(query_parameters, pagination.limit);
 
-            query_parameters = this.appendExclusiveStartKey(query_parameters, pagination.exclusive_start_key);
+            }
 
-        }else if(_.has(pagination, 'cursor')){
+            if(_.has(pagination, 'exclusive_start_key')){
 
-            query_parameters = this.appendCursor(query_parameters, pagination.cursor);
+                query_parameters = this.appendExclusiveStartKey(query_parameters, pagination.exclusive_start_key);
+
+            }else if(_.has(pagination, 'cursor')){
+
+                query_parameters = this.appendCursor(query_parameters, pagination.cursor);
+
+            }
 
         }
 
@@ -1157,9 +1121,26 @@ module.exports = class entityController {
 
     appendLimit(query_parameters, limit){
 
+        du.debug('Append Limit');
+
         if(!_.isUndefined(limit)){
-          //Technical Debt:  validate limit (integer, non-negative, less than global maximum)
-            query_parameters['limit'] = limit;
+
+            if(_.isString(limit) || _.isNumber(limit)){
+
+                limit = parseInt(limit);
+
+                if(_.isNumber(limit) && limit > 0){
+
+                    query_parameters['limit'] = limit;
+
+                }else{
+
+                    throw new Error('Limit is a unrecognized format: '+limit);
+
+                }
+
+            }
+
         }
 
         return query_parameters;
@@ -1168,18 +1149,27 @@ module.exports = class entityController {
 
     appendExclusiveStartKey(query_parameters, exclusive_start_key){
 
+        du.debug('Append Exclusive Start Key');
+
         if(!_.isUndefined(exclusive_start_key)){
 
-            if(this.isUUID(exclusive_start_key) || this.isEmail(exclusive_start_key)){
+            if(_.isString(exclusive_start_key)){
 
-                query_parameters.ExclusiveStartKey = this.appendCursor(exclusive_start_key);
+                if(this.isUUID(exclusive_start_key) || this.isEmail(exclusive_start_key)){
+
+                    query_parameters['ExclusiveStartKey'] = this.appendCursor(exclusive_start_key);
+
+                }else{
+
+                    query_parameters['ExclusiveStartKey'] =  JSON.parse(exclusive_start_key);
+
+                }
 
             }else{
 
-                query_parameters.ExclusiveStartKey =  JSON.parse(exclusive_start_key);
+                throw new Error('Unrecognized Exclusive Start Key format.');
 
             }
-
 
         }
 
@@ -1190,9 +1180,51 @@ module.exports = class entityController {
 
     appendCursor(query_parameters, cursor){
 
-        if(!_.isUndefined(cursor)){
-          //Technical Debt: string, appropriate structure...
-            query_parameters.ExclusiveStartKey = { id: cursor };
+        du.debug('Append Cursor');
+
+        du.debug(cursor);
+
+        if(!_.isUndefined(cursor) && !_.isNull(cursor)){
+
+            if(_.isString(cursor)){
+
+                if(this.isEmail(cursor) || this.isUUID(cursor) || cursor == '*'){
+
+                    query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify({id: cursor}));
+
+                  //query_parameters['ExclusiveStartKey'] = { id: cursor };
+
+                }else{
+
+                    let parsed_cursor;
+
+                    try{
+
+                        parsed_cursor = JSON.parse(cursor);
+
+                    }catch(e){
+
+                        du.warning('Unable to parse cursor:', cursor, e);
+
+                    }
+
+                    if(parsed_cursor){
+
+                        query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify(parsed_cursor));
+
+                    }else{
+
+                        throw new Error('Unrecognized format for Exclusive Start Key.')
+
+                    }
+
+                }
+
+            }else{
+
+                throw new Error('Unrecognized format for Exclusive Start Key.')
+
+            }
 
         }
 
@@ -1200,13 +1232,31 @@ module.exports = class entityController {
 
     }
 
-    appendExpressionAttributeNames(query_parameters, key, value){
+    assurePresence(thing, field, default_value){
 
-        if(!_.has(query_parameters, 'expression_attribute_names')){
+        du.debug('Assure Presence');
 
-            query_parameters.expression_attribute_names = {};
+        if(_.isUndefined(default_value)){
+
+            default_value = {};
 
         }
+
+        if(!_.has(thing, field) || _.isNull(thing[field])){
+
+            thing[field] = default_value;
+
+        }
+
+        return thing;
+
+    }
+
+    appendExpressionAttributeNames(query_parameters, key, value){
+
+        du.debug('Append Expression Attribute Names');
+
+        query_parameters = this.assurePresence(query_parameters, 'expression_attribute_names');
 
         query_parameters.expression_attribute_names[key] = value;
 
@@ -1216,11 +1266,9 @@ module.exports = class entityController {
 
     appendKeyConditionExpression(query_parameters, key, value){
 
-        if(!_.has(query_parameters, 'key_condition_expression')){
+        du.debug('Append Key Condition Expression');
 
-            query_parameters.key_condition_expression = {};
-
-        }
+        query_parameters = this.assurePresence(query_parameters, 'key_condition_expression');
 
         query_parameters.key_condition_expression[key] = value;
 
@@ -1230,11 +1278,9 @@ module.exports = class entityController {
 
     appendExpressionAttributeValues(query_parameters, key, value){
 
-        if(!_.has(query_parameters, 'expression_attribute_values')){
+        du.debug('Append Expression Attribute Values');
 
-            query_parameters.expression_attribute_values = {};
-
-        }
+        query_parameters = this.assurePresence(query_parameters, 'expression_attribute_values');
 
         query_parameters.expression_attribute_values[key] = value;
 
@@ -1245,11 +1291,25 @@ module.exports = class entityController {
 
     appendFilterExpression(query_parameters, filter_expression){
 
+        du.debug('Append Filter Expression');
+
         if (_.has(query_parameters, 'filter_expression')){
 
-            if(_.isString(query_parameters.filter_expression)){
+            if(_.isNull(query_parameters.filter_expression) || _.isUndefined(query_parameters.filter_expression)){
 
-                query_parameters.filter_expression += ' AND '+filter_expression;
+                query_parameters.filter_expression = filter_expression;
+
+            }else if(_.isString(query_parameters.filter_expression)){
+
+                if(query_parameters.filter_expression.trim() == ''){
+
+                    query_parameters.filter_expression = filter_expression;
+
+                }else{
+
+                    query_parameters.filter_expression += ' AND '+filter_expression;
+
+                }
 
             }else{
 
@@ -1269,10 +1329,13 @@ module.exports = class entityController {
 
     buildPaginationObject(data){
 
+        du.debug('Build Pagnination Object');
+
         var pagination_object = {
             count: '',
             end_cursor: '',
-            has_next_page: 'true'
+            has_next_page: 'true',
+            last_evaluated: ''
         }
 
       // Technical Debt: We should improve the way we validate the data, either by using dedicated
@@ -1296,11 +1359,15 @@ module.exports = class entityController {
             pagination_object.has_next_page = 'false';
         }
 
+        du.info(data);
+
         return pagination_object;
 
     }
 
     buildResponse(data, callback){
+
+        du.debug('Append Exclusive Start Key');
 
         if(_.isObject(data)){
 
@@ -1333,7 +1400,7 @@ module.exports = class entityController {
     getResult(result, field){
 
         du.debug('Get Result');
-        du.info(result, field);
+
         if(_.isUndefined(field)){
             field = this.descriptive_name+'s';
         }

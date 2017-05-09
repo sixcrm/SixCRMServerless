@@ -230,7 +230,7 @@ class customerController extends entityController {
 
     // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
     // we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
-    listTransactionsByCustomer(customer, cursor, limit){
+    listTransactionsByCustomer(customer, pagination){
 
         let customer_id = customer;
 
@@ -240,7 +240,6 @@ class customerController extends entityController {
 
         }
 
-        du.info('here');
         return this.getCustomerSessions(customer).then((sessions) => {
 
             du.info(sessions);
@@ -260,7 +259,7 @@ class customerController extends entityController {
                 let transaction_promises = [];
 
                 rebill_ids.forEach((rebill_id) => {
-                    transaction_promises.push(transactionController.listBySecondaryIndex('rebill_id', rebill_id, 'rebill-index'));
+                    transaction_promises.push(transactionController.listBySecondaryIndex('rebill_id', rebill_id, 'rebill-index', pagination));
                 });
 
                 return Promise.all(transaction_promises).then(transaction_responses => {
@@ -291,7 +290,7 @@ class customerController extends entityController {
 
     }
 
-    listCustomerSessions(customer, cursor, limit) {
+    listCustomerSessions(customer, pagination) {
         let customer_id = customer;
 
         if(_.has(customer, 'id')){
@@ -306,11 +305,11 @@ class customerController extends entityController {
 
             let sessionController = require('./Session.js');
 
-            return sessionController.listSessionsByCustomerID(customer_id, cursor, limit);
+            return sessionController.listSessionsByCustomerID(customer_id, pagination);
 
         }else{
 
-            return sessionController.listSessionsByCustomerID(customer_id, cursor, limit);
+            return sessionController.listSessionsByCustomerID(customer_id, pagination);
 
         }
 

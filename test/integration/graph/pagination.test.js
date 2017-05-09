@@ -3,6 +3,8 @@ const chai = require('chai');
 const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
+const _ = require('underscore');
+
 const tu = require('../../../lib/test-utilities.js');
 const du = require('../../../lib/debug-utilities.js');
 
@@ -20,7 +22,7 @@ var entities = [
 	{camel:'FulfillmentProviders',lower:'fulfillmentprovider'},
 	{camel:'LoadBalancers',lower:'loadbalancer'},
 	{camel:'MerchantProviders',lower:'merchantprovider'},
-	{camel:'Notifications',lower:'notifications'},
+	{camel:'Notifications',lower:'notification'},
 	{camel:'ProductSchedules',lower:'productschedule'},
 	{camel:'Products',lower:'product'},
 	{camel:'Rebills',lower:'rebill'},
@@ -69,6 +71,7 @@ entities.forEach((entity) => {
     assert.property(response.body.data[entity.lower+'list'].pagination, 'end_cursor');
     assert.property(response.body.data[entity.lower+'list'].pagination, 'has_next_page');
     assert.property(response.body.data[entity.lower+'list'].pagination, 'count');
+    assert.property(response.body.data[entity.lower+'list'].pagination, 'last_evaluated');
 
     assert.equal(response.body.data[entity.lower+'list'][entity.lower+'s'].length, limit);
     assert.isAtMost(response.body.data[entity.lower+'list'].pagination.count, limit);
@@ -76,6 +79,7 @@ entities.forEach((entity) => {
     assert.property(response.body.data[entity.lower+'list'][entity.lower+'s'][0], 'id');
     var returned_id = response.body.data[entity.lower+'list'][entity.lower+'s'][0].id;
     var cursor = response.body.data[entity.lower+'list'].pagination.end_cursor;
+    var last_evaluated = response.body.data[entity.lower+'list'].pagination.last_evaluated;
 
     assert.equal(returned_id, cursor);
 
@@ -87,9 +91,11 @@ entities.forEach((entity) => {
         assert.isAbove(response.body.data[entity.lower+'list'].pagination.end_cursor.length, 0);
 
         var query = raw_query.split('{argumentation}');
-        var query_arguments = 'pagination:{limit:"'+limit+'", cursor: "'+cursor+'"}';
+        var query_arguments = 'pagination:{limit:"'+limit+'", cursor: "'+cursor+'", exclusive_start_key: '+JSON.stringify(last_evaluated)+'}';
 
         query = query[0]+query_arguments+query[1];
+
+        du.debug('Query: ', query, 'Account: '+account, 'JWT: '+testing_jwt);
 
         this_request.post('graph/'+account)
 							.set('Authorization', testing_jwt)

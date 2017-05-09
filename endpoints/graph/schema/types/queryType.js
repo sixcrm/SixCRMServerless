@@ -525,7 +525,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, transaction){
-                return customerController.listTransactionsByCustomer(transaction.customer, transaction.pagination.cursor, transaction.pagination.limit);
+                return customerController.listTransactionsByCustomer(transaction.customer, transaction.pagination);
             }
         },
         sessionlistbycustomer: {
@@ -538,7 +538,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, session){
-                return customerController.listCustomerSessions(session.customer, session.pagination.cursor, session.pagination.limit);
+                return customerController.listCustomerSessions(session.customer, session.pagination);
             }
         },
         rebilllistbycustomer: {

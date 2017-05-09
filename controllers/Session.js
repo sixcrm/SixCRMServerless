@@ -304,9 +304,9 @@ class sessionController extends entityController {
 
     }
 
-    listSessionsByCustomerID(customer_id, cursor, limit) {
+    listSessionsByCustomerID(customer_id, pagination) {
 
-        return this.listBySecondaryIndex('customer', customer_id, 'customer-index', cursor, limit);
+        return this.listBySecondaryIndex('customer', customer_id, 'customer-index', pagination);
 
     }
 
