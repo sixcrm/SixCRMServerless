@@ -2,9 +2,11 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const customerNoteController = require('../../../../controllers/CustomerNote.js');
-let customerType = require('./customerType');
-let userType = require('./user/userType');
+
+let customerType = require('../customer/customerType');
+let userType = require('../user/userType');
+
+const customerNoteController = require('../../../../../controllers/CustomerNote.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'CustomerNote',

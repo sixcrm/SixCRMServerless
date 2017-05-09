@@ -4,7 +4,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 let accountType  = require('./accountType');
-let paginationType = require('./pagination/paginationType');
+let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Accounts',

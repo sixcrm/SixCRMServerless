@@ -5,7 +5,7 @@ const GraphQLString = require('graphql').GraphQLString;
 
 const userACLController = require('../../../../../controllers/UserACL.js');
 
-let accountType = require('../accountType');
+let accountType = require('../account/accountType');
 let roleType = require('../role/roleType');
 let userType = require('../user/userType');
 

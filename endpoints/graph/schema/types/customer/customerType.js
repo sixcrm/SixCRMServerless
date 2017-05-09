@@ -3,10 +3,12 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const customerController = require('../../../../controllers/Customer.js');
+
+const customerController = require('../../../../../controllers/Customer.js');
+
 let customerInterface = require('./customerInterface');
-let creditCardType = require('./creditCardType');
-let addressType = require('./addressType');
+let creditCardType = require('../creditcard/creditCardType');
+let addressType = require('../address/addressType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Customer',

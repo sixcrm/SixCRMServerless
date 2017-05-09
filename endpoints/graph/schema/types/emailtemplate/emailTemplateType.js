@@ -2,8 +2,9 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const emailTemplateController = require('../../../../controllers/EmailTemplate.js');
-let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
+const emailTemplateController = require('../../../../../controllers/EmailTemplate.js');
+
+let SMTPProviderType = require('../smtpprovider/SMTPProviderType');
 let emailTemplateTypeEnum = require('./emailTemplateTypeEnum');
 
 module.exports.graphObj = new GraphQLObjectType({

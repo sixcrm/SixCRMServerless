@@ -1,32 +1,42 @@
 'use strict';
-let campaignInputType = require('./campaignInputType');
-let campaignType = require('./campaignType');
-let loadBalancerInputType = require('./loadBalancerInputType');
-let loadBalancerType = require('./loadBalancerType');
-let customerNoteInputType = require('./customerNoteInputType');
-let customerNoteType = require('./customerNoteType');
-let customerInputType = require('./customerInputType');
-let customerType = require('./customerType');
-let creditCardInputType = require('./creditCardInputType');
-let creditCardType = require('./creditCardType');
-let emailTemplateInputType = require('./emailTemplateInputType');
-let emailTemplateType = require('./emailTemplateType');
-let fulfillmentProviderInputType = require('./fulfillmentProviderInputType');
-let fulfillmentProviderType = require('./fulfillmentProviderType');
-let merchantProviderInputType = require('./merchantProviderInputType');
-let merchantProviderType = require('./merchantProviderType');
 let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
-let affiliateInputType = require('./affiliateInputType');
-let affiliateType = require('./affiliateType');
 
-let accountInputType = require('./accountInputType');
-let accountType = require('./accountType');
-let accessKeyInputType = require('./accessKeyInputType');
-let accessKeyType = require('./accessKeyType');
-let deleteOutputType = require('./deleteOutputType');
+let accessKeyInputType = require('./accesskey/accessKeyInputType');
+let accessKeyType = require('./accesskey/accessKeyType');
 
-//Refactored
+let accountInputType = require('./account/accountInputType');
+let accountType = require('./account/accountType');
+
+let affiliateInputType = require('./affiliate/affiliateInputType');
+let affiliateType = require('./affiliate/affiliateType');
+
+let campaignInputType = require('./campaign/campaignInputType');
+let campaignType = require('./campaign/campaignType');
+
+let creditCardInputType = require('./creditcard/creditCardInputType');
+let creditCardType = require('./creditcard/creditCardType');
+
+let customerInputType = require('./customer/customerInputType');
+let customerType = require('./customer/customerType');
+
+let customerNoteInputType = require('./customernote/customerNoteInputType');
+let customerNoteType = require('./customernote/customerNoteType');
+
+let emailTemplateInputType = require('./emailtemplate/emailTemplateInputType');
+let emailTemplateType = require('./emailtemplate/emailTemplateType');
+
+let fulfillmentProviderInputType = require('./fulfillmentprovider/fulfillmentProviderInputType');
+let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
+
+let deleteOutputType = require('./general/deleteOutputType');
+
+let loadBalancerInputType = require('./loadbalancer/loadBalancerInputType');
+let loadBalancerType = require('./loadbalancer/loadBalancerType');
+
+let merchantProviderInputType = require('./merchantprovider/merchantProviderInputType');
+let merchantProviderType = require('./merchantprovider/merchantProviderType');
+
 let notificationInputType = require('./notification/notificationInputType');
 let notificationType = require('./notification/notificationType');
 
@@ -48,7 +58,7 @@ let roleType = require('./role/roleType');
 let shippingReceiptInputType = require('./shippingreceipt/shippingReceiptInputType');
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 
-let inviteInputType = require('./inviteInputType');
+let inviteInputType = require('./user/inviteInputType');
 
 let transactionInputType = require('./transaction/transactionInputType');
 let transactionType = require('./transaction/transactionType');
@@ -101,7 +111,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: userType.graphObj,
             description: 'Completes a user invite.',
             args: {
-                invite: { type: inviteInputType .graphObj}
+                invite: { type: inviteInputType.graphObj}
             },
             resolve: (value, invite) => {
                 return userController.acceptInvite(invite.invite);

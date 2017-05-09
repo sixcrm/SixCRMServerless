@@ -9,8 +9,8 @@ const GraphQLString = require('graphql').GraphQLString;
 const userController = require('../../../../../controllers/User.js');
 
 let userACLType = require('../useracl/userACLType');
-let accessKeyType = require('../accessKeyType');
-let addressType = require('../addressType');
+let accessKeyType = require('../accesskey/accessKeyType');
+let addressType = require('../address/addressType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'User',

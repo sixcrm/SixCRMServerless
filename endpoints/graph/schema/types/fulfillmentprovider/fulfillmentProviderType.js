@@ -2,37 +2,36 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const creditCardController = require('../../../../controllers/CreditCard.js');
-let addressType = require('./addressType')
+
+let fulfillmentProviderProviderEnum = require('./fulfillmentProviderProviderEnum');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'CreditCard',
-    description: 'A creditcard',
+    name: 'fulfillmentprovider',
+    description: 'A fulfillment provider.',
     fields: () => ({
   	id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The creditcard id',
+      description: 'The id of the fulfillment provider instance.',
   },
-        ccnumber: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The creditcard number',
-        },
-        expiration: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The creditcard expiration date.',
-        },
-        ccv: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The creditcard ccv.',
-        },
         name: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The creditcard name.',
+            description: 'The name of the fulfillment provider instance.',
         },
-        address: {
-            type: addressType.graphObj,
-            description: 'The customer\'s shipping address.',
-            resolve: creditcard => creditCardController.getAddress(creditcard),
+        provider: {
+            type: new GraphQLNonNull(fulfillmentProviderProviderEnum.graphObj),
+            description: 'The provider.',
+        },
+        username: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The provider username.',
+        },
+        password: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The provider password.',
+        },
+        endpoint: {
+	  type: new GraphQLNonNull(GraphQLString),
+            description:'The provider endpoint.'
         },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),

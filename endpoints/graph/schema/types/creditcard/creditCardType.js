@@ -1,36 +1,40 @@
 'use strict';
-let merchantProviderProcessorsEnum = require('./merchantProviderProcessorsEnum');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
+let addressType = require('../address/addressType')
+
+const creditCardController = require('../../../../../controllers/CreditCard.js');
+
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'merchantprovider',
-    description: 'A merchant provider.',
+    name: 'CreditCard',
+    description: 'A creditcard',
     fields: () => ({
   	id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The id of the merchant provider instance.',
+      description: 'The creditcard id',
   },
+        ccnumber: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The creditcard number',
+        },
+        expiration: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The creditcard expiration date.',
+        },
+        ccv: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The creditcard ccv.',
+        },
         name: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The name of the merchant provider instance.',
+            description: 'The creditcard name.',
         },
-        processor: {
-            type: new GraphQLNonNull(merchantProviderProcessorsEnum.graphObj),
-            description: 'The processor',
-        },
-        username: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The end of schedule.',
-        },
-        password: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The period of schedule.',
-        },
-        endpoint: {
-	  type: new GraphQLNonNull(GraphQLString),
-            description:'The product associated with the schedule'
+        address: {
+            type: addressType.graphObj,
+            description: 'The customer\'s shipping address.',
+            resolve: creditcard => creditCardController.getAddress(creditcard),
         },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),

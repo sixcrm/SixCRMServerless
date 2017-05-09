@@ -3,10 +3,12 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
-const campaignController = require('../../../../controllers/Campaign.js');
-let emailTemplateType = require('./emailTemplateType');
-let loadBalancerType = require('./loadBalancerType');
-let productScheduleType = require('./productschedule/productScheduleType');
+
+const campaignController = require('../../../../../controllers/Campaign.js');
+
+let emailTemplateType = require('../emailtemplate/emailTemplateType');
+let loadBalancerType = require('../loadbalancer/loadBalancerType');
+let productScheduleType = require('../productschedule/productScheduleType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'campaign',

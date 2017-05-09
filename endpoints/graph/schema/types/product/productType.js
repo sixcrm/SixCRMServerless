@@ -3,7 +3,7 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
-let fulfillmentProviderType = require('../fulfillmentProviderType');
+let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
 
 const productController = require('../../../../../controllers/Product.js');
 

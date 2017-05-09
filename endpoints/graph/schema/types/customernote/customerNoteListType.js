@@ -3,16 +3,16 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
-let paginationType = require('./pagination/paginationType');
-let merchantProviderType = require('./merchantProviderType');
+let customerNoteType = require('./customerNoteType');
+let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'MerchantProviders',
-    description: 'Merchant providers',
+    name: 'CustomerNotes',
+    description: 'Customer Notes',
     fields: () => ({
-        merchantproviders: {
-            type: new GraphQLList(merchantProviderType.graphObj),
-            description: 'The merchant providers',
+        customernotes: {
+            type: new GraphQLList(customerNoteType.graphObj),
+            description: 'The customer notes',
         },
         pagination: {
             type: new GraphQLNonNull(paginationType.graphObj),

@@ -10,7 +10,7 @@ const merchantProviderControler = require('../../../../../controllers/MerchantPr
 let transactionInterface = require('./transactionInterface');
 let transactionProductType = require('../transactionproduct/transactionProductType');
 let rebillType = require('../rebill/rebillType');
-let merchantProviderType = require('../merchantProviderType');
+let merchantProviderType = require('../merchantprovider/merchantProviderType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Transaction',

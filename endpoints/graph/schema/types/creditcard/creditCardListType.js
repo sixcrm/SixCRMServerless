@@ -3,15 +3,15 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
-let affiliateType = require('./affiliateType');
-let paginationType = require('./pagination/paginationType');
+let creditCardType = require('./creditCardType')
+let paginationType = require('../pagination/paginationType')
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Affiliates',
-    description: 'Affiliates',
+    name: 'CreditCards',
+    description: 'Credit cards',
     fields: () => ({
-        affiliates: {
-            type: new GraphQLList(affiliateType.graphObj),
+        creditcards: {
+            type: new GraphQLList(creditCardType.graphObj),
             description: 'The affiliates',
         },
         pagination: {

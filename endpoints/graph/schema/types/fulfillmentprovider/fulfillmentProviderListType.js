@@ -3,16 +3,16 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
-let paginationType = require('./pagination/paginationType');
-let loadBalancerType = require('./loadBalancerType');
+let fulfillmentProviderType = require('./fulfillmentProviderType');
+let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'LoadBalancers',
-    description: 'Load Balancers',
+    name: 'FulfillmentProviders',
+    description: 'Fulfillment providers',
     fields: () => ({
-        loadbalancers: {
-            type: new GraphQLList(loadBalancerType.graphObj),
-            description: 'The Load Balancers',
+        fulfillmentproviders: {
+            type: new GraphQLList(fulfillmentProviderType.graphObj),
+            description: 'The fulfillment providers',
         },
         pagination: {
             type: new GraphQLNonNull(paginationType.graphObj),

@@ -3,7 +3,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
-let permissionsType = require('../permissionsType');
+let permissionsType = require('./permissionsType');
 
 const roleController = require('../../../../../controllers/Role.js');
 

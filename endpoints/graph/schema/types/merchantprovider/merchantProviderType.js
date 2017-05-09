@@ -1,36 +1,37 @@
 'use strict';
-let fulfillmentProviderProviderEnum = require('./fulfillmentProviderProviderEnum');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
+let merchantProviderProcessorsEnum = require('./merchantProviderProcessorsEnum');
+
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'fulfillmentprovider',
-    description: 'A fulfillment provider.',
+    name: 'merchantprovider',
+    description: 'A merchant provider.',
     fields: () => ({
   	id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The id of the fulfillment provider instance.',
+      description: 'The id of the merchant provider instance.',
   },
         name: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The name of the fulfillment provider instance.',
+            description: 'The name of the merchant provider instance.',
         },
-        provider: {
-            type: new GraphQLNonNull(fulfillmentProviderProviderEnum.graphObj),
-            description: 'The provider.',
+        processor: {
+            type: new GraphQLNonNull(merchantProviderProcessorsEnum.graphObj),
+            description: 'The processor',
         },
         username: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The provider username.',
+            description: 'The end of schedule.',
         },
         password: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The provider password.',
+            description: 'The period of schedule.',
         },
         endpoint: {
 	  type: new GraphQLNonNull(GraphQLString),
-            description:'The provider endpoint.'
+            description:'The product associated with the schedule'
         },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),

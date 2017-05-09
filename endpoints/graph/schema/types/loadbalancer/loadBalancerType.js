@@ -1,10 +1,12 @@
 'use strict';
-let merchantProviderConfigurationType = require('./merchantProviderConfigurationType');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const loadBalancerController = require('../../../../controllers/LoadBalancer.js');
+
+let merchantProviderConfigurationType = require('../merchantprovider/merchantProviderConfigurationType');
+
+const loadBalancerController = require('../../../../../controllers/LoadBalancer.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'loadbalancer',

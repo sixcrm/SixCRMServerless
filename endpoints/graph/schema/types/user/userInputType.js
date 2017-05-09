@@ -3,7 +3,8 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
-let addressInputType = require('../addressInputType');
+
+let addressInputType = require('../address/addressInputType');
 let userACLInputType = require('../useracl/userACLInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({

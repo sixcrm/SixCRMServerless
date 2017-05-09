@@ -8,34 +8,39 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 
-let accountType = require('./accountType');
-let accessKeyType = require('./accessKeyType');
-let affiliateType = require('./affiliateType');
-let campaignType = require('./campaignType');
-let creditCardType = require('./creditCardType');
-let loadBalancerType = require('./loadBalancerType');
-let fulfillmentProviderType = require('./fulfillmentProviderType');
-let merchantProviderType = require('./merchantProviderType');
+let accessKeyType = require('./accesskey/accessKeyType');
+let accessKeyListType = require('./accesskey/accessKeyListType');
 
-let campaignListType = require('./campaignListType');
-let loadBalancerListType = require('./loadBalancerListType');
-let customerNoteListType = require('./customerNoteListType');
-let customerListType = require('./customerListType');
+let accountType = require('./account/accountType');
+let accountListType = require('./account/accountListType');
 
-let accountListType = require('./accountListType');
-let accessKeyListType = require('./accessKeyListType');
-let fulfillmentProviderListType = require('./fulfillmentProviderListType');
-let merchantProviderListType = require('./merchantProviderListType');
-let creditCardListType = require('./creditCardListType');
-let affiliateListType = require('./affiliateListType');
+let affiliateType = require('./affiliate/affiliateType');
+let affiliateListType = require('./affiliate/affiliateListType');
 
-let emailTemplateListType = require('./emailTemplateListType');
-let emailTemplateType = require('./emailTemplateType');
-let customerNoteType = require('./customerNoteType');
+let campaignType = require('./campaign/campaignType');
+let campaignListType = require('./campaign/campaignListType');
 
-let customerType = require('./customerType');
+let creditCardType = require('./creditcard/creditCardType');
+let creditCardListType = require('./creditcard/creditCardListType');
 
-//Refactored
+let customerListType = require('./customer/customerListType');
+let customerType = require('./customer/customerType');
+
+let customerNoteListType = require('./customernote/customerNoteListType');
+let customerNoteType = require('./customernote/customerNoteType');
+
+let emailTemplateListType = require('./emailtemplate/emailTemplateListType');
+let emailTemplateType = require('./emailtemplate/emailTemplateType');
+
+let fulfillmentProviderListType = require('./fulfillmentprovider/fulfillmentProviderListType');
+let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
+
+let loadBalancerType = require('./loadbalancer/loadBalancerType');
+let loadBalancerListType = require('./loadbalancer/loadBalancerListType');
+
+let merchantProviderType = require('./merchantprovider/merchantProviderType');
+let merchantProviderListType = require('./merchantprovider/merchantProviderListType');
+
 let notificationListType = require('./notification/notificationListType');
 let notificationCountType = require('./notification/notificationCountType');
 let notificationType = require('./notification/notificationType');

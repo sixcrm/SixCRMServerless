@@ -5,10 +5,10 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 let sessionInterface = require('./sessionInterface');
-let campaignType = require('../campaignType');
+let campaignType = require('../campaign/campaignType');
 let rebillType = require('../rebill/rebillType');
 let productScheduleType = require('../productschedule/productScheduleType');
-let customerType = require('../customerType');
+let customerType = require('../customer/customerType');
 
 const sessionController = require('../../../../../controllers/Session.js');
 
@@ -38,23 +38,23 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLList(rebillType.graphObj),
             description: 'The rebills associated with the session',
             resolve: function(session){
-              return sessionController.getRebills(session);
+                return sessionController.getRebills(session);
             }
         },
         campaign: {
             type: campaignType.graphObj,
             description: 'The campaign associated with the session',
             resolve: function(session){
-              return sessionController.getCampaign(session);
+                return sessionController.getCampaign(session);
             }
         },
         created_at: {
-         type: new GraphQLNonNull(GraphQLString),
-         description: 'ISO8601 datetime when the entity was created.',
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'ISO8601 datetime when the entity was created.',
         },
         updated_at: {
-          type: new GraphQLNonNull(GraphQLString),
-          description: 'ISO8601 datetime when the entity was updated.',
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'ISO8601 datetime when the entity was updated.',
         }
     }),
     interfaces: [sessionInterface.graphObj]
