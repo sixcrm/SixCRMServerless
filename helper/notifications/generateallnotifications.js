@@ -73,7 +73,7 @@ let notification_object = {
 
 NotificationProvider.createNotificationForAccountAndUser(notification_object);
 
-du.output('Attempted to insert a notification', notification_object);
+du.output('Attempted to insert and send a notification', notification_object);
 
 function printHelp() {
     du.output('Helper for inserting notification for the given account and user. Notifications are sent via all channels.');

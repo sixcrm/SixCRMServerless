@@ -18,18 +18,19 @@ if (process.env.stage === 'local') {
     process.env.notification_settings_table = 'local' + process.env.notification_settings_table;
 }
 
-const NotificationProvider = require('../../controllers/providers/notification/notification-provider.js');
+const SmsNotificationUtilities = require('../../lib/sms-notification-utilities');
 const PermissionUtilities = require('../../lib/permission-utilities');
 const du = require('../../lib/debug-utilities.js');
+const timestamp = require('../../lib/timestamp.js');
 
 PermissionUtilities.disableACLs();
 
 /*
- * Parameters: message account [user]
+ * Parameters: message account user phone_number
  *
  * Examples:
- * Create a notification with a given message for a specific user of an account and phone number and send it via all channels:
- * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/generatenotification.js 'hi' '*' 'ljubomir@toptal.com' '+381631025339'
+ * Create a notification with a given message for a specific user of an account and phone number and send it via SMS:
+ * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/notifications/generatesmsnotification.js 'hi' '*' 'ljubomir@toptal.com' '+381631025339'
  *
 */
 
@@ -63,17 +64,19 @@ if (!phone_number) {
 }
 
 let notification_object = {
+    id: '78b8306d-1c4a-41ef-bf71-7a4218e4d339',
     account: account,
     user: user,
     type: 'dummy',
     action: 'test',
     message: message,
-    phone_number: phone_number
+    created_at: timestamp.getISO8601(),
+    updated_at: timestamp.getISO8601()
 };
 
-NotificationProvider.createNotificationForAccountAndUser(notification_object);
+SmsNotificationUtilities.sendNotificationViaSms(notification_object, phone_number);
 
-du.output('Attempted to insert a notification', notification_object);
+du.output('Attempted to send a notification', notification_object);
 
 function printHelp() {
     du.output('Helper for inserting notification for the given account and user. Notification is sent via SMS.');
