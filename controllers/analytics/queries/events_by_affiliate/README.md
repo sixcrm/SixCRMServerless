@@ -7,6 +7,8 @@ ____
 ### Required
 * `start` - a ISO-8601 datetime
 * `end` - a ISO-8601 datetime
+* `order` - a number specifing order
+* `limit` - a number specifing limit of rows
 
 ### Optional
 * `account` - a UUIDv4

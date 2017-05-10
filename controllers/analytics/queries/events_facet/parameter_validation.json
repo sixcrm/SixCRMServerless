@@ -12,16 +12,15 @@
 			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
 		}
 	},
-	"properties": {
-		"start": {"$ref": "#/definitions/ISO8601"},
-		"end": {"$ref": "#/definitions/ISO8601"},
-		"period":{
-			"type":"string",
-			"enum": ["minute", "hour","day","week","month","quarter","year"]
-		},
-		"order":{
-			"type":"string",
-			"enum": ["asc", "desc"]
+	"facets":{
+			"type": "array",
+			"minItems": 1,
+			"uniqueItems": true,
+			"items": {
+				"type":"string",
+				"enum": ["session","type","account","campaign","product_schedule","affiliate","subaffiliate_1",
+							   "subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
+			}
 		},
 		"account":{
 			"type": "array",
@@ -43,11 +42,11 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"merchant_processor":{
-			 "type": "array",
-			 "minItems": 1,
-			 "items": {"$ref": "#/definitions/UUIDv4"},
-       "uniqueItems": true
+		"session":{
+			"type": "array",
+			"minItems": 1,
+			"items": {"$ref": "#/definitions/UUIDv4"},
+			"uniqueItems": true
 		},
 		"affiliate:":{
 			"type": "array",
@@ -101,40 +100,15 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"processor_result":{
+		"type":{
 			"type": "array",
 			"minItems": 1,
 			"uniqueItems": true,
 			"items": {
 				"type":"string",
-				"enum": ["success", "decline","error"]
+				"enum": ["click","order","lead","confirm","upsell"]
 			}
-		},
-		"transaction_type":{
-			"type": "array",
-			"minItems": 1,
-			"uniqueItems": true,
-			"items": {
-				"type":"string",
-				"enum": ["new", "rebill"]
-			}
-		},
-		"transaction_subtype":{
-			"type": "array",
-			"minItems": 1,
-			"uniqueItems": true,
-			"items": {
-				"type":"string",
-				"enum": ["main", "upsell"]
-			}
-		},
-		"limit":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
 		}
-	},
-	"required":["start", "end", "order", "limit"]
+	,
+	"required":["start", "end", "facet"]
 }

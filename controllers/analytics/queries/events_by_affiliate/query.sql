@@ -12,4 +12,5 @@ FROM
     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
     GROUP BY affiliate
   )
-ORDER BY affiliate_perc DESC;
+ORDER BY affiliate_perc {{ORDER}}
+LIMIT {{LIMIT}}
