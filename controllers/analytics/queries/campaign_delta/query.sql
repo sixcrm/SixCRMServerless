@@ -5,9 +5,9 @@ SELECT
 FROM
     (SELECT
        campaign,
-       ((coalesce(sum_amount_main, 0) - coalesce(sum_amount_prior, 0))*1.0 / coalesce(sum_amount_prior, 1)) *
+       ((greatest(sum_amount_main, 1) - greatest(sum_amount_prior, 1))*1.0 / greatest(sum_amount_prior, 1)) *
        100.0 AS percent_change_amount,
-       ((coalesce(transaction_count_main, 0) - coalesce(transaction_count_prior, 0))*1.0 / coalesce(transaction_count_prior, 1)) *
+       ((greatest(transaction_count_main, 1) - greatest(transaction_count_prior, 1))*1.0 / greatest(transaction_count_prior, 1)) *
        100.0 AS percent_change_count
      FROM
        (SELECT
@@ -33,7 +33,7 @@ FROM
         FROM f_transactions
         WHERE 1
               {{filter}}
-              AND datetime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND '{{end}}'
+              AND datetime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND TIMESTAMP '{{end}}'
         GROUP BY campaign)
     )
      ORDER BY abs(percent_change_count) DESC, percent_change_count, percent_change_amount
