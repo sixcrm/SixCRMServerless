@@ -1,4 +1,4 @@
-# Transactions facets by subaffiliate_3
+# Events facets
 
 ____
 
@@ -28,7 +28,7 @@ ____
 ---
 ### Query notes
 
-Displays the number of distinct subaffiliate_3, subaffiliate_3 and number of all transactions
+Displays the number of distinct facets,facets themselves and number of all transactions
 
 ---
 ## Results:
