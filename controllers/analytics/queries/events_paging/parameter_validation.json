@@ -99,6 +99,20 @@
 				"type":"string",
 				"enum": ["click","order","lead","confirm","upsell"]
 			}
+		},
+		"limit":{
+			"type": ["integer"],
+			"minimum": 0,
+			"maximum": 100,
+			"exclusiveMaximum": false,
+			"exclusiveMinimum": true
+		},
+		"offset":{
+			"type": ["integer"],
+			"minimum": 0,
+			"maximum": 100,
+			"exclusiveMaximum": false,
+			"exclusiveMinimum": true
 		}
 	},
 	"required":["start", "end", "order", "limit", "offset"]

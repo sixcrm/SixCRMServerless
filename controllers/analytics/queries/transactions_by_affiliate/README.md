@@ -7,6 +7,8 @@ ____
 ### Required
 * `start` - a ISO-8601 datetime
 * `end` - a ISO-8601 datetime
+* `order` - a number specifing order
+* `limit` - a number specifing limit of rows
 
 ### Optional
 * `account` - a UUIDv4
@@ -24,7 +26,7 @@ ____
 ### Query notes
 
 For the current analytics filters and datetime ranging parameters, query generates a ordered percentage of transactions by affiliate.
-The results is displayed as both count and percentage. A "no-affiliate" group is included as a empty string. 
+The results is displayed as both count and percentage. A "no-affiliate" group is included as a empty string.
 
 ---
 ## Results:

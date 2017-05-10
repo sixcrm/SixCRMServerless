@@ -90,7 +90,18 @@
 			"minItems": 1,
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
-		 }
+		},
+		"order":{
+			"type":"string",
+			"enum": ["asc", "desc"]
+		},
+		"limit":{
+			"type": ["integer"],
+			"minimum": 0,
+			"maximum": 100,
+			"exclusiveMaximum": false,
+			"exclusiveMinimum": true
+		}
 	 },
-	"required":["start", "end"]
+	"required":["start", "end", "order", "limit"]
 }
