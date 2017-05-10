@@ -103,6 +103,9 @@ elasticache:
   endpoint: 'localhost'
   port: 6379
 
+logging:
+  loglevel: 2
+
 kinesis:
   firehose:
     streams:

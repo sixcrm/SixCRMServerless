@@ -93,7 +93,7 @@ notifications:
 
 #Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
 cache:
-  usecache: 0
+  usecache: 1
   cachebuster: 'somerandomthing1'
 
 elasticache:
@@ -102,6 +102,9 @@ elasticache:
   endpoint: '34.204.230.178'
   port: 6379
 
+logging:
+  loglevel: 0
+  
 kinesis:
   firehose:
     streams:
