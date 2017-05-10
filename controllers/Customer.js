@@ -317,7 +317,7 @@ class customerController extends entityController {
 
     // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
     // we retrieve data in 2 steps (sessions first, then rebills for each session and combine the results).
-    listCustomerRebills(customer, cursor, limit) {
+    listCustomerRebills(customer, pagination) {
         return this.getCustomerSessions(customer).then((sessions) => {
 
             let rebill_promises = sessions.map((session) => rebillController.listRebillsBySessionID(session.id));

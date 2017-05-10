@@ -10,7 +10,16 @@
 				amount,
 				created_at,
 				updated_at,
-				merchant_provider,
+				merchant_provider {
+                    id,
+                    name,
+                    username,
+                    password,
+                    endpoint,
+                    processor,
+                    created_at,
+                    updated_at
+                            },
 				rebill {
 					id,
 					bill_at,

@@ -553,7 +553,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, rebill){
-                return customerController.listCustomerRebills(rebill.customer, rebill.pagination.cursor, rebill.pagination.limit);
+                return customerController.listCustomerRebills(rebill.customer, rebill.pagination);
             }
         },
         campaignlist: {

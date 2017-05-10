@@ -78,6 +78,11 @@
                     processor_response,
                     amount
                 }
+            },
+            pagination {
+                count,
+                end_cursor,
+                has_next_page
             }
 		},
 	}"

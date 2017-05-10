@@ -76,7 +76,8 @@ module.exports = class entityController {
                 let query_parameters = {
                     key_condition_expression: '#'+field+' = :index_valuev',
                     expression_attribute_values: {':index_valuev': index_value},
-                    expression_attribute_names: {}
+                    expression_attribute_names: {},
+                    filter_expression: '#'+field+' = :index_valuev'
                 }
 
                 query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
