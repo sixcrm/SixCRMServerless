@@ -122,6 +122,7 @@ functions:
       redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
       search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
       elasticache_endpoint: ${file(./config/${opt:stage}/site.yml):elasticache.endpoint}
+      elasticache_port: ${file(./config/${opt:stage}/site.yml):elasticache.port}
       elasticache_retry_time: ${file(./config/${opt:stage}/site.yml):elasticache.retry_time}
       elasticache_max_attempts: ${file(./config/${opt:stage}/site.yml):elasticache.max_attempts}
 

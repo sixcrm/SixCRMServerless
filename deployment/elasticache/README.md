@@ -21,7 +21,7 @@ iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 6379 -j DNAT --to sixcrm-de
 or...
 ```
 iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 6379 -j DNAT --to 172.31.63.232:6379
-[root@ip-172-31-29-60 ec2-user]# iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 6379 -j DNAT --to 172.31.21.15:6379
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 6379 -j DNAT --to 172.31.21.15:6379
 ```
 
 ## Test
