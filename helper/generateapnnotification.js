@@ -1,7 +1,6 @@
 'use strict'
 
 const apnutilities = require('../lib/apn-utilities');
-const apn = require('apn');
 const du = require('../lib/debug-utilities.js');
 
 let deviceToken = process.argv[2];
