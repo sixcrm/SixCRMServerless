@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 const timestamp = require('../lib/timestamp.js');
 const du = require('../lib/debug-utilities.js');
-const redisutilities = require('../lib/redis-utilities.js');
+let redisutilities = require('../lib/redis-utilities.js');
 
 class cacheController {
 
@@ -16,6 +16,11 @@ class cacheController {
 
     }
 
+    createRedisConnection(){
+
+
+
+    }
     //Technical Debt:  Refactor this this to be testable!
     //Technical Debt:  The data_promise variable is executed regardless of whether there are cached results or not.
     useCache(parameters, data_promise, expiration){

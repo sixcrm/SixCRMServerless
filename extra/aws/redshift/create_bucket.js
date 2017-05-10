@@ -10,28 +10,28 @@ var myKey = 'myBucketKey';
 
 s3.createBucket({Bucket: myBucket}, function(err, data) {
 
-if (err) {
+    if (err) {
 
-   console.log(err);
+        console.log(err);
 
-   } else {
+    } else {
 
-     params = {Bucket: myBucket, Key: myKey, Body: 'Hello!'};
+        let params = {Bucket: myBucket, Key: myKey, Body: 'Hello!'};
 
-     s3.putObject(params, function(err, data) {
+        s3.putObject(params, function(err, data) {
 
-         if (err) {
+            if (err) {
 
-             console.log(err)
+                console.log(err)
 
-         } else {
+            } else {
 
-             console.log("Successfully uploaded data to myBucket/myKey");
+                console.log("Successfully uploaded data to myBucket/myKey");
 
-         }
+            }
 
-      });
+        });
 
-   }
+    }
 
 });
