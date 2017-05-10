@@ -1,4 +1,4 @@
-# Transactions paging
+# Events paging
 
 ____
 
@@ -21,12 +21,13 @@ ____
 * `subaffiliate_4` -  a sub-affiliate string
 * `subaffiliate_5` -  a sub-affiliate string
 * `product_schedule` -  a array of UUIDv4 strings
-* `processor_result` -  a array of UUIDv4 strings
+* `type` -  type of the events ["click","order","lead","confirm","upsell"]
+
 
 ---
 ### Query notes
 
-Query returns dataset offset by some value from the beginning of the dataset 
+Query returns dataset offset by some value from the beginning of the dataset
 
 ---
 ## Results:

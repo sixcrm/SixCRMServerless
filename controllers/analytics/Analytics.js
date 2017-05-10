@@ -22,6 +22,17 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
+    getCampaignsByAmount(parameters){
+
+        du.debug('Get Campaigns By Amount');
+
+        parameters.limit = 10;
+        parameters.order = 'desc';
+
+        return this.getResults('campaigns_by_amount', parameters, this.default_query_filters);
+
+    }
+
     //new - broken :D
     getMerchantProcessorAmount(parameters){
 

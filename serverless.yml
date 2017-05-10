@@ -83,7 +83,7 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
-      SIX_VERBOSE: 2
+      SIX_VERBOSE: 0
       stage: ${opt:stage}
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
@@ -125,6 +125,7 @@ functions:
       elasticache_port: ${file(./config/${opt:stage}/site.yml):elasticache.port}
       elasticache_retry_time: ${file(./config/${opt:stage}/site.yml):elasticache.retry_time}
       elasticache_max_attempts: ${file(./config/${opt:stage}/site.yml):elasticache.max_attempts}
+      logging: ${file(./config/${opt:stage}/site.yml):logging.loglevel}
 
 
 ########################
