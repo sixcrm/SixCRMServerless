@@ -26,10 +26,9 @@ module.exports = function(results, parameters){
 
                         match_identified = true;
 
-                        return return_object[i].byprocessorresult.push({
-                            processor_result: result.processor_result.toString(),
-                            count: result.transaction_count.toString(),
-                            amount: result.sum_amount.toString()
+                        return return_object[i].byeventtype.push({
+                            event_type: result.event_type.toString(),
+                            count: result.event_count.toString()
                         });
 
                     }
@@ -42,10 +41,9 @@ module.exports = function(results, parameters){
 
                 return_object.push({
                     datetime: result_date_iso8601,
-                    byprocessorresult: [{
-                        processor_result: result.processor_result.toString(),
-                        count: result.transaction_count.toString(),
-                        amount: result.sum_amount.toString()
+                    byeventtype: [{
+                        event_type: result.event_type.toString(),
+                        count: result.event_count.toString()
                     }]
                 });
 
@@ -56,7 +54,7 @@ module.exports = function(results, parameters){
         du.info("Observation Count: "+return_object.length);
 
         return resolve({
-            transactions:return_object
+            events:return_object
         });
 
     });

@@ -65,7 +65,7 @@ entities.forEach((entity) => {
 				.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 				.end(function(err, response){
-
+    du.debug(response.body);
     tu.assertResultSet(response, global.test_users[0].role);
 
     assert.property(response.body.data[entity.lower+'list'].pagination, 'end_cursor');
@@ -107,19 +107,20 @@ entities.forEach((entity) => {
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
 
-    tu.assertResultSet(response, global.test_users[0].role);
+    du.debug(response.body);
+    						tu.assertResultSet(response, global.test_users[0].role);
 
-    if(response.body.data[entity.lower+'list'].pagination.count > 0){
-        assert.equal(response.body.data[entity.lower+'list'].pagination.count, limit);
+    						if(response.body.data[entity.lower+'list'].pagination.count > 0){
+        					assert.equal(response.body.data[entity.lower+'list'].pagination.count, limit);
 
-        var new_returned_id = response.body.data[entity.lower+'list'][entity.lower+'s'][0].id;
+        					var new_returned_id = response.body.data[entity.lower+'list'][entity.lower+'s'][0].id;
 
-        assert.isNotTrue(new_returned_id == returned_id);
+        					assert.isNotTrue(new_returned_id == returned_id);
 
-        done();
-    }else{
-        done();
-    }
+        				done();
+    					}else{
+        				done();
+    					}
 });
 
     }else{

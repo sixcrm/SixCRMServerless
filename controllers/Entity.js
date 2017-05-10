@@ -142,7 +142,7 @@ module.exports = class entityController {
     //Technical Debt:  You can only paginate against the index...
     queryBySecondaryIndex(field, index_value, index_name, pagination){
 
-        du.debug('Listing by secondary index', field, index_value, index_name, pagination);
+        du.debug('Query by secondary index', field, index_value, index_name, pagination);
 
         return new Promise((resolve, reject) => {
 
