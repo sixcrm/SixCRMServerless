@@ -16,11 +16,6 @@ class cacheController {
 
     }
 
-    createRedisConnection(){
-
-
-
-    }
     //Technical Debt:  Refactor this this to be testable!
     //Technical Debt:  The data_promise variable is executed regardless of whether there are cached results or not.
     useCache(parameters, data_promise, expiration){

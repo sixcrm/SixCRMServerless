@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/CampaignsByAmountParameterValidation",
+	"id":"/Default",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -18,10 +18,6 @@
 		"period":{
 			"type":"string",
 			"enum": ["minute", "hour","day","week","month","quarter","year"]
-		},
-		"order":{
-			"type":"string",
-			"enum": ["desc","asc"]
 		},
 		"account":{
 			"type": "array",
@@ -126,15 +122,15 @@
 			"items": {
 				"type":"string",
 				"enum": ["main", "upsell"]
-			},
-			"limit":{
-				"type": ["integer"],
-				"minimum": 0,
-	  		"maximum": 100,
-				"exclusiveMaximum": false,
-				"exclusiveMinimum": true
 			}
+		},
+		"limit":{
+			"type": ["integer"],
+			"minimum": 0,
+  		"maximum": 100,
+			"exclusiveMaximum": false,
+			"exclusiveMinimum": true
 		}
 	},
-	"required":["start", "end", "limit"]
+	"required":["start", "end","limit","order"]
 }

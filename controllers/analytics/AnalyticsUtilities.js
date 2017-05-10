@@ -260,7 +260,9 @@ module.exports = class AnalyticsUtilities {
 
         du.debug('Get Query Filepath');
 
-        return __dirname+'/queries/'+query_name+'/query.sql';
+        let query_filepath = __dirname+'/queries/'+query_name+'/query.sql';
+
+        return query_filepath;
 
     }
 
@@ -268,7 +270,15 @@ module.exports = class AnalyticsUtilities {
 
         du.debug('Get Transformation Function Filepath');
 
-        return __dirname+'/queries/'+query_name+'/transform.js';
+        let transformation_function_filepath = __dirname+'/queries/'+query_name+'/transform.js';
+        let default_transformation_function_filepath =  __dirname+'/queries/default/transform.js';
+
+        if(fs.existsSync(transformation_function_filepath)){
+            return transformation_function_filepath;
+        }else{
+            du.warning('Using default query transformation function');
+            return default_transformation_function_filepath;
+        }
 
     }
 
@@ -276,7 +286,15 @@ module.exports = class AnalyticsUtilities {
 
         du.debug('Get Query Parameter Validation Filepath');
 
-        return __dirname+'/queries/'+query_name+'/parameter_validation.json';
+        let query_parameter_validation_filepath = __dirname+'/queries/'+query_name+'/parameter_validation.json';
+        let default_query_parameter_validation_filepath = __dirname+'/queries/default/parameter_validation.json';
+
+        if(fs.existsSync(query_parameter_validation_filepath)){
+            return query_parameter_validation_filepath;
+        }else{
+            du.warning('Using default query parameter validation');
+            return default_query_parameter_validation_filepath;
+        }
 
     }
 
