@@ -90,6 +90,7 @@ let searchInputType = require('./search/searchInputType');
 let searchResultsType = require('./search/searchResultsType');
 
 let transactionSummaryType = require('./analytics/transactionSummaryType');
+let eventSummaryType = require('./analytics/eventSummaryType');
 let transactionOverviewType =  require('./analytics/transactionOverviewType');
 let eventFunnelType =  require('./analytics/eventFunnelType');
 let campaignDeltaType =  require('./analytics/campaignDeltaType');
@@ -459,6 +460,15 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, analyticsfilter){
                 return analyticsController.getTransactionSummary(analyticsfilter.analyticsfilter);
+            }
+        },
+        eventsummary: {
+            type: eventSummaryType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getEventSummary(analyticsfilter.analyticsfilter);
             }
         },
         transactionoverview: {

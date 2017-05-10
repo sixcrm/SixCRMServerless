@@ -22,6 +22,20 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
+    getEventSummary(parameters){
+
+        du.debug('Get Event Summary');
+
+        let target_period_count = this.getTargetPeriodCount(parameters);
+
+        let period_selection = this.periodSelection(parameters.start, parameters.end, target_period_count);
+
+        parameters = this.appendPeriod(parameters, period_selection);
+
+        return this.getResults('aggregation_event_type_count', parameters, this.default_query_filters);
+
+    }
+
     getCampaignsByAmount(parameters){
 
         du.debug('Get Campaigns By Amount');
@@ -33,7 +47,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
-    //new - broken :D
+    //new
     getMerchantProcessorAmount(parameters){
 
         du.debug('Get Merchant Processor Amount');
