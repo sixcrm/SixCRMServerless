@@ -68,10 +68,11 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
-    //new
-    getMerchantProcessorAmount(parameters){
+    getMerchantProviderAmount(parameters){
 
-        du.debug('Get Merchant Processor Amount');
+        du.debug('Get Merchant Provider Amount');
+
+        parameters.merchant_providers = parameters.merchantprovider;
 
         return this.getResults('merchant_processor_amount', parameters, this.default_query_filters);
 
@@ -91,6 +92,9 @@ class AnalyticsController extends AnalyticsUtilities {
     getTransactionsByAffiliate(parameters){
 
         du.debug('Get Transactions By Affiliate');
+
+        parameters.limit = 10;
+        parameters.order = 'desc';
 
         return this.getResults('transactions_by_affiliate', parameters, this.default_query_filters);
 

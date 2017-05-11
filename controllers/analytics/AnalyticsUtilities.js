@@ -149,6 +149,19 @@ module.exports = class AnalyticsUtilities {
 
     }
 
+    createQueryList(parameters){
+
+        du.debug('Create Filter List');
+
+        du.debug(parameters);
+        if(!_.isArray(parameters)){
+            throw new Error('Create Filter List only supports array arguments.');
+        }
+
+        return '\''+parameters.join('\',\'')+'\'';
+
+    }
+
     parseQueryParameters(query, parameters){
 
         du.debug('Parse Query Parameters');

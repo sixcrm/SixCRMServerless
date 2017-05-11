@@ -98,7 +98,7 @@ let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
 let eventsByAffiliateType =  require('./analytics/eventsByAffiliateType');
 let transactionsByAffiliateType =  require('./analytics/transactionsByAffiliateType');
-let merchantProcessorAmountType =  require('./analytics/merchantProcessorAmountType');
+let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
 let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
 
 const sessionController = require('../../../../controllers/Session.js');
@@ -536,13 +536,13 @@ module.exports.graphObj = new GraphQLObjectType({
                 return analyticsController.getTransactionsByAffiliate(analyticsfilter.analyticsfilter);
             }
         },
-        merchantprocessoramount: {
-            type: merchantProcessorAmountType.graphObj,
+        merchantprovideramount: {
+            type: merchantProviderAmountType.graphObj,
             args: {
                 analyticsfilter: { type: analyticsFilterInputType.graphObj }
             },
             resolve: function(root, analyticsfilter){
-                return analyticsController.getMerchantProcessorAmount(analyticsfilter.analyticsfilter);
+                return analyticsController.getMerchantProviderAmount(analyticsfilter.analyticsfilter);
             }
         },
         transactionlistbycustomer: {
