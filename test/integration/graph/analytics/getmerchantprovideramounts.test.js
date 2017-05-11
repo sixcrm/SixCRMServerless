@@ -19,8 +19,8 @@ Add Cache response group
 Check Pagination Response Group
 */
 
-let test_name = 'Merchant Processors By Amount';
-let test_query = './endpoints/graph/queries/analytics/getMerchantProcessorAmounts';
+let test_name = 'Merchant Providers By Amount';
+let test_query = './endpoints/graph/queries/analytics/getMerchantProviderAmounts';
 
 //set the test user
 let test_user = {
