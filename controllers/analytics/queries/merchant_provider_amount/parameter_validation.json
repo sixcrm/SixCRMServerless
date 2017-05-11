@@ -27,5 +27,5 @@
 			 "uniqueItems": true
 		}
 	},
-	"required":["start", "end", "merchant_provider"]
+	"required":["start", "end", "merchantprovider"]
 }

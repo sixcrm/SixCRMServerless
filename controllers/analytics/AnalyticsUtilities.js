@@ -170,7 +170,27 @@ module.exports = class AnalyticsUtilities {
 
             var re = new RegExp('{{'+parameter_name+'}}',"g");
 
-            query = query.replace(re, parameters[parameter_name]);
+            let replace_string = ''
+
+            if(_.isArray(parameters[parameter_name])){
+
+                let replace_array = [];
+
+                parameters[parameter_name].forEach((parameter) => {
+
+                    replace_array.push(parameter);
+
+                });
+
+                replace_string = '\''+replace_array.join('\',\'')+'\'';
+
+            }else{
+
+                replace_string = parameters[parameter_name];
+
+            }
+
+            query = query.replace(re, replace_string);
 
         }
 

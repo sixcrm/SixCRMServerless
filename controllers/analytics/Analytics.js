@@ -72,8 +72,6 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Merchant Provider Amount');
 
-        parameters.merchant_providers = parameters.merchantprovider;
-
         return this.getResults('merchant_provider_amount', parameters, this.default_query_filters);
 
     }
