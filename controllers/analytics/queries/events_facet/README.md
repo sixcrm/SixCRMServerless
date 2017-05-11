@@ -7,6 +7,7 @@ ____
 ### Required
 * `start` - a ISO-8601 datetime
 * `end` - a ISO-8601 datetime
+* `facet` - a facet by which we aggregate
 
 ### Optional
 * `account` - a UUIDv4
