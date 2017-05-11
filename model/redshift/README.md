@@ -17,7 +17,7 @@ Sort key is chosen to be date.
 ### Dimensional tables
 * `d_datetimes` - Dimensional table of *minutes* from 01.01.2017 to 01.01.2027
 * `d_processor_result` - Dimensional table of processor results [`success`, `decline`, `error`]
-* `d_merchant_processor` - Dimensional table of merchant processors
+* `d_merchant_provider` - Dimensional table of merchant processors
 * `d_trans_type` - **IN WORK** Dimensional table of transaction types [`new`, `rebill`]
 * `d_products` - **IN WORK** Dimensional table of available products
 

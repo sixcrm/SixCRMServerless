@@ -3,7 +3,7 @@ SELECT
   ft.datetime,
   ft.customer,
   ft.creditcard,
-  ft.merchant_processor,
+  ft.merchant_provider,
   ft.campaign,
   ft.affiliate,
   ft.amount,

@@ -15,7 +15,7 @@ FROM
          d_merchant_provider
        WHERE 1
              AND activity_flag = 'active'
-             AND merchant_provider IN ({{merchant_processor}})
+             AND merchant_provider IN ({{merchant_provider}})
      ) ft
      CROSS JOIN d_processor_result dpr
   ) mp LEFT JOIN (
@@ -27,7 +27,7 @@ FROM
                    FROM f_transactions
                    WHERE 1
                       {{filter}}
-                      AND merchant_provider IN ({{merchant_processor}})
+                      AND merchant_provider IN ({{merchant_provider}})
                       AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
                    GROUP BY
                      processor_result,

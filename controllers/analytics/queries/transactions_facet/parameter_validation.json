@@ -21,7 +21,7 @@
 			"uniqueItems": true,
 			"items": {
 				"type":"string",
-				"enum": ["customer","creditcard","merchant_processor","campaign","affiliate","processor_result",
+				"enum": ["customer","creditcard","merchant_provider","campaign","affiliate","processor_result",
 					       "account","transaction_type","product_schedule","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_5","transaction_subtype"]
 			}
 		},
@@ -45,7 +45,7 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"merchant_processor":{
+		"merchant_provider":{
 			 "type": "array",
 			 "minItems": 1,
 			 "items": {"$ref": "#/definitions/UUIDv4"},

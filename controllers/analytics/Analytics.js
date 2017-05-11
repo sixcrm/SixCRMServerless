@@ -10,7 +10,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         this.default_query_filters = [
             'campaign',
-            'merchant_processor',
+            'merchant_provider',
             'affiliate',
             's1',
             's2',
@@ -52,7 +52,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Merchant Processor Amount');
 
-        return this.getResults('merchant_processor_amount', parameters, this.default_query_filters);
+        return this.getResults('merchant_provider_amount', parameters, this.default_query_filters);
 
     }
 

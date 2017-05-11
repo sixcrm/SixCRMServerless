@@ -39,7 +39,7 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"merchant_processor":{
+		"merchant_provider":{
 			 "type": "array",
 			 "minItems": 1,
 			 "items": {"$ref": "#/definitions/UUIDv4"},
