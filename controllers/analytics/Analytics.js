@@ -81,6 +81,9 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Events By Affiliate');
 
+        parameters.limit = 10;
+        parameters.order = 'desc';
+
         return this.getResults('events_by_affiliate', parameters, this.default_query_filters);
 
     }
