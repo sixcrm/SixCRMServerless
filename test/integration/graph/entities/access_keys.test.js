@@ -3,34 +3,32 @@ const chai = require('chai');
 const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
-
-const tu = require('../../../lib/test-utilities.js');
-const du = require('../../../lib/debug-utilities.js');
+const tu = require('../../../../lib/test-utilities.js');
+const du = require('../../../../lib/debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
-
-var entity = 'Product';
-var tests = [{
+let entity = 'Access Keys';
+let tests = [{
     name: "index",
-    query: "./endpoints/graph/queries/index/getProducts"
+    query: "./endpoints/graph/queries/index/getAccessKeys"
 },
 {
     name: "view",
-    query: "./endpoints/graph/queries/view/getProduct"
+    query: "./endpoints/graph/queries/view/getAccessKey"
 },
 {
     name: "create",
-    query: "./endpoints/graph/queries/create/createProduct"
+    query: "./endpoints/graph/queries/create/createAccessKey"
 },
 {
     name: "update",
-    query: "./endpoints/graph/queries/update/updateProduct"
+    query: "./endpoints/graph/queries/update/updateAccessKey"
 },
 {
     name: "delete",
-    query: "./endpoints/graph/queries/delete/deleteProduct"
+    query: "./endpoints/graph/queries/delete/deleteAccessKey"
 }];
 
 let this_request = request(endpoint);
@@ -41,21 +39,20 @@ describe('Graph '+entity+' Test', function() {
 
   		global.test_users.forEach((test_user) => {
 
-      describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials on the account "'+test_account.name, function() {
+      describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials on the account "'+test_account.name+'"', function() {
 
           let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
-
-          du.warning(test_jwt, test_account.id);
 
           tests.forEach((test) => {
 
 					//let account = tu.getAccount(test.query);
               let account = test_account.id;
 
+              du.warning(account);
+
               it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
                   var query = tu.getQuery(test.query);
 
-                  du.warning(query);
                   this_request.post('graph/'+account)
 							.set('Authorization', test_jwt)
 							.send(query)

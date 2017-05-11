@@ -5,13 +5,14 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const _ = require('underscore');
 
-const tu = require('../../../lib/test-utilities.js');
-const du = require('../../../lib/debug-utilities.js');
+const tu = require('../../../../lib/test-utilities.js');
+const du = require('../../../../lib/debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
 
+//Technical Debt:  Make sure that this list account for all Entities
 var entities = [
 	{camel:'AccessKeys',lower:'accesskey'},
 	{camel:'Accounts',lower:'account'},
