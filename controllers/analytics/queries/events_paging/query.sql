@@ -14,7 +14,7 @@ SELECT
 FROM
   f_events fe
 WHERE 1
-{{FILTER}}
+{{filter}}
 AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-ORDER BY DATETIME {{ORDER}}
-LIMIT {{LIMIT}} OFFSET {{OFFSET}};
+ORDER BY DATETIME {{order}}
+LIMIT {{limit}} OFFSET {{offset}};
