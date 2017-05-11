@@ -11,7 +11,7 @@ CREATE TABLE f_transactions
   datetime            TIMESTAMP     NOT NULL,
   customer            VARCHAR(36)   NOT NULL,
   creditcard          VARCHAR(36)   NOT NULL,
-  merchant_processor  VARCHAR(36)   NOT NULL,
+  merchant_provider  VARCHAR(36)   NOT NULL,
   campaign            VARCHAR(36)   NOT NULL,
   affiliate           VARCHAR(36),
   amount              DECIMAL(8, 2) NOT NULL,
