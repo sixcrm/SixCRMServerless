@@ -1,0 +1,26 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		merchantprovideramount (analyticsfilter:{start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-02T17:23:43.043Z\", merchantprovider:[\"eda50efb-22bc-4ccc-8afd-dee1a8ab3427\",
+		\"76111ebe-bc6d-4a74-81ae-321a9cfee18e\"]}) {
+			merchant_providers{
+				id,
+				name,
+				error {
+					count,
+					amount
+				},
+				decline {
+					count,
+					amount
+				},
+				success {
+					count,
+					amount
+				}
+			}
+		}
+	}"
+}

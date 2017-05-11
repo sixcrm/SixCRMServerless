@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/TransactionSummaryInput",
+	"id":"/MerchantProcessorAmount",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -27,5 +27,5 @@
 			 "uniqueItems": true
 		}
 	},
-	"required":["start", "account", "end", "period","merchant_provider"]
+	"required":["start", "end", "merchantprovider"]
 }

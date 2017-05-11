@@ -22,6 +22,27 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
+    //new
+    getEventsByFacet(){
+
+    }
+
+    //new
+    getTransactionsByFacet(){
+
+    }
+
+    //new
+    getTransactions(){
+
+
+    }
+
+    //new
+    getEvents(){
+
+    }
+
     getEventSummary(parameters){
 
         du.debug('Get Event Summary');
@@ -47,10 +68,9 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
-    //new
-    getMerchantProcessorAmount(parameters){
+    getMerchantProviderAmount(parameters){
 
-        du.debug('Get Merchant Processor Amount');
+        du.debug('Get Merchant Provider Amount');
 
         return this.getResults('merchant_provider_amount', parameters, this.default_query_filters);
 
@@ -60,6 +80,9 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Events By Affiliate');
 
+        parameters.limit = 10;
+        parameters.order = 'desc';
+
         return this.getResults('events_by_affiliate', parameters, this.default_query_filters);
 
     }
@@ -67,6 +90,9 @@ class AnalyticsController extends AnalyticsUtilities {
     getTransactionsByAffiliate(parameters){
 
         du.debug('Get Transactions By Affiliate');
+
+        parameters.limit = 10;
+        parameters.order = 'desc';
 
         return this.getResults('transactions_by_affiliate', parameters, this.default_query_filters);
 
