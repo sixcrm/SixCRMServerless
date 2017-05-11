@@ -16,7 +16,7 @@ function createRandomKinesisTransactionRecord(){
         datetime: timestamp.getISO8601(),
         customer: uuidV4(),
         creditcard: uuidV4(),
-        merchant_processor: uuidV4(),
+        merchant_provider: uuidV4(),
         campaign: uuidV4(),
         affiliate: uuidV4(),
         amount: random.randomDouble(1.00, 45.00, 2),

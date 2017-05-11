@@ -16,7 +16,7 @@
 		"id":{"$ref": "#/definitions/UUIDv4"},
 		"customer":{"$ref": "#/definitions/UUIDv4"},
 		"creditcard":{"$ref": "#/definitions/UUIDv4"},
-		"merchant_processor":{"$ref": "#/definitions/UUIDv4"},
+		"merchant_provider":{"$ref": "#/definitions/UUIDv4"},
 		"campaign":{"$ref": "#/definitions/UUIDv4"},
 		"affiliate":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/UUIDv4"},
@@ -43,5 +43,5 @@
 			"type":"number"
 		}
 	},
-	"required":["id", "customer", "creditcard","merchant_processor","campaign","affiliate","account","product_schedule","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5","datetime","processor_result","transaction_type","subtype","amount"]
+	"required":["id", "customer", "creditcard","merchant_provider","campaign","affiliate","account","product_schedule","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5","datetime","processor_result","transaction_type","subtype","amount"]
 }

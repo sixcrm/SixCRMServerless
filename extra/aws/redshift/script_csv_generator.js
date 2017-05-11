@@ -38,7 +38,7 @@ function generateJson() {
             "datetime": '2017-03-02T17:23:43.043Z',
             "customer": createGuid(),
             "creditcard": createGuid(),
-            "merchant_processor": createGuid(),
+            "merchant_provider": createGuid(),
             "campaign": createGuid(),
             "affiliate": createGuid(),
             "amount": 100.0,

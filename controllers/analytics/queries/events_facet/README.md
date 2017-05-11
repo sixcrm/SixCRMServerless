@@ -19,7 +19,7 @@ ____
 * `subaffiliate_3` -  a sub-affiliate string
 * `subaffiliate_4` -  a sub-affiliate string
 * `subaffiliate_5` -  a sub-affiliate string
-* `merchant_processor` -  a array of UUIDv4 strings
+* `merchant_provider` -  a array of UUIDv4 strings
 * `product_schedule` -  a array of UUIDv4 strings
 * `creditcard` -  a array of UUIDv4 strings
 * `processor_result` -  a array of UUIDv4 strings
