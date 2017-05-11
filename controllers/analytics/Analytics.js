@@ -22,6 +22,27 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
+    //new
+    getEventsByFacet(){
+
+    }
+
+    //new
+    getTransactionsByFacet(){
+
+    }
+
+    //new
+    getTransactions(){
+
+
+    }
+
+    //new
+    getEvents(){
+
+    }
+
     getEventSummary(parameters){
 
         du.debug('Get Event Summary');
