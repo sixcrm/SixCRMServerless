@@ -14,6 +14,9 @@
     }, {
       "AttributeName": "created_at",
       "AttributeType": "S"
+    }, {
+      "AttributeName": "updated_at",
+      "AttributeType": "S"
     }],
     "GlobalSecondaryIndexes": [
       {
@@ -22,6 +25,10 @@
           {
             "AttributeName": "user",
             "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "updated_at",
+            "KeyType": "RANGE"
           }
         ],
         "Projection": {
