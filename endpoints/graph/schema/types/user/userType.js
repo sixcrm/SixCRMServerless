@@ -21,8 +21,16 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The id of the user',
         },
         name: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: GraphQLString,
             description: 'The name of the user',
+        },
+        first_name: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The first name of the user',
+        },
+        last_name: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The last name of the user',
         },
         auth0_id: {
             type: GraphQLString,

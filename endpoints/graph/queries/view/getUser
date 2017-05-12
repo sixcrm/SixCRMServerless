@@ -6,6 +6,8 @@
 		user (id: \"customerservice.user@test.com\") { 
 			id,
 			name,
+			first_name,
+			last_name,
 			auth0_id,
 			active,
 			termsandconditions,

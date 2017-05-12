@@ -3,10 +3,12 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		createuser (user: { id: \"testing.user@test.com\", auth0_id: \"test\", name: \"testingname\", active:\"true\", termsandconditions:\"2.1\", address:{line1: \"123 Heckamecca\", line2:\"Room 666\", city:\"Portland\", state:\"OR\", zip:\"97203\", country:\"US\"}}) { 
+		createuser (user: { id: \"testing.user@test.com\", auth0_id: \"test\", name: \"testingname\", first_name: \"testingfirstname\", last_name: \"testinglastname\", active:\"true\", termsandconditions:\"2.1\", address:{line1: \"123 Heckamecca\", line2:\"Room 666\", city:\"Portland\", state:\"OR\", zip:\"97203\", country:\"US\"}}) {
 			id,
 			auth0_id,
 			name,
+			first_name,
+            last_name,
 			active,
 			address {
 				line1,
