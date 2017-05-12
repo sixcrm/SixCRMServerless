@@ -92,6 +92,7 @@ let searchResultsType = require('./search/searchResultsType');
 
 let transactionSummaryType = require('./analytics/transactionSummaryType');
 let listTransactionsType = require('./analytics/listTransactionsType');
+let listEventsType = require('./analytics/listEventsType');
 let eventSummaryType = require('./analytics/eventSummaryType');
 let transactionOverviewType =  require('./analytics/transactionOverviewType');
 let eventFunnelType =  require('./analytics/eventFunnelType');
@@ -474,6 +475,16 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, analyticsfilter){
                 return analyticsController.getTransactions(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+            }
+        },
+        listevents: {
+            type: listEventsType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getEvents(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         eventsummary: {

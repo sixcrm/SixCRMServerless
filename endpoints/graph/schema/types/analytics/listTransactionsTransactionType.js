@@ -33,7 +33,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: ''
         },
         affiliate: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: GraphQLString,
             description: ''
         },
         amount: {

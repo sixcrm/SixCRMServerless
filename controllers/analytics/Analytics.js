@@ -51,8 +51,19 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
-    //new
-    getEvents(){
+    getEvents(parameters, pagination){
+
+        du.debug('Get Events');
+
+        pagination = paginationutilities.createSQLPaginationInput(pagination);
+
+        parameters.limit = pagination.limit;
+        parameters.offset = pagination.offset;
+        parameters.order = pagination.order;
+
+        du.warning(parameters);
+
+        return this.getResults('events_paging', parameters, this.default_query_filters);
 
     }
 
