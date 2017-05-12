@@ -1,0 +1,31 @@
+{
+  "Table": {
+    "TableName": "user_settings",
+    "KeySchema": [{
+      "AttributeName": "id",
+      "KeyType": "HASH"
+    }],
+    "AttributeDefinitions": [{
+      "AttributeName": "id",
+      "AttributeType": "S"
+    }],
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 1,
+      "WriteCapacityUnits": 1
+    }
+  },
+  "Seeds": [
+    {
+      "id": "ljubomir@toptal.com",
+      "work_phone": "+38121000000",
+      "cell_phone": "+381630000000",
+      "timezone": "Europe/Belgrade",
+      "notification_sms": "+381630000000",
+      "notification_email": "ljubomir@toptal.com",
+      "notification_skype": "",
+      "notification_slack_webhook": "https://hooks.slack.com/services/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",
+      "created_at":"2017-04-06T18:40:41.405Z",
+      "updated_at":"2017-04-06T18:41:12.521Z"
+    }
+  ]
+}

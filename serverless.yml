@@ -103,6 +103,7 @@ functions:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       user_device_tokens_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_device_tokens_table}
       user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
+      user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
       email_templates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.email_templates_table}
       smtp_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.smtp_providers_table}

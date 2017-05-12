@@ -1,8 +1,6 @@
 'use strict';
 const _  = require('underscore');
 
-const du = require('../../../../lib/debug-utilities.js');
-
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
@@ -51,6 +49,9 @@ let notificationSettingDefaultType = require('./notificationsetting/notification
 
 let userType = require('./user/userType');
 let userListType = require('./user/userListType');
+
+let userSettingListType = require('./usersetting/userSettingListType');
+let userSettingType = require('./usersetting/userSettingType');
 
 let userACLType = require('./useracl/userACLType');
 let userACLListType = require('./useracl/userACLListType');
@@ -120,6 +121,7 @@ const accessKeyController = require('../../../../controllers/AccessKey.js');
 const userController = require('../../../../controllers/User.js');
 const userACLController = require('../../../../controllers/UserACL.js');
 const userDeviceTokenController = require('../../../../controllers/UserDeviceToken');
+const userSettingController = require('../../../../controllers/UserSetting');
 
 const emailTemplateController = require('../../../../controllers/EmailTemplate.js');
 const SMTPProviderController = require('../../../../controllers/SMTPProvider.js');
@@ -758,6 +760,35 @@ module.exports.graphObj = new GraphQLObjectType({
             }else{
                 return null;
             }
+            }
+        },
+        usersetting: {
+            type: userSettingType.graphObj,
+            args: {
+                user: {
+                    description: 'user email associated of the user settings',
+                    type: GraphQLString
+                },
+                id: {
+                    description: 'id of the user settings',
+                    type: GraphQLString
+                }
+            },
+            resolve: (root, usersetting) => {
+                if (_.has(usersetting, 'user')) {
+                    return userSettingController.get(usersetting.user, 'user');
+                } else {
+                    return userSettingController.get(usersetting.id, 'id');
+                }
+            }
+        },
+        usersettinglist: {
+            type: userSettingListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, user_setting) {
+                return userSettingController.list(user_setting.pagination);
             }
         },
         notification: {

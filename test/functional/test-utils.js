@@ -44,6 +44,7 @@ class TestUtils {
         process.env.credit_cards_table = 'localcredit_cards';
         process.env.users_table = 'localusers';
         process.env.user_acls_table = 'localuseracls';
+        process.env.user_settings_table = 'localuser_settings';
         process.env.loadbalancers_table = 'localloadbalancers';
         process.env.product_schedules_table = 'localproduct_schedules';
         process.env.affiliates_table = 'localaffiliates';

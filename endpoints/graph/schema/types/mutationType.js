@@ -71,6 +71,8 @@ let userInviteType = require('./userinvite/userInviteType');
 let userType = require('./user/userType');
 let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
 let userDeviceTokenInputType = require('./userdevicetoken/userDeviceTokenInputType');
+let userSettingType = require('./usersetting/userSettingType');
+let userSettingInputType = require('./usersetting/userSettingInputType');
 
 let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
@@ -102,6 +104,7 @@ const accountController = require('../../../../controllers/Account.js');
 const roleController = require('../../../../controllers/Role.js');
 const notificationController = require('../../../../controllers/Notification');
 const notificationSettingController = require('../../../../controllers/NotificationSetting');
+const userSettingController = require('../../../../controllers/UserSetting');
 const userDeviceTokenController = require('../../../../controllers/UserDeviceToken.js');
 
 module.exports.graphObj = new GraphQLObjectType({
@@ -990,6 +993,49 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (value, userdevicetoken) => {
                 return userDeviceTokenController.delete(userdevicetoken.id);
             }
-        }
+        },
+        createusersetting:{
+            type: userSettingType.graphObj,
+            description: 'Creates a new user setting.',
+            args: {
+                usersetting: { type: userSettingInputType.graphObj }
+            },
+            resolve: (value, usersetting) => {
+                return userSettingController.create(usersetting.usersetting);
+            }
+        },
+        updateusersetting:{
+            type: userSettingType.graphObj,
+            description: 'Updates a user setting.',
+            args: {
+                usersetting: { type: userSettingInputType.graphObj }
+            },
+            resolve: (value, usersetting) => {
+                return userSettingController.update(usersetting.usersetting);
+            }
+        },
+        storeusersetting:{
+            type: userSettingType.graphObj,
+            description: 'Updates a user setting.',
+            args: {
+                usersetting: { type: userSettingInputType.graphObj }
+            },
+            resolve: (value, usersetting) => {
+                return userSettingController.store(usersetting.usersetting);
+            }
+        },
+        deleteusersetting:{
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a user setting.',
+            args: {
+                id: {
+                    description: 'User associated with the user setting',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, usersetting) => {
+                return userSettingController.delete(usersetting.id);
+            }
+        },
     })
 });
