@@ -24,7 +24,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: ''
         },
-        merchant_processor: {
+        merchant_provider: {
             type: new GraphQLNonNull(GraphQLString),
             description: ''
         },

@@ -1,5 +1,7 @@
 'use strict';
 const du = require('../../lib/debug-utilities.js');
+const paginationutilities = require('../../lib/pagination-utilities.js');
+
 const AnalyticsUtilities = require('./AnalyticsUtilities.js');
 
 class AnalyticsController extends AnalyticsUtilities {
@@ -33,8 +35,19 @@ class AnalyticsController extends AnalyticsUtilities {
     }
 
     //new
-    getTransactions(){
+    getTransactions(parameters, pagination){
 
+        du.debug('Get Transactions');
+
+        pagination = paginationutilities.createSQLPaginationInput(pagination);
+
+        parameters.limit = pagination.limit;
+        parameters.offset = pagination.offset;
+        parameters.order = pagination.order;
+
+        du.warning(parameters);
+
+        return this.getResults('transaction_paging', parameters, this.default_query_filters);
 
     }
 

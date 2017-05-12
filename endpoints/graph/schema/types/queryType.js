@@ -100,6 +100,7 @@ let eventsByAffiliateType =  require('./analytics/eventsByAffiliateType');
 let transactionsByAffiliateType =  require('./analytics/transactionsByAffiliateType');
 let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
 let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
+let analyticsPaginationInputType = require('./analytics/analyticsPaginationInputType');
 
 const sessionController = require('../../../../controllers/Session.js');
 const productController = require('../../../../controllers/Product.js');
@@ -466,10 +467,11 @@ module.exports.graphObj = new GraphQLObjectType({
         listtransactions: {
             type: listTransactionsType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                pagination: {type: analyticsPaginationInputType.graphObj}
             },
             resolve: function(root, analyticsfilter){
-                return analyticsController.getTransactions(analyticsfilter.analyticsfilter);
+                return analyticsController.getTransactions(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         eventsummary: {

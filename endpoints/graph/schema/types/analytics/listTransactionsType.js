@@ -1,6 +1,8 @@
 'use strict';
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
+const GraphQLNonNull = require('graphql').GraphQLNonNull;
+
 const listTransactionsTransactionType = require('./listTransactionsTransactionType');
 const analyticsPaginationType = require('./analyticsPaginationType');
 
@@ -13,7 +15,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'A transaction',
         },
         pagination: {
-            type: new GraphQLList(analyticsPaginationType.graphObj),
+            type: new GraphQLNonNull(analyticsPaginationType.graphObj),
             description: 'A transaction',
         }
     }),

@@ -126,8 +126,8 @@
 			"type": ["integer"],
 			"minimum": 0,
 			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
+			"exclusiveMaximum": true,
+			"exclusiveMinimum": false
 		},
 		"transaction_subtype":{
 			"type": "array",

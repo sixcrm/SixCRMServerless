@@ -2,17 +2,18 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLInt = require('graphql').GraphQLInt;
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'AnalyticsPagination',
     description: 'Analytics Pagination',
     fields: () => ({
         limit: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLInt),
             description: '',
         },
         offset: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLInt),
             description: '',
         },
         order: {
@@ -20,7 +21,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: '',
         },
         count: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLInt),
             description: ''
         }
     }),
