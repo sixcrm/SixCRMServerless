@@ -30,11 +30,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         parameters.facet = facet;
 
-        pagination = paginationutilities.createSQLPaginationInput('50');
-
-        parameters.limit = pagination.limit;
-        parameters.offset = pagination.offset;
-        parameters.order = pagination.order;
+        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
 
         return this.getResults('events_by_facet', parameters, this.default_query_filters);
 
@@ -46,28 +42,17 @@ class AnalyticsController extends AnalyticsUtilities {
 
         parameters.facet = facet;
 
-        pagination = paginationutilities.createSQLPaginationInput('50');
-
-        parameters.limit = pagination.limit;
-        parameters.offset = pagination.offset;
-        parameters.order = pagination.order;
+        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
 
         return this.getResults('transactions_by_facet', parameters, this.default_query_filters);
 
     }
 
-    //new
     getTransactions(parameters, pagination){
 
         du.debug('Get Transactions');
 
-        pagination = paginationutilities.createSQLPaginationInput(pagination);
-
-        parameters.limit = pagination.limit;
-        parameters.offset = pagination.offset;
-        parameters.order = pagination.order;
-
-        du.warning(parameters);
+        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
 
         return this.getResults('transactions', parameters, this.default_query_filters);
 
@@ -77,13 +62,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Events');
 
-        pagination = paginationutilities.createSQLPaginationInput(pagination);
-
-        parameters.limit = pagination.limit;
-        parameters.offset = pagination.offset;
-        parameters.order = pagination.order;
-
-        du.warning(parameters);
+        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
 
         return this.getResults('events', parameters, this.default_query_filters);
 
@@ -107,8 +86,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Campaigns By Amount');
 
-        parameters.limit = 10;
-        parameters.order = 'desc';
+        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
         return this.getResults('campaigns_by_amount', parameters, this.default_query_filters);
 
@@ -126,8 +104,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Events By Affiliate');
 
-        parameters.limit = 10;
-        parameters.order = 'desc';
+        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
         return this.getResults('events_by_affiliate', parameters, this.default_query_filters);
 
@@ -137,8 +114,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Transactions By Affiliate');
 
-        parameters.limit = 10;
-        parameters.order = 'desc';
+        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
         return this.getResults('transactions_by_affiliate', parameters, this.default_query_filters);
 
@@ -170,8 +146,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.debug('Get Campaign Delta');
 
-        //Technical Debt:  This should be incorporated with the parameters, I think...
-        parameters.limit = 20;
+        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
         return this.getResults('campaign_delta', parameters, this.default_query_filters);
 

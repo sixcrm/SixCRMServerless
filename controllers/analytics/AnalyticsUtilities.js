@@ -9,19 +9,20 @@ const redshiftutilities = require('../../lib/redshift-utilities.js');
 const mathutilities =  require('../../lib/math-utilities.js');
 
 const cacheController = require('../Cache.js');
+//Technical Debt:  Create SQL Query Builder class and abstract the query building methods there.
 
 module.exports = class AnalyticsUtilities {
 
     constructor(){
 
         this.period_options = [
-        {name:"minute", seconds: 60},
-        {name:"hour", seconds: 3600},
-        {name:"day", seconds: 86400},
-        {name:"week", seconds: 604800},
-        {name:"month", seconds: 2678400},
-        {name:"quarter", seconds: 7776000},
-        {name:"year", seconds: 30412800}
+          {name:"minute", seconds: 60},
+          {name:"hour", seconds: 3600},
+          {name:"day", seconds: 86400},
+          {name:"week", seconds: 604800},
+          {name:"month", seconds: 2678400},
+          {name:"quarter", seconds: 7776000},
+          {name:"year", seconds: 30412800}
         ];
 
         this.period_count_default = 30;
