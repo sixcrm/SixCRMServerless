@@ -9,7 +9,6 @@ module.exports = function(results, parameters){
 
     return new Promise((resolve, reject) => {
 
-        du.info(results);
         let facets = [];
 
         let count_sum = 0;
@@ -44,8 +43,6 @@ module.exports = function(results, parameters){
             facet_type: parameters.facet,
             facets:facets
         };
-
-        du.info(return_object);
 
         return resolve(return_object);
 
