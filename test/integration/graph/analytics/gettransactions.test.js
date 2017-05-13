@@ -57,7 +57,7 @@ describe('Get '+test_name+' Test', function() {
 						//du.warning(err);
     }
 
-    du.debug(response.body);
+    //du.debug(response.body);
 
     assert.isObject(response.body.data, JSON.stringify(response.body));
 
