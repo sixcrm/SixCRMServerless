@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/AggregationProcessorAmountInput",
+	"id":"/EventsByAffiliate",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -15,15 +15,9 @@
 	"properties": {
 		"start": {"$ref": "#/definitions/ISO8601"},
 		"end": {"$ref": "#/definitions/ISO8601"},
-		"facets":{
-			"type": "array",
-			"minItems": 1,
-			"uniqueItems": true,
-			"items": {
-				"type":"string",
-				"enum": ["customer","creditcard","merchant_provider","campaign","affiliate","processor_result",
-					       "account","transaction_type","product_schedule","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_5","transaction_subtype"]
-			}
+		"period":{
+			"type":"string",
+			"enum": ["minute", "hour","day","week","month","quarter","year"]
 		},
 		"account":{
 			"type": "array",
@@ -44,12 +38,6 @@
 			"minItems": 1,
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
-		},
-		"merchant_provider":{
-			 "type": "array",
-			 "minItems": 1,
-			 "items": {"$ref": "#/definitions/UUIDv4"},
-       "uniqueItems": true
 		},
 		"affiliate:":{
 			"type": "array",
@@ -103,33 +91,21 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"processor_result":{
-			"type": "array",
-			"minItems": 1,
-			"uniqueItems": true,
-			"items": {
-				"type":"string",
-				"enum": ["success", "decline","error"]
-			}
+		"order":{
+			"type":"string",
+			"enum": ["asc", "desc"]
 		},
-		"transaction_type":{
-			"type": "array",
-			"minItems": 1,
-			"uniqueItems": true,
-			"items": {
-				"type":"string",
-				"enum": ["new", "rebill"]
-			}
+		"limit":{
+			"type": ["integer"],
+			"minimum": 0,
+			"maximum": 100,
+			"exclusiveMaximum": false,
+			"exclusiveMinimum": true
 		},
-		"transaction_subtype":{
-			"type": "array",
-			"minItems": 1,
-			"uniqueItems": true,
-			"items": {
-				"type":"string",
-				"enum": ["main", "upsell"]
-			}
+		"facet":{
+			"type": "string",
+			"enum": ["session","type","account","campaign","product_schedule","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
 		}
-	},
-	"required":["start", "end","facets"]
+	 },
+	"required":["start", "end", "order", "limit","facet"]
 }

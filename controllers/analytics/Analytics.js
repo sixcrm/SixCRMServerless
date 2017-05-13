@@ -24,13 +24,35 @@ class AnalyticsController extends AnalyticsUtilities {
 
     }
 
-    //new
-    getEventsByFacet(){
+    getEventsByFacet(parameters, pagination, facet){
+
+        du.debug('Get Events By Facet');
+
+        parameters.facet = facet;
+
+        pagination = paginationutilities.createSQLPaginationInput('50');
+
+        parameters.limit = pagination.limit;
+        parameters.offset = pagination.offset;
+        parameters.order = pagination.order;
+
+        return this.getResults('events_by_facet', parameters, this.default_query_filters);
 
     }
 
-    //new
-    getTransactionsByFacet(){
+    getTransactionsByFacet(parameters, pagination, facet){
+
+        du.debug('Get Transactions By Facet');
+
+        parameters.facet = facet;
+
+        pagination = paginationutilities.createSQLPaginationInput('50');
+
+        parameters.limit = pagination.limit;
+        parameters.offset = pagination.offset;
+        parameters.order = pagination.order;
+
+        return this.getResults('transactions_by_facet', parameters, this.default_query_filters);
 
     }
 
@@ -47,7 +69,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.warning(parameters);
 
-        return this.getResults('transaction_paging', parameters, this.default_query_filters);
+        return this.getResults('transactions', parameters, this.default_query_filters);
 
     }
 
@@ -63,7 +85,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
         du.warning(parameters);
 
-        return this.getResults('events_paging', parameters, this.default_query_filters);
+        return this.getResults('events', parameters, this.default_query_filters);
 
     }
 

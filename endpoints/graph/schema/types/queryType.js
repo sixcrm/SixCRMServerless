@@ -98,8 +98,15 @@ let transactionOverviewType =  require('./analytics/transactionOverviewType');
 let eventFunnelType =  require('./analytics/eventFunnelType');
 let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
+
+let eventsByFacetType =  require('./analytics/eventsByFacetType');
+let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
+
+/* Technical Debt:  Deprecated */
 let eventsByAffiliateType =  require('./analytics/eventsByAffiliateType');
 let transactionsByAffiliateType =  require('./analytics/transactionsByAffiliateType');
+/* */
+
 let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
 let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
 let analyticsPaginationInputType = require('./analytics/analyticsPaginationInputType');
@@ -541,7 +548,32 @@ module.exports.graphObj = new GraphQLObjectType({
                 return analyticsController.getEventsByAffiliate(analyticsfilter.analyticsfilter);
             }
         },
-
+        eventsbyfacet: {
+            type: eventsByFacetType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                pagination: {type: analyticsPaginationInputType.graphObj},
+                facet:{
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getEventsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
+            }
+        },
+        transactionsbyfacet: {
+            type: transactionsByFacetType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                pagination: {type: analyticsPaginationInputType.graphObj},
+                facet:{
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getTransactionsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
+            }
+        },
         transactionsbyaffiliate: {
             type: transactionsByAffiliateType.graphObj,
             args: {

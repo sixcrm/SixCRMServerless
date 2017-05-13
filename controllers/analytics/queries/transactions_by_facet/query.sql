@@ -8,3 +8,5 @@ WHERE 1
   {{filter}}
 AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 GROUP BY {{facet}}
+ORDER BY transactions_count {{order}}
+LIMIT {{limit}} OFFSET {{offset}}
