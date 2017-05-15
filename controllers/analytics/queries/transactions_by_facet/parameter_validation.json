@@ -134,6 +134,13 @@
 			"exclusiveMaximum": false,
 			"exclusiveMinimum": true
 		},
+		"offset":{
+			"type": ["integer"],
+			"minimum": 0,
+			"maximum": 100,
+			"exclusiveMaximum": false,
+			"exclusiveMinimum": true
+		},
 		"facet":{
 			"type": "string",
 			"enum": ["account","campaign","merchant_provider","product_schedule","transaction_type","transaction_subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
