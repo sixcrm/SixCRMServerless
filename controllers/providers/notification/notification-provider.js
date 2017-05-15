@@ -11,6 +11,7 @@ const timestamp = require('../../../lib/timestamp');
 
 const notificationController = require('../../Notification');
 const notificationSettingController = require('../../NotificationSetting');
+const userSettingController = require('../../UserSetting');
 const userAclController = require('../../UserACL');
 
 class NotificationProvider {
@@ -87,15 +88,20 @@ class NotificationProvider {
 
     }
 
-
     saveAndSendNotification(notification_parameters, account, user) {
         let notificationTypes = ['dummy']; // 'dummy' is used in helper utilities
-        let phone_number = notification_parameters.phone_number;
-        let webhook = notification_parameters.webhook;
 
         du.debug('Save and send notification.');
 
-        return notificationSettingController.get(user).then((notification_settings) => {
+
+        return Promise.all([
+            notificationSettingController.get(user),
+            userSettingController.get(user)
+        ]).get(user).then((settings) => {
+
+            let notification_settings = settings[0];
+            let user_settings = settings[1];
+
             if (notification_settings && notification_settings.notification_groups) {
                 notification_settings.notification_groups.forEach((group) => {
                     if (group.notifications) {
@@ -129,14 +135,19 @@ class NotificationProvider {
 
                 let notificationSendOperations = [];
 
-                // Technical Debt: figure out where to read the settings from and choose which notification channels to use.
                 if (_.contains(notificationTypes, notification.type)) {
-                    // assuming user wants email notification
-                    notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
-                    // assuming user wants SMS notification
-                    notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, phone_number));
-                    // assuming user wants Slack notification
-                    notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, webhook));
+
+                    if (user_settings.notification_email) {
+                        notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
+                    }
+
+                    if (user_settings.notification_sms){
+                        notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, user_settings.notification_sms));
+                    }
+
+                    if (user_settings.notification_slack_webhook) {
+                        notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, user_settings.notification_slack_webhook));
+                    }
                 }
 
                 return Promise.all(notificationSendOperations).then(() => notification);
