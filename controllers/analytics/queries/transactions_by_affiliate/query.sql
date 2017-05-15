@@ -1,10 +1,13 @@
 SELECT
-  *,
+  affiliate,
+  affiliate_count,
+  sum_amount,
   (affiliate_count * 100.0 / (sum(affiliate_count) OVER ())) AS affiliate_perc
 FROM
   (
     SELECT
       affiliate,
+      sum(amount) as sum_amount,
       coalesce(count(*), 0) AS affiliate_count
     FROM f_transactions
     WHERE 1
