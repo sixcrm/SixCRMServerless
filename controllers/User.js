@@ -7,6 +7,7 @@ const mungeutilities = require('../lib/munge-utilities.js');
 const inviteutilities = require('../lib/invite-utilities.js');
 
 const accountController = require('./Account.js');
+const userSettingController = require('./UserSetting.js');
 const roleController = require('./Role.js');
 const accessKeyController = require('./AccessKey.js');
 const userACLController = require('./UserACL.js');
@@ -210,6 +211,9 @@ class userController extends entityController {
                         name: email,
                         active: "false"
                     };
+                    let proto_user_setting = {
+                        id: email
+                    };
 
                     proto_user = this.appendAlias(proto_user);
 
@@ -221,19 +225,23 @@ class userController extends entityController {
 					//Technical Debt:  This should be a lookup, not a hardcoded string
                     promises.push(roleController.get('cae614de-ce8a-40b9-8137-3d3bdff78039'));
 
+                    promises.push(userSettingController.create(proto_user_setting));
+
                     return Promise.all(promises).then((promises) => {
 
                         let account = promises[0];
                         let user = promises[1];
                         let role = promises[2];
+                        let user_setting = promises[3];
 
-                        if(!_.has(account, 'id') || !_.has(user, 'id') || !_.has(role, 'id')){
+                        if(!_.has(account, 'id') || !_.has(user, 'id') || !_.has(role, 'id') || !_.has(user_setting, 'id')){
                             return reject(new Error('Unable to create new profile'));
                         }
 
                         du.debug('User', user);
                         du.debug('Role', role);
                         du.debug('Account', account);
+                        du.debug('User setting', user_setting);
 
                         let acl_object = {
                             user: user.id,
