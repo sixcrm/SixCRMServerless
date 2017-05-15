@@ -72,7 +72,7 @@ FROM
        'none'      AS {{facet}},
        count(*)    AS transactions_count,
        1           AS all_transactions_count,
-       sum(amount) AS all_transactions_count,
+       sum(count(*)) over ( )  AS all_transactions_count,
        sum(amount) AS transactions_amount
      FROM f_transactions
      WHERE 1
