@@ -140,7 +140,7 @@ module.exports = class entityController {
 
 		//ACL enabled
     //Technical Debt:  You can only paginate against the index...
-    queryBySecondaryIndex(field, index_value, index_name, pagination){
+    queryBySecondaryIndex(field, index_value, index_name, pagination, reverse_order){
 
         du.debug('Query by secondary index', field, index_value, index_name, pagination);
 
@@ -159,6 +159,10 @@ module.exports = class entityController {
                 query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
                 query_parameters = this.appendPagination(query_parameters, pagination);
                 query_parameters = this.appendAccountFilter(query_parameters);
+
+                if (reverse_order) {
+                    query_parameters['scan_index_forward'] = false;
+                }
 
                 du.debug('Query Parameters: ', query_parameters);
 

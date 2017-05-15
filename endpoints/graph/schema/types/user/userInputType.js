@@ -11,9 +11,9 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'UserInput',
     fields: () => ({
         id:			{ type: new GraphQLNonNull(GraphQLString) },
-        name:		{ type: GraphQLString },
-        first_name: { type: new GraphQLNonNull(GraphQLString) },
-        last_name:	{ type: new GraphQLNonNull(GraphQLString) },
+        name:		{ type: new GraphQLNonNull(GraphQLString) },
+        first_name: { type: GraphQLString },
+        last_name:	{ type: GraphQLString },
         auth0_id:	{ type: new GraphQLNonNull(GraphQLString) },
         active: 	{ type: new GraphQLNonNull(GraphQLString) },
         termsandconditions: 	{ type: GraphQLString },

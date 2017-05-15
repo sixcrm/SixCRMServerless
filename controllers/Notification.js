@@ -26,7 +26,7 @@ class notificationController extends entityController {
 
             if(_.isNull(response)){ return Promise.resolve(null); }
 
-            return this.queryBySecondaryIndex('user', global.user.id, 'user-index', pagination);
+            return this.queryBySecondaryIndex('user', global.user.id, 'user-index', pagination, true);
 
         }); // Update the time the user has listed notifications.
 
