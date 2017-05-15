@@ -9,6 +9,7 @@ ____
 ### Fact tables
 * `f_transactions` - main fact table of transactional type holds data on transaction level of granularity
 * `f_events` - fact table of events types holds data on events level of granularity
+* `f_activity` - fact table of activities
 * `f_products` - **IN WORK** fact table of products in transactions
 
 Transactional tables are defined with the distribution key based on the account.
@@ -20,6 +21,7 @@ Sort key is chosen to be date.
 * `d_merchant_provider` - Dimensional table of merchant processors
 * `d_trans_type` - **IN WORK** Dimensional table of transaction types [`new`, `rebill`]
 * `d_products` - **IN WORK** Dimensional table of available products
+
 
 ---
 ## Loading scripts

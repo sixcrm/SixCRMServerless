@@ -20,4 +20,4 @@ CREATE TABLE f_activity
   distkey (actor) INTERLEAVED sortkey (datetime);
 
 
-COMMENT ON TABLE f_activity Is 'Fact table builed arount';
+COMMENT ON TABLE f_activity Is 'Fact table builed around activity';
