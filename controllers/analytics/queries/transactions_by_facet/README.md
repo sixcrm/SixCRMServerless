@@ -9,7 +9,6 @@ ____
 * `end` - a ISO-8601 datetime
 * `facet` - a facet by which we aggregate
 * `limit` - a limit of number of transactions
-* `limit_partition` - a limit of number of transactions plus 1
 * `offset` - a facet by which we aggregate
 
 ### Optional

@@ -127,13 +127,6 @@
 			"exclusiveMaximum": false,
 			"exclusiveMinimum": true
 		},
-		"limit_partition":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
-		},
 		"offset":{
 			"type": ["integer"],
 			"minimum": 0,
