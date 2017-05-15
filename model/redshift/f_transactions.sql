@@ -3,28 +3,34 @@
 
 */
 
-DROP TABLE transactions;
+DROP TABLE f_transactions_1;
 
-CREATE TABLE f_transactions
+CREATE TABLE f_transactions_1
 (
-  id                  VARCHAR(36)   NOT NULL PRIMARY KEY,
-  datetime            TIMESTAMP     NOT NULL,
-  customer            VARCHAR(36)   NOT NULL,
-  creditcard          VARCHAR(36)   NOT NULL,
-  merchant_provider  VARCHAR(36)   NOT NULL,
-  campaign            VARCHAR(36)   NOT NULL,
-  affiliate           VARCHAR(36),
-  amount              DECIMAL(8, 2) NOT NULL,
-  processor_result    VARCHAR(16)   NOT NULL,
-  account             VARCHAR(36)   NOT NULL,
-  transaction_type    VARCHAR(6)    NOT NULL,
-  transaction_subtype VARCHAR(6)    NOT NULL,
-  product_schedule    VARCHAR(36),
-  subaffiliate_1      VARCHAR(128),
-  subaffiliate_2      VARCHAR(128),
-  subaffiliate_3      VARCHAR(128),
-  subaffiliate_4      VARCHAR(128),
-  subaffiliate_5      VARCHAR(128)
+  id                  VARCHAR(128)   NOT NULL PRIMARY KEY encode ZSTD,
+  datetime            TIMESTAMP     NOT NULL encode ZSTD,
+  customer            VARCHAR(128)   NOT NULL encode ZSTD,
+  creditcard          VARCHAR(128)   NOT NULL encode ZSTD,
+  merchant_provider   VARCHAR(128)   NOT NULL encode ZSTD,
+  campaign            VARCHAR(128)   NOT NULL encode ZSTD,
+  affiliate           VARCHAR(128) encode ZSTD,
+  amount              DECIMAL(8, 2) NOT NULL encode ZSTD,
+  processor_result    VARCHAR(16)   NOT NULL encode ZSTD,
+  account             VARCHAR(128)   NOT NULL encode ZSTD,
+  transaction_type    VARCHAR(6)    NOT NULL encode ZSTD,
+  transaction_subtype VARCHAR(6)    NOT NULL encode ZSTD,
+  product_schedule    VARCHAR(36) encode ZSTD,
+  subaffiliate_1      VARCHAR(128) encode ZSTD,
+  subaffiliate_2      VARCHAR(128) encode ZSTD,
+  subaffiliate_3      VARCHAR(128) encode ZSTD,
+  subaffiliate_4      VARCHAR(128) encode ZSTD,
+  subaffiliate_5      VARCHAR(128) encode ZSTD
 )
   distkey (account) INTERLEAVED sortkey (customer, datetime
 );
+
+insert into f_transactions_1
+    select * from f_transactions;
+
+drop table f_transactions_;
+alter table f_transactions_1 rename to f_transactions;

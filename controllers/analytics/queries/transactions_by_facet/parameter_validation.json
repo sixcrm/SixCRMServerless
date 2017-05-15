@@ -127,13 +127,6 @@
 			"exclusiveMaximum": false,
 			"exclusiveMinimum": false
 		},
-		"limit_partition":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": false
-		},
 		"offset":{
 			"type": ["integer"],
 			"minimum": 0,
@@ -146,5 +139,5 @@
 			"enum": ["account","campaign","merchant_provider","product_schedule","transaction_type","transaction_subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
 		}
 	},
-	"required":["start", "end", "facet", "order", "limit", "offset","limit_partition"]
+	"required":["start", "end", "facet", "order", "limit", "offset"]
 }

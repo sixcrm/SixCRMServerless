@@ -1,10 +1,10 @@
 SELECT
   {{facet}},
   transactions_count,
-  SUM(CASE WHEN R_ID IN ({{limit_partition}} + {{offset}},0) THEN all_transactions_count ELSE 0 END)
+  SUM(CASE WHEN R_ID IN ({{limit}}+1 + {{offset}},0) THEN all_transactions_count ELSE 0 END)
   OVER () AS all_transactions_count,
   transactions_amount,
-  SUM(CASE WHEN R_ID IN ({{limit_partition}} + {{offset}},0) THEN all_transactions_amount ELSE 0 END)
+  SUM(CASE WHEN R_ID IN ({{limit}}+1 + {{offset}},0) THEN all_transactions_amount ELSE 0 END)
   OVER () AS all_transactions_amount
 FROM
   (SELECT
@@ -16,14 +16,14 @@ FROM
      all_transactions_amount
    FROM
      (SELECT R_ID,
-        CASE WHEN R_ID = {{limit_partition}} + {{offset}}
+        CASE WHEN R_ID = {{limit}}+1 + {{offset}}
           THEN 'all-other'
         ELSE {{facet}} END           AS {{facet}},
-        CASE WHEN R_ID = {{limit_partition}} + {{offset}}
+        CASE WHEN R_ID = {{limit}}+1 + {{offset}}
           THEN all_transactions_count - r_sum_count
         ELSE transactions_count END  AS transactions_count,
         all_transactions_count,
-        CASE WHEN R_ID = {{limit_partition}} + {{offset}}
+        CASE WHEN R_ID = {{limit}}+1 + {{offset}}
           THEN all_transactions_amount - r_sum_amount
         ELSE transactions_amount END AS transactions_amount,
         all_transactions_amount
@@ -63,7 +63,7 @@ FROM
               GROUP BY {{facet}}
             )
           ORDER BY transactions_count {{order}}
-          LIMIT {{limit_partition}}
+          LIMIT {{limit}}+1
           OFFSET {{offset}}
         ))
    UNION ALL
