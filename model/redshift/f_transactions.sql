@@ -3,9 +3,9 @@
 
 */
 
-DROP TABLE f_transactions_1;
+DROP TABLE f_transactions;
 
-CREATE TABLE f_transactions_1
+CREATE TABLE f_transactions
 (
   id                  VARCHAR(128)   NOT NULL PRIMARY KEY encode ZSTD,
   datetime            TIMESTAMP     NOT NULL encode ZSTD,
@@ -29,8 +29,3 @@ CREATE TABLE f_transactions_1
   distkey (account) INTERLEAVED sortkey (customer, datetime
 );
 
-insert into f_transactions_1
-    select * from f_transactions;
-
-drop table f_transactions_;
-alter table f_transactions_1 rename to f_transactions;

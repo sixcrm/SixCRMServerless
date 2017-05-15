@@ -23,3 +23,6 @@ CREATE TABLE f_events
   distkey (account
 ) INTERLEAVED sortkey (datetime
 );
+
+
+
