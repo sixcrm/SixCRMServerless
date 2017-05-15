@@ -2,6 +2,7 @@ SELECT
   affiliate,
   affiliate_count,
   sum_amount,
+  sum(sum_amount) over () as sum_total_amount,
   (affiliate_count * 100.0 / (sum(affiliate_count) OVER ())) AS affiliate_perc
 FROM
   (
