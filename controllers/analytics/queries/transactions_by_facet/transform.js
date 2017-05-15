@@ -9,6 +9,8 @@ module.exports = function(results, parameters){
 
     return new Promise((resolve, reject) => {
 
+        du.info(results);
+
         let facets = [];
 
         let count_sum = 0;
@@ -17,19 +19,25 @@ module.exports = function(results, parameters){
 
             results.forEach((result) => {
 
-                count_sum = parseInt(result.all_transactions);
+                count_sum = parseInt(result.all_transactions_count);
 
                 let facet_name = result[parameters.facet];
 
-                let total = Math.max(parseInt(result.all_transactions), 1);
+                let count_total = Math.max(parseInt(result.all_transactions_count), 1);
 
-                let percentage = mathutilities.formatToPercentage(mathutilities.safePercentage(result.transactions_count, total))+'%';
+                let count_percentage = mathutilities.formatToPercentage(mathutilities.safePercentage(result.transactions_count, count_total))+'%';
+
+                let amount_total = Math.max(parseFloat(result.all_transactions_amount), 1.0);
+
+                let amount_percentage = mathutilities.formatToPercentage(mathutilities.safePercentage(result.transactions_amount, amount_total))+'%';
 
                 facets.push(
                     {
                         facet: result[parameters.facet],
                         count: parseInt(result.transactions_count),
-                        percentage: percentage
+                        count_percentage: count_percentage,
+                        amount: parseFloat(result.transactions_amount),
+                        amount_percentage: amount_percentage
                     }
                 );
 

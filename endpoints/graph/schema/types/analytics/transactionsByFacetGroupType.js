@@ -16,9 +16,17 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The facet event count',
         },
-        percentage: {
+        count_percentage: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The facet event percentage',
+        },
+        amount: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The transaction facet sum amount',
+        },
+        amount_percentage: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The transaction facet amount percentage',
         }
     }),
     interfaces: []
