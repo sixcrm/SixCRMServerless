@@ -213,10 +213,10 @@ class userController extends entityController {
                     };
                     let proto_user_setting = {
                         id: email,
-                        notifications: {
+                        notifications: [{
                             name: "six",
                             receive: true
-                        }
+                        }]
                     };
 
                     proto_user = this.appendAlias(proto_user);
