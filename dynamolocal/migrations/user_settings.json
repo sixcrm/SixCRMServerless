@@ -61,7 +61,7 @@
         {
           "name": "email",
           "receive": true,
-          "data": "ljubomir@toptal.com"
+          "data": "nikola.bosic@toptal.com"
         },
         {
           "name": "sms",
@@ -74,8 +74,7 @@
         },
         {
           "name": "slack",
-          "receive": false,
-          "data": ""
+          "receive": false
         }
       ],
       "created_at":"2017-04-06T18:40:41.405Z",
