@@ -3,15 +3,16 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation {
-		createusersetting (usersetting: { id: \"super.user@test.com\", timezone:\"Europe/Athens\"}) {
+		createusersetting (usersetting: { id: \"super.user@test.com\", timezone:\"Europe/Athens\", notifications: [ { name: \"six\", receive: true } ]}) {
 			id,
             work_phone,
             cell_phone,
             timezone,
-            notification_sms,
-            notification_email,
-            notification_skype,
-            notification_slack_webhook,
+            notifications {
+                name,
+                receive,
+                data
+            },
 			created_at,
 			updated_at
 		}

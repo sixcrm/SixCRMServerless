@@ -2,6 +2,9 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
+
+let userNotificationSettingType = require('./userNotificationSettingType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'UserSetting',
@@ -23,21 +26,9 @@ module.exports.graphObj = new GraphQLObjectType({
             type: GraphQLString,
             description: 'Timezone.',
         },
-        notification_sms: {
-            type: GraphQLString,
-            description: 'SMS number for receiving notifications.',
-        },
-        notification_email: {
-            type: GraphQLString,
-            description: 'Email address for receiving notifications.',
-        },
-        notification_skype: {
-            type: GraphQLString,
-            description: 'Skype address for receiving notifications.',
-        },
-        notification_slack_webhook: {
-            type: GraphQLString,
-            description: 'Slack webhook for receiving notifications.',
+        notifications: {
+            type: new GraphQLList(userNotificationSettingType.graphObj),
+            description:'The settings for notifications.'
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),

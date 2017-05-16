@@ -8,10 +8,11 @@
 			work_phone,
             cell_phone,
             timezone,
-            notification_sms,
-            notification_email,
-            notification_skype,
-            notification_slack_webhook,
+            notifications {
+                name,
+                receive,
+                data
+            },
 			created_at,
 			updated_at
 		}
