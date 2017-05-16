@@ -2,10 +2,29 @@
 const _ = require('underscore');
 const fs = require('fs');
 const uuidV4 = require('uuid/v4');
+const AWS = require('aws-sdk');
+var pg = require('pg');
+
 
 const du = require('../../../../lib/debug-utilities.js');
 const randomutilities = require('../../../../lib/random.js');
 const timestamp = require('../../../../lib/timestamp.js');
+const s3utilities = require('../../../../lib/s3-utilities.js');
+const redshiftutilities =  require('../../../../lib/redshift-utilities.js');
+
+//Technical Debt:  Load the configuration file instead!
+process.env.redshift_user = 'admin';
+process.env.redshift_database = 'dev';
+process.env.redshift_password = 'Jagodica9';
+process.env.redshift_host = 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com';
+process.env.redshift_port = 5439;
+process.env.redshift_pool_max = 10;
+process.env.redshift_idle_timeout = 30000;
+
+//Technical Debt: Configure this
+const s3_bucket = 'sixcrm-redshift-staging';
+const s3_key = 'test_json_gen.json';
+
 
 process.env.SIX_VERBOSE = 2;
 
@@ -18,6 +37,8 @@ let end_datetime = process.argv[3];
 //validate the dates
 
 let configuration_object = require('./random-data-configuration.json');
+
+global.output_array = [];
 
 configuration_object.accounts.forEach((account_object) => {
 
@@ -39,11 +60,11 @@ configuration_object.accounts.forEach((account_object) => {
             session: session,
             campaign: campaign_object.id,
             affiliate: affiliate,
-            subffiliate_1: subaffiliates.subaffiliates_1,
-            subffiliate_2: subaffiliates.subaffiliates_2,
-            subffiliate_3: subaffiliates.subaffiliates_3,
-            subffiliate_4: subaffiliates.subaffiliates_4,
-            subffiliate_5: subaffiliates.subaffiliates_5,
+            subffiliate_1: subaffiliates.subaffiliate_1,
+            subffiliate_2: subaffiliates.subaffiliate_2,
+            subffiliate_3: subaffiliates.subaffiliate_3,
+            subffiliate_4: subaffiliates.subaffiliate_4,
+            subffiliate_5: subaffiliates.subaffiliate_5,
         };
 
         addEvent('click', event, account_object);
@@ -52,15 +73,16 @@ configuration_object.accounts.forEach((account_object) => {
 
 });
 
-//FINISH!
-//do the redshift transaaction (push to S3 bucket)
-//pushToS3(output_object);
+let s3_file_body = createS3File();
+
+pushToS3(s3_file_body, s3_bucket, s3_key).then(() => executeIngest(s3_bucket, s3_key));
+//Functions!
+
 
 function addEvent(event_type, event_object, account_object){
 
     if(randomutilities.randomProbability(account_object.spoofing_config.event_probabilities[event_type])){
 
-        du.info(event_type, event_object);
         event_object.type = event_type;
         event_object = updateEventTimestamp(event_type, event_object);
 
@@ -102,10 +124,59 @@ function addEvent(event_type, event_object, account_object){
 
 }
 
+function executeIngest(s3_bucket, s3_key){
+
+    du.debug('Execute Ingest');
+
+  //let redshiftClient = createRedshiftClient();
+
+  //Technical Debt:  Totally insecure.  Configure credentials!
+    let query = `COPY f_events FROM 's3://${s3_bucket}/${s3_key}' CREDENTIALS 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' MANIFEST json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`;
+
+    return redshiftutilities.query(query, [])
+  .then((results) => {
+      du.info('Successfully loaded data to Redshift');
+  }).catch((error) => {
+      throw error;
+  });
+
+}
+
+function pushToS3(file_body, s3_bucket, s3_key){
+
+    du.debug('Push to S3');
+
+    return s3utilities.bucket_exists(s3_bucket)
+  .then(() => {
+
+      let parameters = {Bucket: s3_bucket, Key: s3_key, Body: file_body};
+
+      return s3utilities.put_object(parameters)
+    .then(() => {
+        du.output("Successfully uploaded data to "+s3_bucket+"/"+s3_key);
+        return true;
+    })
+    .catch((error) => {
+        throw error;
+    });
+
+  })
+  .catch((error) => {
+      throw error;
+  });
+
+}
+
 //FINISH!
 function pushObject(event_object){
 
-    du.info(event_object);
+    global.output_array.push(JSON.stringify(event_object));
+
+}
+
+function createS3File(){
+
+    return global.output_array.join("\n");
 
 }
 
@@ -158,6 +229,7 @@ function selectSubAffiliate(name, subaffiliate_array, account_object){
 
     if(randomutilities.randomProbability(account_object.spoofing_config.affiliate_probabilities[name+'_probability'])){
 
+        //du.warning(subaffiliate_array);
         return randomutilities.selectRandomFromArray(subaffiliate_array);
 
     }else{
