@@ -122,10 +122,11 @@ class NotificationProvider {
                 "message": notification_parameters.message
             };
 
-            // Technical Debt: after we figure out where to read the settings from, update this to set the 'read_at'
-            // only if user chose not to receive Six notifications.
+            // If user does not want to receive 'six' notifications, mark it as already read.
+            if (!this.wantsToReceive('six', user_settings)) {
+                createNotification.read_at = timestamp.getISO8601();
+            }
 
-            // createNotification.read_at = timestamp.getISO8601();
 
             du.debug('About to create notification', createNotification);
 
@@ -137,16 +138,22 @@ class NotificationProvider {
 
                 if (_.contains(notificationTypes, notification.type)) {
 
-                    if (user_settings.notification_email) {
-                        notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
+                    if (this.wantsToReceive('email', user_settings)) {
+                        let email_address = this.settingsDataFor('email');
+
+                        notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
                     }
 
-                    if (user_settings.notification_sms){
-                        notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, user_settings.notification_sms));
+                    if (this.wantsToReceive('sms', user_settings)){
+                        let sms_number = this.settingsDataFor('sms');
+
+                        notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, sms_number));
                     }
 
-                    if (user_settings.notification_slack_webhook) {
-                        notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, user_settings.notification_slack_webhook));
+                    if (this.wantsToReceive('slack', user_settings)) {
+                        let slack_webhook = this.settingsDataFor('slack');
+
+                        notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, slack_webhook));
                     }
                 }
 
@@ -154,6 +161,18 @@ class NotificationProvider {
             });
         });
 
+    }
+
+    wantsToReceive(notification_type_name, user_settings) {
+        let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
+
+        return notification && notification.receive;
+    }
+
+    settingsDataFor(notification_type_name, user_settings) {
+        let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
+
+        return notification.data;
     }
 
     /**
