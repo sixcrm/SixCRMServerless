@@ -1,7 +1,7 @@
 SELECT
   {{facet}},
   events_count,
-  SUM(CASE WHEN R_ID IN ({{limit_partition}} + {{offset}},0) THEN all_events_count ELSE 0 END)
+  SUM(CASE WHEN R_ID IN ({{limit}}+1 + {{offset}},0) THEN all_events_count ELSE 0 END)
   OVER () AS all_events_count
 FROM
   (SELECT
@@ -11,10 +11,10 @@ FROM
      all_events_count
    FROM
      (SELECT R_ID,
-        CASE WHEN R_ID = {{limit_partition}} + {{offset}}
+        CASE WHEN R_ID = {{limit}}+1 + {{offset}}
           THEN 'all-other'
         ELSE {{facet}} END           AS {{facet}},
-        CASE WHEN R_ID = {{limit_partition}} + {{offset}}
+        CASE WHEN R_ID = {{limit}}+1 + {{offset}}
           THEN all_events_count - r_sum_count
         ELSE events_count END  AS events_count,
         all_events_count
@@ -45,7 +45,7 @@ FROM
               GROUP BY {{facet}}
             )
           ORDER BY events_count {{order}}
-          LIMIT {{limit_partition}}
+          LIMIT {{limit}}+1
           OFFSET {{offset}}
         ))
    UNION ALL
