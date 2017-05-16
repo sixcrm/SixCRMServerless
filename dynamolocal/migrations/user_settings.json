@@ -47,6 +47,39 @@
       ],
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"
+    },
+    {
+      "id": "nikola.bosic@toptal.com",
+      "work_phone": "+38121000000",
+      "cell_phone": "+381630000000",
+      "timezone": "Europe/Belgrade",
+      "notifications": [
+        {
+          "name": "six",
+          "receive": true
+        },
+        {
+          "name": "email",
+          "receive": true,
+          "data": "ljubomir@toptal.com"
+        },
+        {
+          "name": "sms",
+          "receive": true,
+          "data": "+381630000000"
+        },
+        {
+          "name": "skype",
+          "receive": false
+        },
+        {
+          "name": "slack",
+          "receive": false,
+          "data": ""
+        }
+      ],
+      "created_at":"2017-04-06T18:40:41.405Z",
+      "updated_at":"2017-04-06T18:41:12.521Z"
     }
   ]
 }
