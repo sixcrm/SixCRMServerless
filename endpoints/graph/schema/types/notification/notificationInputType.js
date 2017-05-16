@@ -9,6 +9,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         id:			{ type: GraphQLString },
         user:		{ type: new GraphQLNonNull(GraphQLString) },
         account:	{ type: new GraphQLNonNull(GraphQLString) },
+        title:   	{ type: new GraphQLNonNull(GraphQLString) },
         type: 	    { type: new GraphQLNonNull(GraphQLString) },
         action: 	{ type: new GraphQLNonNull(GraphQLString) },
         message:	{ type: new GraphQLNonNull(GraphQLString) },

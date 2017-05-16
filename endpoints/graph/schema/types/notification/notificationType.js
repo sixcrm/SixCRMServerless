@@ -19,6 +19,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the account notification is associated with.',
         },
+
         type: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The type of the notification.',
@@ -27,7 +28,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The action associated with the notification.',
         },
-        title:{
+        title: {
             type: GraphQLString,
             description: 'Notification title'
         },

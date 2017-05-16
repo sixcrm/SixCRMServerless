@@ -4,6 +4,7 @@ const site_config = yaml.safeLoad(fs.readFileSync(__dirname+`/../../config/${pro
 
 process.env.users_table = site_config.dynamodb.users_table;
 process.env.user_acls_table = site_config.dynamodb.user_acls_table;
+process.env.user_settings_table = site_config.dynamodb.user_settings_table;
 process.env.notifications_table = site_config.dynamodb.notifications_table;
 process.env.notification_settings_table = site_config.dynamodb.notification_settings_table;
 process.env.notifications_read_table = site_config.dynamodb.notifications_read_table;
@@ -12,6 +13,7 @@ process.env.search_indexing_queue_url = site_config.sqs.search_indexing_queue_ur
 
 if (process.env.stage === 'local') {
     process.env.users_table = 'local' + process.env.users_table;
+    process.env.user_settings_table = 'local' + process.env.user_settings_table;
     process.env.user_acls_table = 'local' + process.env.user_acls_table;
     process.env.notifications_table = 'local' + process.env.notifications_table;
     process.env.notifications_read_table = 'local' + process.env.notifications_read_table;
@@ -62,12 +64,16 @@ let notification_object = {
     user: user,
     type: 'dummy',
     action: 'test',
+    title: 'testing notification',
     message: message
 };
 
-NotificationProvider.createNotificationForAccountAndUser(notification_object);
+NotificationProvider.createNotificationForAccountAndUser(notification_object).then(() => {
+    du.output('Attempted to insert and send a notification', notification_object);
+}).catch((error) => {
+    du.error('Error while inserting or sending.', error);
+});
 
-du.output('Attempted to insert and send a notification', notification_object);
 
 function printHelp() {
     du.output('Helper for inserting notification for the given account and user. Notifications are sent via all channels.');

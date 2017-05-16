@@ -97,7 +97,7 @@ class NotificationProvider {
         return Promise.all([
             notificationSettingController.get(user),
             userSettingController.get(user)
-        ]).get(user).then((settings) => {
+        ]).then((settings) => {
 
             let notification_settings = settings[0];
             let user_settings = settings[1];
@@ -119,6 +119,7 @@ class NotificationProvider {
                 "account": account,
                 "type": notification_parameters.type,
                 "action": notification_parameters.action,
+                "title": notification_parameters.title,
                 "message": notification_parameters.message
             };
 

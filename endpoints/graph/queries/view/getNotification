@@ -8,6 +8,7 @@
             type,
             action,
             message,
+            title,
             created_at,
             read_at,
             updated_at

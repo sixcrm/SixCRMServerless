@@ -26,6 +26,7 @@ describe('lib/notification-utilities', () => {
             account: '*',
             type: 'any',
             action: 'any',
+            title: 'any',
             message: 'any'
         };
 
@@ -94,6 +95,7 @@ describe('lib/notification-utilities', () => {
             account: '*',
             type: 'any',
             action: 'any',
+            title: 'any',
             message: 'any'
         };
 
@@ -147,6 +149,7 @@ describe('lib/notification-utilities', () => {
             user: 'user@example.com',
             type: 'any',
             action: 'any',
+            title: 'any',
             message: 'any'
         };
 
