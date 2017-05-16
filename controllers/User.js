@@ -216,6 +216,26 @@ class userController extends entityController {
                         notifications: [{
                             name: "six",
                             receive: true
+                        },
+                        {
+                            name: "email",
+                            receive: false
+                        },
+                        {
+                            name: "sms",
+                            receive: false
+                        },
+                        {
+                            name: "slack",
+                            receive: false
+                        },
+                        {
+                            name: "skype",
+                            receive: false
+                        },
+                        {
+                            name: "ios",
+                            receive: false
                         }]
                     };
 
