@@ -5,8 +5,8 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const _ = require('underscore');
 
-const tu = require('../../../../lib/test-utilities.js');
-const du = require('../../../../lib/debug-utilities.js');
+const tu = global.routes.include('lib','test-utilities.js');
+const du = global.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -44,7 +44,7 @@ entities.forEach((entity) => {
       it(entity.camel+' Page 1 JSON results', function (done) {
 
           var limit = 1;
-          let query_path = './endpoints/graph/queries/pagination/get'+entity.camel;
+          let query_path = global.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel);
           var raw_query = tu.getQuery(query_path);
           var query = raw_query.split('{argumentation}');
           var query_arguments = 'pagination:{limit:"'+limit+'"}';
@@ -53,7 +53,7 @@ entities.forEach((entity) => {
 
           var this_request = request(endpoint);
 
-          var account = tu.getAccount('./endpoints/graph/queries/pagination/get'+entity.camel);
+          var account = tu.getAccount(global.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel));
 
           du.debug('Query: ', query, 'Account: '+account, 'JWT: '+testing_jwt);
 
@@ -108,7 +108,7 @@ entities.forEach((entity) => {
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
 
-    du.debug(response.body);
+    						du.debug(response.body);
     						tu.assertResultSet(response, global.test_users[0].role);
 
     						if(response.body.data[entity.lower+'list'].pagination.count > 0){

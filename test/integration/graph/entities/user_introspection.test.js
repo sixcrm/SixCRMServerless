@@ -3,8 +3,9 @@ const chai = require('chai');
 const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
-const tu = require('../../../../lib/test-utilities.js');
-const du = require('../../../../lib/debug-utilities.js');
+
+const tu = global.routes.include('lib','test-utilities.js');
+const du = global.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -12,19 +13,19 @@ let endpoint = global.integration_test_config.endpoint;
 
 let entity = 'User Introspection';
 let tests = [{
-	name: "view",
-	query: "./endpoints/graph/queries/view/getUserIntrospection"
+    name: "view",
+    query: global.routes.path('handlers','endpoints/graph/queries/view/getUserIntrospection')
 }];
 
 let test_users = [
-	{
-		name: 'Known User',
-		email: 'super.user@test.com'
-	},
-	{
-		name: 'Unknown User',
-		email: 'unknown.user@test.com'
-	}
+    {
+        name: 'Known User',
+        email: 'super.user@test.com'
+    },
+    {
+        name: 'Unknown User',
+        email: 'unknown.user@test.com'
+    }
 ];
 
 du.output(endpoint);
@@ -34,21 +35,23 @@ let account = '*';
 
 describe('Graph '+entity+' Test', function() {
 
-	test_users.forEach((test_user) => {
+    test_users.forEach((test_user) => {
 
-		describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials.', function() {
+        describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials.', function() {
 
-			var test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
-			du.output(test_jwt);
+            var test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
 
-			tests.forEach((test) => {
+            du.output(test_jwt);
 
-				it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
+            tests.forEach((test) => {
 
-					var query = tu.getQuery(test.query);
-					du.output(query);
+                it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
 
-					this_request.post('graph/'+account)
+                    var query = tu.getQuery(test.query);
+
+                    du.output(query);
+
+                    this_request.post('graph/'+account)
 						.set('Authorization', test_jwt)
 						.send(query)
 						.expect(200)
@@ -57,16 +60,16 @@ describe('Graph '+entity+' Test', function() {
 						.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 						.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 						.end(function(err, response){
-							du.output(response.body);
-							assert.isObject(response.body.data);
-							du.output(response.body.data);
-							done();
-						});
-				});
-			});
+    du.output(response.body);
+    assert.isObject(response.body.data);
+    du.output(response.body.data);
+    done();
+});
+                });
+            });
 
-		});
+        });
 
-	});
+    });
 
 });
