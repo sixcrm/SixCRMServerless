@@ -101,7 +101,7 @@ class NotificationProvider {
             userSettingController.get(user)
         ]).then((settings) => {
 
-            let notification_settings = JSON.parse(settings[0]);
+            let notification_settings = JSON.parse(settings[0].settings);
             let user_settings = settings[1];
 
             if (notification_settings && notification_settings.notification_groups) {
@@ -112,8 +112,12 @@ class NotificationProvider {
                                 notificationTypes.push(notification.key);
                             }
                         })
+                    } else {
+                        du.warning('notifications in unexpected format', group.notifications);
                     }
                 });
+            } else {
+                du.warning('notification_settings in unexpected format', notification_settings);
             }
 
             let createNotification = {
