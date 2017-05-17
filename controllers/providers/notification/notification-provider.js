@@ -32,6 +32,9 @@ class NotificationProvider {
             return this.getAccountUsers(create_notification_object.account);
         }).then((users) => {
             if (!users || users.length < 1) {
+
+                du.debug('No users found of account ' + create_notification_object.account);
+
                 return false;
             }
 
@@ -42,7 +45,7 @@ class NotificationProvider {
                 let saveOperation = this.saveAndSendNotification(
                     create_notification_object,
                     create_notification_object.account,
-                    create_notification_object.user
+                    user
                 );
 
                 saveOperations.push(saveOperation);
@@ -93,13 +96,12 @@ class NotificationProvider {
 
         du.debug('Save and send notification.');
 
-
         return Promise.all([
             notificationSettingController.get(user),
             userSettingController.get(user)
         ]).then((settings) => {
 
-            let notification_settings = settings[0];
+            let notification_settings = JSON.parse(settings[0]);
             let user_settings = settings[1];
 
             if (notification_settings && notification_settings.notification_groups) {
@@ -165,7 +167,11 @@ class NotificationProvider {
     }
 
     wantsToReceive(notification_type_name, user_settings) {
+        du.highlight('receive?');
+
         let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
+
+        du.highlight(notification);
 
         return notification && notification.receive;
     }
@@ -243,7 +249,7 @@ class NotificationProvider {
             }
 
             if (userAcls) {
-                return userAcls.map(acl => acl.user);
+                return userAcls.useracls.map(acl => acl.user);
             } else {
                 return [];
             }

@@ -5,7 +5,7 @@ const validator = require('validator');
 
 const du = require('../../lib/debug-utilities.js');
 const permissionutilities = require('../../lib/permission-utilities.js');
-const notificationutilities = require('../../lib/notification-utilities');
+const notificationProvider = require('../providers/notification/notification-provider');
 
 const userController = require('../User.js');
 
@@ -269,7 +269,7 @@ module.exports = class endpointController {
         parameters.account = global.account;
 
 		// No need to validate input as it happens in the utilities.
-        return notificationutilities.createNotificationsForAccount(parameters);
+        return notificationProvider.createNotificationsForAccount(parameters);
 
     }
 

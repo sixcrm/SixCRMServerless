@@ -4,7 +4,7 @@ const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
 const du = require('../../lib/debug-utilities.js');
-const notificationutilities = require('../../lib/notification-utilities');
+const notificationProvider = require('../providers/notification/notification-provider');
 
 var sessionController = require('../../controllers/Session.js');
 var customerController = require('../../controllers/Customer.js');

@@ -9,7 +9,7 @@ var affiliateController = require('../../controllers/Affiliate.js');
 var campaignController = require('../../controllers/Campaign.js');
 var sessionController = require('../../controllers/Session.js');
 var endpointController = require('../../controllers/endpoints/endpoint.js');
-var notificationutilities = require('../../lib/notification-utilities');
+const notificationProvider = require('../providers/notification/notification-provider');
 
 class createLeadController extends endpointController{
 

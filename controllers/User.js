@@ -6,6 +6,7 @@ const du = require('../lib/debug-utilities.js');
 const mungeutilities = require('../lib/munge-utilities.js');
 const inviteutilities = require('../lib/invite-utilities.js');
 
+const notificationProvider = require('./providers/notification/notification-provider');
 const accountController = require('./Account.js');
 const userSettingController = require('./UserSetting.js');
 const roleController = require('./Role.js');
@@ -700,7 +701,15 @@ class userController extends entityController {
 
                 return inviteutilities.invite(invite_parameters).then((link) => {
 
-                    return resolve({link:link});
+                    return notificationProvider.createNotificationsForAccount({
+                        account: global.account,
+                        type: 'invitation_sent',
+                        action: link,
+                        title: 'Invitation Sent',
+                        message: `User with email ${userinvite.email} has been invited to account ${account.name}.`
+                    }).then(() => {
+                        return resolve({link:link});
+                    });
 
                 }).catch((error) => {
 
