@@ -1,8 +1,10 @@
 "use strict"
+require('../../routes.js');
 const AWS = require("aws-sdk");
 const _ = require('underscore');
-const du = require('../../lib/debug-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
+//Technical Debt:  This should use a lib here instead of making raw AWS calls
 let cs = new AWS.CloudSearch({
     region: 'us-east-1',
     apiVersion: '2013-01-01'

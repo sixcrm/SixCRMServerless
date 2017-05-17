@@ -1,6 +1,7 @@
 'use strict';
-const du = require('../../lib/debug-utilities.js');
-const dynamodeploymentutilities = require('../utilities/dynamo-deploy');
+require('../../routes.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const dynamodeploymentutilities = global.routes.include('deployment', 'utilities/dynamo-deploy');
 let environment = process.argv[2];
 
 //Technical Debt:  Validate the environment variable

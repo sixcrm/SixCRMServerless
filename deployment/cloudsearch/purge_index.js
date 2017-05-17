@@ -1,7 +1,8 @@
 "use strict"
+require('../../routes.js');
 const _ = require('underscore');
-const du = require('../../lib/debug-utilities.js');
-const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
 
 du.highlight('Executing CloudSearch Index Purge');
 
