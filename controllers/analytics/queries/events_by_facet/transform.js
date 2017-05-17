@@ -19,11 +19,11 @@ module.exports = function(results, parameters){
 
             results.forEach((result) => {
 
-                count_sum = parseInt(result.all_events);
+                count_sum = parseInt(result.all_events_count);
 
                 let facet_name = result[parameters.facet];
 
-                let total = Math.max(parseInt(result.all_events), 1);
+                let total = Math.max(parseInt(result.all_events_count), 1);
 
                 let percentage = mathutilities.formatToPercentage(mathutilities.safePercentage(result.events_count, total))+'%';
 
