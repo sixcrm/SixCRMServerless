@@ -17,7 +17,7 @@ CREATE TABLE f_activity
   associated_with  VARCHAR(128),
   accociated_with_type VARCHAR(128)
 )
-  distkey (actor) INTERLEAVED sortkey (datetime);
+  sortkey (datetime);
 
 
-COMMENT ON TABLE f_activity Is 'Fact table builed around activity';
+COMMENT ON TABLE f_activity Is 'Fact table builed around activities of actors';

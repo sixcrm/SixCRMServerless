@@ -39,7 +39,7 @@ FROM
                 sum(count(*))
                 OVER ( )    AS all_events_count
               FROM f_events
-              WHERE {{offset}}
+              WHERE 1
                     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
                     AND {{facet}} IS NOT NULL
               GROUP BY {{facet}}
@@ -55,7 +55,7 @@ FROM
        count(*)    AS events_count,
        {{offset}}           AS all_events_count
      FROM f_events
-     WHERE {{offset}}
+     WHERE 1
            AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
            AND {{facet}} IS NULL
      GROUP BY {{facet}}

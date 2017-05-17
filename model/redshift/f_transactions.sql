@@ -26,6 +26,6 @@ CREATE TABLE f_transactions
   subaffiliate_4      VARCHAR(128) encode ZSTD,
   subaffiliate_5      VARCHAR(128) encode ZSTD
 )
-  distkey (account) INTERLEAVED sortkey (customer, datetime
-);
+  sortkey (customer, datetime);
+
 
