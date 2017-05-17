@@ -6,3 +6,4 @@ handlers: /handlers/
 test: /test/
 model: /model/
 config: /config/
+deployment: /deployment/
