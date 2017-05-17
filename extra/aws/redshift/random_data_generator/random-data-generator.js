@@ -76,9 +76,8 @@ configuration_object.accounts.forEach((account_object) => {
 let s3_file_body = createS3File();
 
 pushToS3(s3_file_body, s3_bucket, s3_key).then(() => executeIngest(s3_bucket, s3_key));
+
 //Functions!
-
-
 function addEvent(event_type, event_object, account_object){
 
     if(randomutilities.randomProbability(account_object.spoofing_config.event_probabilities[event_type])){

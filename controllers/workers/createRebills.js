@@ -1,7 +1,7 @@
 'use strict';
-var rebillController = require('../Rebill.js');
-var productScheduleController = require('../ProductSchedule.js');
-var workerController = require('./worker.js');
+var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+var workerController = global.routes.include('controllers', 'workers/worker.js');
 
 class createRebillsController extends workerController {
 

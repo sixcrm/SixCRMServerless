@@ -1,9 +1,9 @@
 'use strict';
 var _ = require("underscore");
 
-var rebillController = require('../../controllers/Rebill.js');
-var transactionController = require('../../controllers/Transaction.js');
-var workerController = require('./worker.js');
+var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+var workerController = global.routes.include('controllers', 'workers/worker.js');
 
 class confirmShippedController extends workerController {
 

@@ -1,8 +1,8 @@
 'use strict';
 const _ = require("underscore");
-const du = require('../../lib/debug-utilities.js');
-const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
-const permissionutilities = require('../../lib/permission-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
+const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 
 class searchController {
 

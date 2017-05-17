@@ -1,4 +1,0 @@
-{
-	"body":"query { productlist { products { id } } }",
-	"Authorization":"ae31c39cb9c30a027cf6c0a612a813d33bc23b6e:1483824904139:476d523132b619457a726d1792baeaec8b1221d4"
-}

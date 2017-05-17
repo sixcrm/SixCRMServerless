@@ -1,10 +1,10 @@
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
-let EntityController = require('../../../controllers/Entity');
+let EntityController = global.routes.include('controllers','entities/Entity');
 let PermissionTestGenerators = require('../../unit/lib/permission-test-generators');
 
-describe('controllers/Entity.js', () => {
+xdescribe('controllers/Entity.js', () => {
     let entityController;
 
     before(() => {
@@ -123,7 +123,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -156,7 +156,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -180,7 +180,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -218,7 +218,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -265,7 +265,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -292,7 +292,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -316,7 +316,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -341,7 +341,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -375,7 +375,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -421,7 +421,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -445,7 +445,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -469,7 +469,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -493,7 +493,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -511,7 +511,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -535,7 +535,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -559,7 +559,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             console.log('ere');
@@ -580,7 +580,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -600,7 +600,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -623,7 +623,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -653,7 +653,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -686,7 +686,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -718,7 +718,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -738,7 +738,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -758,7 +758,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -778,7 +778,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when
@@ -798,7 +798,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = require('../../../controllers/Entity');
+            const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
             // when

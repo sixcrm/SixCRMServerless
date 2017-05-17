@@ -1,8 +1,8 @@
 'use strict';
-var timestamp = require('../../lib/timestamp.js');
+var timestamp = global.routes.include('lib', 'timestamp.js');
 
-var rebillController = require('../Rebill.js');
-var workerController = require('./worker.js');
+var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+var workerController = global.routes.include('controllers', 'workers/worker.js');
 
 class pickRebillController extends workerController {
 

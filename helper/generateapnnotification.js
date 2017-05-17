@@ -1,6 +1,7 @@
 'use strict'
-const apnutilities = require('../lib/apn-utilities');
-const du = require('../lib/debug-utilities.js');
+require('../routes.js');
+const apnutilities = global.routes.include('lib','apn-utilities');
+const du = global.routes.include('lib','debug-utilities.js');
 
 let message = process.argv[2];
 let user = process.argv[3];

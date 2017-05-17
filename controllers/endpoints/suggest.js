@@ -1,9 +1,9 @@
 'use strict';
 const _ = require("underscore");
-const du = require('../../lib/debug-utilities.js');
-const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
 
-var endpointController = require('./endpoint.js');
+var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 class suggestController extends endpointController {
 

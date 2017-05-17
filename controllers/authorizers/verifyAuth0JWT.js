@@ -1,7 +1,7 @@
 'use strict'
 const _ = require("underscore");
 const jwt = require("jsonwebtoken");
-const du = require('../../lib/debug-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
 class verifyAuth0JWTController {
 

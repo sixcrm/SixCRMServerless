@@ -3,11 +3,11 @@
 const _ = require("underscore");
 const validator = require('validator');
 
-const du = require('../../lib/debug-utilities.js');
-const permissionutilities = require('../../lib/permission-utilities.js');
-const notificationProvider = require('../providers/notification/notification-provider');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
+const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 
-const userController = require('../User.js');
+const userController = global.routes.include('controllers', 'entities/User.js');
 
 module.exports = class endpointController {
 

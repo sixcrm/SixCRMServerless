@@ -3,17 +3,17 @@ const _ = require("underscore");
 const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
-const du = require('../../lib/debug-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
-var sessionController = require('../../controllers/Session.js');
-var customerController = require('../../controllers/Customer.js');
-var productScheduleController = require('../../controllers/ProductSchedule.js');
-var campaignController = require('../../controllers/Campaign.js');
-var transactionController = require('../../controllers/Transaction.js');
-var creditCardController = require('../../controllers/CreditCard.js');
-var loadBalancerController = require('../../controllers/LoadBalancer.js');
-var rebillController = require('../../controllers/Rebill.js');
-var endpointController = require('../../controllers/endpoints/endpoint.js');
+var sessionController = global.routes.include('controllers', 'entities/Session.js');
+var customerController = global.routes.include('controllers', 'entities/Customer.js');
+var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
+var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 class createOrderController extends endpointController{
 
@@ -91,7 +91,7 @@ class createOrderController extends endpointController{
             var order_schema;
 
             try{
-                order_schema = require('../../model/order');
+                order_schema = global.routes.include('model', 'order');
             } catch(e){
                 return reject(new Error('Unable to load validation schemas.'));
             }

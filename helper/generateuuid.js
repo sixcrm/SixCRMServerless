@@ -1,7 +1,10 @@
 'use strict'
 const uuidV4 = require('uuid/v4');
 const _ = require('underscore');
-const du = require('../lib/debug-utilities.js');
+
+require('../routes.js');
+
+const du = global.routes.include('lib','debug-utilities.js');
 
 process.env.SIX_VERBOSE = 2;
 

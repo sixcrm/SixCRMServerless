@@ -1,8 +1,8 @@
 'use strict';
 let _ = require('underscore');
-let mathutilities = require('../../../../lib/math-utilities.js');
-let du = require('../../../../lib/debug-utilities.js');
-let timestamp = require('../../../../lib/timestamp.js');
+let mathutilities = global.routes.include('lib', 'math-utilities.js');
+let du = global.routes.include('lib', 'debug-utilities.js');
+let timestamp = global.routes.include('lib', 'timestamp.js');
 
 module.exports = function(results, parameters){
 

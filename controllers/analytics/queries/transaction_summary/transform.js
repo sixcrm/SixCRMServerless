@@ -1,5 +1,5 @@
 'use strict';
-let du = require('../../../../lib/debug-utilities.js');
+let du = global.routes.include('lib', 'debug-utilities.js');
 
 module.exports = function(results, parameters){
 

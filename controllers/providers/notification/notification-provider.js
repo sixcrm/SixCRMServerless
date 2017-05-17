@@ -2,17 +2,17 @@
 const _ = require('underscore');
 const Validator = require('jsonschema').Validator;
 
-const du = require('../../../lib/debug-utilities');
-const permissionUtils = require('../../../lib/permission-utilities');
-const emailNotificationUtils = require('../../../lib/email-notification-utilities');
-const smsNotificationUtils = require('../../../lib/sms-notification-utilities');
-const slackNotificationUtils = require('../../../lib/slack-notification-utilities');
-const timestamp = require('../../../lib/timestamp');
+const du = global.routes.include('lib','debug-utilities');
+const permissionUtils = global.routes.include('lib','permission-utilities');
+const emailNotificationUtils = global.routes.include('lib','email-notification-utilities');
+const smsNotificationUtils = global.routes.include('lib','sms-notification-utilities');
+const slackNotificationUtils = global.routes.include('lib','slack-notification-utilities');
+const timestamp = global.routes.include('lib','timestamp');
 
-const notificationController = require('../../Notification');
-const notificationSettingController = require('../../NotificationSetting');
-const userSettingController = require('../../UserSetting');
-const userAclController = require('../../UserACL');
+const notificationController = global.routes.include('controllers', 'entities/Notification');
+const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+const userAclController = global.routes.include('controllers', 'entities/UserACL');
 
 class NotificationProvider {
 
@@ -226,7 +226,7 @@ class NotificationProvider {
         let schema;
 
         try{
-            schema = require('../../../model/actions/create_notification.json');
+            schema = global.routes.include('model','actions/create_notification.json');
         } catch(e){
             return Promise.reject(new Error('Unable to load validation schemas.'));
         }

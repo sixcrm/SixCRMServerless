@@ -1,7 +1,7 @@
 'use strict';
 let _ = require('underscore');
-let du = require('../../../../lib/debug-utilities.js');
-let paginationutilities = require('../../../../lib/pagination-utilities.js');
+let du = global.routes.include('lib', 'debug-utilities.js');
+let paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
 
 module.exports = function(results, parameters){
 

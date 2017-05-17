@@ -2,9 +2,9 @@
 const _ = require("underscore");
 const graphql =  require('graphql').graphql;
 
-const du = require('../../lib/debug-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
-let userController = require('../User.js');
+let userController = global.routes.include('controllers', 'entities/User.js');
 
 class graphController {
 
@@ -188,7 +188,7 @@ class graphController {
 
         return new Promise((resolve, reject) => {
 
-            var SixSchema = require('../../endpoints/graph/schema');
+            var SixSchema = global.routes.include('handlers', 'endpoints/graph/schema');
 
             graphql(SixSchema, query).then((result) => {
 

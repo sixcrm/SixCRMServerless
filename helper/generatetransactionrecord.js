@@ -1,9 +1,11 @@
 'use strict'
-
-const du = require('../lib/debug-utilities.js');
-const random = require('../lib/random.js');
 const uuidV4 = require('uuid/v4');
-const timestamp = require('../lib/timestamp.js');
+
+require('../routes.js');
+
+const du = global.routes.include('lib','debug-utilities.js');
+const random = global.routes.include('lib','random.js');
+const timestamp = global.routes.include('lib','timestamp.js');
 
 setEnvironmentVariables();
 
@@ -40,6 +42,7 @@ function createRandomKinesisTransactionRecord(){
 
 function setEnvironmentVariables(){
 
+    process.env.SIX_VERBOSE = 2;
     process.env.kinesis_firehose_transactions_stream = 'six-development-transactions';
     process.env.aws_region = 'us-east-1';
 
