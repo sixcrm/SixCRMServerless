@@ -91,15 +91,18 @@ class NotificationProvider {
 
     }
 
+    /**
+     * Save given notification in the system, and send it though all channels, respecting user settings.
+     */
     saveAndSendNotification(notification_parameters, account, user) {
         let notificationTypes = ['dummy']; // 'dummy' is used in helper utilities
 
         du.debug('Save and send notification.');
 
         return Promise.all([
-            notificationSettingController.get(user),
-            userSettingController.get(user),
-            notificationSettingController.getDefaultProfile(),
+            notificationSettingController.get(user), // notification settings
+            userSettingController.get(user), // user settings
+            notificationSettingController.getDefaultProfile(), // default user settings
         ]).then((settings) => {
 
             let notification_settings = null;
@@ -109,12 +112,20 @@ class NotificationProvider {
             }
 
             let user_settings = settings[1];
+
+            if (!user_settings) {
+                du.error(`No user settings exist for user '${user}'`);
+                return;
+            }
+
             let default_notification_settings = settings[2];
 
+            // If no valid notification settings exist use defaults.
             if (!notification_settings || !notification_settings.notification_groups) {
                 notification_settings = default_notification_settings;
             }
 
+            // Gather notifications types that the user wanted to receive notification for.
             notification_settings.notification_groups.forEach((group) => {
                 if (group && group.notifications) {
                     group.notifications.forEach((notification) => {
@@ -149,8 +160,10 @@ class NotificationProvider {
 
                 let notificationSendOperations = [];
 
+                // If user wanted to receive this type of notification.
                 if (_.contains(notificationTypes, notification.type)) {
 
+                    // If user wanted to receive through this channel.
                     if (this.wantsToReceive('email', user_settings)) {
                         let email_address = this.settingsDataFor('email', user_settings);
 
@@ -176,6 +189,11 @@ class NotificationProvider {
 
     }
 
+    /**
+     * Whether user wants to receive messages through this channel.
+     * @param notification_type_name Channel name ('six' | 'email' | 'sms' | 'slack' | 'skype' | 'ios')
+     * @param user_settings
+     */
     wantsToReceive(notification_type_name, user_settings) {
         let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
 
@@ -184,6 +202,11 @@ class NotificationProvider {
         return notification && notification.receive;
     }
 
+    /**
+     * Settings data for the given name,
+     * @param notification_type_name Channel name ('six' | 'email' | 'sms' | 'slack' | 'skype' | 'ios')
+     * @param user_settings
+     */
     settingsDataFor(notification_type_name, user_settings) {
         let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
 
