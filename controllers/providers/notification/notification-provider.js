@@ -116,12 +116,14 @@ class NotificationProvider {
             }
 
             notification_settings.notification_groups.forEach((group) => {
-                if (group.notifications) {
+                if (group && group.notifications) {
                     group.notifications.forEach((notification) => {
                         if (notification.default) {
                             notificationTypes.push(notification.key);
                         }
                     })
+                } else {
+                    du.warning('Notification group in unexpected format', group);
                 }
             });
 
@@ -150,19 +152,19 @@ class NotificationProvider {
                 if (_.contains(notificationTypes, notification.type)) {
 
                     if (this.wantsToReceive('email', user_settings)) {
-                        let email_address = this.settingsDataFor('email');
+                        let email_address = this.settingsDataFor('email', user_settings);
 
                         notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
                     }
 
                     if (this.wantsToReceive('sms', user_settings)){
-                        let sms_number = this.settingsDataFor('sms');
+                        let sms_number = this.settingsDataFor('sms', user_settings);
 
                         notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, sms_number));
                     }
 
                     if (this.wantsToReceive('slack', user_settings)) {
-                        let slack_webhook = this.settingsDataFor('slack');
+                        let slack_webhook = this.settingsDataFor('slack', user_settings);
 
                         notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, slack_webhook));
                     }
@@ -175,8 +177,6 @@ class NotificationProvider {
     }
 
     wantsToReceive(notification_type_name, user_settings) {
-        du.highlight('receive?');
-
         let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
 
         du.highlight(notification);
