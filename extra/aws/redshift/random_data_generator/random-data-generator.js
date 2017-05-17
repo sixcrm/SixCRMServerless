@@ -76,9 +76,8 @@ configuration_object.accounts.forEach((account_object) => {
 let s3_file_body = createS3File();
 
 pushToS3(s3_file_body, s3_bucket, s3_key).then(() => executeIngest(s3_bucket, s3_key));
+
 //Functions!
-
-
 function addEvent(event_type, event_object, account_object){
 
     if(randomutilities.randomProbability(account_object.spoofing_config.event_probabilities[event_type])){
@@ -126,43 +125,43 @@ function addEvent(event_type, event_object, account_object){
 
 function executeIngest(s3_bucket, s3_key){
 
-    du.debug('Execute Ingest');
+  du.debug('Execute Ingest');
 
   //let redshiftClient = createRedshiftClient();
 
   //Technical Debt:  Totally insecure.  Configure credentials!
-    let query = `COPY f_events FROM 's3://${s3_bucket}/${s3_key}' CREDENTIALS 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' MANIFEST json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`;
+  let query = `COPY f_events FROM 's3://${s3_bucket}/${s3_key}' CREDENTIALS 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' MANIFEST json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`;
 
-    return redshiftutilities.query(query, [])
+  return redshiftutilities.query(query, [])
   .then((results) => {
-      du.info('Successfully loaded data to Redshift');
+    du.info('Successfully loaded data to Redshift');
   }).catch((error) => {
-      throw error;
+    throw error;
   });
 
 }
 
 function pushToS3(file_body, s3_bucket, s3_key){
 
-    du.debug('Push to S3');
+  du.debug('Push to S3');
 
-    return s3utilities.bucket_exists(s3_bucket)
+  return s3utilities.bucket_exists(s3_bucket)
   .then(() => {
 
-      let parameters = {Bucket: s3_bucket, Key: s3_key, Body: file_body};
+    let parameters = {Bucket: s3_bucket, Key: s3_key, Body: file_body};
 
-      return s3utilities.put_object(parameters)
+    return s3utilities.put_object(parameters)
     .then(() => {
-        du.output("Successfully uploaded data to "+s3_bucket+"/"+s3_key);
-        return true;
+      du.output("Successfully uploaded data to "+s3_bucket+"/"+s3_key);
+      return true;
     })
     .catch((error) => {
-        throw error;
+      throw error;
     });
 
   })
   .catch((error) => {
-      throw error;
+    throw error;
   });
 
 }
@@ -170,13 +169,13 @@ function pushToS3(file_body, s3_bucket, s3_key){
 //FINISH!
 function pushObject(event_object){
 
-    global.output_array.push(JSON.stringify(event_object));
+  global.output_array.push(JSON.stringify(event_object));
 
 }
 
 function createS3File(){
 
-    return global.output_array.join("\n");
+  return global.output_array.join("\n");
 
 }
 

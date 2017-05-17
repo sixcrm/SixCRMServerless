@@ -42,7 +42,7 @@ functions:
 ########################
 
   verifysignature:
-    handler: authorizers/verifysignature/handler.verifysignature
+    handler: handlers/authorizers/verifysignature/handler.verifysignature
     environment:
       access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
@@ -50,7 +50,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   verifytransactionjwt:
-    handler: authorizers/verifytransactionjwt/handler.verifyjwt
+    handler: handlers/authorizers/verifytransactionjwt/handler.verifyjwt
     environment:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
@@ -59,7 +59,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   verifyauth0jwt:
-    handler: authorizers/verifyauth0jwt/handler.verifyjwt
+    handler: handlers/authorizers/verifyauth0jwt/handler.verifyjwt
     environment:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       secret_key: ${file(./config/${opt:stage}/site.yml):jwt.auth0.secret_key}
@@ -72,7 +72,7 @@ functions:
 ########################
 
   graph:
-    handler: endpoints/graph/handler.graph
+    handler: handlers/endpoints/graph/handler.graph
     events:
       - http:
           path: graph/{account}
@@ -136,7 +136,7 @@ functions:
 # Movement Managers
 
   billtohold:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
@@ -149,7 +149,7 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billtohold}
 
   recovertohold:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: cron(0 1 ? * FRI *)
@@ -161,7 +161,7 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
 
   holdtopending:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
@@ -174,7 +174,7 @@ functions:
       failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
 
   pendingfailedtopending:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(6 hours)
@@ -186,7 +186,7 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
 
   pendingtoshipped:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
@@ -198,7 +198,7 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
 
   shippedtodelivered:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
@@ -212,7 +212,7 @@ functions:
 # Archive Methods (Exit Points)
 
   deliveredtoarchive:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
@@ -225,7 +225,7 @@ functions:
       archivefilter: 'ALL'
 
   holdtoarchive:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
@@ -237,7 +237,7 @@ functions:
       archivefilter: 'NOSHIP'
 
   rebilltoarchive:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
@@ -249,7 +249,7 @@ functions:
       archivefilter: 'ALL'
 
   recovertoarchive:
-    handler: workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(6 hours)
@@ -261,7 +261,7 @@ functions:
       archivefilter: 'TWOATTEMPTS'
 
   indextoarchive:
-    handler: workers/forwardmessages/handler.forwardmessages
+    handler: handlers/workers/forwardmessages/handler.forwardmessages
     events:
       - schedule:
           rate: rate(1 minute)
@@ -275,7 +275,7 @@ functions:
 # Workers
 
   sesnotifications:
-    handler: workers/sesnotifications/handler.sesnotifications
+    handler: handlers/workers/sesnotifications/handler.sesnotifications
     events:
       - sns:
           topicName: SESNotifications
@@ -286,7 +286,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   slackalarm:
-    handler: workers/slackalarm/exports.handler
+    handler: handlers/workers/slackalarm/exports.handler
     events:
       - sns:
           topicName: SlackAlarm
@@ -297,7 +297,7 @@ functions:
       kmsEncryptedHookUrl: AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ==
 
   indexentities:
-    handler: workers/indexentities/handler.indexentities
+    handler: handlers/workers/indexentities/handler.indexentities
     events:
       - schedule:
           rate: rate(1 minute)
@@ -306,7 +306,7 @@ functions:
       stage: ${opt:stage}
 
   createrebills:
-    handler: workers/createrebills/handler.createrebills
+    handler: handlers/workers/createrebills/handler.createrebills
     events:
       - schedule:
           rate: rate(2 hours)
@@ -320,7 +320,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   pickrebill:
-    handler: workers/pickrebill/handler.pickrebill
+    handler: handlers/workers/pickrebill/handler.pickrebill
     events:
       - schedule:
           rate: rate(2 hours)
@@ -332,7 +332,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   processbilling:
-    handler: workers/processbilling/handler.processbilling
+    handler: handlers/workers/processbilling/handler.processbilling
     environment:
       stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
@@ -352,7 +352,7 @@ functions:
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
 
   shipproduct:
-    handler: workers/shipproduct/handler.shipproduct
+    handler: handlers/workers/shipproduct/handler.shipproduct
     environment:
       stage: ${opt:stage}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
@@ -363,7 +363,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   confirmshipped:
-    handler: workers/confirmshipped/handler.confirmshipped
+    handler: handlers/workers/confirmshipped/handler.confirmshipped
     environment:
       stage: ${opt:stage}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
@@ -373,7 +373,7 @@ functions:
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   confirmdelivered:
-    handler: workers/confirmdelivered/handler.confirmdelivered
+    handler: handlers/workers/confirmdelivered/handler.confirmdelivered
     environment:
       stage: ${opt:stage}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
@@ -385,7 +385,7 @@ functions:
       usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
 
   archivedelivered:
-    handler: workers/archive/handler.archive
+    handler: handlers/workers/archive/handler.archive
     environment:
       stage: ${opt:stage}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
@@ -396,7 +396,7 @@ functions:
       archivefilter: 'ALL'
 
   archivehold:
-    handler: workers/archive/handler.archive
+    handler: handlers/workers/archive/handler.archive
     environment:
       stage: ${opt:stage}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
@@ -407,7 +407,7 @@ functions:
       archivefilter: 'NOSHIP'
 
   archiverecover:
-    handler: workers/archive/handler.archive
+    handler: handlers/workers/archive/handler.archive
     environment:
       stage: ${opt:stage}
       rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
@@ -422,7 +422,7 @@ functions:
 ########################
 
   acquiretoken:
-    handler: endpoints/acquiretoken/handler.acquiretoken
+    handler: handlers/endpoints/acquiretoken/handler.acquiretoken
     events:
       - http:
          path: token/acquire/{account}
@@ -442,7 +442,7 @@ functions:
       stage: ${opt:stage}
 
   createlead:
-    handler: endpoints/createlead/handler.createlead
+    handler: handlers/endpoints/createlead/handler.createlead
     events:
       - http:
          path: lead/create/{account}
@@ -467,7 +467,7 @@ functions:
         stage: ${opt:stage}
 
   createorder:
-    handler: endpoints/createorder/handler.createorder
+    handler: handlers/endpoints/createorder/handler.createorder
     events:
       - http:
          path: order/create/{account}
@@ -503,7 +503,7 @@ functions:
         stage: ${opt:stage}
 
   createupsell:
-    handler: endpoints/createupsell/handler.createupsell
+    handler: handlers/endpoints/createupsell/handler.createupsell
     events:
       - http:
          path: upsell/create/{account}
@@ -539,7 +539,7 @@ functions:
         stage: ${opt:stage}
 
   confirmorder:
-    handler: endpoints/confirmorder/handler.confirmorder
+    handler: handlers/endpoints/confirmorder/handler.confirmorder
     events:
       - http:
          path: order/confirm/{account}

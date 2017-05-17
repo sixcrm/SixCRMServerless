@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 const _    = require("underscore");
 var util   = require('util');
 var AWS    = require('aws-sdk');
-var timestamp = require('../lib/timestamp.js');
+var timestamp = global.routes.include('lib','timestamp.js');
 
 /*
 
@@ -43,9 +43,9 @@ process.env = {
     "pending_failed_queue_url"    : 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending-failed',
     "shipped_queue_url"           : 'https://sqs.us-east-1.amazonaws.com/068070110666/development-shipped',
     "delivered_queue_url"         : 'https://sqs.us-east-1.amazonaws.com/068070110666/development-delivered',
-// Wanted in shipProduct worker and forwardMessage worker:    
+// Wanted in shipProduct worker and forwardMessage worker:
     //"origin_queue_url"            : 'https://sqs.us-east-1.amazonaws.com/068070110666/development-origin',
-    
+
     // dynamodb configuration
     'endpoint'                    : 'http://localhost:8001',
     'dynamo_endpoint'             : 'http://localhost:8001',
@@ -64,22 +64,22 @@ process.env = {
 // AWS will make a remote call through a link-local address (169.254.169.254)
 // for metadata. TODO: confirm
 var config = new AWS.Config({
-   accessKeyId     : 'fake', 
-   secretAccessKey : 'fake', 
+   accessKeyId     : 'fake',
+   secretAccessKey : 'fake',
    region          : 'localhost'
 });
 */
 
 before(function(done) {
-	
-	//can these be set in the test themselves?		
+
+	//can these be set in the test themselves?
 	global.test_account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
 
     global.transaction_jwt = jwt.sign({user_id:'93b086b8-6343-4271-87d6-b2a00149f070'}, global.site_config.jwt.auth0.secret_key);
 
     done();
-    
-  //do some fixture loading etc here    
+
+  //do some fixture loading etc here
 });
 
 after(function(done) {

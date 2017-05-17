@@ -1,12 +1,12 @@
 'use strict'
 const _ = require("underscore");
 
-var timestamp = require('../../lib/timestamp.js');
-var signature = require('../../lib/signature.js');
-const du = require('../../lib/debug-utilities.js');
+var timestamp = global.routes.include('lib', 'timestamp.js');
+var signature = global.routes.include('lib', 'signature.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
-var userController = require('../../controllers/User.js');
-const accessKeyController = require('../../controllers/AccessKey.js');
+const userController = global.routes.include('controllers', 'entities/User.js');
+const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
 
 class verifySignatureController {
 
@@ -146,4 +146,3 @@ class verifySignatureController {
 }
 
 module.exports = new verifySignatureController();
-

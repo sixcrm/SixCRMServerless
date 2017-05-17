@@ -1,16 +1,16 @@
 'use strict';
 var _ = require("underscore");
 
-var timestamp = require('../../lib/timestamp.js');
+var timestamp = global.routes.include('lib', 'timestamp.js');
 
-var sessionController = require('../Session.js');
-var transactionController = require('../Transaction.js');
-var rebillController = require('../Rebill.js');
-var productScheduleController = require('../ProductSchedule.js');
-var productController = require('../Product.js');
-var loadBalancerController = require('../LoadBalancer.js');
-var creditCardController = require('../CreditCard.js');
-var workerController = require('./worker.js');
+var sessionController = global.routes.include('controllers', 'entities/Session.js');
+var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+var productController = global.routes.include('controllers', 'entities/Product.js');
+var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
+var workerController = global.routes.include('controllers', 'workers/worker.js');
 
 //Technical Debt:  This controller makes a lot of redundant database queries...  Needs a refactor.
 class processBillingController extends workerController {

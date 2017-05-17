@@ -109,5 +109,3 @@ function indexDocuments() {
         });
     });
 }
-
-

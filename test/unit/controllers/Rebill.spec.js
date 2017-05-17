@@ -31,7 +31,7 @@ describe('controllers/Rebill.js', () => {
         let rebillController;
 
         before(() => {
-            rebillController = require('../../../controllers/Rebill');
+            rebillController = global.routes.include('controllers','entities/Rebill');
         });
 
         it('should calculate rebill', () => {

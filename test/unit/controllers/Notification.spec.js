@@ -50,7 +50,7 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            let notificationController = require('../../../controllers/Notification');
+            let notificationController = global.routes.include('controllers','entities/Notification');
 
             // when
             return notificationController.numberOfUnseenNotifications().then((count) => {

@@ -1,5 +1,9 @@
+'use strict'
 const fs = require('fs');
 const yaml = require('js-yaml');
+
+require('../../routes.js');
+
 const site_config = yaml.safeLoad(fs.readFileSync(__dirname+`/../../config/${process.env.stage}/site.yml`, 'utf8'));
 
 process.env.users_table = site_config.dynamodb.users_table;
@@ -18,9 +22,9 @@ if (process.env.stage === 'local') {
     process.env.notification_settings_table = 'local' + process.env.notification_settings_table;
 }
 
-const NotificationProvider = require('../../controllers/providers/notification/notification-provider.js');
-const PermissionUtilities = require('../../lib/permission-utilities');
-const du = require('../../lib/debug-utilities.js');
+const NotificationProvider = global.routes.include('controllers','providers/notification/notification-provider.js');
+const PermissionUtilities = global.routes.include('lib','permission-utilities.js');
+const du = global.routes.include('lib','debug-utilities.js');
 
 PermissionUtilities.disableACLs();
 

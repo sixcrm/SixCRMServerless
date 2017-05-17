@@ -3,12 +3,12 @@ const _ = require('underscore');
 const fs = require('fs');
 const Validator = require('jsonschema').Validator;
 
-const timestamp = require('../../lib/timestamp.js');
-const du = require('../../lib/debug-utilities.js');
-const redshiftutilities = require('../../lib/redshift-utilities.js');
-const mathutilities =  require('../../lib/math-utilities.js');
+const timestamp = global.routes.include('lib', 'timestamp.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
+const mathutilities =  global.routes.include('lib', 'math-utilities.js');
 
-const cacheController = require('../Cache.js');
+const cacheController = global.routes.include('controllers', 'providers/Cache.js');
 //Technical Debt:  Create SQL Query Builder class and abstract the query building methods there.
 
 module.exports = class AnalyticsUtilities {

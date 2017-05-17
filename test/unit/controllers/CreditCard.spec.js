@@ -12,7 +12,7 @@ describe('controllers/CreditCard.js', () => {
             name: 'N',
             addres: 'A'
         };
-        let creditCardController = require('../../../controllers/CreditCard');
+        let creditCardController = global.routes.include('controllers','entities/CreditCard');
 
         // when
         let creditCardObject = creditCardController.createCreditCardObject(creditCardData);
