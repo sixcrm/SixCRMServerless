@@ -3,8 +3,8 @@ const chai = require('chai');
 const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
-const tu = require('../../../../lib/test-utilities.js');
-const du = require('../../../../lib/debug-utilities.js');
+const tu = global.routes.include('lib','test-utilities.js');
+const du = global.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -34,7 +34,7 @@ let account = {
     id: '*'
 };
 
-let test_query = './endpoints/graph/queries/analytics/getEventsByAffiliate';
+let test_query = global.routes.path('handlers','/endpoints/graph/queries/analytics/getEventsByAffiliate');
 
 let this_request = request(global.integration_test_config.endpoint);
 
