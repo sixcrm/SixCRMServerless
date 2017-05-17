@@ -2,7 +2,7 @@ let Signature = require('../../../lib/signature');
 let chai = require('chai');
 let expect = chai.expect;
 
-describe('lib/signature', () => {
+xdescribe('lib/signature', () => {
     describe('signature', () => {
 
         it('should create a signature', () => {

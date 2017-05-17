@@ -4,7 +4,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-describe('controllers/Rebill.js', () => {
+xdescribe('controllers/Rebill.js', () => {
     const oneDayInSeconds = 86400;
 
     function nowInSeconds() {

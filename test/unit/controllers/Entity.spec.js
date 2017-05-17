@@ -4,7 +4,7 @@ let expect = chai.expect;
 let EntityController = global.routes.include('controllers','entities/Entity');
 let PermissionTestGenerators = require('../../unit/lib/permission-test-generators');
 
-describe('controllers/Entity.js', () => {
+xdescribe('controllers/Entity.js', () => {
     let entityController;
 
     before(() => {

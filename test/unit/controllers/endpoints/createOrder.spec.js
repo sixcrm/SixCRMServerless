@@ -4,7 +4,7 @@ const PermissionTestGenerators = global.routes.include('test','unit/lib/permissi
 let chai = require('chai');
 let expect = chai.expect;
 
-describe('controllers/endpoints/createOrder.js', () => {
+xdescribe('controllers/endpoints/createOrder.js', () => {
     before(() => {
         mockery.enable({
             useCleanCache: true,
@@ -73,6 +73,7 @@ describe('controllers/endpoints/createOrder.js', () => {
 
 
         let endpointController = global.routes.include('controllers','endpoints/createOrder.js');
+
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available session.');
         });
@@ -121,6 +122,7 @@ describe('controllers/endpoints/createOrder.js', () => {
 
 
         let endpointController = global.routes.include('controllers','endpoints/createOrder');
+
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available campaign.');
         });
@@ -171,6 +173,7 @@ describe('controllers/endpoints/createOrder.js', () => {
 
 
         let endpointController = require('../../../../controllers/endpoints/createOrder');
+
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available creditcard.');
         });

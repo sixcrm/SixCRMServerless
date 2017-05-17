@@ -3,7 +3,7 @@ let PermissionTestGenerators = require('./permission-test-generators');
 let chai = require('chai');
 let expect = chai.expect;
 
-describe('lib/permission-utilities', () => {
+xdescribe('lib/permission-utilities', () => {
 
     beforeEach(() => {
         process.env.SIX_VERBOSE = 0; // increase this for debug messages
@@ -57,6 +57,7 @@ describe('lib/permission-utilities', () => {
             // given
             let anAction = anyAction;
             let anEntity = anyEntity;
+
             PermissionTestGenerators.givenUserWithAllowed(anAction, anEntity);
 
             // when
@@ -69,6 +70,7 @@ describe('lib/permission-utilities', () => {
         it('returns true when user has permissions over entity and the id matches with \'*\'', () => {
             // given
             let user = PermissionTestGenerators.givenAnyUser();
+
             user.acl[0].account.id = '*';
 
             // when
@@ -81,6 +83,7 @@ describe('lib/permission-utilities', () => {
         it('returns true when user has asterisk permission over entity', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithNoPermissions();
+
             user.acl[0].role.permissions.allow.push(`${anyEntity}/*`);
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -94,6 +97,7 @@ describe('lib/permission-utilities', () => {
         it('returns true when user has asterisk permission without entity', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithNoPermissions();
+
             user.acl[0].role.permissions.allow.push('*');
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -107,6 +111,7 @@ describe('lib/permission-utilities', () => {
         it('returns false when user has invalid permission over entity (too many parts)', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithNoPermissions();
+
             user.acl[0].role.permissions.allow.push(`${anyEntity}/${anyAction}/somethingInvalid`);
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -120,6 +125,7 @@ describe('lib/permission-utilities', () => {
         it('returns false when user has invalid permission over entity (without action)', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithNoPermissions();
+
             user.acl[0].role.permissions.allow.push(`${anyEntity}`);
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -133,6 +139,7 @@ describe('lib/permission-utilities', () => {
         it('returns false when user has invalid permission over entity (without action but with separator)', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithNoPermissions();
+
             user.acl[0].role.permissions.allow.push(`${anyEntity}/`);
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -146,6 +153,7 @@ describe('lib/permission-utilities', () => {
         it('returns false when user has no permissions over entity and the id matches with \'*\'', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithNoPermissions();
+
             user.acl[0].account.id = '*';
 
             // when
@@ -159,6 +167,7 @@ describe('lib/permission-utilities', () => {
             // given
             let anAction = anyAction;
             let anEntity = anyEntity;
+
             PermissionTestGenerators.givenUserWithNoPermissions();
 
             // when
@@ -172,6 +181,7 @@ describe('lib/permission-utilities', () => {
             // given
             let anAction = anyAction;
             let anEntity = anyEntity;
+
             PermissionTestGenerators.givenUserWithDenied(anAction, anEntity);
 
             // when
@@ -196,6 +206,7 @@ describe('lib/permission-utilities', () => {
         it('throws error when the ACL structure is missing role object', () => {
             // given
             let user = PermissionTestGenerators.givenAnyUser();
+
             delete user.acl[0].role;
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -211,6 +222,7 @@ describe('lib/permission-utilities', () => {
         it('throws error when the ACL structure is missing permissions object', () => {
             // given
             let user = PermissionTestGenerators.givenAnyUser();
+
             delete user.acl[0].role.permissions;
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -226,6 +238,7 @@ describe('lib/permission-utilities', () => {
         it('throws error when the ACL structure is missing allow object', () => {
             // given
             let user = PermissionTestGenerators.givenAnyUser();
+
             delete user.acl[0].role.permissions.allow;
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -241,6 +254,7 @@ describe('lib/permission-utilities', () => {
         it('throws error when the ACL account id is missing', () => {
             // given
             let user = PermissionTestGenerators.givenAnyUser();
+
             delete user.acl[0].account.id;
             PermissionTestGenerators.setGlobalUser(user);
 
@@ -400,6 +414,7 @@ describe('lib/permission-utilities', () => {
         it('allows user with anothe id when account id is \'*\'', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithAllowed('add', 'user');
+
             user.acl[0].account.id = '*';
             PermissionTestGenerators.setGlobalUser(user);
             global.account = 'anotherId';
@@ -425,6 +440,7 @@ describe('lib/permission-utilities', () => {
         it('denies when user and account don\'t match', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithAllowed('user', 'add');
+
             global.account = 'anotherId';
 
             // then

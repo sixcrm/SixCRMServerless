@@ -13,7 +13,7 @@ case "$2" in
 		TAGS=$(git describe --all --exact-match $GIT_COMMIT)
 		echo "Tags:"
 		echo $TAGS;
-		
+
 		echo "$TAGS" | grep -q "tags/v\d\+.*"
 		if [ $? -eq 0 ]; then
 		  echo "Version tag present.  Merging to production."

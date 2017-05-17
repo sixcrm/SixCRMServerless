@@ -1,7 +1,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 
-describe('controllers/CreditCard.js', () => {
+xdescribe('controllers/CreditCard.js', () => {
 
     it('creates credit card object', () => {
         // given

@@ -3,7 +3,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-describe('controllers/Notification.js', () => {
+xdescribe('controllers/Notification.js', () => {
 
     describe('count notifications', () => {
         before(() => {

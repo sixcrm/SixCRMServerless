@@ -7,7 +7,7 @@ const anyEffect = 'effect';
 const anyResource = 'resource';
 const anyUser = 'user';
 
-describe('lib/policy_response', () => {
+xdescribe('lib/policy_response', () => {
     describe('policy_response', () => {
 
         it('should generate a policy', () => {

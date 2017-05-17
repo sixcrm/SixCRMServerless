@@ -4,6 +4,7 @@ let expect = chai.expect;
 
 chai.Assertion.addProperty('uppercase', function () {
     let obj = this._obj;
+
     new chai.Assertion(obj).to.be.a('string');
 
     this.assert(
@@ -13,7 +14,7 @@ chai.Assertion.addProperty('uppercase', function () {
     );
 });
 
-describe('lib/random', () => {
+xdescribe('lib/random', () => {
 
     it('should create random string of given length', () => {
         expect(Random.createRandomString(5)).to.have.lengthOf(5);
