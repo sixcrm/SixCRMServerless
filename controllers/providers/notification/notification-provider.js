@@ -102,7 +102,12 @@ class NotificationProvider {
             notificationSettingController.getDefaultProfile(),
         ]).then((settings) => {
 
-            let notification_settings = JSON.parse(settings[0].settings);
+            let notification_settings = null;
+
+            if (settings[0] && settings[0].settings) {
+                notification_settings = JSON.parse(settings[0].settings);
+            }
+
             let user_settings = settings[1];
             let default_notification_settings = settings[2];
 
