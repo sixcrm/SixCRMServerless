@@ -98,27 +98,27 @@ class NotificationProvider {
 
         return Promise.all([
             notificationSettingController.get(user),
-            userSettingController.get(user)
+            userSettingController.get(user),
+            notificationSettingController.getDefaultProfile(),
         ]).then((settings) => {
 
             let notification_settings = JSON.parse(settings[0].settings);
             let user_settings = settings[1];
+            let default_notification_settings = settings[2];
 
-            if (notification_settings && notification_settings.notification_groups) {
-                notification_settings.notification_groups.forEach((group) => {
-                    if (group.notifications) {
-                        group.notifications.forEach((notification) => {
-                            if (notification.default) {
-                                notificationTypes.push(notification.key);
-                            }
-                        })
-                    } else {
-                        du.warning('notifications in unexpected format', group.notifications);
-                    }
-                });
-            } else {
-                du.warning('notification_settings in unexpected format', notification_settings);
+            if (!notification_settings || !notification_settings.notification_groups) {
+                notification_settings = default_notification_settings;
             }
+
+            notification_settings.notification_groups.forEach((group) => {
+                if (group.notifications) {
+                    group.notifications.forEach((notification) => {
+                        if (notification.default) {
+                            notificationTypes.push(notification.key);
+                        }
+                    })
+                }
+            });
 
             let createNotification = {
                 "user": user,
@@ -129,11 +129,10 @@ class NotificationProvider {
                 "message": notification_parameters.message
             };
 
-            // If user does not want to receive 'six' notifications, mark it as already read.
-            if (!this.wantsToReceive('six', user_settings)) {
+            // If user does not want to receive 'six' notifications, or this type of notification, mark it as already read.
+            if (!this.wantsToReceive('six', user_settings) || !_.contains(notificationTypes, notification_parameters.type)) {
                 createNotification.read_at = timestamp.getISO8601();
             }
-
 
             du.debug('About to create notification', createNotification);
 
