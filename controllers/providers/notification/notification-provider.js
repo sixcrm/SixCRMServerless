@@ -2,17 +2,17 @@
 const _ = require('underscore');
 const Validator = require('jsonschema').Validator;
 
-const du = require('../../../lib/debug-utilities');
-const permissionUtils = require('../../../lib/permission-utilities');
-const emailNotificationUtils = require('../../../lib/email-notification-utilities');
-const smsNotificationUtils = require('../../../lib/sms-notification-utilities');
-const slackNotificationUtils = require('../../../lib/slack-notification-utilities');
-const timestamp = require('../../../lib/timestamp');
+const du = global.routes.include('lib','debug-utilities');
+const permissionUtils = global.routes.include('lib','permission-utilities');
+const emailNotificationUtils = global.routes.include('lib','email-notification-utilities');
+const smsNotificationUtils = global.routes.include('lib','sms-notification-utilities');
+const slackNotificationUtils = global.routes.include('lib','slack-notification-utilities');
+const timestamp = global.routes.include('lib','timestamp');
 
-const notificationController = require('../../Notification');
-const notificationSettingController = require('../../NotificationSetting');
-const userSettingController = require('../../UserSetting');
-const userAclController = require('../../UserACL');
+const notificationController = global.routes.include('controllers', 'entities/Notification');
+const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+const userAclController = global.routes.include('controllers', 'entities/UserACL');
 
 class NotificationProvider {
 
@@ -32,6 +32,9 @@ class NotificationProvider {
             return this.getAccountUsers(create_notification_object.account);
         }).then((users) => {
             if (!users || users.length < 1) {
+
+                du.debug('No users found of account ' + create_notification_object.account);
+
                 return false;
             }
 
@@ -42,7 +45,7 @@ class NotificationProvider {
                 let saveOperation = this.saveAndSendNotification(
                     create_notification_object,
                     create_notification_object.account,
-                    create_notification_object.user
+                    user
                 );
 
                 saveOperations.push(saveOperation);
@@ -88,44 +91,66 @@ class NotificationProvider {
 
     }
 
+    /**
+     * Save given notification in the system, and send it though all channels, respecting user settings.
+     */
     saveAndSendNotification(notification_parameters, account, user) {
         let notificationTypes = ['dummy']; // 'dummy' is used in helper utilities
 
         du.debug('Save and send notification.');
 
-
         return Promise.all([
-            notificationSettingController.get(user),
-            userSettingController.get(user)
-        ]).get(user).then((settings) => {
+            notificationSettingController.get(user), // notification settings
+            userSettingController.get(user), // user settings
+            notificationSettingController.getDefaultProfile(), // default user settings
+        ]).then((settings) => {
 
-            let notification_settings = settings[0];
+            let notification_settings = null;
+
+            if (settings[0] && settings[0].settings) {
+                notification_settings = JSON.parse(settings[0].settings);
+            }
+
             let user_settings = settings[1];
 
-            if (notification_settings && notification_settings.notification_groups) {
-                notification_settings.notification_groups.forEach((group) => {
-                    if (group.notifications) {
-                        group.notifications.forEach((notification) => {
-                            if (notification.default) {
-                                notificationTypes.push(notification.key);
-                            }
-                        })
-                    }
-                });
+            if (!user_settings) {
+                du.error(`No user settings exist for user '${user}'`);
+                return;
             }
+
+            let default_notification_settings = settings[2];
+
+            // If no valid notification settings exist use defaults.
+            if (!notification_settings || !notification_settings.notification_groups) {
+                notification_settings = default_notification_settings;
+            }
+
+            // Gather notifications types that the user wanted to receive notification for.
+            notification_settings.notification_groups.forEach((group) => {
+                if (group && group.notifications) {
+                    group.notifications.forEach((notification) => {
+                        if (notification.default) {
+                            notificationTypes.push(notification.key);
+                        }
+                    })
+                } else {
+                    du.warning('Notification group in unexpected format', group);
+                }
+            });
 
             let createNotification = {
                 "user": user,
                 "account": account,
                 "type": notification_parameters.type,
                 "action": notification_parameters.action,
+                "title": notification_parameters.title,
                 "message": notification_parameters.message
             };
 
-            // Technical Debt: after we figure out where to read the settings from, update this to set the 'read_at'
-            // only if user chose not to receive Six notifications.
-
-            // createNotification.read_at = timestamp.getISO8601();
+            // If user does not want to receive 'six' notifications, or this type of notification, mark it as already read.
+            if (!this.wantsToReceive('six', user_settings) || !_.contains(notificationTypes, notification_parameters.type)) {
+                createNotification.read_at = timestamp.getISO8601();
+            }
 
             du.debug('About to create notification', createNotification);
 
@@ -135,18 +160,26 @@ class NotificationProvider {
 
                 let notificationSendOperations = [];
 
+                // If user wanted to receive this type of notification.
                 if (_.contains(notificationTypes, notification.type)) {
 
-                    if (user_settings.notification_email) {
-                        notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, notification.user));
+                    // If user wanted to receive through this channel.
+                    if (this.wantsToReceive('email', user_settings)) {
+                        let email_address = this.settingsDataFor('email', user_settings);
+
+                        notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
                     }
 
-                    if (user_settings.notification_sms){
-                        notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, user_settings.notification_sms));
+                    if (this.wantsToReceive('sms', user_settings)){
+                        let sms_number = this.settingsDataFor('sms', user_settings);
+
+                        notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, sms_number));
                     }
 
-                    if (user_settings.notification_slack_webhook) {
-                        notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, user_settings.notification_slack_webhook));
+                    if (this.wantsToReceive('slack', user_settings)) {
+                        let slack_webhook = this.settingsDataFor('slack', user_settings);
+
+                        notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, slack_webhook));
                     }
                 }
 
@@ -154,6 +187,30 @@ class NotificationProvider {
             });
         });
 
+    }
+
+    /**
+     * Whether user wants to receive messages through this channel.
+     * @param notification_type_name Channel name ('six' | 'email' | 'sms' | 'slack' | 'skype' | 'ios')
+     * @param user_settings
+     */
+    wantsToReceive(notification_type_name, user_settings) {
+        let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
+
+        du.highlight(notification);
+
+        return notification && notification.receive;
+    }
+
+    /**
+     * Settings data for the given name,
+     * @param notification_type_name Channel name ('six' | 'email' | 'sms' | 'slack' | 'skype' | 'ios')
+     * @param user_settings
+     */
+    settingsDataFor(notification_type_name, user_settings) {
+        let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
+
+        return notification.data;
     }
 
     /**
@@ -169,7 +226,7 @@ class NotificationProvider {
         let schema;
 
         try{
-            schema = require('../../../model/actions/create_notification.json');
+            schema = global.routes.include('model','actions/create_notification.json');
         } catch(e){
             return Promise.reject(new Error('Unable to load validation schemas.'));
         }
@@ -223,7 +280,7 @@ class NotificationProvider {
             }
 
             if (userAcls) {
-                return userAcls.map(acl => acl.user);
+                return userAcls.useracls.map(acl => acl.user);
             } else {
                 return [];
             }

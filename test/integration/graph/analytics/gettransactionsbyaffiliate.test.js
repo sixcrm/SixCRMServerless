@@ -20,7 +20,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Transactions By Affiliate';
-let test_query = './endpoints/graph/queries/analytics/getTransactionsByAffiliate';
+let test_query = global.routes.path('handlers','endpoints/graph/queries/analytics/getTransactionsByAffiliate');
 
 //set the test user
 let test_user = {

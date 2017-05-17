@@ -14,10 +14,13 @@
     "action":{
       "type":"string"
     },
+    "title":{
+      "type":"string"
+    },
     "message":{
       "type":"string"
     }
 
   },
-  "required":["account", "type", "action", "message"]
+  "required":["account", "type", "action", "title", "message"]
 }

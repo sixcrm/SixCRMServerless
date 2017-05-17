@@ -3,8 +3,9 @@ const chai = require('chai');
 const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
-const tu = require('../../../../lib/test-utilities.js');
-const du = require('../../../../lib/debug-utilities.js');
+
+const tu = global.routes.include('lib','test-utilities.js');
+const du = global.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -12,23 +13,23 @@ let endpoint = global.integration_test_config.endpoint;
 let entity = 'Access Keys';
 let tests = [{
     name: "index",
-    query: "./endpoints/graph/queries/index/getAccessKeys"
+    query: global.routes.path('handlers','endpoints/graph/queries/index/getAccessKeys')
 },
 {
     name: "view",
-    query: "./endpoints/graph/queries/view/getAccessKey"
+    query: global.routes.path('handlers','endpoints/graph/queries/view/getAccessKey')
 },
 {
     name: "create",
-    query: "./endpoints/graph/queries/create/createAccessKey"
+    query: global.routes.path('handlers','endpoints/graph/queries/create/createAccessKey')
 },
 {
     name: "update",
-    query: "./endpoints/graph/queries/update/updateAccessKey"
+    query: global.routes.path('handlers','endpoints/graph/queries/update/updateAccessKey')
 },
 {
     name: "delete",
-    query: "./endpoints/graph/queries/delete/deleteAccessKey"
+    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteAccessKey')
 }];
 
 let this_request = request(endpoint);

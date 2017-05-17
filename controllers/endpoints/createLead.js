@@ -2,14 +2,15 @@
 const _ = require('underscore');
 const validator = require('validator');
 const Validator = require('jsonschema').Validator;
-const du = require('../../lib/debug-utilities.js');
 
-var customerController = require('../../controllers/Customer.js');
-var affiliateController = require('../../controllers/Affiliate.js');
-var campaignController = require('../../controllers/Campaign.js');
-var sessionController = require('../../controllers/Session.js');
-var endpointController = require('../../controllers/endpoints/endpoint.js');
-var notificationutilities = require('../../lib/notification-utilities');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
+
+var customerController = global.routes.include('controllers', 'entities/Customer.js');
+var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+var sessionController = global.routes.include('controllers', 'entities/Session.js');
+var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 class createLeadController extends endpointController{
 
@@ -80,9 +81,9 @@ class createLeadController extends endpointController{
 
             try{
 
-                customer_schema = require('../../model/customer');
-                address_schema = require('../../model/address');
-                creditcard_schema = require('../../model/creditcard');
+                customer_schema = global.routes.include('model', 'customer');
+                address_schema = global.routes.include('model', 'address');
+                creditcard_schema = global.routes.include('model', 'creditcard');
 
             } catch(e){
 

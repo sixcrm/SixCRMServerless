@@ -2,10 +2,10 @@
 const _ = require("underscore");
 const querystring = require('querystring');
 
-const du = require('../../lib/debug-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
-var sessionController = require('../../controllers/Session.js');
-var endpointController = require('../../controllers/endpoints/endpoint.js');
+var sessionController = global.routes.include('controllers', 'entities/Session.js');
+var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 class confirmOrderController extends endpointController{
 

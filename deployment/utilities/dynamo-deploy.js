@@ -2,9 +2,10 @@
 require('require-yaml');
 const Promise = require('bluebird');
 const fs = require('fs');
-const du = require('../../lib/debug-utilities.js');
 const exec = require('child-process-promise').exec;
-const dynamodbutilities = require('../../lib/dynamodb-utilities.js');
+
+const du = global.routes.include('lib', 'debug-utilities.js');
+const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 
 class DynamoDeploy {
     constructor(){}

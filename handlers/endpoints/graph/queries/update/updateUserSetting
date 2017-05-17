@@ -1,0 +1,20 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation {
+		updateusersetting (usersetting: { id: \"super.user@test.com\", timezone:\"Europe/Belgrade\",  notifications: [ { name: \"six\", receive: true }, { name: \"email\", receive: true, data: \"super.user@test.com\" } ]}) {
+			id,
+            work_phone,
+            cell_phone,
+            timezone,
+            notifications {
+                name,
+                receive,
+                data
+            },
+			created_at,
+			updated_at
+		}
+	}"
+}

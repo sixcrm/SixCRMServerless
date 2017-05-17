@@ -1,0 +1,9 @@
+root: /
+lib: /lib/
+controllers: /controllers/
+helpers: /helpers/
+handlers: /handlers/
+test: /test/
+model: /model/
+config: /config/
+deployment: /deployment/

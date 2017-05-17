@@ -6,7 +6,8 @@ var assert = require('chai').assert
 var fs = require('fs');
 var yaml = require('js-yaml');
 var crypto = require('crypto');
-const du = require('../../../lib/debug-utilities.js');
+
+const du = global.routes.include('lib','debug-utilities.js');
 
 try {
     var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));

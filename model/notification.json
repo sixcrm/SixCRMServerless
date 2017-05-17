@@ -17,6 +17,9 @@
 		"action":{
 			"type":"string"
 		},
+		"title":{
+			"type":"string"
+		},
 		"message":{
 			"type":"string"
 		},
@@ -28,5 +31,5 @@
 		}
 
 	},
-	"required":["account", "type", "action", "message", "created_at", "updated_at"]
+	"required":["account", "type", "action", "title", "message", "created_at", "updated_at"]
 }

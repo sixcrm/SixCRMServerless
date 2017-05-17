@@ -1,11 +1,11 @@
 'use strict';
 var _ = require("underscore");
 
-const cloudsearchutilities = require('../../lib/cloudsearch-utilities.js');
-const indexingutilities = require('../../lib/indexing-utilities.js');
-const du = require('../../lib/debug-utilities.js');
+const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
+const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
-var workerController = require('./worker.js');
+var workerController = global.routes.include('controllers', 'workers/worker.js');
 
 class indexEntitiesController extends workerController {
 

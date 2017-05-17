@@ -1,10 +1,10 @@
 'use strict';
-const du = require('../../lib/debug-utilities.js');
-const paginationutilities = require('../../lib/pagination-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
 
-const AnalyticsUtilities = require('./AnalyticsUtilities.js');
+const AnalyticsUtilities = global.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 
-class AnalyticsController extends AnalyticsUtilities {
+class AnalyticsController extends AnalyticsUtilities{
 
     constructor(){
 

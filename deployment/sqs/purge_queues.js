@@ -1,16 +1,19 @@
 "use strict"
+require('../../routes.js');
+
 const fs = require('fs');
 const yaml = require('js-yaml');
 const _ = require('underscore');
-const du = require('../../lib/debug-utilities.js');
-const sqsutilities = require('../../lib/sqs-utilities.js');
+
+const du = global.routes.include('lib', 'debug-utilities.js');
+const sqsutilities = global.routes.include('lib', 'sqs-utilities.js');
 
 let environment = process.argv[2];
 let environment_account_id = process.argv[3];
 let region = process.argv[4];
 
 try {
-    var serverless_config = yaml.safeLoad(fs.readFileSync(__dirname+'/../../serverless.yml', 'utf8'));
+    var serverless_config = yaml.safeLoad(fs.readFileSync(global.routes.path('root', 'serverless.yml'), 'utf8'));
 } catch (e) {
     du.warning(e);
 }

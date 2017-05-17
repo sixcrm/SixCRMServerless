@@ -1,12 +1,16 @@
+'use strict'
 const fs = require('fs');
 const yaml = require('js-yaml');
 const _ = require('underscore');
 
-const tu = require('../lib/test-utilities.js');
-const timestamp = require('../lib/timestamp.js');
-const du = require('../lib/debug-utilities.js');
+require('../routes.js');
+
+const tu = global.routes.include('lib','test-utilities.js');
+const timestamp = global.routes.include('lib','timestamp.js');
+const du = global.routes.include('lib','debug-utilities.js');
 
 process.env.SIX_VERBOSE = 2;
+
 let site_config = yaml.safeLoad(fs.readFileSync(__dirname+'/../config/development/site.yml', 'utf8'));
 let now = timestamp.createTimestampSeconds();
 

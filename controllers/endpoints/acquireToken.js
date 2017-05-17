@@ -2,10 +2,10 @@
 const jwt = require('jsonwebtoken');
 const _ = require("underscore");
 
-const timestamp = require('../../lib/timestamp.js');
-const du = require('../../lib/debug-utilities.js');
+const timestamp = global.routes.include('lib', 'timestamp.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
-const endpointController = require('../../controllers/endpoints/endpoint.js');
+const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 class acquireTokenController extends endpointController {
 

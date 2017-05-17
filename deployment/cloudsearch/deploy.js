@@ -1,8 +1,11 @@
+'use strict'
+require('../../routes.js');
 const AWS = require('aws-sdk');
 const _ = require('underscore');
 const fs = require('fs');
-const du = require('../../lib/debug-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
+//Technical Debt:  THis should use a lib utility instead of making raw AWS calls
 const cs = new AWS.CloudSearch({
     region: 'us-east-1',
     apiVersion: '2013-01-01',
@@ -109,5 +112,3 @@ function indexDocuments() {
         });
     });
 }
-
-

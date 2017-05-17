@@ -1,0 +1,16 @@
+'use strict';
+var entityController = global.routes.include('controllers', 'entities/Entity.js');
+
+class SMTPProviderController extends entityController {
+
+    constructor(){
+
+        super(process.env.smtp_providers_table, 'smtpprovider');
+        this.table_name = process.env.smtp_providers_table;
+        this.descriptive_name = 'smtpprovider';
+
+    }
+
+}
+
+module.exports = new SMTPProviderController();

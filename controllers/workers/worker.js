@@ -2,8 +2,8 @@
 const Validator = require('jsonschema').Validator;
 var _ = require("underscore");
 
-var rebillController = require('../../controllers/Rebill.js');
-var sessionController = require('../../controllers/Session.js');
+var rebillController = global.routes.include('controllers','entities/Rebill.js');
+var sessionController = global.routes.include('controllers','entities/Session.js');
 
 module.exports = class workerController {
 
@@ -114,7 +114,7 @@ module.exports = class workerController {
 
             try{
 
-                var rebill_schema = require('../../model/rebill.json');
+                var rebill_schema = global.routes.include('model','rebill.json');
 
             } catch(e){
 
@@ -155,7 +155,7 @@ module.exports = class workerController {
 
             try{
 
-                var session_schema = require('../../model/session.json');
+                var session_schema = global.routes.include('model','session.json');
 
             } catch(e){
 

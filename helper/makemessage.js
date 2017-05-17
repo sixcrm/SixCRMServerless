@@ -1,4 +1,10 @@
-const du = require('../lib/debug-utilities.js');
+'use strict'
+
+require('../routes.js');
+
+const du = global.routes.include('lib','debug-utilities.js');
+
+process.env.SIX_VERBOSE = 2;
 var rebill_object = {
     "amount": "34.99",
     "bill_at": "2017-04-10T19:26:58.026Z",

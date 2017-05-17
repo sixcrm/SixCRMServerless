@@ -1,10 +1,10 @@
 'use strict';
 var _ = require("underscore");
-var sqs = require('../../lib/sqs-utilities.js');
-var lambda = require('../../lib/lambda-utilities.js');
-const du = require('../../lib/debug-utilities.js');
+var sqs = global.routes.include('lib', 'sqs-utilities.js');
+var lambda = global.routes.include('lib', 'lambda-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
-var workerController = require('./worker.js');
+var workerController = global.routes.include('controllers', 'workers/worker.js');
 
 /*
 *

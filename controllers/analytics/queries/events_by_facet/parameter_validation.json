@@ -105,14 +105,7 @@
 			"type": ["integer"],
 			"minimum": 0,
 			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
-		},
-		"limit_partition":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
+			"exclusiveMaximum": true,
 			"exclusiveMinimum": true
 		},
 		"offset":{
@@ -120,12 +113,12 @@
 			"minimum": 0,
 			"maximum": 100,
 			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
+			"exclusiveMinimum": false
 		},
 		"facet":{
 			"type": "string",
 			"enum": ["session","type","account","campaign","product_schedule","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
 		}
 	 },
-	"required":["start", "end", "order", "limit","facet"]
+	"required":["start", "end", "order", "limit", "facet"]
 }

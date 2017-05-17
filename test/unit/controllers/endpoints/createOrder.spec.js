@@ -1,10 +1,10 @@
 const mockery = require('mockery');
-const PermissionTestGenerators = require('../../lib/permission-test-generators');
+const PermissionTestGenerators = global.routes.include('test','unit/lib/permission-test-generators');
 
 let chai = require('chai');
 let expect = chai.expect;
 
-describe('controllers/endpoints/createOrder.js', () => {
+xdescribe('controllers/endpoints/createOrder.js', () => {
     before(() => {
         mockery.enable({
             useCleanCache: true,
@@ -22,7 +22,7 @@ describe('controllers/endpoints/createOrder.js', () => {
     });
 
     it('acquires body', () => {
-        let endpointController = require('../../../../controllers/endpoints/createOrder');
+        let endpointController = global.routes.include('controllers','endpoints/createOrder');
         let anEvent = {
             body: 'abc'
         };
@@ -44,25 +44,25 @@ describe('controllers/endpoints/createOrder.js', () => {
             name: ''
         };
 
-        mockery.registerMock('../../controllers/Session.js', {
+        mockery.registerMock(global.routes.path('controllers','entities/Session.js'), {
             get: () => {
                 return Promise.resolve({});
             }
         });
 
-        mockery.registerMock('../../controllers/Campaign.js', {
+        mockery.registerMock(global.routes.path('controllers','entities/Campaign.js'), {
             getHydratedCampaign: () => {
                 return Promise.resolve({});
             }
         });
 
-        mockery.registerMock('../../controllers/ProductSchedule.js', {
+        mockery.registerMock(global.routes.path('controllers','entities/entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             }
         });
 
-        mockery.registerMock('../../controllers/CreditCard.js', {
+        mockery.registerMock(global.routes.path('controllers','entities/entities/CreditCard.js'), {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
@@ -72,7 +72,8 @@ describe('controllers/endpoints/createOrder.js', () => {
         });
 
 
-        let endpointController = require('../../../../controllers/endpoints/createOrder');
+        let endpointController = global.routes.include('controllers','endpoints/createOrder.js');
+
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available session.');
         });
@@ -120,7 +121,8 @@ describe('controllers/endpoints/createOrder.js', () => {
         });
 
 
-        let endpointController = require('../../../../controllers/endpoints/createOrder');
+        let endpointController = global.routes.include('controllers','endpoints/createOrder');
+
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available campaign.');
         });
@@ -171,6 +173,7 @@ describe('controllers/endpoints/createOrder.js', () => {
 
 
         let endpointController = require('../../../../controllers/endpoints/createOrder');
+
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available creditcard.');
         });

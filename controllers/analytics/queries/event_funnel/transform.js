@@ -1,6 +1,6 @@
 'use strict';
-let mathutilities = require('../../../../lib/math-utilities.js');
-let du = require('../../../../lib/debug-utilities.js');
+let mathutilities = global.routes.include('lib', 'math-utilities.js');
+let du = global.routes.include('lib', 'debug-utilities.js');
 
 module.exports = function(results, parameters){
 

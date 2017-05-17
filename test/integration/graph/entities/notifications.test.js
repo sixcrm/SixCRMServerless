@@ -2,7 +2,9 @@ const request = require('supertest');
 const chai = require('chai');
 const fs = require('fs');
 const yaml = require('js-yaml');
-const tu = require('../../../../lib/test-utilities.js');
+
+const tu = global.routes.include('lib','test-utilities.js');
+const du = global.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -12,23 +14,23 @@ const entity = 'Notifications';
 const tests = [
     {
         name: "index",
-        query: "./endpoints/graph/queries/index/getNotifications"
+        query: global.routes.path('handlers','endpoints/graph/queries/index/getNotifications')
     },
     {
         name: "view",
-        query: "./endpoints/graph/queries/view/getNotification"
+        query: global.routes.path('handlers','endpoints/graph/queries/view/getNotification')
     },
     {
         name: "create",
-        query: "./endpoints/graph/queries/create/createNotification"
+        query: global.routes.path('handlers','endpoints/graph/queries/create/createNotification')
     },
     {
         name: "update",
-        query: "./endpoints/graph/queries/update/updateNotification"
+        query: global.routes.path('handlers','endpoints/graph/queries/update/updateNotification')
     },
     {
         name: "delete",
-        query: "./endpoints/graph/queries/delete/deleteNotification"
+        query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteNotification')
     }
 ];
 

@@ -1,10 +1,11 @@
 'use strict';
-var rebillController = require('../../controllers/Rebill.js');
-var transactionController = require('../../controllers/Transaction.js');
-var shippingReceiptController = require('../../controllers/ShippingReceipt.js');
-var fulfillmentTriggerController = require('../../controllers/fulfillmentproviders/FulfillmentTrigger.js');
-var workerController = require('./worker.js');
 var _ =  require('underscore');
+
+var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+var shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
+var fulfillmentTriggerController = global.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js');
+var workerController = global.routes.include('controllers', 'workers/worker.js');
 
 class shipProductController extends workerController {
 
