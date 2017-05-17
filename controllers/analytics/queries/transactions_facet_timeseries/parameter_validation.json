@@ -115,6 +115,10 @@
 				"enum": ["new", "rebill"]
 			}
 		},
+		"facet":{
+			"type": "string",
+			"enum": ["account","campaign","merchant_provider","product_schedule","transaction_type","transaction_subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
+		},
 		"transaction_subtype":{
 			"type": "array",
 			"minItems": 1,
@@ -125,5 +129,5 @@
 			}
 		}
 	},
-	"required":["start", "end", "period"]
+	"required":["start", "end", "period", "facet"]
 }

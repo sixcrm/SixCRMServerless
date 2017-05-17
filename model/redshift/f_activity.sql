@@ -3,7 +3,7 @@
 
 */
 
-DROP TABLE f_activity;
+
 
 CREATE TABLE f_activity
 (
