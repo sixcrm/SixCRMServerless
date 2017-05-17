@@ -4,7 +4,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 
-let userNotificationSettingType = require('./userNotificationSettingType');
+let userNotificationSettingType = require('./userNotificationSettingType.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'UserSetting',
