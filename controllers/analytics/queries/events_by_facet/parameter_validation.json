@@ -39,6 +39,12 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
+		"session":{
+			"type": "array",
+			"minItems": 1,
+			"items": {"$ref": "#/definitions/UUIDv4"},
+			"uniqueItems": true
+		},
 		"affiliate:":{
 			"type": "array",
 			"minItems": 1,

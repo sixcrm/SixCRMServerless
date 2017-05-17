@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/EventsByAffiliate",
+	"id":"/AggregationProcessorAmountInput",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -31,6 +31,12 @@
             { "$ref": "#/definitions/UUIDv4" }
         ]
 			},
+			"uniqueItems": true
+		},
+		"session":{
+			"type": "array",
+			"minItems": 1,
+			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
 		"campaign":{
@@ -91,21 +97,10 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"order":{
-			"type":"string",
-			"enum": ["asc", "desc"]
-		},
-		"limit":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
-		},
 		"facet":{
 			"type": "string",
 			"enum": ["session","type","account","campaign","product_schedule","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
 		}
-	 },
-	"required":["start", "end", "order", "limit", "facet"]
+	},
+	"required":["start", "end", "period", "facet"]
 }
