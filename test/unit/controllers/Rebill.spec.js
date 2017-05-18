@@ -4,7 +4,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-xdescribe('controllers/Rebill.js', () => {
+describe('controllers/Rebill.js', () => {
     const oneDayInSeconds = 86400;
 
     function nowInSeconds() {
@@ -171,7 +171,7 @@ xdescribe('controllers/Rebill.js', () => {
             let aSession = givenAnySession();
             let aProductSchedule = givenAnyProductSchedule();
             let aDayInCycle = givenAnyDayInCycle();
-            let rebillController = require('../../../controllers/Rebill');
+            let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).catch((error) => {
@@ -186,7 +186,7 @@ xdescribe('controllers/Rebill.js', () => {
             let aSession = givenAnySession();
             let aProductSchedule = givenAnyProductSchedule();
             let aDayInCycle = givenAnyDayInCycle();
-            let rebillController = require('../../../controllers/Rebill');
+            let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
@@ -202,7 +202,7 @@ xdescribe('controllers/Rebill.js', () => {
             let aProductSchedule = givenAnyProductSchedule();
             let aDayInCycle = givenAnyDayInCycle();
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, []);
                 },
@@ -210,7 +210,7 @@ xdescribe('controllers/Rebill.js', () => {
                     callback(null, entity);
                 }
             });
-            mockery.registerMock('../lib/indexing-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: (entity, entity_type) => {
                     return new Promise((resolve) => {
                         resolve(true);
@@ -218,7 +218,7 @@ xdescribe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = require('../../../controllers/Rebill');
+            let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
@@ -239,7 +239,7 @@ xdescribe('controllers/Rebill.js', () => {
             };
 
 
-            let rebillController = require('../../../controllers/Rebill');
+            let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
             let rebillObject = rebillController.buildRebillObject(parameters);
@@ -257,7 +257,7 @@ xdescribe('controllers/Rebill.js', () => {
         let rebillController;
 
         before(() => {
-            rebillController = require('../../../controllers/Rebill');
+            rebillController = global.routes.include('controllers', 'entities/Rebill.js');
         });
 
         it('for today', () => {
@@ -288,7 +288,7 @@ xdescribe('controllers/Rebill.js', () => {
             process.env.search_indexing_queue_url = 'url';
 
             // mock sqs utilities that always succeed
-            mockery.registerMock('../lib/sqs-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
                     expect(parameters.queue_url).to.equal(process.env.bill_queue_url); // expect queue url to be correct
@@ -297,7 +297,7 @@ xdescribe('controllers/Rebill.js', () => {
             });
 
             // mock permission utilities that always allow the action
-            mockery.registerMock('../lib/permission-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'permission-utilities.js'), {
                 validatePermissions: (action, entity) => {
                     return new Promise((resolve) => resolve(true));
                 }
@@ -305,7 +305,7 @@ xdescribe('controllers/Rebill.js', () => {
             });
 
             // mock dynamodb utilities that return a single rebill and save always succeeds
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [aRebill]);
                 },
@@ -314,7 +314,7 @@ xdescribe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = require('../../../controllers/Rebill');
+            let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
 
@@ -340,7 +340,7 @@ xdescribe('controllers/Rebill.js', () => {
             process.env.search_indexing_queue_url = 'url';
 
             // mock sqs utilities that always succeed
-            mockery.registerMock('../lib/sqs-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
                 }
@@ -348,7 +348,7 @@ xdescribe('controllers/Rebill.js', () => {
             });
 
             // mock dynamodb utilities that return a single rebill and save always succeeds
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [aRebill]);
                 },
@@ -357,7 +357,7 @@ xdescribe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = require('../../../controllers/Rebill');
+            let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
             return rebillController.sendMessageAndMarkRebill(aRebill).then(() => {
@@ -372,14 +372,14 @@ xdescribe('controllers/Rebill.js', () => {
             let aRebill = {};
 
             // mock sqs utilities that always fails
-            mockery.registerMock('../lib/sqs-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(new Error('Sending message failed.'), null);
                 }
 
             });
 
-            let rebillController = require('../../../controllers/Rebill');
+            let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
             return rebillController.sendMessageAndMarkRebill(aRebill).catch((error) => {
@@ -405,7 +405,7 @@ xdescribe('controllers/Rebill.js', () => {
                 transactions: ['1', '2']
             };
 
-            let rebillController = require('../../../controllers/Rebill');
+            let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
             return rebillController.updateRebillTransactions(aRebill, ['3', '4']).then((savedRebill) => {
