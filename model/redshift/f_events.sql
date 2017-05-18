@@ -8,9 +8,9 @@ DROP TABLE f_events;
 CREATE TABLE f_events
 (
   session          VARCHAR(128) NOT NULL encode ZSTD,
-  type             VARCHAR(128) NOT NULL encode ZSTD,
-  datetime         TIMESTAMP    NOT NULL encode ZSTD,
-  account          VARCHAR(36)  NOT NULL encode ZSTD,
+  type             VARCHAR(10) NOT NULL encode Text255,
+  datetime         TIMESTAMP    NOT NULL encode delta,
+  account          VARCHAR(36)  NOT NULL encode Runlength,
   campaign         VARCHAR(36)  NOT NULL encode ZSTD,
   product_schedule VARCHAR(36) encode ZSTD,
   affiliate        VARCHAR(36) encode ZSTD,
@@ -21,5 +21,3 @@ CREATE TABLE f_events
   subaffiliate_5   VARCHAR(128)
 )
   sortkey (account,datetime);
-
-
