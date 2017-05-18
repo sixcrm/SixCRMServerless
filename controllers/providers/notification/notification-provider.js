@@ -92,6 +92,26 @@ class NotificationProvider {
     }
 
     /**
+     * Send a test notification to current user.
+     */
+    test() {
+        du.debug('Sending a test notification.');
+
+        let notification_object = {
+            account: global.account,
+            user: global.user.id,
+            type: 'dummy',
+            action: 'test',
+            title: 'A notification from SixCRM!',
+            message: 'This is a test notification. Do you see it?'
+        };
+
+        return this.createNotificationForAccountAndUser(notification_object).then(() => {
+            return 'OK';
+        });
+    }
+
+    /**
      * Save given notification in the system, and send it though all channels, respecting user settings.
      */
     saveAndSendNotification(notification_parameters, account, user) {
@@ -167,19 +187,25 @@ class NotificationProvider {
                     if (this.wantsToReceive('email', user_settings)) {
                         let email_address = this.settingsDataFor('email', user_settings);
 
-                        notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
+                        if (email_address) {
+                            notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
+                        }
                     }
 
                     if (this.wantsToReceive('sms', user_settings)){
                         let sms_number = this.settingsDataFor('sms', user_settings);
 
-                        notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, sms_number));
+                        if (sms_number) {
+                            notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, sms_number));
+                        }
                     }
 
                     if (this.wantsToReceive('slack', user_settings)) {
                         let slack_webhook = this.settingsDataFor('slack', user_settings);
 
-                        notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, slack_webhook));
+                        if (slack_webhook) {
+                            notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, slack_webhook));
+                        }
                     }
                 }
 
@@ -251,6 +277,9 @@ class NotificationProvider {
                 message: 'One or more validation errors occurred.',
                 issues: validation.errors.map(e => e.message)
             };
+
+            du.error(error);
+            du.debug(create_notification_object);
 
             return Promise.reject(error);
         }
