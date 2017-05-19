@@ -1,4 +1,4 @@
-let Random = require('../../../lib/random');
+let Random = global.routes.include('lib', 'random.js');
 let chai = require('chai');
 let expect = chai.expect;
 
@@ -14,7 +14,7 @@ chai.Assertion.addProperty('uppercase', function () {
     );
 });
 
-xdescribe('lib/random', () => {
+describe('lib/random', () => {
 
     it('should create random string of given length', () => {
         expect(Random.createRandomString(5)).to.have.lengthOf(5);

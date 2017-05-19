@@ -562,9 +562,7 @@ describe('controllers/Entity.js', () => {
             const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
-            console.log('ere');
             return entityController.list({cursor: 0, limit: 10}).catch((error) => {
-                console.log('ere2');
                 // then
                 expect(error.message).to.equal('Data has no items.');
             });

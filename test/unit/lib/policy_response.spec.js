@@ -1,4 +1,4 @@
-let PolicyResponse = require('../../../lib/policy_response');
+let PolicyResponse = global.routes.include('lib', 'policy_response.js');
 let chai = require('chai');
 let expect = chai.expect;
 
@@ -7,7 +7,7 @@ const anyEffect = 'effect';
 const anyResource = 'resource';
 const anyUser = 'user';
 
-xdescribe('lib/policy_response', () => {
+describe('lib/policy_response', () => {
     describe('policy_response', () => {
 
         it('should generate a policy', () => {

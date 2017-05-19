@@ -1,9 +1,9 @@
-let PermissionUtilities = require('../../../lib/permission-utilities');
+let PermissionUtilities = global.routes.include('lib', 'permission-utilities.js');
 let PermissionTestGenerators = require('./permission-test-generators');
 let chai = require('chai');
 let expect = chai.expect;
 
-xdescribe('lib/permission-utilities', () => {
+describe('lib/permission-utilities', () => {
 
     beforeEach(() => {
         process.env.SIX_VERBOSE = 0; // increase this for debug messages
