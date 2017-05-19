@@ -3,7 +3,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-xdescribe('controllers/Notification.js', () => {
+describe('controllers/Notification.js', () => {
 
     describe('count notifications', () => {
         before(() => {
@@ -28,7 +28,7 @@ xdescribe('controllers/Notification.js', () => {
             global.disableactionchecks = true;
             PermissionTestGenerators.givenAnyUser();
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 countRecords: (table, parameters, index, callback) => {
                     callback(null, 2);
                 },

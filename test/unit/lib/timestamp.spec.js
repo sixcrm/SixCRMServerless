@@ -1,4 +1,4 @@
-let Timestamp = require('../../../lib/timestamp');
+let Timestamp = global.routes.include('lib', 'timestamp.js');
 let chai = require('chai');
 let expect = chai.expect;
 
@@ -7,7 +7,7 @@ const frozenNowAsISOString = 'Wed, 22 Feb 2017 13:03:19 GMT';
 const frozenNowInSeconds = 1487768599;
 const oneDayInSeconds = 86400;
 
-xdescribe('lib/timestamp', () => {
+describe('lib/timestamp', () => {
     describe('timestamp', () => {
 
         it('should create timestamp in seconds', () => {

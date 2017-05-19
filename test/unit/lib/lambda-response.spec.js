@@ -1,4 +1,4 @@
-let LambdaResponse = require('../../../lib/lambda-response');
+let LambdaResponse = global.routes.include('lib', 'lambda-response.js');
 let chai = require('chai');
 let expect = chai.expect;
 
@@ -9,7 +9,7 @@ const anyEvent = {};
 const anyIssues = [];
 const anyError = { issues: [] };
 
-xdescribe('lib/lambda-response', () => {
+describe('lib/lambda-response', () => {
     describe('response', () => {
 
         it('should issue a response', (done) => {

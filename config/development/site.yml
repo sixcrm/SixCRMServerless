@@ -84,6 +84,9 @@ redshift:
   port: 5439
   max: 10
   idleTimeoutMillis: 30000
+  randomdata:
+    staging_bucket: 'redshift-data-staging'
+    interval: 18000
 
 notifications:
   apn:
@@ -105,7 +108,7 @@ elasticache:
 
 logging:
   loglevel: 0
-  
+
 kinesis:
   firehose:
     streams:

@@ -4,7 +4,7 @@ let expect = chai.expect;
 let EntityController = global.routes.include('controllers','entities/Entity');
 let PermissionTestGenerators = require('../../unit/lib/permission-test-generators');
 
-xdescribe('controllers/Entity.js', () => {
+describe('controllers/Entity.js', () => {
     let entityController;
 
     before(() => {
@@ -108,7 +108,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, []);
                 },
@@ -117,7 +117,7 @@ xdescribe('controllers/Entity.js', () => {
                 }
             });
 
-            mockery.registerMock('../lib/indexing-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: (entity) => {
                     return new Promise((resolve) => resolve(true));
                 }
@@ -141,7 +141,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity]);
                 },
@@ -150,7 +150,7 @@ xdescribe('controllers/Entity.js', () => {
                 }
             });
 
-            mockery.registerMock('../lib/indexing-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: (entity) => {
                     return new Promise((resolve) => resolve(true));
                 }
@@ -174,7 +174,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(new Error('Reading failed.'), null);
                 }
@@ -212,7 +212,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(new Error('Reading failed.'), null);
                 }
@@ -259,7 +259,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(new Error('Reading failed.'), null);
                 }
@@ -283,7 +283,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity]);
                 },
@@ -310,7 +310,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, []);
                 }
@@ -335,7 +335,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity, anEntity]);
                 }
@@ -360,7 +360,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity]);
                 },
@@ -369,7 +369,7 @@ xdescribe('controllers/Entity.js', () => {
                 }
             });
 
-            mockery.registerMock('../lib/indexing-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
                 removeFromSearchIndex: (entity) => {
                     return new Promise((resolve) => resolve(true));
                 }
@@ -415,7 +415,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity]);
                 }
@@ -439,7 +439,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(new Error('Reading failed.'), null);
                 }
@@ -463,7 +463,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity, anEntity]);
                 }
@@ -487,7 +487,7 @@ xdescribe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, []);
                 }
@@ -549,7 +549,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, {
                         LastEvaluatedKey: {
@@ -562,9 +562,7 @@ xdescribe('controllers/Entity.js', () => {
             const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
-            console.log('ere');
             return entityController.list({cursor: 0, limit: 10}).catch((error) => {
-                console.log('ere2');
                 // then
                 expect(error.message).to.equal('Data has no items.');
             });
@@ -574,7 +572,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, 'result');
                 }
@@ -594,7 +592,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(new Error('Scanning failed.'), null);
                 }
@@ -614,7 +612,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, {
                         Count: 0,
@@ -644,7 +642,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, {
                         Count: 10,
@@ -674,7 +672,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, {
                         LastEvaluatedKey: {
@@ -732,7 +730,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, 'result');
                 }
@@ -752,7 +750,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(new Error('Query failed.'), null);
                 }
@@ -772,7 +770,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, []);
                 }
@@ -792,7 +790,7 @@ xdescribe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock('../lib/dynamodb-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [{},{}]);
                 }

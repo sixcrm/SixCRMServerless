@@ -41,6 +41,7 @@ let merchantProviderListType = require('./merchantprovider/merchantProviderListT
 
 let notificationListType = require('./notification/notificationListType');
 let notificationCountType = require('./notification/notificationCountType');
+let notificationTestType = require('./notification/notificationTestType');
 let notificationType = require('./notification/notificationType');
 
 let notificationSettingListType = require('./notificationsetting/notificationSettingListType');
@@ -139,6 +140,7 @@ const shippingReceiptController = global.routes.include('controllers', 'entities
 const accountController = global.routes.include('controllers', 'entities/Account.js');
 const roleController = global.routes.include('controllers', 'entities/Role.js');
 const notificationController = global.routes.include('controllers', 'entities/Notification');
+const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
 
 const searchController = global.routes.include('controllers', 'endpoints/search.js');
@@ -857,6 +859,12 @@ module.exports.graphObj = new GraphQLObjectType({
   	       type: notificationCountType.graphObj,
             resolve: function() {
                 return notificationController.numberOfUnseenNotifications();
+            }
+        },
+        notificationtest: {
+            type: notificationTestType.graphObj,
+            resolve: function() {
+                return notificationProvider.test();
             }
         },
         notificationlist: {
