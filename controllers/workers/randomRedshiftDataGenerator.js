@@ -17,28 +17,67 @@ class RandomRedshiftData extends workerController {
 
     }
 
+    set(key, value){
+        this[key] = value;
+    }
+
     execute(){
 
         return this.acquireConfiguration()
-    .then(() => this.buildObjects())
-    .then(() => this.createS3Files())
-    .then(() => this.pushToS3())
-    .then(() => this.executeIngest())
-    .then(() => this.feedback());
+        .then(() => this.validateConfiguration())
+        .then(() => this.buildObjects())
+        .then(() => this.createS3Files())
+        .then(() => this.pushToS3())
+        .then(() => this.executeIngest())
+        .then(() => this.feedback())
+        .catch((error) => { throw error; });
 
     }
 
     feedback(){
 
+        du.debug('Feedback');
     //diagnostic info here pleez...
 
         du.highlight('Process complete');
 
-        return true;
+        return Promise.resolve(true);
+
+    }
+
+    validateConfiguration(){
+
+        du.debug('Validate Configuration');
+
+        if(_.has(this, 'start_datetime') || _.has(this, 'end_datetime')){
+
+            if(!_.has(this, 'start_datetime') || !_.has(this, 'end_datetime')){
+
+                return Promise.reject(new Error('Invalid datetime fields -  both start and end are required if any one of them is provided.'));
+
+            }
+
+            if(!timestamp.isISO8601(this.start_datetime) || !timestamp.isISO8601(this.end_datetime)){
+
+                return Promise.reject(new Error('Invalid datetimes -  the start and end datetimes must be ISO8601 format compliant.'));
+
+            }
+
+            if(this.start_datetime > this.end_datetime){
+
+                return Promise.reject(new Error('Invalid datetimes -  the start datetime must be less than or equal to the end datetime.'));
+
+            }
+
+        }
+
+        return Promise.resolve(true);
 
     }
 
     buildObjects(){
+
+        du.debug('Build Objects');
 
         let execution_window = this.setExecutionWindow();
 
@@ -60,6 +99,8 @@ class RandomRedshiftData extends workerController {
 
     generateObjects(parameters){
 
+        du.debug('Generate Objects');
+
         let new_transaction_count_over_period = this.rollAccountNewEventCountOverPeriod(parameters);
 
         for(var i = 0; i < new_transaction_count_over_period; i++){
@@ -73,6 +114,8 @@ class RandomRedshiftData extends workerController {
     }
 
     createEventObject(parameters){
+
+        du.debug('Create Event Object');
 
         let datetime          = this.createDatetimeOverRange(parameters.start_datetime, parameters.end_datetime);
         let campaign_object   = this.selectCampaign(parameters.account);
@@ -102,17 +145,32 @@ class RandomRedshiftData extends workerController {
 
     setExecutionWindow(){
 
-        let now = timestamp.getISO8601();
-        let now_sub_interval = timestamp.toISO8601(timestamp.getTimeDifference(this.random_data_interval));
+        du.debug('Set Execution Window');
+
+        let now, now_sub_interval;
+
+        if(_.has(this, 'start_datetime') && _.has(this, 'end_datetime')){
+
+            now = timestamp.convertToISO8601(this.end_datetime);
+            now_sub_interval = timestamp.convertToISO8601(this.start_datetime);
+
+        }else{
+
+            now = timestamp.getISO8601();
+            now_sub_interval = timestamp.toISO8601(timestamp.getTimeDifference(this.random_data_interval));
+
+        }
 
         return {
-            start_datetime: now,
-            end_datetime: now_sub_interval
+            start_datetime: now_sub_interval,
+            end_datetime: now
         }
 
     }
 
     acquireConfiguration(){
+
+        du.debug('Acquire Configuration');
 
         this.acquireConfigurationObject();
 
@@ -125,11 +183,15 @@ class RandomRedshiftData extends workerController {
 
     acquireConfigurationObject(){
 
+        du.debug('Acquire Configuration Object');
+
         return this.configuration_object = global.routes.include('config', process.env.stage+'/random-redshift-data-configuration.json');
 
     }
 
     addEvent(event_type, event_object, account_object){
+
+        du.debug('Add Event');
 
         if(randomutilities.randomProbability(account_object.spoofing_config.event_probabilities[event_type])){
 
@@ -176,6 +238,8 @@ class RandomRedshiftData extends workerController {
 
     updateEventObject(event_object, event_type){
 
+        du.debug('Update Event Object');
+
         event_object['type'] = event_type;
         event_object['product_schedule'] = this.selectProductSchedule(event_type, event_object.account, event_object.campaign);
         event_object = this.updateEventTimestamp(event_type, event_object);
@@ -195,12 +259,7 @@ class RandomRedshiftData extends workerController {
             var s3_filename = this.getS3FileName(k);
             let query = `COPY f_events FROM 's3://${this.s3_bucket}/${s3_filename}' MANIFEST json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`;
 
-            promises.push(redshiftutilities.query(query, [])
-        .then((results) => {
-            du.info('Successfully loaded data to Redshift');
-        }).catch((error) => {
-            throw error;
-        }));
+            promises.push(redshiftutilities.query(query, []));
 
         }
 
@@ -209,33 +268,38 @@ class RandomRedshiftData extends workerController {
     }
 
     getS3FileName(file_key){
+
+        du.debug('Get S3 Filename');
+
         return file_key+'.json';
+
     }
 
     pushToS3(file_body){
 
         du.debug('Push to S3');
 
-        return s3utilities.bucket_exists(this.s3_bucket)
-    .then(() => {
+        return s3utilities.assure_bucket(this.s3_bucket)
+        .then(() => {
 
-        let promises = [];
+            let promises = [];
 
-        for(var k in this.s3_files){
+            for(var k in this.s3_files){
 
-            var parameters = {
-                Bucket: this.s3_bucket,
-                Key: this.getS3FileName(k),
-                Body: this.s3_files[k]
-            };
+                var parameters = {
+                    Bucket: this.s3_bucket,
+                    Key: this.getS3FileName(k),
+                    Body: this.s3_files[k]
+                };
 
-            promises.push(s3utilities.put_object(parameters));
+                du.highlight(parameters);
+                promises.push(s3utilities.put_object(parameters));
 
-        }
+            }
 
-        return Promise.all(promises);
+            return Promise.all(promises);
 
-    })
+        })
     .then((promises) => {
 
         du.output("Successfully uploaded data to S3");
@@ -251,6 +315,9 @@ class RandomRedshiftData extends workerController {
 
     pushObject(object, list){
 
+        du.debug(object);
+
+        du.debug('Push Object');
       //expensive, but cleaner.
         if(!_.has(this, list+'_output_array')){
             this[list+'_output_array'] = [];
@@ -261,6 +328,8 @@ class RandomRedshiftData extends workerController {
     }
 
     createS3Files(){
+
+        du.debug('Create S3 Files');
 
         let promises = [];
 
@@ -284,7 +353,11 @@ class RandomRedshiftData extends workerController {
 
     createS3File(list){
 
+        du.debug('Create S3 File');
+
         if(_.has(this, list+'_output_array') && _.isArray(this[list+'_output_array']) && this[list+'_output_array'].length > 0){
+
+            du.info(this[list+'_output_array']);
 
             return Promise.resolve(this[list+'_output_array'].join("\n"));
 
@@ -297,6 +370,8 @@ class RandomRedshiftData extends workerController {
     }
 
     updateEventTimestamp(event_type, event_object){
+
+        du.debug('Update Event Timestamp');
 
         if(event_type !== 'click'){
 
@@ -313,16 +388,19 @@ class RandomRedshiftData extends workerController {
     }
 
     createSession(){
+        du.debug('Create Session');
         return uuidV4();
     }
 
     selectCampaign(account_object){
-
+        du.debug('Select Campaign');
         return randomutilities.selectRandomFromArray(account_object.campaigns);
 
     }
 
     selectProductSchedule(event_type, account_id, campaign_id){
+
+        du.debug('Select Product Schedule');
 
         let campaign_object = this.getCampaignObject(account_id, campaign_id);
 
@@ -338,7 +416,11 @@ class RandomRedshiftData extends workerController {
 
     getCampaignObject(account_id, campaign_id){
 
+        du.debug('Get Campaign Object');
+
         let accounts = this.configuration_object.accounts;
+
+        let found_campaign = null;
 
         accounts.forEach((account) => {
 
@@ -350,7 +432,7 @@ class RandomRedshiftData extends workerController {
 
                     if(campaign.id == campaign_id){
 
-                        return campaign;
+                        found_campaign = campaign;
 
                     }
 
@@ -360,11 +442,13 @@ class RandomRedshiftData extends workerController {
 
         });
 
-        return null;
+        return found_campaign;
 
     }
 
     selectAffiliate(campaign_object, account_object){
+
+        du.debug('Select Affiliate');
 
         if(randomutilities.randomProbability(account_object.spoofing_config.affiliate_probabilities.affiliate_probability)){
 
@@ -379,6 +463,8 @@ class RandomRedshiftData extends workerController {
     }
 
     selectSubAffiliate(name, subaffiliate_array, account_object){
+
+        du.debug('Select Subaffiliate');
 
         if(randomutilities.randomProbability(account_object.spoofing_config.affiliate_probabilities[name+'_probability'])){
 
@@ -395,6 +481,8 @@ class RandomRedshiftData extends workerController {
 
     selectSubAffiliates(campaign_object, account_object){
 
+        du.debug('Select Subaffiliates');
+
         let return_object = {};
 
         for(var k in campaign_object.subaffiliates){
@@ -406,6 +494,8 @@ class RandomRedshiftData extends workerController {
     }
 
     createDatetimeOverRange(start_datetime, end_datetime){
+
+        du.debug('Select Create Datetime Over Range');
 
         let start_time_seconds = timestamp.dateToTimestamp(start_datetime);
         let end_time_seconds = timestamp.dateToTimestamp(end_datetime);
@@ -420,21 +510,32 @@ class RandomRedshiftData extends workerController {
 
     }
 
-    rollAccountEventCountOverPeriod(start_datetime, end_datetime, account_object){
+    rollAccountEventCountOverPeriod(parameters){
 
-        let random_roll = randomutilities.randomGaussian(account_object.spoofing_config.monthly_transactions.mean, account_object.spoofing_config.monthly_transactions.standard_deviation);
+        du.debug('Roll Account Event Count Over Period');
 
-        let period_scalar = (timestamp.dateToTimestamp(end_datetime) - timestamp.dateToTimestamp(start_datetime))/(3600 * 24 * 31);
+        let random_roll = randomutilities.randomGaussian(
+          parameters.account.spoofing_config.monthly_transactions.mean,
+          parameters.account.spoofing_config.monthly_transactions.standard_deviation
+        );
 
-        return Math.round((period_scalar * random_roll));
+        let period_scalar = (timestamp.dateToTimestamp(parameters.end_datetime) - timestamp.dateToTimestamp(parameters.start_datetime))/(3600 * 24 * 31);
+
+        let event_count = Math.round((period_scalar * random_roll));
+
+        return event_count;
 
     }
 
-    rollAccountNewEventCountOverPeriod(start_datetime, end_datetime, account_object){
+    rollAccountNewEventCountOverPeriod(parameters){
 
-        let event_count = this.rollAccountEventCountOverPeriod(start_datetime, end_datetime, account_object);
+        du.debug('Roll Account New Event Count Over Period');
 
-        return Math.round(event_count * account_object.spoofing_config.monthly_transactions.new);
+        let event_count = this.rollAccountEventCountOverPeriod(parameters);
+
+        du.debug('Event Count: '+event_count);
+
+        return Math.round(event_count * parameters.account.spoofing_config.monthly_transactions.new);
 
     }
 
