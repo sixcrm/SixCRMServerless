@@ -87,7 +87,7 @@ redshift:
   idleTimeoutMillis: 30000
   randomdata:
     staging_bucket: 'redshift-data-staging'
-    interval: 18000
+    interval: 300 #this is provided in seconds
 
 notifications:
   apn:

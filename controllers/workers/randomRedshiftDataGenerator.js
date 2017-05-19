@@ -29,8 +29,7 @@ class RandomRedshiftData extends workerController {
         .then(() => this.createS3Files())
         .then(() => this.pushToS3())
         .then(() => this.executeIngest())
-        .then(() => this.feedback())
-        .catch((error) => { throw error; });
+        .then(() => this.feedback());
 
     }
 
@@ -40,7 +39,7 @@ class RandomRedshiftData extends workerController {
 
         //du.highlight('Process complete');
 
-        return Promise.resolve(true);
+        return Promise.resolve('New data uploaded.');
 
     }
 
@@ -156,14 +155,25 @@ class RandomRedshiftData extends workerController {
         }else{
 
             now = timestamp.getISO8601();
-            now_sub_interval = timestamp.toISO8601(timestamp.getTimeDifference(this.random_data_interval));
+
+            let proposed_start_time = timestamp.getTimeDifference(this.random_data_interval);
+
+            du.highlight('Proposed Start Time: '+proposed_start_time, timestamp.toISO8601(proposed_start_time));
+            du.highlight('Data Interval: '+this.random_data_interval);
+            du.highlight('End Time: '+now);
+
+            now_sub_interval = timestamp.toISO8601();
 
         }
 
-        return {
+        let execution_window = {
             start_datetime: now_sub_interval,
             end_datetime: now
-        }
+        };
+
+        du.highlight('Execution Window: ', execution_window);
+        process.exit();
+        return execution_window;
 
     }
 
@@ -264,12 +274,10 @@ class RandomRedshiftData extends workerController {
 
         return Promise.all(promises).then((promises) => {
 
-            du.debug(promises);
             return true;
 
         }).catch((error) => {
 
-            du.warning(error);
             throw error;
 
         });

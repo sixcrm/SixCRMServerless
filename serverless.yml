@@ -278,7 +278,7 @@ functions:
     handler: handlers/workers/randomredshiftdata/handler.randomredshiftdata
     events:
       - schedule:
-          rate: rate(1 minute)
+          rate: rate(5 minutes)
           enabled: true
     environment:
       stage: ${opt:stage}
