@@ -3,6 +3,7 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const mathutilities = global.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.routes.include('lib', 'random.js');
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const s3utilities = global.routes.include('lib', 's3-utilities.js');
@@ -99,7 +100,9 @@ class RandomRedshiftData extends workerController {
 
         du.debug('Generate Objects');
 
-        let new_transaction_count_over_period = this.rollAccountNewEventCountOverPeriod(parameters);
+        let new_transaction_count_over_period = Math.round(this.rollAccountNewEventCountOverPeriod(parameters));
+
+        du.highlight('New Event Count: '+ new_transaction_count_over_period);
 
         for(var i = 0; i < new_transaction_count_over_period; i++){
 
@@ -145,34 +148,32 @@ class RandomRedshiftData extends workerController {
 
         du.debug('Set Execution Window');
 
-        let now, now_sub_interval;
+        let now, proposed_start_time;
 
         if(_.has(this, 'start_datetime') && _.has(this, 'end_datetime')){
 
             now = timestamp.convertToISO8601(this.end_datetime);
-            now_sub_interval = timestamp.convertToISO8601(this.start_datetime);
+            proposed_start_time = timestamp.convertToISO8601(this.start_datetime);
 
         }else{
 
-            now = timestamp.getISO8601();
+            now = timestamp.createTimestampSeconds();
+            proposed_start_time = timestamp.toISO8601(now  - this.random_data_interval);
+            now = timestamp.toISO8601(now);
 
-            let proposed_start_time = timestamp.getTimeDifference(this.random_data_interval);
-
-            du.highlight('Proposed Start Time: '+proposed_start_time, timestamp.toISO8601(proposed_start_time));
+            du.highlight('Proposed Start Time: '+proposed_start_time);
             du.highlight('Data Interval: '+this.random_data_interval);
             du.highlight('End Time: '+now);
-
-            now_sub_interval = timestamp.toISO8601();
 
         }
 
         let execution_window = {
-            start_datetime: now_sub_interval,
+            start_datetime: proposed_start_time,
             end_datetime: now
         };
 
         du.highlight('Execution Window: ', execution_window);
-        process.exit();
+
         return execution_window;
 
     }
@@ -530,16 +531,80 @@ class RandomRedshiftData extends workerController {
 
         du.debug('Roll Account Event Count Over Period');
 
-        let random_roll = randomutilities.randomGaussian(
-          parameters.account.spoofing_config.monthly_transactions.mean,
-          parameters.account.spoofing_config.monthly_transactions.standard_deviation
-        );
+        let new_transaction_count = this.rollNewTransactionCountOverPeriod(parameters);
+
+        let event_count = this.getEventCountFromNewTransactionCount(parameters, new_transaction_count);
+
+        return event_count;
+
+    }
+
+    rollNewTransactionCountOverPeriod(parameters){
+
+        du.debug('Roll New Transaction Count Over Period');
+
+        let transaction_random_roll = this.rollTransactionCountOverPeriod(parameters);
+        let period_scalar = this.getPeriodScalar(parameters);
+
+        let transaction_count_over_period = (period_scalar * transaction_random_roll);
+
+        du.info('Transaction Count Over Period: '+transaction_count_over_period);
+
+        let new_transaction_count_over_period = (parseFloat(parameters.account.spoofing_config.monthly_transactions.new) * transaction_count_over_period);
+
+        du.info('New Transaction Count Over Period: '+new_transaction_count_over_period);
+
+        return new_transaction_count_over_period;
+
+    }
+
+    getPeriodScalar(parameters){
+
+        du.debug('Get Period Scalar');
 
         let period_scalar = (timestamp.dateToTimestamp(parameters.end_datetime) - timestamp.dateToTimestamp(parameters.start_datetime))/(3600 * 24 * 31);
 
-        let event_count = Math.round((period_scalar * random_roll));
+        du.info('Percentage of the month: '+mathutilities.formatToPercentage(period_scalar, 8)+'%');
+        return period_scalar;
 
-        return event_count;
+    }
+
+    rollTransactionCountOverPeriod(parameters){
+
+        du.debug('Roll Transaction Count Over Period');
+
+        let transaction_random_roll = randomutilities.randomGaussian(
+        parameters.account.spoofing_config.monthly_transactions.mean,
+        parameters.account.spoofing_config.monthly_transactions.standard_deviation
+      );
+
+        du.info('Total Transaction Count (Gaussian): '+ transaction_random_roll);
+
+        return transaction_random_roll;
+
+    }
+
+    getEventCountFromNewTransactionCount(parameters, transaction_count){
+
+        du.debug('Get Event Count From New Transaction Count');
+
+        let sum_upsell_probability = parseFloat(parameters.account.spoofing_config.event_probabilities.upsell) + parseFloat(parameters.account.spoofing_config.event_probabilities.upsell2);
+
+        du.info('Sum Upsell Probability: '+sum_upsell_probability);
+
+        let order_count = (transaction_count / (1 + sum_upsell_probability));
+
+        du.info('Order Count: '+order_count);
+
+        let clicks_to_orders_compound_probability = (parseFloat(parameters.account.spoofing_config.event_probabilities.lead) * parseFloat(parameters.account.spoofing_config.event_probabilities.order));
+
+        du.info('Clicks to orders compound probability: '+clicks_to_orders_compound_probability);
+
+        let click_count = (order_count / clicks_to_orders_compound_probability);
+
+        du.info('Click Count (Event Count): '+ click_count);
+
+        return click_count;
 
     }
 
@@ -551,7 +616,7 @@ class RandomRedshiftData extends workerController {
 
         du.debug('Event Count: '+event_count);
 
-        return Math.round(event_count * parameters.account.spoofing_config.monthly_transactions.new);
+        return event_count;
 
     }
 
