@@ -1,12 +1,12 @@
 var fs = require('fs');
 var path = require('path');
-var createOrder = require('../../../../controllers/endpoints/createOrder');
+var createOrder = global.routes.include('controllers', 'endpoints/createOrder.js');
 var chai = require('chai');
 var expect = chai.expect;
 
 chai.use(require('../../chaiAssertionHelper'));
 
-xdescribe('endpoints/createOrder', function () {
+describe('endpoints/createOrder', function () {
     describe('validateInputs', function () {
         it('should not be valid with null input', function () {
             var actual = createOrder.validateInput();

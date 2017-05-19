@@ -5,7 +5,7 @@ let expect = chai.expect;
 let anyItem = { property: 'value' };
 let anyTableName = 'tableName';
 
-xdescribe('lib/dynamodb-utilities', () => {
+describe('lib/dynamodb-utilities', () => {
     describe('dynamodb-utilities', () => {
 
         it('should save a record', (done) => {

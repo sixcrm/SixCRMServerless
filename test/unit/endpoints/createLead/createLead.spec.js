@@ -1,12 +1,12 @@
 var fs = require('fs');
 var path = require('path');
-var createLead = require('../../../../controllers/endpoints/createLead');
+var createLead = global.routes.include('controllers', 'endpoints/createLead.js');
 var chai = require('chai');
 var expect = chai.expect;
 
 chai.use(require('../../chaiAssertionHelper'));
 
-xdescribe('endpoints/createLead', function () {
+describe('endpoints/createLead', function () {
     describe('validateInputs', function () {
         it('should not be valid with null input', function () {
             var actual = createLead.validateInput();

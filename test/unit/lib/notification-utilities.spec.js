@@ -1,9 +1,9 @@
-let NotificationUtilities = require('../../../lib/notification-utilities');
+let NotificationUtilities = global.routes.include('lib', 'notification-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-xdescribe('lib/notification-utilities', () => {
+describe('lib/notification-utilities', () => {
 
     before(() => {
         mockery.enable({
@@ -103,7 +103,7 @@ xdescribe('lib/notification-utilities', () => {
             // given
             let notification_object = Object.assign({}, valid_object);
 
-            mockery.registerMock('../controllers/Notification', {
+            mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
                     expect(notification_object).not.to.equal(notification_object, 'Notification utilities should not have been called.');
                 }
@@ -120,21 +120,21 @@ xdescribe('lib/notification-utilities', () => {
 
         it('should create notifications when the object is valid', (done) => {
             // given
-            mockery.registerMock('../controllers/Notification', {
+            mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
                     expect(notification_object).to.be.defined;
                     expect(notification_object.user).to.equal('user@example.com');
                     done();
                 }
             });
-            mockery.registerMock('../controllers/UserACL', {
+            mockery.registerMock(global.routes.path('controllers', 'entities/UserACL.js'), {
                 queryBySecondaryIndex: () => {
                     return Promise.resolve([{
                         user: 'user@example.com'
                     }]);
                 }
             });
-            let NotificationUtilities = require('../../../lib/notification-utilities');
+            let NotificationUtilities = global.routes.include('lib', 'notification-utilities.js');
 
             NotificationUtilities.createNotificationsForAccount(valid_object).catch((error) => {
                 done(error);
@@ -157,7 +157,7 @@ xdescribe('lib/notification-utilities', () => {
             // given
             let notification_object = Object.assign({}, valid_object);
 
-            mockery.registerMock('../controllers/Notification', {
+            mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
                     expect(notification_object).not.to.equal(notification_object, 'Notification utilities should not have been called.');
                 }
@@ -174,7 +174,7 @@ xdescribe('lib/notification-utilities', () => {
 
         it('should create notification when the object is valid', (done) => {
             // given
-            mockery.registerMock('../controllers/Notification', {
+            mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
                     expect(notification_object).to.be.defined;
                     expect(notification_object.id).to.be.defined;
@@ -186,7 +186,7 @@ xdescribe('lib/notification-utilities', () => {
                     done();
                 }
             });
-            let NotificationUtilities = require('../../../lib/notification-utilities');
+            let NotificationUtilities = global.routes.include('lib', 'notification-utilities.js');
 
             NotificationUtilities.createNotificationForAccountAndUser(valid_object);
         });
