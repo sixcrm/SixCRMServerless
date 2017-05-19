@@ -10,12 +10,12 @@ setEnvironmentVariables();
 
 const dataGenerator = global.routes.include('controllers','workers/randomRedshiftDataGenerator');
 
-dataGenerator.set('start_datetime', '2017-05-18T18:25:44.500Z');
+dataGenerator.set('start_datetime', '2017-05-18T18:00:44.500Z');
 dataGenerator.set('end_datetime', '2017-05-18T18:30:44.500Z');
 
-dataGenerator.execute().then(() => {
+return dataGenerator.execute().then(() => {
 
-    du.higlight('Complete');
+    du.highlight('Process Complete');
 
 }).catch((error) => {
     throw error;

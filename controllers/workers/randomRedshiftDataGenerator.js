@@ -37,9 +37,8 @@ class RandomRedshiftData extends workerController {
     feedback(){
 
         du.debug('Feedback');
-    //diagnostic info here pleez...
 
-        du.highlight('Process complete');
+        //du.highlight('Process complete');
 
         return Promise.resolve(true);
 
@@ -257,13 +256,23 @@ class RandomRedshiftData extends workerController {
         for(var k in this.s3_files){
 
             var s3_filename = this.getS3FileName(k);
-            let query = `COPY f_events FROM 's3://${this.s3_bucket}/${s3_filename}' MANIFEST json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`;
+            let query = `COPY f_events FROM 's3://${this.s3_bucket}/${s3_filename}' credentials 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`;
 
             promises.push(redshiftutilities.query(query, []));
 
         }
 
-        return Promise.all(promises);
+        return Promise.all(promises).then((promises) => {
+
+            du.debug(promises);
+            return true;
+
+        }).catch((error) => {
+
+            du.warning(error);
+            throw error;
+
+        });
 
     }
 
@@ -292,7 +301,6 @@ class RandomRedshiftData extends workerController {
                     Body: this.s3_files[k]
                 };
 
-                du.highlight(parameters);
                 promises.push(s3utilities.put_object(parameters));
 
             }
@@ -359,7 +367,7 @@ class RandomRedshiftData extends workerController {
 
             du.info(this[list+'_output_array']);
 
-            return Promise.resolve(this[list+'_output_array'].join("\n"));
+            return Promise.resolve(this[list+'_output_array'].join("\r"));
 
         }else{
 
@@ -473,7 +481,7 @@ class RandomRedshiftData extends workerController {
 
         }else{
 
-            return null;
+            return "";
 
         }
 
