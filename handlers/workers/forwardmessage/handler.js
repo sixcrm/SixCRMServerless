@@ -1,7 +1,7 @@
 'use strict';
 require('../../../routes.js');
 var LambdaResponse = global.routes.include('lib', 'lambda-response.js');
-var forwardMessageController = global.routes.include('lib', 'workers/forwardMessage.js');
+var forwardMessageController = global.routes.include('controllers', 'workers/forwardMessage.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.forwardmessage = (event, context, callback) => {

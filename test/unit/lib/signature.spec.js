@@ -1,8 +1,8 @@
-let Signature = require('../../../lib/signature');
+let Signature = global.routes.include('lib', 'signature.js')
 let chai = require('chai');
 let expect = chai.expect;
 
-xdescribe('lib/signature', () => {
+describe('lib/signature', () => {
     describe('signature', () => {
 
         it('should create a signature', () => {

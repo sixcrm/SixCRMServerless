@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var confirmOrder = require('../../../../controllers/endpoints/confirmOrder');
+var confirmOrder = global.routes.include('controllers', 'endpoints/confirmOrder.js');
 var chai = require('chai');
 var chaiAsPromised = require("chai-as-promised");
 
@@ -18,7 +18,7 @@ chai.use(require('../../chaiAssertionHelper'));
 // This will fail after the first test because the session will be modifed and
 // set as complete.
 //==========================================================================
-xdescribe('endpoints/confirmOrder', function () {
+describe('endpoints/confirmOrder', function () {
     describe('validateInputs', function () {
         it('should NOT be valid with no arguments', function () {
             return assert.isRejected(confirmOrder.validateInput(), Error, 'The session_id must be set in the querystring.');

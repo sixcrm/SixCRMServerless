@@ -1,9 +1,9 @@
-let IndexingUtilities = require('../../../lib/indexing-utilities');
+let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-xdescribe('lib/indexing-utilities', () => {
+describe('lib/indexing-utilities', () => {
 
     before(() => {
         mockery.enable({
@@ -160,12 +160,12 @@ xdescribe('lib/indexing-utilities', () => {
 
             process.env.search_indexing_queue_url = 'url';
 
-            mockery.registerMock('./sqs-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
                 }
             });
-            let IndexingUtilities = require('../../../lib/indexing-utilities');
+            let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).then((response) => {
@@ -182,12 +182,12 @@ xdescribe('lib/indexing-utilities', () => {
 
             process.env.search_indexing_queue_url = 'url';
 
-            mockery.registerMock('./sqs-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(new Error('Sending message failed.'), null);
                 }
             });
-            let IndexingUtilities = require('../../../lib/indexing-utilities');
+            let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
@@ -206,12 +206,12 @@ xdescribe('lib/indexing-utilities', () => {
 
             process.env.search_indexing_queue_url = 'url';
 
-            mockery.registerMock('./sqs-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
                 }
             });
-            let IndexingUtilities = require('../../../lib/indexing-utilities');
+            let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.removeFromSearchIndex(entity).then((response) => {
@@ -231,12 +231,12 @@ xdescribe('lib/indexing-utilities', () => {
 
             process.env.search_indexing_queue_url = 'url';
 
-            mockery.registerMock('./sqs-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
                 }
             });
-            let IndexingUtilities = require('../../../lib/indexing-utilities');
+            let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.addToSearchIndex(entity).then((response) => {

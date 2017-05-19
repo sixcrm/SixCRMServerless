@@ -274,6 +274,26 @@ functions:
 
 # Workers
 
+  randomredshiftdata:
+    handler: handlers/workers/randomredshiftdata/handler.randomredshiftdata
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      stage: ${opt:stage}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
+      redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
+      redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
+      redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
+      redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
+      redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
+      redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
+      redshift_random_data_staging_bucket: sixcrm-${opt:stage}-${file(./config/${opt:stage}/site.yml):redshift.randomdata.staging_bucket}
+      redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
+
+
   sesnotifications:
     handler: handlers/workers/sesnotifications/handler.sesnotifications
     events:

@@ -4,7 +4,7 @@ const PermissionTestGenerators = global.routes.include('test','unit/lib/permissi
 let chai = require('chai');
 let expect = chai.expect;
 
-xdescribe('controllers/endpoints/createOrder.js', () => {
+describe('controllers/endpoints/createOrder.js', () => {
     before(() => {
         mockery.enable({
             useCleanCache: true,
@@ -32,7 +32,7 @@ xdescribe('controllers/endpoints/createOrder.js', () => {
         });
     });
 
-    it('doesn\'t get order info outside of session', () => {
+    xit('doesn\'t get order info outside of session', () => {
         PermissionTestGenerators.givenUserWithAllowed('read', 'creditcard');
         let eventBody = {
             session_id: 1,
@@ -91,7 +91,7 @@ xdescribe('controllers/endpoints/createOrder.js', () => {
             name: ''
         };
 
-        mockery.registerMock('../../controllers/Session.js', {
+        mockery.registerMock(global.routes.path('controllers', 'entities/Session.js'), {
             get: () => {
                 return Promise.resolve({
                     id: 1
@@ -99,19 +99,19 @@ xdescribe('controllers/endpoints/createOrder.js', () => {
             }
         });
 
-        mockery.registerMock('../../controllers/Campaign.js', {
+        mockery.registerMock(global.routes.path('controllers', 'entities/Campaign.js'), {
             getHydratedCampaign: () => {
                 return Promise.resolve({});
             }
         });
 
-        mockery.registerMock('../../controllers/ProductSchedule.js', {
+        mockery.registerMock(global.routes.path('controllers', 'entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             }
         });
 
-        mockery.registerMock('../../controllers/CreditCard.js', {
+        mockery.registerMock(global.routes.path('controllers', 'entities/CreditCard.js'), {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
@@ -140,7 +140,7 @@ xdescribe('controllers/endpoints/createOrder.js', () => {
             name: ''
         };
 
-        mockery.registerMock('../../controllers/Session.js', {
+        mockery.registerMock(global.routes.path('controllers', 'entities/CreditCard.js'), {
             get: () => {
                 return Promise.resolve({
                     id: 1
@@ -148,7 +148,7 @@ xdescribe('controllers/endpoints/createOrder.js', () => {
             }
         });
 
-        mockery.registerMock('../../controllers/Campaign.js', {
+        mockery.registerMock(global.routes.path('controllers', 'entities/Campaign.js'), {
             getHydratedCampaign: () => {
                 return Promise.resolve({
                     id: 1
@@ -156,13 +156,13 @@ xdescribe('controllers/endpoints/createOrder.js', () => {
             }
         });
 
-        mockery.registerMock('../../controllers/ProductSchedule.js', {
+        mockery.registerMock(global.routes.path('controllers', 'entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             }
         });
 
-        mockery.registerMock('../../controllers/CreditCard.js', {
+        mockery.registerMock(global.routes.path('controllers', 'entities/CreditCard.js'), {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
@@ -172,7 +172,7 @@ xdescribe('controllers/endpoints/createOrder.js', () => {
         });
 
 
-        let endpointController = require('../../../../controllers/endpoints/createOrder');
+        let endpointController = global.routes.include('controllers', 'endpoints/createOrder.js');
 
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available creditcard.');
