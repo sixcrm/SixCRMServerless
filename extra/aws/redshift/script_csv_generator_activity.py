@@ -24,20 +24,6 @@ actor = [uuid.uuid4() for x in range(10)]
 acted_upon = [uuid.uuid4() for x in range(10)]
 accociated_with = [uuid.uuid4() for x in range(10)]
 
-"""
-ID internal id
-datetime -
-actor - UUID4 or an e-mail address
-actor type - entity name - customer, user, system
-action - created a new, deleted a etcc...
-acted upon - e-mail or ID required
-acted-upon type - customer ,user, etc...
-associated with not required UUID4 or e-mail
-ACCOCIATED WITH type customer, user merchant proicessor etc...
-
-everyting by the actore everything by the acted upon
-"""
-
 
 g=open("activity.csv","w",newline="\n", encoding="utf-8")
 
