@@ -691,7 +691,7 @@ resources:
            - Effect: Allow
              Action:
                - s3:*
-             Resource: 	arn:aws:s3:us-east-1:*:*
+             Resource: 	arn:aws:s3:*:*:*
         Roles:
           - Ref: IamRoleLambdaExecution
 #    SixEncryptionKey:
