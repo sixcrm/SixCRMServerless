@@ -425,7 +425,6 @@ class RandomRedshiftData extends workerController {
 
         let campaign_object = this.getCampaignObject(account_id, campaign_id);
 
-        du.warning(campaign_object.product_schedules, event_type);
         if(_.has(campaign_object.product_schedules, event_type)){
 
             return campaign_object.product_schedules[event_type];
