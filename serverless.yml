@@ -688,6 +688,10 @@ resources:
              Action:
                - cloudsearch:*
              Resource: 	arn:aws:cloudsearch:us-east-1:*:*
+           - Effect: Allow
+             Action:
+               - s3:*
+             Resource: 	arn:aws:s3:us-east-1:*:*
         Roles:
           - Ref: IamRoleLambdaExecution
 #    SixEncryptionKey:
