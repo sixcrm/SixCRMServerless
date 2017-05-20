@@ -92,6 +92,8 @@ class RandomRedshiftData extends workerController {
 
         });
 
+        du.output(this.events_output_array);
+
         return Promise.resolve(true);
 
     }
@@ -133,7 +135,7 @@ class RandomRedshiftData extends workerController {
             datetime: datetime,
             account: account_id,
             campaign: campaign_id,
-            product_schedule: null,
+            product_schedule: '',
             affiliate: affiliate,
             subffiliate_1: subaffiliates.subaffiliate_1,
             subffiliate_2: subaffiliates.subaffiliate_2,
@@ -410,7 +412,9 @@ class RandomRedshiftData extends workerController {
     }
 
     selectCampaign(account_object){
+
         du.debug('Select Campaign');
+
         return randomutilities.selectRandomFromArray(account_object.campaigns);
 
     }
@@ -421,13 +425,14 @@ class RandomRedshiftData extends workerController {
 
         let campaign_object = this.getCampaignObject(account_id, campaign_id);
 
-        if(_.has(campaign_object.product_schedule, event_type)){
+        du.warning(campaign_object.product_schedules, event_type);
+        if(_.has(campaign_object.product_schedules, event_type)){
 
-            return campaign_object.product_schedule[event_type];
+            return campaign_object.product_schedules[event_type];
 
         }
 
-        return null;
+        return "";
 
     }
 
@@ -473,7 +478,7 @@ class RandomRedshiftData extends workerController {
 
         }else{
 
-            return null;
+            return "";
 
         }
 
