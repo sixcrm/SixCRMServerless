@@ -691,7 +691,7 @@ resources:
            - Effect: Allow
              Action:
                - s3:*
-             Resource: *
+             Resource: "*"
         Roles:
           - Ref: IamRoleLambdaExecution
 #    SixEncryptionKey:
