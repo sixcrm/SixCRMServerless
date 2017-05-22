@@ -32,6 +32,13 @@ class RandomRedshiftData extends workerController {
             'subaffiliate_4',
             'subaffiliate_5'
         ];
+
+        this.table_name_translations = {
+            transactions: 'f_transactions',
+            events: 'f_events',
+            activity: 'f_activity'
+        };
+
     }
 
     set(key, value){
@@ -124,6 +131,8 @@ class RandomRedshiftData extends workerController {
 
         for(var i = 0; i < new_transaction_count_over_period; i++){
 
+            this.setSession();
+
             var event_object = this.createEventObject(parameters);
 
             this.addEvent('click', event_object, parameters.account);
@@ -140,6 +149,7 @@ class RandomRedshiftData extends workerController {
         let campaign_object   = this.selectCampaign(parameters.account);
         let affiliate         = this.selectAffiliate(campaign_object, parameters.account);
         let subaffiliates     = this.selectSubAffiliates(campaign_object, parameters.account);
+
         let session           = this.session.id;
 
         let account_id        = parameters.account.id;
@@ -153,11 +163,11 @@ class RandomRedshiftData extends workerController {
             campaign: campaign_id,
             product_schedule: '',
             affiliate: affiliate,
-            subffiliate_1: subaffiliates.subaffiliate_1,
-            subffiliate_2: subaffiliates.subaffiliate_2,
-            subffiliate_3: subaffiliates.subaffiliate_3,
-            subffiliate_4: subaffiliates.subaffiliate_4,
-            subffiliate_5: subaffiliates.subaffiliate_5,
+            subaffiliate_1: subaffiliates.subaffiliate_1,
+            subaffiliate_2: subaffiliates.subaffiliate_2,
+            subaffiliate_3: subaffiliates.subaffiliate_3,
+            subaffiliate_4: subaffiliates.subaffiliate_4,
+            subaffiliate_5: subaffiliates.subaffiliate_5,
         };
 
     }
@@ -231,7 +241,6 @@ class RandomRedshiftData extends workerController {
 
             case 'click':
 
-                this.setSession();
                 this.addEvent('lead', event_object, account_object);
 
                 break;
@@ -278,7 +287,7 @@ class RandomRedshiftData extends workerController {
 
         du.debug('Add Transaction');
 
-        let transaction_object = this.createTransactionObject();
+        let transaction_object = this.createTransactionObject(event_type, event_object, account_object);
 
         this.pushObject(transaction_object, 'transactions');
 
@@ -332,8 +341,8 @@ class RandomRedshiftData extends workerController {
 
         transaction.customer = this.getCustomer();
         transaction.creditcard = this.getCreditCard();
-        transaction.merchant_provider = this.selectMerchantProvider();
-        transaction.amount = this.getAmountFromProductSchedule();
+        transaction.merchant_provider = this.selectMerchantProvider(event_object, account_object);
+        transaction.amount = this.getAmountFromProductSchedule(event_type, event_object, account_object);
 
         transaction.processor_result = 'success';
         transaction.transaction_type = 'new';
@@ -344,6 +353,8 @@ class RandomRedshiftData extends workerController {
     }
 
     assureSessionField(field){
+
+        du.debug('Assure Session Field');
 
         if(_.has(this, 'session') && _.has(this.session, field)){
 
@@ -359,37 +370,94 @@ class RandomRedshiftData extends workerController {
 
     }
 
+    //test
     getCustomer(){
+
+        du.debug('Get Customer');
 
         return this.assureSessionField('customer');
 
     }
 
+    //test
     getCreditCard(){
+
+        du.debug('Get Credit Card');
 
         return this.assureSessionField('creditcard');
 
     }
 
-    selectMerchantProvider(campaign_object){
+    //test
+    selectMerchantProvider(event_object, account_object){
+
+        du.debug('Select Merchant Provider');
 
         if(_.has(this, 'session') && _.has(this.session, 'merchant_provider')){
+
+            du.debug('Merchant Provider in session: ', this.session);
 
             return this.session.merchant_provider;
 
         }
 
+
+        let campaign_object = this.getCampaignObject(account_object.id, event_object.campaign);
+
         if(_.has(campaign_object, 'merchant_providers') && _.isArray(campaign_object.merchant_providers) && campaign_object.merchant_providers.length > 0){
 
             this.session.merchant_provider = randomutilities.selectRandomFromArray(campaign_object.merchant_providers);
+
         }
 
         return this.session.merchant_provider;
 
     }
 
-    getAmountFromProductSchedule(){
+    getAmountFromProductSchedule(event_type, event_object, account_object){
 
+        du.debug('Get Amount From Product Schedule');
+
+        let product_schedule_id = null;
+
+        if(_.has(event_object, 'product_schedule')){
+
+            product_schedule_id = event_object.product_schedule;
+
+            let campaign_object = this.getCampaignObject(account_object.id, event_object.campaign);
+
+            let product_schedule_object = this.getProductScheduleObject(campaign_object, product_schedule_id);
+
+            if(_.has(product_schedule_object, 'amount')){
+
+                return product_schedule_object.amount;
+
+            }else{
+
+                throw new Error('Amount not defined for product schedule obect.');
+
+            }
+
+        }
+
+        throw new Error('No product schedule in the event object');
+
+    }
+
+    //test
+    getProductScheduleObject(campaign_object, product_schedule_id){
+
+        du.debug('Get Product Schedule');
+
+        if(_.has(campaign_object, 'product_schedules')){
+            for(var m in campaign_object.product_schedules){
+                if(_.has(campaign_object.product_schedules[m], 'id') && (campaign_object.product_schedules[m].id == product_schedule_id)){
+                    return campaign_object.product_schedules[m];
+                }
+            }
+        }
+
+        throw new Error('No product schedule defined for the campaign object');
 
     }
 
@@ -405,30 +473,31 @@ class RandomRedshiftData extends workerController {
 
     }
 
+    getRedshiftTableName(row_type){
+
+        return this.table_name_translations[row_type];
+
+    }
+
     executeIngest(){
 
         du.debug('Execute Ingest');
 
-        let promises = [];
+        let queries = [];
 
         for(var k in this.s3_files){
 
             var s3_filename = this.getS3FileName(k);
-            let query = `COPY f_events FROM 's3://${this.s3_bucket}/${s3_filename}' credentials 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`;
+            var table_name = this.getRedshiftTableName(k)
 
-            promises.push(redshiftutilities.query(query, []));
+            //Technical Debt:  Make this use a role
+            queries.push(`COPY ${table_name} FROM 's3://${this.s3_bucket}/${s3_filename}' credentials 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`);
 
         }
 
-        return Promise.all(promises).then((promises) => {
+        let query = queries.join('; ');
 
-            return true;
-
-        }).catch((error) => {
-
-            throw error;
-
-        });
+        return redshiftutilities.query(query, []);
 
     }
 
@@ -498,16 +567,21 @@ class RandomRedshiftData extends workerController {
         let promises = [];
 
         promises.push(this.createS3File('events'));
-    //promises.push(this.createS3File('transactions'));
+        promises.push(this.createS3File('transactions'));
     //promises.push(this.createS3File('activity'));
 
         return Promise.all(promises).then((promises) => {
 
+            let events_file_body = promises[0];
+            let transactions_file_body = promises[1];
+
             this.s3_files = {
-                events: promises[0],
-        //transactions: '',
-        //activity: ''
+                events: events_file_body,
             };
+
+            if(_.isString(transactions_file_body)){
+                this.s3_files['transactions'] = transactions_file_body;
+            }
 
             return true;
 
@@ -527,7 +601,7 @@ class RandomRedshiftData extends workerController {
 
         }else{
 
-            return Promise.reject(new Error('"'+list+'_output_array" doesn\'t exist'));
+            return Promise.resolve('');
 
         }
 
@@ -565,9 +639,9 @@ class RandomRedshiftData extends workerController {
 
         let campaign_object = this.getCampaignObject(account_id, campaign_id);
 
-        if(_.has(campaign_object.product_schedules, event_type)){
+        if(_.has(campaign_object.product_schedules, event_type) && _.has(campaign_object.product_schedules[event_type], 'id')){
 
-            return campaign_object.product_schedules[event_type];
+            return campaign_object.product_schedules[event_type].id;
 
         }
 
