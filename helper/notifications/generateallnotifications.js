@@ -31,22 +31,22 @@ const du = global.routes.include('lib','debug-utilities.js');
 PermissionUtilities.disableACLs();
 
 /*
- * Parameters: message account user
+ * Parameters: body account user
  *
  * Examples:
- * Create a notification with a given message for a specific user of an account and phone number and send it via all channels:
+ * Create a notification with a given body for a specific user of an account and phone number and send it via all channels:
  * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/notifications/generateallnotifications.js 'hi' '*' 'ljubomir@toptal.com'
  *
  * Make sure the user_setting is filled for specific user in the seed, as the underlying code respects the settings.
  *
 */
 
-let message = process.argv[2];
+let body = process.argv[2];
 let account = process.argv[3];
 let user = process.argv[4];
 
-if (!message) {
-    du.output('Message is required');
+if (!body) {
+    du.output('Body is required');
     printHelp();
     return;
 }
@@ -69,7 +69,7 @@ let notification_object = {
     type: 'dummy',
     action: 'test',
     title: 'testing notification',
-    message: message
+    body: body
 };
 
 NotificationProvider.createNotificationForAccountAndUser(notification_object).then(() => {
@@ -81,5 +81,5 @@ NotificationProvider.createNotificationForAccountAndUser(notification_object).th
 
 function printHelp() {
     du.output('Helper for inserting notification for the given account and user. Notifications are sent via all channels.');
-    du.output('Parameters: message account user');
+    du.output('Parameters: body account user');
 }

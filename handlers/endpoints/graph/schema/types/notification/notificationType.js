@@ -32,9 +32,9 @@ module.exports.graphObj = new GraphQLObjectType({
             type: GraphQLString,
             description: 'Notification title'
         },
-        message: {
+        body: {
             type: GraphQLString,
-            description: 'Notification message.'
+            description: 'Notification body.'
         },
         read_at: {
             type: GraphQLString,

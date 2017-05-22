@@ -29,22 +29,22 @@ const du = global.routes.include('lib','debug-utilities.js');
 PermissionUtilities.disableACLs();
 
 /*
- * Parameters: message account [user]
+ * Parameters: body account [user]
  *
  * Examples:
- * Create a notification with a given message for a specific user of an account:
+ * Create a notification with a given body for a specific user of an account:
  * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/generatenotification.js 'hi' '*' 'nikola.bosic@toptal.com'
  *
- * Create a notification with a given message for all users of an account:
+ * Create a notification with a given body for all users of an account:
  * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/generatenotification.js 'hi' '*'
 */
 
-let message = process.argv[2];
+let body = process.argv[2];
 let account = process.argv[3];
 let user = process.argv[4];
 
-if (!message) {
-    du.output('Message is required');
+if (!body) {
+    du.output('Body is required');
     printHelp();
     return;
 }
@@ -60,7 +60,7 @@ let notification_object = {
     type: 'dummy',
     action: 'test',
     title: 'testing notification',
-    message: message
+    body: body
 };
 
 if (user) {
@@ -74,5 +74,5 @@ du.output('Attempted to insert a notification', notification_object);
 
 function printHelp() {
     du.output('Helper for inserting notification for the given account and user. User is optional.');
-    du.output('Parameters: message account [user]');
+    du.output('Parameters: body account [user]');
 }

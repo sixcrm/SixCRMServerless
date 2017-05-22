@@ -28,19 +28,19 @@ const timestamp = global.routes.include('lib','timestamp.js');
 PermissionUtilities.disableACLs();
 
 /*
- * Parameters: message account user
+ * Parameters: body account user
  *
  * Examples:
- * Create a notification with a given message for a specific user of an account:
+ * Create a notification with a given body for a specific user of an account:
  * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/notifications/generateemailnotification.js 'hi' '*' 'ljubomir@toptal.com'
 */
 
-let message = process.argv[2];
+let body = process.argv[2];
 let account = process.argv[3];
 let user = process.argv[4];
 
-if (!message) {
-    du.output('Message is required');
+if (!body) {
+    du.output('Body is required');
     printHelp();
     return;
 }
@@ -64,7 +64,7 @@ let notification_object = {
     type: 'dummy',
     action: 'test',
     title: 'testing notification',
-    message: message,
+    body: body,
     created_at: timestamp.getISO8601(),
     updated_at: timestamp.getISO8601()
 };
@@ -75,5 +75,5 @@ du.output('Attempted to send a notification via email.', notification_object);
 
 function printHelp() {
     du.output('Helper for inserting notification for the given account and user. User is optional.');
-    du.output('Parameters: message account [user]');
+    du.output('Parameters: body account [user]');
 }

@@ -31,21 +31,21 @@ const timestamp = global.routes.include('lib','timestamp.js');
 PermissionUtilities.disableACLs();
 
 /*
- * Parameters: message account user phone_number
+ * Parameters: body account user phone_number
  *
  * Examples:
- * Create a notification with a given message for a specific user of an account and phone number and send it via SMS:
+ * Create a notification with a given body for a specific user of an account and phone number and send it via SMS:
  * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/notifications/generatesmsnotification.js 'hi' '*' 'ljubomir@toptal.com' '+381631025339'
  *
 */
 
-let message = process.argv[2];
+let body = process.argv[2];
 let account = process.argv[3];
 let user = process.argv[4];
 let phone_number = process.argv[5];
 
-if (!message) {
-    du.output('Message is required');
+if (!body) {
+    du.output('Body is required');
     printHelp();
     return;
 }
@@ -75,7 +75,7 @@ let notification_object = {
     type: 'dummy',
     action: 'test',
     title: 'testing notification',
-    message: message,
+    body: body,
     created_at: timestamp.getISO8601(),
     updated_at: timestamp.getISO8601()
 };
@@ -86,5 +86,5 @@ du.output('Attempted to send a notification', notification_object);
 
 function printHelp() {
     du.output('Helper for inserting notification for the given account and user. Notification is sent via SMS.');
-    du.output('Parameters: message account user phone_number');
+    du.output('Parameters: body account user phone_number');
 }

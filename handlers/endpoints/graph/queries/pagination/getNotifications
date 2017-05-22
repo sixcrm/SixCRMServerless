@@ -8,7 +8,7 @@
 		    id,
 		    type,
 		    action,
-		    message,
+		    body,
 		    read_at,
 				created_at,
 				updated_at
