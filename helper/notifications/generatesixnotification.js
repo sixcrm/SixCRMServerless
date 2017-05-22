@@ -59,6 +59,7 @@ let notification_object = {
     account: account,
     type: 'dummy',
     action: 'test',
+    title: 'testing notification',
     message: message
 };
 

@@ -63,6 +63,7 @@ let notification_object = {
     user: user,
     type: 'dummy',
     action: 'test',
+    title: 'testing notification',
     message: message,
     created_at: timestamp.getISO8601(),
     updated_at: timestamp.getISO8601()
