@@ -7,7 +7,7 @@
 			id,
             type,
             action,
-            message,
+            body,
             title,
             created_at,
             read_at,

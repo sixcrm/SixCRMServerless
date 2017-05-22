@@ -30,21 +30,21 @@ const timestamp = global.routes.include('lib','timestamp.js');
 PermissionUtilities.disableACLs();
 
 /*
- * Parameters: message account user webhook.
+ * Parameters: body account user webhook.
  *
  * Examples:
- * Create a notification with a given message for a specific user of an account and phone number and send it via slack webhook:
+ * Create a notification with a given body for a specific user of an account and send it via slack webhook:
  * stage=local AWS_PROFILE=six SIX_VERBOSE=2 node helper/notifications/generateslacknotification.js 'test' '*' 'ljubomir@toptal.com' 'https://hooks.slack.com/services/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'
  *
 */
 
-let message = process.argv[2];
+let body = process.argv[2];
 let account = process.argv[3];
 let user = process.argv[4];
 let webhook = process.argv[5];
 
-if (!message) {
-    du.output('Message is required');
+if (!body) {
+    du.output('Body is required');
     printHelp();
     return;
 }
@@ -62,7 +62,7 @@ if (!user) {
 }
 
 if (!webhook) {
-    du.output('Phone number is required');
+    du.output('Webhook is required');
     printHelp();
     return;
 }
@@ -73,7 +73,8 @@ let notification_object = {
     user: user,
     type: 'dummy',
     action: 'test',
-    message: message,
+    title: 'testing notification',
+    body: body,
     created_at: timestamp.getISO8601(),
     updated_at: timestamp.getISO8601()
 };
@@ -84,5 +85,5 @@ du.output('Attempted to send a notification', notification_object);
 
 function printHelp() {
     du.output('Helper for inserting notification for the given account and user. Notification is sent via Slack Webhook.');
-    du.output('Parameters: message account user webhook');
+    du.output('Parameters: body account user webhook');
 }

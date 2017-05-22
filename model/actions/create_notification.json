@@ -17,10 +17,10 @@
     "title":{
       "type":"string"
     },
-    "message":{
+    "body":{
       "type":"string"
     }
 
   },
-  "required":["account", "type", "action", "title", "message"]
+  "required":["account", "type", "action", "title", "body"]
 }

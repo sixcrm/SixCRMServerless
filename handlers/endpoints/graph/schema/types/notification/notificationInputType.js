@@ -12,7 +12,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         title:   	{ type: new GraphQLNonNull(GraphQLString) },
         type: 	    { type: new GraphQLNonNull(GraphQLString) },
         action: 	{ type: new GraphQLNonNull(GraphQLString) },
-        message:	{ type: new GraphQLNonNull(GraphQLString) },
+        body:	{ type: new GraphQLNonNull(GraphQLString) },
         read_at:		{ type: GraphQLString }
     })
 });
