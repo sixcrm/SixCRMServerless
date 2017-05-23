@@ -43,7 +43,8 @@ class createOrderController extends endpointController{
         this.notification_parameters = {
             type: 'order',
             action: 'added',
-            message: 'A new order has been created.'
+            title: 'A new order',
+            body: 'A new order has been created.'
         };
 
     }

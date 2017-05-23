@@ -44,7 +44,8 @@ class createUpsellController extends endpointController{
         this.notification_parameters = {
             type: 'order',
             action: 'added',
-            message: 'A new order (upsell) has been created.'
+            title: 'A new order (upsell)',
+            body: 'A new order (upsell) has been created.'
         };
 
     }

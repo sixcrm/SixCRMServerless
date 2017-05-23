@@ -34,7 +34,8 @@ class confirmOrderController extends endpointController{
         this.notification_parameters = {
             type: 'session',
             action: 'closed',
-            message: 'A customer has completed a session.'
+            title: 'Completed Session',
+            body: 'A customer has completed a session.'
         };
 
     }
