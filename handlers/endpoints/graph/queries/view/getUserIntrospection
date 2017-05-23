@@ -29,6 +29,9 @@
 				zip,
 				country
 			},
+			usersetting {
+			    timezone
+            }
 			created_at,
 			updated_at
 		} 

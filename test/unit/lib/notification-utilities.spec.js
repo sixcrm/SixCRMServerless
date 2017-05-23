@@ -27,7 +27,7 @@ describe('lib/notification-utilities', () => {
             type: 'any',
             action: 'any',
             title: 'any',
-            message: 'any'
+            body: 'any'
         };
 
         it('should not allow object without an account', () => {
@@ -69,12 +69,12 @@ describe('lib/notification-utilities', () => {
             });
         });
 
-        it('should not allow object without a message', () => {
+        it('should not allow object without a body', () => {
             // given
             let notification_object = Object.assign({}, valid_object);
 
             // when
-            delete notification_object.message;
+            delete notification_object.body;
 
             return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
@@ -96,7 +96,7 @@ describe('lib/notification-utilities', () => {
             type: 'any',
             action: 'any',
             title: 'any',
-            message: 'any'
+            body: 'any'
         };
 
         it('should not create notifications when the account is not defined', () => {
@@ -150,7 +150,7 @@ describe('lib/notification-utilities', () => {
             type: 'any',
             action: 'any',
             title: 'any',
-            message: 'any'
+            body: 'any'
         };
 
         it('should not create notifications when the user is not defined', () => {
@@ -182,7 +182,7 @@ describe('lib/notification-utilities', () => {
                     expect(notification_object.account).to.equal(valid_object.account);
                     expect(notification_object.type).to.equal(valid_object.type);
                     expect(notification_object.action).to.equal(valid_object.action);
-                    expect(notification_object.message).to.equal(valid_object.message);
+                    expect(notification_object.body).to.equal(valid_object.body);
                     done();
                 }
             });

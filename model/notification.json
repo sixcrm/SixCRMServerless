@@ -20,7 +20,7 @@
 		"title":{
 			"type":"string"
 		},
-		"message":{
+		"body":{
 			"type":"string"
 		},
 		"created_at":{
@@ -31,5 +31,5 @@
 		}
 
 	},
-	"required":["account", "type", "action", "title", "message", "created_at", "updated_at"]
+	"required":["id", "account", "type", "action", "title", "body", "created_at", "updated_at"]
 }

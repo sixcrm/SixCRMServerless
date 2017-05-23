@@ -103,7 +103,7 @@ class NotificationProvider {
             type: 'dummy',
             action: 'test',
             title: 'A notification from SixCRM!',
-            message: 'This is a test notification. Do you see it?'
+            body: 'This is a test notification. Do you see it?'
         };
 
         return this.createNotificationForAccountAndUser(notification_object).then(() => {
@@ -164,7 +164,7 @@ class NotificationProvider {
                 "type": notification_parameters.type,
                 "action": notification_parameters.action,
                 "title": notification_parameters.title,
-                "message": notification_parameters.message
+                "body": notification_parameters.body
             };
 
             // If user does not want to receive 'six' notifications, or this type of notification, mark it as already read.

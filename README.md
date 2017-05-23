@@ -108,3 +108,7 @@ In order to disable rules in code (for example for false positives, or old depre
 Currently deployment is (mostly) handled via CircleCI.  There are a few issues:
 
 * API Gateway requires some manual configuration - certificates, custom domain names for example.
+
+## Data Spoofing
+
+The Six deployment has random data "spoofers" -  that is scripts which attempts to emulate data in the absence of real usage or customer data.  

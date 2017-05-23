@@ -88,6 +88,7 @@
     },
     {
       "id": "timothy.dalbey@sixcrm.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -119,6 +120,7 @@
     },
     {
       "id": "kris@sixcrm.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -150,6 +152,7 @@
     },
     {
       "id": "jared@sixcrm.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -181,6 +184,7 @@
     },
     {
       "id": "waltr0n21@gmail.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -212,6 +216,7 @@
     },
     {
       "id": "customerservice.user@test.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -243,6 +248,7 @@
     },
     {
       "id": "owner.user@test.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -274,6 +280,7 @@
     },
     {
       "id": "admin.user@test.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -305,6 +312,7 @@
     },
     {
       "id": "super.user@test.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -336,6 +344,7 @@
     },
     {
       "id": "nikola.bosic@coingcs.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -367,6 +376,7 @@
     },
     {
       "id": "clausruete@gmail.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -398,6 +408,7 @@
     },
     {
       "id": "mychael.walton@crmblackbox.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",
@@ -429,6 +440,7 @@
     },
     {
       "id": "travis.rea@crmblackbox.com",
+      "timezone:": "America/Los_Angeles",
       "notifications": [
         {
           "name": "six",

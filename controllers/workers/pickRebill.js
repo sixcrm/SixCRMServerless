@@ -17,6 +17,7 @@ class pickRebillController extends workerController {
     }
 
     pickRebill(){
+
         return new Promise((resolve) => {
 
             var now = timestamp.createTimestampSeconds();
@@ -24,7 +25,7 @@ class pickRebillController extends workerController {
             return rebillController.getRebillsAfterTimestamp(now).then((rebills) => {
                 return Promise.all(rebills.map(rebill => rebillController.sendMessageAndMarkRebill(rebill))).then(() => {
 
-					//Technical Debt: do something here?
+					          //Technical Debt: do something here?  Why do we need the following .then() ???
                     return;
 
                 }).then(() => {
