@@ -473,6 +473,7 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
+        stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
@@ -484,7 +485,8 @@ functions:
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        stage: ${opt:stage}
+        notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
+        user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
 
   createorder:
     handler: handlers/endpoints/createorder/handler.createorder
@@ -498,6 +500,7 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
+        stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
@@ -520,7 +523,8 @@ functions:
         roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
         notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        stage: ${opt:stage}
+        notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
+        user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
 
   createupsell:
     handler: handlers/endpoints/createupsell/handler.createupsell
@@ -534,6 +538,7 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
+        stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
@@ -556,7 +561,8 @@ functions:
         bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
         notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        stage: ${opt:stage}
+        notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
+        user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
 
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
@@ -570,6 +576,7 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
+        stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
         products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
@@ -583,7 +590,9 @@ functions:
         roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
         notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        stage: ${opt:stage}
+        notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
+        user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
+
 
 ########################
 # Resource definitions for required system resources

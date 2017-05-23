@@ -1,0 +1,28 @@
+{
+	"title": "Affiliates",
+	"type": "object",
+	"properties": {
+		"affiliate":{
+			"type":"string"
+		},
+		"subaffiliate_1":{
+			"type":"string"
+		},
+		"subaffiliate_2":{
+			"type":"string"
+		},
+		"subaffiliate_3":{
+			"type":"string"
+		},
+		"subaffiliate_4":{
+			"type":"string"
+		},
+		"subaffiliate_5":{
+			"type":"string"
+		},
+		"trackback":{
+			"type":"string",
+			"format":"uri"
+		}
+	}
+}

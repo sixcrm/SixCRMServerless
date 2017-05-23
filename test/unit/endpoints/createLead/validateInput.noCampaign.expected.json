@@ -1,6 +1,8 @@
 {
 	"message": "One or more validation errors occurred.",
 	"issues": [
+		"requires property \"campaign\"",
+    "requires property \"customer\"",
 		"A lead must be associated with a campaign"
 	]
 }

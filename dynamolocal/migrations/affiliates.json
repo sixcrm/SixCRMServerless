@@ -8,6 +8,25 @@
         "AttributeDefinitions": [{
             "AttributeName": "id",
             "AttributeType": "S"
+        },{
+  				"AttributeName": "affiliate_id",
+  				"AttributeType": "S"
+  			}],
+        "GlobalSecondaryIndexes": [{
+          "IndexName": "affiliate_id-index",
+          "KeySchema": [
+           {
+              "AttributeName": "affiliate_id",
+              "KeyType": "HASH"
+           }
+          ],
+          "Projection": {
+           "ProjectionType": "ALL"
+          },
+          "ProvisionedThroughput": {
+           "ReadCapacityUnits": 1,
+           "WriteCapacityUnits": 1
+          }
         }],
         "ProvisionedThroughput": {
             "ReadCapacityUnits": 1,

@@ -33,6 +33,7 @@ module.exports = class endpointController {
 			.then(this.parseEvent)
 			.then(this.acquireAccount)
 			.then(this.acquireUser)
+      .then(this.acquireAffiliateInformation)
 			.then((event) => this.validateRequiredPermissions(event));
 
     }
