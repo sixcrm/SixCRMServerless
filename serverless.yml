@@ -710,6 +710,10 @@ resources:
              Action:
                - s3:*
              Resource: "*"
+           - Effect: Allow
+             Action:
+               - firehose:*
+             Resource: "*"
         Roles:
           - Ref: IamRoleLambdaExecution
 #    SixEncryptionKey:
