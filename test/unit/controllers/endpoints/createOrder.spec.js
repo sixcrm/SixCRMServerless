@@ -32,7 +32,7 @@ describe('controllers/endpoints/createOrder.js', () => {
         });
     });
 
-    xit('doesn\'t get order info outside of session', () => {
+    it('doesn\'t get order info outside of session', () => {
         PermissionTestGenerators.givenUserWithAllowed('read', 'creditcard');
         let eventBody = {
             session_id: 1,
@@ -56,13 +56,13 @@ describe('controllers/endpoints/createOrder.js', () => {
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers','entities/entities/ProductSchedule.js'), {
+        mockery.registerMock(global.routes.path('controllers','entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers','entities/entities/CreditCard.js'), {
+        mockery.registerMock(global.routes.path('controllers','entities/CreditCard.js'), {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
