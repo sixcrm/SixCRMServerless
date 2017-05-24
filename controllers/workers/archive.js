@@ -3,7 +3,7 @@ var _ = require("underscore");
 
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var workerController = global.routes.include('controllers', 'entities/worker.js');
+var workerController = global.routes.include('controllers', 'workers/worker.js');
 
 class archiveController extends workerController {
 
