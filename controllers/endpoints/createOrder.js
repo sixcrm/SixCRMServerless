@@ -67,7 +67,8 @@ class createOrderController extends endpointController{
       		.then(this.updateCustomer)
       		.then(this.getTransactionInfo)
       		.then(this.createOrder)
-      		.then(this.postOrderProcessing)
+          .then((info) => this.pushToRedshift(info))
+      		.then((info) => this.postOrderProcessing(info))
       		.then((pass_through) => this.handleNotifications(pass_through))
       		.catch((error) => {
           du.error(error);
@@ -326,6 +327,22 @@ class createOrderController extends endpointController{
         });
 
     });
+
+    }
+
+    pushToRedshift(info){
+
+        du.debug('Push To Redshift');
+
+        let product_schedule = info.schedulesToPurchase[0].id;
+
+        return this.pushEventToRedshift('order', info.session, product_schedule).then((result) => {
+
+            du.info(info);
+
+            return info;
+
+        });
 
     }
 

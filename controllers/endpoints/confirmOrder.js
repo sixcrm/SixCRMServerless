@@ -7,10 +7,6 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
-/*
-* Push the Redshift rows (Event)
-*/
-
 class confirmOrderController extends endpointController{
 
     constructor(){
@@ -156,8 +152,6 @@ class confirmOrderController extends endpointController{
     pushToRedshift(results){
 
         du.debug('Push To Redshift');
-
-      //du.info(results);
 
         return this.pushEventToRedshift('confirm', results.session).then((result) => {
 

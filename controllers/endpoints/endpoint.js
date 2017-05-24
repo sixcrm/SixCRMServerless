@@ -3,9 +3,10 @@
 const _ = require("underscore");
 const validator = require('validator');
 
+const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
+
 const du = global.routes.include('lib', 'debug-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
-const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 
 const userController = global.routes.include('controllers', 'entities/User.js');
