@@ -17,17 +17,16 @@ try {
 }
 
 var endpoint = config.endpoint;
-
 var appropriate_spacing = '        ';
 
 describe('Round Trip Test', function() {
     describe('Confirms a sales funnel purchase with partial and multiple upsells.', function() {
-        it('Return a confirmed sale', function (done) {
+        it('Returns a confirmed sale', function (done) {
 
-    	let request_time = new Date().getTime();
-    	let secret_key = config.access_keys.super_user.secret_key;
-    	let access_key = config.access_keys.super_user.access_key;
-    	let account = config.account;
+          	let request_time = new Date().getTime();
+          	let secret_key = config.access_keys.super_user.secret_key;
+          	let access_key = config.access_keys.super_user.access_key;
+          	let account = config.account;
             var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
             let signature = crypto.createHash('sha1').update(secret_key+request_time).digest('hex');
@@ -39,15 +38,22 @@ describe('Round Trip Test', function() {
             du.highlight('Authorization String: ', authorization_string);
             du.output(appropriate_spacing+'Acquiring Token');
 
+            let affiliate_id = random.createRandomString(10);
+            let subaffiliate_1_id = random.createRandomString(10);
+            let subaffiliate_2_id = random.createRandomString(10);
+            let subaffiliate_3_id = random.createRandomString(10);
+            let subaffiliate_4_id = random.createRandomString(10);
+            let subaffiliate_5_id = random.createRandomString(10);
+
             var post_body = {
                 "campaign":campaign_id,
                 "affiliates":{
-                    "affiliate":'affiliate_test:'+random.createRandomString(10),
-                    "subaffiliate_1":'subaffiliate_1_test:'+random.createRandomString(10),
-                    "subaffiliate_2":'subaffiliate_2_test:'+random.createRandomString(10),
-                    "subaffiliate_3":'subaffiliate_3_test:'+random.createRandomString(10),
-                    "subaffiliate_4":'subaffiliate_4_test:'+random.createRandomString(10),
-                    "subaffiliate_5":'subaffiliate_5_test:'+random.createRandomString(10)
+                    "affiliate":affiliate_id,
+                    "subaffiliate_1":subaffiliate_1_id,
+                    "subaffiliate_2":subaffiliate_2_id,
+                    "subaffiliate_3":subaffiliate_3_id,
+                    "subaffiliate_4":subaffiliate_4_id,
+                    "subaffiliate_5":subaffiliate_5_id
                 }
             };
 
@@ -79,7 +85,12 @@ describe('Round Trip Test', function() {
     var post_body = {
         "campaign":campaign_id,
         "affiliates":{
-            "affiliate":"6b6331f6-7f84-437a-9ac6-093ba301e455"
+            "affiliate":affiliate_id,
+            "subaffiliate_1":subaffiliate_1_id,
+            "subaffiliate_2":subaffiliate_2_id,
+            "subaffiliate_3":subaffiliate_3_id,
+            "subaffiliate_4":subaffiliate_4_id,
+            "subaffiliate_5":subaffiliate_5_id
         },
         "customer":{
             "firstname":"Rama",
@@ -136,8 +147,8 @@ describe('Round Trip Test', function() {
       "product_schedules":product_schedules,
       "creditcard":{
           "number":"4111111111111111",
-          "ccexpiration":"1025",
-          "ccccv":"999",
+          "expiration":"1025",
+          "ccv":"999",
           "name":"Rama Damunaste",
           "address":{
               "line1":"10 Skid Rw.",
