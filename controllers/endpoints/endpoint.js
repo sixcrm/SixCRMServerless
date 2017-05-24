@@ -6,6 +6,7 @@ const validator = require('validator');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
+const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 
 const userController = global.routes.include('controllers', 'entities/User.js');
 
@@ -271,6 +272,43 @@ module.exports = class endpointController {
 
 		// No need to validate input as it happens in the utilities.
         return notificationProvider.createNotificationsForAccount(parameters);
+
+    }
+
+    pushEventToRedshift(event_type, session, product_schedule){
+
+        du.debug('Push Event to Redshift');
+
+        if(_.isUndefined(product_schedule)){
+            product_schedule = '';
+        }
+
+        du.warning(session);
+
+        let event = {
+            session: session.id,
+            type : event_type,
+            datetime: session.created_at,
+            account: session.account,
+            campaign: session.campaign,
+            product_schedule: product_schedule
+        };
+
+        ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((optional_property) => {
+            if(_.has(session, optional_property) && !_.isNull(session[optional_property])){
+                event[optional_property] = session[optional_property];
+            }else{
+                event[optional_property] = '';
+            }
+        });
+
+        return kinesisfirehoseutilities.putRecord('events', event).then((result) => {
+
+            du.output('Kinesis Firehose Result', result);
+
+            return session;
+
+        });
 
     }
 

@@ -487,6 +487,7 @@ functions:
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
+        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
 
   createorder:
     handler: handlers/endpoints/createorder/handler.createorder
@@ -525,6 +526,7 @@ functions:
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
+        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
 
   createupsell:
     handler: handlers/endpoints/createupsell/handler.createupsell
@@ -563,6 +565,7 @@ functions:
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
+        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
 
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
@@ -592,6 +595,7 @@ functions:
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
+        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
 
 
 ########################

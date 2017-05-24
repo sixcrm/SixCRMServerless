@@ -10,23 +10,29 @@
 		"ISO8601": {
 			"type": "string",
 			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
+		},
+		"OptionalUUIDv4":{
+			"anyOf":[
+				{"type":"string", "enum":[""]},
+				{"$ref": "#/definitions/UUIDv4"}
+			]
 		}
 	},
 	"properties": {
 		"session":{"$ref": "#/definitions/UUIDv4"},
 		"campaign":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/UUIDv4"},
-		"product_schedule":{"$ref": "#/definitions/UUIDv4"},
-		"affiliate":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_1":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_2":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_3":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_4":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_5":{"$ref": "#/definitions/UUIDv4"},
+		"product_schedule":{"$ref": "#/definitions/OptionalUUIDv4"},
+		"affiliate":{"$ref": "#/definitions/OptionalUUIDv4"},
+		"subaffiliate_1":{"$ref": "#/definitions/OptionalUUIDv4"},
+		"subaffiliate_2":{"$ref": "#/definitions/OptionalUUIDv4"},
+		"subaffiliate_3":{"$ref": "#/definitions/OptionalUUIDv4"},
+		"subaffiliate_4":{"$ref": "#/definitions/OptionalUUIDv4"},
+		"subaffiliate_5":{"$ref": "#/definitions/OptionalUUIDv4"},
 		"datetime": {"$ref": "#/definitions/ISO8601"},
 		"type":{
 			"type":"string",
-			"enum": ["click", "lead","order","upsell","confirm"]
+			"enum": ["click","lead","order","upsell","confirm"]
 		}
 	},
 	"required":["session","campaign","account","product_schedule","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5","datetime","type"]

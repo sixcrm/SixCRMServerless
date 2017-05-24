@@ -4,17 +4,12 @@ const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
-const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 
 var customerController = global.routes.include('controllers', 'entities/Customer.js');
 var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
-
-/*
-* Push the Redshift row (Click)
-*/
 
 class createLeadController extends endpointController{
 
@@ -57,6 +52,7 @@ class createLeadController extends endpointController{
         .then((event) => this.handleTrackbackInformation(event))
   			.then((event) => this.createSessionObject(event))
   			.then((session_object) => this.persistSession(session_object))
+        .then((session_object) => this.pushToRedshift(session_object))
   			.then((session_object) => this.handleNotifications(session_object));
 
     }
@@ -308,6 +304,19 @@ class createLeadController extends endpointController{
                 return reject(error);
 
             });
+
+        });
+
+    }
+
+    pushToRedshift(session){
+
+        du.debug('Push To Redshift');
+
+        return this.pushEventToRedshift('lead', session).then((result) => {
+
+            du.info(result);
+            return session;
 
         });
 
