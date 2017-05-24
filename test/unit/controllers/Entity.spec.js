@@ -522,7 +522,7 @@ describe('controllers/Entity.js', () => {
         });
     });
 
-    xdescribe('list', () => {
+    describe('list', () => {
         afterEach(() => {
             mockery.resetCache();
         });
@@ -539,7 +539,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list({cursor: 0, limit: 10}).then((response) => {
+            return entityController.list({limit: 10}).then((response) => {
                 // then
                 expect(response).to.equal(null);
             });
@@ -562,7 +562,7 @@ describe('controllers/Entity.js', () => {
             const EC = global.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('table_name', 'entity');
 
-            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
+            return entityController.list({limit: 10}).catch((error) => {
                 // then
                 expect(error.message).to.equal('Data has no items.');
             });
@@ -582,7 +582,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
+            return entityController.list({limit: 10}).catch((error) => {
                 // then
                 expect(error.message).to.equal('Data is not an object.');
             });
@@ -602,7 +602,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
+            return entityController.list({limit: 10}).catch((error) => {
                 // then
                 expect(error.message).to.equal('Scanning failed.');
             });
@@ -625,13 +625,14 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list({cursor: 0, limit: 10}).then((response) => {
+            return entityController.list({limit: 10}).then((response) => {
                 // then
                 expect(response).to.deep.equal({
                     pagination: {
                         count: 0,
                         end_cursor: '',
-                        has_next_page: 'false'
+                        has_next_page: 'false',
+                        last_evaluated: ""
                     },
                     entitys: null
                 });
@@ -655,46 +656,14 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.list({cursor:0, limit:10}).then((response) => {
+            return entityController.list({limit:10}).then((response) => {
                 // then
                 expect(response).to.deep.equal({
                     pagination: {
                         count: 10,
                         end_cursor: '',
-                        has_next_page: 'false'
-                    },
-                    entitys: [{},{},{},{},{},{},{},{},{},{}]
-                });
-            });
-        });
-
-        it('correctly sets end_cursor', () => {
-            // given
-            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
-
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                scanRecordsFull: (table, parameters, callback) => {
-                    callback(null, {
-                        LastEvaluatedKey: {
-                            id: 9
-                        },
-                        Count: 10,
-                        Items: [{},{},{},{},{},{},{},{},{},{}]
-                    });
-                }
-            });
-
-            const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
-
-            // when
-            return entityController.list({cursor:0, limit:10}).then((response) => {
-                // then
-                expect(response).to.deep.equal({
-                    pagination: {
-                        count: 10,
-                        end_cursor: 9,
-                        has_next_page: 'true'
+                        has_next_page: 'false',
+                        last_evaluated: ""
                     },
                     entitys: [{},{},{},{},{},{},{},{},{},{}]
                 });
@@ -703,7 +672,7 @@ describe('controllers/Entity.js', () => {
 
     });
 
-    xdescribe('queryBySecondaryIndex', () => {
+    describe('queryBySecondaryIndex', () => {
         afterEach(() => {
             mockery.resetCache();
         });
@@ -731,8 +700,8 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, 'result');
+                queryRecordsFull: (table, parameters, index, callback) => {
+                    callback(null, { Items: 'non array' });
                 }
             });
 
@@ -740,9 +709,9 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('table_name', 'entity');
 
             // when
-            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((result) => {
+            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
                 // then
-                expect(result).to.equal(null);
+                expect(error.message).to.equal('Data has no items.');
             });
         });
 
@@ -751,7 +720,7 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecordsFull: (table, parameters, index, callback) => {
                     callback(new Error('Query failed.'), null);
                 }
             });
@@ -771,8 +740,8 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, []);
+                queryRecordsFull: (table, parameters, index, callback) => {
+                    callback(null, { Items: [] });
                 }
             });
 
@@ -782,7 +751,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
-                expect(response).to.equal(null);
+                expect(response.entitys).to.equal(null);
             });
         });
 
@@ -791,8 +760,8 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, [{},{}]);
+                queryRecordsFull: (table, parameters, index, callback) => {
+                    callback(null, { Items: [{},{}] });
                 }
             });
 
@@ -802,7 +771,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
-                expect(response).to.deep.equal([{}, {}]);
+                expect(response.entitys).to.deep.equal([{}, {}]);
             });
         });
 

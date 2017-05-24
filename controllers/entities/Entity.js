@@ -1209,7 +1209,7 @@ module.exports = class entityController {
 
             }else{
 
-                throw new Error('Unrecognized format for Exclusive Start Key.')
+                throw new Error('Unrecognized format for Cursor.')
 
             }
 

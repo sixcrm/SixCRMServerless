@@ -9,13 +9,13 @@ var expect = chai.expect;
 var assert = chai.assert;
 
 chai.should();
-require('../../../bootstrap.test')
+require('../../../bootstrap.test');
 
-xdescribe('workers/archive', function () {
+describe('workers/archive', function () {
     describe('archive', function (done) {
         it('will be ARCHIVED', function() {
-            var archive = require('../../../../controllers/workers/archive');
-            var rebill = require('./fixtures/validRebill')
+            var archive = global.routes.include('controllers', 'workers/archive.js');
+            var rebill = require('./fixtures/validRebill');
             var actual = archive.archive(rebill);
 
             return Promise.resolve(actual).should.eventually.equal("ARCHIVED")
