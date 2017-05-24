@@ -65,7 +65,8 @@ class createUpsellController extends endpointController{
 		.then(this.getUpsellAssociatedProperties)
 		.then(this.getTransactionInfo)
 		.then(this.createUpsell)
-		.then(this.postUpsellProcessing)
+    .then((info) => this.pushToRedshift(info))
+		.then((info) => this.postUpsellProcessing(info))
 		.then((pass_through) => this.handleNotifications(pass_through))
 		.catch((error) => {
     du.error(error);
@@ -276,6 +277,22 @@ class createUpsellController extends endpointController{
     });
 
 });
+
+    }
+
+    pushToRedshift(info){
+
+        du.debug('Push To Redshift');
+
+        let product_schedule = info.schedulesToPurchase[0].id;
+
+        return this.pushEventToRedshift('upsell', info.session, product_schedule).then((result) => {
+
+            du.info(info);
+
+            return info;
+
+        });
 
     }
 
