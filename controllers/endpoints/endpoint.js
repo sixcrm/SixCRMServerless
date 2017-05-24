@@ -10,6 +10,7 @@ const permissionutilities = global.routes.include('lib', 'permission-utilities.j
 const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 
 const userController = global.routes.include('controllers', 'entities/User.js');
+const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 
 module.exports = class endpointController {
 
@@ -35,7 +36,6 @@ module.exports = class endpointController {
 			.then(this.parseEvent)
 			.then(this.acquireAccount)
 			.then(this.acquireUser)
-      .then(this.acquireAffiliateInformation)
 			.then((event) => this.validateRequiredPermissions(event));
 
     }
@@ -237,6 +237,57 @@ module.exports = class endpointController {
 
     }
 
+    handleAffiliateInformation(event){
+
+        du.debug('Handle Affiliate Information');
+
+        if(_.has(event, 'affiliates')){
+
+            let promises = [];
+            let assure_array = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'];
+
+            for(var i = 0; i < assure_array.length; i++){
+
+                let assurance_field = assure_array[i];
+
+                if(_.has(event.affiliates, assurance_field) && event.affiliates[assurance_field] != ''){
+
+                    promises[i] = affiliateController.assureAffiliate(event.affiliates[assurance_field]);
+
+                }else{
+
+                    promises[i] = Promise.resolve('');
+
+                }
+
+            }
+
+            return Promise.all(promises).then((promises) => {
+
+                for(var i = 0; i < assure_array.length; i++){
+
+                    let assurance_field = assure_array[i];
+
+                    if(_.has(promises[i], 'id')){
+
+                        event.affiliates[assurance_field] = promises[i].id;
+
+                    }else{
+
+                        //event.affiliates[assurance_field] = promises[i];
+
+                    }
+
+                }
+
+                return Promise.resolve(event);
+
+            });
+
+        }
+
+    }
+
     validateRequiredPermissions(event){
 
         du.debug('Validate Required Permissions');
@@ -284,8 +335,6 @@ module.exports = class endpointController {
             product_schedule = '';
         }
 
-        du.warning(session);
-
         let event = {
             session: session.id,
             type : event_type,
@@ -303,11 +352,21 @@ module.exports = class endpointController {
             }
         });
 
-        return kinesisfirehoseutilities.putRecord('events', event).then((result) => {
+        return this.pushRecordToRedshift('events', event).then(() => {
+
+            return session;
+
+        });
+
+    }
+
+    pushRecordToRedshift(table, object){
+
+        return kinesisfirehoseutilities.putRecord(table, object).then((result) => {
 
             du.output('Kinesis Firehose Result', result);
 
-            return session;
+            return result;
 
         });
 

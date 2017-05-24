@@ -19,10 +19,6 @@
 		},
 		"subaffiliate_5":{
 			"type":"string"
-		},
-		"trackback":{
-			"type":"string",
-			"format":"uri"
 		}
 	}
 }

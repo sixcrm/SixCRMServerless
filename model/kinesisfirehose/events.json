@@ -19,7 +19,7 @@
 		}
 	},
 	"properties": {
-		"session":{"$ref": "#/definitions/UUIDv4"},
+		"session":{"$ref": "#/definitions/OptionalUUIDv4"},
 		"campaign":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/UUIDv4"},
 		"product_schedule":{"$ref": "#/definitions/OptionalUUIDv4"},

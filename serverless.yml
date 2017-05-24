@@ -453,13 +453,18 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
+      stage: ${opt:stage}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       transaction_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
       accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
       roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      stage: ${opt:stage}
+      campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
+      affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
+      kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+      search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
+
 
   createlead:
     handler: handlers/endpoints/createlead/handler.createlead
