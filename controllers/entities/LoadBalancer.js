@@ -16,6 +16,8 @@ class loadBalancerController extends entityController {
 
     getMerchantProviderConfigurations(loadbalancer){
 
+        du.debug('Get Merchant Provider Configurations');
+
         return loadbalancer.merchantproviders.map((merchantproviderconfiguration) => {
 
             return {
@@ -29,11 +31,15 @@ class loadBalancerController extends entityController {
 
     getMerchantProviderConfiguration(merchantproviderconfiguration){
 
+        du.debug('Get Merchant Provider Configuration');
+
         return merchantProviderController.get(merchantproviderconfiguration.merchantprovider);
 
     }
 
     getMerchantProviders(loadbalancer){
+
+        du.debug('Get Merchant Providers');
 
         return Promise.all(loadbalancer.merchantproviders.map(merchantprovider => merchantProviderController.get(merchantprovider.id)));
 
@@ -41,6 +47,8 @@ class loadBalancerController extends entityController {
 
 	//Isn't there a better way?
     getLoadBalancerHydrated(id){
+
+        du.debug('Get Loadbalancer Hydrated');
 
         var controller_instance = this;
 
@@ -100,6 +108,8 @@ class loadBalancerController extends entityController {
 
     sortMerchantProviders(merchantproviders){
 
+        du.debug('Sort Merchant Providers');
+
     	merchantproviders.sort(function(a, b) {
 
     		if(a.distribution != b.distribution){
@@ -132,6 +142,8 @@ class loadBalancerController extends entityController {
     }
 
     pickMerchantProvider(roll, loadbalancer){
+
+        du.debug('Pick Merchant Provider');
 
     	return new Promise((resolve, reject) => {
 
@@ -170,6 +182,9 @@ class loadBalancerController extends entityController {
     }
 
     createProcessorClass(merchantprovider){
+
+        du.debug('Create Processor Class');
+
     	switch(merchantprovider.merchantprovider.processor){
     		case 'NMI':
 
@@ -182,6 +197,7 @@ class loadBalancerController extends entityController {
         });
 
         return _nmi;
+
     		default:
     			throw new Error('Unrecognized merchant provider: '+merchantprovider.processor);
 
@@ -207,6 +223,8 @@ class loadBalancerController extends entityController {
     }
 
     sumLoadBalancerDistributions(merchantproviders){
+
+        du.debug('Sum Load Balancer Distributions');
 
     	var distributionSum = 0.0;
 

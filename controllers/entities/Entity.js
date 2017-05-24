@@ -55,24 +55,6 @@ module.exports = class entityController {
 
                 if(permission != true){ return resolve(null); }
 
-                /*
-                let query_parameters = {
-                    key_condition_expression: {},
-                    expression_attribute_names: {},
-                    expression_attribute_values: {}
-                }
-
-                query_parameters = this.appendKeyConditionExpression(query_parameters, '#'+field, ':indexv');
-                query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
-                query_parameters = this.appendExpressionAttributeValues(query_parameters, ':indexv', index_value);
-                query_parameters = this.appendFilterExpression(query_parameters, '#'+field+' = :indexv');
-
-                query_parameters = this.appendCursor(query_parameters, cursor);
-                query_parameters = this.appendLimit(query_parameters, limit);
-                query_parameters = this.appendAccountFilter(query_parameters);
-
-                */
-
                 let query_parameters = {
                     key_condition_expression: '#'+field+' = :index_valuev',
                     expression_attribute_values: {':index_valuev': index_value},
@@ -535,6 +517,8 @@ module.exports = class entityController {
 
                     entity = this.setCreatedAt(entity);
 
+                    //Technical Debt:  Validate that this model adheres to a entity in /model/entities/{model_name}.json
+
                     return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
                         if(_.isError(error)){ return reject(error);}
@@ -592,6 +576,8 @@ module.exports = class entityController {
                     entity = this.marryCreatedUpdated(entity, exists);
 
                     entity = this.setUpdatedAt(entity);
+
+                    //Technical Debt:  Validate that this model adheres to a entity in /model/entities/{model_name}.json
 
                     return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 

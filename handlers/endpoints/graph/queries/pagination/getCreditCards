@@ -6,7 +6,7 @@
 		creditcardlist ({argumentation}) {
 			creditcards {
 				id,
-				ccnumber,
+				number,
 				expiration,
 				ccv,
 				name,

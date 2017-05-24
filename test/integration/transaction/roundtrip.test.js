@@ -60,26 +60,30 @@ describe('Round Trip Test', function() {
     var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
     var post_body = {
-        "campaign_id":campaign_id,
-        "affiliate_id":"6b6331f6-7f84-437a-9ac6-093ba301e455",
-        "firstname":"Rama",
-        "lastname":"Damunaste",
-        "email":"rama@damunaste.com",
-        "phone":"1234567890",
-        "billing":{
-            "line1":"10 Downing St.",
-            "city":"Detroit",
-            "state":"Michigan",
-            "zip":"12345",
-            "country":"US"
+        "campaign":campaign_id,
+        "affiliates":{
+            "affiliate":"6b6331f6-7f84-437a-9ac6-093ba301e455"
         },
-        "address":{
-            "line1":"334 Lombard St.",
-            "line2":"Apartment 2",
-            "city":"Portland",
-            "state":"Oregon",
-            "zip":"97203",
-            "country":"US"
+        "customer":{
+            "firstname":"Rama",
+            "lastname":"Damunaste",
+            "email":"rama@damunaste.com",
+            "phone":"1234567890",
+            "billing":{
+                "line1":"10 Downing St.",
+                "city":"Detroit",
+                "state":"Michigan",
+                "zip":"12345",
+                "country":"US"
+            },
+            "address":{
+                "line1":"334 Lombard St.",
+                "line2":"Apartment 2",
+                "city":"Portland",
+                "state":"Oregon",
+                "zip":"97203",
+                "country":"US"
+            }
         }
     };
 
@@ -111,20 +115,21 @@ describe('Round Trip Test', function() {
 					  	var product_schedules = ["12529a17-ac32-4e46-b05b-83862843055d"]
 
 					  	var order_create = {
-      "session_id":session_id,
+      "session":session_id,
       "product_schedules":product_schedules,
-      "campaign_id":campaign_id,
-      "ccnumber":"4111111111111111",
-      "ccexpiration":"1025",
-      "ccccv":"999",
-      "name":"Rama Damunaste",
-      "address":{
-          "line1":"10 Skid Rw.",
-          "line2":"Suite 100",
-          "city":"Portland",
-          "state":"Oregon",
-          "zip":"97213",
-          "country":"USA"
+      "creditcard":{
+          "number":"4111111111111111",
+          "ccexpiration":"1025",
+          "ccccv":"999",
+          "name":"Rama Damunaste",
+          "address":{
+              "line1":"10 Skid Rw.",
+              "line2":"Suite 100",
+              "city":"Portland",
+              "state":"Oregon",
+              "zip":"97213",
+              "country":"USA"
+          }
       }
   };
 
@@ -158,7 +163,7 @@ describe('Round Trip Test', function() {
     var upsell_product_schedules = ['8d1e896f-c50d-4a6b-8c84-d5661c16a046'];
 
     var upsell_create = {
-        "session_id": session_id,
+        "session": session_id,
         "product_schedules": upsell_product_schedules
     };
 
@@ -199,7 +204,7 @@ describe('Round Trip Test', function() {
     du.debug('Confirmation params: ', 'session_id='+session_id);
 
     this_request.get('order/confirm/'+account)
-											.query('session_id='+session_id)
+											.query('session='+session_id)
 											.set('Content-Type', 'application/json')
 											.set('Authorization', jwt)
 											.expect(200)

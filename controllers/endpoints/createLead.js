@@ -12,6 +12,10 @@ var campaignController = global.routes.include('controllers', 'entities/Campaign
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
+/*
+* Push the Redshift row (Click)
+*/
+
 class createLeadController extends endpointController{
 
     constructor(){
@@ -87,11 +91,11 @@ class createLeadController extends endpointController{
 
             try{
 
-                lead_schema = global.routes.include('model', 'lead');
-                customer_schema = global.routes.include('model', 'customer');
-                address_schema = global.routes.include('model', 'address');
-                creditcard_schema = global.routes.include('model', 'creditcard');
-                affiliates_schema = global.routes.include('model', 'affiliates');
+                lead_schema = global.routes.include('model', 'endpoints/lead');
+                customer_schema = global.routes.include('model', 'general/customer');
+                address_schema = global.routes.include('model', 'general/address');
+                creditcard_schema = global.routes.include('model', 'general/creditcard');
+                affiliates_schema = global.routes.include('model', 'endpoints/affiliates');
 
             } catch(e){
 
@@ -214,7 +218,7 @@ class createLeadController extends endpointController{
 
                     }else{
 
-                        event.affiliates[assurance_field] = promises[i];
+                        //event.affiliates[assurance_field] = promises[i];
 
                     }
 
@@ -269,7 +273,11 @@ class createLeadController extends endpointController{
 
                     if(_.has(event, 'affiliates') && _.has(event.affiliates, affiliate_field)){
 
-                        session_object[affiliate_field] = event.affiliates[affiliate_field];
+                        if(!_.isNull(event.affiliates[affiliate_field])){
+
+                            session_object[affiliate_field] = event.affiliates[affiliate_field];
+
+                        }
 
                     }
 

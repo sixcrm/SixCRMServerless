@@ -325,6 +325,8 @@ class sessionController extends entityController {
                 reject(new Error('Parameters object must have a customer'));
             }
 
+            /*
+            //Technical Debt:  This assures the presence of fields that we don't necessarily need...
             ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((affiliate_field) => {
 
                 if(!_.has(parameters, affiliate_field)){
@@ -332,6 +334,7 @@ class sessionController extends entityController {
                 }
 
             });
+            */
 
 
             return this.getSessionByCustomerID(parameters.customer).then((sessions) => {
@@ -359,12 +362,16 @@ class sessionController extends entityController {
 
                     let session = {};
 
-                    ['customer', 'campaign', 'affiliate','subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((parameter) => {
+                    ['customer', 'campaign', 'affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((parameter) => {
                         if(_.has(parameters, parameter)){
                             session[parameter] = parameters[parameter];
                         }else{
-                            session[parameter] = null;
+
+                            //Technical Debt:  Some of this stuff is not necessary...
+                            //session[parameter] = null;
+
                         }
+
                     });
 
                     return this.create(session).then((session) => {

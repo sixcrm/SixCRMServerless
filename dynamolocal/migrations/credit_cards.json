@@ -4,33 +4,33 @@
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
-        }], 
+        }],
         "AttributeDefinitions": [{
-            "AttributeName": "id", 
+            "AttributeName": "id",
             "AttributeType": "S"
         },
         {
-            "AttributeName": "ccnumber", 
+            "AttributeName": "number",
             "AttributeType": "S"
         }],
-        "GlobalSecondaryIndexes": [{ 
-			"IndexName": "ccnumber-index",
-			"KeySchema": [ 
-				{ 
-					"AttributeName": "ccnumber",
+        "GlobalSecondaryIndexes": [{
+			"IndexName": "number-index",
+			"KeySchema": [
+				{
+					"AttributeName": "number",
 					"KeyType": "HASH"
 				}
 			],
-			"Projection": { 
+			"Projection": {
 				"ProjectionType": "ALL"
 			},
-			"ProvisionedThroughput": { 
+			"ProvisionedThroughput": {
 				"ReadCapacityUnits": 1,
 				"WriteCapacityUnits": 1
 			}
 		}],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1, 
+            "ReadCapacityUnits": 1,
             "WriteCapacityUnits": 1
         }
     },
@@ -45,7 +45,7 @@
     		"state": "Oregon",
     		"zip": "97213"
   		},
-  		"ccnumber": "4111111111111111",
+  		"number": "4111111111111111",
   		"ccv": "999",
   		"expiration": "1025",
   		"name": "Rama Damunaste",

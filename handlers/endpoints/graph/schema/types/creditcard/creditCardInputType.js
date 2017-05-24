@@ -9,7 +9,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'CreditCardInput',
     fields: () => ({
   	id:					{ type: GraphQLString },
-        ccnumber:			{ type: new GraphQLNonNull(GraphQLString) },
+        number:			{ type: new GraphQLNonNull(GraphQLString) },
         expiration:			{ type: new GraphQLNonNull(GraphQLString) },
         ccv:				{ type: new GraphQLNonNull(GraphQLString) },
         name:				{ type: new GraphQLNonNull(GraphQLString) },

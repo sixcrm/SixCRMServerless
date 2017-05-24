@@ -26,9 +26,9 @@ class NMIController {
             var parameter_group = this.createParameterGroup(parameters_array);
 
             var request_options = {
-			  headers: {'content-type' : 'application/x-www-form-urlencoded'},
-			  url:     this.endpoint,
-			  body:    querystring.stringify(parameter_group)
+      			  headers: {'content-type' : 'application/x-www-form-urlencoded'},
+      			  url:     this.endpoint,
+      			  body:    querystring.stringify(parameter_group)
             };
 
 
@@ -99,7 +99,7 @@ class NMIController {
         return_object.lastname = parameters.customer.lastname;
 
 		//creditcard
-        return_object.ccnumber = parameters.creditcard.ccnumber;
+        return_object.ccnumber = parameters.creditcard.number;
         return_object.ccexp = parameters.creditcard.expiration;
         return_object.ccv = parameters.creditcard.ccv;
         return_object.amount = parameters.amount;

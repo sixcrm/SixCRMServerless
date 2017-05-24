@@ -7,6 +7,10 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
+/*
+* Push the Redshift rows (Event)
+*/
+
 class confirmOrderController extends endpointController{
 
     constructor(){
@@ -96,9 +100,9 @@ class confirmOrderController extends endpointController{
 
         return new Promise((resolve, reject) => {
 
-            if(!_.isObject(querystring) || !_.has(querystring, 'session_id')){
+            if(!_.isObject(querystring) || !_.has(querystring, 'session')){
 
-                return reject(new Error('The session_id must be set in the querystring.'));
+                return reject(new Error('The session must be set in the querystring.'));
 
             }
 
@@ -114,7 +118,7 @@ class confirmOrderController extends endpointController{
 
         var promises = [];
 
-        return sessionController.get(querystring['session_id']).then((session) => {
+        return sessionController.get(querystring['session']).then((session) => {
 
             if(_.isNull(session)){ throw new Error('The specified session is unavailable.'); }
             if(session.completed == 'true'){ throw new Error('The specified session is already complete.'); }

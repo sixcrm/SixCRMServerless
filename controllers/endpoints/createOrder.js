@@ -2,6 +2,7 @@
 const _ = require("underscore");
 const validator = require('validator');
 const Validator = require('jsonschema').Validator;
+const luhn = require("luhn");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 
@@ -14,6 +15,12 @@ var creditCardController = global.routes.include('controllers', 'entities/Credit
 var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+
+/*
+* Push the pingback to the transaction
+* Pingback parsing and execution
+* Push the Redshift rows (Event and Transaction)
+*/
 
 class createOrderController extends endpointController{
 
@@ -55,6 +62,8 @@ class createOrderController extends endpointController{
       		.then(this.acquireBody)
       		.then(this.validateInput)
       		.then(this.getOrderInfo)
+          .then(this.getOrderCampaign)
+          .then(this.validateInfo)
       		.then(this.updateCustomer)
       		.then(this.getTransactionInfo)
       		.then(this.createOrder)
@@ -90,10 +99,18 @@ class createOrderController extends endpointController{
         return new Promise((resolve, reject) => {
 
             var order_schema;
+            var address_schema;
+            var creditcard_schema;
 
             try{
-                order_schema = global.routes.include('model', 'order');
+
+                order_schema = global.routes.include('model', 'endpoints/order');
+                address_schema = global.routes.include('model', 'general/address');
+                creditcard_schema = global.routes.include('model', 'general/creditcard');
+
+
             } catch(e){
+                du.warning(e);
                 return reject(new Error('Unable to load validation schemas.'));
             }
 
@@ -103,28 +120,13 @@ class createOrderController extends endpointController{
             try{
                 var v = new Validator();
 
+                v.addSchema(address_schema, '/Address');
+                v.addSchema(creditcard_schema, '/CreditCard');
+
                 validation = v.validate(params, order_schema);
+
             }catch(e){
                 return reject(new Error('Unable to instantiate validator.'));
-            }
-
-
-			      //Technical Debt: Are these ever attached?
-            if(params.email && !validator.isEmail(params.email)){
-                validation.errors.push({message: '"email" field must be a email address.'});
-            }
-
-			      //Technical Debt: Are these ever attached?
-            if(params.shipping_email && !validator.isEmail(params.shipping_email)){
-                validation.errors.push({message: '"shipping_email" field must be a email address.'});
-            }
-
-            if(!validator.isCreditCard(params.ccnumber || '')){
-
-                if(process.env.stage == 'production'){
-                    validation.errors.push({message: '"ccnumber" must be a credit card number.'});
-                }
-
             }
 
             if(validation['errors'].length > 0) {
@@ -134,6 +136,17 @@ class createOrderController extends endpointController{
                 };
 
                 return reject(error);
+            }
+
+
+            if(!luhn.validate(params.creditcard.number)){
+
+                return reject(new Error('Invalid Credit Card number.'))
+
+            }else{
+
+                du.debug('Credit Card Valid');
+
             }
 
             return resolve(params);
@@ -149,15 +162,15 @@ class createOrderController extends endpointController{
 
         var promises = [];
 
-        var getSession = sessionController.get(event_body['session_id']);
-        var getCampaign = campaignController.getHydratedCampaign(event_body['campaign_id']);
+        var getSession = sessionController.get(event_body['session']);
+
         var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
-        var getCreditCard	= creditCardController.createCreditCardObject(event_body).then((creditcard) => {
+
+        var getCreditCard	= creditCardController.createCreditCardObject(event_body['creditcard']).then((creditcard) => {
             return creditCardController.storeCreditCard(creditcard);
         });
 
         promises.push(getSession);
-        promises.push(getCampaign);
         promises.push(getProductSchedules);
         promises.push(getCreditCard);
 
@@ -165,38 +178,61 @@ class createOrderController extends endpointController{
 
             var info = {
                 session: promises[0],
-                campaign:  promises[1],
-                schedulesToPurchase: promises[2],
-                creditcard: promises[3]
+                schedulesToPurchase: promises[1],
+                creditcard: promises[2]
             };
-
-            if(!_.isObject(info.session) || !_.has(info.session, 'id')){
- 			 	throw new Error('No available session.');
- 		 	}
-
-            if(!_.isObject(info.campaign) || !_.has(info.campaign, 'id')){
- 			 	throw new Error('No available campaign.');
-            }
-
-            if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
- 			 	throw new Error('No available creditcard.');
-            }
-
-            if(info.session.completed == 'true'){
- 			 	throw new Error('The specified session is already complete.');
-            }
-
-            if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
- 			 	throw new Error('No available schedules to purchase.');
-            }
-
-            sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
-
-            campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
 
             return info;
 
         })
+
+    }
+
+    getOrderCampaign(info){
+
+        du.debug('Get Order Campaign');
+
+        if(!_.isObject(info.session) || !_.has(info.session, 'campaign')){
+            throw new Error('No available session campaign.');
+        }
+
+        return campaignController.getHydratedCampaign(info.session['campaign']).then((campaign) => {
+
+            if(!_.isObject(campaign) || !_.has(campaign, 'id')){
+                throw new Error('No available campaign.');
+            }
+
+            info['campaign'] = campaign;
+
+            return info;
+
+        });
+
+    }
+
+    validateInfo(info){
+
+        if(!_.isObject(info.session) || !_.has(info.session, 'id')){
+            throw new Error('No available session.');
+        }
+
+        if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
+            throw new Error('No available creditcard.');
+        }
+
+        if(info.session.completed == 'true'){
+            throw new Error('The specified session is already complete.');
+        }
+
+        if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
+            throw new Error('No available schedules to purchase.');
+        }
+
+        sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
+
+        campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
+
+        return Promise.resolve(info);
 
     }
 
@@ -264,32 +300,32 @@ class createOrderController extends endpointController{
         du.debug('Create Order');
 
         return loadBalancerController.process( info.campaign.loadbalancer, {customer: info.customer, creditcard: info.creditcard, amount: info.amount})
-		.then((processor) => {
+		    .then((processor) => {
 
-			//Technical Debt:  Are there further actions to take if a transaction is denied?
+          //Technical Debt:  Are there further actions to take if a transaction is denied?
 
-			//validate processor
-    if( !_.has(processor, "message") || processor.message !== 'Success' ||
-				!_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'
-			) {
-        throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
-    }
+          //validate processor
+        if(!_.has(processor, "message") || processor.message !== 'Success' || !_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'){
 
-    info.processor = processor;
+            throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
 
-    return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
+        }
 
-				//Techincal Debt: validate transaction above
+        info.processor = processor;
 
-        info.transaction = transaction;
+        return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
 
-        du.debug('Info:', info);
+            //Techincal Debt: validate transaction above
 
-        return info;
+            info.transaction = transaction;
+
+            du.debug('Info:', info);
+
+            return info;
+
+        });
 
     });
-
-});
 
     }
 

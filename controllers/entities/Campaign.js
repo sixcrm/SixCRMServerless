@@ -158,12 +158,6 @@ class campaignController extends entityController {
 
         var campaign_product_schedules = campaign.productschedules;
 
-        du.highlight('Product Schedules');
-        du.highlight(product_schedules);
-
-        du.highlight('Campaign Product Schedules');
-        du.highlight(campaign_product_schedules);
-
         for(var i = 0; i < product_schedules.length; i++){
 
             var schedule_found = false;

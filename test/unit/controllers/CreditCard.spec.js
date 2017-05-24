@@ -6,11 +6,11 @@ describe('controllers/CreditCard.js', () => {
     it('creates credit card object', () => {
         // given
         let creditCardData = {
-            ccnumber: '1',
-            ccexpiration: '01/18',
-            ccccv: '2',
+            number: '1',
+            expiration: '01/18',
+            ccv: '2',
             name: 'N',
-            addres: 'A'
+            address: 'A'
         };
         let creditCardController = global.routes.include('controllers','entities/CreditCard');
 
@@ -20,9 +20,9 @@ describe('controllers/CreditCard.js', () => {
         // then
         return creditCardObject.then((data) => {
             expect(data).to.deep.equal({
-                ccnumber: creditCardData.ccnumber,
-                expiration: creditCardData.ccexpiration,
-                ccv: creditCardData.ccccv,
+                number: creditCardData.number,
+                expiration: creditCardData.expiration,
+                ccv: creditCardData.ccv,
                 name: creditCardData.name,
                 address: creditCardData.address
             });

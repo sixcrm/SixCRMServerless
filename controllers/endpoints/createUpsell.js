@@ -16,6 +16,12 @@ var loadBalancerController = global.routes.include('controllers', 'entities/Load
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
+/*
+* Push the pingback to the transaction
+* Pingback parsing and execution
+* Push the Redshift rows (Event and Transaction)
+*/
+
 class createUpsellController extends endpointController{
 
     constructor(){
@@ -93,7 +99,7 @@ class createUpsellController extends endpointController{
             var upsell_schema;
 
             try{
-                upsell_schema = global.routes.include('model', 'upsell');
+                upsell_schema = global.routes.include('model', 'endpoints/upsell');
             } catch(e){
                 return reject(new Error('Unable to load validation schemas.'));
             }
@@ -130,7 +136,7 @@ class createUpsellController extends endpointController{
 
         var promises = [];
 
-        var getSession = sessionController.get(event_body['session_id']);
+        var getSession = sessionController.get(event_body['session']);
         var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
 
         du.debug('Product Schedules', event_body['product_schedules']);

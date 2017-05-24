@@ -15,7 +15,7 @@ module.exports.graphObj = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The creditcard id',
   },
-        ccnumber: {
+        number: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The creditcard number',
         },
