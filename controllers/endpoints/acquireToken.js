@@ -13,7 +13,16 @@ const campaignController = global.routes.include('controllers', 'entities/Campai
 class acquireTokenController extends endpointController {
 
     constructor(){
-        super({required_permissions: ['user/read','account/read']});
+        super({
+            required_permissions: [
+                'user/read',
+                'account/read',
+                'campaign/read',
+                'affiliate/read',
+                'affiliate/create'
+            ]
+        });
+
     }
 
     execute(event){

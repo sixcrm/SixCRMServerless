@@ -446,7 +446,7 @@ functions:
     events:
       - http:
          path: token/acquire/{account}
-         method: get
+         method: post
          cors: true
          authorizer:
             name: verifysignature

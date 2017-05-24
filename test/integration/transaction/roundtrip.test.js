@@ -8,6 +8,7 @@ var yaml = require('js-yaml');
 var crypto = require('crypto');
 
 const du = global.routes.include('lib','debug-utilities.js');
+const random = global.routes.include('lib','random.js');
 
 try {
     var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));
@@ -27,9 +28,10 @@ describe('Round Trip Test', function() {
     	let secret_key = config.access_keys.super_user.secret_key;
     	let access_key = config.access_keys.super_user.access_key;
     	let account = config.account;
+            var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
             let signature = crypto.createHash('sha1').update(secret_key+request_time).digest('hex');
-    	let authorization_string = access_key+':'+request_time+':'+signature;
+            let authorization_string = access_key+':'+request_time+':'+signature;
             let this_request = request(endpoint);
 
             du.highlight('Request Time: ', request_time);
@@ -37,7 +39,22 @@ describe('Round Trip Test', function() {
             du.highlight('Authorization String: ', authorization_string);
             du.output(appropriate_spacing+'Acquiring Token');
 
-    	this_request.get('token/acquire/'+account)
+            var post_body = {
+                "campaign":campaign_id,
+                "affiliates":{
+                    "affiliate":'affiliate_test:'+random.createRandomString(10),
+                    "subaffiliate_1":'subaffiliate_1_test:'+random.createRandomString(10),
+                    "subaffiliate_2":'subaffiliate_2_test:'+random.createRandomString(10),
+                    "subaffiliate_3":'subaffiliate_3_test:'+random.createRandomString(10),
+                    "subaffiliate_4":'subaffiliate_4_test:'+random.createRandomString(10),
+                    "subaffiliate_5":'subaffiliate_5_test:'+random.createRandomString(10)
+                }
+            };
+
+            du.debug('Post data', post_body);
+
+    	this_request.post('token/acquire/'+account)
+      .send(post_body)
 			.set('Content-Type', 'application/json')
 			.set('Authorization', authorization_string)
 			.expect(200)
@@ -57,7 +74,7 @@ describe('Round Trip Test', function() {
 
     du.debug('Acquired JWT:', jwt);
 
-    var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
+
 
     var post_body = {
         "campaign":campaign_id,
