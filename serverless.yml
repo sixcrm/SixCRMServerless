@@ -143,6 +143,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_billtohold}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
@@ -156,6 +157,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertohold}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
@@ -168,6 +170,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtopending}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
@@ -181,6 +184,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingfailedtopending}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
@@ -193,6 +197,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingtoshipped}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
@@ -205,6 +210,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_shippedtodelivered}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
@@ -219,6 +225,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_deliveredtoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint} #Technical Debt:  Why is this here?
@@ -232,6 +239,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtoarchive}
       archivefilter: 'NOSHIP'
@@ -244,6 +252,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_createrebillstoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.createrebillstoarchive}
       archivefilter: 'ALL'
@@ -256,6 +265,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertoarchive}
       archivefilter: 'TWOATTEMPTS'
@@ -268,6 +278,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_indextoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
       archivefilter: 'ALL'

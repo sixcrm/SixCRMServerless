@@ -52,6 +52,17 @@ lambda:
     createrebillstoarchive: 'sixtransaction-development-createrebills'
     recovertoarchive: 'sixtransaction-development-archiverecover'
     indextoarchive: 'sixtransaction-development-indexentities'
+    forwardmessage_deliveredtoarchive: 'sixtransaction-production-forwardmessage_archivedelivered'
+    forwardmessage_shippedtodelivered: 'sixtransaction-production-forwardmessage_confirmdelivered'
+    forwardmessage_pendingtoshipped: 'sixtransaction-production-forwardmessage_confirmshipped'
+    forwardmessage_pendingfailedtopending: 'sixtransaction-production-forwardmessage_shipproduct'
+    forwardmessage_holdtopending: 'sixtransaction-production-forwardmessage_shipproduct'
+    forwardmessage_holdtoarchive: 'sixtransaction-production-forwardmessage_archivehold'
+    forwardmessage_billtohold: 'sixtransaction-production-forwardmessage_processbilling'
+    forwardmessage_recovertohold: 'sixtransaction-production-forwardmessage_processbilling'
+    forwardmessage_createrebillstoarchive: 'sixtransaction-production-forwardmessage_createrebills'
+    forwardmessage_recovertoarchive: 'sixtransaction-production-forwardmessage_archiverecover'
+    forwardmessage_indextoarchive: 'sixtransaction-production-forwardmessage_indexentities'
 
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill'

@@ -94,10 +94,17 @@ class forwardMessageController extends workerController {
 
         return new Promise((resolve, reject) => {
 
-			//Technical Debt:  This handles a maximum of 10 messages at a time...
             sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}).then((messages) => {
 
                 if (messages && messages.length > 0) {
+
+                    // If there are 10 messages (maximum), invoke the lambda again so it picks the rest of the messages.
+                    if (messages.length === 10) {
+                        lambda.invokeFunction({
+                            function_name: process.env.name,
+                            payload: JSON.stringify({}),
+                            invocation_type: 'Event'}); // 'Event' type will make the lambda execute asynchronously.
+                    }
 
                     messages.forEach(function(message) {
 
