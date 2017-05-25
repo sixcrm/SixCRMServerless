@@ -38,7 +38,7 @@ let this_request = request(endpoint);
 
 describe('Graph ' + entity + ' Test', function () {
 
-    global.test_accounts.forEach((test_account) => {
+    global.test_accounts.filter((account) => account.id === '*').forEach((test_account) => {
 
         global.test_users.forEach((test_user) => {
 
@@ -84,7 +84,10 @@ describe('Graph ' + entity + ' Test', function () {
         this_request.post('graph/' + account)
             .set('Authorization', test_jwt)
             .send(query)
-            .expect(200);
+            .expect(200)
+            .end(() => {
+                done();
+            })
     });
 
 });
