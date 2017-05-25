@@ -303,6 +303,7 @@ class createOrderController extends endpointController{
         return loadBalancerController.process( info.campaign.loadbalancer, {customer: info.customer, creditcard: info.creditcard, amount: info.amount})
 		    .then((processor) => {
 
+        du.highlight(processor);
           //Technical Debt:  Are there further actions to take if a transaction is denied?
 
           //validate processor
@@ -330,15 +331,46 @@ class createOrderController extends endpointController{
 
     }
 
-    pushToRedshift(info){
+    pushEventsRecord(info){
 
-        du.debug('Push To Redshift');
+        du.debug('Push Events Record');
 
         let product_schedule = info.schedulesToPurchase[0].id;
 
         return this.pushEventToRedshift('order', info.session, product_schedule).then((result) => {
 
             du.info(info);
+
+            return info;
+
+        });
+
+    }
+
+    pushTransactionsRecord(info){
+
+        du.debug('Push Transactions Record');
+
+        return this.pushTransactionToRedshift(info).then((result) => {
+
+            du.info(info);
+
+            return info;
+
+        });
+
+    }
+
+    pushToRedshift(info){
+
+        du.debug('Push To Redshift');
+
+        let promises = [];
+
+        promises.push(this.pushEventsRecord(info));
+        promises.push(this.pushTransactionsRecord(info));
+
+        return Promise.all(promises).then((promises) => {
 
             return info;
 

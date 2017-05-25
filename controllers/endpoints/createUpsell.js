@@ -280,15 +280,46 @@ class createUpsellController extends endpointController{
 
     }
 
+    pushEventsRecord(info){
+
+        du.debug('Push Events Record');
+
+        let product_schedule = info.schedulesToPurchase[0].id;
+
+        return this.pushEventToRedshift('order', info.session, product_schedule).then((result) => {
+
+            du.info(info);
+
+            return info;
+
+        });
+
+    }
+
+    pushTransactionsRecord(info){
+
+        du.debug('Push Transactions Record');
+
+        return this.pushTransactionToRedshift(info).then((result) => {
+
+            du.info(info);
+
+            return info;
+
+        });
+
+    }
+
     pushToRedshift(info){
 
         du.debug('Push To Redshift');
 
-        let product_schedule = info.schedulesToPurchase[0].id;
+        let promises = [];
 
-        return this.pushEventToRedshift('upsell', info.session, product_schedule).then((result) => {
+        promises.push(this.pushEventsRecord(info));
+        promises.push(this.pushTransactionsRecord(info));
 
-            du.info(info);
+        return Promise.all(promises).then((promises) => {
 
             return info;
 

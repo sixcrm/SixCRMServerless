@@ -360,6 +360,95 @@ module.exports = class endpointController {
 
     }
 
+    getTransactionSubType(info){
+
+        du.debug('Get Transaction Subtype')
+
+        var order_test = /Order/gi;
+        var upsell_test = /Upsell/gi;
+
+        if(order_test.test(this.constructor.name)){
+
+            return 'main';
+
+        }
+
+        if(upsell_test.test(this.constructor.name)){
+
+            return 'upsell';
+
+        }
+
+        throw new Error('Unrecognized Transaction Subtype');
+
+    }
+
+    getProcessorResult(info){
+
+        du.debug('Get Processor Result');
+
+        return info.processor.message.toLowerCase();
+    }
+
+    getProductSchedule(info){
+
+        du.debug('Get Product Schedule');
+
+        return info.schedulesToPurchase[0].id;
+
+    }
+
+    createTransactionObject(info){
+
+        du.debug('Create Transaction Object');
+
+        du.warning(info);
+
+        let transaction_subtype = this.getTransactionSubType();
+        let processor_result = this.getProcessorResult(info);
+        let product_schedule = this.getProductSchedule(info);
+
+        let transaction = {
+            id: info.transaction.id,
+            datetime: info.transaction.created_at,
+            customer: info.customer.id,
+            creditcard: info.creditcard.id,
+            merchant_provider:info.transaction.merchant_provider,
+            campaign:info.campaign.id,
+            amount:info.amount,
+            processor_result:processor_result,
+            account:info.transaction.account,
+            transaction_type:"new",
+            subtype:transaction_subtype,
+            product_schedule:product_schedule,
+        };
+
+        ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((optional_property) => {
+            if(_.has(info.session, optional_property) && !_.isNull(info.session[optional_property])){
+                transaction[optional_property] = info.session[optional_property];
+            }else{
+                transaction[optional_property] = '';
+            }
+        });
+
+        return transaction;
+
+    }
+
+    pushTransactionToRedshift(info){
+
+        du.debug('Push Transaction to Redshift');
+
+        let transaction = this.createTransactionObject(info);
+
+        return this.pushRecordToRedshift('transactions', transaction).then(() => {
+
+            return info;
+
+        });
+
+    }
+
     pushRecordToRedshift(table, object){
 
         return kinesisfirehoseutilities.putRecord(table, object).then((result) => {
