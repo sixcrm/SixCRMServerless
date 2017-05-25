@@ -24,7 +24,7 @@ if (process.env.stage === 'local') {
 }
 
 const SmsNotificationUtilities = global.routes.include('lib','sms-notification-utilities');
-const PermissionUtilities = global.routes.include('lib','lib/permission-utilities');
+const PermissionUtilities = global.routes.include('lib','permission-utilities');
 const du = global.routes.include('lib','debug-utilities.js');
 const timestamp = global.routes.include('lib','timestamp.js');
 
