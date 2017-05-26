@@ -4,14 +4,16 @@
 	"body":"
 	query {
 		trackerlist ({argumentation}) {
-			id,
-			affiliate {
-				id
-			},
-			body,
-			type,
-			created_at,
-			updated_at,
+			trackers {
+				id,
+				affiliate {
+					id
+				},
+				body,
+				type,
+				created_at,
+				updated_at,
+			}
 			pagination {
 				count,
 				end_cursor,
