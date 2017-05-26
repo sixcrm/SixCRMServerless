@@ -11,8 +11,8 @@ let accountType = require('./account/accountType');
 let affiliateInputType = require('./affiliate/affiliateInputType');
 let affiliateType = require('./affiliate/affiliateType');
 
-let trackingInputType = require('./tracking/trackingInputType');
-let trackingType = require('./tracking/trackingType');
+let trackerInputType = require('./tracker/trackerInputType');
+let trackerType = require('./tracker/trackerType');
 
 let campaignInputType = require('./campaign/campaignInputType');
 let campaignType = require('./campaign/campaignType');
@@ -96,7 +96,7 @@ const merchantProviderController = global.routes.include('controllers', 'entitie
 const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
-const trackingController = global.routes.include('controllers', 'entities/Tracking.js');
+const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
 const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
 const userController = global.routes.include('controllers', 'entities/User.js');
@@ -354,39 +354,39 @@ module.exports.graphObj = new GraphQLObjectType({
                 return roleController.delete(id);
             }
         },
-        createtracking:{
-            type: trackingType.graphObj,
-            description: 'Adds a new tracking.',
+        createtracker:{
+            type: trackerType.graphObj,
+            description: 'Adds a new tracker.',
             args: {
-                tracking: { type: trackingInputType .graphObj}
+                tracker: { type: trackerInputType .graphObj}
             },
-            resolve: (value, tracking) => {
-                return trackingController.create(tracking.tracking);
+            resolve: (value, tracker) => {
+                return trackerController.create(tracker.tracker);
             }
         },
-        updatetracking:{
-            type: trackingType.graphObj,
-            description: 'Updates a tracking.',
+        updatetracker:{
+            type: trackerType.graphObj,
+            description: 'Updates a tracker.',
             args: {
-                tracking: { type: trackingInputType.graphObj }
+                tracker: { type: trackerInputType.graphObj }
             },
-            resolve: (value, tracking) => {
-                return trackingController.update(tracking.tracking);
+            resolve: (value, tracker) => {
+                return trackerController.update(tracker.tracker);
             }
         },
-        deletetracking:{
+        deletetracker:{
             type: deleteOutputType.graphObj,
-            description: 'Deletes a tracking.',
+            description: 'Deletes a tracker.',
             args: {
                 id: {
-        				  description: 'id of the tracking',
+        				  description: 'id of the tracker',
         				  type: new GraphQLNonNull(GraphQLString)
                 }
             },
-            resolve: (value, tracking) => {
-                var id = tracking.id;
+            resolve: (value, tracker) => {
+                var id = tracker.id;
 
-                return trackingController.delete(id);
+                return trackerController.delete(id);
             }
         },
         createaffiliate:{

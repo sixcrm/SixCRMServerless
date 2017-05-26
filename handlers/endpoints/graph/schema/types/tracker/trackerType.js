@@ -5,20 +5,20 @@ const GraphQLString = require('graphql').GraphQLString;
 
 let affiliateType = require('../affiliate/affiliateType');
 
-const trackingController = global.routes.include('controllers', 'entities/Tracking.js');
+const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Tracking',
-    description: 'A affiliate tracking configuration.',
+    name: 'Tracker',
+    description: 'A tracker.',
     fields: () => ({
         id: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The id of the tracking config.',
+            description: 'The id of the tracker.',
         },
         affiliate: {
             type: affiliateType.graphObj,
             description: '.',
-            resolve: tracking => trackingController.getAffiliate(tracking),
+            resolve: tracker => trackerController.getAffiliate(tracker),
         },
         type: {
             type: new GraphQLNonNull(GraphQLString),

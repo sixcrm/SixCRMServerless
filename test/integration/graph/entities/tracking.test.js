@@ -12,26 +12,26 @@ chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
 
-var entity = 'Trackings';
+var entity = 'Trackers';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getTracking')
+    query: global.routes.path('handlers','endpoints/graph/queries/index/getTrackers')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getTracking')
+    query: global.routes.path('handlers','endpoints/graph/queries/view/getTracker')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createTracking')
+    query: global.routes.path('handlers','endpoints/graph/queries/create/createTracker')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateTracking')
+    query: global.routes.path('handlers','endpoints/graph/queries/update/updateTracker')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteTracking')
+    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteTracker')
 }];
 
 let this_request = request(endpoint);

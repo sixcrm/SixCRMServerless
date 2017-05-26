@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "tracking",
+        "TableName": "tracker",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"

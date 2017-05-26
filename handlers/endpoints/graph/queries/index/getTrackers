@@ -3,20 +3,21 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		trackinglist ({argumentation}) {
-			id,
-			affiliate {
-				id
+		trackerlist {
+			trackers {
+				id,
+				affiliate {
+					id
+				},
+				type,
+				body,
+				created_at,
+				updated_at
 			},
-			body,
-			type,
-			created_at,
-			updated_at,
 			pagination {
 				count,
 				end_cursor,
-				has_next_page,
-				last_evaluated
+				has_next_page
 			}
 		},
 	}"

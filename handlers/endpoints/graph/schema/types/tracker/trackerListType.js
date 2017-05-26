@@ -3,16 +3,16 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
-let trackingType = require('./trackingType');
+let trackerType = require('./trackerType');
 let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'TrackingConfigs',
-    description: 'Tracking Configurations',
+    name: 'Trackers',
+    description: 'Trackers',
     fields: () => ({
-        trackings: {
-            type: new GraphQLList(trackingType.graphObj),
-            description: 'The trackings',
+        trackers: {
+            type: new GraphQLList(trackerType.graphObj),
+            description: 'The trackers',
         },
         pagination: {
             type: new GraphQLNonNull(paginationType.graphObj),
