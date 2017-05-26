@@ -419,7 +419,7 @@ module.exports = class endpointController {
             processor_result:processor_result,
             account:info.transaction.account,
             transaction_type:"new",
-            subtype:transaction_subtype,
+            transaction_subtype:transaction_subtype,
             product_schedule:product_schedule,
         };
 

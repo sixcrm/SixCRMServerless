@@ -41,7 +41,7 @@
 			"type":"string",
 			"enum": ["new", "rebill"]
 		},
-		"subtype":{
+		"transaction_subtype":{
 			"type":"string",
 			"enum": ["upsell", "main"]
 		},
@@ -49,5 +49,5 @@
 			"type":"number"
 		}
 	},
-	"required":["id", "customer", "creditcard","merchant_provider","campaign","affiliate","account","product_schedule","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5","datetime","processor_result","transaction_type","subtype","amount"]
+	"required":["id", "customer", "creditcard","merchant_provider","campaign","affiliate","account","product_schedule","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5","datetime","processor_result","transaction_type","transaction_subtype","amount"]
 }
