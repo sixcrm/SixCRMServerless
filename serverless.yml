@@ -622,6 +622,76 @@ functions:
 
 resources:
   Resources:
+    ShippedDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-shipped_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    RecoverDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-recover_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    RebillFailedDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-rebill-failed_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    RebillDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-rebill_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    PendingFailedDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-pending-failed_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    PendingDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-pending_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    HoldDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-hold_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    DeliveredDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-delivered_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    BillingDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-bill_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
+    SearchIndexingDeadletterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${opt:stage}-searchindex_deadletter
+        MessageRetentionPeriod: '345600'
+        VisibilityTimeout: '300'
+        MaximumMessageSize: '262144'
     ShippedQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -752,76 +822,6 @@ resources:
               - ${opt:stage}-searchindex_deadletter
               - "Arn"
           maxReceiveCount: 5
-    ShippedDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-shipped_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    RecoverDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-recover_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    RebillFailedDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-rebill-failed_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    RebillDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-rebill_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    PendingFailedDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-pending-failed_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    PendingDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-pending_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    HoldDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-hold_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    DeliveredDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-delivered_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    BillingDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-bill_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    SearchIndexingDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-searchindex_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
       Properties:
