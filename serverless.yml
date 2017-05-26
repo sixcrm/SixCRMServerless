@@ -727,6 +727,10 @@ resources:
              Action:
                - firehose:*
              Resource: "*"
+           - Effect: Allow
+             Action:
+               - sns:*
+             Resource: "*"
         Roles:
           - Ref: IamRoleLambdaExecution
 #    SixEncryptionKey:
