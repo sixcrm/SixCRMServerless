@@ -17,6 +17,7 @@ var entities = [
 	{camel:'AccessKeys',lower:'accesskey'},
 	{camel:'Accounts',lower:'account'},
 	{camel:'Affiliates',lower:'affiliate'},
+	{camel:'Trackings',lower:'tracking'},
 	{camel:'Campaigns',lower:'campaign'},
 	{camel:'Customers',lower:'customer'},
 	{camel:'EmailTemplates',lower:'emailtemplate'},
