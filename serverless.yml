@@ -633,6 +633,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-shipped_deadletter
+              - "Arn"
           maxReceiveCount: 5
     RecoverQueue:
       Type: AWS::SQS::Queue
@@ -645,6 +646,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-recover_deadletter
+              - "Arn"
           maxReceiveCount: 5
     RebillFailedQueue:
       Type: AWS::SQS::Queue
@@ -657,6 +659,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-rebill-failed_deadletter
+              - "Arn"
           maxReceiveCount: 5
     RebillQueue:
       Type: AWS::SQS::Queue
@@ -669,6 +672,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-rebill_deadletter
+              - "Arn"
           maxReceiveCount: 5
     PendingFailedQueue:
       Type: AWS::SQS::Queue
@@ -681,6 +685,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-pending-failed_deadletter
+              - "Arn"
           maxReceiveCount: 5
     PendingQueue:
       Type: AWS::SQS::Queue
@@ -693,6 +698,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-pending_deadletter
+              - "Arn"
           maxReceiveCount: 5
     HoldQueue:
       Type: AWS::SQS::Queue
@@ -705,6 +711,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-hold_deadletter
+              - "Arn"
           maxReceiveCount: 5
     DeliveredQueue:
       Type: AWS::SQS::Queue
@@ -717,6 +724,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-delivered_deadletter
+              - "Arn"
           maxReceiveCount: 5
     BillingQueue:
       Type: AWS::SQS::Queue
@@ -729,6 +737,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-bill_deadletter
+              - "Arn"
           maxReceiveCount: 5
     SearchIndexingQueue:
       Type: AWS::SQS::Queue
@@ -741,6 +750,7 @@ resources:
           deadLetterTargetArn:
             Fn::GetAtt:
               - ${opt:stage}-searchindex_deadletter
+              - "Arn"
           maxReceiveCount: 5
     ShippedDeadletterQueue:
       Type: AWS::SQS::Queue
