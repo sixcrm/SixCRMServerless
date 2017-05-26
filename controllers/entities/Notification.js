@@ -49,6 +49,8 @@ class notificationController extends entityController {
     }
 
 
+    //Technical Debt:  Just use the native validation method in Entity.js
+
     /**
      * Whether a given object is a valid notification.
      *
@@ -59,7 +61,7 @@ class notificationController extends entityController {
         let schema;
 
         try {
-            schema = global.routes.include('model','notification.json');
+            schema = global.routes.include('model','entities/notification.json');
         } catch(e){
             return Promise.reject(new Error('Unable to load validation schemas.'));
         }

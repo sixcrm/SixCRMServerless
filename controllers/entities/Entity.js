@@ -796,7 +796,8 @@ module.exports = class entityController {
 
             try{
 
-                schema = global.routes.include('model', object_type);
+                schema = global.routes.include('model', 'entities/'+object_type);
+
 
             } catch(e){
 

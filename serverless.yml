@@ -126,6 +126,7 @@ functions:
       elasticache_port: ${file(./config/${opt:stage}/site.yml):elasticache.port}
       elasticache_retry_time: ${file(./config/${opt:stage}/site.yml):elasticache.retry_time}
       elasticache_max_attempts: ${file(./config/${opt:stage}/site.yml):elasticache.max_attempts}
+      tracking_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracking_table}
       logging: ${file(./config/${opt:stage}/site.yml):logging.loglevel}
 
 
@@ -475,6 +476,7 @@ functions:
       affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
       kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
       search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
+      tracking_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracking_table}
 
 
   createlead:
@@ -504,6 +506,7 @@ functions:
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+        tracking_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracking_table}
 
   createorder:
     handler: handlers/endpoints/createorder/handler.createorder
@@ -544,6 +547,7 @@ functions:
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
         kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
+        tracking_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracking_table}
 
   createupsell:
     handler: handlers/endpoints/createupsell/handler.createupsell
@@ -584,6 +588,7 @@ functions:
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
         kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
+        tracking_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracking_table}
 
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
@@ -614,6 +619,7 @@ functions:
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+        tracking_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracking_table}
 
 
 ########################

@@ -114,7 +114,7 @@ module.exports = class workerController {
 
             try{
 
-                var rebill_schema = global.routes.include('model','rebill.json');
+                var rebill_schema = global.routes.include('model','entities/rebill.json');
 
             } catch(e){
 
@@ -155,7 +155,7 @@ module.exports = class workerController {
 
             try{
 
-                var session_schema = global.routes.include('model','session.json');
+                var session_schema = global.routes.include('model','entities/session.json');
 
             } catch(e){
 

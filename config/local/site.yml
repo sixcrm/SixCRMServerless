@@ -36,6 +36,7 @@ dynamodb:
   notifications_table: 'notifications'
   notifications_read_table: 'notifications_read'
   notification_settings_table: 'notification_settings'
+  tracking_table: 'tracking'
   endpoint: 'http://localhost:8001'
 
 lambda:
