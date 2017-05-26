@@ -11,6 +11,9 @@ let accountType = require('./account/accountType');
 let affiliateInputType = require('./affiliate/affiliateInputType');
 let affiliateType = require('./affiliate/affiliateType');
 
+let trackingInputType = require('./tracking/trackingInputType');
+let trackingType = require('./tracking/trackingType');
+
 let campaignInputType = require('./campaign/campaignInputType');
 let campaignType = require('./campaign/campaignType');
 
@@ -93,6 +96,7 @@ const merchantProviderController = global.routes.include('controllers', 'entitie
 const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+const trackingController = global.routes.include('controllers', 'entities/Tracking.js');
 const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
 const userController = global.routes.include('controllers', 'entities/User.js');
@@ -348,6 +352,41 @@ module.exports.graphObj = new GraphQLObjectType({
                 var id = role.id;
 
                 return roleController.delete(id);
+            }
+        },
+        createtracking:{
+            type: trackingType.graphObj,
+            description: 'Adds a new tracking.',
+            args: {
+                tracking: { type: trackingInputType .graphObj}
+            },
+            resolve: (value, tracking) => {
+                return trackingController.create(tracking.tracking);
+            }
+        },
+        updatetracking:{
+            type: trackingType.graphObj,
+            description: 'Updates a tracking.',
+            args: {
+                tracking: { type: trackingInputType.graphObj }
+            },
+            resolve: (value, tracking) => {
+                return trackingController.update(tracking.tracking);
+            }
+        },
+        deletetracking:{
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a tracking.',
+            args: {
+                id: {
+        				  description: 'id of the tracking',
+        				  type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, tracking) => {
+                var id = tracking.id;
+
+                return trackingController.delete(id);
             }
         },
         createaffiliate:{

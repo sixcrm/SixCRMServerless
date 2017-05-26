@@ -56,7 +56,8 @@
     				"notification/*",
             "notificationsetting/*",
             "usersetting/*",
-            "userdevicetoken/*"
+            "userdevicetoken/*",
+            "tracking/*"
         	],
         	"deny":["*"]
         },

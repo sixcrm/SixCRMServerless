@@ -86,6 +86,9 @@ let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType');
 
+let trackingType = require('./tracking/trackingType');
+let trackingListType = require('./tracking/trackingListType');
+
 let suggestInputType = require('./search/suggestInputType');
 let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
@@ -126,6 +129,7 @@ const merchantProviderController = global.routes.include('controllers', 'entitie
 const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+const trackingController = global.routes.include('controllers', 'entities/Tracking.js');
 
 const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
@@ -142,6 +146,7 @@ const roleController = global.routes.include('controllers', 'entities/Role.js');
 const notificationController = global.routes.include('controllers', 'entities/Notification');
 const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
 
 const searchController = global.routes.include('controllers', 'endpoints/search.js');
 const suggestController = global.routes.include('controllers', 'endpoints/suggest.js');
@@ -354,6 +359,15 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, affiliate){
                 return affiliateController.list(affiliate.pagination);
+            }
+        },
+        trackinglist: {
+            type: trackingListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, tracking){
+                return trackingController.list(tracking.pagination);
             }
         },
         creditcardlist: {
@@ -737,6 +751,18 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, affiliate){
                 return affiliateController.get(affiliate.id);
+            }
+        },
+        tracking: {
+            type: trackingType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the tracking',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, tracking){
+                return trackingController.get(tracking.id);
             }
         },
         accesskey: {
