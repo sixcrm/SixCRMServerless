@@ -5,6 +5,7 @@ const Validator = require('jsonschema').Validator;
 const luhn = require("luhn");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var customerController = global.routes.include('controllers', 'entities/Customer.js');
@@ -68,6 +69,7 @@ class createOrderController extends endpointController{
       		.then(this.getTransactionInfo)
       		.then(this.createOrder)
           .then((info) => this.pushToRedshift(info))
+          .then((info) => this.handleTracking(info))
       		.then((info) => this.postOrderProcessing(info))
       		.then((pass_through) => this.handleNotifications(pass_through))
       		.catch((error) => {
@@ -371,6 +373,18 @@ class createOrderController extends endpointController{
         promises.push(this.pushTransactionsRecord(info));
 
         return Promise.all(promises).then((promises) => {
+
+            return info;
+
+        });
+
+    }
+
+    handleTracking(info){
+
+        du.debug('Handle Tracking');
+
+        return trackerutilities.handleTracking(info.session.id, info).then((results) => {
 
             return info;
 

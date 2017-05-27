@@ -13,6 +13,7 @@ const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
+//Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
 
 module.exports = class entityController {
 
@@ -261,9 +262,15 @@ module.exports = class entityController {
 		//ACL enabled
     get(id, primary_key){
 
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
-
         return new Promise((resolve, reject) => {
+
+            if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+
+            try{
+                id = this.getID(id, primary_key);
+            }catch(e){
+                return reject(e);
+            }
 
             return this.can('read').then((permission) => {
 
@@ -379,6 +386,7 @@ module.exports = class entityController {
 
     }
 
+    //Technical Debt: Why is this useful?
     getByKey(key){
 
         return new Promise((resolve, reject) => {
@@ -648,7 +656,13 @@ module.exports = class entityController {
 
         return new Promise((resolve, reject) => {
 
+            if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
+            try{
+                id = this.getID(id, primary_key);
+            }catch(e){
+                return reject(e);
+            }
 
             //Technical Debt:  Why is this "update"?
             return this.can('update').then((permission) => {
@@ -1402,6 +1416,38 @@ module.exports = class entityController {
             return Promise.resolve(null);
 
         }
+
+    }
+
+    getID(object, primary_key){
+
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+
+        if(_.isString(object)){
+
+        //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
+
+            if(this.isUUID(object)){
+
+                return object;
+
+            }else if(this.isEmail(object)){
+
+                return object;
+
+            }
+
+        }else if(_.isObject(object)){
+
+            if(_.has(object, primary_key)){
+
+                return object[primary_key];
+
+            }
+
+        }
+
+        throw new Error('Could not determine identifier.');
 
     }
 

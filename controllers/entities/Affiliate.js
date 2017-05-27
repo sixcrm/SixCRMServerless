@@ -1,7 +1,9 @@
 'use strict';
 const _ = require('underscore');
 
+var trackerController = global.routes.include('controllers', 'entities/Tracker.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
+
 
 class affiliateController extends entityController {
 
@@ -38,6 +40,14 @@ class affiliateController extends entityController {
             });
 
         });
+
+    }
+
+    getTrackers(affiliate){
+
+        let affiliate_id = this.getID(affiliate);
+
+        return trackerController.listBySecondaryIndex('affiliate', affiliate_id, 'affiliate-index');
 
     }
 

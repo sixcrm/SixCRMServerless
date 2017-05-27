@@ -11,6 +11,7 @@ var customerController = global.routes.include('controllers', 'entities/Customer
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 
 class sessionController extends entityController {
 
@@ -20,10 +21,21 @@ class sessionController extends entityController {
         this.descriptive_name = 'session';
 
         this.session_length = 3600;
+        this.affiliate_fields = [
+            'affiliate',
+            'subaffiliate_1',
+            'subaffiliate_2',
+            'subaffiliate_3',
+            'subaffiliate_4',
+            'subaffiliate_5',
+            'cid'
+        ];
 
     }
 
     getCustomer(session){
+
+        du.debug('Get Customer');
 
         if(!_.has(session, "customer")){ return null; }
 
@@ -36,6 +48,8 @@ class sessionController extends entityController {
 
     getCampaign(session){
 
+        du.debug('Get Campaign');
+
         if(!_.has(session, "campaign")){ return null; }
 
         return campaignController.get(session.campaign);
@@ -43,6 +57,8 @@ class sessionController extends entityController {
     }
 
     getSessionCreditCard(session){
+
+        du.debug('Get Session Credit Card');
 
         if(!_.has(session, 'customer')){ return null; }
 
@@ -52,12 +68,88 @@ class sessionController extends entityController {
 
     getCampaignHydrated(session){
 
+        du.debug('Get Campaign Hydrated');
+
         var id = session;
 
         if(_.has(session, "id")){
             id = session.id;
         }
         return campaignController.getHydratedCampaign(id);
+
+    }
+
+    getAffiliateIDs(session){
+
+        du.debug('Get Affiliate IDs');
+
+        return this.get(session).then((session) => {
+
+            let affiliate_ids = [];
+
+            this.affiliate_fields.forEach((affiliate_field) => {
+
+                if(_.has(session, affiliate_field)){
+
+                    if(this.isUUID(session[affiliate_field])){
+
+                        affiliate_ids.push(session[affiliate_field]);
+
+                    }else{
+
+                        du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
+
+                    }
+
+                }
+
+            });
+
+            return affiliate_ids;
+
+        });
+
+    }
+
+    getAffiliates(session){
+
+        du.debug('Get Affiliates');
+
+        return new Promise((resolve) => {
+
+            this.get(session).then((session) => {
+
+                let affiliates = [];
+
+                this.affiliate_fields.forEach((affiliate_field) => {
+
+                    if(_.has(session, affiliate_field)){
+
+                        if(this.isUUID(session[affiliate_field])){
+
+                            affiliates.push(affiliateController.get(session[affiliate_field]));
+
+                        }else{
+
+                            du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
+
+                        }
+
+                    }
+
+                });
+
+                if(affiliates.length < 1){ return resolve(affiliates); }
+
+                return Promise.all(affiliates).then((affiliates) => {
+
+                    return resolve(affiliates);
+
+                });
+
+            });
+
+        });
 
     }
 

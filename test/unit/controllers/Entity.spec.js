@@ -246,15 +246,14 @@ describe('controllers/Entity.js', () => {
 
             // when
             return entityController.delete({}).catch((error) => {
-                // then
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('Could not determine identifier.');
             });
         });
 
         it('throws error when reading from database fails', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -278,7 +277,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when deleting from database fails', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -305,7 +304,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when there are no entities with given id', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -330,7 +329,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when there are multiple entities with given id', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -355,7 +354,7 @@ describe('controllers/Entity.js', () => {
         it('succeeds when deleting succeeds', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -403,14 +402,14 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.get(1).catch((error) => {
                 // then
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('Could not determine identifier.');
             });
         });
 
         it('gets the entity from database when has permissions and entity exists', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -434,7 +433,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when reading from database fails', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -458,7 +457,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when reading from database returns more than 1 result', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -482,7 +481,7 @@ describe('controllers/Entity.js', () => {
         it('returns null when there are no results', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -506,7 +505,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when has no permissions', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
