@@ -1422,12 +1422,16 @@ module.exports = class entityController {
     getID(object, primary_key){
 
         du.warning(object);
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(_.isString(object)){
 
-        //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
 
+        //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
+            return object;
+
+            /*
             if(this.isUUID(object)){
 
                 return object;
@@ -1441,6 +1445,7 @@ module.exports = class entityController {
                 return object;
 
             }
+            */
 
         }else if(_.isObject(object)){
 
