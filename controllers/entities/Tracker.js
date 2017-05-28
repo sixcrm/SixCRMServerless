@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
 
+const du = global.routes.include('lib', 'debug-utilities.js');
 const postbackutilities = global.routes.include('lib', 'postback-utilities.js');
 
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
@@ -24,7 +25,11 @@ class trackerController extends entityController {
 
         let affiliate_id = this.getID(affiliate);
 
-        return trackerController.listBySecondaryIndex('affiliate', affiliate_id, 'affiliate-index');
+        return this.listBySecondaryIndex('affiliate', affiliate_id, 'affiliate-index').then((results) => {
+
+            return results.trackers;
+
+        });
 
     }
 

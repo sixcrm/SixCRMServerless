@@ -940,7 +940,7 @@ module.exports = class entityController {
 
     setCreatedAt(entity, created_at){
 
-        du.warning('Created At:', created_at);
+        du.debug('Set Created At');
 
         if(_.isUndefined(created_at)){
 
@@ -1095,9 +1095,9 @@ module.exports = class entityController {
 
         du.debug('Append Pagination');
 
-        du.debug('Pagination Object:', pagination);
-
         if(!_.isUndefined(pagination) && _.isObject(pagination)){
+
+            du.debug('Pagination Object:', pagination);
 
             if(_.has(pagination, 'limit')){
 
@@ -1421,6 +1421,7 @@ module.exports = class entityController {
 
     getID(object, primary_key){
 
+        du.warning(object);
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(_.isString(object)){
@@ -1432,6 +1433,10 @@ module.exports = class entityController {
                 return object;
 
             }else if(this.isEmail(object)){
+
+                return object;
+
+            }else if(object == '*'){
 
                 return object;
 
