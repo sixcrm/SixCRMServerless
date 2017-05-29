@@ -29,9 +29,9 @@ class verifyTransactionJWTController {
 
         return new Promise((resolve, reject) => {
 
-            if(!_.has(process.env, 'secret_key')){
+            if(!_.has(process.env, 'transaction_jwt_secret_key')){
 
-                du.warning('Missing secret_key in environment variables.');
+                du.warning('Missing transaction_jwt_secret_key in environment variables.');
 
                 return reject(new Error('JWT verification requires a secret key.'));
 
@@ -126,8 +126,11 @@ class verifyTransactionJWTController {
 
         return new Promise((resolve, reject) => {
 
-            jwt.verify(token, process.env.secret_key, function(error, decoded) {
+            du.warning(token, process.env.transaction_jwt_secret_key);
 
+            jwt.verify(token, process.env.transaction_jwt_secret_key, function(error, decoded) {
+
+                du.warning(error);
                 du.debug('Decoded Token: ', decoded);
 
                 if(_.isError(error)){ return reject(error); }

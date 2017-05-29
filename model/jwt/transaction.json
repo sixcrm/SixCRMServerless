@@ -1,0 +1,32 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/TransactionJWTContents",
+	"title": "TransactionJWTContents",
+	"type": "object",
+	"definitions": {
+		"SHA1": {
+			"type": "string",
+			"pattern":"^[0-9a-f]{5,40}$"
+		}
+	},
+	"properties": {
+		"iat":{
+			"type":"integer"
+		},
+		"exp":{
+			"type":"integer"
+		},
+		"iss":{
+			"type":"string",
+			"format":"uri"
+		},
+		"sub":{
+			"type":"string"
+		},
+		"aud":{
+			"type":"string"
+		},
+		"user_alias":{"$ref": "#/definitions/SHA1"}
+	},
+	"required":["iat","exp","user_alias"]
+}

@@ -53,19 +53,24 @@ functions:
     handler: handlers/authorizers/verifytransactionjwt/handler.verifyjwt
     environment:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
+      transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
+      transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
-  verifyauth0jwt:
-    handler: handlers/authorizers/verifyauth0jwt/handler.verifyjwt
+  verifysitejwt:
+    handler: handlers/authorizers/verifysitejwt/handler.verifyjwt
     environment:
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      secret_key: ${file(./config/${opt:stage}/site.yml):jwt.auth0.secret_key}
+      site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
+      site_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.site.expiration}
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      user_signing_strings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_signing_strings_table}
 
 ########################
 # Backend Graph Endpoint renders entity data to the website
@@ -79,7 +84,7 @@ functions:
           method: post
           cors: true
           authorizer:
-            name: verifyauth0jwt
+            name: verifysitejwt
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
@@ -468,8 +473,9 @@ functions:
     environment:
       stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
-      transaction_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
+      transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
       accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}

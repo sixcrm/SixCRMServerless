@@ -89,7 +89,7 @@ class acquireTokenController extends transactionEndpointController {
             user_alias: user_alias
         }
 
-        let transaction_jwt = jwt.sign(payload, process.env.transaction_secret_key);
+        let transaction_jwt = jwt.sign(payload, process.env.transaction_jwt_secret_key);
 
         return Promise.resolve(transaction_jwt);
 
