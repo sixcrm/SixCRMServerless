@@ -5,8 +5,9 @@ const graphql =  require('graphql').graphql;
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 let userController = global.routes.include('controllers', 'entities/User.js');
+var authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
 
-class graphController {
+class graphController extends authenticatedController{
 
     execute(event){
 

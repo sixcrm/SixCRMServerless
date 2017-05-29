@@ -9,9 +9,9 @@ var customerController = global.routes.include('controllers', 'entities/Customer
 var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
-var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
-class createLeadController extends endpointController{
+class createLeadController extends transactionEndpointController{
 
     constructor(){
         super({
@@ -28,15 +28,14 @@ class createLeadController extends endpointController{
                 'affiliate/read',
                 'affiliate/create',
                 'notification/create'
-            ]
+            ],
+            notification_parameters: {
+                type: 'lead',
+                action: 'created',
+                title:  'New Lead',
+                body: 'A new lead has been created.'
+            }
         });
-
-        this.notification_parameters = {
-            type: 'lead',
-            action: 'created',
-            title:  'New Lead',
-            body: 'A new lead has been created.'
-        };
 
     }
 
@@ -46,91 +45,35 @@ class createLeadController extends endpointController{
 
         return this.preprocessing((event))
   			.then((event) => this.acquireBody(event))
-  			.then((event) => this.validateInput(event))
+  			.then((event) => this.validateInput(event, this.validateEventSchema))
   			.then((event) => this.assureCustomer(event))
         .then((event) => this.handleAffiliateInformation(event))
-        .then((event) => this.handleTrackbackInformation(event))
   			.then((event) => this.createSessionObject(event))
   			.then((session_object) => this.persistSession(session_object))
+        .then((session_object) => this.handleLeadTracking(session_object, event))
         .then((session_object) => this.pushToRedshift(session_object))
   			.then((session_object) => this.handleNotifications(session_object));
 
     }
 
-    acquireBody(event){
+    validateEventSchema(event){
 
-        du.debug('Acquire Body');
+        du.debug('Validate Event Schema');
 
-        var duplicate_body;
+        let lead_schema = global.routes.include('model', 'endpoints/lead');
+        let customer_schema = global.routes.include('model', 'general/customer');
+        let address_schema = global.routes.include('model', 'general/address');
+        let creditcard_schema = global.routes.include('model', 'general/creditcard');
+        let affiliates_schema = global.routes.include('model', 'endpoints/affiliates');
 
-        try {
-            duplicate_body = JSON.parse(event['body']);
-        } catch (e) {
-            duplicate_body = event.body;
-        }
+        let v = new Validator();
 
-        return Promise.resolve(duplicate_body);
+        v.addSchema(address_schema, '/Address');
+        v.addSchema(creditcard_schema, '/CreditCard');
+        v.addSchema(affiliates_schema, '/Affiliates');
+        v.addSchema(customer_schema, '/Customer');
 
-    }
-
-    validateInput(event){
-
-        du.debug('Validate Input');
-
-        return new Promise((resolve, reject) => {
-
-            var lead_schema;
-            var customer_schema;
-            var address_schema;
-            var creditcard_schema;
-            var affiliates_schema;
-
-            try{
-
-                lead_schema = global.routes.include('model', 'endpoints/lead');
-                customer_schema = global.routes.include('model', 'general/customer');
-                address_schema = global.routes.include('model', 'general/address');
-                creditcard_schema = global.routes.include('model', 'general/creditcard');
-                affiliates_schema = global.routes.include('model', 'endpoints/affiliates');
-
-            } catch(e){
-
-                return reject(new Error('Unable to load validation schemas.'));
-
-            }
-
-            var validation;
-            var params = JSON.parse(JSON.stringify(event || {}));
-
-            try{
-                var v = new Validator();
-
-                v.addSchema(address_schema, '/Address');
-                v.addSchema(creditcard_schema, '/CreditCard');
-                v.addSchema(affiliates_schema, '/Affiliates');
-                v.addSchema(customer_schema, '/Customer');
-                validation = v.validate(params, lead_schema);
-
-            }catch(e){
-                return reject(new Error('Unable to instantiate validator.'));
-            }
-
-            if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
-
-                du.warning(validation);
-
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map((e)=>{ return e.message; })
-                };
-
-                return reject(error);
-
-            }
-
-            return resolve(params)
-
-        });
+        return v.validate(event, lead_schema);
 
     }
 
@@ -174,15 +117,6 @@ class createLeadController extends endpointController{
             });
 
         });
-
-    }
-
-    //Technical Debt: Complete!
-    handleTrackbackInformation(event){
-
-        du.debug('Handle Trackback Information');
-
-        return Promise.resolve(event);
 
     }
 
@@ -258,24 +192,27 @@ class createLeadController extends endpointController{
 
     }
 
-    pushToRedshift(session){
+    handleLeadTracking(session, event){
 
-        du.debug('Push To Redshift');
+        du.debug('Handle Lead Tracking');
 
-        return this.pushEventToRedshift('lead', session).then((result) => {
+        return this.handleTracking({session: session}, event).then((result) => {
 
-            du.info(result);
             return session;
 
         });
 
     }
 
-    handleNotifications(pass_through){
+    pushToRedshift(session){
 
-        du.warning('Handle Notifications');
+        du.debug('Push To Redshift');
 
-        return this.issueNotifications(this.notification_parameters).then(() => pass_through);
+        return this.pushEventToRedshift('lead', session).then((result) => {
+
+            return session;
+
+        });
 
     }
 

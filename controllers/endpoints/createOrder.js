@@ -1,8 +1,6 @@
 'use strict';
 const _ = require("underscore");
-const validator = require('validator');
 const Validator = require('jsonschema').Validator;
-const luhn = require("luhn");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
@@ -15,15 +13,10 @@ var transactionController = global.routes.include('controllers', 'entities/Trans
 var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
 var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
-/*
-* Push the pingback to the transaction
-* Pingback parsing and execution
-* Push the Redshift rows (Event and Transaction)
-*/
+const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
-class createOrderController extends endpointController{
+class createOrderController extends transactionEndpointController{
 
     constructor(){
         super({
@@ -45,15 +38,14 @@ class createOrderController extends endpointController{
                 'product/read',
                 'affiliate/read',
                 'notification/create'
-            ]
+            ],
+            notification_parameters: {
+                type: 'order',
+                action: 'added',
+                title: 'A new order',
+                body: 'A new order has been created.'
+            }
         });
-
-        this.notification_parameters = {
-            type: 'order',
-            action: 'added',
-            title: 'A new order',
-            body: 'A new order has been created.'
-        };
 
     }
 
@@ -61,7 +53,7 @@ class createOrderController extends endpointController{
 
         return this.preprocessing((event))
       		.then(this.acquireBody)
-      		.then(this.validateInput)
+      		.then((event) => this.validateInput(event, this.validateEventSchema))
       		.then(this.getOrderInfo)
           .then(this.getOrderCampaign)
           .then(this.validateInfo)
@@ -79,82 +71,20 @@ class createOrderController extends endpointController{
 
     }
 
-    acquireBody(event){
-
-        du.debug('Acquire Body');
-
-        var duplicate_body;
-
-        try {
-            duplicate_body = JSON.parse(event['body']);
-        } catch (e) {
-            duplicate_body = event.body;
-        }
-
-        return Promise.resolve(duplicate_body);
-
-    }
-
-    validateInput(event){
+    validateEventSchema(event){
 
         du.debug('Validate Input');
 
-        return new Promise((resolve, reject) => {
+        let order_schema = global.routes.include('model', 'endpoints/order');
+        let address_schema = global.routes.include('model', 'general/address');
+        let creditcard_schema = global.routes.include('model', 'general/creditcard');
 
-            var order_schema;
-            var address_schema;
-            var creditcard_schema;
+        var v = new Validator();
 
-            try{
+        v.addSchema(address_schema, '/Address');
+        v.addSchema(creditcard_schema, '/CreditCard');
 
-                order_schema = global.routes.include('model', 'endpoints/order');
-                address_schema = global.routes.include('model', 'general/address');
-                creditcard_schema = global.routes.include('model', 'general/creditcard');
-
-
-            } catch(e){
-                du.warning(e);
-                return reject(new Error('Unable to load validation schemas.'));
-            }
-
-            var validation;
-            var params = JSON.parse(JSON.stringify(event || {}));
-
-            try{
-                var v = new Validator();
-
-                v.addSchema(address_schema, '/Address');
-                v.addSchema(creditcard_schema, '/CreditCard');
-
-                validation = v.validate(params, order_schema);
-
-            }catch(e){
-                return reject(new Error('Unable to instantiate validator.'));
-            }
-
-            if(validation['errors'].length > 0) {
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map(e => e.message)
-                };
-
-                return reject(error);
-            }
-
-
-            if(!luhn.validate(params.creditcard.number)){
-
-                return reject(new Error('Invalid Credit Card number.'))
-
-            }else{
-
-                du.debug('Credit Card Valid');
-
-            }
-
-            return resolve(params);
-
-        });
+        return v.validate(event, order_schema);
 
     }
 
@@ -333,65 +263,6 @@ class createOrderController extends endpointController{
 
     }
 
-    pushEventsRecord(info){
-
-        du.debug('Push Events Record');
-
-        let product_schedule = info.schedulesToPurchase[0].id;
-
-        return this.pushEventToRedshift('order', info.session, product_schedule).then((result) => {
-
-            du.info(info);
-
-            return info;
-
-        });
-
-    }
-
-    pushTransactionsRecord(info){
-
-        du.debug('Push Transactions Record');
-
-        return this.pushTransactionToRedshift(info).then((result) => {
-
-            du.info(info);
-
-            return info;
-
-        });
-
-    }
-
-    pushToRedshift(info){
-
-        du.debug('Push To Redshift');
-
-        let promises = [];
-
-        promises.push(this.pushEventsRecord(info));
-        promises.push(this.pushTransactionsRecord(info));
-
-        return Promise.all(promises).then((promises) => {
-
-            return info;
-
-        });
-
-    }
-
-    handleTracking(info){
-
-        du.debug('Handle Tracking');
-
-        return trackerutilities.handleTracking(info.session.id, info).then((results) => {
-
-            return info;
-
-        });
-
-    }
-
     postOrderProcessing(info) {
 
         du.debug('Post Order Processing');
@@ -432,10 +303,46 @@ class createOrderController extends endpointController{
 
     }
 
-    handleNotifications(pass_through){
+    pushToRedshift(info){
 
-        return this.issueNotifications(this.notification_parameters)
-			.then(() => pass_through);
+        du.debug('Push To Redshift');
+
+        let promises = [];
+
+        promises.push(this.pushEventsRecord(info));
+        promises.push(this.pushTransactionsRecord(info));
+
+        return Promise.all(promises).then((promises) => {
+
+            return info;
+
+        });
+
+    }
+
+    pushEventsRecord(info){
+
+        du.debug('Push Events Record');
+
+        let product_schedule = info.schedulesToPurchase[0].id;
+
+        return this.pushEventToRedshift('order', info.session, product_schedule).then((result) => {
+
+            return info;
+
+        });
+
+    }
+
+    pushTransactionsRecord(info){
+
+        du.debug('Push Transactions Record');
+
+        return this.pushTransactionToRedshift(info).then((result) => {
+
+            return info;
+
+        });
 
     }
 

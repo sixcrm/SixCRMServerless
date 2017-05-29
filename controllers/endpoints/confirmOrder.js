@@ -1,13 +1,13 @@
 'use strict';
 const _ = require("underscore");
-const querystring = require('querystring');
+const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
-var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
-class confirmOrderController extends endpointController{
+class confirmOrderController extends transactionEndpointController{
 
     constructor(){
         super({
@@ -28,15 +28,14 @@ class confirmOrderController extends endpointController{
                 'transaction/read',
                 'rebill/read',
                 'notifications/create'
-            ]
+            ],
+            notification_parameters: {
+                type: 'session',
+                action: 'closed',
+                title: 'Completed Session',
+                body: 'A customer has completed a session.'
+            }
         });
-
-        this.notification_parameters = {
-            type: 'session',
-            action: 'closed',
-            title: 'Completed Session',
-            body: 'A customer has completed a session.'
-        };
 
     }
 
@@ -44,68 +43,22 @@ class confirmOrderController extends endpointController{
 
         return this.preprocessing(event)
 			.then(this.acquireQuerystring)
-			.then(this.validateInput)
+			.then((querystring) => this.validateInput(querystring, this.validateEventSchema))
 			.then(this.confirmOrder)
       .then((result_object) => this.pushToRedshift(result_object))
 			.then((results) => this.handleNotifications(results));
 
     }
 
-    acquireQuerystring(event){
-
-        du.debug('Acquire Querystring');
-
-        return new Promise((resolve, reject) => {
-
-            var duplicate_querystring = event.queryStringParameters;
-
-            if(!_.isObject(duplicate_querystring)){
-
-                if(_.isString(duplicate_querystring)){
-
-                    try{
-
-                        duplicate_querystring = querystring.parse(duplicate_querystring);
-
-                    }catch(error){
-
-                        return reject(error);
-
-                    }
-
-                    resolve(duplicate_querystring);
-
-                }else{
-
-                    return reject(new Error('Request querystring is an unexpected format.'));
-
-                }
-
-            }else{
-
-                return resolve(duplicate_querystring);
-
-            }
-
-        });
-
-    }
-
-    validateInput(querystring){
+    validateEventSchema(querystring){
 
         du.debug('Validate Input');
 
-        return new Promise((resolve, reject) => {
+        let confirmorder_schema = global.routes.include('model', 'endpoints/confirmorder');
 
-            if(!_.isObject(querystring) || !_.has(querystring, 'session')){
+        var v = new Validator();
 
-                return reject(new Error('The session must be set in the querystring.'));
-
-            }
-
-            return resolve(querystring);
-
-        });
+        return v.validate(querystring, confirmorder_schema);
 
     }
 
@@ -160,14 +113,6 @@ class confirmOrderController extends endpointController{
             return results;
 
         });
-
-    }
-
-    handleNotifications(pass_through){
-
-        du.warning('Handle Notifications');
-
-        return this.issueNotifications(this.notification_parameters).then(() => pass_through);
 
     }
 

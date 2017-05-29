@@ -3,9 +3,9 @@ const _ = require("underscore");
 const du = global.routes.include('lib', 'debug-utilities.js');
 const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
 
-var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+var authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
 
-class suggestController extends endpointController {
+class suggestController extends authenticatedController {
 
     constructor(){
         super();

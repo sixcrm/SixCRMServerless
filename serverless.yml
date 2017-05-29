@@ -467,6 +467,7 @@ functions:
     environment:
       stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
       transaction_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
       users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
@@ -619,6 +620,18 @@ functions:
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+        tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
+
+  public:
+    handler: handlers/endpoints/public/handler.public
+    events:
+      - http:
+         path: /{action}/{arguments}
+         method: get
+         cors: true
+    environment:
+        stage: ${opt:stage}
+        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
         tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
 
 

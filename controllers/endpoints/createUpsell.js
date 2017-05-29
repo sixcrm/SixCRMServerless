@@ -1,6 +1,5 @@
 'use strict';
 const _ = require("underscore");
-const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
@@ -14,7 +13,7 @@ var transactionController = global.routes.include('controllers', 'entities/Trans
 var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
 var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
 /*
 * Push the pingback to the transaction
@@ -22,7 +21,7 @@ var endpointController = global.routes.include('controllers', 'endpoints/endpoin
 * Push the Redshift rows (Event and Transaction)
 */
 
-class createUpsellController extends endpointController{
+class createUpsellController extends transactionEndpointController{
 
     constructor(){
         super({
@@ -44,90 +43,38 @@ class createUpsellController extends endpointController{
                 'product/read',
                 'affiliate/read',
                 'notification/create'
-            ]
+            ],
+            notification_parameters: {
+                type: 'order',
+                action: 'added',
+                title: 'A new order (upsell)',
+                body: 'A new order (upsell) has been created.'
+            }
         });
-
-        this.notification_parameters = {
-            type: 'order',
-            action: 'added',
-            title: 'A new order (upsell)',
-            body: 'A new order (upsell) has been created.'
-        };
 
     }
 
     execute(event){
 
         return this.preprocessing((event))
-		.then(this.acquireBody)
-		.then(this.validateInput)
-		.then(this.getUpsellProperties)
-		.then(this.getUpsellAssociatedProperties)
-		.then(this.getTransactionInfo)
-		.then(this.createUpsell)
-    .then((info) => this.pushToRedshift(info))
-		.then((info) => this.postUpsellProcessing(info))
-		.then((pass_through) => this.handleNotifications(pass_through))
-		.catch((error) => {
-    du.error(error);
-    throw error;
-});
+  		.then(this.acquireBody)
+  		.then((event) => this.validateInput(event, this.validateEventSchema))
+  		.then(this.getUpsellProperties)
+  		.then(this.getUpsellAssociatedProperties)
+  		.then(this.getTransactionInfo)
+  		.then(this.createUpsell)
+      .then((info) => this.pushToRedshift(info))
+  		.then((info) => this.postUpsellProcessing(info))
+  		.then((pass_through) => this.handleNotifications(pass_through));
 
     }
 
-    acquireBody(event){
+    validateEventSchema(event){
 
-        du.debug('Acquire Body');
+        let upsell_schema = global.routes.include('model', 'endpoints/upsell');
+        var v = new Validator();
 
-        var duplicate_body;
-
-        try {
-            duplicate_body = JSON.parse(event['body']);
-        } catch (e) {
-            duplicate_body = event.body;
-        }
-
-        return Promise.resolve(duplicate_body);
-
-    }
-
-    validateInput(event){
-
-        du.debug('Validate Input');
-
-        return new Promise((resolve, reject) => {
-
-            var upsell_schema;
-
-            try{
-                upsell_schema = global.routes.include('model', 'endpoints/upsell');
-            } catch(e){
-                return reject(new Error('Unable to load validation schemas.'));
-            }
-
-            var validation;
-            var params = JSON.parse(JSON.stringify(event || {}));
-
-            try{
-                var v = new Validator();
-
-                validation = v.validate(params, upsell_schema);
-            }catch(e){
-                return reject(new Error('Unable to instantiate validator.'));
-            }
-
-            if(validation['errors'].length > 0) {
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map(e => e.message)
-                };
-
-                return reject(error);
-            }
-
-            return resolve(params);
-
-        });
+        return v.validate(event, upsell_schema);
 
     }
 
@@ -362,13 +309,6 @@ class createUpsellController extends endpointController{
             return info.transaction;
 
         });
-
-    }
-
-    handleNotifications(pass_through){
-
-        return this.issueNotifications(this.notification_parameters)
-			.then(() => pass_through);
 
     }
 
