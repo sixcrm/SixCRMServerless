@@ -669,7 +669,7 @@ resources:
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
         RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.rebill-failed_deadletter_queue_url}
+          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.rebill_failed_deadletter_queue_url}
           maxReceiveCount: 5
     RebillQueue:
       Type: AWS::SQS::Queue
@@ -689,7 +689,7 @@ resources:
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
         RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.pending-failed_deadletter_queue_url}
+          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_deadletter_queue_url}
           maxReceiveCount: 5
     PendingQueue:
       Type: AWS::SQS::Queue
