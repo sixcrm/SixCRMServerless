@@ -648,9 +648,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.shipped_deadletter_queue_url}
-          maxReceiveCount: 5
     RecoverQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -658,9 +655,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.recover_deadletter_queue_url}
-          maxReceiveCount: 5
     RebillFailedQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -668,9 +662,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.rebill_failed_deadletter_queue_url}
-          maxReceiveCount: 5
     RebillQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -678,9 +669,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.rebill_deadletter_queue_url}
-          maxReceiveCount: 5
     PendingFailedQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -688,9 +676,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_deadletter_queue_url}
-          maxReceiveCount: 5
     PendingQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -698,9 +683,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.pending_deadletter_queue_url}
-          maxReceiveCount: 5
     HoldQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -708,9 +690,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.hold_deadletter_queue_url}
-          maxReceiveCount: 5
     DeliveredQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -718,9 +697,6 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.delivered_deadletter_queue_url}
-          maxReceiveCount: 5
     BillingQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -728,86 +704,10 @@ resources:
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.bill_deadletter_queue_url}
-          maxReceiveCount: 5
     SearchIndexingQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${opt:stage}-searchindex
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-        RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_deadletter_queue_url}
-          maxReceiveCount: 5
-    ShippedDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-shipped_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    RecoverDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-recover_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    RebillFailedDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-rebill-failed_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    RebillDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-rebill_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    PendingFailedDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-pending-failed_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    PendingDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-pending_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    HoldDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-hold_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    DeliveredDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-delivered_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    BillingDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-bill_deadletter
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '300'
-        MaximumMessageSize: '262144'
-    SearchIndexingDeadletterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-searchindex_deadletter
         MessageRetentionPeriod: '345600'
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
