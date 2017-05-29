@@ -33,7 +33,7 @@ class acquireTokenController extends transactionEndpointController {
       .then((event) => this.validateCampaign(event))
       .then((event) => this.handleAffiliateInformation(event))
       .then((event) => this.pushToRedshift(event))
-			.then((event) => this.acquireToken(event));
+			.then((event) => this.acquireToken());
 
     }
 
@@ -66,7 +66,7 @@ class acquireTokenController extends transactionEndpointController {
 
         let event_object = this.createEventObject(event);
 
-        return this.pushRecordToRedshift('events', event_object).then((result) => {
+        return this.pushRecordToRedshift('events', event_object).then(() => {
 
             return event;
 
@@ -74,7 +74,7 @@ class acquireTokenController extends transactionEndpointController {
 
     }
 
-    acquireToken (event) {
+    acquireToken () {
 
         du.debug('Acquire Token');
 
