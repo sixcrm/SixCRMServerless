@@ -4,7 +4,7 @@
 	"body":"
 	query {
 		usersigningstringlist {
-			user_signing_strings {
+			usersigningstrings {
                 id,
                 user,
                 name,

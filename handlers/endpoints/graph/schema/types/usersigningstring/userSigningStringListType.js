@@ -10,7 +10,7 @@ module.exports.graphObj =  new GraphQLObjectType({
     name: 'UserSigningStringList',
     description: 'User Signing String.',
     fields: () => ({
-        user_signing_strings: {
+        usersigningstrings: {
             type: new GraphQLList(userSigningStringType.graphObj),
             description: 'User Signing Strings.',
         },

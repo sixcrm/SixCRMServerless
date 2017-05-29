@@ -17,7 +17,7 @@ class verifyAuth0JWTController {
 
     execute(event){
 
-        return this.acquireToken(event).then((token) => this.verifyJWT(token));
+        return this.acquireToken(event).then((token) => { return this.verifyJWT(token) });
 
     }
 
@@ -39,7 +39,7 @@ class verifyAuth0JWTController {
 
     }
 
-    validateToken(token, signing_string){
+    validateToken(token, signing_string) {
 
         du.debug('Validate Token');
 
@@ -47,7 +47,7 @@ class verifyAuth0JWTController {
 
             if(!_.has(process.env, 'secret_key')){ return resolve(false); }
 
-            du.debug('Token: '+token, 'Secret: '+process.env.secret_key);
+            du.debug('Token: '+token, 'Secret: '+ signing_string);
 
             jwt.verify(token, signing_string, function(error, decoded) {
 
@@ -55,7 +55,7 @@ class verifyAuth0JWTController {
 
                 if(_.isError(error) || !_.isObject(decoded)){
 
-                    du.warning(error);
+                    du.warning(error.message);
 
                     return resolve(false);
 
@@ -81,11 +81,15 @@ class verifyAuth0JWTController {
             }
 
             // Validate token using default Auth0 private key.
-            this.validateToken(token, process.env.secret_key).then((decoded_token) => {
+            return this.validateToken(token, process.env.secret_key).then((decoded_token) => {
+
+                du.debug(`Token validated to ${decoded_token}.`);
 
                 if(decoded_token == false) {
                     // If we failed to verify jwt using Auth0 key, attempt to decode via user's signing key(s).
-                    return resolve(this.decodeWithUserSigningStrings(token));
+                    return this.decodeWithUserSigningStrings(token).then(result => {
+                        return resolve(result);
+                    });
                 }
 
                 du.debug('Decoded Token:', decoded_token);
@@ -135,21 +139,23 @@ class verifyAuth0JWTController {
     decodeWithUserSigningStrings(token) {
         du.debug('Decode using users signing strings.');
 
-        let successfull_email = '';
+        let successful_email = '';
 
-        this.decodeToken(token).then(decoded_token => {
-            return decoded_token.payload.user_alias;
-        }).then(user_alias => {
-            return userController.getUserByAlias(user_alias);
-        }).then(user => {
-            return user.id;
+        return this.decodeToken(token).then(decoded_token => {
+            du.debug('Decoded token:', decoded_token);
+
+            return decoded_token.email;
         }).then(email => {
-            // we know the user, get her signing keys
-            return userSigningStringContoller.listBySecondaryIndex('user', email);
+            du.debug(`Getting user signing strings for ${email}.`);
+
+            // we know the user, get her signing strings
+            return userSigningStringContoller.listBySecondaryIndex('user', email, 'user-index');
         }).then(signing_strings => {
+            du.debug(`Got user signing strings for user.`, signing_strings);
+
             let validateRequests = [];
 
-            signing_strings.forEach(signing_string => {
+            signing_strings.usersigningstrings.forEach(signing_string => {
 
                 du.debug(`Validating token with string named ${signing_string.name}.`);
 
@@ -161,9 +167,11 @@ class verifyAuth0JWTController {
                         signing_string.used_at = timestamp.getISO8601(); // update used_at
                         userSigningStringContoller.update(signing_string);
 
-                        successfull_email = signing_string.user;
+                        successful_email = signing_string.user;
 
-                        return validation;
+                        return true;
+                    } else {
+                        return false;
                     }
                 }));
             });
@@ -172,9 +180,13 @@ class verifyAuth0JWTController {
                 let atLeastOneKeyValid = results.reduce((previous, result) => { return previous || result });
 
                 if (!atLeastOneKeyValid) {
+                    du.debug('Could not find a valid signing string.');
+
                     return false;
                 } else {
-                    return successfull_email;
+                    du.debug(`Successfully used signing key for ${successful_email}.`);
+
+                    return successful_email;
                 }
             });
         }).catch(error => {

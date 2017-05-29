@@ -9,9 +9,9 @@ const entityController = global.routes.include('controllers', 'entities/Entity.j
 class userSigningString extends entityController {
 
     constructor() {
-        super(process.env.user_signing_strings_table, 'user_signing_string');
+        super(process.env.user_signing_strings_table, 'usersigningstring');
         this.table_name = process.env.user_signing_strings_table;
-        this.descriptive_name = 'user_signing_string';
+        this.descriptive_name = 'usersigningstring';
     }
 
 }
