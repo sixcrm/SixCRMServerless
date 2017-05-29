@@ -790,19 +790,17 @@ module.exports = class entityController {
 		//ACL enabled
     validate(object, object_type){
 
-        du.debug('Validating:', object_type, object);
+        du.debug('Validate');
 
         return new Promise((resolve, reject) => {
 
-            du.debug(object_type);
+            if(_.isUndefined(object_type) || !_.isString(object_type)){
 
-            if(!_.isString(object_type)){
-
-                du.debug('Is not a string: ', object_type);
-
-                var object_type = this.descriptive_name;
+                object_type = this.descriptive_name;
 
             }
+
+            du.debug('Object: ', object, 'Object Type: ', object_type);
 
             var v = new Validator();
 
