@@ -37,7 +37,8 @@ class createOrderController extends transactionEndpointController{
                 'rebill/update',
                 'product/read',
                 'affiliate/read',
-                'notification/create'
+                'notification/create',
+                'tracker/read'
             ],
             notification_parameters: {
                 type: 'order',

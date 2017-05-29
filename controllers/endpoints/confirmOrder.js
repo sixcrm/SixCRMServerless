@@ -27,7 +27,8 @@ class confirmOrderController extends transactionEndpointController{
                 'affiliate/read',
                 'transaction/read',
                 'rebill/read',
-                'notifications/create'
+                'notifications/create',
+                'tracker/read'
             ],
             notification_parameters: {
                 type: 'session',

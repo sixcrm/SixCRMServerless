@@ -19,7 +19,8 @@ class acquireTokenController extends transactionEndpointController {
                 'account/read',
                 'campaign/read',
                 'affiliate/read',
-                'affiliate/create'
+                'affiliate/create',
+                'tracker/read'
             ]
         });
 

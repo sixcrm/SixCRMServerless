@@ -626,7 +626,7 @@ functions:
     handler: handlers/endpoints/public/handler.public
     events:
       - http:
-         path: /{action}/{arguments}
+         path: /p/{arguments}
          method: get
          cors: true
     environment:

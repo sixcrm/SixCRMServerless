@@ -27,7 +27,8 @@ class createLeadController extends transactionEndpointController{
                 'campaign/read',
                 'affiliate/read',
                 'affiliate/create',
-                'notification/create'
+                'notification/create',
+                'tracker/read'
             ],
             notification_parameters: {
                 type: 'lead',
