@@ -78,6 +78,18 @@ sqs:
   rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
   rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure'
   search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchindex'
+  bill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill_deadletter'
+  bill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill-failed_deadletter'
+  recover_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-recover_deadletter'
+  hold_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-hold_deadletter'
+  pending_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending_deadletter'
+  pending_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending-failed_deadletter'
+  shipped_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-shipped_deadletter'
+  delivered_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-delivered_deadletter'
+  rebill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-rebill_deadletter'
+  rebill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-rebill-failure_deadletter'
+  search_indexing_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-searchindex_deadletter'
+  search_deindexing_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-searchdeindex_deadletter'
 
 nmi:
   username: 'demo'
