@@ -54,6 +54,9 @@ let userListType = require('./user/userListType');
 let userSettingListType = require('./usersetting/userSettingListType');
 let userSettingType = require('./usersetting/userSettingType');
 
+let userSigningStringListType = require('./usersigningstring/userSigningStringListType');
+let userSigningStringType = require('./usersigningstring/userSigningStringType');
+
 let userACLType = require('./useracl/userACLType');
 let userACLListType = require('./useracl/userACLListType');
 
@@ -137,6 +140,7 @@ const userController = global.routes.include('controllers', 'entities/User.js');
 const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
 const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken');
 const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
 const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
 
 const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
@@ -862,6 +866,27 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, user_setting) {
                 return userSettingController.list(user_setting.pagination);
+            }
+        },
+        usersigningstring: {
+            type: userSigningStringType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the user signing string',
+                    type: GraphQLString
+                }
+            },
+            resolve: (root, user_signing_string) => {
+                return userSigningStringController.get(user_signing_string.id);
+            }
+        },
+        usersigningstringlist: {
+            type: userSigningStringListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, user_signing_strings) {
+                return userSigningStringController.list(user_signing_strings.pagination);
             }
         },
         notification: {

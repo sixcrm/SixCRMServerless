@@ -77,6 +77,9 @@ let userDeviceTokenInputType = require('./userdevicetoken/userDeviceTokenInputTy
 let userSettingType = require('./usersetting/userSettingType');
 let userSettingInputType = require('./usersetting/userSettingInputType');
 
+let userSigningStringType = require('./usersigningstring/userSigningStringType');
+let userSigningStringInputType = require('./usersigningstring/userSigningStringInputType');
+
 let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
 
@@ -101,6 +104,7 @@ const fulfillmentProviderController = global.routes.include('controllers', 'enti
 const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
 const userController = global.routes.include('controllers', 'entities/User.js');
 const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
+const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
 const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
 const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
 const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
@@ -1076,5 +1080,48 @@ module.exports.graphObj = new GraphQLObjectType({
                 return userSettingController.delete(usersetting.id);
             }
         },
+        createusersigningstring:{
+            type: userSigningStringType.graphObj,
+            description: 'Creates a new user signing string.',
+            args: {
+                usersigningstring: { type: userSigningStringInputType.graphObj }
+            },
+            resolve: (value, usersigningstring) => {
+                return userSigningStringController.create(usersigningstring.usersigningstring);
+            }
+        },
+        updateusersigningstring:{
+            type: userSigningStringType.graphObj,
+            description: 'Updates a user signing string.',
+            args: {
+                usersigningstring: { type: userSigningStringInputType.graphObj }
+            },
+            resolve: (value, usersigningstring) => {
+                return userSigningStringController.update(usersigningstring.usersigningstring);
+            }
+        },
+        storeusersigningstring:{
+            type: userSigningStringType.graphObj,
+            description: 'Updates a user signing string.',
+            args: {
+                usersigningstring: { type: userSigningStringInputType.graphObj }
+            },
+            resolve: (value, usersigningstring) => {
+                return userSigningStringController.store(usersigningstring.usersigningstring);
+            }
+        },
+        deleteusersigningstring:{
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a user signing string.',
+            args: {
+                id: {
+                    description: 'Id of the user signing string',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, usersigningstring) => {
+                return userSigningStringController.delete(usersigningstring.id);
+            }
+        }
     })
 });

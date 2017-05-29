@@ -20,7 +20,7 @@ module.exports = class entityController {
     constructor(table_name, descriptive_name){
         this.table_name = table_name;
         this.descriptive_name = descriptive_name;
-        this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting'];
+        this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting', 'usersigningstring'];
     }
 
     can(action){
