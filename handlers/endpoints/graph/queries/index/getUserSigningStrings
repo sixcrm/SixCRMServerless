@@ -1,0 +1,18 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"nikola.bosic@toptal.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		usersigningstringlist {
+			user_signing_strings {
+                id,
+                user,
+                name,
+                signing_string,
+                updated_at,
+                created_at,
+				updated_at
+			}
+		}
+	}"
+}

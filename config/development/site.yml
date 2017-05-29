@@ -22,6 +22,7 @@ dynamodb:
   user_device_tokens_table: 'user_device_tokens'
   user_acls_table: 'useracls'
   user_settings_table: 'user_settings'
+  user_signing_strings_table: 'user_signing_strings'
   loadbalancers_table: 'loadbalancers'
   product_schedules_table: 'product_schedules'
   affiliates_table: 'affiliates'
