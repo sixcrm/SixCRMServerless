@@ -4,10 +4,6 @@ const _ = require("underscore");
 const jwtutilities = global.routes.include('lib', 'jwt-utilities');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
-/*
-*  Note:  This is slightly different than the Auth0JWT verification method, and particularly around the decoded token structure.
-*/
-
 class verifyTransactionJWTController {
 
     constructor(){
