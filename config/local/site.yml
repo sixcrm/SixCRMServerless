@@ -90,7 +90,6 @@ sqs:
   rebill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill_deadletter'
   rebill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure_deadletter'
   search_indexing_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchindex_deadletter'
-  search_deindexing_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchdeindex_deadletter'
 
 nmi:
   username: 'demo'

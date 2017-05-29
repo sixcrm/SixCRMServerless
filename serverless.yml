@@ -739,7 +739,7 @@ resources:
         VisibilityTimeout: '300'
         MaximumMessageSize: '262144'
         RedrivePolicy:
-          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.searchindex_deadletter_queue_url}
+          deadLetterTargetArn: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_deadletter_queue_url}
           maxReceiveCount: 5
     ShippedDeadletterQueue:
       Type: AWS::SQS::Queue
