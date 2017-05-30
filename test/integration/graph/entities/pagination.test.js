@@ -36,7 +36,7 @@ var entities = [
 	{camel:'Users',lower:'user'}
 ];
 
-let testing_jwt = tu.createTestAuth0JWT('super.user@test.com', global.site_config.jwt.auth0.secret_key);
+let testing_jwt = tu.createTestAuth0JWT('super.user@test.com', global.site_config.jwt.site.secret_key);
 //Technical Debt:  Test pagination using all roles
 
 entities.forEach((entity) => {

@@ -44,6 +44,7 @@ describe('Round Trip Test', function() {
             let subaffiliate_3_id = random.createRandomString(10);
             let subaffiliate_4_id = random.createRandomString(10);
             let subaffiliate_5_id = random.createRandomString(10);
+            let cid = random.createRandomString(10);
 
             var post_body = {
                 "campaign":campaign_id,
@@ -53,7 +54,8 @@ describe('Round Trip Test', function() {
                     "subaffiliate_2":subaffiliate_2_id,
                     "subaffiliate_3":subaffiliate_3_id,
                     "subaffiliate_4":subaffiliate_4_id,
-                    "subaffiliate_5":subaffiliate_5_id
+                    "subaffiliate_5":subaffiliate_5_id,
+                    "cid":cid
                 }
             };
 
