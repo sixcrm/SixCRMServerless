@@ -1,7 +1,7 @@
 {
 	"requestContext":"{\"authorizer\":{\"user\":\"4ee23a8f5c8661612075a89e72a56a3c6d00df90\"}}",
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
-	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0OTEyNjEwNDksImV4cCI6MTQ5MTI2MTA0OSwidXNlcl9hbGlhcyI6IjRlZTIzYThmNWM4NjYxNjEyMDc1YTg5ZTcyYTU2YTNjNmQwMGRmOTAifQ.J0Y9nrPO_yO7Yu2xzMBpnid5ue_XXQsC3BVhJDlAJbo",
+	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNDk2MTY0Mzg3LCJleHAiOjE0OTYxNjc5ODcsInVzZXJfYWxpYXMiOiI0ZWUyM2E4ZjVjODY2MTYxMjA3NWE4OWU3MmE1NmEzYzZkMDBkZjkwIn0.GNl4N85mzShUMH-9eTTTOHIVJuce_-ETMvfntryLRbw",
 	"body": {
 		"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
 		"affiliates": {

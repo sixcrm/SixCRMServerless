@@ -1,8 +1,8 @@
 'use strict';
 const _ = require("underscore");
-const jwt = require('jsonwebtoken');
 const Validator = require('jsonschema').Validator;
 
+const jwtutilities  = global.routes.include('lib', 'jwt-utilities');
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
@@ -79,17 +79,7 @@ class acquireTokenController extends transactionEndpointController {
 
         du.debug('Acquire Token');
 
-        let user_alias = global.user.alias;
-
-        let _timestamp = timestamp.createTimestampSeconds() + process.env.transaction_jwt_expiration;
-
-        let payload = {
-            iat: _timestamp,
-            exp: _timestamp,
-            user_alias: user_alias
-        }
-
-        let transaction_jwt = jwt.sign(payload, process.env.transaction_jwt_secret_key);
+        let transaction_jwt = jwtutilities.getJWT({user:{user_alias: global.user.alias}}, 'transaction');
 
         return Promise.resolve(transaction_jwt);
 
