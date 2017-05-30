@@ -117,7 +117,7 @@ class sessionController extends entityController {
 
         return new Promise((resolve) => {
 
-            this.get(session).then((session) => {
+            return this.get(session).then((session) => {
 
                 let affiliates = [];
 
