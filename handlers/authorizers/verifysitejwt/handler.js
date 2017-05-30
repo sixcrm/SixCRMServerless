@@ -14,7 +14,7 @@ module.exports.verifyjwt = (event, context, callback) => {
 
             return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, response));
 
-        }else if(response == verifyAuth0JWTController.messages.bypass){
+        }else if(response == verifySiteJWTController.messages.bypass){
 
             return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, null));
 
