@@ -39,6 +39,8 @@ class acquireTokenController extends transactionEndpointController {
 
     validateEventSchema(parameters){
 
+        du.debug('Validate Event Schema');
+
         let v = new Validator();
         let schema = global.routes.include('model', 'endpoints/token');
         let affiliates_schema = global.routes.include('model', 'endpoints/affiliates');
@@ -49,6 +51,8 @@ class acquireTokenController extends transactionEndpointController {
     }
 
     validateCampaign(event){
+
+        du.debug('Validate Campaign');
 
         return campaignController.get(event.campaign).then((campaign) => {
 

@@ -26,7 +26,12 @@ class verifySignatureController {
 
      var tokens = event.authorizationToken.split(':');
 
-     if(!_.isArray(tokens) || !(tokens.length == 3)){ return Promise.reject(false); }
+     if(!_.isArray(tokens) || !(tokens.length == 3)){
+
+         du.warning('Signature failed:  Incorrect structure');
+
+         return Promise.reject(false);
+     }
 
      return Promise.resolve(tokens);
 
@@ -77,7 +82,7 @@ class verifySignatureController {
 
         if(time_difference > (60 * 60 * 5)){
 
-            du.debug('Timestamp Expired');
+            du.warning('Signature failed:  Timestamp expired');
 
             return Promise.reject(false);
 
@@ -93,7 +98,7 @@ class verifySignatureController {
 
         if(!signature.validateSignature(token_object.access_key.secret_key, token_object.timestamp, token_object.signature)){
 
-            du.debug('Failed signature validation');
+            du.warning('Signature failed:  Incorrect Signature');
 
             return Promise.reject(false);
 
