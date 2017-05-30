@@ -3,7 +3,6 @@ const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
 const jwtutilities  = global.routes.include('lib', 'jwt-utilities');
-const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 const campaignController = global.routes.include('controllers', 'entities/Campaign');
@@ -34,7 +33,7 @@ class acquireTokenController extends transactionEndpointController {
       .then((event) => this.validateCampaign(event))
       .then((event) => this.handleAffiliateInformation(event))
       .then((event) => this.pushToRedshift(event))
-			.then((event) => this.acquireToken());
+			.then(() => this.acquireToken());
 
     }
 
