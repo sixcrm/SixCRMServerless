@@ -5,7 +5,6 @@ chai.use(require('chai-json-schema'));
 var assert = require('chai').assert
 var fs = require('fs');
 var yaml = require('js-yaml');
-var crypto = require('crypto');
 
 const du = global.routes.include('lib','debug-utilities.js');
 const random = global.routes.include('lib','random.js');
@@ -14,7 +13,7 @@ const signatureutilities = global.routes.include('lib','signature.js');
 try {
     var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));
 } catch (e) {
-    console.log(e);
+    du.warning(e);
 }
 
 var endpoint = config.endpoint;

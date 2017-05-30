@@ -9,8 +9,6 @@ var timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib','debug-utilities.js');
 const signatureutilities = global.routes.include('lib', 'signature.js');
 
-let site_config = yaml.safeLoad(fs.readFileSync(global.routes.path('config', 'development/site.yml'), 'utf8'));
-
 process.env.SIX_VERBOSE = 2;
 
 let access_key = process.argv[2];
