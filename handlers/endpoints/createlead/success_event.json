@@ -9,7 +9,8 @@
 			"subaffiliate_1":"Howdy",
 			"subaffiliate_2":"Doodie",
 			"subaffiliate_4":"Pant",
-			"subaffiliate_5":"Suit"
+			"subaffiliate_5":"Suit",
+			"cid":"dingdong"
 		},
 		"customer":{
 			"firstname": "Rama",

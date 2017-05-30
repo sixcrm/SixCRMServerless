@@ -79,6 +79,18 @@ class sessionController extends entityController {
 
     }
 
+    getAffiliate(session, affiliate_field){
+
+        du.debug('Get Affiliate');
+
+        if(_.has(session, affiliate_field) && this.isUUID(session[affiliate_field])){
+            return affiliateController.get(session[affiliate_field]);
+        }else{
+            return null;
+        }
+
+    }
+
     getAffiliateIDs(session){
 
         du.debug('Get Affiliate IDs');

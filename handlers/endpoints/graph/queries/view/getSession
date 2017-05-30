@@ -2,20 +2,62 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	{ 
-		session (id: \"668ad918-0d09-4116-a6fe-0e8a9eda36f7\") { 
-			id, 
-			customer { 
-				id, 
-				firstname, 
-				lastname, 
-				address { 
-					line1, 
-					line2, 
-					city, 
-					state, 
-					zip 
-				} 
+	{
+		session (id: \"668ad918-0d09-4116-a6fe-0e8a9eda36f7\") {
+			id,
+			customer {
+				id,
+				firstname,
+				lastname,
+				address {
+					line1,
+					line2,
+					city,
+					state,
+					zip
+				}
+			},
+			affiliate {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_1 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_2 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_3 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_4 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_5 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			cid {
+				id,
+				affiliate_id,
+				created_at,
+				updated_atid
 			},
 			created_at,
 			updated_at,
@@ -33,7 +75,7 @@
 						ship,
 						shipping_delay,
 						fulfillment_provider {
-							id, 
+							id,
 							name,
 							provider,
 							username,
@@ -60,7 +102,7 @@
 							ship,
 							shipping_delay,
 							fulfillment_provider {
-								id, 
+								id,
 								name,
 								provider,
 								username,
@@ -79,7 +121,7 @@
 			campaign {
 				id,
 				name,
-				productschedules { 
+				productschedules {
 					id,
 					schedule {
 						price,
@@ -93,7 +135,7 @@
 							ship,
 							shipping_delay,
 							fulfillment_provider {
-								id, 
+								id,
 								name,
 								provider,
 								username,
@@ -107,7 +149,7 @@
 					id,
 					merchantproviderconfigurations {
 						merchantprovider {
-							id, 
+							id,
 							username,
 							password,
 							endpoint,
@@ -117,7 +159,6 @@
 					}
 				}
 			}
-		} 
+		}
 	}"
 }
-
