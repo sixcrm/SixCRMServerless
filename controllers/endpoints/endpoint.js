@@ -1,6 +1,5 @@
 'use strict';
 const _ = require("underscore");
-const validator = require('validator');
 const querystring = require('querystring');
 
 const du = global.routes.include('lib', 'debug-utilities.js');

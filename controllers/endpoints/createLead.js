@@ -149,7 +149,7 @@ class createLeadController extends transactionEndpointController{
                     campaign: campaign.id,
                 };
 
-                ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((affiliate_field) => {
+                this.affiliate_fields.forEach((affiliate_field) => {
 
                     if(_.has(event, 'affiliates') && _.has(event.affiliates, affiliate_field)){
 

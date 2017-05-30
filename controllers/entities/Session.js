@@ -454,7 +454,7 @@ class sessionController extends entityController {
 
                     let session = {};
 
-                    ['customer', 'campaign', 'affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((parameter) => {
+                    _.union(['customer', 'campaign'], this.affiliate_fields).forEach((parameter) => {
                         if(_.has(parameters, parameter)){
                             session[parameter] = parameters[parameter];
                         }else{
