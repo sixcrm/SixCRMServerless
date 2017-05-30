@@ -1,12 +1,10 @@
 'use strict';
 const _ = require('underscore');
-const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 var customerController = global.routes.include('controllers', 'entities/Customer.js');
-var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
@@ -197,7 +195,7 @@ class createLeadController extends transactionEndpointController{
 
         du.debug('Handle Lead Tracking');
 
-        return this.handleTracking({session: session}, event).then((result) => {
+        return this.handleTracking({session: session}, event).then(() => {
 
             return session;
 
@@ -209,7 +207,7 @@ class createLeadController extends transactionEndpointController{
 
         du.debug('Push To Redshift');
 
-        return this.pushEventToRedshift('lead', session).then((result) => {
+        return this.pushEventToRedshift('lead', session).then(() => {
 
             return session;
 

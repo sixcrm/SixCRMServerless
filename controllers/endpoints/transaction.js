@@ -4,7 +4,6 @@ const luhn = require("luhn");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.routes.include('lib', 'timestamp.js');
-const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
 
@@ -168,7 +167,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    getTransactionSubType(info){
+    getTransactionSubType(){
 
         du.debug('Get Transaction Subtype')
 
@@ -304,7 +303,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         du.highlight(info);
 
-        return trackerutilities.handleTracking(info.session.id, info).then((results) => {
+        return trackerutilities.handleTracking(info.session.id, info).then(() => {
 
             return info;
 

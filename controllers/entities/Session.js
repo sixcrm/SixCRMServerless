@@ -405,8 +405,6 @@ class sessionController extends entityController {
     //Technical Debt:  Update me!
     putSession(parameters){
 
-        var controller_instance = this;
-
         return new Promise((resolve, reject) => {
 
             if(!_.has(parameters, 'customer')){
