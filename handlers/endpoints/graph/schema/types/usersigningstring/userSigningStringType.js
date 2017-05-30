@@ -2,7 +2,6 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLList = require('graphql').GraphQLList;
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'SigningString',

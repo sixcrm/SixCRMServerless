@@ -13,22 +13,22 @@ class verifySignatureController {
     execute(event){
 
         return this.parseEventSignature(event)
-			.then(this.createTokenObject)
-			.then(this.verifyTimestamp)
-			.then(this.verifySignature)
-			.then(this.populateAuthorityUser);
+      .then(this.createTokenObject)
+      .then(this.verifyTimestamp)
+      .then(this.verifySignature)
+      .then(this.populateAuthorityUser);
 
     }
 
  	parseEventSignature(event){
 
- 		du.debug('Parse Event Signature');
+     du.debug('Parse Event Signature');
 
- 		var tokens = event.authorizationToken.split(':');
+     var tokens = event.authorizationToken.split(':');
 
- 		if(!_.isArray(tokens) || !(tokens.length == 3)){ return Promise.reject(false); }
+     if(!_.isArray(tokens) || !(tokens.length == 3)){ return Promise.reject(false); }
 
- 		return Promise.resolve(tokens);
+     return Promise.resolve(tokens);
 
  	}
 

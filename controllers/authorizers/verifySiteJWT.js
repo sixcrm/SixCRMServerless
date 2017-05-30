@@ -21,7 +21,7 @@ class verifySiteJWTController {
 
     execute(event){
 
-        return this.acquireToken(event).then((token) => this.verifyJWT(token));
+        return this.acquireToken(event).then((token) => { return this.verifyJWT(token) });
 
     }
 
@@ -43,27 +43,23 @@ class verifySiteJWTController {
 
     }
 
-    validateToken(token, signing_string){
+    validateToken(token, signing_string) {
 
         du.debug('Validate Token');
 
-        return new Promise((resolve) => {
+        let decoded;
 
-            let decoded;
+        if(!_.isUndefined(signing_string)){
 
-            if(!_.isUndefined(signing_string)){
+            decoded = jwtutilities.decodeAndValidateJWT(token, signing_string);
 
-                decoded = jwtutilities.decodeAndValidateJWT(token, signing_string);
+        }else{
 
-            }else{
+            decoded = jwtutilities.verifyJWT(token);
 
-                decoded = jwtutilities.verifyJWT(token);
+        }
 
-            }
-
-            return resolve(decoded);
-
-        });
+        return Promise.resolve(decoded);
 
     }
 
@@ -109,13 +105,7 @@ class verifySiteJWTController {
 
         du.debug('Decode Token');
 
-        return new Promise((resolve) => {
-
-            du.debug('Token: '+token);
-
-            return resolve(jwtutilities.decodeJWT(token));
-
-        });
+        return Promise.resolve(jwtutilities.decodeJWT(token));
 
     }
 
@@ -129,29 +119,24 @@ class verifySiteJWTController {
 
         du.debug('Decode using users signing strings.');
 
-        let successfull_email = '';
+        return this.decodeToken(token).then((decoded_token) => {
 
-        return this.decodeToken(token).then(decoded_token => {
+            du.debug('Decoded token:', decoded_token);
 
             jwtutilities.validateJWTContents(decoded_token);
 
-            //Technical Debt:  User Alias isn't configured for site tokens...
-            //return decoded_token.payload.user_alias;
             return decoded_token.email;
 
-        }).then(email => {
+        }).then((email) => {
 
             userSigningStringContoller.disableACLs();
-
             return userSigningStringContoller.listBySecondaryIndex('user', email).then((results) => {
-
                 userSigningStringContoller.enableACLs();
 
-                if(_.has(results, 'user_signing_strings')){
-
-                    return results.user_signing_strings;
-
+                if(_.has(results, 'usersigningstrings')){
+                    return results.usersigningstrings;
                 }
+                return null;
 
             });
 
@@ -171,8 +156,6 @@ class verifySiteJWTController {
 
                 return Promise.all(validate_requests).then(results => {
 
-                    du.warning(results);
-
                     let successful_email = false;
 
                     results.some((result) => {
@@ -188,6 +171,10 @@ class verifySiteJWTController {
                     return successful_email;
 
                 });
+
+            }else{
+
+                return null;
 
             }
 
