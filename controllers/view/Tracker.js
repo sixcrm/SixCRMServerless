@@ -16,7 +16,7 @@ class trackerViewController{
         du.debug('View');
 
         trackerController.disableACLs();
-        return trackerController.get(argumentation_object.pathParameters.arguments).then((tracker) => {
+        return trackerController.get(argumentation_object.pathParameters.argument).then((tracker) => {
             trackerController.enableACLs();
 
             if(trackerController.validate(tracker)){

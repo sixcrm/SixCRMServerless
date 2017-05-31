@@ -45,32 +45,16 @@ module.exports = class PublicController extends endpointController {
 
         let path_object = {};
 
-        if(_.has(this.pathParameters, 'arguments')){
+        if(_.has(this.pathParameters, 'class')){
+            path_object.class = this.pathParameters.class;
+        }
 
-            let path_components = this.pathParameters.arguments.split('/');
+        if(_.has(this.pathParameters, 'method')){
+            path_object.method = this.pathParameters.method;
+        }
 
-            if(_.isArray(path_components) && path_components.length > 0){
-
-                for(var i = 0; i < path_components.length; i++){
-
-                    if(!_.isUndefined(this.path_fields[i])){
-
-                        if(this.path_fields[i] == 'arguments'){
-
-                            path_object[this.path_fields[i]] = path_components.slice(i).join('/');
-
-                        }else{
-
-                            path_object[this.path_fields[i]] = path_components[i];
-
-                        }
-
-                    }
-
-                }
-
-            }
-
+        if(_.has(this.pathParameters, 'argument')){
+            path_object.argument = this.pathParameters.argument;
         }
 
         this.path_object = path_object;
@@ -82,8 +66,6 @@ module.exports = class PublicController extends endpointController {
     validatePath(){
 
         du.debug('Validate Path');
-
-        du.warning(this.path_object);
 
         if(!_.has(this.path_object, 'class')){
             return Promise.reject(new Error('The path parameters object requires a class property.'));

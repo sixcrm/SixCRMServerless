@@ -480,7 +480,7 @@ functions:
     handler: handlers/endpoints/public/handler.public
     events:
       - http:
-         path: public/{arguments}
+         path: public/{class}/{method}/{arguments}
          method: get
     environment:
         stage: ${opt:stage}
