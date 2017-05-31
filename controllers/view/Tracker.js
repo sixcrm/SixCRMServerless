@@ -2,8 +2,8 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
-
 const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
 
 class trackerViewController{
 
@@ -30,6 +30,10 @@ class trackerViewController{
             if(trackerController.validate(tracker)){
 
                 if(tracker.type == 'html'){
+
+                    let lr = new LambdaResponse;
+
+                    lr.setGlobalHeaders({"Content-Type":"text/html;charset=UTF-8"});
 
                     return Promise.resolve(tracker.body);
 

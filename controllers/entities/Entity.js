@@ -25,57 +25,7 @@ module.exports = class entityController {
 
     }
 
-    setNames(name){
-
-        du.debug('Set Names');
-
-        this.descriptive_name = name;
-
-        this.setEnvironmentTableName(name);
-
-        this.setTableName(name);
-
-    }
-
-    setEnvironmentTableName(name){
-
-        du.debug('Set Environment Table Name');
-
-        let key = this.buildTableKey(name);
-        let value = this.buildTableName(name);
-
-        if(!_.has(process.env, key)){
-            process.env[key] = value;
-        }
-
-    }
-
-    setTableName(name){
-
-        du.debug('Set Table Name');
-
-        let key = this.buildTableKey(name);
-
-        this.table_name = process.env[key];
-
-    }
-
-    buildTableKey(name){
-
-        du.debug('Build Table Key');
-
-        return name+'s_table';
-
-    }
-
-    buildTableName(name){
-
-        du.debug('Build Table Name');
-
-        return process.env.stage+name+'s';
-
-    }
-
+    //Technical Debt:  Cache this.
     can(action){
 
         du.debug('Can');
@@ -1559,6 +1509,57 @@ module.exports = class entityController {
         }
 
         throw new Error('Could not determine identifier.');
+
+    }
+
+    setNames(name){
+
+        du.debug('Set Names');
+
+        this.descriptive_name = name;
+
+        this.setEnvironmentTableName(name);
+
+        this.setTableName(name);
+
+    }
+
+    setEnvironmentTableName(name){
+
+        du.debug('Set Environment Table Name');
+
+        let key = this.buildTableKey(name);
+        let value = this.buildTableName(name);
+
+        if(!_.has(process.env, key)){
+            process.env[key] = value;
+        }
+
+    }
+
+    setTableName(name){
+
+        du.debug('Set Table Name');
+
+        let key = this.buildTableKey(name);
+
+        this.table_name = process.env[key];
+
+    }
+
+    buildTableKey(name){
+
+        du.debug('Build Table Key');
+
+        return name+'s_table';
+
+    }
+
+    buildTableName(name){
+
+        du.debug('Build Table Name');
+
+        return process.env.stage+name+'s';
 
     }
 
