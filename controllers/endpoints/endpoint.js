@@ -46,31 +46,37 @@ module.exports = class EndpointController {
 
         du.debug('Acquire Querystring');
 
-        let duplicate_querystring = event.queryStringParameters;
+        if(_.has(event, 'queryStringParameters') && !_.isNull(event.queryStringParameters)){
 
-        if(!_.isObject(duplicate_querystring) && !_.isString(duplicate_querystring)){
+            let duplicate_querystring = event.queryStringParameters;
 
-            return Promise.reject(new Error('Request querystring is an unexpected format.'));
+            if(!_.isObject(duplicate_querystring) && !_.isString(duplicate_querystring)){
 
-        }
-
-        if(_.isString(duplicate_querystring)){
-
-            try {
-
-                duplicate_querystring = querystring.parse(duplicate_querystring);
-
-            }catch(error){
-
-                return Promise.reject(error);
+                return Promise.reject(new Error('Request querystring is an unexpected format.'));
 
             }
 
+            if(_.isString(duplicate_querystring)){
+
+                try {
+
+                    duplicate_querystring = querystring.parse(duplicate_querystring);
+
+                }catch(error){
+
+                    return Promise.reject(error);
+
+                }
+
+            }
+
+            this.queryString = duplicate_querystring;
+
+            return Promise.resolve(duplicate_querystring);
+
         }
 
-        this.queryString = duplicate_querystring;
-
-        return Promise.resolve(duplicate_querystring);
+        return Promise.resolve(null);
 
     }
 

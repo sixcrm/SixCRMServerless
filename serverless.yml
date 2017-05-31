@@ -482,7 +482,6 @@ functions:
       - http:
          path: public/{arguments}
          method: get
-         cors: true
     environment:
         stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}

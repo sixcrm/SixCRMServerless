@@ -14,9 +14,6 @@ class htmlController extends publicController{
 
         return this.preprocessing(event)
       .then(() => this.routeRequest());
-      /*
-      .then(() => this.executeAction);
-      */
 
     }
 
