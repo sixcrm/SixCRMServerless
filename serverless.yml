@@ -480,8 +480,15 @@ functions:
     handler: handlers/endpoints/public/handler.public
     events:
       - http:
-         path: public/{class}/{method}/{arguments}
-         method: get
+          path: public/{class}/{method}/{arguments}
+          method: get
+          integration: lambda
+          request:
+            parameters:
+              paths:
+                class: true
+                method: true
+                arguments: true
     environment:
         stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
