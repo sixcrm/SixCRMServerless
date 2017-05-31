@@ -1,6 +1,6 @@
 {
   "Table": {
-    "TableName": "notifications_read",
+    "TableName": "notificationreads",
     "KeySchema": [{
       "AttributeName": "user",
       "KeyType": "HASH"

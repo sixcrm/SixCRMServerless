@@ -1,3 +1,5 @@
+'use strict'
+
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
@@ -25,7 +27,7 @@ describe('controllers/Entity.js', () => {
 
     describe('can', () => {
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         afterEach(() => {
@@ -89,7 +91,7 @@ describe('controllers/Entity.js', () => {
 
     describe('create', () => {
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         it('fails when user is not defined', () => {
@@ -124,7 +126,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.create(anEntity).then((result) => {
@@ -157,7 +159,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.create(anEntity).catch((error) => {
@@ -181,7 +183,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.create(anEntity).catch((error) => {
@@ -193,7 +195,7 @@ describe('controllers/Entity.js', () => {
 
     describe('update', () => {
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         it('fails when user is not defined', () => {
@@ -219,7 +221,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.update(anEntity).catch((error) => {
@@ -240,7 +242,7 @@ describe('controllers/Entity.js', () => {
 
         it('fails when user is not defined', () => {
             // given
-            let entityController = new EntityController('table_name', 'entity');
+            let entityController = new EntityController('entity');
 
             global.user = null;
 
@@ -265,7 +267,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -292,7 +294,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -316,7 +318,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -341,7 +343,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -375,7 +377,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -397,7 +399,7 @@ describe('controllers/Entity.js', () => {
         it('fails when user is not defined', () => {
             // given
             global.user = null;
-            let entityController = new EntityController('table_name', 'entity');
+            let entityController = new EntityController('entity');
 
             // when
             return entityController.get(1).catch((error) => {
@@ -421,7 +423,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).then((response) => {
@@ -445,7 +447,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).catch((error) => {
@@ -469,7 +471,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).catch((error) => {
@@ -493,7 +495,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).then((result) => {
@@ -511,7 +513,7 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).then((response) => {
@@ -535,7 +537,7 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.list({limit: 10}).then((response) => {
@@ -559,7 +561,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             return entityController.list({limit: 10}).catch((error) => {
                 // then
@@ -578,7 +580,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.list({limit: 10}).catch((error) => {
@@ -598,7 +600,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.list({limit: 10}).catch((error) => {
@@ -621,7 +623,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.list({limit: 10}).then((response) => {
@@ -652,7 +654,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.list({limit:10}).then((response) => {
@@ -685,7 +687,7 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
@@ -705,7 +707,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
@@ -725,7 +727,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
@@ -745,7 +747,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
@@ -765,7 +767,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
@@ -780,7 +782,7 @@ describe('controllers/Entity.js', () => {
         let entityController;
 
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         it('should allow valid mail', () => {
@@ -818,7 +820,7 @@ describe('controllers/Entity.js', () => {
         let entityController;
 
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         it('should allow valid UUID', () => {

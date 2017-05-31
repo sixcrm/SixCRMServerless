@@ -5,9 +5,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class roleController extends entityController {
 
     constructor(){
-        super(process.env.roles_table, 'role');
-        this.table_name = process.env.roles_table;
-        this.descriptive_name = 'role';
+        super('role');
     }
 
     getPermissions(role){

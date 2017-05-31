@@ -13,9 +13,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class campaignController extends entityController {
 
     constructor(){
-        super(process.env.campaigns_table, 'campaign');
-        this.table_name = process.env.campaigns_table;
-        this.descriptive_name = 'campaign';
+        super('campaign');
     }
 
     getEmailTemplates(campaign){

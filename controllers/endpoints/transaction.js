@@ -4,10 +4,8 @@ const luhn = require("luhn");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.routes.include('lib', 'timestamp.js');
-const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
-
 
 const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
@@ -20,6 +18,8 @@ module.exports = class transactionEndpointController extends authenticatedContro
         super(parameters);
 
         this.setLocalParameters(parameters);
+
+        this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
 
     }
 
@@ -81,11 +81,10 @@ module.exports = class transactionEndpointController extends authenticatedContro
         if(_.has(event, 'affiliates')){
 
             let promises = [];
-            let assure_array = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'];
 
-            for(var i = 0; i < assure_array.length; i++){
+            for(var i = 0; i < this.affiliate_fields.length; i++){
 
-                let assurance_field = assure_array[i];
+                let assurance_field = this.affiliate_fields[i];
 
                 if(_.has(event.affiliates, assurance_field) && event.affiliates[assurance_field] != ''){
 
@@ -101,9 +100,9 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
             return Promise.all(promises).then((promises) => {
 
-                for(var i = 0; i < assure_array.length; i++){
+                for(var i = 0; i < this.affiliate_fields.length; i++){
 
-                    let assurance_field = assure_array[i];
+                    let assurance_field = this.affiliate_fields[i];
 
                     if(_.has(promises[i], 'id')){
 
@@ -152,7 +151,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
             product_schedule: product_schedule
         };
 
-        ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((optional_property) => {
+        this.affiliate_fields.forEach((optional_property) => {
             if(_.has(session, optional_property) && !_.isNull(session[optional_property])){
                 event[optional_property] = session[optional_property];
             }else{
@@ -168,7 +167,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    getTransactionSubType(info){
+    getTransactionSubType(){
 
         du.debug('Get Transaction Subtype')
 
@@ -222,7 +221,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
             product_schedule: ''
         };
 
-        ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((optional_property) => {
+        this.affiliate_fields.forEach((optional_property) => {
             if(_.has(event, 'affiliates') && _.has(event.affiliates, optional_property) && !_.isNull(event.affiliates[optional_property])){
                 event_object[optional_property] = event.affiliates[optional_property];
             }else{
@@ -260,7 +259,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
             product_schedule:product_schedule,
         };
 
-        ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((optional_property) => {
+        this.affiliate_fields.forEach((optional_property) => {
             if(_.has(info.session, optional_property) && !_.isNull(info.session[optional_property])){
                 transaction[optional_property] = info.session[optional_property];
             }else{
@@ -304,7 +303,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         du.highlight(info);
 
-        return trackerutilities.handleTracking(info.session.id, info).then((results) => {
+        return trackerutilities.handleTracking(info.session.id, info).then(() => {
 
             return info;
 

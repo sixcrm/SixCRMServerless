@@ -5,15 +5,15 @@ chai.use(require('chai-json-schema'));
 var assert = require('chai').assert
 var fs = require('fs');
 var yaml = require('js-yaml');
-var crypto = require('crypto');
 
 const du = global.routes.include('lib','debug-utilities.js');
 const random = global.routes.include('lib','random.js');
+const signatureutilities = global.routes.include('lib','signature.js');
 
 try {
     var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));
 } catch (e) {
-    console.log(e);
+    du.warning(e);
 }
 
 var endpoint = config.endpoint;
@@ -29,7 +29,7 @@ describe('Round Trip Test', function() {
           	let account = config.account;
             var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
-            let signature = crypto.createHash('sha1').update(secret_key+request_time).digest('hex');
+            let signature = signatureutilities.createSignature(secret_key, request_time);
             let authorization_string = access_key+':'+request_time+':'+signature;
             let this_request = request(endpoint);
 
@@ -44,6 +44,7 @@ describe('Round Trip Test', function() {
             let subaffiliate_3_id = random.createRandomString(10);
             let subaffiliate_4_id = random.createRandomString(10);
             let subaffiliate_5_id = random.createRandomString(10);
+            let cid = random.createRandomString(10);
 
             var post_body = {
                 "campaign":campaign_id,
@@ -53,7 +54,8 @@ describe('Round Trip Test', function() {
                     "subaffiliate_2":subaffiliate_2_id,
                     "subaffiliate_3":subaffiliate_3_id,
                     "subaffiliate_4":subaffiliate_4_id,
-                    "subaffiliate_5":subaffiliate_5_id
+                    "subaffiliate_5":subaffiliate_5_id,
+                    "cid":cid
                 }
             };
 
@@ -79,8 +81,6 @@ describe('Round Trip Test', function() {
     var jwt = response.body.token;
 
     du.debug('Acquired JWT:', jwt);
-
-
 
     var post_body = {
         "campaign":campaign_id,

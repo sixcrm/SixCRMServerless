@@ -1,6 +1,6 @@
 {
   "Table": {
-    "TableName": "user_settings",
+    "TableName": "usersettings",
     "KeySchema": [{
       "AttributeName": "id",
       "KeyType": "HASH"

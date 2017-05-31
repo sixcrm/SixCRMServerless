@@ -10,9 +10,7 @@ const affiliateController = global.routes.include('controllers', 'entities/Affil
 class trackerController extends entityController {
 
     constructor(){
-        super(process.env.tracker_table, 'tracker');
-        this.table_name = process.env.tracker_table;
-        this.descriptive_name = 'tracker';
+        super('tracker');
     }
 
     getAffiliate(tracker){

@@ -39,7 +39,7 @@ describe('Graph '+entity+' Test', function() {
 
         describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials.', function() {
 
-            var test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
+            var test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
 
             du.output(test_jwt);
 

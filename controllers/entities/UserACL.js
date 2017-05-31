@@ -13,9 +13,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class userACLController extends entityController {
 
     constructor(){
-        super(process.env.users_table, 'useracl');
-        this.table_name = process.env.user_acls_table;
-        this.descriptive_name = 'useracl';
+        super('useracl');
     }
 
 	//this is called specifically from the UserController.  Hence the partial hydration...

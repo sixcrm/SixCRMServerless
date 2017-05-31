@@ -16,9 +16,7 @@ var affiliateController = global.routes.include('controllers', 'entities/Affilia
 class sessionController extends entityController {
 
     constructor(){
-        super(process.env.sessions_table, 'session');
-        this.table_name = process.env.sessions_table;
-        this.descriptive_name = 'session';
+        super('session');
 
         this.session_length = 3600;
         this.affiliate_fields = [
@@ -79,6 +77,18 @@ class sessionController extends entityController {
 
     }
 
+    getAffiliate(session, affiliate_field){
+
+        du.debug('Get Affiliate');
+
+        if(_.has(session, affiliate_field) && this.isUUID(session[affiliate_field])){
+            return affiliateController.get(session[affiliate_field]);
+        }else{
+            return null;
+        }
+
+    }
+
     getAffiliateIDs(session){
 
         du.debug('Get Affiliate IDs');
@@ -117,7 +127,7 @@ class sessionController extends entityController {
 
         return new Promise((resolve) => {
 
-            this.get(session).then((session) => {
+            return this.get(session).then((session) => {
 
                 let affiliates = [];
 
@@ -405,8 +415,6 @@ class sessionController extends entityController {
     //Technical Debt:  Update me!
     putSession(parameters){
 
-        var controller_instance = this;
-
         return new Promise((resolve, reject) => {
 
             if(!_.has(parameters, 'customer')){
@@ -454,7 +462,7 @@ class sessionController extends entityController {
 
                     let session = {};
 
-                    ['customer', 'campaign', 'affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((parameter) => {
+                    _.union(['customer', 'campaign'], this.affiliate_fields).forEach((parameter) => {
                         if(_.has(parameters, parameter)){
                             session[parameter] = parameters[parameter];
                         }else{

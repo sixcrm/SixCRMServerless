@@ -8,9 +8,7 @@ const entityController = global.routes.include('controllers', 'entities/Entity.j
 class notificationSettingController extends entityController {
 
     constructor() {
-        super(process.env.notifications_table, 'notificationsetting');
-        this.table_name = process.env.notification_settings_table;
-        this.descriptive_name = 'notificationsetting';
+        super('notificationsetting');
     }
 
     getDefaultProfile(){

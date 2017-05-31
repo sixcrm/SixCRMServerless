@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "merchant_providers",
+        "TableName": "merchantproviders",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"

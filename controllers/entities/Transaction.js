@@ -11,9 +11,7 @@ var shippingReceiptController = global.routes.include('controllers', 'entities/S
 class transactionController extends entityController {
 
     constructor(){
-        super(process.env.transactions_table, 'transaction');
-        this.table_name = process.env.transactions_table;
-        this.descriptive_name = 'transaction';
+        super('transaction');
     }
 
 	//Technical Debt:  Why is this missing rebill_ids

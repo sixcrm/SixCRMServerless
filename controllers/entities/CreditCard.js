@@ -6,9 +6,7 @@ const du = global.routes.include('lib', 'debug-utilities');
 class creditCardController extends entityController {
 
     constructor(){
-        super(process.env.credit_cards_table, 'creditcard');
-        this.table_name = process.env.credit_cards_table;
-        this.descriptive_name = 'creditcard';
+        super('creditcard');
     }
 
     getAddress(creditcard){

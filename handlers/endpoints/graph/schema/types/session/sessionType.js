@@ -6,6 +6,7 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 let sessionInterface = require('./sessionInterface');
 let campaignType = require('../campaign/campaignType');
+let affiliateType = require('../affiliate/affiliateType');
 let rebillType = require('../rebill/rebillType');
 let productScheduleType = require('../productschedule/productScheduleType');
 let customerType = require('../customer/customerType');
@@ -19,10 +20,6 @@ module.exports.graphObj = new GraphQLObjectType({
         id: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the session.',
-        },
-        completed: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'A boolean string denoting that that session has otherwise been completed or expired.',
         },
         customer: {
             type: customerType.graphObj,
@@ -47,6 +44,59 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(session){
                 return sessionController.getCampaign(session);
             }
+        },
+        affiliate:{
+            type: affiliateType.graphObj,
+            description: 'The affiliate associated with the session',
+            resolve: function(session){
+                return sessionController.getAffiliate(session, 'affiliate');
+            }
+        },
+        subaffiliate_1:{
+            type: affiliateType.graphObj,
+            description: 'The subaffiliate_1 associated with the session',
+            resolve: function(session){
+                return sessionController.getAffiliate(session, 'subaffiliate_1');
+            }
+        },
+        subaffiliate_2:{
+            type: affiliateType.graphObj,
+            description: 'The subaffiliate_2 associated with the session',
+            resolve: function(session){
+                return sessionController.getAffiliate(session, 'subaffiliate_2');
+            }
+        },
+        subaffiliate_3:{
+            type: affiliateType.graphObj,
+            description: 'The subaffiliate_3 associated with the session',
+            resolve: function(session){
+                return sessionController.getAffiliate(session, 'subaffiliate_3');
+            }
+        },
+        subaffiliate_4:{
+            type: affiliateType.graphObj,
+            description: 'The subaffiliate_4 associated with the session',
+            resolve: function(session){
+                return sessionController.getAffiliate(session, 'subaffiliate_4');
+            }
+        },
+        subaffiliate_5:{
+            type: affiliateType.graphObj,
+            description: 'The subaffiliate_5 associated with the session',
+            resolve: function(session){
+                return sessionController.getAffiliate(session, 'subaffiliate_5');
+            }
+        },
+        cid:{
+            type: affiliateType.graphObj,
+            description: 'The cid associated with the session',
+            resolve: function(session){
+                return sessionController.getAffiliate(session, 'cid');
+            }
+        },
+        completed: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'A boolean string denoting that that session has otherwise been completed or expired.',
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),

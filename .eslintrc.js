@@ -14,7 +14,7 @@ module.exports = {
         "indent": ["warn", 4],
         "linebreak-style": [ "error", "unix" ],
         "newline-after-var": ["warn", "always"],
-        "newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }],
+        //"newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }],
         "no-console": [ "warn" ],
         "no-extra-semi": [ "off" ],
         "no-trailing-spaces": [ "warn" ],

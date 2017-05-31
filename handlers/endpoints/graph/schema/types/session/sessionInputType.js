@@ -12,6 +12,12 @@ module.exports.graphObj = new GraphQLInputObjectType({
         campaign:			{ type: new GraphQLNonNull(GraphQLString) },
         completed:			{ type: new GraphQLNonNull(GraphQLString) },
         affiliate:			{ type: GraphQLString },
+        subaffiliate_1:			{ type: GraphQLString },
+        subaffiliate_2:			{ type: GraphQLString },
+        subaffiliate_3:			{ type: GraphQLString },
+        subaffiliate_4:			{ type: GraphQLString },
+        subaffiliate_5:			{ type: GraphQLString },
+        cid:			{ type: GraphQLString },
         product_schedules:	{ type: new GraphQLList(GraphQLString) }
     })
 });

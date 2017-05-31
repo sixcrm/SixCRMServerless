@@ -1,6 +1,5 @@
 'use strict';
 const _ = require("underscore");
-const validator = require('validator');
 const querystring = require('querystring');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
@@ -27,43 +26,57 @@ module.exports = class EndpointController {
 
     }
 
+    acquirePathParameters(event){
+
+        du.debug('Acquire Path Parameters');
+
+        if(_.has(event, 'pathParameters')){
+
+            this.pathParameters = event.pathParameters;
+
+            return Promise.resolve(event);
+
+        }
+
+        return Promise.reject(new Error('Event does not have path parameters'));
+
+    }
+
     acquireQuerystring(event){
 
         du.debug('Acquire Querystring');
 
-        return new Promise((resolve, reject) => {
+        if(_.has(event, 'queryStringParameters') && !_.isNull(event.queryStringParameters)){
 
-            var duplicate_querystring = event.queryStringParameters;
+            let duplicate_querystring = event.queryStringParameters;
 
-            if(!_.isObject(duplicate_querystring)){
+            if(!_.isObject(duplicate_querystring) && !_.isString(duplicate_querystring)){
 
-                if(_.isString(duplicate_querystring)){
-
-                    try{
-
-                        duplicate_querystring = querystring.parse(duplicate_querystring);
-
-                    }catch(error){
-
-                        return reject(error);
-
-                    }
-
-                    resolve(duplicate_querystring);
-
-                }else{
-
-                    return reject(new Error('Request querystring is an unexpected format.'));
-
-                }
-
-            }else{
-
-                return resolve(duplicate_querystring);
+                return Promise.reject(new Error('Request querystring is an unexpected format.'));
 
             }
 
-        });
+            if(_.isString(duplicate_querystring)){
+
+                try {
+
+                    duplicate_querystring = querystring.parse(duplicate_querystring);
+
+                }catch(error){
+
+                    return Promise.reject(error);
+
+                }
+
+            }
+
+            this.queryString = duplicate_querystring;
+
+            return Promise.resolve(duplicate_querystring);
+
+        }
+
+        return Promise.resolve(null);
 
     }
 

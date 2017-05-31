@@ -1,5 +1,5 @@
 {
 	"requestContext":"{}",
-	"pathParameters": "{ \"action\": \"tracker\", \"arguments\":\"view/62949662-edd6-4750-9280-2d40c225eb80\" }",
+	"pathParameters": "{\"class\":\"tracker\", \"method\":\"view\", \"argument\":\"62949662-edd6-4750-9280-2d40c225eb80\"}",
 	"queryStringParameters":""
 }

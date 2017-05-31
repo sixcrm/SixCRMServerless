@@ -19,6 +19,9 @@
 		},
 		"subaffiliate_5":{
 			"type":"string"
+		},
+		"cid":{
+			"type":"string"
 		}
 	}
 }

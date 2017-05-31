@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "ses_notifications",
+        "TableName": "sesnotifications",
         "KeySchema": [{
             "AttributeName": "SESMessageId",
             "KeyType": "HASH"

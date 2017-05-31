@@ -10,9 +10,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class productScheduleController extends entityController {
 
     constructor(){
-        super(process.env.product_schedules_table, 'productschedule');
-        this.table_name = process.env.product_schedules_table;
-        this.descriptive_name = 'productschedule';
+        super('productschedule');
     }
 
     getTransactionProducts(day_in_schedule, schedules_to_purchase){
@@ -162,7 +160,7 @@ class productScheduleController extends entityController {
     }
 
     getProductSchedules(product_schedules){
-      du.warning(product_schedules);
+        du.warning(product_schedules);
     	return Promise.all(product_schedules.map(product_schedule => this.get(product_schedule)));
 
     }

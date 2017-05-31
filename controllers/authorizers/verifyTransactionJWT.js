@@ -12,6 +12,8 @@ class verifyTransactionJWTController {
             bypass: 'BYPASS'
         }
 
+        jwtutilities.setJWTType('transaction');
+
     }
 
     execute(event){

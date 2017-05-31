@@ -9,9 +9,7 @@ const entityController = global.routes.include('controllers', 'entities/Entity.j
 class userDeviceTokenController extends entityController {
 
     constructor(){
-        super(process.env.user_device_tokens_table, 'userdevicetoken');
-        this.table_name = process.env.user_device_tokens_table;
-        this.descriptive_name = 'userdevicetoken';
+        super('userdevicetoken');
     }
 
     getUserDeviceTokensByUser(user){
