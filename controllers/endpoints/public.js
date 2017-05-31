@@ -1,6 +1,6 @@
 'use strict';
 let _ = require('underscore');
-let encode = global.routes.include('lib', 'encode');
+let encodeutilities = global.routes.include('lib', 'encode.js');
 let du = global.routes.include('lib', 'debug-utilities');
 const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
@@ -39,7 +39,7 @@ module.exports = class PublicController extends endpointController {
         let path_object = {};
 
         if(_.has(this.pathParameters, 'encoded')){
-            path_object = encode.base64ToObject(this.pathParameters.encoded);
+            path_object = encodeutilities.base64ToObject(this.pathParameters.encoded);
         }
 
         this.path_object = path_object;

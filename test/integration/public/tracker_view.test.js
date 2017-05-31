@@ -8,7 +8,7 @@ let this_request = request(endpoint);
 describe('Public Tracker View Test', function() {
     describe('Test the public endpoint ('+endpoint+') using for tracker/view availability.', function() {
         it('Should return a 200 and some HTML', function (done) {
-            this_request.get('public/tracker/view/62949662-edd6-4750-9280-2d40c225eb80')
+            this_request.get('publichtml/eyJjbGFzcyI6InRyYWNrZXIiLCJtZXRob2QiOiJ2aWV3IiwiYXJndW1lbnRzIjoiNjI5NDk2NjItZWRkNi00NzUwLTkyODAtMmQ0MGMyMjVlYjgwIn0=')
 			.expect(200)
 			.expect('Content-Type', 'application/json')
 			.expect('Access-Control-Allow-Origin','*')
