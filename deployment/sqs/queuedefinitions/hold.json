@@ -1,0 +1,8 @@
+{
+    "QueueName": "hold",
+    "Attributes": {
+        "MessageRetentionPeriod": "345600",
+        "VisibilityTimeout": "300",
+        "MaximumMessageSize": "262144"
+    }
+}
