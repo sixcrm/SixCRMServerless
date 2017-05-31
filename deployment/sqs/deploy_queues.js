@@ -1,6 +1,7 @@
 'use strict';
 require('../../routes.js');
-const queuePrefix = 'https://sqs.us-east-1.amazonaws.com/068070110666/';
+const queueUrlPrefix = 'https://sqs.us-east-1.amazonaws.com/068070110666/';
+const queueArnPrefix = 'arn:aws:sqs:us-east-1:068070110666:';
 const maxReceiveCount = 5;
 
 const _ = require('underscore');
@@ -25,9 +26,11 @@ getQueueDefinitions()
         return queueDefinitions;
     })
     .then(delay(seventySeconds))
+    .then(queueDefinitions => createDeadletterQueues(queueDefinitions))
     .then(queueDefinitions => createQueues(queueDefinitions))
     .then(() => {du.highlight('Complete')})
     .catch((error) => {
+        du.error(error);
         throw new Error(error);
     });
 
@@ -46,29 +49,78 @@ function getQueueDefinitions() {
 
 function deleteQueues(queueDefinitions) {
 
+    let deleteOperations = [];
+
     queueDefinitions.map((queue) => {
-        du.highlight('Deleting ' + queue.QueueName + '_deadletter');
-        du.highlight('Deleting ' + queue.QueueName);
+        let queueUrl = getUrl(queue.QueueName);
+        let deadletterQueueUrl = getUrl(queue.QueueName + '_deadletter');
+
+        deleteOperations.push(sqsUtils.deleteQueue(deadletterQueueUrl));
+        deleteOperations.push(sqsUtils.deleteQueue(queueUrl));
     });
 
-    return Promise.resolve(queueDefinitions);
+    return Promise.all(deleteOperations).then(() => {
+        return Promise.resolve(queueDefinitions);
+    });
+}
+
+function createDeadletterQueues(queueDefinitions) {
+    let createOperations = [];
+
+    queueDefinitions.map((definition) => {
+        let deadletter_queue = createDeadletterQueueDefinition(definition);
+
+        addEnvironmentToName(deadletter_queue);
+
+        createOperations.push(sqsUtils.createQueue(deadletter_queue));
+    });
+
+    return Promise.all(createOperations).then(() => {
+        return Promise.resolve(queueDefinitions);
+    });
 }
 
 function createQueues(queueDefinitions) {
+    let createOperations = [];
+
     queueDefinitions.map((definition) => {
+        let deadletter_queue = createDeadletterQueueDefinition(definition);
         let queue = JSON.parse(JSON.stringify(definition));
-        let deadletter_queue = JSON.parse(JSON.stringify(definition));
 
-        deadletter_queue.QueueName = `${queue.QueueName}_deadletter`;
+        configureDeadletterQueue(queue, deadletter_queue);
 
-        let deadletter_queue_arn = `${queuePrefix}${environment}-${deadletter_queue.QueueName}`;
+        addEnvironmentToName(queue);
 
-        queue.Attributes["RedrivePolicy"] = `{\"deadLetterTargetArn\":\"${deadletter_queue_arn}\",\"maxReceiveCount\":\"${maxReceiveCount}\"}`;
-
-        du.highlight(deadletter_queue);
-        du.highlight(queue);
-
+        createOperations.push(sqsUtils.createQueue(queue));
     });
 
-    return Promise.resolve(queueDefinitions);
+    return Promise.all(createOperations).then(() => {
+        return Promise.resolve(queueDefinitions);
+    });
+}
+
+function addEnvironmentToName(queue) {
+    queue.QueueName = `${environment}-${queue.QueueName}`;
+}
+
+function createDeadletterQueueDefinition(queue) {
+    let deadletter_queue = JSON.parse(JSON.stringify(queue));
+
+    deadletter_queue.QueueName = `${queue.QueueName}_deadletter`;
+
+    return deadletter_queue;
+}
+
+function configureDeadletterQueue(queue, deadletter_queue) {
+    let deadletter_queue_arn = getArn(deadletter_queue.QueueName);
+
+    queue.Attributes["RedrivePolicy"] = `{\"deadLetterTargetArn\":\"${deadletter_queue_arn}\",\"maxReceiveCount\":\"${maxReceiveCount}\"}`;
+}
+
+function getUrl(queueName) {
+    return `${queueUrlPrefix}${environment}-${queueName}`;
+}
+
+function getArn(queueName) {
+    return `${queueArnPrefix}${environment}-${queueName}`;
 }
