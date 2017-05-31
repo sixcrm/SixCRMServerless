@@ -1,5 +1,7 @@
 'use strict';
 require('../../routes.js');
+
+// Technical Debt: We should read this from somewhere.
 const queueUrlPrefix = 'https://sqs.us-east-1.amazonaws.com/068070110666/';
 const queueArnPrefix = 'arn:aws:sqs:us-east-1:068070110666:';
 const maxReceiveCount = 5;
@@ -35,7 +37,7 @@ getQueueDefinitions()
     });
 
 function getQueueDefinitions() {
-    const queueDir = `${__dirname}/queuedefinitions/`;
+    const queueDir = `${__dirname}/queues/`;
     const files = fs.readdirSync(queueDir);
     const queueObjects = files.map((file) => {
         du.debug(`Queue Definition File: ${file}`);
