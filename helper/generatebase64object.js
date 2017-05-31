@@ -5,7 +5,7 @@ const du = global.routes.include('lib','debug-utilities.js');
 
 process.env.SIX_VERBOSE = 2;
 let object = {
-    class: "tracker",
+    class: "Tracker",
     method:"view",
     tracker:{
         id:"62949662-edd6-4750-9280-2d40c225eb80"
