@@ -1,13 +1,12 @@
 'use strict';
 let _ = require('underscore');
-let querystring = require('querystring');
 let encode = global.routes.include('lib', 'encode');
 let du = global.routes.include('lib', 'debug-utilities');
 const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 module.exports = class PublicController extends endpointController {
 
-    constructor(parameters){
+    constructor(){
 
         super();
 
