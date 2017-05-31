@@ -476,19 +476,13 @@ functions:
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
 
-  public:
-    handler: handlers/endpoints/public/handler.public
+  publichtml:
+    handler: handlers/endpoints/publichtml/handler.publichtml
     events:
       - http:
-          path: public/{class}/{method}/{arguments}
-          method: get
-          integration: lambda
-          request:
-            parameters:
-              paths:
-                class: true
-                method: true
-                arguments: true
+         path: publichtml/{encoded}
+         method: get
+         cors: true
     environment:
         stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}

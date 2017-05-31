@@ -2,7 +2,7 @@
 let du = global.routes.include('lib', 'debug-utilities');
 var publicController = global.routes.include('controllers', 'endpoints/public.js');
 
-class htmlController extends publicController{
+class publicHTMLController extends publicController{
 
     constructor(){
 
@@ -12,11 +12,11 @@ class htmlController extends publicController{
 
     execute(event){
 
-        return this.preprocessing(event)
+      return this.preprocessing(event)
       .then(() => this.routeRequest());
 
     }
 
 }
 
-module.exports = new htmlController();
+module.exports = new publicHTMLController();

@@ -36,6 +36,10 @@ module.exports = class EndpointController {
 
             return Promise.resolve(event);
 
+        }else{
+
+            this.pathParameters = null;
+
         }
 
         return Promise.reject(new Error('Event does not have path parameters'));

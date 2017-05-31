@@ -1,6 +1,7 @@
 'use strict';
 let _ = require('underscore');
 let querystring = require('querystring');
+let encode = global.routes.include('lib', 'encode');
 let du = global.routes.include('lib', 'debug-utilities');
 const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
@@ -15,46 +16,31 @@ module.exports = class PublicController extends endpointController {
     }
 
     preprocessing(event){
-
         du.debug('Preprocessing');
-
         return this.validateEvent(event)
-  			.then((event) => this.parseEvent(event))
-        .then((event) => this.acquirePathParameters(event))
-        .then((event) => this.acquireQuerystring(event));
-
+      .then((event) => this.parseEvent(event))
+      .then((event) => this.acquirePathParameters(event))
+      .then((event) => this.acquireQuerystring(event));
     }
 
     routeRequest(){
-
         du.debug('Route Request');
-
         return this.parsePathParameters()
       .then(() => this.validatePath())
       .then(() => this.instantiateViewController())
       .then(() => this.validateViewController())
       .then(() => this.createArgumentationObject())
       .then(() => this.invokeViewController());
-
     }
 
     parsePathParameters(){
 
         du.debug('Parse Path Parameters');
-        du.highlight (this.pathParameters);
 
         let path_object = {};
 
-        if(_.has(this.pathParameters, 'class')){
-            path_object.class = this.pathParameters.class;
-        }
-
-        if(_.has(this.pathParameters, 'method')){
-            path_object.method = this.pathParameters.method;
-        }
-
-        if(_.has(this.pathParameters, 'argument')){
-            path_object.argument = this.pathParameters.argument;
+        if(_.has(this.pathParameters, 'encoded')){
+            path_object = encode.base64ToObject(this.pathParameters.encoded);
         }
 
         this.path_object = path_object;
@@ -75,7 +61,7 @@ module.exports = class PublicController extends endpointController {
             return Promise.reject(new Error('The path parameters object requires a method property.'));
         }
 
-      //make sure we have a corresponding class
+        //Technical Debt:  Make sure that the class exists in the views directory
 
     }
 

@@ -15,8 +15,16 @@ class trackerViewController{
 
         du.debug('View');
 
+        du.highlight(argumentation_object);
+
+        if(!_.has(argumentation_object, 'pathParameters')){ return Promise.reject(new Error('Argumentation object missing pathParameters.')); }
+
+        if(!_.has(argumentation_object.pathParameters, 'tracker')){ return Promise.reject(new Error('Invalid Argumentation')); }
+
+        let tracker = argumentation_object.pathParameters.tracker;
+
         trackerController.disableACLs();
-        return trackerController.get(argumentation_object.pathParameters.argument).then((tracker) => {
+        return trackerController.get(tracker).then((tracker) => {
             trackerController.enableACLs();
 
             if(trackerController.validate(tracker)){
