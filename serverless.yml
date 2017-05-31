@@ -480,7 +480,7 @@ functions:
     handler: handlers/endpoints/public/handler.public
     events:
       - http:
-         path: /{arguments}
+         path: public/{arguments}
          method: get
          cors: true
     environment:

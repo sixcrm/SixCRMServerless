@@ -21,11 +21,14 @@ class trackerViewController{
 
             if(trackerController.validate(tracker)){
 
-                return Promise.resolve(tracker.body);
+                if(tracker.type == 'html'){
+
+                    return Promise.resolve(tracker.body);
+
+                }
 
             }
 
-        //return a 404
             return Promise.reject(new Error('404'));
 
         });

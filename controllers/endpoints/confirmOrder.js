@@ -43,7 +43,7 @@ class confirmOrderController extends transactionEndpointController{
     execute(event){
 
         return this.preprocessing(event)
-			.then(this.acquireQuerystring)
+			.then((event) => this.acquireQuerystring(event))
 			.then((querystring) => this.validateInput(querystring, this.validateEventSchema))
 			.then(this.confirmOrder)
       .then((result_object) => this.pushToRedshift(result_object))
