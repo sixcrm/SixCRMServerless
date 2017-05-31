@@ -54,6 +54,7 @@ deployment:
       # Technical Debt:
       #   - API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
       - serverless deploy --stage $CIRCLE_BRANCH
+      - node ./deployment/sqs/deploy_queues.js $CIRLCE_BRANCH
       - export SIX_VERBOSE=0 && npm run test-integration
       - ./deployment/environment/deploy_development.sh
       - ./deployment/utilities/merge_branches.sh development staging
