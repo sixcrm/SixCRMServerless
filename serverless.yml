@@ -92,33 +92,6 @@ functions:
       stage: ${opt:stage}
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
-      customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-      customer_notes_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customer_notes_table}
-      sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      credit_cards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.credit_cards_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
-      loadbalancers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.loadbalancers_table}
-      product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
-      affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
-      merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
-      fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
-      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      user_device_tokens_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_device_tokens_table}
-      user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-      user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
-      user_signing_strings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_signing_strings_table}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      email_templates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.email_templates_table}
-      smtp_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.smtp_providers_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
-      accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-      notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
-      notifications_read_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_read_table}
-      notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
-      roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
       redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
@@ -132,7 +105,6 @@ functions:
       elasticache_port: ${file(./config/${opt:stage}/site.yml):elasticache.port}
       elasticache_retry_time: ${file(./config/${opt:stage}/site.yml):elasticache.retry_time}
       elasticache_max_attempts: ${file(./config/${opt:stage}/site.yml):elasticache.max_attempts}
-      tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
       logging: ${file(./config/${opt:stage}/site.yml):logging.loglevel}
 
 
@@ -484,7 +456,7 @@ functions:
       affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
       kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
       search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-      tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
+      trackers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
 
 
   createlead:
@@ -514,7 +486,7 @@ functions:
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-        tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
+        trackers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
 
   createorder:
     handler: handlers/endpoints/createorder/handler.createorder
@@ -555,7 +527,7 @@ functions:
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
         kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
-        tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
+        trackers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
 
   createupsell:
     handler: handlers/endpoints/createupsell/handler.createupsell
@@ -596,7 +568,7 @@ functions:
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
         kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
-        tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
+        trackers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
 
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
@@ -627,19 +599,18 @@ functions:
         notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
         user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-        tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
+        trackers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
 
   public:
     handler: handlers/endpoints/public/handler.public
     events:
       - http:
-         path: /p/{arguments}
+         path: /{arguments}
          method: get
          cors: true
     environment:
         stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        tracker_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.tracker_table}
 
 
 ########################

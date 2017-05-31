@@ -10,9 +10,7 @@ const entityController = global.routes.include('controllers', 'entities/Entity.j
 class notificationController extends entityController {
 
     constructor() {
-        super(process.env.notifications_table, 'notification');
-        this.table_name = process.env.notifications_table;
-        this.descriptive_name = 'notification';
+        super('notification');
     }
 
     /**

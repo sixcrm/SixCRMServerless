@@ -17,13 +17,68 @@ const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
 
 module.exports = class entityController {
 
-    constructor(table_name, descriptive_name){
-        this.table_name = table_name;
-        this.descriptive_name = descriptive_name;
+    constructor(name){
+
+        this.setNames(name);
+
         this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting', 'usersigningstring'];
+
+    }
+
+    setNames(name){
+
+        du.debug('Set Names');
+
+        this.descriptive_name = name;
+
+        this.setEnvironmentTableName(name);
+
+        this.setTableName(name);
+
+    }
+
+    setEnvironmentTableName(name){
+
+        du.debug('Set Environment Table Name');
+
+        let key = this.buildTableKey(name);
+        let value = this.buildTableName(name);
+
+        if(!_.has(process.env, key)){
+            process.env[key] = value;
+        }
+
+    }
+
+    setTableName(name){
+
+        du.debug('Set Table Name');
+
+        let key = this.buildTableKey(name);
+
+        this.table_name = process.env[key];
+
+    }
+
+    buildTableKey(name){
+
+        du.debug('Build Table Key');
+
+        return name+'s_table';
+
+    }
+
+    buildTableName(name){
+
+        du.debug('Build Table Name');
+
+        return process.env.stage+name+'s';
+
     }
 
     can(action){
+
+        du.debug('Can');
 
         du.debug('Can check:', action, this.descriptive_name);
 
@@ -49,6 +104,8 @@ module.exports = class entityController {
     }
 
     listBySecondaryIndex(field, index_value, index_name, pagination) {
+
+        du.debug('List By Secondary Index');
 
         return new Promise((resolve, reject) => {
 
@@ -89,6 +146,8 @@ module.exports = class entityController {
 		//ACL enabled
     list(pagination, query_parameters){
 
+        du.debug('List');
+
         return new Promise((resolve, reject) => {
 
             return this.can('read').then((permission) => {
@@ -124,6 +183,8 @@ module.exports = class entityController {
 		//ACL enabled
     //Technical Debt:  You can only paginate against the index...
     queryBySecondaryIndex(field, index_value, index_name, pagination, reverse_order){
+
+        du.debug('Query By Secondary Index');
 
         du.debug('Query by secondary index', field, index_value, index_name, pagination);
 
@@ -174,6 +235,8 @@ module.exports = class entityController {
 
 		//ACL enabled
     getBySecondaryIndex(field, index_value, index_name, cursor, limit){
+
+        du.debug('Get By Secondary Index');
 
         du.debug(Array.from(arguments));
 
@@ -261,6 +324,8 @@ module.exports = class entityController {
 
 		//ACL enabled
     get(id, primary_key){
+
+        du.debug('Get');
 
         return new Promise((resolve, reject) => {
 
@@ -353,6 +418,8 @@ module.exports = class entityController {
 
     touch(key){
 
+        du.debug('Touch');
+
         return new Promise((resolve, reject) => {
 
             return this.can('read').then((permission) => {
@@ -388,6 +455,8 @@ module.exports = class entityController {
 
     //Technical Debt: Why is this useful?
     getByKey(key){
+
+        du.debug('Get By Key');
 
         return new Promise((resolve, reject) => {
 
@@ -431,6 +500,8 @@ module.exports = class entityController {
     }
 
     countCreatedAfterBySecondaryIndex(date_time, field, index_name, cursor, limit) {
+
+        du.debug('Count Created After Secondary Index');
 
         return new Promise((resolve, reject) => {
 
@@ -505,6 +576,8 @@ module.exports = class entityController {
     //ACL enabled
     create(entity, primary_key){
 
+        du.debug('Create');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         return new Promise((resolve, reject) => {
@@ -565,6 +638,8 @@ module.exports = class entityController {
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
     update(entity, primary_key){
 
+        du.debug('Update');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         return new Promise((resolve, reject) => {
@@ -620,6 +695,8 @@ module.exports = class entityController {
 
     store(entity, primary_key){
 
+        du.debug('Store');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(!_.has(entity, primary_key)){
@@ -651,6 +728,8 @@ module.exports = class entityController {
 
 		//NOT ACL enabled
     delete(id, primary_key){
+
+        du.debug('Delete');
 
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
@@ -745,6 +824,8 @@ module.exports = class entityController {
     }
 
     exists(entity, primary_key){
+
+        du.debug('Exists');
 
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
@@ -848,6 +929,8 @@ module.exports = class entityController {
 
     isUUID(string, version){
 
+        du.debug('Is UUID');
+
         if(_.isString(string)){
 
             return validator.isUUID(string, version);
@@ -859,6 +942,8 @@ module.exports = class entityController {
     }
 
     isEmail(string){
+
+        du.debug('Is Email');
 
         if(_.isString(string)){
 
@@ -872,6 +957,8 @@ module.exports = class entityController {
 
     disableACLs(){
 
+        du.debug('Disable ACLs');
+
         permissionutilities.disableACLs();
 
         return;
@@ -879,6 +966,8 @@ module.exports = class entityController {
     }
 
     enableACLs(){
+
+        du.debug('Enable ACLs');
 
         permissionutilities.enableACLs();
 
@@ -888,6 +977,8 @@ module.exports = class entityController {
 
     unsetGlobalUser(){
 
+        du.debug('Unset Global User');
+
         permissionutilities.unsetGlobalUser();
 
         return;
@@ -895,6 +986,8 @@ module.exports = class entityController {
     }
 
     setGlobalUser(user){
+
+        du.debug('Set Global User');
 
         if(_.has(user, 'id') || this.isEmail(user)){
 
@@ -908,6 +1001,8 @@ module.exports = class entityController {
 
     acquireGlobalUser(){
 
+        du.debug('Acquire Global User');
+
         if(_.has(global, 'user')){
 
             return global.user;
@@ -920,6 +1015,8 @@ module.exports = class entityController {
 
     removeFromSearchIndex(id, entity_type){
 
+        du.debug('Remove From Search Index');
+
         let entity = {id:id, entity_type: entity_type};
 
         return indexingutilities.removeFromSearchIndex(entity);
@@ -927,6 +1024,8 @@ module.exports = class entityController {
     }
 
     addToSearchIndex(entity, entity_type){
+
+        du.debug('Add To Search Index');
 
         entity['entity_type'] = entity_type;
 
@@ -958,6 +1057,8 @@ module.exports = class entityController {
 
     setUpdatedAt(entity){
 
+        du.debug('Set Updated At');
+
         if(!_.has(entity, 'created_at')){
 
             throw new Error('Entity lacks a "created_at" property');
@@ -979,6 +1080,8 @@ module.exports = class entityController {
     }
 
     marryCreatedUpdated(entity, exists){
+
+        du.debug('Marry Created Updated');
 
         if(!_.has(exists, 'created_at')){
             throw new Error('Entity lacks "created_at" property.');
@@ -1367,7 +1470,7 @@ module.exports = class entityController {
 
     buildResponse(data, callback){
 
-        du.debug('Append Exclusive Start Key');
+        du.debug('Build Response');
 
         if(_.isObject(data)){
 
@@ -1419,7 +1522,7 @@ module.exports = class entityController {
 
     getID(object, primary_key){
 
-        du.warning(object);
+        du.debug('Get ID');
 
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 

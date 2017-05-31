@@ -26,43 +26,51 @@ module.exports = class EndpointController {
 
     }
 
+    acquirePathParameters(event){
+
+        du.debug('Acquire Path Parameters');
+
+        if(_.has(event, 'pathParameters')){
+
+            this.pathParameters = event.pathParameters;
+
+            return Promise.resolve(event);
+
+        }
+
+        return Promise.reject(new Error('Event does not have path parameters'));
+
+    }
+
     acquireQuerystring(event){
 
         du.debug('Acquire Querystring');
 
-        return new Promise((resolve, reject) => {
+        let duplicate_querystring = event.queryStringParameters;
 
-            var duplicate_querystring = event.queryStringParameters;
+        if(!_.isObject(duplicate_querystring) && !_.isString(duplicate_querystring)){
 
-            if(!_.isObject(duplicate_querystring)){
+            return Promise.reject(new Error('Request querystring is an unexpected format.'));
 
-                if(_.isString(duplicate_querystring)){
+        }
 
-                    try{
+        if(_.isString(duplicate_querystring)){
 
-                        duplicate_querystring = querystring.parse(duplicate_querystring);
+            try {
 
-                    }catch(error){
+                duplicate_querystring = querystring.parse(duplicate_querystring);
 
-                        return reject(error);
+            }catch(error){
 
-                    }
-
-                    resolve(duplicate_querystring);
-
-                }else{
-
-                    return reject(new Error('Request querystring is an unexpected format.'));
-
-                }
-
-            }else{
-
-                return resolve(duplicate_querystring);
+                return Promise.reject(error);
 
             }
 
-        });
+        }
+
+        this.queryString = duplicate_querystring;
+
+        return Promise.resolve(duplicate_querystring);
 
     }
 

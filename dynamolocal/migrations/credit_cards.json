@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "credit_cards",
+        "TableName": "creditcards",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"

@@ -4,9 +4,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class accessKeyController extends entityController {
 
     constructor(){
-        super(process.env.access_keys_table, 'accesskey');
-        this.table_name = process.env.access_keys_table;
-        this.descriptive_name = 'accesskey';
+        super('accesskey');
     }
 
     getAccessKeyByKey(access_key){

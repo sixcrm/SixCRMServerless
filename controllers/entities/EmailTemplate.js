@@ -5,9 +5,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class emailTemplateController extends entityController {
 
     constructor(){
-        super(process.env.emails_keys_table, 'emailtemplate');
-        this.table_name = process.env.email_templates_table;
-        this.descriptive_name = 'emailtemplate';
+        super('emailtemplate');
     }
 
     getSMTPProvider(emailtemplate){

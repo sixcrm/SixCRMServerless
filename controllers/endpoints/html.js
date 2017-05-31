@@ -1,9 +1,5 @@
 'use strict';
-const _ = require("underscore");
-
-const du = global.routes.include('lib', 'debug-utilities.js');
-
-var trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+let du = global.routes.include('lib', 'debug-utilities');
 var publicController = global.routes.include('controllers', 'endpoints/public.js');
 
 class htmlController extends publicController{
@@ -16,7 +12,11 @@ class htmlController extends publicController{
 
     execute(event){
 
-        return this.Promise.resolve('Hello');
+        return this.preprocessing(event)
+      .then(() => this.routeRequest());
+      /*
+      .then(() => this.executeAction);
+      */
 
     }
 

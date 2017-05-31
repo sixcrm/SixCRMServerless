@@ -40,7 +40,7 @@ dynamodb:
   notifications_table: 'notifications'
   notifications_read_table: 'notifications_read'
   notification_settings_table: 'notification_settings'
-  tracker_table: 'tracker'
+  tracker_table: 'trackers'
   endpoint: ''
 
 lambda:

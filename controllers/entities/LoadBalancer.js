@@ -9,9 +9,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class loadBalancerController extends entityController {
 
     constructor(){
-        super(process.env.loadbalancers_table, 'loadbalancer');
-        this.table_name = process.env.loadbalancers_table;
-        this.descriptive_name = 'loadbalancer';
+        super('loadbalancer');
     }
 
     getMerchantProviderConfigurations(loadbalancer){

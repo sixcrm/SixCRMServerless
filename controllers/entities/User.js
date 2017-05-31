@@ -17,9 +17,7 @@ const entityController = global.routes.include('controllers', 'entities/Entity.j
 class userController extends entityController {
 
     constructor(){
-        super(process.env.users_table, 'user');
-        this.table_name = process.env.users_table;
-        this.descriptive_name = 'user';
+        super('user');
     }
 
     getUserByAlias(user_alias){

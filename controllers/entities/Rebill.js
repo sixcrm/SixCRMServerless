@@ -19,9 +19,7 @@ const oneDayInSeconds = 86400;
 class rebillController extends entityController {
 
     constructor(){
-        super(process.env.rebills_table, 'rebill');
-        this.table_name = process.env.rebills_table;
-        this.descriptive_name = 'rebill';
+        super('rebill');
     }
 
 	//Note: rebills don't get product associations, only product schedules

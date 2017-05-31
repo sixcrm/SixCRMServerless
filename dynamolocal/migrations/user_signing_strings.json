@@ -1,6 +1,6 @@
 {
   "Table": {
-    "TableName": "user_signing_strings",
+    "TableName": "usersigningstrings",
     "KeySchema": [{
       "AttributeName": "id",
       "KeyType": "HASH"

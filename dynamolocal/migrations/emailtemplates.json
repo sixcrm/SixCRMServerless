@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "email_templates",
+        "TableName": "emailtemplates",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
@@ -10,7 +10,7 @@
             "AttributeType": "S"
         }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1, 
+            "ReadCapacityUnits": 1,
             "WriteCapacityUnits": 1
         }
     },

@@ -16,9 +16,7 @@ var affiliateController = global.routes.include('controllers', 'entities/Affilia
 class sessionController extends entityController {
 
     constructor(){
-        super(process.env.sessions_table, 'session');
-        this.table_name = process.env.sessions_table;
-        this.descriptive_name = 'session';
+        super('session');
 
         this.session_length = 3600;
         this.affiliate_fields = [

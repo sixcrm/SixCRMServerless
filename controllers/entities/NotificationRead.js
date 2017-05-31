@@ -8,9 +8,7 @@ const entityController = global.routes.include('controllers', 'entities/Entity.j
 class notificationReadController extends entityController {
 
     constructor() {
-        super(process.env.notifications_read_table, 'notification_read');
-        this.table_name = process.env.notifications_read_table;
-        this.descriptive_name = 'notification_read';
+        super('notificationread');
     }
 
      /**

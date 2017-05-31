@@ -1,6 +1,6 @@
 {
     "Table": {
-        "TableName": "user_device_tokens",
+        "TableName": "userdevicetokens",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
