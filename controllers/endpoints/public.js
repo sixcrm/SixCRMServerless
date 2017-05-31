@@ -19,9 +19,9 @@ module.exports = class PublicController extends endpointController {
         du.debug('Preprocessing');
 
         return this.validateEvent(event)
-			.then((event) => this.parseEvent(event))
-      .then(() => this.acquirePathParameters(event))
-      .then(() => this.acquireQuerystring(event));
+  			.then((event) => this.parseEvent(event))
+        .then((event) => this.acquirePathParameters(event))
+        .then((event) => this.acquireQuerystring(event));
 
     }
 
@@ -43,18 +43,34 @@ module.exports = class PublicController extends endpointController {
         du.debug('Parse Path Parameters');
         du.highlight (this.pathParameters);
 
-        let path_components = this.pathParameters.arguments.split('/');
-
         let path_object = {};
 
-        for(var i = 0; i < path_components.length; i++){
-            if(!_.isUndefined(this.path_fields[i])){
-                if(this.path_fields[i] == 'arguments'){
-                    path_object[this.path_fields[i]] = path_components.slice(i).join('/');
-                }else{
-                    path_object[this.path_fields[i]] = path_components[i];
+        if(_.has(this.pathParameters, 'arguments')){
+
+            let path_components = this.pathParameters.arguments.split('/');
+
+            if(_.isArray(path_components) && path_components.length > 0){
+
+                for(var i = 0; i < path_components.length; i++){
+
+                    if(!_.isUndefined(this.path_fields[i])){
+
+                        if(this.path_fields[i] == 'arguments'){
+
+                            path_object[this.path_fields[i]] = path_components.slice(i).join('/');
+
+                        }else{
+
+                            path_object[this.path_fields[i]] = path_components[i];
+
+                        }
+
+                    }
+
                 }
+
             }
+
         }
 
         this.path_object = path_object;
