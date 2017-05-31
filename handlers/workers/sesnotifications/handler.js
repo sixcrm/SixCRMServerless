@@ -8,7 +8,7 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 
 
 //Technical Debt:  Configure the Table Name here...
-var ddb = new aws.DynamoDB({params: {TableName: process.env.ses_notifications_table}});
+var ddb = new aws.DynamoDB({params: {TableName: process.env.stage+'sesnotifications'}});
 
 /* eslint-disable promise/always-return, promise/catch-or-return, no-unused-vars */
 module.exports.sesnotifications = function(event, context, callback){
