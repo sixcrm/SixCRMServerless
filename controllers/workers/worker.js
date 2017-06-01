@@ -118,7 +118,7 @@ module.exports = class workerController {
 
             } catch(e){
 
-                reject(new Error('Unable to load validation schemas.'));
+                reject(new Error('Unable to load validation schemas. Error:' + e));
 
             }
 
@@ -159,7 +159,7 @@ module.exports = class workerController {
 
             } catch(e){
 
-                reject(new Error('Unable to load validation schemas.'));
+                reject(new Error('Unable to load validation schemas. Error:' + e));
 
             }
 
