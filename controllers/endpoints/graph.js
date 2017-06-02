@@ -40,7 +40,7 @@ class graphController extends authenticatedController{
 
         }
 
-        Promise.resolve(event);
+        return Promise.resolve(event);
 
     }
 

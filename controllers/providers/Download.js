@@ -1,5 +1,4 @@
 'use strict';
-const _ = require("underscore");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
@@ -16,6 +15,8 @@ class DownloadController {
 
     resolveDownload(parameters, data_acquisition_function){
 
+        du.debug('Resolve Download');
+
         this.setDownloadParameters(parameters);
 
         return data_acquisition_function().then((data) => {
@@ -31,6 +32,8 @@ class DownloadController {
     }
 
     setDownloadHeaders(transformed_data){
+
+        du.debug('Set Download Headers');
 
         let response_headers = {};
 
@@ -61,11 +64,17 @@ class DownloadController {
 
     setDownloadParameters(parameters){
 
+        du.debug('Set Download Parameters');
+
+      //Technical Debt:  Do some validation here...
+
         this.download_parameters = parameters;
 
     }
 
     transformData(data){
+
+        du.debug('Transform Data');
 
         switch(this.download_parameters.type){
 
