@@ -53,7 +53,7 @@ class USPSController extends shippingProviderController {
 
           if(_.isError(err)){ reject(error); }
 
-    				if(!_.has(result, 'TrackResponse') || !_.has(result.TrackResponse, 'TrackInfo')){ reject(new Error('Unexpected response from USPS.')); }
+    				if(!_.has(result, 'TrackResponse') || !_.has(result.TrackResponse, 'TrackInfo')){ return reject(new Error('Unexpected response from USPS.')); }
 
           var usps_response = result.TrackResponse.TrackInfo[0].TrackSummary[0].Event[0];
 
@@ -61,11 +61,11 @@ class USPSController extends shippingProviderController {
 
               var parsed_status = controller_instance.parseTrackSummaryMessage(usps_response);
 
-              resolve({parsed_status: parsed_status, message: usps_response});
+              return resolve({parsed_status: parsed_status, message: usps_response});
 
           }else{
 
-              reject(new Error('Unexpected response from USPS.'));
+              return reject(new Error('Unexpected response from USPS.'));
 
           }
 

@@ -7,7 +7,8 @@ describe('notificationController', function () {
         TestUtils.setGlobalUser();
         TestUtils.setEnvironmentVariables();
         // we need to initialize controller _after_ the variables has been set, that's why it's not on top of the file
-        notificationController = require('../../controllers/Notification');
+        notificationController = global.routes.include('controllers', 'entities/Notification.js')
+
     });
 
     afterEach(() => {

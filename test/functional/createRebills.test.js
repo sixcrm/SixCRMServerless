@@ -14,14 +14,16 @@ describe('createRebills', function () {
     it('should return success when a valid session is passed', function () {
         let fn = createRebills();
         let session = givenAnySession();
+
         return fn.execute(session).then((response) => {
-            expect(response).to.equal(fn.messages.success);
+            expect(response).to.equal(fn.messages.successnoaction);
         });
     });
 
     it('should return validation error when a non-existing session is passed', function () {
         let fn = createRebills();
         let session = givenNonExistingSession();
+
         return fn.execute(session).catch((error) => {
             expect(error.message).to.be.equal('One or more validation errors occurred.');
         });
@@ -43,7 +45,7 @@ describe('createRebills', function () {
     function createRebills() {
         process.env.rebill_queue_url = 'http://localhost:9324/queue/rebill';
         process.env.search_indexing_queue_url = 'http://localhost:9324/queue/searchindex';
-        return require('../../controllers/workers/createRebills');
+        return global.routes.include('controllers', 'workers/createRebills');
     }
 });
 

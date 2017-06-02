@@ -24,7 +24,7 @@ class TestUtils {
      * Technical Debt: this should be read from serverless.yml and/or config/local/site.yml
      */
     setEnvironmentVariables() {
-        process.env.secret_key = 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV';
+        process.env.site_jwt_secret_key = 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV';
 
         process.env.stage = 'local';
 

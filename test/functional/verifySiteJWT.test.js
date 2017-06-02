@@ -4,25 +4,27 @@ const TestUtils = require('./test-utils.js');
 require('../../routes');
 
 TestUtils.setEnvironmentVariables();
-const authController = global.routes.include('controllers', 'authorizers/verifyAuth0JWT.js');
+const authController = global.routes.include('controllers', 'authorizers/verifySiteJWT.js');
 
-describe.only('verifyAuth0JWTController', function () {
+describe('verifySiteJWTController', function () {
     before(() => {
         TestUtils.setGlobalUser();
     });
 
-    it('should validate auth0 JWT', function () {
-        return authController.execute(eventWithAuth0Jwt()).then(result => {
-            expect(result).to.equal('ljubomir@toptal.com');
+    it('should not validate expired auth0 JWT', function () {
+        return authController.execute(eventWithExpiredAuth0Jwt()).then(result => {
+            expect(result).to.equal(false);
         });
     });
 
+    // Technical Debt: JWT used in this test will expire at 05/29/2018 @ 4:02pm (UTC)
     it('should validate self-signed JWT', function () {
         return authController.execute(eventWithSelfSignedJwt()).then(result => {
             expect(result).to.equal('ljubomir@toptal.com');
         });
     });
 
+    // Technical Debt: JWT used in this test will expire at 05/29/2018 @ 4:02pm (UTC)
     it('should not validate invalid self-signed JWT', function () {
         return authController.execute(eventWithInvalidSelfSignedJwt()).then(result => {
             expect(result).to.equal(false);
@@ -41,7 +43,7 @@ describe.only('verifyAuth0JWTController', function () {
         }
     }
 
-    function eventWithAuth0Jwt() {
+    function eventWithExpiredAuth0Jwt() {
         return {
             authorizationToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxqdWJvbWlyQHRvcHRhbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS8tWGRVSXFkTWtDV0EvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvNDI1MnJzY2J2NU0vcGhvdG8uanBnIiwiaXNzIjoiaHR0cHM6Ly9zaXhjcm0uYXV0aDAuY29tLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTA3NTYyMDY0NDM2ODcyOTk1MTQ4IiwiYXVkIjoiSk0xdEMyajd0eWNidTYyZWwzb0JoeWtscE5iazV4NkYiLCJleHAiOjE0OTYxMTAzMDEsImlhdCI6MTQ5NjA3NDMwMX0.G2UWRr2PGW_z7F6FNKDm1hv0M6UltyGt00LRRpgChzI'
         }
