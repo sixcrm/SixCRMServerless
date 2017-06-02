@@ -1,4 +1,6 @@
 'use strict';
+const _ = require('underscore');
+
 const du = global.routes.include('lib', 'debug-utilities.js');
 const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
 
@@ -157,6 +159,16 @@ class AnalyticsController extends AnalyticsUtilities{
         du.debug('Get Campaign Delta');
 
         return this.getResults('event_funnel', parameters, this.default_query_filters);
+
+    }
+
+    getAnalyticsFilter(parameters){
+
+        if(_.has(parameters, 'analyticsfilter')){
+            return parameters.analyticsfilter;
+        }
+
+        return null;
 
     }
 

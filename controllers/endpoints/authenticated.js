@@ -81,80 +81,65 @@ module.exports = class AuthenticatedController extends endpointController {
 
         du.debug('Acquire User');
 
-        return new Promise((resolve, reject) => {
+        if(!_.has(event.requestContext, "authorizer")){
 
-            if(!_.has(event.requestContext, "authorizer")){
+            return Promise.reject(new Error('Unable to identify the authorizer property in the event request context.'));
 
-                return reject(new Error('Unable to identify the authorizer property in the event request context.'));
+        }
 
-            }
+        if(!_.has(event.requestContext.authorizer, "user")){
 
-            if(!_.has(event.requestContext.authorizer, "user")){
+            return Promise.reject(new Error('Unable to identify the user node in the event request context authorizer property.'));
 
-                return reject(new Error('Unable to identify the user node in the event request context authorizer property.'));
+        }
 
-            }
+        let user_string = event.requestContext.authorizer.user;
 
-            let user_string = event.requestContext.authorizer.user;
+        du.debug('Event Request Context Authorizer User Alias:', user_string);
 
-            du.debug('Event Request Context Authorizer User Alias:', user_string);
+        if(!_.isString(user_string)){
 
-            if(!_.isString(user_string)){
+            return Promise.reject(new Error('Event request context authorizer user is an unrecognized format.'));
 
-                return reject(new Error('Event request context authorizer user is an unrecognized format.'));
+        }
 
-            }
+        if(validator.isEmail(user_string)){
 
-            if(validator.isEmail(user_string)){
+            return userController.getUserStrict(user_string).then((user) => {
 
-                userController.getUserStrict(user_string).then((user) => {
+                if(_.has(user, 'id')){
 
-                    if(_.has(user, 'id')){
+                    permissionutilities.setGlobalUser(user);
 
-                        permissionutilities.setGlobalUser(user);
+                    return event;
 
-                    }else if(user == false){
+                }else if(user == false){
 
-                        return reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    return new Error('Unknown user.  Please contact the system administrator.');
 
-                    }
+                }
 
-                    return resolve(event);
+            });
 
-                }).catch((error) => {
+        }else{
 
-                    return reject(error);
+            return userController.getUserByAlias(user_string).then((user) => {
 
-                });
+                if(_.has(user, 'id')){
 
-            }else{
+                    permissionutilities.setGlobalUser(user);
 
-                du.warning('HERE');
-                userController.getUserByAlias(user_string).then((user) => {
+                    return event;
 
-                    if(_.has(user, 'id')){
+                }else if(user == false){
 
-                        permissionutilities.setGlobalUser(user);
+                    return new Error('Unknown user.  Please contact the system administrator.');
 
-                    }else if(user == false){
+                }
 
-                        return reject(new Error('Unknown user.  Please contact the system administrator.'));
+            });
 
-                    }
-
-                    return resolve(event);
-
-                }).catch((error) => {
-
-                    du.warning(error);
-
-                    return reject(error);
-
-                });
-
-            }
-
-        });
+        }
 
     }
 

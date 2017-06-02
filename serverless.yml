@@ -483,9 +483,6 @@ functions:
          path: publichtml/{encoded}
          method: get
          cors: true
-         response:
-            headers:
-              Content-Type: "text/html;charset=UTF-8"
     environment:
         stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
