@@ -111,13 +111,13 @@ module.exports = class AuthenticatedController extends endpointController {
 
                     permissionutilities.setGlobalUser(user);
 
-                    return event;
-
                 }else if(user == false){
 
                     return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
 
                 }
+
+                return Promise.resolve(event);
 
             });
 
@@ -129,13 +129,13 @@ module.exports = class AuthenticatedController extends endpointController {
 
                     permissionutilities.setGlobalUser(user);
 
-                    return event;
-
                 }else if(user == false){
 
                     return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
 
                 }
+
+                return Promise.resolve(event);
 
             });
 
