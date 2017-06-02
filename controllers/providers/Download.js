@@ -1,4 +1,5 @@
 'use strict';
+const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
@@ -37,24 +38,13 @@ class DownloadController {
 
         let response_headers = {};
 
-        switch(this.download_parameters.type){
-        case 'json':
+        if(this.download_parameters.type == 'json'){
+
+            let content_length = this.calculateContentLength(transformed_data);
 
             response_headers['Content-Type'] = 'application/octet-stream';
             response_headers['Content-Disposition'] = 'attachment;filename=awdawdawd.json';
-
-            break;
-
-        case 'csv':
-
-            response_headers['Content-Type'] = 'application/octet-stream';
-            response_headers['Content-Disposition'] = 'attachment;filename=awdawdawd.json';
-
-            break;
-
-        default:
-
-            break;
+            response_headers['Content-Length'] = content_length.toString();
 
         }
 
@@ -62,11 +52,29 @@ class DownloadController {
 
     }
 
+    calculateContentLength(content){
+
+        du.debug('Calculate Content Length');
+
+        return Buffer.byteLength(content.toString(), 'utf8');
+
+    }
+
     setDownloadParameters(parameters){
 
         du.debug('Set Download Parameters');
 
-      //Technical Debt:  Do some validation here...
+        if(!_.isObject(parameters)){
+            throw new Error('Invalid download parameter type.');
+        }
+
+        if(!_.has(parameters, 'type')){
+            throw new Error('Download parameters missing type field.');
+        }
+
+        if(!_.contains(this.available_types, parameters.type)){
+            throw new Error('Download type is not supported.');
+        }
 
         this.download_parameters = parameters;
 
@@ -79,7 +87,7 @@ class DownloadController {
         switch(this.download_parameters.type){
 
         case 'json':
-            return data;
+            return JSON.stringify(data);
         case 'csv':
         default:
             return data;

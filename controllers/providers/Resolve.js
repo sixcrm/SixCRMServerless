@@ -23,7 +23,7 @@ class ResolveController {
 
         du.debug('Resolve');
 
-        if(_.has(this, 'download_parameters') && _.has(this.download_parameters, 'type') && _.contains(this.downloadController.available_types, this.download_parameters.type)){
+        if(_.has(this, 'download_parameters') && _.has(this.download_parameters, 'type')){
 
             return this.downloadController.resolveDownload(this.download_parameters, data_aquisition_function);
 
