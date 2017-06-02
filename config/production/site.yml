@@ -1,41 +1,17 @@
 jwt:
+  issuer: 'https://api.sixcrm.com'
   development_bypass: 'deathstalker'
-  auth0: #This is the key for all graph requests (AKA Six users)
+  site: #This is the key for all graph requests (AKA Six users)
     secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
     domain: ''
+    expiration: 3600
   transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+    expiration: 3600
   #Technical Debt:  The site key may be deprecated...
   site_key: 'anwdadawdjaklwdlakd'
 
 dynamodb:
-  access_keys_table: 'access_keys'
-  sessions_table: 'sessions'
-  transactions_table: 'transactions'
-  rebills_table: 'rebills'
-  customers_table: 'customers'
-  customer_notes_table: 'customer_notes'
-  products_table: 'products'
-  credit_cards_table: 'credit_cards'
-  users_table: 'users'
-  user_device_tokens_table: 'user_device_tokens'
-  user_acls_table: 'useracls'
-  user_settings_table: 'user_settings'
-  loadbalancers_table: 'loadbalancers'
-  product_schedules_table: 'product_schedules'
-  affiliates_table: 'affiliates'
-  campaigns_table: 'campaigns'
-  merchant_providers_table: 'merchant_providers'
-  fulfillment_providers_table: 'fulfillment_providers'
-  email_templates_table: 'email_templates'
-  smtp_providers_table: 'smtp_providers'
-  shipping_receipts_table: 'shipping_receipts'
-  accounts_table: 'accounts'
-  roles_table: 'roles'
-  ses_notifications_table: 'ses_notifications'
-  notifications_table: 'notifications'
-  notifications_read_table: 'notifications_read'
-  notification_settings_table: 'notification_settings'
   endpoint: ''
 
 lambda:
@@ -52,6 +28,17 @@ lambda:
     createrebillstoarchive: 'sixtransaction-development-createrebills'
     recovertoarchive: 'sixtransaction-development-archiverecover'
     indextoarchive: 'sixtransaction-development-indexentities'
+    forwardmessage_deliveredtoarchive: 'sixtransaction-production-deliveredtoarchive'
+    forwardmessage_shippedtodelivered: 'sixtransaction-production-shippedtodelivered'
+    forwardmessage_pendingtoshipped: 'sixtransaction-production-pendingtoshipped'
+    forwardmessage_pendingfailedtopending: 'sixtransaction-production-pendingfailedtopending'
+    forwardmessage_holdtopending: 'sixtransaction-production-holdtopending'
+    forwardmessage_holdtoarchive: 'sixtransaction-production-holdtoarchive'
+    forwardmessage_billtohold: 'sixtransaction-production-billtohold'
+    forwardmessage_recovertohold: 'sixtransaction-production-recovertohold'
+    forwardmessage_createrebillstoarchive: 'sixtransaction-production-rebilltoarchive'
+    forwardmessage_recovertoarchive: 'sixtransaction-production-recovertoarchive'
+    forwardmessage_indextoarchive: 'sixtransaction-production-indextoarchive'
 
 sqs:
   bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill'
@@ -65,6 +52,17 @@ sqs:
   rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
   rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure'
   search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchindex'
+  bill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill_deadletter'
+  bill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill-failed_deadletter'
+  recover_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-recover_deadletter'
+  hold_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-hold_deadletter'
+  pending_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending_deadletter'
+  pending_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending-failed_deadletter'
+  shipped_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-shipped_deadletter'
+  delivered_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-delivered_deadletter'
+  rebill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-rebill_deadletter'
+  rebill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-rebill-failure_deadletter'
+  search_indexing_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-searchindex_deadletter'
 
 nmi:
   username: 'demo'
@@ -109,7 +107,9 @@ elasticache:
 kinesis:
   firehose:
     streams:
-      transactions: 'six-development-transactions'
-      events: 'sixcrm-firehose-events'
+      transactions: 'six-production-transactions'
+      events: 'six-production-events'
+      activity: 'six-production-activity'
+
 aws:
   region: 'us-east-1'

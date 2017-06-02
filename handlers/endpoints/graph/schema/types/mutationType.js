@@ -11,6 +11,9 @@ let accountType = require('./account/accountType');
 let affiliateInputType = require('./affiliate/affiliateInputType');
 let affiliateType = require('./affiliate/affiliateType');
 
+let trackerInputType = require('./tracker/trackerInputType');
+let trackerType = require('./tracker/trackerType');
+
 let campaignInputType = require('./campaign/campaignInputType');
 let campaignType = require('./campaign/campaignType');
 
@@ -74,6 +77,9 @@ let userDeviceTokenInputType = require('./userdevicetoken/userDeviceTokenInputTy
 let userSettingType = require('./usersetting/userSettingType');
 let userSettingInputType = require('./usersetting/userSettingInputType');
 
+let userSigningStringType = require('./usersigningstring/userSigningStringType');
+let userSigningStringInputType = require('./usersigningstring/userSigningStringInputType');
+
 let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
 
@@ -93,10 +99,12 @@ const merchantProviderController = global.routes.include('controllers', 'entitie
 const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
 const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
 const userController = global.routes.include('controllers', 'entities/User.js');
 const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
+const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
 const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
 const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
 const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
@@ -348,6 +356,41 @@ module.exports.graphObj = new GraphQLObjectType({
                 var id = role.id;
 
                 return roleController.delete(id);
+            }
+        },
+        createtracker:{
+            type: trackerType.graphObj,
+            description: 'Adds a new tracker.',
+            args: {
+                tracker: { type: trackerInputType .graphObj}
+            },
+            resolve: (value, tracker) => {
+                return trackerController.create(tracker.tracker);
+            }
+        },
+        updatetracker:{
+            type: trackerType.graphObj,
+            description: 'Updates a tracker.',
+            args: {
+                tracker: { type: trackerInputType.graphObj }
+            },
+            resolve: (value, tracker) => {
+                return trackerController.update(tracker.tracker);
+            }
+        },
+        deletetracker:{
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a tracker.',
+            args: {
+                id: {
+        				  description: 'id of the tracker',
+        				  type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, tracker) => {
+                var id = tracker.id;
+
+                return trackerController.delete(id);
             }
         },
         createaffiliate:{
@@ -1037,5 +1080,48 @@ module.exports.graphObj = new GraphQLObjectType({
                 return userSettingController.delete(usersetting.id);
             }
         },
+        createusersigningstring:{
+            type: userSigningStringType.graphObj,
+            description: 'Creates a new user signing string.',
+            args: {
+                usersigningstring: { type: userSigningStringInputType.graphObj }
+            },
+            resolve: (value, usersigningstring) => {
+                return userSigningStringController.create(usersigningstring.usersigningstring);
+            }
+        },
+        updateusersigningstring:{
+            type: userSigningStringType.graphObj,
+            description: 'Updates a user signing string.',
+            args: {
+                usersigningstring: { type: userSigningStringInputType.graphObj }
+            },
+            resolve: (value, usersigningstring) => {
+                return userSigningStringController.update(usersigningstring.usersigningstring);
+            }
+        },
+        storeusersigningstring:{
+            type: userSigningStringType.graphObj,
+            description: 'Updates a user signing string.',
+            args: {
+                usersigningstring: { type: userSigningStringInputType.graphObj }
+            },
+            resolve: (value, usersigningstring) => {
+                return userSigningStringController.store(usersigningstring.usersigningstring);
+            }
+        },
+        deleteusersigningstring:{
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a user signing string.',
+            args: {
+                id: {
+                    description: 'Id of the user signing string',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, usersigningstring) => {
+                return userSigningStringController.delete(usersigningstring.id);
+            }
+        }
     })
 });

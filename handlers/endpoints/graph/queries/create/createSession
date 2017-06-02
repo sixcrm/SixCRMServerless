@@ -2,22 +2,64 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
-		createsession ( session: { id: \"053b54ce-6cd1-4952-8e3e-3eb137cd5a30\", customer: \"24f7c851-29d4-4af9-87c5-0298fa74c689\", affiliate: \"6b6331f6-7f84-437a-9ac6-093ba301e455\", campaign:\"70a6689a-5814-438b-b9fd-dd484d0812f9\", product_schedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"], completed: \"false\" } ) { 
+	mutation {
+		createsession ( session: { id: \"053b54ce-6cd1-4952-8e3e-3eb137cd5a30\", customer: \"24f7c851-29d4-4af9-87c5-0298fa74c689\", affiliate: \"6b6331f6-7f84-437a-9ac6-093ba301e455\", campaign:\"70a6689a-5814-438b-b9fd-dd484d0812f9\", product_schedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"], completed: \"false\" } ) {
 			id,
 			created_at,
-			updated_at, 
-			customer { 
-				id, 
-				firstname, 
-				lastname, 
-				address { 
-					line1, 
-					line2, 
-					city, 
-					state, 
-					zip 
-				} 
+			updated_at,
+			customer {
+				id,
+				firstname,
+				lastname,
+				address {
+					line1,
+					line2,
+					city,
+					state,
+					zip
+				}
+			},
+			affiliate {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_1 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_2 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_3 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_4 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			subaffiliate_5 {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
+			},
+			cid {
+				id,
+				affiliate_id,
+				created_at,
+				updated_at
 			},
 			product_schedules {
 				id,
@@ -33,7 +75,7 @@
 						ship,
 						shipping_delay,
 						fulfillment_provider {
-							id, 
+							id,
 							name,
 							provider,
 							username,
@@ -49,7 +91,7 @@
 			campaign {
 				id,
 				name,
-				productschedules { 
+				productschedules {
 					id,
 					schedule {
 						price,
@@ -63,7 +105,7 @@
 							ship,
 							shipping_delay,
 							fulfillment_provider {
-								id, 
+								id,
 								name,
 								provider,
 								username,
@@ -77,7 +119,7 @@
 					id,
 					merchantproviderconfigurations {
 						merchantprovider {
-							id, 
+							id,
 							username,
 							password,
 							endpoint,
@@ -87,6 +129,6 @@
 					}
 				}
 			}
-		} 
+		}
 	}"
 }

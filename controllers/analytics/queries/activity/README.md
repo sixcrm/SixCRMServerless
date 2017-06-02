@@ -18,7 +18,7 @@ ____
 * `acted_upon` -  a sub-affiliate string
 * `acted_upon_type` -  a sub-affiliate string
 * `associated_with` -  a sub-affiliate string
-* `accociated_with_type` -  a sub-affiliate string
+* `associated_with_type` -  a sub-affiliate string
 
 ---
 ### Query notes

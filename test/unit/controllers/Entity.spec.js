@@ -1,3 +1,5 @@
+'use strict'
+
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
@@ -25,7 +27,7 @@ describe('controllers/Entity.js', () => {
 
     describe('can', () => {
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         afterEach(() => {
@@ -89,7 +91,7 @@ describe('controllers/Entity.js', () => {
 
     describe('create', () => {
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         it('fails when user is not defined', () => {
@@ -124,7 +126,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.create(anEntity).then((result) => {
@@ -157,7 +159,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.create(anEntity).catch((error) => {
@@ -181,7 +183,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.create(anEntity).catch((error) => {
@@ -193,7 +195,7 @@ describe('controllers/Entity.js', () => {
 
     describe('update', () => {
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         it('fails when user is not defined', () => {
@@ -219,7 +221,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.update(anEntity).catch((error) => {
@@ -240,21 +242,20 @@ describe('controllers/Entity.js', () => {
 
         it('fails when user is not defined', () => {
             // given
-            let entityController = new EntityController('table_name', 'entity');
+            let entityController = new EntityController('entity');
 
             global.user = null;
 
             // when
             return entityController.delete({}).catch((error) => {
-                // then
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('Could not determine identifier.');
             });
         });
 
         it('throws error when reading from database fails', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -266,7 +267,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -278,7 +279,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when deleting from database fails', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -293,7 +294,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -305,7 +306,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when there are no entities with given id', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -317,7 +318,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -330,7 +331,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when there are multiple entities with given id', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -342,7 +343,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -355,7 +356,7 @@ describe('controllers/Entity.js', () => {
         it('succeeds when deleting succeeds', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
@@ -376,7 +377,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -398,19 +399,19 @@ describe('controllers/Entity.js', () => {
         it('fails when user is not defined', () => {
             // given
             global.user = null;
-            let entityController = new EntityController('table_name', 'entity');
+            let entityController = new EntityController('entity');
 
             // when
             return entityController.get(1).catch((error) => {
                 // then
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('Could not determine identifier.');
             });
         });
 
         it('gets the entity from database when has permissions and entity exists', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -422,7 +423,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).then((response) => {
@@ -434,7 +435,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when reading from database fails', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -446,7 +447,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).catch((error) => {
@@ -458,7 +459,7 @@ describe('controllers/Entity.js', () => {
         it('throws error when reading from database returns more than 1 result', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -470,7 +471,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).catch((error) => {
@@ -482,7 +483,7 @@ describe('controllers/Entity.js', () => {
         it('returns null when there are no results', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -494,7 +495,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).then((result) => {
@@ -506,13 +507,13 @@ describe('controllers/Entity.js', () => {
         it('throws error when has no permissions', () => {
             // given
             let anEntity = {
-                id: 1
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.get(anEntity.id).then((response) => {
@@ -522,7 +523,7 @@ describe('controllers/Entity.js', () => {
         });
     });
 
-    xdescribe('list', () => {
+    describe('list', () => {
         afterEach(() => {
             mockery.resetCache();
         });
@@ -536,10 +537,10 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
-            return entityController.list({cursor: 0, limit: 10}).then((response) => {
+            return entityController.list({limit: 10}).then((response) => {
                 // then
                 expect(response).to.equal(null);
             });
@@ -560,9 +561,9 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
-            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
+            return entityController.list({limit: 10}).catch((error) => {
                 // then
                 expect(error.message).to.equal('Data has no items.');
             });
@@ -579,10 +580,10 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
-            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
+            return entityController.list({limit: 10}).catch((error) => {
                 // then
                 expect(error.message).to.equal('Data is not an object.');
             });
@@ -599,10 +600,10 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
-            return entityController.list({cursor: 0, limit: 10}).catch((error) => {
+            return entityController.list({limit: 10}).catch((error) => {
                 // then
                 expect(error.message).to.equal('Scanning failed.');
             });
@@ -622,16 +623,17 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
-            return entityController.list({cursor: 0, limit: 10}).then((response) => {
+            return entityController.list({limit: 10}).then((response) => {
                 // then
                 expect(response).to.deep.equal({
                     pagination: {
                         count: 0,
                         end_cursor: '',
-                        has_next_page: 'false'
+                        has_next_page: 'false',
+                        last_evaluated: ""
                     },
                     entitys: null
                 });
@@ -652,49 +654,17 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
-            return entityController.list({cursor:0, limit:10}).then((response) => {
+            return entityController.list({limit:10}).then((response) => {
                 // then
                 expect(response).to.deep.equal({
                     pagination: {
                         count: 10,
                         end_cursor: '',
-                        has_next_page: 'false'
-                    },
-                    entitys: [{},{},{},{},{},{},{},{},{},{}]
-                });
-            });
-        });
-
-        it('correctly sets end_cursor', () => {
-            // given
-            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
-
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                scanRecordsFull: (table, parameters, callback) => {
-                    callback(null, {
-                        LastEvaluatedKey: {
-                            id: 9
-                        },
-                        Count: 10,
-                        Items: [{},{},{},{},{},{},{},{},{},{}]
-                    });
-                }
-            });
-
-            const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
-
-            // when
-            return entityController.list({cursor:0, limit:10}).then((response) => {
-                // then
-                expect(response).to.deep.equal({
-                    pagination: {
-                        count: 10,
-                        end_cursor: 9,
-                        has_next_page: 'true'
+                        has_next_page: 'false',
+                        last_evaluated: ""
                     },
                     entitys: [{},{},{},{},{},{},{},{},{},{}]
                 });
@@ -703,7 +673,7 @@ describe('controllers/Entity.js', () => {
 
     });
 
-    xdescribe('queryBySecondaryIndex', () => {
+    describe('queryBySecondaryIndex', () => {
         afterEach(() => {
             mockery.resetCache();
         });
@@ -717,7 +687,7 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
@@ -731,18 +701,18 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, 'result');
+                queryRecordsFull: (table, parameters, index, callback) => {
+                    callback(null, { Items: 'non array' });
                 }
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
-            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((result) => {
+            return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
                 // then
-                expect(result).to.equal(null);
+                expect(error.message).to.equal('Data has no items.');
             });
         });
 
@@ -751,13 +721,13 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecordsFull: (table, parameters, index, callback) => {
                     callback(new Error('Query failed.'), null);
                 }
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
@@ -771,18 +741,18 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, []);
+                queryRecordsFull: (table, parameters, index, callback) => {
+                    callback(null, { Items: [] });
                 }
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
-                expect(response).to.equal(null);
+                expect(response.entitys).to.equal(null);
             });
         });
 
@@ -791,18 +761,18 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, [{},{}]);
+                queryRecordsFull: (table, parameters, index, callback) => {
+                    callback(null, { Items: [{},{}] });
                 }
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js');
-            let entityController = new EC('table_name', 'entity');
+            let entityController = new EC('entity');
 
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
-                expect(response).to.deep.equal([{}, {}]);
+                expect(response.entitys).to.deep.equal([{}, {}]);
             });
         });
 
@@ -812,7 +782,7 @@ describe('controllers/Entity.js', () => {
         let entityController;
 
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         it('should allow valid mail', () => {
@@ -850,7 +820,7 @@ describe('controllers/Entity.js', () => {
         let entityController;
 
         before(() => {
-            entityController = new EntityController('table_name', 'entity');
+            entityController = new EntityController('entity');
         });
 
         it('should allow valid UUID', () => {

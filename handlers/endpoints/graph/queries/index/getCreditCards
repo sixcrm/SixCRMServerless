@@ -2,11 +2,11 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		creditcardlist {
 			creditcards {
 				id,
-				ccnumber,
+				number,
 				expiration,
 				ccv,
 				name,
@@ -28,4 +28,3 @@
 		},
 	}"
 }
-

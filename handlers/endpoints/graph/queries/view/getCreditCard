@@ -2,10 +2,10 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
-	{ 
-		creditcard (id: \"df84f7bb-06bd-4daa-b1a3-6a2c113edd72\") { 
+	{
+		creditcard (id: \"df84f7bb-06bd-4daa-b1a3-6a2c113edd72\") {
 			id,
-			ccnumber,
+			number,
 			expiration,
 			ccv,
 			name,
@@ -18,7 +18,6 @@
 			},
 			created_at,
 			updated_at
-		} 
+		}
 	}"
 }
-

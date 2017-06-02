@@ -1,13 +1,13 @@
 'use strict';
 const _ = require("underscore");
-const querystring = require('querystring');
+const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
-var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
-class confirmOrderController extends endpointController{
+class confirmOrderController extends transactionEndpointController{
 
     constructor(){
         super({
@@ -27,83 +27,39 @@ class confirmOrderController extends endpointController{
                 'affiliate/read',
                 'transaction/read',
                 'rebill/read',
-                'notifications/create'
-            ]
+                'notifications/create',
+                'tracker/read'
+            ],
+            notification_parameters: {
+                type: 'session',
+                action: 'closed',
+                title: 'Completed Session',
+                body: 'A customer has completed a session.'
+            }
         });
-
-        this.notification_parameters = {
-            type: 'session',
-            action: 'closed',
-            message: 'A customer has completed a session.'
-        };
 
     }
 
     execute(event){
 
-        return this.preprocessing((event))
-			.then(this.acquireQuerystring)
-			.then(this.validateInput)
+        return this.preprocessing(event)
+			.then((event) => this.acquireQuerystring(event))
+			.then((querystring) => this.validateInput(querystring, this.validateEventSchema))
 			.then(this.confirmOrder)
+      .then((result_object) => this.pushToRedshift(result_object))
 			.then((results) => this.handleNotifications(results));
 
     }
 
-    acquireQuerystring(event){
-
-        du.debug('Acquire Querystring');
-
-        return new Promise((resolve, reject) => {
-
-            var duplicate_querystring = event.queryStringParameters;
-
-            if(!_.isObject(duplicate_querystring)){
-
-                if(_.isString(duplicate_querystring)){
-
-                    try{
-
-                        duplicate_querystring = querystring.parse(duplicate_querystring);
-
-                    }catch(error){
-
-                        return reject(error);
-
-                    }
-
-                    resolve(duplicate_querystring);
-
-                }else{
-
-                    return reject(new Error('Request querystring is an unexpected format.'));
-
-                }
-
-            }else{
-
-                return resolve(duplicate_querystring);
-
-            }
-
-        });
-
-    }
-
-    validateInput(querystring){
+    validateEventSchema(querystring){
 
         du.debug('Validate Input');
 
-        return new Promise((resolve, reject) => {
+        let confirmorder_schema = global.routes.include('model', 'endpoints/confirmorder');
 
-            if(!_.isObject(querystring) || !_.has(querystring, 'session_id')){
+        var v = new Validator();
 
-                return reject(new Error('The session_id must be set in the querystring.'));
-
-            }
-
-            return resolve(querystring);
-
-        });
+        return v.validate(querystring, confirmorder_schema);
 
     }
 
@@ -113,7 +69,7 @@ class confirmOrderController extends endpointController{
 
         var promises = [];
 
-        return sessionController.get(querystring['session_id']).then((session) => {
+        return sessionController.get(querystring['session']).then((session) => {
 
             if(_.isNull(session)){ throw new Error('The specified session is unavailable.'); }
             if(session.completed == 'true'){ throw new Error('The specified session is already complete.'); }
@@ -147,11 +103,17 @@ class confirmOrderController extends endpointController{
 
     }
 
-    handleNotifications(pass_through){
+    pushToRedshift(results){
 
-        du.warning('Handle Notifications');
+        du.debug('Push To Redshift');
 
-        return this.issueNotifications(this.notification_parameters).then(() => pass_through);
+        return this.pushEventToRedshift('confirm', results.session).then((result) => {
+
+            du.debug(result);
+
+            return results;
+
+        });
 
     }
 

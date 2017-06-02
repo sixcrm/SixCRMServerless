@@ -54,6 +54,9 @@ let userListType = require('./user/userListType');
 let userSettingListType = require('./usersetting/userSettingListType');
 let userSettingType = require('./usersetting/userSettingType');
 
+let userSigningStringListType = require('./usersigningstring/userSigningStringListType');
+let userSigningStringType = require('./usersigningstring/userSigningStringType');
+
 let userACLType = require('./useracl/userACLType');
 let userACLListType = require('./useracl/userACLListType');
 
@@ -86,6 +89,9 @@ let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType');
 
+let trackerType = require('./tracker/trackerType');
+let trackerListType = require('./tracker/trackerListType');
+
 let suggestInputType = require('./search/suggestInputType');
 let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
@@ -99,6 +105,8 @@ let transactionOverviewType =  require('./analytics/transactionOverviewType');
 let eventFunnelType =  require('./analytics/eventFunnelType');
 let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
+
+let listActivityType = require('./analytics/listActivityType');
 
 let eventsByFacetType =  require('./analytics/eventsByFacetType');
 let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
@@ -126,6 +134,7 @@ const merchantProviderController = global.routes.include('controllers', 'entitie
 const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
 
 const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
@@ -133,6 +142,7 @@ const userController = global.routes.include('controllers', 'entities/User.js');
 const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
 const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken');
 const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
 const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
 
 const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
@@ -142,6 +152,7 @@ const roleController = global.routes.include('controllers', 'entities/Role.js');
 const notificationController = global.routes.include('controllers', 'entities/Notification');
 const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
 
 const searchController = global.routes.include('controllers', 'endpoints/search.js');
 const suggestController = global.routes.include('controllers', 'endpoints/suggest.js');
@@ -354,6 +365,15 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, affiliate){
                 return affiliateController.list(affiliate.pagination);
+            }
+        },
+        trackerlist: {
+            type: trackerListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, tracker){
+                return trackerController.list(tracker.pagination);
             }
         },
         creditcardlist: {
@@ -596,6 +616,16 @@ module.exports.graphObj = new GraphQLObjectType({
                 return analyticsController.getMerchantProviderAmount(analyticsfilter.analyticsfilter);
             }
         },
+        listactivity: {
+            type: listActivityType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getActivity(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+            }
+        },
         transactionlistbycustomer: {
             type: transactionListType.graphObj,
             args: {
@@ -739,6 +769,18 @@ module.exports.graphObj = new GraphQLObjectType({
                 return affiliateController.get(affiliate.id);
             }
         },
+        tracker: {
+            type: trackerType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the tracker',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, tracker){
+                return trackerController.get(tracker.id);
+            }
+        },
         accesskey: {
             type: accessKeyType.graphObj,
             args: {
@@ -836,6 +878,27 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, user_setting) {
                 return userSettingController.list(user_setting.pagination);
+            }
+        },
+        usersigningstring: {
+            type: userSigningStringType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the user signing string',
+                    type: GraphQLString
+                }
+            },
+            resolve: (root, user_signing_string) => {
+                return userSigningStringController.get(user_signing_string.id);
+            }
+        },
+        usersigningstringlist: {
+            type: userSigningStringListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, user_signing_strings) {
+                return userSigningStringController.list(user_signing_strings.pagination);
             }
         },
         notification: {

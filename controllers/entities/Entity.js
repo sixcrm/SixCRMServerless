@@ -13,16 +13,22 @@ const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
+//Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
 
 module.exports = class entityController {
 
-    constructor(table_name, descriptive_name){
-        this.table_name = table_name;
-        this.descriptive_name = descriptive_name;
-        this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting'];
+    constructor(name){
+
+        this.setNames(name);
+
+        this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting', 'usersigningstring'];
+
     }
 
+    //Technical Debt:  Cache this.
     can(action){
+
+        du.debug('Can');
 
         du.debug('Can check:', action, this.descriptive_name);
 
@@ -49,29 +55,13 @@ module.exports = class entityController {
 
     listBySecondaryIndex(field, index_value, index_name, pagination) {
 
+        du.debug('List By Secondary Index');
+
         return new Promise((resolve, reject) => {
 
             return this.can('read').then((permission) => {
 
                 if(permission != true){ return resolve(null); }
-
-                /*
-                let query_parameters = {
-                    key_condition_expression: {},
-                    expression_attribute_names: {},
-                    expression_attribute_values: {}
-                }
-
-                query_parameters = this.appendKeyConditionExpression(query_parameters, '#'+field, ':indexv');
-                query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
-                query_parameters = this.appendExpressionAttributeValues(query_parameters, ':indexv', index_value);
-                query_parameters = this.appendFilterExpression(query_parameters, '#'+field+' = :indexv');
-
-                query_parameters = this.appendCursor(query_parameters, cursor);
-                query_parameters = this.appendLimit(query_parameters, limit);
-                query_parameters = this.appendAccountFilter(query_parameters);
-
-                */
 
                 let query_parameters = {
                     key_condition_expression: '#'+field+' = :index_valuev',
@@ -105,6 +95,8 @@ module.exports = class entityController {
 
 		//ACL enabled
     list(pagination, query_parameters){
+
+        du.debug('List');
 
         return new Promise((resolve, reject) => {
 
@@ -141,6 +133,8 @@ module.exports = class entityController {
 		//ACL enabled
     //Technical Debt:  You can only paginate against the index...
     queryBySecondaryIndex(field, index_value, index_name, pagination, reverse_order){
+
+        du.debug('Query By Secondary Index');
 
         du.debug('Query by secondary index', field, index_value, index_name, pagination);
 
@@ -191,6 +185,8 @@ module.exports = class entityController {
 
 		//ACL enabled
     getBySecondaryIndex(field, index_value, index_name, cursor, limit){
+
+        du.debug('Get By Secondary Index');
 
         du.debug(Array.from(arguments));
 
@@ -279,9 +275,17 @@ module.exports = class entityController {
 		//ACL enabled
     get(id, primary_key){
 
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+        du.debug('Get');
 
         return new Promise((resolve, reject) => {
+
+            if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+
+            try{
+                id = this.getID(id, primary_key);
+            }catch(e){
+                return reject(e);
+            }
 
             return this.can('read').then((permission) => {
 
@@ -364,6 +368,8 @@ module.exports = class entityController {
 
     touch(key){
 
+        du.debug('Touch');
+
         return new Promise((resolve, reject) => {
 
             return this.can('read').then((permission) => {
@@ -397,7 +403,10 @@ module.exports = class entityController {
 
     }
 
+    //Technical Debt: Why is this useful?
     getByKey(key){
+
+        du.debug('Get By Key');
 
         return new Promise((resolve, reject) => {
 
@@ -441,6 +450,8 @@ module.exports = class entityController {
     }
 
     countCreatedAfterBySecondaryIndex(date_time, field, index_name, cursor, limit) {
+
+        du.debug('Count Created After Secondary Index');
 
         return new Promise((resolve, reject) => {
 
@@ -515,6 +526,8 @@ module.exports = class entityController {
     //ACL enabled
     create(entity, primary_key){
 
+        du.debug('Create');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         return new Promise((resolve, reject) => {
@@ -534,6 +547,8 @@ module.exports = class entityController {
                     if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
 
                     entity = this.setCreatedAt(entity);
+
+                    //Technical Debt:  Validate that this model adheres to a entity in /model/entities/{model_name}.json
 
                     return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
@@ -573,6 +588,8 @@ module.exports = class entityController {
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
     update(entity, primary_key){
 
+        du.debug('Update');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         return new Promise((resolve, reject) => {
@@ -592,6 +609,8 @@ module.exports = class entityController {
                     entity = this.marryCreatedUpdated(entity, exists);
 
                     entity = this.setUpdatedAt(entity);
+
+                    //Technical Debt:  Validate that this model adheres to a entity in /model/entities/{model_name}.json
 
                     return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
@@ -626,6 +645,8 @@ module.exports = class entityController {
 
     store(entity, primary_key){
 
+        du.debug('Store');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(!_.has(entity, primary_key)){
@@ -658,11 +679,19 @@ module.exports = class entityController {
 		//NOT ACL enabled
     delete(id, primary_key){
 
+        du.debug('Delete');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         return new Promise((resolve, reject) => {
 
+            if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
+            try{
+                id = this.getID(id, primary_key);
+            }catch(e){
+                return reject(e);
+            }
 
             //Technical Debt:  Why is this "update"?
             return this.can('update').then((permission) => {
@@ -746,6 +775,8 @@ module.exports = class entityController {
 
     exists(entity, primary_key){
 
+        du.debug('Exists');
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(!_.has(entity, primary_key)){
@@ -790,19 +821,17 @@ module.exports = class entityController {
 		//ACL enabled
     validate(object, object_type){
 
-        du.debug('Validating:', object_type, object);
+        du.debug('Validate');
 
         return new Promise((resolve, reject) => {
 
-            du.debug(object_type);
+            if(_.isUndefined(object_type) || !_.isString(object_type)){
 
-            if(!_.isString(object_type)){
-
-                du.debug('Is not a string: ', object_type);
-
-                var object_type = this.descriptive_name;
+                object_type = this.descriptive_name;
 
             }
+
+            du.debug('Object: ', object, 'Object Type: ', object_type);
 
             var v = new Validator();
 
@@ -810,7 +839,8 @@ module.exports = class entityController {
 
             try{
 
-                schema = global.routes.include('model', object_type);
+                schema = global.routes.include('model', 'entities/'+object_type);
+
 
             } catch(e){
 
@@ -849,6 +879,8 @@ module.exports = class entityController {
 
     isUUID(string, version){
 
+        du.debug('Is UUID');
+
         if(_.isString(string)){
 
             return validator.isUUID(string, version);
@@ -860,6 +892,8 @@ module.exports = class entityController {
     }
 
     isEmail(string){
+
+        du.debug('Is Email');
 
         if(_.isString(string)){
 
@@ -873,6 +907,8 @@ module.exports = class entityController {
 
     disableACLs(){
 
+        du.debug('Disable ACLs');
+
         permissionutilities.disableACLs();
 
         return;
@@ -880,6 +916,8 @@ module.exports = class entityController {
     }
 
     enableACLs(){
+
+        du.debug('Enable ACLs');
 
         permissionutilities.enableACLs();
 
@@ -889,6 +927,8 @@ module.exports = class entityController {
 
     unsetGlobalUser(){
 
+        du.debug('Unset Global User');
+
         permissionutilities.unsetGlobalUser();
 
         return;
@@ -896,6 +936,8 @@ module.exports = class entityController {
     }
 
     setGlobalUser(user){
+
+        du.debug('Set Global User');
 
         if(_.has(user, 'id') || this.isEmail(user)){
 
@@ -909,6 +951,8 @@ module.exports = class entityController {
 
     acquireGlobalUser(){
 
+        du.debug('Acquire Global User');
+
         if(_.has(global, 'user')){
 
             return global.user;
@@ -921,6 +965,8 @@ module.exports = class entityController {
 
     removeFromSearchIndex(id, entity_type){
 
+        du.debug('Remove From Search Index');
+
         let entity = {id:id, entity_type: entity_type};
 
         return indexingutilities.removeFromSearchIndex(entity);
@@ -928,6 +974,8 @@ module.exports = class entityController {
     }
 
     addToSearchIndex(entity, entity_type){
+
+        du.debug('Add To Search Index');
 
         entity['entity_type'] = entity_type;
 
@@ -939,7 +987,7 @@ module.exports = class entityController {
 
     setCreatedAt(entity, created_at){
 
-        du.warning('Created At:', created_at);
+        du.debug('Set Created At');
 
         if(_.isUndefined(created_at)){
 
@@ -958,6 +1006,8 @@ module.exports = class entityController {
     }
 
     setUpdatedAt(entity){
+
+        du.debug('Set Updated At');
 
         if(!_.has(entity, 'created_at')){
 
@@ -980,6 +1030,8 @@ module.exports = class entityController {
     }
 
     marryCreatedUpdated(entity, exists){
+
+        du.debug('Marry Created Updated');
 
         if(!_.has(exists, 'created_at')){
             throw new Error('Entity lacks "created_at" property.');
@@ -1094,9 +1146,9 @@ module.exports = class entityController {
 
         du.debug('Append Pagination');
 
-        du.debug('Pagination Object:', pagination);
-
         if(!_.isUndefined(pagination) && _.isObject(pagination)){
+
+            du.debug('Pagination Object:', pagination);
 
             if(_.has(pagination, 'limit')){
 
@@ -1223,7 +1275,7 @@ module.exports = class entityController {
 
             }else{
 
-                throw new Error('Unrecognized format for Exclusive Start Key.')
+                throw new Error('Unrecognized format for Cursor.')
 
             }
 
@@ -1368,7 +1420,7 @@ module.exports = class entityController {
 
     buildResponse(data, callback){
 
-        du.debug('Append Exclusive Start Key');
+        du.debug('Build Response');
 
         if(_.isObject(data)){
 
@@ -1415,6 +1467,99 @@ module.exports = class entityController {
             return Promise.resolve(null);
 
         }
+
+    }
+
+    getID(object, primary_key){
+
+        du.debug('Get ID');
+
+        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+
+        if(_.isString(object)){
+
+
+        //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
+            return object;
+
+            /*
+            if(this.isUUID(object)){
+
+                return object;
+
+            }else if(this.isEmail(object)){
+
+                return object;
+
+            }else if(object == '*'){
+
+                return object;
+
+            }
+            */
+
+        }else if(_.isObject(object)){
+
+            if(_.has(object, primary_key)){
+
+                return object[primary_key];
+
+            }
+
+        }
+
+        throw new Error('Could not determine identifier.');
+
+    }
+
+    setNames(name){
+
+        du.debug('Set Names');
+
+        this.descriptive_name = name;
+
+        this.setEnvironmentTableName(name);
+
+        this.setTableName(name);
+
+    }
+
+    setEnvironmentTableName(name){
+
+        du.debug('Set Environment Table Name');
+
+        let key = this.buildTableKey(name);
+        let value = this.buildTableName(name);
+
+        if(!_.has(process.env, key)){
+            process.env[key] = value;
+        }
+
+    }
+
+    setTableName(name){
+
+        du.debug('Set Table Name');
+
+        let key = this.buildTableKey(name);
+
+        this.table_name = process.env[key];
+
+    }
+
+    buildTableKey(name){
+
+        du.debug('Build Table Key');
+
+        return name+'s_table';
+
+    }
+
+    buildTableName(name){
+
+        du.debug('Build Table Name');
+
+        return process.env.stage+name+'s';
 
     }
 

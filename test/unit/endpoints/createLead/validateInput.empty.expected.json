@@ -1,9 +1,7 @@
 {
 	"message": "One or more validation errors occurred.",
 	"issues": [
-		"requires property \"email\"",
-		"requires property \"firstname\"",
-		"requires property \"lastname\"",
-		"A lead must be associated with a campaign"
+		"requires property \"campaign\"",
+    "requires property \"customer\""
 	]
 }

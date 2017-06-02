@@ -42,14 +42,14 @@ describe('Graph '+entity+' Test', function() {
 
       describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials on the account "'+test_account.name+'"', function() {
 
-          let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
+          let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
 
           tests.forEach((test) => {
 
 					//let account = tu.getAccount(test.query);
               let account = test_account.id;
 
-              du.warning(account);
+              du.debug(account, test_jwt);
 
               it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
                   var query = tu.getQuery(test.query);

@@ -38,13 +38,13 @@ let this_request = request(endpoint);
 
 describe('Graph ' + entity + ' Test', function () {
 
-    global.test_accounts.forEach((test_account) => {
+    global.test_accounts.filter((account) => account.id === '*').forEach((test_account) => {
 
         global.test_users.forEach((test_user) => {
 
             describe(`Test the graph ${entity} endpoint using "${test_user.name}" credentials on the account "${test_account.name}"`, function () {
 
-                let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
+                let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
 
                 tests.forEach((test) => {
 
@@ -77,14 +77,17 @@ describe('Graph ' + entity + ' Test', function () {
     it(`Test notification endpoint should return success`, function (done) {
         let account = global.test_accounts[0];
         let test_user = global.test_users[0];
-        let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
+        let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
 
         let query = tu.getQuery(global.routes.path('handlers','endpoints/graph/queries/uncategorized/sendTestNotification'));
 
         this_request.post('graph/' + account)
             .set('Authorization', test_jwt)
             .send(query)
-            .expect(200);
+            .expect(200)
+            .end(() => {
+                done();
+            })
     });
 
 });

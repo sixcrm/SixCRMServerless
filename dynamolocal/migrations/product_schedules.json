@@ -1,16 +1,16 @@
 {
     "Table": {
-        "TableName": "product_schedules",
+        "TableName": "productschedules",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
-        }], 
+        }],
         "AttributeDefinitions": [{
-            "AttributeName": "id", 
+            "AttributeName": "id",
             "AttributeType": "S"
         }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1, 
+            "ReadCapacityUnits": 1,
             "WriteCapacityUnits": 1
         }
     },
@@ -30,7 +30,7 @@
     			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
     			"price":"34.99",
     			"start":"14",
-    			"period":"30" 
+    			"period":"30"
     		}
     	],
     	"created_at":"2017-04-06T18:40:41.405Z",
@@ -52,7 +52,7 @@
                 "product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
                 "price":"34.99",
                 "start":"14",
-                "period":"30" 
+                "period":"30"
             }
         ],
         "created_at":"2017-04-06T18:40:41.405Z",

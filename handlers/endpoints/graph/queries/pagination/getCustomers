@@ -20,7 +20,7 @@
 				},
 				creditcards {
 					id,
-					ccnumber,
+					number,
 					expiration,
 					ccv,
 					name,

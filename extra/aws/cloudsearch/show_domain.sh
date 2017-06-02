@@ -13,4 +13,4 @@ aws cloudsearchdomain search \
   --size=10000 \
   --query-parser=structured \
   --search-query="matchall" \
-  | jq '[.hits.hit[]]' 
+  | jq '[.hits.hit[]]'

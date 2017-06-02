@@ -1,0 +1,49 @@
+{
+  "Table": {
+    "TableName": "usersigningstrings",
+    "KeySchema": [{
+      "AttributeName": "id",
+      "KeyType": "HASH"
+    }],
+    "AttributeDefinitions": [{
+      "AttributeName": "id",
+      "AttributeType": "S"
+    }, {
+      "AttributeName": "user",
+      "AttributeType": "S"
+    }],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "user-index",
+        "KeySchema": [
+          {
+            "AttributeName": "user",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    ],
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 1,
+      "WriteCapacityUnits": 1
+    }
+  },
+  "Seeds": [
+    {
+      "id": "ed5fcb78-9093-4a97-b62e-8ffcf2347ff5",
+      "user": "ljubomir@toptal.com",
+      "name": "test key 1",
+      "signing_string": "j2ij86zbz3",
+      "used_at": null,
+      "created_at":"2017-04-06T18:40:41.405Z",
+      "updated_at":"2017-04-06T18:41:12.521Z"
+    }
+  ]
+}

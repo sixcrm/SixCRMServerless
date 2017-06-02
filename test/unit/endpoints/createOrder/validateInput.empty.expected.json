@@ -1,12 +1,8 @@
 {
 	"message": "One or more validation errors occurred.",
 	"issues": [
-		"requires property \"ccnumber\"",
-		"requires property \"ccexpiration\"",
-		"requires property \"ccccv\"",
-		"requires property \"product_schedules\"",
-		"requires property \"campaign_id\"",
-		"requires property \"session_id\"",
-		"requires property \"name\""
+		"requires property \"creditcard\"",
+		"requires property \"session\"",
+		"requires property \"product_schedules\""
 	]
 }

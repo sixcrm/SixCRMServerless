@@ -44,25 +44,25 @@ functions:
   verifysignature:
     handler: handlers/authorizers/verifysignature/handler.verifysignature
     environment:
-      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
       stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   verifytransactionjwt:
     handler: handlers/authorizers/verifytransactionjwt/handler.verifyjwt
     environment:
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
+      transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
+      transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
-  verifyauth0jwt:
-    handler: handlers/authorizers/verifyauth0jwt/handler.verifyjwt
+  verifysitejwt:
+    handler: handlers/authorizers/verifysitejwt/handler.verifyjwt
     environment:
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      secret_key: ${file(./config/${opt:stage}/site.yml):jwt.auth0.secret_key}
+      site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
+      site_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.site.expiration}
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
@@ -79,7 +79,7 @@ functions:
           method: post
           cors: true
           authorizer:
-            name: verifyauth0jwt
+            name: verifysitejwt
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
@@ -87,32 +87,6 @@ functions:
       stage: ${opt:stage}
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
-      customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-      customer_notes_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customer_notes_table}
-      sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      credit_cards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.credit_cards_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
-      loadbalancers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.loadbalancers_table}
-      product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
-      affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
-      merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
-      fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
-      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      user_device_tokens_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_device_tokens_table}
-      user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-      user_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_settings_table}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      email_templates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.email_templates_table}
-      smtp_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.smtp_providers_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
-      accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-      notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
-      notifications_read_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_read_table}
-      notification_settings_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notification_settings_table}
-      roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
       redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
@@ -143,6 +117,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_billtohold}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
@@ -156,6 +131,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertohold}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
@@ -168,6 +144,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtopending}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
@@ -181,6 +158,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingfailedtopending}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
@@ -193,6 +171,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingtoshipped}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
@@ -205,6 +184,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_shippedtodelivered}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
@@ -219,6 +199,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_deliveredtoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint} #Technical Debt:  Why is this here?
@@ -232,6 +213,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtoarchive}
       archivefilter: 'NOSHIP'
@@ -244,6 +226,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_createrebillstoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.createrebillstoarchive}
       archivefilter: 'ALL'
@@ -256,6 +239,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertoarchive}
       archivefilter: 'TWOATTEMPTS'
@@ -268,6 +252,7 @@ functions:
           enabled: true
     environment:
       stage: ${opt:stage}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_indextoarchive}
       origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
       archivefilter: 'ALL'
@@ -302,7 +287,6 @@ functions:
           displayName: SES Notifications
     environment:
       stage: ${opt:stage}
-      ses_notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.ses_notifications_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   slackalarm:
@@ -334,9 +318,6 @@ functions:
     environment:
       stage: ${opt:stage}
       rebill_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
-      product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   pickrebill:
@@ -348,7 +329,6 @@ functions:
     environment:
       stage: ${opt:stage}
       bill_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   processbilling:
@@ -356,50 +336,23 @@ functions:
     environment:
       stage: ${opt:stage}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-      sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      credit_cards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.credit_cards_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
-      loadbalancers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.loadbalancers_table}
-      product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
-      affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
-      merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
-      fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
-      access_keys_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.access_keys_table}
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
 
   shipproduct:
     handler: handlers/workers/shipproduct/handler.shipproduct
     environment:
       stage: ${opt:stage}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
-      fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   confirmshipped:
     handler: handlers/workers/confirmshipped/handler.confirmshipped
     environment:
       stage: ${opt:stage}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   confirmdelivered:
     handler: handlers/workers/confirmdelivered/handler.confirmdelivered
     environment:
       stage: ${opt:stage}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
       usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
@@ -408,10 +361,6 @@ functions:
     handler: handlers/workers/archive/handler.archive
     environment:
       stage: ${opt:stage}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'ALL'
 
@@ -419,10 +368,6 @@ functions:
     handler: handlers/workers/archive/handler.archive
     environment:
       stage: ${opt:stage}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'NOSHIP'
 
@@ -430,10 +375,6 @@ functions:
     handler: handlers/workers/archive/handler.archive
     environment:
       stage: ${opt:stage}
-      rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-      transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-      products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-      shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
       dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'TWOATTEMPTS'
 
@@ -446,20 +387,21 @@ functions:
     events:
       - http:
          path: token/acquire/{account}
-         method: get
+         method: post
          cors: true
          authorizer:
             name: verifysignature
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
-      transaction_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
-      users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-      user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-      accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-      roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       stage: ${opt:stage}
+      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
+      transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
+      transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
+      kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+      search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
+
 
   createlead:
     handler: handlers/endpoints/createlead/handler.createlead
@@ -473,18 +415,9 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
-        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-        affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
-        campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
-        accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-        users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-        user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-        roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
-        sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
-        notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
-        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         stage: ${opt:stage}
+        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
 
   createorder:
     handler: handlers/endpoints/createorder/handler.createorder
@@ -498,29 +431,13 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
+        stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-        sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
-        products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-        credit_cards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.credit_cards_table}
-        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-        campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
-        loadbalancers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.loadbalancers_table}
-        product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
-        affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
-        merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
-        fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
-        rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
         hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
         bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
-        shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
-        accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-        users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-        user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-        roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
-        notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        stage: ${opt:stage}
+        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+        kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
 
   createupsell:
     handler: handlers/endpoints/createupsell/handler.createupsell
@@ -534,29 +451,13 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
+        stage: ${opt:stage}
         dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-        sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
-        products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-        credit_cards_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.credit_cards_table}
-        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-        campaigns_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.campaigns_table}
-        loadbalancers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.loadbalancers_table}
-        product_schedules_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.product_schedules_table}
-        affiliates_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.affiliates_table}
-        merchant_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.merchant_providers_table}
-        fulfillment_providers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.fulfillment_providers_table}
-        rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-        shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
-        accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-        users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-        user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-        roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
         hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
         bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
-        notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        stage: ${opt:stage}
+        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+        kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
 
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
@@ -570,20 +471,22 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
     environment:
-        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        sessions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.sessions_table}
-        products_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.products_table}
-        transactions_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.transactions_table}
-        customers_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.customers_table}
-        rebills_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.rebills_table}
-        shipping_receipts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.shipping_receipts_table}
-        accounts_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.accounts_table}
-        users_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.users_table}
-        user_acls_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.user_acls_table}
-        roles_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.roles_table}
-        notifications_table: ${opt:stage}${file(./config/${opt:stage}/site.yml):dynamodb.notifications_table}
-        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         stage: ${opt:stage}
+        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
+        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+
+  publichtml:
+    handler: handlers/endpoints/publichtml/handler.publichtml
+    events:
+      - http:
+         path: publichtml/{encoded}
+         method: get
+         cors: true
+    environment:
+        stage: ${opt:stage}
+        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+
 
 ########################
 # Resource definitions for required system resources
@@ -591,76 +494,6 @@ functions:
 
 resources:
   Resources:
-    ShippedQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-shipped
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    RecoverQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-recover
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    RebillFailedQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-rebill-failed
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    RebillQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-rebill
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    PendingFailedQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-pending-failed
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    PendingQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-pending
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    HoldQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-hold
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    DeliveredQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-delivered
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    BillingQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-bill
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
-    SearchIndexingQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${opt:stage}-searchindex
-        MessageRetentionPeriod: '345600'
-        VisibilityTimeout: '30'
-        MaximumMessageSize: '262144'
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
       Properties:
@@ -691,6 +524,14 @@ resources:
            - Effect: Allow
              Action:
                - s3:*
+             Resource: "*"
+           - Effect: Allow
+             Action:
+               - firehose:*
+             Resource: "*"
+           - Effect: Allow
+             Action:
+               - sns:*
              Resource: "*"
         Roles:
           - Ref: IamRoleLambdaExecution

@@ -1,9 +1,9 @@
 'use strict';
 const _ = require("underscore");
-const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var customerController = global.routes.include('controllers', 'entities/Customer.js');
@@ -13,9 +13,10 @@ var transactionController = global.routes.include('controllers', 'entities/Trans
 var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
 var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
-class createOrderController extends endpointController{
+const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
+
+class createOrderController extends transactionEndpointController{
 
     constructor(){
         super({
@@ -36,15 +37,16 @@ class createOrderController extends endpointController{
                 'rebill/update',
                 'product/read',
                 'affiliate/read',
-                'notification/create'
-            ]
+                'notification/create',
+                'tracker/read'
+            ],
+            notification_parameters: {
+                type: 'order',
+                action: 'added',
+                title: 'A new order',
+                body: 'A new order has been created.'
+            }
         });
-
-        this.notification_parameters = {
-            type: 'order',
-            action: 'added',
-            message: 'A new order has been created.'
-        };
 
     }
 
@@ -52,12 +54,16 @@ class createOrderController extends endpointController{
 
         return this.preprocessing((event))
       		.then(this.acquireBody)
-      		.then(this.validateInput)
+      		.then((event) => this.validateInput(event, this.validateEventSchema))
       		.then(this.getOrderInfo)
+          .then(this.getOrderCampaign)
+          .then(this.validateInfo)
       		.then(this.updateCustomer)
       		.then(this.getTransactionInfo)
       		.then(this.createOrder)
-      		.then(this.postOrderProcessing)
+          .then((info) => this.pushToRedshift(info))
+          .then((info) => this.handleTracking(info))
+      		.then((info) => this.postOrderProcessing(info))
       		.then((pass_through) => this.handleNotifications(pass_through))
       		.catch((error) => {
           du.error(error);
@@ -66,78 +72,20 @@ class createOrderController extends endpointController{
 
     }
 
-    acquireBody(event){
-
-        du.debug('Acquire Body');
-
-        var duplicate_body;
-
-        try {
-            duplicate_body = JSON.parse(event['body']);
-        } catch (e) {
-            duplicate_body = event.body;
-        }
-
-        return Promise.resolve(duplicate_body);
-
-    }
-
-    validateInput(event){
+    validateEventSchema(event){
 
         du.debug('Validate Input');
 
-        return new Promise((resolve, reject) => {
+        let order_schema = global.routes.include('model', 'endpoints/order');
+        let address_schema = global.routes.include('model', 'general/address');
+        let creditcard_schema = global.routes.include('model', 'general/creditcard');
 
-            var order_schema;
+        var v = new Validator();
 
-            try{
-                order_schema = global.routes.include('model', 'order');
-            } catch(e){
-                return reject(new Error('Unable to load validation schemas.'));
-            }
+        v.addSchema(address_schema, '/Address');
+        v.addSchema(creditcard_schema, '/CreditCard');
 
-            var validation;
-            var params = JSON.parse(JSON.stringify(event || {}));
-
-            try{
-                var v = new Validator();
-
-                validation = v.validate(params, order_schema);
-            }catch(e){
-                return reject(new Error('Unable to instantiate validator.'));
-            }
-
-
-			      //Technical Debt: Are these ever attached?
-            if(params.email && !validator.isEmail(params.email)){
-                validation.errors.push({message: '"email" field must be a email address.'});
-            }
-
-			      //Technical Debt: Are these ever attached?
-            if(params.shipping_email && !validator.isEmail(params.shipping_email)){
-                validation.errors.push({message: '"shipping_email" field must be a email address.'});
-            }
-
-            if(!validator.isCreditCard(params.ccnumber || '')){
-
-                if(process.env.stage == 'production'){
-                    validation.errors.push({message: '"ccnumber" must be a credit card number.'});
-                }
-
-            }
-
-            if(validation['errors'].length > 0) {
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map(e => e.message)
-                };
-
-                return reject(error);
-            }
-
-            return resolve(params);
-
-        });
+        return v.validate(event, order_schema);
 
     }
 
@@ -148,15 +96,15 @@ class createOrderController extends endpointController{
 
         var promises = [];
 
-        var getSession = sessionController.get(event_body['session_id']);
-        var getCampaign = campaignController.getHydratedCampaign(event_body['campaign_id']);
+        var getSession = sessionController.get(event_body['session']);
+
         var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
-        var getCreditCard	= creditCardController.createCreditCardObject(event_body).then((creditcard) => {
+
+        var getCreditCard	= creditCardController.createCreditCardObject(event_body['creditcard']).then((creditcard) => {
             return creditCardController.storeCreditCard(creditcard);
         });
 
         promises.push(getSession);
-        promises.push(getCampaign);
         promises.push(getProductSchedules);
         promises.push(getCreditCard);
 
@@ -164,38 +112,61 @@ class createOrderController extends endpointController{
 
             var info = {
                 session: promises[0],
-                campaign:  promises[1],
-                schedulesToPurchase: promises[2],
-                creditcard: promises[3]
+                schedulesToPurchase: promises[1],
+                creditcard: promises[2]
             };
-
-            if(!_.isObject(info.session) || !_.has(info.session, 'id')){
- 			 	throw new Error('No available session.');
- 		 	}
-
-            if(!_.isObject(info.campaign) || !_.has(info.campaign, 'id')){
- 			 	throw new Error('No available campaign.');
-            }
-
-            if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
- 			 	throw new Error('No available creditcard.');
-            }
-
-            if(info.session.completed == 'true'){
- 			 	throw new Error('The specified session is already complete.');
-            }
-
-            if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
- 			 	throw new Error('No available schedules to purchase.');
-            }
-
-            sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
-
-            campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
 
             return info;
 
         })
+
+    }
+
+    getOrderCampaign(info){
+
+        du.debug('Get Order Campaign');
+
+        if(!_.isObject(info.session) || !_.has(info.session, 'campaign')){
+            throw new Error('No available session campaign.');
+        }
+
+        return campaignController.getHydratedCampaign(info.session['campaign']).then((campaign) => {
+
+            if(!_.isObject(campaign) || !_.has(campaign, 'id')){
+                throw new Error('No available campaign.');
+            }
+
+            info['campaign'] = campaign;
+
+            return info;
+
+        });
+
+    }
+
+    validateInfo(info){
+
+        if(!_.isObject(info.session) || !_.has(info.session, 'id')){
+            throw new Error('No available session.');
+        }
+
+        if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
+            throw new Error('No available creditcard.');
+        }
+
+        if(info.session.completed == 'true'){
+            throw new Error('The specified session is already complete.');
+        }
+
+        if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
+            throw new Error('No available schedules to purchase.');
+        }
+
+        sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
+
+        campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
+
+        return Promise.resolve(info);
 
     }
 
@@ -263,32 +234,33 @@ class createOrderController extends endpointController{
         du.debug('Create Order');
 
         return loadBalancerController.process( info.campaign.loadbalancer, {customer: info.customer, creditcard: info.creditcard, amount: info.amount})
-		.then((processor) => {
+		    .then((processor) => {
 
-			//Technical Debt:  Are there further actions to take if a transaction is denied?
+        du.highlight(processor);
+          //Technical Debt:  Are there further actions to take if a transaction is denied?
 
-			//validate processor
-    if( !_.has(processor, "message") || processor.message !== 'Success' ||
-				!_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'
-			) {
-        throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
-    }
+          //validate processor
+        if(!_.has(processor, "message") || processor.message !== 'Success' || !_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'){
 
-    info.processor = processor;
+            throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
 
-    return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
+        }
 
-				//Techincal Debt: validate transaction above
+        info.processor = processor;
 
-        info.transaction = transaction;
+        return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
 
-        du.debug('Info:', info);
+            //Techincal Debt: validate transaction above
 
-        return info;
+            info.transaction = transaction;
+
+            du.debug('Info:', info);
+
+            return info;
+
+        });
 
     });
-
-});
 
     }
 
@@ -332,10 +304,46 @@ class createOrderController extends endpointController{
 
     }
 
-    handleNotifications(pass_through){
+    pushToRedshift(info){
 
-        return this.issueNotifications(this.notification_parameters)
-			.then(() => pass_through);
+        du.debug('Push To Redshift');
+
+        let promises = [];
+
+        promises.push(this.pushEventsRecord(info));
+        promises.push(this.pushTransactionsRecord(info));
+
+        return Promise.all(promises).then((promises) => {
+
+            return info;
+
+        });
+
+    }
+
+    pushEventsRecord(info){
+
+        du.debug('Push Events Record');
+
+        let product_schedule = info.schedulesToPurchase[0].id;
+
+        return this.pushEventToRedshift('order', info.session, product_schedule).then((result) => {
+
+            return info;
+
+        });
+
+    }
+
+    pushTransactionsRecord(info){
+
+        du.debug('Push Transactions Record');
+
+        return this.pushTransactionToRedshift(info).then((result) => {
+
+            return info;
+
+        });
 
     }
 

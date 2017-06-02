@@ -4,9 +4,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class merchantProviderController extends entityController {
 
     constructor(){
-        super(process.env.merchant_providers_table, 'merchantprovider');
-        this.table_name = process.env.merchant_providers_table;
-        this.descriptive_name = 'merchantprovider';
+        super('merchantprovider');
     }
 
 }

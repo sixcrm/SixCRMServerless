@@ -13,9 +13,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class campaignController extends entityController {
 
     constructor(){
-        super(process.env.campaigns_table, 'campaign');
-        this.table_name = process.env.campaigns_table;
-        this.descriptive_name = 'campaign';
+        super('campaign');
     }
 
     getEmailTemplates(campaign){
@@ -157,12 +155,6 @@ class campaignController extends entityController {
         }
 
         var campaign_product_schedules = campaign.productschedules;
-
-        du.highlight('Product Schedules');
-        du.highlight(product_schedules);
-
-        du.highlight('Campaign Product Schedules');
-        du.highlight(campaign_product_schedules);
 
         for(var i = 0; i < product_schedules.length; i++){
 

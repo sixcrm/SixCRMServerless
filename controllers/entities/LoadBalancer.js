@@ -9,12 +9,12 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class loadBalancerController extends entityController {
 
     constructor(){
-        super(process.env.loadbalancers_table, 'loadbalancer');
-        this.table_name = process.env.loadbalancers_table;
-        this.descriptive_name = 'loadbalancer';
+        super('loadbalancer');
     }
 
     getMerchantProviderConfigurations(loadbalancer){
+
+        du.debug('Get Merchant Provider Configurations');
 
         return loadbalancer.merchantproviders.map((merchantproviderconfiguration) => {
 
@@ -29,11 +29,15 @@ class loadBalancerController extends entityController {
 
     getMerchantProviderConfiguration(merchantproviderconfiguration){
 
+        du.debug('Get Merchant Provider Configuration');
+
         return merchantProviderController.get(merchantproviderconfiguration.merchantprovider);
 
     }
 
     getMerchantProviders(loadbalancer){
+
+        du.debug('Get Merchant Providers');
 
         return Promise.all(loadbalancer.merchantproviders.map(merchantprovider => merchantProviderController.get(merchantprovider.id)));
 
@@ -41,6 +45,8 @@ class loadBalancerController extends entityController {
 
 	//Isn't there a better way?
     getLoadBalancerHydrated(id){
+
+        du.debug('Get Loadbalancer Hydrated');
 
         var controller_instance = this;
 
@@ -100,6 +106,8 @@ class loadBalancerController extends entityController {
 
     sortMerchantProviders(merchantproviders){
 
+        du.debug('Sort Merchant Providers');
+
     	merchantproviders.sort(function(a, b) {
 
     		if(a.distribution != b.distribution){
@@ -132,6 +140,8 @@ class loadBalancerController extends entityController {
     }
 
     pickMerchantProvider(roll, loadbalancer){
+
+        du.debug('Pick Merchant Provider');
 
     	return new Promise((resolve, reject) => {
 
@@ -170,6 +180,9 @@ class loadBalancerController extends entityController {
     }
 
     createProcessorClass(merchantprovider){
+
+        du.debug('Create Processor Class');
+
     	switch(merchantprovider.merchantprovider.processor){
     		case 'NMI':
 
@@ -182,6 +195,7 @@ class loadBalancerController extends entityController {
         });
 
         return _nmi;
+
     		default:
     			throw new Error('Unrecognized merchant provider: '+merchantprovider.processor);
 
@@ -196,17 +210,22 @@ class loadBalancerController extends entityController {
 
             var processor = this.createProcessorClass(merchantprovider);
 
-            let response = processor.process(params);
+            return processor.process(params).then((response) => {
 
-            response.merchant_provider = merchantprovider.id;
+                //Technical Debt:  This is very clumsy.
+                response.merchant_provider = merchantprovider.merchantprovider.id;
 
-            return response;
+                return response;
+
+            });
 
         });
 
     }
 
     sumLoadBalancerDistributions(merchantproviders){
+
+        du.debug('Sum Load Balancer Distributions');
 
     	var distributionSum = 0.0;
 

@@ -1,0 +1,25 @@
+{
+	"title": "Customer",
+	"type": "object",
+	"properties": {
+		"email":{
+			"type": "string",
+			"format": "email"
+		},
+		"firstname":{
+			"type":"string"
+		},
+		"lastname":{
+			"type":"string"
+		},
+		"phone":{
+			"type":"string"
+		},
+		"address":{"$ref": "/Address"},
+		"creditcards":{
+			"type":"array",
+			"items":{"$ref": "/CreditCard"}
+		}
+	},
+	"required":["email", "firstname", "lastname"]
+}

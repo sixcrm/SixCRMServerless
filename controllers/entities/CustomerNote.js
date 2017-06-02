@@ -10,9 +10,7 @@ var customerController = global.routes.include('controllers', 'entities/Customer
 class customerNoteController extends entityController {
 
     constructor(){
-        super(process.env.customer_notes_table, 'customernote');
-        this.table_name = process.env.customer_notes_table;
-        this.descriptive_name = 'customernote';
+        super('customernote');
     }
 
     getCustomer(customer_note){

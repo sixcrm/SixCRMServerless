@@ -12,9 +12,7 @@ const transactionController = global.routes.include('controllers', 'entities/Tra
 class customerController extends entityController {
 
     constructor(){
-        super(process.env.customers_table, 'customer');
-        this.table_name = process.env.customers_table;
-        this.descriptive_name = 'customer';
+        super('customer');
     }
 
     getAddress(customer){

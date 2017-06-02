@@ -1,16 +1,16 @@
 {
     "Table": {
-        "TableName": "smtp_providers",
+        "TableName": "smtpproviders",
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
-        }], 
+        }],
         "AttributeDefinitions": [{
-            "AttributeName": "id", 
+            "AttributeName": "id",
             "AttributeType": "S"
         }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1, 
+            "ReadCapacityUnits": 1,
             "WriteCapacityUnits": 1
         }
     },

@@ -5,31 +5,32 @@ chai.use(require('chai-json-schema'));
 var assert = require('chai').assert
 var fs = require('fs');
 var yaml = require('js-yaml');
-var crypto = require('crypto');
 
 const du = global.routes.include('lib','debug-utilities.js');
+const random = global.routes.include('lib','random.js');
+const signatureutilities = global.routes.include('lib','signature.js');
 
 try {
     var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));
 } catch (e) {
-    console.log(e);
+    du.warning(e);
 }
 
 var endpoint = config.endpoint;
-
 var appropriate_spacing = '        ';
 
 describe('Round Trip Test', function() {
     describe('Confirms a sales funnel purchase with partial and multiple upsells.', function() {
-        it('Return a confirmed sale', function (done) {
+        it('Returns a confirmed sale', function (done) {
 
-    	let request_time = new Date().getTime();
-    	let secret_key = config.access_keys.super_user.secret_key;
-    	let access_key = config.access_keys.super_user.access_key;
-    	let account = config.account;
+          	let request_time = new Date().getTime();
+          	let secret_key = config.access_keys.super_user.secret_key;
+          	let access_key = config.access_keys.super_user.access_key;
+          	let account = config.account;
+            var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
-            let signature = crypto.createHash('sha1').update(secret_key+request_time).digest('hex');
-    	let authorization_string = access_key+':'+request_time+':'+signature;
+            let signature = signatureutilities.createSignature(secret_key, request_time);
+            let authorization_string = access_key+':'+request_time+':'+signature;
             let this_request = request(endpoint);
 
             du.highlight('Request Time: ', request_time);
@@ -37,7 +38,31 @@ describe('Round Trip Test', function() {
             du.highlight('Authorization String: ', authorization_string);
             du.output(appropriate_spacing+'Acquiring Token');
 
-    	this_request.get('token/acquire/'+account)
+            let affiliate_id = random.createRandomString(10);
+            let subaffiliate_1_id = random.createRandomString(10);
+            let subaffiliate_2_id = random.createRandomString(10);
+            let subaffiliate_3_id = random.createRandomString(10);
+            let subaffiliate_4_id = random.createRandomString(10);
+            let subaffiliate_5_id = random.createRandomString(10);
+            let cid = random.createRandomString(10);
+
+            var post_body = {
+                "campaign":campaign_id,
+                "affiliates":{
+                    "affiliate":affiliate_id,
+                    "subaffiliate_1":subaffiliate_1_id,
+                    "subaffiliate_2":subaffiliate_2_id,
+                    "subaffiliate_3":subaffiliate_3_id,
+                    "subaffiliate_4":subaffiliate_4_id,
+                    "subaffiliate_5":subaffiliate_5_id,
+                    "cid":cid
+                }
+            };
+
+            du.debug('Post data', post_body);
+
+    	this_request.post('token/acquire/'+account)
+      .send(post_body)
 			.set('Content-Type', 'application/json')
 			.set('Authorization', authorization_string)
 			.expect(200)
@@ -57,29 +82,36 @@ describe('Round Trip Test', function() {
 
     du.debug('Acquired JWT:', jwt);
 
-    var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
-
     var post_body = {
-        "campaign_id":campaign_id,
-        "affiliate_id":"6b6331f6-7f84-437a-9ac6-093ba301e455",
-        "firstname":"Rama",
-        "lastname":"Damunaste",
-        "email":"rama@damunaste.com",
-        "phone":"1234567890",
-        "billing":{
-            "line1":"10 Downing St.",
-            "city":"Detroit",
-            "state":"Michigan",
-            "zip":"12345",
-            "country":"US"
+        "campaign":campaign_id,
+        "affiliates":{
+            "affiliate":affiliate_id,
+            "subaffiliate_1":subaffiliate_1_id,
+            "subaffiliate_2":subaffiliate_2_id,
+            "subaffiliate_3":subaffiliate_3_id,
+            "subaffiliate_4":subaffiliate_4_id,
+            "subaffiliate_5":subaffiliate_5_id
         },
-        "address":{
-            "line1":"334 Lombard St.",
-            "line2":"Apartment 2",
-            "city":"Portland",
-            "state":"Oregon",
-            "zip":"97203",
-            "country":"US"
+        "customer":{
+            "firstname":"Rama",
+            "lastname":"Damunaste",
+            "email":"rama@damunaste.com",
+            "phone":"1234567890",
+            "billing":{
+                "line1":"10 Downing St.",
+                "city":"Detroit",
+                "state":"Michigan",
+                "zip":"12345",
+                "country":"US"
+            },
+            "address":{
+                "line1":"334 Lombard St.",
+                "line2":"Apartment 2",
+                "city":"Portland",
+                "state":"Oregon",
+                "zip":"97203",
+                "country":"US"
+            }
         }
     };
 
@@ -111,20 +143,21 @@ describe('Round Trip Test', function() {
 					  	var product_schedules = ["12529a17-ac32-4e46-b05b-83862843055d"]
 
 					  	var order_create = {
-      "session_id":session_id,
+      "session":session_id,
       "product_schedules":product_schedules,
-      "campaign_id":campaign_id,
-      "ccnumber":"4111111111111111",
-      "ccexpiration":"1025",
-      "ccccv":"999",
-      "name":"Rama Damunaste",
-      "address":{
-          "line1":"10 Skid Rw.",
-          "line2":"Suite 100",
-          "city":"Portland",
-          "state":"Oregon",
-          "zip":"97213",
-          "country":"USA"
+      "creditcard":{
+          "number":"4111111111111111",
+          "expiration":"1025",
+          "ccv":"999",
+          "name":"Rama Damunaste",
+          "address":{
+              "line1":"10 Skid Rw.",
+              "line2":"Suite 100",
+              "city":"Portland",
+              "state":"Oregon",
+              "zip":"97213",
+              "country":"USA"
+          }
       }
   };
 
@@ -158,7 +191,7 @@ describe('Round Trip Test', function() {
     var upsell_product_schedules = ['8d1e896f-c50d-4a6b-8c84-d5661c16a046'];
 
     var upsell_create = {
-        "session_id": session_id,
+        "session": session_id,
         "product_schedules": upsell_product_schedules
     };
 
@@ -199,7 +232,7 @@ describe('Round Trip Test', function() {
     du.debug('Confirmation params: ', 'session_id='+session_id);
 
     this_request.get('order/confirm/'+account)
-											.query('session_id='+session_id)
+											.query('session='+session_id)
 											.set('Content-Type', 'application/json')
 											.set('Authorization', jwt)
 											.expect(200)

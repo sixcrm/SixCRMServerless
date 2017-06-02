@@ -7,9 +7,7 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class ProductController extends entityController {
 
     constructor(){
-        super(process.env.products_table, 'product');
-        this.table_name = process.env.products_table;
-        this.descriptive_name = 'product';
+        super('product');
     }
 
     getFulfillmentProvider(product){

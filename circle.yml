@@ -47,13 +47,14 @@ deployment:
       - npm run lint
       - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
       - npm run purge-tables $CIRCLE_BRANCH
-      # Technical Debt:
-      #  - Need to purge the CloudSearch index...
+      #Technical Debt:  This needs to be configured for multi-environment purges
+      - node ./deployment/cloudsearch/purge_index.js $CIRCLE_BRANCH
       - node ./deployment/cloudsearch/deploy.js sixcrm-$CIRCLE_BRANCH
       - npm run deploy-tables $CIRCLE_BRANCH $AWS_REGION
       # Technical Debt:
       #   - API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
       - serverless deploy --stage $CIRCLE_BRANCH
+      - node ./deployment/sqs/deploy_queues.js $CIRCLE_BRANCH
       - export SIX_VERBOSE=0 && npm run test-integration
       - ./deployment/environment/deploy_development.sh
       - ./deployment/utilities/merge_branches.sh development staging

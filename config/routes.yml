@@ -7,3 +7,4 @@ test: /test/
 model: /model/
 config: /config/
 deployment: /deployment/
+providers: /controllers/providers/

@@ -6,9 +6,7 @@ const du = global.routes.include('lib', 'debug-utilities');
 class creditCardController extends entityController {
 
     constructor(){
-        super(process.env.credit_cards_table, 'creditcard');
-        this.table_name = process.env.credit_cards_table;
-        this.descriptive_name = 'creditcard';
+        super('creditcard');
     }
 
     getAddress(creditcard){
@@ -23,7 +21,7 @@ class creditCardController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            controller_instance.queryBySecondaryIndex('ccnumber', creditcard.ccnumber, 'ccnumber-index')
+            controller_instance.queryBySecondaryIndex('number', creditcard.number, 'number-index')
               .then((result) => this.getResult(result))
               .then((creditcards) => {
 
@@ -75,7 +73,7 @@ class creditCardController extends entityController {
             return false;
         }
 
-        if(!_.isEqual(creditcard1.ccnumber, creditcard2.ccnumber)){
+        if(!_.isEqual(creditcard1.number, creditcard2.number)){
             return false;
         }
 
@@ -94,9 +92,9 @@ class creditCardController extends entityController {
     createCreditCardObject(input_object){
 
         var creditcard = {
-            ccnumber: input_object.ccnumber,
-            expiration: input_object.ccexpiration,
-            ccv: input_object.ccccv,
+            number: input_object.number,
+            expiration: input_object.expiration,
+            ccv: input_object.ccv,
             name: input_object.name,
             address: input_object.address
         };

@@ -11,19 +11,29 @@ var customerController = global.routes.include('controllers', 'entities/Customer
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 
 class sessionController extends entityController {
 
     constructor(){
-        super(process.env.sessions_table, 'session');
-        this.table_name = process.env.sessions_table;
-        this.descriptive_name = 'session';
+        super('session');
 
         this.session_length = 3600;
+        this.affiliate_fields = [
+            'affiliate',
+            'subaffiliate_1',
+            'subaffiliate_2',
+            'subaffiliate_3',
+            'subaffiliate_4',
+            'subaffiliate_5',
+            'cid'
+        ];
 
     }
 
     getCustomer(session){
+
+        du.debug('Get Customer');
 
         if(!_.has(session, "customer")){ return null; }
 
@@ -36,6 +46,8 @@ class sessionController extends entityController {
 
     getCampaign(session){
 
+        du.debug('Get Campaign');
+
         if(!_.has(session, "campaign")){ return null; }
 
         return campaignController.get(session.campaign);
@@ -43,6 +55,8 @@ class sessionController extends entityController {
     }
 
     getSessionCreditCard(session){
+
+        du.debug('Get Session Credit Card');
 
         if(!_.has(session, 'customer')){ return null; }
 
@@ -52,12 +66,100 @@ class sessionController extends entityController {
 
     getCampaignHydrated(session){
 
+        du.debug('Get Campaign Hydrated');
+
         var id = session;
 
         if(_.has(session, "id")){
             id = session.id;
         }
         return campaignController.getHydratedCampaign(id);
+
+    }
+
+    getAffiliate(session, affiliate_field){
+
+        du.debug('Get Affiliate');
+
+        if(_.has(session, affiliate_field) && this.isUUID(session[affiliate_field])){
+            return affiliateController.get(session[affiliate_field]);
+        }else{
+            return null;
+        }
+
+    }
+
+    getAffiliateIDs(session){
+
+        du.debug('Get Affiliate IDs');
+
+        return this.get(session).then((session) => {
+
+            let affiliate_ids = [];
+
+            this.affiliate_fields.forEach((affiliate_field) => {
+
+                if(_.has(session, affiliate_field)){
+
+                    if(this.isUUID(session[affiliate_field])){
+
+                        affiliate_ids.push(session[affiliate_field]);
+
+                    }else{
+
+                        du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
+
+                    }
+
+                }
+
+            });
+
+            return affiliate_ids;
+
+        });
+
+    }
+
+    getAffiliates(session){
+
+        du.debug('Get Affiliates');
+
+        return new Promise((resolve) => {
+
+            return this.get(session).then((session) => {
+
+                let affiliates = [];
+
+                this.affiliate_fields.forEach((affiliate_field) => {
+
+                    if(_.has(session, affiliate_field)){
+
+                        if(this.isUUID(session[affiliate_field])){
+
+                            affiliates.push(affiliateController.get(session[affiliate_field]));
+
+                        }else{
+
+                            du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
+
+                        }
+
+                    }
+
+                });
+
+                if(affiliates.length < 1){ return resolve(affiliates); }
+
+                return Promise.all(affiliates).then((affiliates) => {
+
+                    return resolve(affiliates);
+
+                });
+
+            });
+
+        });
 
     }
 
@@ -271,22 +373,22 @@ class sessionController extends entityController {
 
     createSessionObject(params){
 
-        if(!_.has(params,'customer_id')){
+        if(!_.has(params,'customer')){
 
-            return new Error('A session must be associated with a Customer ID.');
+            return new Error('A session must be associated with a Customer.');
 
         }
 
-        if(!_.has(params,'campaign_id')){
+        if(!_.has(params,'campaign')){
 
-            return new Error('A session must be associated with a Campaign ID.');
+            return new Error('A session must be associated with a Campaign.');
 
         }
 
         var session = {
             id: uuidV4(),
-            customer: params.customer_id,
-            campaign: params.campaign_id,
+            customer: params.customer,
+            campaign: params.campaign,
             completed: 'false'
         };
 
@@ -310,25 +412,32 @@ class sessionController extends entityController {
 
     }
 
+    //Technical Debt:  Update me!
     putSession(parameters){
-
-        var controller_instance = this;
 
         return new Promise((resolve, reject) => {
 
-            if(!_.has(parameters, 'customer_id')){
-                reject(new Error('Parameters object must have a customer_id'));
+            if(!_.has(parameters, 'customer')){
+                reject(new Error('Parameters object must have a customer'));
             }
 
-            if(!_.has(parameters, 'campaign_id')){
-                reject(new Error('Parameters object must have a customer_id'));
+            if(!_.has(parameters, 'campaign')){
+                reject(new Error('Parameters object must have a customer'));
             }
 
-            if(!_.has(parameters, 'affiliate_id')){
-                parameters.affiliate_id = null;
-            }
+            /*
+            //Technical Debt:  This assures the presence of fields that we don't necessarily need...
+            ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((affiliate_field) => {
 
-            return this.getSessionByCustomerID(parameters.customer_id).then((sessions) => {
+                if(!_.has(parameters, affiliate_field)){
+                    parameters[affiliate_field] = null;
+                }
+
+            });
+            */
+
+
+            return this.getSessionByCustomerID(parameters.customer).then((sessions) => {
 
                 var session_found = false;
 
@@ -351,20 +460,26 @@ class sessionController extends entityController {
 
                 if(session_found == false){
 
-                    var session = controller_instance.createSessionObject({
-                        customer_id: parameters.customer_id,
-                        campaign_id: parameters.campaign_id,
-                        affiliate_id: parameters.affiliate_id
+                    let session = {};
+
+                    _.union(['customer', 'campaign'], this.affiliate_fields).forEach((parameter) => {
+                        if(_.has(parameters, parameter)){
+                            session[parameter] = parameters[parameter];
+                        }else{
+
+                            //Technical Debt:  Some of this stuff is not necessary...
+                            //session[parameter] = null;
+
+                        }
+
                     });
 
                     return this.create(session).then((session) => {
-
                         return resolve(session);
-
                     });
 
                 } else {
-                    return reject(`Session with CustomerID '${parameters.customer_id}' not found`);
+                    return reject(`Session with CustomerID '${parameters.customer}' not found`);
                 }
 
             }).catch((error) => {

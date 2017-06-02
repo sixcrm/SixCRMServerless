@@ -144,6 +144,14 @@ class forwardMessagesController extends workerController {
 
                 if (_.isArray(messages) && messages.length > 0) {
 
+                    // If there are 10 messages (maximum), invoke the lambda again so it picks the rest of the messages.
+                    if (messages.length === 10) {
+                        lambda.invokeFunction({
+                            function_name: process.env.name,
+                            payload: JSON.stringify({}),
+                            invocation_type: 'Event'}); // 'Event' type will make the lambda execute asynchronously.
+                    }
+
                     du.debug('Worker function:  ', process.env.workerfunction);
 
                     let invoke_parameters = {

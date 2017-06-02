@@ -1,21 +1,23 @@
 {
-	"firstname":"Rama",
-	"lastname":"Damunaste",
-	"email":"rama@damunaste.org",
-	"phone":"1234567890",
-	"billing":{
-		"line1":"10 Downing St.",
-		"city":"Detroit",
-		"state":"Michigan",
-		"zip":"12345",
-		"country":"US"
-	},
-	"address":{
-		"line1":"334 Lombard St.",
-		"line2":"Apartment 2",
-		"city":"Portland",
-		"state":"Oregon",
-		"zip":"97203",
-		"country":"US"
+	"customer":{
+		"firstname":"Rama",
+		"lastname":"Damunaste",
+		"email":"rama@damunaste.org",
+		"phone":"1234567890",
+		"billing":{
+			"line1":"10 Downing St.",
+			"city":"Detroit",
+			"state":"Michigan",
+			"zip":"12345",
+			"country":"US"
+		},
+		"address":{
+			"line1":"334 Lombard St.",
+			"line2":"Apartment 2",
+			"city":"Portland",
+			"state":"Oregon",
+			"zip":"97203",
+			"country":"US"
+		}
 	}
 }

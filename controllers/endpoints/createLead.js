@@ -1,18 +1,15 @@
 'use strict';
 const _ = require('underscore');
-const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
-const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 
 var customerController = global.routes.include('controllers', 'entities/Customer.js');
-var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
-var endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
-class createLeadController extends endpointController{
+class createLeadController extends transactionEndpointController{
 
     constructor(){
         super({
@@ -27,15 +24,17 @@ class createLeadController extends endpointController{
                 'session/read',
                 'campaign/read',
                 'affiliate/read',
-                'notification/create'
-            ]
+                'affiliate/create',
+                'notification/create',
+                'tracker/read'
+            ],
+            notification_parameters: {
+                type: 'lead',
+                action: 'created',
+                title:  'New Lead',
+                body: 'A new lead has been created.'
+            }
         });
-
-        this.notification_parameters = {
-            type: 'lead',
-            action: 'created',
-            message: 'A new lead has been created.'
-        };
 
     }
 
@@ -44,103 +43,51 @@ class createLeadController extends endpointController{
         du.debug('Execute');
 
         return this.preprocessing((event))
-			.then((event) => this.acquireBody(event))
-			.then((event) => this.validateInput(event))
-			.then((event) => this.assureCustomer(event))
-			.then((event) => this.createSessionObject(event))
-			.then((session_object) => this.persistSession(session_object))
-			.then((session_object) => this.handleNotifications(session_object));
+  			.then((event) => this.acquireBody(event))
+  			.then((event) => this.validateInput(event, this.validateEventSchema))
+  			.then((event) => this.assureCustomer(event))
+        .then((event) => this.handleAffiliateInformation(event))
+  			.then((event) => this.createSessionObject(event))
+  			.then((session_object) => this.persistSession(session_object))
+        .then((session_object) => this.handleLeadTracking(session_object, event))
+        .then((session_object) => this.pushToRedshift(session_object))
+  			.then((session_object) => this.handleNotifications(session_object));
 
     }
 
-    acquireBody(event){
+    validateEventSchema(event){
 
-        du.debug('Acquire Body');
+        du.debug('Validate Event Schema');
 
-        var duplicate_body;
+        let lead_schema = global.routes.include('model', 'endpoints/lead');
+        let customer_schema = global.routes.include('model', 'general/customer');
+        let address_schema = global.routes.include('model', 'general/address');
+        let creditcard_schema = global.routes.include('model', 'general/creditcard');
+        let affiliates_schema = global.routes.include('model', 'endpoints/affiliates');
 
-        try {
-            duplicate_body = JSON.parse(event['body']);
-        } catch (e) {
-            duplicate_body = event.body;
-        }
+        let v = new Validator();
 
-        return Promise.resolve(duplicate_body);
+        v.addSchema(address_schema, '/Address');
+        v.addSchema(creditcard_schema, '/CreditCard');
+        v.addSchema(affiliates_schema, '/Affiliates');
+        v.addSchema(customer_schema, '/Customer');
 
-    }
-
-    validateInput(event){
-
-        du.debug('Validate Input');
-
-        return new Promise((resolve, reject) => {
-
-            var customer_schema;
-            var address_schema;
-            var creditcard_schema;
-
-            try{
-
-                customer_schema = global.routes.include('model', 'customer');
-                address_schema = global.routes.include('model', 'address');
-                creditcard_schema = global.routes.include('model', 'creditcard');
-
-            } catch(e){
-
-                return reject(new Error('Unable to load validation schemas.'));
-
-            }
-
-            var validation;
-            var params = JSON.parse(JSON.stringify(event || {}));
-
-            try{
-                var v = new Validator();
-
-                v.addSchema(address_schema, '/Address');
-                v.addSchema(creditcard_schema, '/CreditCard');
-                validation = v.validate(params, customer_schema);
-            }catch(e){
-                return reject(new Error('Unable to instantiate validator.'));
-            }
-
-
-            if(params.email && !validator.isEmail(params.email)){
-                validation.errors.push({message:'"email" field must be an email address.'});
-            }
-
-            if(!params.campaign_id || !_.isString(params.campaign_id)){
-                validation.errors.push({message:'A lead must be associated with a campaign'});
-            }
-
-            if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
-
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map((e)=>{ return e.message; })
-                };
-
-                return reject(error);
-
-            }
-
-            return resolve(params)
-
-        });
+        return v.validate(event, lead_schema);
 
     }
 
+    //Technical Debt:  Streamline to add hydrated model to the event object
     assureCustomer(event){
 
         du.debug('Assure Customer');
 
         return new Promise((resolve, reject) => {
 
-            customerController.getCustomerByEmail(event.email).then((customer) => {
+            customerController.getCustomerByEmail(event.customer.email).then((customer) => {
 
                 if(!_.has(customer, 'id')){
 
-                    return customerController.create(event).then((created_customer) => {
+                    return customerController.create(event.customer).then((created_customer) => {
 
                         if(_.has(created_customer, 'id')){
 
@@ -180,41 +127,39 @@ class createLeadController extends endpointController{
 
             var promises = [];
 
-            var getCampaign = campaignController.get(event.campaign_id);
-            var getCustomer = customerController.getCustomerByEmail(event.email);
+            var getCampaign = campaignController.get(event.campaign);
+            var getCustomer = customerController.getCustomerByEmail(event.customer.email);
 
             promises.push(getCampaign);
             promises.push(getCustomer);
-
-            if(_.has(event, 'affiliate_id')){
-                var getAffiliate = affiliateController.get(event.affiliate_id);
-
-                promises.push(getAffiliate);
-            }
 
             return Promise.all(promises).then((promises) => {
 
                 let campaign = promises[0];
                 let customer = promises[1];
-                let affiliate = {};
-
-                if(promises.length > 2){
-                    affiliate = promises[2];
-                    if(!_.has(affiliate, 'id')){ return reject(new Error('A invalid affiliate id is specified.')); }
-                }
 
                 if(!_.has(campaign, 'id')){ return reject(new Error('A invalid campaign id is specified.')); }
 
                 if(!_.has(customer, "id")){ return reject(new Error('A invalid customer id is specified.')); }
 
                 let session_object = {
-                    customer_id: customer.id,
-                    campaign_id: campaign.id,
+                    customer: customer.id,
+                    campaign: campaign.id,
                 };
 
-                if(_.has(affiliate, 'id')){
-                    session_object['affiliate_id'] = affiliate.id;
-                }
+                this.affiliate_fields.forEach((affiliate_field) => {
+
+                    if(_.has(event, 'affiliates') && _.has(event.affiliates, affiliate_field)){
+
+                        if(!_.isNull(event.affiliates[affiliate_field])){
+
+                            session_object[affiliate_field] = event.affiliates[affiliate_field];
+
+                        }
+
+                    }
+
+                });
 
                 return resolve(session_object);
 
@@ -227,6 +172,8 @@ class createLeadController extends endpointController{
     persistSession(session_object){
 
         du.debug('Persist Session');
+
+        du.warning('Session Object: ', session_object);
 
         return new Promise((resolve, reject) => {
 
@@ -244,11 +191,27 @@ class createLeadController extends endpointController{
 
     }
 
-    handleNotifications(pass_through){
+    handleLeadTracking(session, event){
 
-        du.warning('Handle Notifications');
+        du.debug('Handle Lead Tracking');
 
-        return this.issueNotifications(this.notification_parameters).then(() => pass_through);
+        return this.handleTracking({session: session}, event).then(() => {
+
+            return session;
+
+        });
+
+    }
+
+    pushToRedshift(session){
+
+        du.debug('Push To Redshift');
+
+        return this.pushEventToRedshift('lead', session).then(() => {
+
+            return session;
+
+        });
 
     }
 

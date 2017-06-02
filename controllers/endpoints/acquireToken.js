@@ -1,53 +1,88 @@
 'use strict';
-const jwt = require('jsonwebtoken');
 const _ = require("underscore");
+const Validator = require('jsonschema').Validator;
 
-const timestamp = global.routes.include('lib', 'timestamp.js');
+const jwtutilities  = global.routes.include('lib', 'jwt-utilities');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
-const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+const campaignController = global.routes.include('controllers', 'entities/Campaign');
+const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
-class acquireTokenController extends endpointController {
+class acquireTokenController extends transactionEndpointController {
 
     constructor(){
-        super({required_permissions: ['user/read','account/read']});
+
+        super({
+            required_permissions: [
+                'user/read',
+                'account/read',
+                'campaign/read',
+                'affiliate/read',
+                'affiliate/create',
+                'tracker/read'
+            ]
+        });
+
     }
 
     execute(event){
 
         return this.preprocessing(event)
-			.then(this.validateInput)
-			.then(this.acquireToken);
+      .then((event) => this.acquireBody(event))
+      .then((event) => this.validateInput(event, this.validateEventSchema))
+      .then((event) => this.validateCampaign(event))
+      .then((event) => this.handleAffiliateInformation(event))
+      .then((event) => this.pushToRedshift(event))
+			.then(() => this.acquireToken());
 
     }
 
-	//Note: This is the sort of thing that is likely to be necessary however all functionality has been abstracted to other classes for the time being
-    validateInput(event){
+    validateEventSchema(parameters){
 
-        du.debug('Validate Input');
+        du.debug('Validate Event Schema');
 
-        return Promise.resolve(event);
+        let v = new Validator();
+        let schema = global.routes.include('model', 'endpoints/token');
+        let affiliates_schema = global.routes.include('model', 'endpoints/affiliates');
+
+        v.addSchema(affiliates_schema, '/Affiliates');
+        return v.validate(parameters, schema);
 
     }
 
-    acquireToken (event) {
+    validateCampaign(event){
 
-        du.debug('Validate Token');
+        du.debug('Validate Campaign');
 
-		//Note:  The presence of this has already been assured in the endpoint.js class in the preprocessing event
-        let user_alias = global.user.alias;
+        return campaignController.get(event.campaign).then((campaign) => {
 
-		//Note: The transaction JWT is only valid for one hour
-        let _timestamp = timestamp.createTimestampSeconds() + (60 * 60);
+            if(!_.has(campaign, 'id')){ throw new Error('Invalid Campaign ID: '+event.campaign); }
 
-		//Technical Debt:  we want the account in the JWT too...
-        let payload = {
-            iat: _timestamp,
-            exp: _timestamp,
-            user_alias: user_alias
-        }
+            return event;
 
-        let transaction_jwt = jwt.sign(payload, process.env.transaction_secret_key);
+        });
+
+    }
+
+    pushToRedshift(event){
+
+        du.debug('Push To Redshift');
+
+        let event_object = this.createEventObject(event);
+
+        return this.pushRecordToRedshift('events', event_object).then(() => {
+
+            return event;
+
+        });
+
+    }
+
+    acquireToken () {
+
+        du.debug('Acquire Token');
+
+        let transaction_jwt = jwtutilities.getJWT({user:{user_alias: global.user.alias}}, 'transaction');
 
         return Promise.resolve(transaction_jwt);
 

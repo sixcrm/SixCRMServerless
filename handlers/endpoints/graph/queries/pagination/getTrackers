@@ -1,0 +1,25 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		trackerlist ({argumentation}) {
+			trackers {
+				id,
+				affiliate {
+					id
+				},
+				body,
+				type,
+				created_at,
+				updated_at,
+			}
+			pagination {
+				count,
+				end_cursor,
+				has_next_page,
+				last_evaluated
+			}
+		},
+	}"
+}

@@ -2,10 +2,10 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
-		createcreditcard (creditcard: { ccnumber: \"3111111111111111\", expiration: \"1025\", ccv: \"999\", name: \"Rama2 Damunaste\", address: { line1: \"102 Skid Rw.\", line2: \"Suite 100\", city: \"Portland\", state: \"Oregon\", zip: \"97213\", country: \"USA\" }, id: \"105207a0-928d-4dd4-a0d6-889965a621fa\" }) { 
+	mutation {
+		createcreditcard (creditcard: { number: \"3111111111111111\", expiration: \"1025\", ccv: \"999\", name: \"Rama2 Damunaste\", address: { line1: \"102 Skid Rw.\", line2: \"Suite 100\", city: \"Portland\", state: \"Oregon\", zip: \"97213\", country: \"USA\" }, id: \"105207a0-928d-4dd4-a0d6-889965a621fa\" }) {
 			id,
-			ccnumber,
+			number,
 			expiration,
 			ccv,
 			name,
@@ -19,6 +19,6 @@
 			},
 			created_at,
 			updated_at
-		} 
+		}
 	}"
 }

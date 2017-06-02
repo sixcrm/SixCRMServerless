@@ -4,10 +4,13 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 
-class searchController {
+var authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
+
+class searchController extends authenticatedController {
 
     constructor(){
 
+        super();
 		//Technical Debt:  This needs to be configured.
         this.entity_types = {
             product: 'product',

@@ -13,64 +13,63 @@ class verifySignatureController {
     execute(event){
 
         return this.parseEventSignature(event)
-			.then(this.createTokenObject)
-			.then(this.verifyTimestamp)
-			.then(this.verifySignature)
-			.then(this.populateAuthorityUser);
+      .then(this.createTokenObject)
+      .then(this.verifyTimestamp)
+      .then(this.verifySignature)
+      .then(this.populateAuthorityUser);
 
     }
 
  	parseEventSignature(event){
 
- 		du.debug('Parse Event Signature');
+     du.debug('Parse Event Signature');
 
- 		return new Promise((resolve, reject) => {
+     var tokens = event.authorizationToken.split(':');
 
- 			var tokens = event.authorizationToken.split(':');
+     if(!_.isArray(tokens) || !(tokens.length == 3)){
 
- 			if(!_.isArray(tokens) || !(tokens.length == 3)){ return reject(false); }
+         du.warning('Signature failed:  Incorrect structure');
 
- 			resolve(tokens);
+         return Promise.reject(false);
+     }
 
- 		});
+     return Promise.resolve(tokens);
 
  	}
 
  	createTokenObject(tokens){
 
- 		du.debug('Create Token Object');
+     du.debug('Create Token Object');
 
- 		return new Promise((resolve, reject) =>	{
+     return new Promise((resolve, reject) =>	{
 
-     accessKeyController.disableACLs();
+         accessKeyController.disableACLs();
+         accessKeyController.getAccessKeyByKey(tokens[0]).then((access_key) => {
+             accessKeyController.enableACLs();
 
-     accessKeyController.getAccessKeyByKey(tokens[0]).then((access_key) => {
+             if(_.has(access_key, 'secret_key') && _.has(access_key, 'id')){
 
-         accessKeyController.enableACLs();
+                 let token_object = {
+                     access_key: access_key,
+                     timestamp: tokens[1],
+                     signature: tokens[2]
+                 };
 
-         if(_.has(access_key, 'secret_key') && _.has(access_key, 'id')){
+                 return resolve(token_object);
 
-             let token_object = {
-                 access_key: access_key,
-                 timestamp: tokens[1],
-                 signature: tokens[2]
-             };
+             }else{
 
-             return resolve(token_object);
+                 return reject(new Error('Unset Access Key properties.'));
 
-         }else{
+             }
 
-             return reject(new Error('Unset Access Key properties.'));
+         }).catch((error) => {
 
-         }
+             return reject(error);
 
-     }).catch((error) => {
-
-         return reject(error);
+         });
 
      });
-
- });
 
  	}
 
@@ -79,21 +78,17 @@ class verifySignatureController {
 
         du.debug('Verify Timestamp');
 
-        return new Promise((resolve, reject) => {
+        let time_difference = timestamp.getTimeDifference(token_object.timestamp);
 
-            var time_difference = timestamp.getTimeDifference(token_object.timestamp);
+        if(time_difference > (60 * 60 * 5)){
 
-            if(time_difference > (60 * 60 * 5)){
+            du.warning('Signature failed:  Timestamp expired');
 
-                du.debug('Timestamp Expired');
+            return Promise.reject(false);
 
-                return reject(false);
+        }
 
-            }
-
-            return resolve(token_object);
-
-        });
+        return Promise.resolve(token_object);
 
     }
 
@@ -101,21 +96,17 @@ class verifySignatureController {
 
         du.debug('Verify Signature');
 
-        return new Promise((resolve, reject) => {
+        if(!signature.validateSignature(token_object.access_key.secret_key, token_object.timestamp, token_object.signature)){
 
-            if(!signature.validateSignature(token_object.access_key.secret_key, token_object.timestamp, token_object.signature)){
+            du.warning('Signature failed:  Incorrect Signature');
 
-                du.debug('Failed signature validation');
+            return Promise.reject(false);
 
-                return reject(false);
+        }else{
 
-            }else{
+            return Promise.resolve(token_object);
 
-                return resolve(token_object);
-
-            }
-
-        });
+        }
 
     }
 
@@ -123,19 +114,13 @@ class verifySignatureController {
 
         du.debug('Populate Authority User');
 
-        return new Promise((resolve, reject) => {
+        userController.disableACLs();
+        return userController.getUserByAccessKeyId(token_object.access_key.id).then((user) => {
+            userController.enableACLs();
 
-            userController.disableACLs();
+            return userController.validate(user).then(() => {
 
-            return userController.getUserByAccessKeyId(token_object.access_key.id).then((user) => {
-
-                userController.enableACLs();
-
-                return resolve(user);
-
-            }).catch((error) =>{
-
-                return reject(error);
+                return user;
 
             });
 

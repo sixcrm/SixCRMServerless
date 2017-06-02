@@ -36,7 +36,7 @@ describe('Customer indexing test', function() {
 
     let test_user = global.test_users[0];
     let test_account = global.test_accounts[0];
-    let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.auth0.secret_key);
+    let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
     let account = test_account.id;
 
     it('Customer is available in index after creation and not available after delete', (done) => {

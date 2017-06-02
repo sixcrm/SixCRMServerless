@@ -1,0 +1,17 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation {
+		updatetracker (tracker: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", affiliate: \"6b6331f6-7f84-437a-9ac6-093ba301e455\", type: \"postback\", body:\"http://sofunagain.com\"}) {
+			id,
+			affiliate{
+				id
+			},
+			type,
+			body,
+			created_at,
+			updated_at
+		}
+	}"
+}

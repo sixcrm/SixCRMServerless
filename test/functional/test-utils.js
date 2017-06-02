@@ -24,6 +24,8 @@ class TestUtils {
      * Technical Debt: this should be read from serverless.yml and/or config/local/site.yml
      */
     setEnvironmentVariables() {
+        process.env.site_jwt_secret_key = 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV';
+
         process.env.stage = 'local';
 
         process.env.dynamo_endpoint = 'http://localhost:8001';
@@ -45,6 +47,7 @@ class TestUtils {
         process.env.users_table = 'localusers';
         process.env.user_acls_table = 'localuseracls';
         process.env.user_settings_table = 'localuser_settings';
+        process.env.user_signing_strings_table = 'localuser_signing_strings';
         process.env.loadbalancers_table = 'localloadbalancers';
         process.env.product_schedules_table = 'localproduct_schedules';
         process.env.affiliates_table = 'localaffiliates';
