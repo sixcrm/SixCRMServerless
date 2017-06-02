@@ -7,7 +7,7 @@ SELECT
   fa.acted_upon,
   fa.acted_upon_type,
   fa.associated_with,
-  fa.accociated_with_type
+  fa.associated_with_type
 FROM f_activity fa
 WHERE 1
   {{filter}}

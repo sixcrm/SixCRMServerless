@@ -15,7 +15,7 @@ CREATE TABLE f_activity
   acted_upon       VARCHAR(128),
   acted_upon_type  VARCHAR(128),
   associated_with  VARCHAR(128),
-  accociated_with_type VARCHAR(128)
+  associated_with_type VARCHAR(128)
 )
   sortkey (datetime);
 
