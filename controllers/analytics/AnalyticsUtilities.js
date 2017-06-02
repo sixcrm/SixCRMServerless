@@ -9,6 +9,7 @@ const redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
 const mathutilities =  global.routes.include('lib', 'math-utilities.js');
 
 const cacheController = global.routes.include('controllers', 'providers/Cache.js');
+
 //Technical Debt:  Create SQL Query Builder class and abstract the query building methods there.
 
 module.exports = class AnalyticsUtilities {

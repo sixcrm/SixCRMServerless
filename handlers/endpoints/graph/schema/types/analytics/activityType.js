@@ -43,6 +43,10 @@ module.exports.graphObj = new GraphQLObjectType({
         associated_with_type: {
             type: GraphQLString,
             description: ''
+        },
+        english_readable:{
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The english readable statement associated with the activity row.'
         }
     }),
     interfaces: []
