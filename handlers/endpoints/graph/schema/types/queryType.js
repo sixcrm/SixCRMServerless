@@ -106,6 +106,8 @@ let eventFunnelType =  require('./analytics/eventFunnelType');
 let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
 
+let listActivityType = require('./analytics/listActivityType');
+
 let eventsByFacetType =  require('./analytics/eventsByFacetType');
 let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
 
@@ -612,6 +614,16 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, analyticsfilter){
                 return analyticsController.getMerchantProviderAmount(analyticsfilter.analyticsfilter);
+            }
+        },
+        listactivity: {
+            type: listActivityType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getActivity(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         transactionlistbycustomer: {
