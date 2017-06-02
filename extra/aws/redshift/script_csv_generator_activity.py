@@ -22,7 +22,7 @@ d2 = datetime.strptime('4/21/2017 10:00 AM', '%m/%d/%Y %I:%M %p')
 
 actor = [uuid.uuid4() for x in range(10)]
 acted_upon = [uuid.uuid4() for x in range(10)]
-accociated_with = [uuid.uuid4() for x in range(10)]
+associated_with = [uuid.uuid4() for x in range(10)]
 
 
 g=open("activity.csv","w",newline="\n", encoding="utf-8")
@@ -49,7 +49,7 @@ for i in range(1000000):
       random.choice(["continued","deleted","created new"]),
       random.choice(acted_upon),
       random.choice(["customer","merchant processor","system"]),
-      random.choice(accociated_with),
+      random.choice(associated_with),
       random.choice(["customer","merchant processor","system"])
       ))
 g.close()

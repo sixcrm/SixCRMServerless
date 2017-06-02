@@ -64,7 +64,7 @@
 				"enum": ["merchant processor", "system","customer"]
 			}
 		},
-		"accociated_with_type":{
+		"associated_with_type":{
 			"type": "array",
 			"minItems": 1,
 			"uniqueItems": true,
