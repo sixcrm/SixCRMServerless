@@ -108,6 +108,7 @@ module.exports = class EndpointController {
 
         du.debug('Parse Event');
 
+
         return new Promise((resolve, reject) => {
 
             if(!_.isObject(event)){
@@ -118,6 +119,7 @@ module.exports = class EndpointController {
 
                 }catch(error){
 
+                    du.warning(error);
                     return reject(error);
 
                 }

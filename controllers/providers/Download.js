@@ -42,8 +42,14 @@ class DownloadController {
 
             let content_length = this.calculateContentLength(transformed_data);
 
+            response_headers['Content-Description'] = 'File Transfer';
+            response_headers['Cache-Control'] = 'must-revalidate, post-check=0, pre-check=0';
+            response_headers['Pragma'] = 'public';
             response_headers['Content-Type'] = 'application/octet-stream';
             response_headers['Content-Disposition'] = 'attachment;filename=awdawdawd.json';
+            response_headers['Content-Transfer-Encoding'] = 'binary';
+            response_headers['Connection'] = 'Keep-Alive';
+            response_headers['Expires'] = '0';
             response_headers['Content-Length'] = content_length.toString();
 
         }

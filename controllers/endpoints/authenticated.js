@@ -115,7 +115,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
                 }else if(user == false){
 
-                    return new Error('Unknown user.  Please contact the system administrator.');
+                    return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
 
                 }
 
@@ -133,7 +133,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
                 }else if(user == false){
 
-                    return new Error('Unknown user.  Please contact the system administrator.');
+                    return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
 
                 }
 

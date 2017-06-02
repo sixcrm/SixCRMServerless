@@ -1,9 +1,8 @@
 {
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
-	"pathParameters": "{ \"account\": \"*\" }"
-	"body":"
-	query {
-		transactionsummary (analyticsfilter:{start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-02T17:23:43.043Z\", campaign:[\"767f7a0a-d8c1-426d-abeb-6b333e855daf\"], targetperiodcount:24}) {
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"query {
+		transactionsummary (analyticsfilter:{start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-02T17:23:43.043Z\", campaign:[\"767f7a0a-d8c1-426d-abeb-6b333e855daf\"], targetperiodcount:24}){
 			transactions {
 				datetime,
 				byprocessorresult {

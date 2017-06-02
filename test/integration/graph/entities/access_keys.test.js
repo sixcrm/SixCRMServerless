@@ -49,7 +49,7 @@ describe('Graph '+entity+' Test', function() {
 					//let account = tu.getAccount(test.query);
               let account = test_account.id;
 
-              du.warning(account);
+              du.debug(account, test_jwt);
 
               it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
                   var query = tu.getQuery(test.query);
