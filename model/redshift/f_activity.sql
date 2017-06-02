@@ -4,18 +4,17 @@
 */
 
 
-
 CREATE TABLE f_activity
 (
   id               VARCHAR(128) NOT NULL,
   datetime         TIMESTAMP    NOT NULL,
-  actor            VARCHAR(128)  NOT NULL,
-  actor_type       VARCHAR(128),
-  action           VARCHAR(128),
-  acted_upon       VARCHAR(128),
-  acted_upon_type  VARCHAR(128),
-  associated_with  VARCHAR(128),
-  associated_with_type VARCHAR(128)
+  actor            VARCHAR(36)  NOT NULL,
+  actor_type       VARCHAR(36),
+  action           VARCHAR(36),
+  acted_upon       VARCHAR(36),
+  acted_upon_type  VARCHAR(36),
+  associated_with  VARCHAR(36),
+  associated_with_type VARCHAR(36)
 )
   sortkey (datetime);
 
