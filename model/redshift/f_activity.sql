@@ -6,7 +6,7 @@
 
 CREATE TABLE f_activity
 (
-  id               VARCHAR(128) NOT NULL,
+  id               VARCHAR(36) NOT NULL,
   datetime         TIMESTAMP    NOT NULL,
   actor            VARCHAR(36)  NOT NULL,
   actor_type       VARCHAR(36),
