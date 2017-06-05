@@ -120,6 +120,7 @@ let merchantProviderAmountType =  require('./analytics/merchantProviderAmountTyp
 let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
 let analyticsPaginationInputType = require('./analytics/analyticsPaginationInputType');
 let analyticsActivityFilterInputType = require('./analytics/analyticsActivityFilterInputType');
+let analyticsCustomerActivityFilterInputType = require('./analytics/analyticsCustomerActivityFilterInputType');
 
 const sessionController = global.routes.include('controllers', 'entities/Session.js');
 
@@ -625,6 +626,16 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, analyticsfilter){
                 return analyticsController.getActivity(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+            }
+        },
+        listactivitybycustomer: {
+            type: listActivityType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsCustomerActivityFilterInputType.graphObj },
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getActivityByCustomer(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         transactionlistbycustomer: {

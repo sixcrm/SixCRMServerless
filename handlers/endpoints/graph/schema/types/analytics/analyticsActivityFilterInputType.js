@@ -9,40 +9,40 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'AnalyticsActivityFilterInput',
     fields: () => ({
         start: {
-            description: 'The transaction summary start daytime.',
+            description: '',
             type: new GraphQLNonNull(GraphQLString)
         },
         end: {
-            description: 'The transaction summary start daytime.',
+            description: '',
             type: new GraphQLNonNull(GraphQLString)
         },
         actor:{
             description: '',
-            type: GraphQLString
+            type: new GraphQLList(GraphQLString)
         },
         actor_type:{
             description: '',
-            type: GraphQLString
+            type: new GraphQLList(GraphQLString)
         },
         action:{
             description: '',
-            type: GraphQLString
+            type: new GraphQLList(GraphQLString)
         },
         acted_upon:{
             description: '',
-            type: GraphQLString
+            type: new GraphQLList(GraphQLString)
         },
         acted_upon_type:{
             description: '',
-            type: GraphQLString
+            type: new GraphQLList(GraphQLString)
         },
         associated_with:{
             description: '',
-            type: GraphQLString
+            type: new GraphQLList(GraphQLString)
         },
         associated_with_type:{
             description: '',
-            type: GraphQLString
+            type: new GraphQLList(GraphQLString)
         }
     })
 });

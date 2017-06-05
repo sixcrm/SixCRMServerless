@@ -30,21 +30,23 @@ module.exports = class AnalyticsUtilities {
     }
 
     //Technical Debt:  Messy.  Refactor.
-    getResults(query_name, parameters, query_filters){
+    getResults(query_name, parameters, query_filters, or_groups){
 
-        du.debug('Get Results');
+        du.highlight('Get Results');
 
         return new Promise((resolve, reject) => {
 
             parameters = this.appendAccount(parameters);
 
-            parameters = this.createQueryFilter(parameters, query_filters);
+            parameters = this.createQueryFilter(parameters, query_filters, or_groups);
 
             this.validateQueryParameters(query_name, parameters).then(() => {
 
                 return this.getQueryString(query_name).then((query) => {
 
                     query = this.parseQueryParameters(query, parameters);
+
+                    du.highlight('Parameters:', parameters);
 
                     du.highlight('Query:', query);
 
@@ -122,21 +124,50 @@ module.exports = class AnalyticsUtilities {
 
     }
 
-    createQueryFilter(parameters, filters_array){
+    // Technical Debt: The way we handle logical OR grouping is messy. write a generic a simpler solution.
+    createQueryFilter(parameters, filters_array, or_groups){
 
-        du.debug('Create Query Filter');
+        du.highlight('Create Query Filter', parameters, filters_array);
 
         let filter_array = [];
 
-        filters_array.forEach((filter) => {
+        if (!or_groups || or_groups.length === 0) {
 
-            if(_.has(parameters, filter)){
+            filters_array.forEach((filter) => {
 
-                filter_array.push('AND '+filter+' IN (\''+parameters[filter].join('\',\'')+'\')');
+                if (_.has(parameters, filter)) {
 
-            }
+                    du.highlight(filter, parameters[filter]);
 
-        });
+                    filter_array.push('AND ' + filter + ' IN (\'' + parameters[filter].join('\',\'') + '\')');
+
+                }
+
+            });
+        } else {
+            let statement = 'AND (';
+            let or_statement = '';
+
+            or_groups.forEach((group, i) => {
+
+                group.forEach((item, i) => {
+                    or_statement += `${item} IN ('${parameters[item].join(`','`)}') `;
+                    if (i < group.length - 1) {
+                        or_statement += ' AND '
+                    }
+                });
+
+                if (i < or_groups.length - 1) {
+                    or_statement += ') OR (';
+                } else {
+                    or_statement += ')';
+                }
+
+            });
+            statement += or_statement;
+
+            filter_array.push(statement);
+        }
 
         du.info(filter_array);
 
