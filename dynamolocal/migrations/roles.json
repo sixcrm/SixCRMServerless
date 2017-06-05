@@ -56,7 +56,7 @@
     				"notification/*",
             "notificationsetting/*",
             "usersetting/*",
-			"usersigningstring/*",
+			      "usersigningstring/*",
             "userdevicetoken/*",
             "tracker/*"
         	],

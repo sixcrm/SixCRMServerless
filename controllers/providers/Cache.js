@@ -22,7 +22,7 @@ class cacheController {
 
         du.debug('Use Cache');
 
-        if(this.cacheActive()){
+        if(this.cacheActive() && this.cacheEnabled()){
 
             return this.validatePromise(data_promise).then((validated) => {
 
@@ -64,7 +64,30 @@ class cacheController {
 
         }else{
 
-            return data_promise();
+            return data_promise().then((results) => {
+
+                if(this.cacheActive()){
+
+                    return this.createKey(parameters).then((key) => {
+
+                        return this.setCache(key, JSON.stringify(results), expiration).then((reply) => {
+
+                            du.warning('Redis Set for key "'+key+'": '+reply);
+
+                            return Promise.resolve(results);
+
+                        });
+
+                    });
+
+                }else{
+
+                    return Promise.resolve(results);
+
+                }
+
+
+            });
 
         }
 
@@ -191,15 +214,47 @@ class cacheController {
 
         if(_.has(process.env, 'usecache') && parseInt(process.env.usecache) > 0){
 
-            du.warning('Cache active.');
+            du.warning('Cache Active');
 
             return true;
 
         }
 
-        du.warning('Cache not active.')
+        du.warning('The cache is not active.  Please check serverless configuration.');
 
         return false;
+
+    }
+
+    setDisable(setting){
+
+        du.debug('Set Disable');
+
+        this.disable = setting;
+
+    }
+
+    cacheEnabled(){
+
+        du.debug('Cache Enabled');
+
+        if(_.has(this, 'disable') && this.disable === true){
+
+            du.warning('Cache Disabled (Local Setting)');
+
+            return false;
+
+        }
+
+        if(_.has(global, 'use_cache') && global.use_cache == false){
+
+            du.warning('Cache Disabled (Global Setting)');
+
+            return false;
+
+        }
+
+        return true;
 
     }
 

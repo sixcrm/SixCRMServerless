@@ -36,45 +36,59 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getEventsByFacet(parameters, pagination, facet){
+    executeAnalyticsFunction(argumentation, function_name){
+
+        if(_.isFunction(this[function_name])){
+
+            this.setCacheSettings(argumentation);
+
+            return this[function_name](argumentation);
+
+        }else{
+
+            throw new Error('AnalyticsController.'+function_name+' is not defined.');
+
+        }
+
+    }
+
+    getEventsByFacet(parameters){
 
         du.debug('Get Events By Facet');
 
-        parameters.facet = facet;
-
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
         return this.getResults('events_by_facet', parameters, this.default_query_filters);
 
     }
 
-    getTransactionsByFacet(parameters, pagination, facet){
+    getTransactionsByFacet(parameters){
 
         du.debug('Get Transactions By Facet');
 
-        parameters.facet = facet;
+        //parameters.facet = parameters.facet;
 
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
         return this.getResults('transactions_by_facet', parameters, this.default_query_filters);
 
     }
 
-    getTransactions(parameters, pagination){
+    getTransactions(parameters){
 
         du.debug('Get Transactions');
 
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
         return this.getResults('transactions', parameters, this.default_query_filters);
 
     }
 
-    getEvents(parameters, pagination){
+    getEvents(parameters){
 
         du.debug('Get Events');
 
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
         return this.getResults('events', parameters, this.default_query_filters);
 
@@ -84,11 +98,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Event Summary');
 
-        let target_period_count = this.getTargetPeriodCount(parameters);
+        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
 
-        let period_selection = this.periodSelection(parameters.start, parameters.end, target_period_count);
+        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
 
-        parameters = this.appendPeriod(parameters, period_selection);
+        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
         return this.getResults('aggregation_event_type_count', parameters, this.default_query_filters);
 
@@ -98,7 +112,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Campaigns By Amount');
 
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
         return this.getResults('campaigns_by_amount', parameters, this.default_query_filters);
 
@@ -108,7 +122,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Merchant Provider Amount');
 
-        return this.getResults('merchant_provider_amount', parameters, this.default_query_filters);
+        return this.getResults('merchant_provider_amount', parameters.analyticsfilter, this.default_query_filters);
 
     }
 
@@ -116,7 +130,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Events By Affiliate');
 
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
         return this.getResults('events_by_affiliate', parameters, this.default_query_filters);
 
@@ -126,9 +140,9 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Transactions By Affiliate');
 
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
-        return this.getResults('transactions_by_affiliate', parameters, this.default_query_filters);
+        return this.getResults('transactions_by_affiliate', parameters.analyticsfilter, this.default_query_filters);
 
     }
 
@@ -136,7 +150,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Transaction Overview');
 
-        return this.getResults('transaction_summary', parameters, this.default_query_filters);
+        return this.getResults('transaction_summary', parameters.analyticsfilter, this.default_query_filters);
 
     }
 
@@ -144,11 +158,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Transaction Summary');
 
-        let target_period_count = this.getTargetPeriodCount(parameters);
+        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
 
-        let period_selection = this.periodSelection(parameters.start, parameters.end, target_period_count);
+        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
 
-        parameters = this.appendPeriod(parameters, period_selection);
+        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
         return this.getResults('aggregation_processor_amount', parameters, this.default_query_filters);
 
@@ -158,7 +172,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Campaign Delta');
 
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
         return this.getResults('campaign_delta', parameters, this.default_query_filters);
 
@@ -168,21 +182,21 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Get Campaign Delta');
 
-        return this.getResults('event_funnel', parameters, this.default_query_filters);
+        return this.getResults('event_funnel', parameters.analyticsfilter, this.default_query_filters);
 
     }
 
-    getActivity(parameters, pagination){
+    getActivity(args){
 
         du.debug('Get Activity');
 
-        parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
+        let parameters = paginationutilities.mergePagination(args.analyticsfilter, paginationutilities.createSQLPaginationInput(args.pagination));
 
         let filters = this.default_query_filters;
 
-        this.activity_optional_params.forEach((optionalParam) => {
-            if (parameters[optionalParam]) {
-                filters.push(optionalParam);
+        this.activity_optional_params.forEach((optional_parameter) => {
+            if (parameters[optional_parameter]) {
+                filters.push(optional_parameter);
             }
         });
 
@@ -190,7 +204,9 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getActivityByCustomer(parameters, pagination){
+    getActivityByCustomer(args){
+
+        let parameters = paginationutilities.mergePagination(args.analyticsfilter, paginationutilities.createSQLPaginationInput(args.pagination));
 
         du.debug('Get Activity By Customer', parameters);
 
@@ -207,7 +223,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         // return this.getActivity(params, pagination);
 
-        params = paginationutilities.mergePagination(params, paginationutilities.createSQLPaginationInput(pagination));
+        params = paginationutilities.mergePagination(params, paginationutilities.createSQLPaginationInput(args.pagination));
 
         let filters = this.default_query_filters;
 

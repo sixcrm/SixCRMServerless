@@ -28,7 +28,20 @@ class graphController extends authenticatedController{
       .then((event) => this.acquireQuery(event))
       .then((event) => this.acquireQueryParameters(event))
       .then((event) => this.acquireOutputParameters(event))
+      .then((event) => this.setCacheParameters(event))
 			.then((event) => this.graphQuery(event));
+
+    }
+
+    setCacheParameters(event){
+
+        if(_.has(this.queryString, 'use_cache')){
+
+            this.resolveController.setCacheParameters({use_cache: this.queryString.use_cache});
+
+        }
+
+        return Promise.resolve(event);
 
     }
 
@@ -82,7 +95,6 @@ class graphController extends authenticatedController{
             return graphql(SixSchema, this.query, null, null, this.query_parameters);
 
         };
-
 
         return this.resolveController.resolve(graph_resolver);
 

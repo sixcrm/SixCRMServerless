@@ -38,10 +38,18 @@ module.exports = class ActivityToEnglishUtilities {
 
     validateActivityRow(){
 
+        du.debug('Validate Activity Row');
+
         try{
+
             mvu.validateModel(this.activity_row, global.routes.path('model', 'redshift/activity.json'));
+
         }catch(e){
+
+            du.warning(this.activity_row, e);
+
             return Promise.reject(e);
+
         }
 
         return Promise.resolve(true);
@@ -50,17 +58,31 @@ module.exports = class ActivityToEnglishUtilities {
 
     acquireResources(){
 
+        du.debug('Acquire Resources');
+
         let promises = [];
 
         promises.push(this.getActor());
         promises.push(this.getActedUpon());
         promises.push(this.getAssociatedWith());
 
-        return Promise.all(promises);
+        return Promise.all(promises).then((promises) => {
+
+            this.actor = promises[0];
+            this.acted_upon = promises[1];
+            this.associated_with = promises[2];
+
+            return Promise.resolve(true);
+
+        });
 
     }
 
     setEnglishTemplate(){
+
+        du.debug('Set English Template');
+
+        du.info(this);
 
         if(_.has(this, 'associated_with') && _.has(this,'acted_upon')){
             this.english_template = this.statement_templates.actor_and_acted_upon_and_associated_with;
@@ -75,6 +97,8 @@ module.exports = class ActivityToEnglishUtilities {
     }
 
     buildObject(){
+
+        du.debug('Build Object');
 
         let english_object = {
             actor: this.actor,
@@ -91,6 +115,8 @@ module.exports = class ActivityToEnglishUtilities {
 
     parseActivityRow(){
 
+        du.debug('Parse Activity Row');
+
         let parsed_activity_row = '';
 
         return Promise.resolve(parsed_activity_row);
@@ -99,11 +125,15 @@ module.exports = class ActivityToEnglishUtilities {
 
     getActor(){
 
+        du.debug('Get Actor');
+
         return this.get('actor');
 
     }
 
     getAssocatedWith(){
+
+        du.debug('Get Associated With');
 
         return this.get('associated_with');
 
@@ -111,19 +141,35 @@ module.exports = class ActivityToEnglishUtilities {
 
     getActedUpon(){
 
+        du.debug('Get Acted Upon');
+
         return this.get('acted_upon');
 
     }
 
     get(type){
 
-        if(!(_.has(this.activity_row, type) && this.activity_row[type] != '')){
+        du.debug('Get');
+
+        if(!_.has(this.activity_row, type) || this.activity_row[type] == ''){
 
             return Promise.resolve(null);
 
         }
 
-        return this.getEntity(this.activity_row[type], this.activity[type+'_type']).then((entity) => {
+        if(this.activity_row[type] == 'system' || this.activity_row[type+'_type'] == 'system'){
+
+            return Promise.resolve(this.getSystemObject());
+
+        }
+
+        let parameters = {id: this.activity_row[type], type: this.activity_row[type+'_type']};
+
+        du.warning(this.activity_row, parameters);
+
+        return this.getEntity(parameters).then((entity) => {
+
+            du.warning(entity);
 
             if(_.has(entity, 'id')){
 
@@ -135,19 +181,37 @@ module.exports = class ActivityToEnglishUtilities {
 
             return Promise.reject(new Error('Unable to identify '+type+'.'));
 
+        }).catch((error) => {
+
+            throw error;
+
         });
+
 
     }
 
-    getEntity(id, type){
+    getSystemObject(){
 
-        let ec = new EntityController(type);
+        return {
+            id: 'system',
+            name: 'SixCRM',
+        };
 
-        return ec.get(id);
+    }
+
+    getEntity(parameters){
+
+        du.debug('Get Entity');
+
+        let ec = new EntityController(parameters.type);
+
+        return ec.get(parameters.id);
 
     }
 
     setActivityRow(activity_row){
+
+        du.debug('Set Activity Row');
 
         this.activity_row = activity_row;
 

@@ -18,28 +18,34 @@ module.exports = function(results, parameters){
 
             let a2e = new activityToEnglishController(result);
 
-            let english_object_string = '';
+            let english_object_string = null;
 
             try{
 
                 english_object_string = a2e.buildActivityEnglishObject();
 
             }catch(e){
+
                 du.warning(e);
+
             }
 
-            result_array.push({
-                id: result.id,
-                datetime: result.datetime,
-                actor: result.actor,
-                actor_type: result.actor_type,
-                action: result.action,
-                acted_upon: result.acted_upon,
-                acted_upon_type: result.acted_upon_type,
-                associated_with: result.associated_with,
-                associated_with_type: result.associated_with_type,
-                english: english_object_string
-            });
+            if(_.isNull(english_object_string)){
+
+                result_array.push({
+                    id: result.id,
+                    datetime: result.datetime,
+                    actor: result.actor,
+                    actor_type: result.actor_type,
+                    action: result.action,
+                    acted_upon: result.acted_upon,
+                    acted_upon_type: result.acted_upon_type,
+                    associated_with: result.associated_with,
+                    associated_with_type: result.associated_with_type,
+                    english: english_object_string
+                });
+
+            }
 
         });
 
