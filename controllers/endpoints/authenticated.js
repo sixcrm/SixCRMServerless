@@ -113,8 +113,11 @@ module.exports = class AuthenticatedController extends endpointController {
 
                 }else if(user == false){
 
-                    return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    du.warning('Unable to acquire user, setting global user to email.');
 
+                    permissionutilities.setGlobalUser(user_string);
+
+                    return event;
                 }
 
                 return Promise.resolve(event);
@@ -131,7 +134,11 @@ module.exports = class AuthenticatedController extends endpointController {
 
                 }else if(user == false){
 
-                    return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    du.warning('Unable to acquire user, setting global user to alias.');
+
+                    permissionutilities.setGlobalUser(user_string);
+
+                    return event;
 
                 }
 
