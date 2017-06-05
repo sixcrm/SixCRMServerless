@@ -4,6 +4,7 @@
 
 */
 
+drop table f_activity;
 
 CREATE TABLE f_activity
 (
