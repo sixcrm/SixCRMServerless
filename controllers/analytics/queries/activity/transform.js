@@ -18,7 +18,15 @@ module.exports = function(results, parameters){
 
             let a2e = new activityToEnglishController(result);
 
-            let english_object_string = a2e.buildActivityStatement();
+            let english_object_string = '';
+
+            try{
+
+                english_object_string = a2e.buildActivityEnglishObject();
+
+            }catch(e){
+                du.warning(e);
+            }
 
             result_array.push({
                 id: result.id,

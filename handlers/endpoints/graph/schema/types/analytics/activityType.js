@@ -44,9 +44,9 @@ module.exports.graphObj = new GraphQLObjectType({
             type: GraphQLString,
             description: ''
         },
-        english_readable:{
+        english:{
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The english readable statement associated with the activity row.'
+            description: 'An object containin all of the hydrated models as well as a english readable string template for parsing.'
         }
     }),
     interfaces: []

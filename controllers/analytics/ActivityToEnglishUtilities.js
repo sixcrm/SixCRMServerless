@@ -19,14 +19,20 @@ module.exports = class ActivityToEnglishUtilities {
 
     }
 
+    //Entrypoint
     buildActivityEnglishObject(){
 
         du.debug('Build Activity Statement');
 
         return this.validateActivityRow()
-    .then(() => this.acquireResources())
-    .then(() => this.setEnglishTemplate())
-    .then(() => this.buildObject());
+        .then(() => this.acquireResources())
+        .then(() => this.setEnglishTemplate())
+        .then(() => this.buildObject())
+        .catch((error) => {
+
+            return Promise.resolve(JSON.stringify(error));
+
+        });
 
     }
 
