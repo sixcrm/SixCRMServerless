@@ -24,6 +24,16 @@ class AnalyticsController extends AnalyticsUtilities{
             'account'
         ];
 
+        this.activity_optional_params = [
+            'actor',
+            'actor_type',
+            'action',
+            'acted_upon',
+            'acted_upon_type',
+            'associated_with',
+            'associated_with_type'
+        ];
+
     }
 
     getEventsByFacet(parameters, pagination, facet){
@@ -168,7 +178,53 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = paginationutilities.mergePagination(parameters, paginationutilities.createSQLPaginationInput(pagination));
 
-        return this.getResults('activity', parameters, this.default_query_filters);
+        let filters = this.default_query_filters;
+
+        this.activity_optional_params.forEach((optionalParam) => {
+            if (parameters[optionalParam]) {
+                filters.push(optionalParam);
+            }
+        });
+
+        return this.getResults('activity', parameters, filters);
+
+    }
+
+    getActivityByCustomer(parameters, pagination){
+
+        du.debug('Get Activity By Customer', parameters);
+
+        let params = {
+            start: parameters.start,
+            end: parameters.end,
+            actor: [parameters.customer],
+            actor_type: ['customer'],
+            acted_upon: [parameters.customer],
+            acted_upon_type: ['customer'],
+            associated_with: [parameters.customer],
+            associated_with_type: ['customer']
+        };
+
+        // return this.getActivity(params, pagination);
+
+        params = paginationutilities.mergePagination(params, paginationutilities.createSQLPaginationInput(pagination));
+
+        let filters = this.default_query_filters;
+
+        this.activity_optional_params.forEach((optionalParam) => {
+            if (params[optionalParam]) {
+                filters.push(optionalParam);
+            }
+        });
+
+        let or_groups = [
+            ['actor', 'actor_type'],
+            ['acted_upon', 'acted_upon_type'],
+            ['associated_with', 'associated_with_type']
+
+        ];
+
+        return this.getResults('activity', params, filters, or_groups);
 
     }
 
