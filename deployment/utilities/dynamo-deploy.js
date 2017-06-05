@@ -6,11 +6,13 @@ const exec = require('child-process-promise').exec;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
+const retryCount = 3;
 
 class DynamoDeploy {
     constructor(){}
 
-    deployTable(tableFileName, env, region) {
+    deployTable(tableFileName, env, region, counter) {
+        let executionCount = counter || 0;
         let tableName = env+this.getTableName(tableFileName);
 
         return exec(`serverless dynamodb execute -s ${env} -n ${tableFileName} -r ${region}`)
@@ -29,6 +31,11 @@ class DynamoDeploy {
 
             du.error(val);
             du.debug(err);
+
+            if (executionCount++ < retryCount) {
+                return this.deployTable(tableFileName, env, region, executionCount)
+            }
+
             return val;
         });
     }

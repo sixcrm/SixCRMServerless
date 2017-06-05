@@ -119,6 +119,8 @@ let transactionsByAffiliateType =  require('./analytics/transactionsByAffiliateT
 let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
 let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
 let analyticsPaginationInputType = require('./analytics/analyticsPaginationInputType');
+let analyticsActivityFilterInputType = require('./analytics/analyticsActivityFilterInputType');
+let analyticsCustomerActivityFilterInputType = require('./analytics/analyticsCustomerActivityFilterInputType');
 
 const sessionController = global.routes.include('controllers', 'entities/Session.js');
 
@@ -619,11 +621,21 @@ module.exports.graphObj = new GraphQLObjectType({
         listactivity: {
             type: listActivityType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                analyticsfilter: { type: analyticsActivityFilterInputType.graphObj },
                 pagination: {type: analyticsPaginationInputType.graphObj}
             },
             resolve: function(root, analyticsfilter){
                 return analyticsController.getActivity(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+            }
+        },
+        listactivitybycustomer: {
+            type: listActivityType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsCustomerActivityFilterInputType.graphObj },
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, analyticsfilter){
+                return analyticsController.getActivityByCustomer(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         transactionlistbycustomer: {
