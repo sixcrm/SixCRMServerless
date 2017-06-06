@@ -3,28 +3,44 @@
 
 Helper functions writen in plpython
 
-*/ 
-CREATE OR REPLACE FUNCTION public.fn_uuid_random () /*
+*/
+CREATE OR REPLACE FUNCTION public.fn_uuid_random() /*
   Returns a random uuid number
-*/ 
-RETURNS CHARACTER VARYING
+*/
+  RETURNS CHARACTER VARYING
 AS
 'import uuid
 return uuid.uuid4().__str__()' LANGUAGE plpythonu VOLATILE;
 
-CREATE OR REPLACE FUNCTION public.fn_uuid_seq () /*
+CREATE OR REPLACE FUNCTION public.fn_uuid_seq() /*
   Returns a sequential uuid number
-*/ 
-RETURNS CHARACTER VARYING
+*/
+  RETURNS CHARACTER VARYING
 AS
 'import uuid
 return uuid.uuid1().__str__()' LANGUAGE plpythonu VOLATILE;
 
-CREATE OR REPLACE FUNCTION public.fn_uuid (input CHARACTER VARYING) /*
+CREATE OR REPLACE FUNCTION public.fn_uuid(input CHARACTER VARYING) /*
   Returns a uuid number based on the input
-*/ 
-RETURNS CHARACTER VARYING
+*/
+  RETURNS CHARACTER VARYING
 AS
 'import uuid
 return uuid.uuid5(uuid.NAMESPACE_DNS, input).__str__()' LANGUAGE plpythonu VOLATILE;
 
+CREATE OR REPLACE FUNCTION validate_uuid4(uuid_string CHARACTER VARYING)
+  RETURNS BOOLEAN
+AS $$
+    import uuid
+
+    try:
+        val = uuid.UUID(uuid_string, version=4)
+
+    except ValueError:
+        # If it's a value error, then the string
+        # is not a valid hex code for a UUID.
+        return False
+
+    return val.hex == uuid_string.replace('-', '')
+
+$$ LANGUAGE plpythonu VOLATILE;
