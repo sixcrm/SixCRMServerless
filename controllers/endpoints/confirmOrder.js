@@ -44,7 +44,7 @@ class confirmOrderController extends transactionEndpointController{
 
         return this.preprocessing(event)
 			.then((event) => this.acquireQuerystring(event))
-			.then((querystring) => this.validateInput(querystring, this.validateEventSchema))
+			.then((event) => this.validateInput(this.queryString, this.validateEventSchema))
 			.then(this.confirmOrder)
       .then((result_object) => this.pushToRedshift(result_object))
 			.then((results) => this.handleNotifications(results));
@@ -53,13 +53,13 @@ class confirmOrderController extends transactionEndpointController{
 
     validateEventSchema(querystring){
 
-        du.debug('Validate Input');
+        du.debug('Validate Event Schema');
 
-        let confirmorder_schema = global.routes.include('model', 'endpoints/confirmorder');
+        let confirm_order_schema = global.routes.include('model', 'endpoints/confirmorder');
 
-        var v = new Validator();
+        let v = new Validator();
 
-        return v.validate(querystring, confirmorder_schema);
+        return v.validate(querystring, confirm_order_schema);
 
     }
 
