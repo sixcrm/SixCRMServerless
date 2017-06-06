@@ -113,6 +113,10 @@ module.exports = class AuthenticatedController extends endpointController {
 
                 }else if(user == false){
 
+                    if (!this.isUserIntrospection(event)) {
+                        return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    }
+
                     du.warning('Unable to acquire user, setting global user to email.');
 
                     permissionutilities.setGlobalUser(user_string);
@@ -133,6 +137,10 @@ module.exports = class AuthenticatedController extends endpointController {
                     permissionutilities.setGlobalUser(user);
 
                 }else if(user == false){
+
+                    if (!this.isUserIntrospection(event)) {
+                        return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    }
 
                     du.warning('Unable to acquire user, setting global user to alias.');
 
@@ -178,6 +186,17 @@ module.exports = class AuthenticatedController extends endpointController {
 
         });
 
+    }
+
+    /**
+     * Whether this event meant for user instrospection endpoint.
+     */
+    isUserIntrospection(event) {
+        if (event.body.match(/^{\s*userintrospection\s*{/)) {
+            return true;
+        }
+
+        return false;
     }
 
 }
