@@ -2,7 +2,6 @@
 const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities');
 const mvu = global.routes.include('lib', 'model-validator-utilities');
-const parserutilities = global.routes.include('lib', 'parser-utilities');
 const EntityController = global.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class ActivityToEnglishUtilities {
@@ -79,7 +78,7 @@ module.exports = class ActivityToEnglishUtilities {
         promises.push(this.getActedUpon());
         promises.push(this.getAssociatedWith());
 
-        return Promise.all(promises).then((promises) => {
+        return Promise.all(promises).then(() => {
 
             return true;
 

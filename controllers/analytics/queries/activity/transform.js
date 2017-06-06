@@ -1,5 +1,4 @@
 'use strict';
-let _ = require('underscore');
 let du = global.routes.include('lib', 'debug-utilities.js');
 let timestamp = global.routes.include('lib', 'timestamp');
 
