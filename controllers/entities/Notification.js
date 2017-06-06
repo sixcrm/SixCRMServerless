@@ -20,12 +20,7 @@ class notificationController extends entityController {
      */
     listForCurrentUser(pagination) {
 
-        return notificationReadController.markNotificationsAsSeen().then((response) => {
-
-            //Technical Debt:  This needs to change.  Note that notifcations read needs to be available to all users...
-            if(_.isNull(response)){ return Promise.resolve(null); }
-
-            du.warning(global); process.exit();
+        return notificationReadController.markNotificationsAsSeen().then(() => {
 
             return this.queryBySecondaryIndex('user', global.user.id, 'user-index', pagination, true);
 
