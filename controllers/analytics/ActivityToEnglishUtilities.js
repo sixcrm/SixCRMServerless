@@ -46,7 +46,8 @@ module.exports = class ActivityToEnglishUtilities {
 
         }catch(e){
 
-            du.warning(this.activity_row, e);
+            du.warning(this.activity_row);
+            du.warning(e); process.exit();
 
             return Promise.reject(e);
 

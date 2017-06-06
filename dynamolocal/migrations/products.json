@@ -10,7 +10,7 @@
             "AttributeType": "S"
         }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1, 
+            "ReadCapacityUnits": 1,
             "WriteCapacityUnits": 1
         }
     },
@@ -71,23 +71,23 @@
 			"updated_at":"2017-04-06T18:41:12.521Z"
         },
         {
-            "id": "00000000-0000-0000-0000-100000000000",
+            "id": "8a8a5e96-60df-4551-8eb2-1b77c769e5fb",
             "name": "Ship Product Test 1",
             "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
             "sku":"912093802958203958",
             "ship":"true",
             "shipping_delay":"3600",
-            "fulfillment_provider":"00000000-0000-0000-0000-000000000001",
+            "fulfillment_provider":"2344f424-7571-4b40-aea0-e39615fa0338",
             "created_at":"2017-04-06T18:40:41.405Z",
-			"updated_at":"2017-04-06T18:41:12.521Z"  
+			"updated_at":"2017-04-06T18:41:12.521Z"
         },
 		{
-    		"id": "00000000-0000-0000-0000-200000000000",
+    		"id": "d29950cc-1a4d-4e6e-90a5-c7fdf24b95ac",
 			"name": "Ship Product Test 1",
 			"sku":"1098298739485739485",
 			"ship":"true",
 			"shipping_delay":"3600",
-			"fulfillment_provider":"00000000-0000-0000-0000-000000000001",
+			"fulfillment_provider":"2344f424-7571-4b40-aea0-e39615fa0338",
 			"created_at":"2017-04-06T18:40:41.405Z",
 			"updated_at":"2017-04-06T18:41:12.521Z"
 		}
