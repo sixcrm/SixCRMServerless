@@ -10,45 +10,29 @@ module.exports = function(results, parameters){
 
     du.debug('Transformation Function');
 
-    return new Promise((resolve, reject) => {
+    let result_array = [];
 
-        let result_array = [];
+    results.forEach((result) => {
 
-        du.info(results);
+        let result_array_entry = {
+            id: result.id,
+            datetime: timestamp.castToISO8601(result.datetime),
+            actor: result.actor,
+            actor_type: result.actor_type,
+            action: result.action,
+            acted_upon: result.acted_upon,
+            acted_upon_type: result.acted_upon_type,
+            associated_with: result.associated_with,
+            associated_with_type: result.associated_with_type,
+        };
 
-        results.forEach((result) => {
+        let a2e = new activityToEnglishController(result_array_entry);
 
-            let result_array_entry = {
-                id: result.id,
-                datetime: timestamp.castToISO8601(result.datetime),
-                actor: result.actor,
-                actor_type: result.actor_type,
-                action: result.action,
-                acted_upon: result.acted_upon,
-                acted_upon_type: result.acted_upon_type,
-                associated_with: result.associated_with,
-                associated_with_type: result.associated_with_type,
-            };
+        result_array.push(a2e.appendActivityEnglishObject());
 
-            let a2e = new activityToEnglishController(result_array_entry);
+    });
 
-            let english_object_string = null;
-
-            try{
-
-                english_object_string = a2e.buildActivityEnglishObject();
-                du.warning(english_object_string);
-                result_array_entry.english = english_object_string;
-
-            }catch(e){
-
-              //du.warning(e);
-
-            }
-
-            result_array.push(result_array_entry);
-
-        });
+    return Promise.all(result_array).then((result_array) => {
 
         parameters['count'] = results.length;
 
@@ -56,7 +40,7 @@ module.exports = function(results, parameters){
 
         let return_object = {activity:result_array, pagination: pagination_object};
 
-        return resolve(return_object);
+        return return_object;
 
     });
 
