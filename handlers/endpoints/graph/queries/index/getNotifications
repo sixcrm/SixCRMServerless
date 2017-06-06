@@ -1,6 +1,6 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"nikola.bosic@toptal.com\"}}",
-	"pathParameters": "{ \"account\": \"*\" }",
+	"requestContext":"{\"authorizer\":{\"user\":\"nikola.bosic@coingcs.com\"}}",
+	"pathParameters": "{ \"account\": \"5db7ed46-75b1-4ecd-b489-e61ef5d1107a\" }",
 	"body":"
 	query {
 		notificationlist {

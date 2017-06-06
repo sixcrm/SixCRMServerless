@@ -64,6 +64,7 @@ let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 let inviteInputType = require('./user/inviteInputType');
 
 let transactionInputType = require('./transaction/transactionInputType');
+let transactionRefundInputType = require('./transaction/transactionRefundInputType');
 let transactionType = require('./transaction/transactionType');
 
 let userACLInputType = require('./useracl/userACLInputType');
@@ -811,6 +812,17 @@ module.exports.graphObj = new GraphQLObjectType({
                 var id = transaction.id;
 
                 return transactionController.delete(id);
+            }
+        },
+        refundtransaction:{
+            type: transactionType.graphObj,
+            description: 'Refunds a transaction.',
+            args: {
+                transaction: { type: transactionInputType.graphObj },
+                refund: { type: transactionRefundInputType.graphObj }
+            },
+            resolve: (value, args) => {
+                return transactionController.refundTransaction(args);
             }
         },
         createcampaign:{

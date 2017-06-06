@@ -43,6 +43,10 @@ module.exports.graphObj = new GraphQLObjectType({
         associated_with_type: {
             type: GraphQLString,
             description: ''
+        },
+        english:{
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'An object containin all of the hydrated models as well as a english readable string template for parsing.'
         }
     }),
     interfaces: []

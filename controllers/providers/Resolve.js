@@ -12,6 +12,12 @@ class ResolveController {
 
     }
 
+    setCacheParameters(parameters){
+
+        this.cache_parameters = parameters;
+
+    }
+
     setDownloadParameters(parameters){
 
       //Technical Debt: validate parameters
@@ -22,6 +28,12 @@ class ResolveController {
     resolve(data_aquisition_function){
 
         du.debug('Resolve');
+
+        if(_.has(this, 'cache_parameters') && _.has(this.cache_parameters, 'use_cache')){
+
+            global.use_cache = false;
+
+        }
 
         if(_.has(this, 'download_parameters') && _.has(this.download_parameters, 'type')){
 

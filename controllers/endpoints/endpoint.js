@@ -68,6 +68,7 @@ module.exports = class EndpointController {
 
                 }catch(error){
 
+                    du.warning(error);
                     return Promise.reject(error);
 
                 }

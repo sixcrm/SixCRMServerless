@@ -31,6 +31,7 @@ dependencies:
 test:
   override:
     - npm run test-unit
+    - npm run lint
 
 deployment:
   production:
@@ -44,17 +45,29 @@ deployment:
   development:
     branch: development
     commands:
-      - npm run lint
+
+      #Serverless (Lambdas, API Gateway, Roles)
+      - serverless deploy --stage $CIRCLE_BRANCH
+
+      #SQS
       - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
+      - node ./deployment/sqs/deploy_queues.js $CIRCLE_BRANCH
+
+      #DynamoDB
       - npm run purge-tables $CIRCLE_BRANCH
+      - npm run deploy-tables $CIRCLE_BRANCH $AWS_REGION
+
+      #CloudSearch
       #Technical Debt:  This needs to be configured for multi-environment purges
       - node ./deployment/cloudsearch/purge_index.js $CIRCLE_BRANCH
       - node ./deployment/cloudsearch/deploy.js sixcrm-$CIRCLE_BRANCH
-      - npm run deploy-tables $CIRCLE_BRANCH $AWS_REGION
-      # Technical Debt:
-      #   - API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
-      - serverless deploy --stage $CIRCLE_BRANCH
-      - node ./deployment/sqs/deploy_queues.js $CIRCLE_BRANCH
+
+      # Tecnhincal Debt: Add Redshift
+      # Technical Debt:  Add Elasticache and NAT Instance (where necessary)
+      # Technical Debt:  Use Route53 for resource mappings
+      # Technical Debt: API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
+
       - export SIX_VERBOSE=0 && npm run test-integration
-      - ./deployment/environment/deploy_development.sh
+
+      # Merge to upper environment
       - ./deployment/utilities/merge_branches.sh development staging

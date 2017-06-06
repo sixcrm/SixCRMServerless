@@ -111,13 +111,20 @@ module.exports = class AuthenticatedController extends endpointController {
 
                     permissionutilities.setGlobalUser(user);
 
-                    return event;
-
                 }else if(user == false){
 
-                    return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    if (!this.isUserIntrospection(event)) {
+                        return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    }
 
+                    du.warning('Unable to acquire user, setting global user to email.');
+
+                    permissionutilities.setGlobalUser(user_string);
+
+                    return event;
                 }
+
+                return Promise.resolve(event);
 
             });
 
@@ -129,13 +136,21 @@ module.exports = class AuthenticatedController extends endpointController {
 
                     permissionutilities.setGlobalUser(user);
 
-                    return event;
-
                 }else if(user == false){
 
-                    return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    if (!this.isUserIntrospection(event)) {
+                        return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                    }
+
+                    du.warning('Unable to acquire user, setting global user to alias.');
+
+                    permissionutilities.setGlobalUser(user_string);
+
+                    return event;
 
                 }
+
+                return Promise.resolve(event);
 
             });
 
@@ -171,6 +186,17 @@ module.exports = class AuthenticatedController extends endpointController {
 
         });
 
+    }
+
+    /**
+     * Whether this event meant for user instrospection endpoint.
+     */
+    isUserIntrospection(event) {
+        if (event.body.match(/^{\s*userintrospection\s*{/)) {
+            return true;
+        }
+
+        return false;
     }
 
 }

@@ -9,6 +9,7 @@ const redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
 const mathutilities =  global.routes.include('lib', 'math-utilities.js');
 
 const cacheController = global.routes.include('controllers', 'providers/Cache.js');
+
 //Technical Debt:  Create SQL Query Builder class and abstract the query building methods there.
 
 module.exports = class AnalyticsUtilities {
@@ -29,10 +30,26 @@ module.exports = class AnalyticsUtilities {
 
     }
 
+    setCacheSettings(parameters){
+
+        du.debug('Set Cache Settings');
+
+        if(_.has(parameters, 'cache')){
+
+            if(_.has(parameters.cache, 'use_cache') && parameters.cache.use_cache == false){
+
+                cacheController.setDisable(true);
+
+            }
+
+        }
+
+    }
+
     //Technical Debt:  Messy.  Refactor.
     getResults(query_name, parameters, query_filters, or_groups){
 
-        du.highlight('Get Results');
+        du.debug('Get Results');
 
         return new Promise((resolve, reject) => {
 
@@ -127,7 +144,7 @@ module.exports = class AnalyticsUtilities {
     // Technical Debt: The way we handle logical OR grouping is messy. write a generic a simpler solution.
     createQueryFilter(parameters, filters_array, or_groups){
 
-        du.highlight('Create Query Filter', parameters, filters_array);
+        du.debug('Create Query Filter', parameters, filters_array);
 
         let filter_array = [];
 

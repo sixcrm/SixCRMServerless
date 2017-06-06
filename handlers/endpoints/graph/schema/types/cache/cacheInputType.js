@@ -7,7 +7,6 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'CacheInputType',
     fields: () => ({
-        usecache: { type: new GraphQLNonNull(GraphQLBoolean) },
-        expiration: { type: GraphQLInt }
+        use_cache: { type: GraphQLBoolean }
     })
 });

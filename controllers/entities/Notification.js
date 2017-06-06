@@ -20,9 +20,7 @@ class notificationController extends entityController {
      */
     listForCurrentUser(pagination) {
 
-        return notificationReadController.markNotificationsAsSeen().then((response) => {
-
-            if(_.isNull(response)){ return Promise.resolve(null); }
+        return notificationReadController.markNotificationsAsSeen().then(() => {
 
             return this.queryBySecondaryIndex('user', global.user.id, 'user-index', pagination, true);
 

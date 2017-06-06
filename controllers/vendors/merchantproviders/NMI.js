@@ -19,6 +19,12 @@ class NMIController {
         }
     }
 
+    refund(parameters){
+
+        return true;
+
+    }
+
     process(parameters_array){
 
         return new Promise((resolve, reject) => {

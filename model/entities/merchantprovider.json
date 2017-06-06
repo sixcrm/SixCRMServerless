@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/Transaction",
-	"title": "Transaction",
+	"id":"/MerchantProvider",
+	"title": "Merchant Provider",
 	"type": "object",
 	"definitions": {
 		"ISO8601": {
@@ -15,23 +15,29 @@
 	},
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
-		"alias":{
-			"type":"string",
-			"pattern":"^T[0-9A-F]{7}$"
-		},
 		"account":{"$ref": "#/definitions/UUIDv4"},
-		"rebill":{"$ref": "#/definitions/UUIDv4"},
-		"products":{
-			"type":"array",
-			"items":{"$ref": "transactionproduct.json"},
-			"minItems": 1,
+		"name":{
+			"type":"string"
 		},
-		"processorresult":{
-			"type":"object"
+		"processor":{
+			"type":"string",
+			"enum":["NMI"]
 		},
-		"merchant_provider":{"$ref": "#/definitions/UUIDv4"},
+		"username":{
+			"type":"string"
+		},
+		"password":{
+			"type":"string"
+		},
+		"endpoint":{
+			"type":"string",
+			"format":"uri"
+		},
+		"monthly_cap":{
+			"type":"integer"
+		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["id", "alias", "account", "rebill", "products", "processorresult", "merchant_provider", "created_at", "updated_at"]
+	"required":["id","account", "name", "processor", "username", "password", "endpoint", "monthly_cap", "created_at", "updated_at"]
 }

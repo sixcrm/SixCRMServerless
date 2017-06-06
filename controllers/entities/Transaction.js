@@ -7,6 +7,7 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 var productController = global.routes.include('controllers', 'entities/Product.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 var shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
+const merchantProviderController = global.routes.include('controllers','entities/MerchantProvider.js');
 
 class transactionController extends entityController {
 
@@ -134,6 +135,50 @@ class transactionController extends entityController {
         let alias = random.createRandomString(9);
 
         return 'T'+alias;
+
+    }
+
+    validateRefund(refund, transaction){
+
+        let validated = [];
+      //make sure that the refund has the correct structure
+      //make sure that the refund amount isn't greater than the sum of all the transactions on the rebill
+
+        return validated;
+
+    }
+
+    refundTransaction(args){
+
+        du.debug('Refund Transaction');
+
+        let transaction = args.transaction;
+        let refund = args.refund;
+
+        return this.get(transaction).then((transaction) => {
+
+            return this.validate(transaction).then((validated) => {
+
+                return this.validateRefund(refund, transaction).then(() => {
+
+                    return merchantProviderController.issueRefund(transaction, refund).then((processor_result) => {
+
+                        let refund_transaction = {
+                            rebill: transaction.rebill,
+                            amount: (refund.amount * -1),
+                            products: transaction.products,
+                            merchant_provider: transaction.merchant_provider
+                        };
+
+                        return this.putTransaction(refund_transaction, processor_result);
+
+                    });
+
+                });
+
+            });
+
+        });
 
     }
 

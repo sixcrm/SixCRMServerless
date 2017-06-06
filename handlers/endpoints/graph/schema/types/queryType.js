@@ -66,8 +66,6 @@ let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
 let transactionListType = require('./transaction/transactionListType');
 let transactionType = require('./transaction/transactionType');
 
-let paginationInputType = require('./pagination/paginationInputType');
-
 let productType = require('./product/productType');
 let productListType = require('./product/productListType');
 
@@ -161,6 +159,9 @@ const suggestController = global.routes.include('controllers', 'endpoints/sugges
 
 const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
 
+let paginationInputType = require('./pagination/paginationInputType');
+let cacheInputType = require('./cache/cacheInputType');
+
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
@@ -168,7 +169,8 @@ module.exports.graphObj = new GraphQLObjectType({
     	      type: searchResultsType.graphObj,
   	        description: 'Executes a search query.',
   	        args: {
-  	           search: { type: searchInputType.graphObj }
+  	           search: { type: searchInputType.graphObj },
+              cache: {type: cacheInputType.graphObj}
   	        },
         	  resolve: function(root, search){
               return searchController.search(search.search);
@@ -178,7 +180,8 @@ module.exports.graphObj = new GraphQLObjectType({
       	  type: suggestResultsType.graphObj,
       	  description: 'Retrieves string suggestions.',
       	  args: {
-      	    suggest: { type: suggestInputType.graphObj}
+      	    suggest: { type: suggestInputType.graphObj},
+            cache: {type: cacheInputType.graphObj}
       	  },
       	  resolve: function(root, suggest){
             return suggestController.suggest(suggest.suggest);
@@ -494,84 +497,92 @@ module.exports.graphObj = new GraphQLObjectType({
         transactionsummary: {
             type: transactionSummaryType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getTransactionSummary(analyticsfilter.analyticsfilter);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getTransactionSummary');
+              //return analyticsController.getTransactionSummary(analyticsfilter.analyticsfilter);
             }
         },
         listtransactions: {
             type: listTransactionsType.graphObj,
             args: {
                 analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                pagination: {type: analyticsPaginationInputType.graphObj}
+                pagination: {type: analyticsPaginationInputType.graphObj},
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getTransactions(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getTransactions');
+              //return analyticsController.getTransactions(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         listevents: {
             type: listEventsType.graphObj,
             args: {
                 analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                pagination: {type: analyticsPaginationInputType.graphObj}
+                pagination: {type: analyticsPaginationInputType.graphObj},
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getEvents(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getEvents');
+              //return analyticsController.getEvents(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         eventsummary: {
             type: eventSummaryType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getEventSummary(analyticsfilter.analyticsfilter);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getEventSummary');
+              //return analyticsController.getEventSummary(analyticsfilter.analyticsfilter);
             }
         },
         transactionoverview: {
             type: transactionOverviewType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getTransactionOverview(analyticsfilter.analyticsfilter);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getTransactionOverview');
+              //return analyticsController.getTransactionOverview(analyticsfilter.analyticsfilter);
             }
         },
         eventfunnel: {
             type: eventFunnelType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj}
+
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getEventFunnel(analyticsfilter.analyticsfilter);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getEventFunnel');
+              //return analyticsController.getEventFunnel(analyticsfilter.analyticsfilter);
             }
         },
         campaigndelta: {
             type: campaignDeltaType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getCampaignDelta(analyticsfilter.analyticsfilter);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getCampaignDelta');
+              //return analyticsController.getCampaignDelta(analyticsfilter.analyticsfilter);
             }
         },
         campaignsbyamount: {
             type: campaignsByAmountType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getCampaignsByAmount(analyticsfilter.analyticsfilter);
-            }
-        },
-        eventsbyaffiliate: {
-            type: eventsByAffiliateType.graphObj,
-            args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
-            },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getEventsByAffiliate(analyticsfilter.analyticsfilter);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getCampaignsByAmount');
+              //return analyticsController.getCampaignsByAmount(analyticsfilter.analyticsfilter);
             }
         },
         eventsbyfacet: {
@@ -579,12 +590,14 @@ module.exports.graphObj = new GraphQLObjectType({
             args: {
                 analyticsfilter: { type: analyticsFilterInputType.graphObj },
                 pagination: {type: analyticsPaginationInputType.graphObj},
+                cache: {type: cacheInputType.graphObj},
                 facet:{
                     type: GraphQLString
                 }
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getEventsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getEventsByFacet');
+              //return analyticsController.getEventsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
             }
         },
         transactionsbyfacet: {
@@ -592,50 +605,49 @@ module.exports.graphObj = new GraphQLObjectType({
             args: {
                 analyticsfilter: { type: analyticsFilterInputType.graphObj },
                 pagination: {type: analyticsPaginationInputType.graphObj},
+                cache: {type: cacheInputType.graphObj},
                 facet:{
                     type: GraphQLString
                 }
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getTransactionsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
-            }
-        },
-        transactionsbyaffiliate: {
-            type: transactionsByAffiliateType.graphObj,
-            args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
-            },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getTransactionsByAffiliate(analyticsfilter.analyticsfilter);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByFacet');
+              //return analyticsController.getTransactionsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
             }
         },
         merchantprovideramount: {
             type: merchantProviderAmountType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj }
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getMerchantProviderAmount(analyticsfilter.analyticsfilter);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderAmount');
+                //return analyticsController.getMerchantProviderAmount(analyticsfilter.analyticsfilter);
             }
         },
         listactivity: {
             type: listActivityType.graphObj,
             args: {
                 analyticsfilter: { type: analyticsActivityFilterInputType.graphObj },
-                pagination: {type: analyticsPaginationInputType.graphObj}
+                pagination: {type: analyticsPaginationInputType.graphObj},
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getActivity(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getActivity');
+                //return analyticsController.getActivity(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         listactivitybycustomer: {
             type: listActivityType.graphObj,
             args: {
                 analyticsfilter: { type: analyticsCustomerActivityFilterInputType.graphObj },
-                pagination: {type: analyticsPaginationInputType.graphObj}
+                pagination: {type: analyticsPaginationInputType.graphObj},
+                cache: {type: cacheInputType.graphObj}
             },
-            resolve: function(root, analyticsfilter){
-                return analyticsController.getActivityByCustomer(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+            resolve: function(root, args){
+                return analyticsController.executeAnalyticsFunction(args, 'getActivityByCustomer');
+                //return analyticsController.getActivityByCustomer(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         transactionlistbycustomer: {

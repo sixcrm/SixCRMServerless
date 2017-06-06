@@ -1,8 +1,8 @@
 'use strict';
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
-var validator = require('validator');
-var Validator = require('jsonschema').Validator;
+const validator = require('validator');
+const Validator = require('jsonschema').Validator;
 
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
