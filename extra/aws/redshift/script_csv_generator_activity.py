@@ -44,9 +44,10 @@ for filename in os.listdir(os.getcwd()):
         data = json.load(data_file)
         try:
             data['Seeds']
-            dict_data[data['Table']['TableName']] = []
+            user_type = re.sub('s$','',data['Table']['TableName'])
+            dict_data[user_type] = []
             for seed in data['Seeds']:
-                dict_data[data['Table']['TableName']].append(seed['id'])
+                dict_data[user_type].append(seed['id'])
         except KeyError:
             print('No seeds : '+data['Table']['TableName'])
 
@@ -69,15 +70,17 @@ w.writerow((
  'associated_with_type'
 ))
 
+# re.sub('s$','','users')
+
 
 types_all_tuple = [(x,1) for x in dict_data.keys() if len(dict_data[x]) != 0]
 
 for i in range(100000):
-    actor_type = weighted_choice([('customers',5.0),('users',4.0),('system',1.0)])
-    if (actor_type == 'customers') :
-        actor = random.choice(dict_data['customers'])
-    elif  (actor_type == 'users') :
-        actor = random.choice(dict_data['users'])
+    actor_type = weighted_choice([('customer',5.0),('user',4.0),('system',1.0)])
+    if (actor_type == 'customer') :
+        actor = random.choice(dict_data['customer'])
+    elif  (actor_type == 'user') :
+        actor = random.choice(dict_data['user'])
     else :
         actor = 'system'
 
