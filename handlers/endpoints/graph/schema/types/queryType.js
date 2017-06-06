@@ -585,17 +585,6 @@ module.exports.graphObj = new GraphQLObjectType({
               //return analyticsController.getCampaignsByAmount(analyticsfilter.analyticsfilter);
             }
         },
-        eventsbyaffiliate: {
-            type: eventsByAffiliateType.graphObj,
-            args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                cache: {type: cacheInputType.graphObj}
-            },
-            resolve: function(root, args){
-                return analyticsController.executeAnalyticsFunction(args, 'getEventsByAffiliate');
-                //return analyticsController.getEventsByAffiliate(analyticsfilter.analyticsfilter);
-            }
-        },
         eventsbyfacet: {
             type: eventsByFacetType.graphObj,
             args: {
@@ -624,17 +613,6 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByFacet');
               //return analyticsController.getTransactionsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
-            }
-        },
-        transactionsbyaffiliate: {
-            type: transactionsByAffiliateType.graphObj,
-            args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                cache: {type: cacheInputType.graphObj}
-            },
-            resolve: function(root, args){
-                return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByAffiliate');
-              //  return analyticsController.getTransactionsByAffiliate(analyticsfilter.analyticsfilter);
             }
         },
         merchantprovideramount: {

@@ -52,28 +52,6 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getEventsByFacet(parameters){
-
-        du.debug('Get Events By Facet');
-
-        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-        return this.getResults('events_by_facet', parameters, this.default_query_filters);
-
-    }
-
-    getTransactionsByFacet(parameters){
-
-        du.debug('Get Transactions By Facet');
-
-        //parameters.facet = parameters.facet;
-
-        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-        return this.getResults('transactions_by_facet', parameters, this.default_query_filters);
-
-    }
-
     getTransactions(parameters){
 
         du.debug('Get Transactions');
@@ -126,23 +104,27 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getEventsByAffiliate(parameters){
+    getEventsByFacet(parameters){
 
-        du.debug('Get Events By Affiliate');
+        du.debug('Get Events By Facet');
 
-        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
+        let merged_parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-        return this.getResults('events_by_affiliate', parameters, this.default_query_filters);
+        merged_parameters.facet = parameters.facet;
+
+        return this.getResults('events_by_facet', merged_parameters, this.default_query_filters);
 
     }
 
-    getTransactionsByAffiliate(parameters){
+    getTransactionsByFacet(parameters){
 
-        du.debug('Get Transactions By Affiliate');
+        du.debug('Get Transactions By Facet');
 
-        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
+        let merged_parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-        return this.getResults('transactions_by_affiliate', parameters.analyticsfilter, this.default_query_filters);
+        merged_parameters.facet = parameters.facet;
+
+        return this.getResults('transactions_by_facet', merged_parameters, this.default_query_filters);
 
     }
 
