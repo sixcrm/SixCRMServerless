@@ -4,34 +4,34 @@
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
-        }], 
+        }],
         "AttributeDefinitions": [{
-            "AttributeName": "id", 
+            "AttributeName": "id",
             "AttributeType": "S"
         },
         {
-            "AttributeName": "rebill_id", 
+            "AttributeName": "rebill_id",
             "AttributeType": "S"
         }],
-        "GlobalSecondaryIndexes": [ 
-		  { 
+        "GlobalSecondaryIndexes": [
+		  {
 			 "IndexName": "rebill-index",
-			 "KeySchema": [ 
-				{ 
+			 "KeySchema": [
+				{
 				   "AttributeName": "rebill_id",
 				   "KeyType": "HASH"
 				}
 			 ],
-			 "Projection": { 
+			 "Projection": {
 				"ProjectionType": "ALL"
 			 },
-			 "ProvisionedThroughput": { 
+			 "ProvisionedThroughput": {
 				"ReadCapacityUnits": 1,
 				"WriteCapacityUnits": 1
 			 }
 		  }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1, 
+            "ReadCapacityUnits": 1,
             "WriteCapacityUnits": 1
         }
     },
@@ -69,15 +69,15 @@
         },
         {
           "amount": 124.99,
-          "id": "00000000-0000-0000-0000-000000000001",
+          "id": "07110153-41c5-4a7f-ae49-8204d7ba7ff0",
           "alias":"T56S2NJO",
           "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-          "rebill_id": "00000000-0000-0000-0000-000000000001",
+          "rebill_id": "70de203e-f2fd-45d3-918b-460570338c9b",
           "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
           "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
           "products":[{
-            "shippingreceipt":"00000000-0000-0000-0000-000000000001",
-            "product":"00000000-0000-0000-0000-100000000000",
+            "shippingreceipt":"c9703e7e-3967-46aa-a576-430471791ae6",
+            "product":"8a8a5e96-60df-4551-8eb2-1b77c769e5fb",
             "amount":124.99
           }],
           "created_at":"2017-04-06T18:40:41.405Z",
@@ -85,15 +85,15 @@
         },
 		{
 		  "amount": 139.99,
-		  "id": "00000000-0000-0000-0000-000000000003",
+		  "id": "b5a1753d-717a-4454-ab4e-2abeef1c306f",
 		  "alias":"TB6V2HJO",
 		  "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		  "rebill_id": "00000000-0000-0000-0000-000000000003",
+		  "rebill_id": "c8b70738-755c-43c3-a953-1ef6fb4d1327",
 		  "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
           "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
 		  "products":[{
-		  	"shippingreceipt":"00000000-0000-0000-0000-000000000003",
-		  	"product":"00000000-0000-0000-0000-200000000000",
+		  	"shippingreceipt":"2bd473d9-6479-40f4-8d8d-7b3fc494fb98",
+		  	"product":"d29950cc-1a4d-4e6e-90a5-c7fdf24b95ac",
 		  	"amount":139.99
 		  }],
 		  "created_at":"2017-04-06T18:40:41.405Z",

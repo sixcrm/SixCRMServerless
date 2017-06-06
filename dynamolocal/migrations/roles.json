@@ -83,11 +83,11 @@
     				"transaction/*",
     				"role/read",
     				"notification/*",
-					"notificationread/*",
+					  "notificationread/*",
     				"user/read",
     				"account/read",
             "usersetting/*",
-			"usersigningstring/*",
+			      "usersigningstring/*",
             "userdevicetoken/*"
         	],
         	"deny":["*"]
