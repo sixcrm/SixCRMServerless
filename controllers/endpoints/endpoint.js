@@ -50,7 +50,6 @@ module.exports = class EndpointController {
 
         du.debug('Acquire Querystring');
 
-
         if(_.has(event, 'queryStringParameters') && !_.isNull(event.queryStringParameters)){
 
             let duplicate_querystring = event.queryStringParameters;
