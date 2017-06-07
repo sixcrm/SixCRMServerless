@@ -27,16 +27,16 @@ class DynamoDeploy {
             return val;
         })
         .catch((err) => {
-            let val = `Failed to create ${tableName}`;
-
-            du.error(val);
-            du.debug(err);
-
             if (executionCount++ < retryCount) {
                 return this.deployTable(tableFileName, env, region, executionCount)
-            }
+            } else {
+                let val = `Failed to create ${tableName}`;
 
-            return val;
+                du.error(val);
+                du.debug(err);
+
+                return val;
+            }
         });
     }
 
