@@ -4,7 +4,6 @@ const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
-const parserutilities = global.routes.include('lib', 'parser-utilities.js');
 
 const AnalyticsUtilities = global.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 
