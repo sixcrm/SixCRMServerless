@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('underscore');
-var timestamp = global.routes.include('lib', 'timestamp.js');
 var random = global.routes.include('lib', 'random.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
@@ -151,15 +150,14 @@ class transactionController extends entityController {
 
     validateRefund(refund, transaction){
 
-        let validated = [];
-
         //Technical Debt:  This should be, uh more rigorous...
+        //make sure that the transaction was successful
 
         if(refund.amount > transaction.amount){
             throw new Error('Refund amount is greater than the transaction amount');
         }
 
-        return Promise.resolve(validated);
+        return Promise.resolve(true);
 
     }
 
