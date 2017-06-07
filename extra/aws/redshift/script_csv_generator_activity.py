@@ -61,6 +61,7 @@ w=csv.writer(g)
 w.writerow((
  'id',
  'datetime',
+ 'account',
  'actor',
  'actor_type',
  'action',
@@ -84,6 +85,7 @@ for i in range(100000):
     else :
         actor = 'system'
 
+    account = random.choice(dict_data['account'])
     acted_upon_type = weighted_choice(types_all_tuple)
     acted_upon = random.choice(dict_data[acted_upon_type])
 
@@ -93,6 +95,7 @@ for i in range(100000):
     w.writerow((
       uuid.uuid4(),
       random_date(d1,d2),
+      account,
       actor,
       actor_type,
       random.choice(["continued","deleted","created new"]),
