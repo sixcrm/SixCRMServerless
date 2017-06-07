@@ -2,6 +2,7 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
 const parserutilities = global.routes.include('lib', 'parser-utilities.js');
 
@@ -192,7 +193,13 @@ class AnalyticsController extends AnalyticsUtilities{
 
         let parameters = paginationutilities.mergePagination(activity_filter, paginationutilities.createSQLPaginationInput(pagination));
 
-        return this.getResults('activity_by_identifier', parameters, this.default_activity_query_filters);
+        let this_query_filter = this.default_activity_query_filters;
+
+        ['actor', 'actor_type','acted_upon', 'acted_upon_type','associated_with', 'associated_with_type'].forEach((argument) => {
+            this_query_filter = arrayutilities.removeElement(this_query_filter, argument);
+        });
+
+        return this.getResults('activity_by_identifier', parameters, this_query_filter);
 
     }
 

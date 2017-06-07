@@ -19,8 +19,8 @@ Add Cache response group
 Check Pagination Response Group
 */
 
-let test_name = 'Activity';
-let test_query = global.routes.path('handlers','/endpoints/graph/queries/analytics/getActivityByCustomer');
+let test_name = 'Activity By Identifier';
+let test_query = global.routes.path('handlers','/endpoints/graph/queries/analytics/getActivityByIdentifier');
 
 //set the test user
 let test_user = {
