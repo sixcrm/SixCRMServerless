@@ -21,8 +21,6 @@ class merchantProviderController extends entityController {
 
                 let parameters = this.createRefundParameters(transaction, refund);
 
-                du.warning('here'); process.exit();
-
                 return processor.refund(parameters);
 
             });

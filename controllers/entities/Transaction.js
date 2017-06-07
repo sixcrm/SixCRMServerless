@@ -107,23 +107,34 @@ class transactionController extends entityController {
 
     putTransaction(params, processor_response){
 
-        var transaction = this.createTransactionObject(params, processor_response);
+        du.debug('Put Transaction');
 
-        return this.create(transaction);
+        const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+
+        return rebillController.get(params.rebill).then((rebill) => {
+
+            params.rebill = rebill;
+
+            var transaction = this.createTransactionObject(params, processor_response);
+
+            return this.create(transaction);
+
+        });
 
     }
 
-    createTransactionObject(params, processor_response){
+    createTransactionObject(parameters, processor_response){
 
-        du.debug('Creating Transaction Object');
+        du.debug('Create Transaction Object');
 
         var return_object = {
-            rebill: params.rebill.id,
+            rebill: parameters.rebill.id,
             processor_response: JSON.stringify(processor_response),
-            amount: params.amount,
-            products: params.products,
+            amount: parameters.amount,
+            products: parameters.products,
             alias: this.createAlias(),
-            merchant_provider: processor_response.merchant_provider
+            //Technical debt:  this was "processor_response.merchant_provider"
+            merchant_provider: parameters.merchant_provider
         }
 
         return return_object;
@@ -166,9 +177,6 @@ class transactionController extends entityController {
                 return this.validateRefund(refund, transaction).then(() => {
 
                     return merchantProviderController.issueRefund(transaction, refund).then((processor_result) => {
-
-                        du.warning(processor_result);
-                        process.exit();
 
                         let refund_transaction = {
                             rebill: transaction.rebill,
