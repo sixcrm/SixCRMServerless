@@ -15,19 +15,19 @@
 				"AttributeType": "S"
 			}
         ],
-         "GlobalSecondaryIndexes": [ 
-		  { 
+         "GlobalSecondaryIndexes": [
+		  {
 			 "IndexName": "email-index",
-			 "KeySchema": [ 
-				{ 
+			 "KeySchema": [
+				{
 				   "AttributeName": "email",
 				   "KeyType": "HASH"
 				}
 			 ],
-			 "Projection": { 
+			 "Projection": {
 				"ProjectionType": "ALL"
 			 },
-			 "ProvisionedThroughput": { 
+			 "ProvisionedThroughput": {
 				"ReadCapacityUnits": 1,
 				"WriteCapacityUnits": 1
 			 }
@@ -37,7 +37,7 @@
             "WriteCapacityUnits": 1
         }
     },
-    "Seeds": [	
+    "Seeds": [
     	{
     		"id":"24f7c851-29d4-4af9-87c5-0298fa74c689",
     		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
