@@ -170,7 +170,7 @@ class transactionController extends entityController {
 
         return this.get(transaction).then((transaction) => {
 
-            return this.validate(transaction).then((validated) => {
+            return this.validate(transaction).then(() => {
 
                 return this.validateRefund(refund, transaction).then(() => {
 
