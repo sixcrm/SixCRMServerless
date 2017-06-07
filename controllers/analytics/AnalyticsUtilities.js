@@ -5,6 +5,8 @@ const Validator = require('jsonschema').Validator;
 
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const parserutilities = global.routes.include('lib', 'parser-utilities');
+const arrayutilities = global.routes.include('lib', 'array-utilities');
 const redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
 
 const cacheController = global.routes.include('controllers', 'providers/Cache.js');
@@ -150,7 +152,7 @@ module.exports = class AnalyticsUtilities {
 
                 du.highlight(filter, parameters[filter]);
 
-                filter_array.push(filter+" IN ('"+parameters[filter].join("','")+"')");
+                filter_array.push(filter+" IN ("+arrayutilities.compress(parameters[filter])+")");
 
             }
 
@@ -183,43 +185,26 @@ module.exports = class AnalyticsUtilities {
             throw new Error('Create Filter List only supports array arguments.');
         }
 
-        return '\''+parameters.join('\',\'')+'\'';
+        return arrayutilities.compress(parameters);
 
+    }
+
+    compressParameters(parameters){
+        for(var key in parameters){
+            if(_.isArray(parameters[key])){
+                parameters[key] = arrayutilities.compress(parameters[key]);
+            }
+        }
+        return parameters;
     }
 
     parseQueryParameters(query, parameters){
 
         du.debug('Parse Query Parameters');
 
-        for (var parameter_name in parameters) {
+        let compressed_query_parameters = this.compressParameters(parameters);
 
-            var re = new RegExp('{{'+parameter_name+'}}',"g");
-
-            let replace_string = ''
-
-            if(_.isArray(parameters[parameter_name])){
-
-                let replace_array = [];
-
-                parameters[parameter_name].forEach((parameter) => {
-
-                    replace_array.push(parameter);
-
-                });
-
-                replace_string = '\''+replace_array.join('\',\'')+'\'';
-
-            }else{
-
-                replace_string = parameters[parameter_name];
-
-            }
-
-            query = query.replace(re, replace_string);
-
-        }
-
-        return query;
+        return parserutilities.parse(query, compressed_query_parameters);
 
     }
 
@@ -384,7 +369,7 @@ module.exports = class AnalyticsUtilities {
 
         if(_.isArray(activity_filter_object[key]) && activity_filter_object[key].length > 0){
 
-            return_object[key] = "'"+activity_filter_object[key].join("','")+"'";
+            return_object[key] = arrayutilities.compress(activity_filter_object[key]);
 
         }else if(_.isString(activity_filter_object[key])){
 

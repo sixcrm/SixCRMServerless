@@ -619,7 +619,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 return analyticsController.executeAnalyticsFunction(args, 'getActivity');
             }
         },
-        listactivitybycustomer: {
+        listactivitybyidentifier: {
             type: listActivityType.graphObj,
             args: {
                 activityfilter: {type: analyticsActivityFilterInputType.graphObj},
@@ -627,7 +627,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                return analyticsController.executeAnalyticsFunction(args, 'getActivityByCustomer');
+                return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
             }
         },
         transactionlistbycustomer: {

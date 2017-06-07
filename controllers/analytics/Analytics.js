@@ -182,34 +182,17 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getActivityByCustomer(args){
+    getActivityByIdentifier(args){
 
-        du.debug('Get Activity By Customer');
+        du.debug('Get Activity By Identifier');
 
         let activity_filter = this.getActivityFilter(args);
+
         let pagination = this.getPagination(args);
-
-        let collapsed = this.collapseActivityFilterObject(activity_filter);
-
-        let additional_filter = parserutilities.parse(
-          '((actor IN ({{actor}}) AND actor_type IN ({{actor_type}})) OR (acted_upon IN ({{acted_upon}}) AND acted_upon_type IN ({{acted_upon_type}})) OR (associated_with IN ({{associated_with}}) AND associated_with_type IN ({{associated_with_type}})))',
-          //'((actor IN ({{actor}}) AND actor_type IN ({{actor_type}})))',
-          collapsed
-        );
-
-        ['actor', 'actor_type', 'acted_upon', 'acted_upon_type', 'associated_with', 'associated_with_type'].forEach((activity_filter_field) => {
-
-            if(_.has(args.activityfilter, activity_filter_field)){
-                delete activity_filter[activity_filter_field];
-            }
-
-        });
 
         let parameters = paginationutilities.mergePagination(activity_filter, paginationutilities.createSQLPaginationInput(pagination));
 
-        parameters.additional_filters = [additional_filter];
-
-        return this.getResults('activity_by_customer', parameters, this.default_activity_query_filters);
+        return this.getResults('activity_by_identifier', parameters, this.default_activity_query_filters);
 
     }
 
