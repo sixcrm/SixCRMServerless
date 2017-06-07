@@ -182,6 +182,7 @@ module.exports.graphObj = new GraphQLObjectType({
       	},
       	userintrospection:{
       	  type: userType.graphObj,
+          description: 'Retrieves or creates a user.',
     	    resolve: function(){
             return userController.introspection();
     	     }

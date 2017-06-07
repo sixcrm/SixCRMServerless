@@ -188,15 +188,14 @@ module.exports = class AuthenticatedController extends endpointController {
 
     }
 
-    /**
-     * Whether this event meant for user instrospection endpoint.
-     */
     isUserIntrospection(event) {
-        if (event.body.match(/^{\s*userintrospection\s*{/)) {
+
+        if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(query)?[\s\n\r]*{[\s\n\r]*userintrospection[\s\n\r]*{/)) {
             return true;
         }
 
         return false;
+
     }
 
 }

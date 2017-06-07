@@ -61,9 +61,12 @@ class NMIController {
                         break;
 
                     case '3':
-                    default:
 
                         resolve_object.message = 'Error';
+                        break;
+
+                    default:
+                        //do nothing...
                         break;
 
                     }
