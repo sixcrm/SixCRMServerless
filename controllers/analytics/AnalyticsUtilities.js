@@ -6,7 +6,6 @@ const Validator = require('jsonschema').Validator;
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
-const mathutilities =  global.routes.include('lib', 'math-utilities.js');
 
 const cacheController = global.routes.include('controllers', 'providers/Cache.js');
 

@@ -4,7 +4,6 @@ const _  = require('underscore');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLList = require('graphql').GraphQLList;
 
 let accessKeyType = require('./accesskey/accessKeyType');
 let accessKeyListType = require('./accesskey/accessKeyListType');
@@ -108,11 +107,6 @@ let listActivityType = require('./analytics/listActivityType');
 
 let eventsByFacetType =  require('./analytics/eventsByFacetType');
 let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
-
-/* Technical Debt:  Deprecated */
-let eventsByAffiliateType =  require('./analytics/eventsByAffiliateType');
-let transactionsByAffiliateType =  require('./analytics/transactionsByAffiliateType');
-/* */
 
 let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
 let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
@@ -980,7 +974,7 @@ module.exports.graphObj = new GraphQLObjectType({
         },
         notificationsettingdefault: {
             type: notificationSettingDefaultType.graphObj,
-            resolve: (root, notificationdefault) => {
+            resolve: (root) => {
                 return notificationSettingController.getDefaultProfile();
             }
         },
