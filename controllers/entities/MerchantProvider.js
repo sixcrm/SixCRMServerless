@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities');
+const mathutilities = global.routes.include('lib', 'math-utilities');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 const NMIController = global.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
 
@@ -12,37 +13,71 @@ class merchantProviderController extends entityController {
 
     issueRefund(transaction, refund){
 
-        return this.get(transaction.merchant_provider)
-      .then((merchant_provider) => this.validate(merchant_provider))
-      .then((merchant_provider) => {
-        //Technical Debt: If this thing is still active.
-          let processor = this.createProcessorClass(merchant_provider);
+        return this.get(transaction.merchant_provider).then((merchant_provider) => {
 
-        //build this thing...
-          let parameters = {};
+            return this.validate(merchant_provider).then(() => {
 
-          return processor.refund(parameters);
+                let processor = this.createProcessorClass(merchant_provider);
 
-      });
+                let parameters = this.createRefundParameters(transaction, refund);
+
+                du.warning('here'); process.exit();
+
+                return processor.refund(parameters);
+
+            });
+
+        });
 
     }
 
-    createProcessorClass(merchantprovider){
+    createRefundParameters(transaction, refund){
+
+        du.debug('Create Refund Parameters');
+
+        let refund_parameters = {
+            type: 'refund',
+            amount: encodeURIComponent(mathutilities.formatFloat(refund.amount, 2))
+        };
+
+        if(_.has(transaction, 'processor_response')){
+
+            let processor_response;
+
+            try{
+                processor_response = JSON.parse(transaction.processor_response);
+            }catch(e){
+                throw new Error('Unable to parse processor response: '+transaction.processor_response);
+            }
+
+            if(!_.has(processor_response, 'results') || !_.has(processor_response.results, 'transactionid')){
+                throw new Error('Unable identify the processor "transactionid" field from the processor response: '+transaction.processor_response);
+            }
+
+            refund_parameters.transactionid = processor_response.results.transactionid;
+
+        }
+
+        return refund_parameters;
+
+    }
+
+    createProcessorClass(merchant_provider){
 
         du.debug('Create Processor Class');
 
-  	  if(merchantprovider.processor == 'NMI'){
+  	  if(merchant_provider.processor == 'NMI'){
 
         let _nmi = new NMIController({
-            username: merchantprovider.username,
-            password: merchantprovider.password,
-            endpoint: merchantprovider.endpoint
+            username: merchant_provider.username,
+            password: merchant_provider.password,
+            endpoint: merchant_provider.endpoint
         });
 
         return _nmi;
 
     	}else{
-        throw new Error('Unrecognized merchant provider: '+merchantprovider.processor);
+        throw new Error('Unrecognized merchant provider: '+merchant_provider.processor);
     }
 
     }

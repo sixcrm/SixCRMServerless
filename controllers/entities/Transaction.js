@@ -15,13 +15,13 @@ class transactionController extends entityController {
         super('transaction');
     }
 
-	//Technical Debt:  Why is this missing rebill_ids
+	//Technical Debt:  Why is this missing rebills
     getParentRebill(transaction){
 
-        if(_.has(transaction, "rebill_id")){
+        if(_.has(transaction, 'rebill')){
             var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
-            return rebillController.get(transaction.rebill_id);
+            return rebillController.get(transaction.rebill);
         }else{
             return null;
         }
@@ -101,7 +101,7 @@ class transactionController extends entityController {
 
     getTransactionsByRebillID(id){
 
-        return this.queryBySecondaryIndex('rebill_id', id, 'rebill-index').then((result) => this.getResult(result));
+        return this.queryBySecondaryIndex('rebill', id, 'rebill-index').then((result) => this.getResult(result));
 
     }
 
@@ -118,7 +118,7 @@ class transactionController extends entityController {
         du.debug('Creating Transaction Object');
 
         var return_object = {
-            rebill_id: params.rebill.id,
+            rebill: params.rebill.id,
             processor_response: JSON.stringify(processor_response),
             amount: params.amount,
             products: params.products,
@@ -141,10 +141,14 @@ class transactionController extends entityController {
     validateRefund(refund, transaction){
 
         let validated = [];
-      //make sure that the refund has the correct structure
-      //make sure that the refund amount isn't greater than the sum of all the transactions on the rebill
 
-        return validated;
+        //Technical Debt:  This should be, uh more rigorous...
+
+        if(refund.amount > transaction.amount){
+            throw new Error('Refund amount is greater than the transaction amount');
+        }
+
+        return Promise.resolve(validated);
 
     }
 
@@ -162,6 +166,9 @@ class transactionController extends entityController {
                 return this.validateRefund(refund, transaction).then(() => {
 
                     return merchantProviderController.issueRefund(transaction, refund).then((processor_result) => {
+
+                        du.warning(processor_result);
+                        process.exit();
 
                         let refund_transaction = {
                             rebill: transaction.rebill,

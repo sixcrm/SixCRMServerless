@@ -10,7 +10,7 @@
             "AttributeType": "S"
         },
         {
-            "AttributeName": "rebill_id",
+            "AttributeName": "rebill",
             "AttributeType": "S"
         }],
         "GlobalSecondaryIndexes": [
@@ -18,7 +18,7 @@
 			 "IndexName": "rebill-index",
 			 "KeySchema": [
 				{
-				   "AttributeName": "rebill_id",
+				   "AttributeName": "rebill",
 				   "KeyType": "HASH"
 				}
 			 ],
@@ -41,7 +41,7 @@
 		  "id": "e624af6a-21dc-4c64-b310-3b0523f8ca42",
 		  "alias":"T56S2HJO",
 		  "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		  "rebill_id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
+		  "rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
 		  "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
           "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
 		  "products":[{
@@ -56,7 +56,7 @@
           "id": "cf3cd926-b321-453a-99be-591611f07e3d",
           "alias":"T56S2HJY",
           "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-          "rebill_id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
+          "rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
           "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
           "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
           "products":[{
@@ -72,7 +72,7 @@
           "id": "07110153-41c5-4a7f-ae49-8204d7ba7ff0",
           "alias":"T56S2NJO",
           "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-          "rebill_id": "70de203e-f2fd-45d3-918b-460570338c9b",
+          "rebill": "70de203e-f2fd-45d3-918b-460570338c9b",
           "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
           "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
           "products":[{
@@ -88,7 +88,7 @@
 		  "id": "b5a1753d-717a-4454-ab4e-2abeef1c306f",
 		  "alias":"TB6V2HJO",
 		  "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		  "rebill_id": "c8b70738-755c-43c3-a953-1ef6fb4d1327",
+		  "rebill": "c8b70738-755c-43c3-a953-1ef6fb4d1327",
 		  "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
           "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
 		  "products":[{

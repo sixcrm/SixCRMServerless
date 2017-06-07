@@ -84,6 +84,8 @@ let userSigningStringInputType = require('./usersigningstring/userSigningStringI
 let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
 
+let identifierInputType = require('./general/identifierInputType');
+
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
@@ -815,11 +817,21 @@ module.exports.graphObj = new GraphQLObjectType({
             }
         },
         refundtransaction:{
-            type: transactionType.graphObj,
+            /*
+            types: transactionType.graphObj,
             description: 'Refunds a transaction.',
             args: {
-                transaction: { type: transactionInputType.graphObj },
                 refund: { type: transactionRefundInputType.graphObj }
+            },
+            resolve: (value, args) => {
+                return transactionController.refundTransaction(args);
+            }
+            */
+            type: transactionType.graphObj,
+            description: 'Refunds a transaction',
+            args: {
+                refund: { type: transactionRefundInputType.graphObj },
+                transaction:{type: new GraphQLNonNull(GraphQLString)}
             },
             resolve: (value, args) => {
                 return transactionController.refundTransaction(args);

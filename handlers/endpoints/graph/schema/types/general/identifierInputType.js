@@ -8,13 +8,8 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 let transactionProductInputType = require('../transactionproduct/transactionProductInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({
-    name: 'TransactionInputType',
+    name: 'IdentifierInputType',
     fields: () => ({
-        id:					{ type: new GraphQLNonNull(GraphQLString) },
-        rebill:			{ type: new GraphQLNonNull(GraphQLString) },
-        amount:				{ type: new GraphQLNonNull(GraphQLFloat) },
-        processor_response:	{ type: new GraphQLList(GraphQLString) },
-        merchant_provider:  { type: new GraphQLNonNull(GraphQLString) },
-        products:			{ type: new GraphQLList(transactionProductInputType.graphObj) }
+        id:	{ type: new GraphQLNonNull(GraphQLString) }
     })
 });
