@@ -975,7 +975,7 @@ module.exports.graphObj = new GraphQLObjectType({
         },
         notificationsettingdefault: {
             type: notificationSettingDefaultType.graphObj,
-            resolve: (root) => {
+            resolve: () => {
                 return notificationSettingController.getDefaultProfile();
             }
         },

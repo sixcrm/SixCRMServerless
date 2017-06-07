@@ -190,6 +190,8 @@ module.exports = class AuthenticatedController extends endpointController {
 
     isUserIntrospection(event) {
 
+        du.debug('Is User Introspection');
+
         if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(query)?[\s\n\r]*{[\s\n\r]*userintrospection[\s\n\r]*{/)) {
             return true;
         }

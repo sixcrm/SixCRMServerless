@@ -23,6 +23,8 @@ class NMIController {
 
     refund(parameters){
 
+        du.debug('Refund');
+
         return new Promise((resolve, reject) => {
 
             parameters = this.appendCredentials(parameters);
@@ -87,6 +89,8 @@ class NMIController {
 
     process(parameters_array){
 
+        du.debug('Process');
+
         return new Promise((resolve, reject) => {
 
             var parameter_group = this.createParameterGroup(parameters_array);
@@ -149,6 +153,8 @@ class NMIController {
 
     appendCredentials(parameters){
 
+        du.debug('Append Credentials');
+
         if(_.has(this, 'username')){
             parameters.username = this.username;
         }
@@ -163,6 +169,7 @@ class NMIController {
 
     createParameterGroup(parameters){
 
+        du.debug('Create Parameter Group');
 		//need to enforce a contract here...
 
         var return_object = {};

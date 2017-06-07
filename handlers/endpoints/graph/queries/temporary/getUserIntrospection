@@ -2,7 +2,7 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"tmdalbey2@gmail.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	{
+	query {
 		userintrospection {
 			id,
 			name,
