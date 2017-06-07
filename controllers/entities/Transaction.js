@@ -126,17 +126,35 @@ class transactionController extends entityController {
 
         du.debug('Create Transaction Object');
 
+        //Technical Debt: Why is this necessary?
+        let merchant_provider = this.getMerchantProvider(parameters, processor_response);
+
         var return_object = {
             rebill: parameters.rebill.id,
             processor_response: JSON.stringify(processor_response),
             amount: parameters.amount,
             products: parameters.products,
             alias: this.createAlias(),
-            //Technical debt:  this was "processor_response.merchant_provider"
-            merchant_provider: parameters.merchant_provider
+            merchant_provider: merchant_provider
         }
 
         return return_object;
+
+    }
+
+    getMerchantProvider(parameters, processor_response){
+
+        du.debug('Get Merchant Provider');
+
+        if(_.has(parameters, 'merchant_provider') && this.isUUID(parameters.merchant_provider)){
+            return parameters.merchant_provider;
+        }
+
+        if(_.has(processor_response, 'merchant_provider') && this.isUUID(processor_response.merchant_provider)){
+            return processor_response.merchant_provider;
+        }
+
+        return null;
 
     }
 
