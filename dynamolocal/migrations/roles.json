@@ -59,7 +59,8 @@
             "usersetting/*",
 			      "usersigningstring/*",
             "userdevicetoken/*",
-            "tracker/*"
+            "tracker/*",
+            "analytics/*"
         	],
         	"deny":["*"]
         },
