@@ -3,6 +3,7 @@ require('require-yaml');
 
 const path = require('path');
 const _ = require('underscore');
+var fs = require('fs');
 
 class Routes{
 
@@ -39,6 +40,16 @@ class Routes{
             throw new Error('Undefined route: '+feature);
 
         }
+
+    }
+
+    files(feature, subpath){
+
+        let directory_path = this.path(feature, subpath);
+
+        let files = fs.readdirSync(directory_path);
+
+        return files;
 
     }
 

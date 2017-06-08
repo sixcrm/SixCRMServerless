@@ -33,7 +33,7 @@ function setEnvironmentVariables(){
     process.env.redshift_port = 5439;
     process.env.redshift_pool_max = 10;
     process.env.redshift_idle_timeout = 30000;
-    process.env.redshift_random_data_staging_bucket = 'sixcrm-'+process.env.stage+'-redshift-data-staging';
+    process.env.redshift_random_data_staging_bucket = 'sixcrm-'+process.env.stage+'-redshift/sixcrm-random-generator';
     process.env.redshift_random_data_interval = 18000;
 
 }
