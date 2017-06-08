@@ -32,6 +32,9 @@ custom:
     migration:
       table_prefix: ${opt:stage}
       dir: ./dynamolocal/migrations
+    seed:
+      table_prefix: ${opt:stage}
+      dir: ./dynamolocal/seeds
 
 site_config: ${file(./config/${opt:stage}/site.yml)}
 

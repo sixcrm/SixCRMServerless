@@ -56,7 +56,8 @@
     "lint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '**/*.js'",
     "lintCommit": "./tools/lintCommit.sh",
     "deploy-tables": "export SIX_VERBOSE=6; node ./deployment/dynamodb/deploy_tables.js",
-    "purge-tables": "export SIX_VERBOSE=6; node ./deployment/dynamodb/purge_tables.js"
+    "purge-tables": "export SIX_VERBOSE=6; node ./deployment/dynamodb/purge_tables.js",
+    "deploy-seeds": "export SIX_VERBOSE=6; node ./deployment/dynamodb/deploy_seeds.js"
   },
   "pre-commit": [
     "lintCommit",
