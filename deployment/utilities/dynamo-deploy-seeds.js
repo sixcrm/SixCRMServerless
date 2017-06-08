@@ -42,9 +42,10 @@ class DynamoDeploySeeds {
     deployAllSeeds(environment) {
         PermissionUtilities.disableACLs();
         process.env.stage = environment;
-        process.env.search_indexing_queue_url = this.getConfigValue('sqs.search_indexing_queue_url');
+        process.env.search_indexing_queue_url = this.getConfig().sqs.search_indexing_queue_url;
+        process.env.dynamo_endpoint = this.getConfig().dynamodb.endpoint;
 
-        du.highlight(`Deploying seeds on ${environment}`);
+        du.highlight(`Deploying seeds on ${environment} environment.`);
 
         let seeds = this.getSeedFileNames().filter((seed) => !_.contains(this.blacklisted_seeds, seed));
 
@@ -95,20 +96,6 @@ class DynamoDeploySeeds {
         }
         return config;
     }
-
-    getConfigValue(key) {
-        let config = this.getConfig();
-        let value = config;
-
-        key.split('.').forEach((property) => { value = value[property]; });
-
-        if (value === config) {
-            throw `${key} not set in config.`;
-        }
-
-        return value;
-    }
-
 }
 
 module.exports = new DynamoDeploySeeds();
