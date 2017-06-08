@@ -14,7 +14,7 @@ setEnvironmentVariables();
 let entities = global.routes.files('seeds');
 
 entities = entities.map(function(filename){
-    return filename.substring(0, filename.indexOf(".json"));
+    return filename.substring(0, filename.indexOf("s.json"));
 });
 
 const kinesisfirehoseutilities = require('../lib/kinesis-firehose-utilities');
@@ -35,11 +35,8 @@ function createRandomKinesisActivityRecord(){
         associated_with:associated_with.id,
         associated_with_type:associated_with.type,
         action:"tested",
-        account:uuidV4()
+        account:getIDFromSeed('account')
     };
-
-    du.debug('Spoofed Record:', spoofed_record);
-    process.exit();
 
     return spoofed_record;
 
@@ -55,15 +52,23 @@ function createEntity(entity_type){
 
     let return_object = {id: '', type: ''};
 
-    return_object.selected_type = random.selectRandomFromArray(entity_types[entity_type]);
+    return_object.type = random.selectRandomFromArray(entity_types[entity_type]);
 
-    if(return_object.selected_type == 'system'){
+    if(return_object.type == 'system'){
 
-        return_object.id = return_object.selected_type;
+        return_object.id = return_object.type;
 
-    }else if(return_object.selected_type !== ''){
+    }else if(return_object.type !== ''){
 
-        return_object.id = getIDFromSeed(return_object.selected_type);
+        return_object.id = getIDFromSeed(return_object.type);
+
+        if(_.isNull(return_object.id)){
+
+            du.warning('Recreating entity, null id value...');
+
+            return_object = createEntity(entity_type);
+
+        }
 
     }
 
@@ -79,17 +84,21 @@ function createEntity(entity_type){
 
 function getIDFromSeed(seed_type){
 
-    let seeds = global.routes.include('seeds', seed_type+'.json');
+    let seeds = global.routes.include('seeds', seed_type+'s.json');
 
     let seeds_array = (_.has(seeds, 'Seeds'))?seeds.Seeds:seeds;
 
-    let selected_seed = random.selectRandomFromArray(seeds);
+    if(!_.isArray(seeds_array) || seeds_array.length < 1){
+        return null;
+    }
+
+    let selected_seed = random.selectRandomFromArray(seeds_array);
 
     if(_.has(selected_seed, 'id')){
         return selected_seed.id;
-    }else{
-        return getIDFromSeed(seed_type);
     }
+
+    return null;
 
 }
 
