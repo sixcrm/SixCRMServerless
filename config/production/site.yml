@@ -83,7 +83,7 @@ redshift:
   max: 10
   idleTimeoutMillis: 30000
   randomdata:
-    staging_bucket: 'sixcrm-development-redshift/sixcrm-random-generator'
+    staging_bucket: 'sixcrm-redshift/sixcrm-random-generator'
     interval: 18000
 
 notifications:
