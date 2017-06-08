@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
+const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 
 const AnalyticsUtilities = global.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 
@@ -42,15 +43,50 @@ class AnalyticsController extends AnalyticsUtilities{
 
         if(_.isFunction(this[function_name])){
 
-            this.setCacheSettings(argumentation);
+            return this.can(function_name).then((permission) => {
 
-            return this[function_name](argumentation);
+                if(permission !== true){
+                    return Promise.reject('Insufficient Permissions');
+                }
+
+                this.setCacheSettings(argumentation);
+
+                return this[function_name](argumentation);
+
+            });
 
         }else{
 
-            throw new Error('AnalyticsController.'+function_name+' is not defined.');
+            return Promise.reject(new Error('AnalyticsController.'+function_name+' is not defined.'));
 
         }
+
+    }
+
+    can(function_name){
+
+        du.debug('Can');
+
+        du.debug('Can check:', function_name, 'analytics');
+
+        return new Promise((resolve, reject) => {
+
+            permissionutilities.validatePermissions(function_name, 'analytics').then((permission) => {
+
+                du.debug('Has permission:', permission);
+
+                return resolve(permission);
+
+            })
+          .catch((error) => {
+
+              du.debug(error);
+
+              return reject(error);
+
+          });
+
+        });
 
     }
 
