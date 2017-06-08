@@ -1,0 +1,79 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	mutation {
+		refundtransaction(refund:{amount:0.99}, transaction:\"e624af6a-21dc-4c64-b310-3b0523f8ca42\") {
+			id,
+			alias,
+			amount,
+			processor_response,
+            merchant_provider {
+                id,
+                name,
+                username,
+                password,
+                endpoint,
+                processor,
+                created_at,
+                updated_at
+            },
+			created_at,
+			updated_at,
+			rebill {
+				id,
+				amount,
+				bill_at,
+				product_schedules {
+					id,
+					schedule {
+						price,
+						start,
+						end,
+						period,
+						product {
+							id,
+							name,
+							sku,
+							ship,
+							shipping_delay,
+							fulfillment_provider {
+								id,
+								name,
+								provider,
+								username,
+								password,
+								endpoint
+							}
+						}
+					}
+				}
+			},
+			products {
+				amount,
+				product {
+					id,
+					name,
+					sku,
+					ship,
+					shipping_delay,
+					fulfillment_provider {
+						id,
+						name,
+						provider,
+						username,
+						password,
+						endpoint
+					}
+				},
+				shippingreceipt {
+					id,
+					status,
+					trackingnumber,
+					created_at,
+					updated_at
+				}
+			}	
+		}
+	}"
+}

@@ -4,7 +4,6 @@ const _  = require('underscore');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLList = require('graphql').GraphQLList;
 
 let accessKeyType = require('./accesskey/accessKeyType');
 let accessKeyListType = require('./accesskey/accessKeyListType');
@@ -109,16 +108,10 @@ let listActivityType = require('./analytics/listActivityType');
 let eventsByFacetType =  require('./analytics/eventsByFacetType');
 let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
 
-/* Technical Debt:  Deprecated */
-let eventsByAffiliateType =  require('./analytics/eventsByAffiliateType');
-let transactionsByAffiliateType =  require('./analytics/transactionsByAffiliateType');
-/* */
-
 let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
 let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
 let analyticsPaginationInputType = require('./analytics/analyticsPaginationInputType');
 let analyticsActivityFilterInputType = require('./analytics/analyticsActivityFilterInputType');
-let analyticsCustomerActivityFilterInputType = require('./analytics/analyticsCustomerActivityFilterInputType');
 
 const sessionController = global.routes.include('controllers', 'entities/Session.js');
 
@@ -189,6 +182,7 @@ module.exports.graphObj = new GraphQLObjectType({
       	},
       	userintrospection:{
       	  type: userType.graphObj,
+          description: 'Retrieves or creates a user.',
     	    resolve: function(){
             return userController.introspection();
     	     }
@@ -502,7 +496,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionSummary');
-              //return analyticsController.getTransactionSummary(analyticsfilter.analyticsfilter);
             }
         },
         listtransactions: {
@@ -514,7 +507,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactions');
-              //return analyticsController.getTransactions(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         listevents: {
@@ -526,7 +518,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getEvents');
-              //return analyticsController.getEvents(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
         eventsummary: {
@@ -537,7 +528,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getEventSummary');
-              //return analyticsController.getEventSummary(analyticsfilter.analyticsfilter);
             }
         },
         transactionoverview: {
@@ -548,7 +538,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionOverview');
-              //return analyticsController.getTransactionOverview(analyticsfilter.analyticsfilter);
             }
         },
         eventfunnel: {
@@ -560,7 +549,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getEventFunnel');
-              //return analyticsController.getEventFunnel(analyticsfilter.analyticsfilter);
             }
         },
         campaigndelta: {
@@ -571,7 +559,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getCampaignDelta');
-              //return analyticsController.getCampaignDelta(analyticsfilter.analyticsfilter);
             }
         },
         campaignsbyamount: {
@@ -582,7 +569,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getCampaignsByAmount');
-              //return analyticsController.getCampaignsByAmount(analyticsfilter.analyticsfilter);
             }
         },
         eventsbyfacet: {
@@ -597,7 +583,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getEventsByFacet');
-              //return analyticsController.getEventsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
             }
         },
         transactionsbyfacet: {
@@ -612,7 +597,6 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByFacet');
-              //return analyticsController.getTransactionsByFacet(analyticsfilter.analyticsfilter, analyticsfilter.pagination, analyticsfilter.facet);
             }
         },
         merchantprovideramount: {
@@ -623,31 +607,28 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderAmount');
-                //return analyticsController.getMerchantProviderAmount(analyticsfilter.analyticsfilter);
             }
         },
         listactivity: {
             type: listActivityType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsActivityFilterInputType.graphObj },
+                activityfilter: {type: analyticsActivityFilterInputType.graphObj},
                 pagination: {type: analyticsPaginationInputType.graphObj},
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
                 return analyticsController.executeAnalyticsFunction(args, 'getActivity');
-                //return analyticsController.getActivity(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
             }
         },
-        listactivitybycustomer: {
+        listactivitybyidentifier: {
             type: listActivityType.graphObj,
             args: {
-                analyticsfilter: { type: analyticsCustomerActivityFilterInputType.graphObj },
+                activityfilter: {type: analyticsActivityFilterInputType.graphObj},
                 pagination: {type: analyticsPaginationInputType.graphObj},
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                return analyticsController.executeAnalyticsFunction(args, 'getActivityByCustomer');
-                //return analyticsController.getActivityByCustomer(analyticsfilter.analyticsfilter, analyticsfilter.pagination);
+                return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
             }
         },
         transactionlistbycustomer: {
@@ -994,7 +975,7 @@ module.exports.graphObj = new GraphQLObjectType({
         },
         notificationsettingdefault: {
             type: notificationSettingDefaultType.graphObj,
-            resolve: (root, notificationdefault) => {
+            resolve: () => {
                 return notificationSettingController.getDefaultProfile();
             }
         },

@@ -818,7 +818,8 @@ module.exports = class entityController {
 
     }
 
-		//ACL enabled
+		//Technical Debt: Like the Analytics class, this function should look for entity specific methods to attempt to identify a function that creates the validation schema
+    //OR it needs to load associated schemas based on the contents of the schema...
     validate(object, object_type){
 
         du.debug('Validate');
@@ -857,11 +858,12 @@ module.exports = class entityController {
                 v = new Validator();
                 validation = v.validate(object, schema);
             }catch(e){
-                return reject(new Error('Unable to instantiate validator.'));
+                return reject(e);
             }
 
             if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
 
+                du.warning(validation.errors);
                 var error = {
                     message: 'One or more validation errors occurred.',
                     issues: validation.errors.map((e)=>{ return e.message; })

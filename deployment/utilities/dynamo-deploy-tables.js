@@ -8,7 +8,7 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 const retryCount = 3;
 
-class DynamoDeploy {
+class DynamoDeployTables {
     constructor(){}
 
     deployTable(tableFileName, env, region, counter) {
@@ -27,16 +27,16 @@ class DynamoDeploy {
             return val;
         })
         .catch((err) => {
-            let val = `Failed to create ${tableName}`;
-
-            du.error(val);
-            du.debug(err);
-
             if (executionCount++ < retryCount) {
                 return this.deployTable(tableFileName, env, region, executionCount)
-            }
+            } else {
+                let val = `Failed to create ${tableName}`;
 
-            return val;
+                du.error(val);
+                du.debug(err);
+
+                return val;
+            }
         });
     }
 
@@ -193,4 +193,4 @@ class DynamoDeploy {
 
 }
 
-module.exports = new DynamoDeploy();
+module.exports = new DynamoDeployTables();

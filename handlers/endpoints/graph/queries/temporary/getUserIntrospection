@@ -1,0 +1,39 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"tmdalbey2@gmail.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		userintrospection {
+			id,
+			name,
+			auth0_id,
+			active,
+			termsandconditions,
+			acl {
+				account {
+					id,
+					name,
+					active
+				},
+				role {
+					id,
+					name,
+					active
+				}
+			},
+			address {
+				line1,
+				line2,
+				city,
+				state,
+				zip,
+				country
+			},
+			usersetting {
+			    timezone
+            }
+			created_at,
+			updated_at
+		}
+	}"
+}

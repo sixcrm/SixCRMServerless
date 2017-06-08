@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('underscore');
-var timestamp = global.routes.include('lib', 'timestamp.js');
 var random = global.routes.include('lib', 'random.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
@@ -15,13 +14,13 @@ class transactionController extends entityController {
         super('transaction');
     }
 
-	//Technical Debt:  Why is this missing rebill_ids
+	//Technical Debt:  Why is this missing rebills
     getParentRebill(transaction){
 
-        if(_.has(transaction, "rebill_id")){
+        if(_.has(transaction, 'rebill')){
             var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
-            return rebillController.get(transaction.rebill_id);
+            return rebillController.get(transaction.rebill);
         }else{
             return null;
         }
@@ -101,32 +100,61 @@ class transactionController extends entityController {
 
     getTransactionsByRebillID(id){
 
-        return this.queryBySecondaryIndex('rebill_id', id, 'rebill-index').then((result) => this.getResult(result));
+        return this.queryBySecondaryIndex('rebill', id, 'rebill-index').then((result) => this.getResult(result));
 
     }
 
     putTransaction(params, processor_response){
 
-        var transaction = this.createTransactionObject(params, processor_response);
+        du.debug('Put Transaction');
 
-        return this.create(transaction);
+        const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+
+        return rebillController.get(params.rebill).then((rebill) => {
+
+            params.rebill = rebill;
+
+            var transaction = this.createTransactionObject(params, processor_response);
+
+            return this.create(transaction);
+
+        });
 
     }
 
-    createTransactionObject(params, processor_response){
+    createTransactionObject(parameters, processor_response){
 
-        du.debug('Creating Transaction Object');
+        du.debug('Create Transaction Object');
+
+        //Technical Debt: Why is this necessary?
+        let merchant_provider = this.getMerchantProvider(parameters, processor_response);
 
         var return_object = {
-            rebill_id: params.rebill.id,
+            rebill: parameters.rebill.id,
             processor_response: JSON.stringify(processor_response),
-            amount: params.amount,
-            products: params.products,
+            amount: parameters.amount,
+            products: parameters.products,
             alias: this.createAlias(),
-            merchant_provider: processor_response.merchant_provider
+            merchant_provider: merchant_provider
         }
 
         return return_object;
+
+    }
+
+    getMerchantProvider(parameters, processor_response){
+
+        du.debug('Get Merchant Provider');
+
+        if(_.has(parameters, 'merchant_provider') && this.isUUID(parameters.merchant_provider)){
+            return parameters.merchant_provider;
+        }
+
+        if(_.has(processor_response, 'merchant_provider') && this.isUUID(processor_response.merchant_provider)){
+            return processor_response.merchant_provider;
+        }
+
+        return null;
 
     }
 
@@ -140,11 +168,14 @@ class transactionController extends entityController {
 
     validateRefund(refund, transaction){
 
-        let validated = [];
-      //make sure that the refund has the correct structure
-      //make sure that the refund amount isn't greater than the sum of all the transactions on the rebill
+        //Technical Debt:  This should be, uh more rigorous...
+        //make sure that the transaction was successful
 
-        return validated;
+        if(refund.amount > transaction.amount){
+            throw new Error('Refund amount is greater than the transaction amount');
+        }
+
+        return Promise.resolve(true);
 
     }
 
@@ -157,7 +188,7 @@ class transactionController extends entityController {
 
         return this.get(transaction).then((transaction) => {
 
-            return this.validate(transaction).then((validated) => {
+            return this.validate(transaction).then(() => {
 
                 return this.validateRefund(refund, transaction).then(() => {
 

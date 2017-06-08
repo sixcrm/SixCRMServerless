@@ -2,7 +2,9 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
+const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 
 const AnalyticsUtilities = global.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 
@@ -24,14 +26,15 @@ class AnalyticsController extends AnalyticsUtilities{
             'account'
         ];
 
-        this.activity_optional_params = [
+        this.default_activity_query_filters = [
+            'action',
             'actor',
             'actor_type',
-            'action',
             'acted_upon',
             'acted_upon_type',
             'associated_with',
-            'associated_with_type'
+            'associated_with_type',
+            'account'
         ];
 
     }
@@ -40,15 +43,50 @@ class AnalyticsController extends AnalyticsUtilities{
 
         if(_.isFunction(this[function_name])){
 
-            this.setCacheSettings(argumentation);
+            return this.can(function_name).then((permission) => {
 
-            return this[function_name](argumentation);
+                if(permission !== true){
+                    return Promise.reject('Insufficient Permissions');
+                }
+
+                this.setCacheSettings(argumentation);
+
+                return this[function_name](argumentation);
+
+            });
 
         }else{
 
-            throw new Error('AnalyticsController.'+function_name+' is not defined.');
+            return Promise.reject(new Error('AnalyticsController.'+function_name+' is not defined.'));
 
         }
+
+    }
+
+    can(function_name){
+
+        du.debug('Can');
+
+        du.debug('Can check:', function_name, 'analytics');
+
+        return new Promise((resolve, reject) => {
+
+            permissionutilities.validatePermissions(function_name, 'analytics').then((permission) => {
+
+                du.debug('Has permission:', permission);
+
+                return resolve(permission);
+
+            })
+          .catch((error) => {
+
+              du.debug(error);
+
+              return reject(error);
+
+          });
+
+        });
 
     }
 
@@ -72,20 +110,6 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getEventSummary(parameters){
-
-        du.debug('Get Event Summary');
-
-        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
-
-        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
-
-        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
-
-        return this.getResults('aggregation_event_type_count', parameters, this.default_query_filters);
-
-    }
-
     getCampaignsByAmount(parameters){
 
         du.debug('Get Campaigns By Amount');
@@ -101,6 +125,28 @@ class AnalyticsController extends AnalyticsUtilities{
         du.debug('Get Merchant Provider Amount');
 
         return this.getResults('merchant_provider_amount', parameters.analyticsfilter, this.default_query_filters);
+
+    }
+
+    getEventSummary(parameters){
+
+        du.debug('Get Event Summary');
+
+        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
+
+        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
+
+        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
+
+        return this.getResults('aggregation_event_type_count', parameters, this.default_query_filters);
+
+    }
+
+    getEventFunnel(parameters){
+
+        du.debug('Get Campaign Delta');
+
+        return this.getResults('event_funnel', parameters.analyticsfilter, this.default_query_filters);
 
     }
 
@@ -160,69 +206,45 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getEventFunnel(parameters){
-
-        du.debug('Get Campaign Delta');
-
-        return this.getResults('event_funnel', parameters.analyticsfilter, this.default_query_filters);
-
-    }
-
     getActivity(args){
 
         du.debug('Get Activity');
 
-        let parameters = paginationutilities.mergePagination(args.analyticsfilter, paginationutilities.createSQLPaginationInput(args.pagination));
+        let parameters = paginationutilities.mergePagination(args.activityfilter, paginationutilities.createSQLPaginationInput(args.pagination));
 
-        let filters = this.default_query_filters;
-
-        this.activity_optional_params.forEach((optional_parameter) => {
-            if (parameters[optional_parameter]) {
-                filters.push(optional_parameter);
-            }
-        });
+        let filters = this.default_activity_query_filters;
 
         return this.getResults('activity', parameters, filters);
 
     }
 
-    getActivityByCustomer(args){
+    getActivityByIdentifier(args){
 
-        let parameters = paginationutilities.mergePagination(args.analyticsfilter, paginationutilities.createSQLPaginationInput(args.pagination));
+        du.debug('Get Activity By Identifier');
 
-        du.debug('Get Activity By Customer', parameters);
+        let activity_filter = this.getActivityFilter(args);
 
-        let params = {
-            start: parameters.start,
-            end: parameters.end,
-            actor: [parameters.customer],
-            actor_type: ['customer'],
-            acted_upon: [parameters.customer],
-            acted_upon_type: ['customer'],
-            associated_with: [parameters.customer],
-            associated_with_type: ['customer']
-        };
+        let pagination = this.getPagination(args);
 
-        // return this.getActivity(params, pagination);
+        let parameters = paginationutilities.mergePagination(activity_filter, paginationutilities.createSQLPaginationInput(pagination));
 
-        params = paginationutilities.mergePagination(params, paginationutilities.createSQLPaginationInput(args.pagination));
+        let this_query_filter = this.default_activity_query_filters;
 
-        let filters = this.default_query_filters;
-
-        this.activity_optional_params.forEach((optionalParam) => {
-            if (params[optionalParam]) {
-                filters.push(optionalParam);
-            }
+        ['actor', 'actor_type','acted_upon', 'acted_upon_type','associated_with', 'associated_with_type'].forEach((argument) => {
+            this_query_filter = arrayutilities.removeElement(this_query_filter, argument);
         });
 
-        let or_groups = [
-            ['actor', 'actor_type'],
-            ['acted_upon', 'acted_upon_type'],
-            ['associated_with', 'associated_with_type']
+        return this.getResults('activity_by_identifier', parameters, this_query_filter);
 
-        ];
+    }
 
-        return this.getResults('activity', params, filters, or_groups);
+    getPagination(parameters){
+
+        if(_.has(parameters, 'pagination')){
+            return parameters.pagination;
+        }
+
+        return null;
 
     }
 
@@ -230,6 +252,16 @@ class AnalyticsController extends AnalyticsUtilities{
 
         if(_.has(parameters, 'analyticsfilter')){
             return parameters.analyticsfilter;
+        }
+
+        return null;
+
+    }
+
+    getActivityFilter(parameters){
+
+        if(_.has(parameters, 'activityfilter')){
+            return parameters.activityfilter;
         }
 
         return null;

@@ -43,6 +43,8 @@ To add all dynamodb tables to AWS for a stage execute: `AWS_PROFILE=six npm run 
 
 To remove all dynamoDB tables for a stage execute: `AWS_PROFILE=six npm run purge-tables -- {stage}` (where `{stage}` is `local`, `development`, or `production`).
 
+To seed dynamodb data, execute `AWS_PROFILE=six SIX_VERBOSE=2 npm run deploy-seeds {stage}`.
+
 If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --stage {stage}`.
 
 #### SQS

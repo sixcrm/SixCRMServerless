@@ -3,6 +3,8 @@ const _ = require('underscore');
 const request = require('request');
 const querystring = require('querystring');
 
+const du = global.routes.include('lib', 'debug-utilities');
+
 class NMIController {
 
     constructor(parameters){
@@ -21,11 +23,73 @@ class NMIController {
 
     refund(parameters){
 
-        return true;
+        du.debug('Refund');
+
+        return new Promise((resolve, reject) => {
+
+            parameters = this.appendCredentials(parameters);
+
+            var request_options = {
+                headers: {'content-type' : 'application/x-www-form-urlencoded'},
+                url:     this.endpoint,
+                body:    querystring.stringify(parameters)
+            };
+
+            request.post(request_options, (error, response, body) => {
+
+                if(_.isError(error)){
+                    reject(error);
+                }
+
+                var response_body = querystring.parse(body);
+
+                if(_.isObject(response_body) && _.has(response_body, "response")){
+
+                    var resolve_object = {
+                        message: '',
+                        results: response_body
+                    };
+
+                    switch(response_body.response){
+
+                    case '1':
+
+                        resolve_object.message = 'Success';
+                        break;
+
+                    case '2':
+
+                        resolve_object.message = 'Declined';
+                        break;
+
+                    case '3':
+
+                        resolve_object.message = 'Error';
+                        break;
+
+                    default:
+                        //do nothing...
+                        break;
+
+                    }
+
+                    return resolve(resolve_object);
+
+                }else{
+
+                    new Error('Unexpected Error posting to NMI.');
+
+                }
+
+            });
+
+        });
 
     }
 
     process(parameters_array){
+
+        du.debug('Process');
 
         return new Promise((resolve, reject) => {
 
@@ -87,8 +151,25 @@ class NMIController {
 
     }
 
+    appendCredentials(parameters){
+
+        du.debug('Append Credentials');
+
+        if(_.has(this, 'username')){
+            parameters.username = this.username;
+        }
+
+        if(_.has(this, 'password')){
+            parameters.password = this.password;
+        }
+
+        return parameters;
+
+    }
+
     createParameterGroup(parameters){
 
+        du.debug('Create Parameter Group');
 		//need to enforce a contract here...
 
         var return_object = {};

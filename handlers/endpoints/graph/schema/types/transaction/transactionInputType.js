@@ -11,7 +11,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'TransactionInputType',
     fields: () => ({
         id:					{ type: new GraphQLNonNull(GraphQLString) },
-        rebill_id:			{ type: new GraphQLNonNull(GraphQLString) },
+        rebill:			{ type: new GraphQLNonNull(GraphQLString) },
         amount:				{ type: new GraphQLNonNull(GraphQLFloat) },
         processor_response:	{ type: new GraphQLList(GraphQLString) },
         merchant_provider:  { type: new GraphQLNonNull(GraphQLString) },

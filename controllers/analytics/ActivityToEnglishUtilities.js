@@ -2,12 +2,13 @@
 const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities');
 const mvu = global.routes.include('lib', 'model-validator-utilities');
-const parserutilities = global.routes.include('lib', 'parser-utilities');
 const EntityController = global.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class ActivityToEnglishUtilities {
 
     constructor(activity_row){
+
+        du.debug('Constructor');
 
         this.setActivityRow(activity_row);
 
@@ -20,19 +21,28 @@ module.exports = class ActivityToEnglishUtilities {
     }
 
     //Entrypoint
+    appendActivityEnglishObject(){
+
+        du.debug('Append Activity Statement');
+
+        return this.buildActivityEnglishObject().then((english_string) => {
+
+            this.activity_row['english'] = english_string;
+
+            return this.activity_row;
+
+        });
+
+    }
+
+    //Entrypoint
     buildActivityEnglishObject(){
 
         du.debug('Build Activity Statement');
 
-        return this.validateActivityRow()
-        .then(() => this.acquireResources())
+        return this.validateActivityRow().then(() => this.acquireResources())
         .then(() => this.setEnglishTemplate())
-        .then(() => this.buildObject())
-        .catch((error) => {
-
-            return Promise.resolve(JSON.stringify(error));
-
-        });
+        .then(() => this.buildObject());
 
     }
 
@@ -46,12 +56,13 @@ module.exports = class ActivityToEnglishUtilities {
 
         }catch(e){
 
-            du.warning(this.activity_row);
-            du.warning(e); process.exit();
+            du.warning(this.activity_row, e);
 
             return Promise.reject(e);
 
         }
+
+        du.info('Model Validated');
 
         return Promise.resolve(true);
 
@@ -67,13 +78,9 @@ module.exports = class ActivityToEnglishUtilities {
         promises.push(this.getActedUpon());
         promises.push(this.getAssociatedWith());
 
-        return Promise.all(promises).then((promises) => {
+        return Promise.all(promises).then(() => {
 
-            this.actor = promises[0];
-            this.acted_upon = promises[1];
-            this.associated_with = promises[2];
-
-            return Promise.resolve(true);
+            return true;
 
         });
 
@@ -82,8 +89,6 @@ module.exports = class ActivityToEnglishUtilities {
     setEnglishTemplate(){
 
         du.debug('Set English Template');
-
-        du.info(this);
 
         if(_.has(this, 'associated_with') && _.has(this,'acted_upon')){
             this.english_template = this.statement_templates.actor_and_acted_upon_and_associated_with;
@@ -132,7 +137,7 @@ module.exports = class ActivityToEnglishUtilities {
 
     }
 
-    getAssocatedWith(){
+    getAssociatedWith(){
 
         du.debug('Get Associated With');
 
@@ -166,21 +171,21 @@ module.exports = class ActivityToEnglishUtilities {
 
         let parameters = {id: this.activity_row[type], type: this.activity_row[type+'_type']};
 
-        du.warning(this.activity_row, parameters);
-
         return this.getEntity(parameters).then((entity) => {
-
-            du.warning(entity);
 
             if(_.has(entity, 'id')){
 
                 this[type] = entity;
 
-                return Promise.resolve(true);
+                return true;
 
             }
 
-            return Promise.reject(new Error('Unable to identify '+type+'.'));
+            let error = new Error('Unable to identify '+type+'.');
+
+            du.warning(error);
+
+            return Promise.reject(error);
 
         }).catch((error) => {
 

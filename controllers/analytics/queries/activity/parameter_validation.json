@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/TransactionsValidation",
+	"id":"/ActivityValidation",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {

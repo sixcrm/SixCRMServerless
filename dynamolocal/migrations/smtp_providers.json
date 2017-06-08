@@ -13,19 +13,5 @@
             "ReadCapacityUnits": 1,
             "WriteCapacityUnits": 1
         }
-    },
-    "Seeds": [
-    	{
-			"id":"18213d0b-cd6d-4cea-91b9-993d7443468b",
-			"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-			"name":"SMTP Provider 1",
-			"hostname":"a",
-			"ip_address":"b",
-			"username":"c",
-			"password":"d",
-			"port":"e",
-			"created_at":"2017-04-06T18:40:41.405Z",
-			"updated_at":"2017-04-06T18:41:12.521Z"
-    	}
-    ]
+    }
 }

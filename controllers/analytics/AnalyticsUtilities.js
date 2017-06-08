@@ -5,8 +5,9 @@ const Validator = require('jsonschema').Validator;
 
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const parserutilities = global.routes.include('lib', 'parser-utilities');
+const arrayutilities = global.routes.include('lib', 'array-utilities');
 const redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
-const mathutilities =  global.routes.include('lib', 'math-utilities.js');
 
 const cacheController = global.routes.include('controllers', 'providers/Cache.js');
 
@@ -47,7 +48,7 @@ module.exports = class AnalyticsUtilities {
     }
 
     //Technical Debt:  Messy.  Refactor.
-    getResults(query_name, parameters, query_filters, or_groups){
+    getResults(query_name, parameters, query_filters){
 
         du.debug('Get Results');
 
@@ -55,15 +56,13 @@ module.exports = class AnalyticsUtilities {
 
             parameters = this.appendAccount(parameters);
 
-            parameters = this.createQueryFilter(parameters, query_filters, or_groups);
+            parameters = this.createQueryFilter(parameters, query_filters);
 
             this.validateQueryParameters(query_name, parameters).then(() => {
 
                 return this.getQueryString(query_name).then((query) => {
 
                     query = this.parseQueryParameters(query, parameters);
-
-                    du.highlight('Parameters:', parameters);
 
                     du.highlight('Query:', query);
 
@@ -141,55 +140,34 @@ module.exports = class AnalyticsUtilities {
 
     }
 
-    // Technical Debt: The way we handle logical OR grouping is messy. write a generic a simpler solution.
-    createQueryFilter(parameters, filters_array, or_groups){
+    createQueryFilter(parameters, filters_array){
 
         du.debug('Create Query Filter', parameters, filters_array);
 
         let filter_array = [];
 
-        if (!or_groups || or_groups.length === 0) {
+        filters_array.forEach((filter) => {
 
-            filters_array.forEach((filter) => {
+            if (_.has(parameters, filter)) {
 
-                if (_.has(parameters, filter)) {
+                du.highlight(filter, parameters[filter]);
 
-                    du.highlight(filter, parameters[filter]);
+                filter_array.push(filter+" IN ("+arrayutilities.compress(parameters[filter])+")");
 
-                    filter_array.push('AND ' + filter + ' IN (\'' + parameters[filter].join('\',\'') + '\')');
+            }
 
-                }
+        });
 
-            });
-        } else {
-            let statement = 'AND (';
-            let or_statement = '';
+        if(_.has(parameters, 'additional_filters') && _.isArray(parameters.additional_filters) && parameters.additional_filters.length > 0){
 
-            or_groups.forEach((group, i) => {
+            filter_array = filter_array.concat(parameters.additional_filters);
 
-                group.forEach((item, i) => {
-                    or_statement += `${item} IN ('${parameters[item].join(`','`)}') `;
-                    if (i < group.length - 1) {
-                        or_statement += ' AND '
-                    }
-                });
+            delete parameters.additional_filters;
 
-                if (i < or_groups.length - 1) {
-                    or_statement += ') OR (';
-                } else {
-                    or_statement += ')';
-                }
-
-            });
-            statement += or_statement;
-
-            filter_array.push(statement);
         }
 
-        du.info(filter_array);
-
         if(filter_array.length > 0){
-            parameters['filter'] = filter_array.join(' ');
+            parameters['filter'] = ' AND '+filter_array.join(' AND ');
         }else{
             parameters['filter'] = ' AND 1 '
         }
@@ -207,43 +185,26 @@ module.exports = class AnalyticsUtilities {
             throw new Error('Create Filter List only supports array arguments.');
         }
 
-        return '\''+parameters.join('\',\'')+'\'';
+        return arrayutilities.compress(parameters);
 
+    }
+
+    compressParameters(parameters){
+        for(var key in parameters){
+            if(_.isArray(parameters[key])){
+                parameters[key] = arrayutilities.compress(parameters[key]);
+            }
+        }
+        return parameters;
     }
 
     parseQueryParameters(query, parameters){
 
         du.debug('Parse Query Parameters');
 
-        for (var parameter_name in parameters) {
+        let compressed_query_parameters = this.compressParameters(parameters);
 
-            var re = new RegExp('{{'+parameter_name+'}}',"g");
-
-            let replace_string = ''
-
-            if(_.isArray(parameters[parameter_name])){
-
-                let replace_array = [];
-
-                parameters[parameter_name].forEach((parameter) => {
-
-                    replace_array.push(parameter);
-
-                });
-
-                replace_string = '\''+replace_array.join('\',\'')+'\'';
-
-            }else{
-
-                replace_string = parameters[parameter_name];
-
-            }
-
-            query = query.replace(re, replace_string);
-
-        }
-
-        return query;
+        return parserutilities.parse(query, compressed_query_parameters);
 
     }
 
@@ -387,6 +348,36 @@ module.exports = class AnalyticsUtilities {
         let transformation_function_filepath = this.getTransformationFunctionFilepath(query_name);
 
         return require(transformation_function_filepath);
+
+    }
+
+    collapseActivityFilterObject(activity_filter_object){
+
+        let return_object = {};
+
+        for(var key in activity_filter_object){
+
+            return_object = this.collapseActivityFilterKey(return_object, key, activity_filter_object);
+
+        }
+
+        return return_object;
+
+    }
+
+    collapseActivityFilterKey(return_object, key, activity_filter_object){
+
+        if(_.isArray(activity_filter_object[key]) && activity_filter_object[key].length > 0){
+
+            return_object[key] = arrayutilities.compress(activity_filter_object[key]);
+
+        }else if(_.isString(activity_filter_object[key])){
+
+            return_object[key] = activity_filter_object[key];
+
+        }
+
+        return return_object;
 
     }
 

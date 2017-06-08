@@ -256,8 +256,8 @@ class customerController extends entityController {
 
                 let transaction_promises = [];
 
-                rebill_ids.forEach((rebill_id) => {
-                    transaction_promises.push(transactionController.listBySecondaryIndex('rebill_id', rebill_id, 'rebill-index', pagination));
+                rebill_ids.forEach((rebill) => {
+                    transaction_promises.push(transactionController.listBySecondaryIndex('rebill', rebill, 'rebill-index', pagination));
                 });
 
                 return Promise.all(transaction_promises).then(transaction_responses => {

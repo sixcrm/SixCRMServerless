@@ -8,3 +8,5 @@ model: /model/
 config: /config/
 deployment: /deployment/
 providers: /controllers/providers/
+migrations: /dynamolocal/migrations/
+seeds: /dynamolocal/seeds/
