@@ -29,7 +29,7 @@ class DynamoDeploySeeds {
         du.highlight(`Seeding ${entity}`);
 
         seed_content.forEach((entity) => {
-            controller.create(entity).catch(error => {
+            controller.store(entity).catch(error => {
                 du.error(`Error while seeding '${controller.descriptive_name}' with id '${entity.id}': ${error.message}`);
             });
         });
