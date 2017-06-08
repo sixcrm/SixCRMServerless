@@ -26,6 +26,8 @@ class DynamoDeploySeeds {
         let controller = global.routes.include('controllers', 'entities/' + entity);
         let seed_content = global.routes.include('seeds', seed + '.json').Seeds;
 
+        du.highlight(`Seeding ${entity}`);
+
         seed_content.forEach((entity) => {
             controller.create(entity);
         });
@@ -38,6 +40,9 @@ class DynamoDeploySeeds {
     deployAllSeeds(environment) {
         PermissionUtilities.disableACLs();
         process.env.stage = environment;
+        process.env.search_indexing_queue_url = this.getConfigValue('sqs.search_indexing_queue_url');
+
+        du.highlight(`Deploying seeds on ${environment}`);
 
         let seeds = this.getSeedFileNames().filter((seed) => !_.contains(this.blacklisted_seeds, seed));
 
@@ -78,6 +83,28 @@ class DynamoDeploySeeds {
         }
 
         return name;
+    }
+
+    getConfig() {
+        let config = global.routes.include('config', `${process.env.stage}/site.yml`);
+
+        if (!config) {
+            throw 'Unable to find config file.';
+        }
+        return config;
+    }
+
+    getConfigValue(key) {
+        let config = this.getConfig();
+        let value = config;
+
+        key.split('.').forEach((property) => { value = value[property]; });
+
+        if (value === config) {
+            throw `${key} not set in config.`;
+        }
+
+        return value;
     }
 
 }
