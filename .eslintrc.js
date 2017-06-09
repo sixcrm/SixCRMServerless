@@ -5,7 +5,8 @@ module.exports = {
         "mocha": true
     },
     "plugins": [
-        "promise"
+        "promise",
+        "json"
     ],
     "extends": [
         "eslint:recommended"
