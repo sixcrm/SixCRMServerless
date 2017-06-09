@@ -1,5 +1,4 @@
-{
-  "Seeds": [
+[
     {
       "id": "ljubomir@toptal.com",
       "work_phone": "+38121000000",
@@ -457,4 +456,3 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
     }
   ]
-}

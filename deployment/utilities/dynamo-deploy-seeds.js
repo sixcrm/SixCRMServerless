@@ -13,7 +13,7 @@ class DynamoDeploySeeds {
 
     deploySeed(seed) {
         let controller = this.getController(seed);
-        let seed_content = global.routes.include('seeds', seed + '.json').Seeds;
+        let seed_content = global.routes.include('seeds', seed + '.json');
 
         du.highlight(`Seeding ${seed}`);
 

@@ -1,9 +1,7 @@
-{
-    "Seeds": [{
-    	"id":"6b6331f6-7f84-437a-9ac6-093ba301e455",
-    	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    	"affiliate_id":"whatever",
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-    }]
-}
+[{
+    "id":"6b6331f6-7f84-437a-9ac6-093ba301e455",
+    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "affiliate_id":"whatever",
+  "created_at":"2017-04-06T18:40:41.405Z",
+  "updated_at":"2017-04-06T18:41:12.521Z"
+}]
