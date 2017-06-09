@@ -2,7 +2,7 @@
 cd "$(git rev-parse --show-toplevel)"
 
 LINT_CMD="node_modules/.bin/eslint"
-FILES_TO_CHECK=($(git diff --cached --name-only --diff-filter=ACM | grep -e ".js$" -e ".json$"))
+FILES_TO_CHECK=($(git diff --cached --name-only --diff-filter=ACM | grep -e ".js$"))
 
 if [[ "$FILES_TO_CHECK" = "" ]]; then
   printf "No files to lint check"
