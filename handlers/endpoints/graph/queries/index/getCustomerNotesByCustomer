@@ -30,7 +30,12 @@
 				body,
 				created_at,
 				updated_at
-			}
+			},
+			pagination {
+                count,
+                end_cursor,
+                has_next_page
+            }
 		}
 	}"
 }
