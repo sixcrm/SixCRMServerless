@@ -31,7 +31,7 @@ custom:
       migration: true
     migration:
       table_prefix: ${opt:stage}
-      dir: ./dynamolocal/migrations
+      dir: ./dynamolocal/tabledefinitions
     seed:
       table_prefix: ${opt:stage}
       dir: ./dynamolocal/seeds

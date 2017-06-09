@@ -6,7 +6,7 @@ export AWS_REGION=us-east-1
 export CS_DOMAIN=https://search-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com
 export DOMAIN_NAME=sixcrm
 
-SEED_DIR=../../../dynamolocal/migrations/
+SEED_DIR=../../../dynamolocal/tabledefinitions/
 
 # Entities to index.
 allowed_entities='campaign customer product transaction';
