@@ -13,7 +13,11 @@
 			{
 				"AttributeName": "customer",
 				"AttributeType": "S"
-			}
+			},
+		 	{
+				"AttributeName": "created_at",
+				"AttributeType": "S"
+		 	}
         ],
          "GlobalSecondaryIndexes": [
 		  {
@@ -22,6 +26,10 @@
 				{
 				   "AttributeName": "customer",
 				   "KeyType": "HASH"
+				},
+				{
+					"AttributeName": "created_at",
+				 	"KeyType": "RANGE"
 				}
 			 ],
 			 "Projection": {
