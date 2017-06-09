@@ -12,7 +12,8 @@ class DynamoDeploySeeds {
     }
 
     deploySeed(seed) {
-        let controller = this.getController(seed);
+        let entity_name = this.getEntityName(seed);
+        let controller = this.getController(entity_name);
         let seed_content = global.routes.include('seeds', seed + '.json');
 
         du.highlight(`Seeding ${seed}`);
@@ -66,22 +67,28 @@ class DynamoDeploySeeds {
         });
     }
 
-    getController(table_name) {
+    getController(name) {
+        du.debug('Get controller for entity ' + name);
+
         let matched_controllers =  this.controllers
-            .filter(controller => controller.table_name)
-            .filter(controller => controller.table_name.replace(/^local/,'') === table_name);
+            .filter(controller => controller.descriptive_name)
+            .filter(controller => controller.descriptive_name === name);
 
         if (matched_controllers.length < 1) {
-            du.error(`No entity controller found for table '${table_name}'.`);
+            du.error(`No entity controller found for entity '${name}'.`);
             return null;
         }
 
         if (matched_controllers.length > 1) {
-            du.error(`More than one controller found for table '${table_name}'.`);
+            du.error(`More than one controller found for entity '${name}'.`);
             return null;
         }
 
         return matched_controllers[0];
+    }
+
+    getEntityName(seed) {
+        return seed.replace(/s$/, '');
     }
 
     getConfig() {
