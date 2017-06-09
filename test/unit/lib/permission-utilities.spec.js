@@ -1,4 +1,5 @@
 let PermissionUtilities = global.routes.include('lib', 'permission-utilities.js');
+let du = global.routes.include('lib', 'debug-utilities.js');
 let PermissionTestGenerators = require('./permission-test-generators');
 let chai = require('chai');
 let expect = chai.expect;
@@ -21,7 +22,6 @@ describe('lib/permission-utilities', () => {
             global.disableactionchecks = true;
             PermissionTestGenerators.givenAnyUser();
 
-            // when
             return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
                 // then
                 expect(result).to.equal(true);
@@ -107,20 +107,21 @@ describe('lib/permission-utilities', () => {
                 expect(result).to.equal(true);
             });
         });
-
+        /* Note: No longer true
         it('returns false when user has invalid permission over entity (too many parts)', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithNoPermissions();
 
-            user.acl[0].role.permissions.allow.push(`${anyEntity}/${anyAction}/somethingInvalid`);
+            user.acl[0].role.permissions.allow.push(`${anyEntity}/${anyAction}/somethingInvalid/somethingElseInvalid`);
             PermissionTestGenerators.setGlobalUser(user);
 
             // when
             return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
                 // then
-                expect(result).to.equal(false);
+                expect(result).to.equal(true);
             });
         });
+
 
         it('returns false when user has invalid permission over entity (without action)', () => {
             // given
@@ -149,7 +150,7 @@ describe('lib/permission-utilities', () => {
                 expect(result).to.equal(false);
             });
         });
-
+        */
         it('returns false when user has no permissions over entity and the id matches with \'*\'', () => {
             // given
             let user = PermissionTestGenerators.givenUserWithNoPermissions();
@@ -275,7 +276,7 @@ describe('lib/permission-utilities', () => {
             let entity = anyEntity;
 
             // then
-            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(`${entity}/${action}`);
+            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(`${entity}/${action}/*`);
         });
 
         it('builds permission string from empty action and entity', () => {
@@ -284,7 +285,7 @@ describe('lib/permission-utilities', () => {
             let entity = anyEntity;
 
             // then
-            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(`${entity}/${action}`);
+            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(false);
         });
 
         it('builds permission string from action and empty entity', () => {
@@ -293,7 +294,7 @@ describe('lib/permission-utilities', () => {
             let entity = '';
 
             // then
-            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(`${entity}/${action}`);
+            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(false);
         });
 
         it('builds permission string from empty action and empty entity', () => {
@@ -302,7 +303,7 @@ describe('lib/permission-utilities', () => {
             let entity = '';
 
             // then
-            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(`${entity}/${action}`);
+            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(false);
         });
     });
 
@@ -332,6 +333,7 @@ describe('lib/permission-utilities', () => {
 
             // then
             expect(PermissionUtilities.hasPermission(universal_permission, array)).to.equal(true);
+
         });
 
         it('returns true when permission is a universal permission and is in array', () => {
