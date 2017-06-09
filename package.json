@@ -45,7 +45,8 @@
     "serverless": "^1.6.0",
     "serverless-dynamodb-local": "0.2.18",
     "serverless-mocha-plugin": "^1.3.2",
-    "supertest": "^2.0.1"
+    "supertest": "^2.0.1",
+    "yaml-lint": "0.0.4"
   },
   "scripts": {
     "test-integration": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/graph/**/*.test.js test/integration/transaction/*.test.js",
@@ -54,14 +55,16 @@
     "test-functional": "ENV=local AWS_PROFILE=six istanbul cover node_modules/.bin/_mocha --recursive './test/functional/*.test.js'",
     "test-workers": "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
     "test-endpoints": "istanbul cover _mocha  -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'",
-    "lint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '{**/*.js,**/*.json}'",
-    "lintCommit": "./tools/lintCommit.sh",
+    "lint-eslint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '{**/*.js,**/*.json}'",
+    "lint-yml": "node_modules/yaml-lint/cli.js **/*.yml",
+    "lint": "npm run lint-eslint && npm run lint-yml",
+    "lint-commit": "npm run lint",
     "deploy-tables": "export SIX_VERBOSE=6; node ./deployment/dynamodb/deploy_tables.js",
     "purge-tables": "export SIX_VERBOSE=6; node ./deployment/dynamodb/purge_tables.js",
     "deploy-seeds": "export SIX_VERBOSE=6; node ./deployment/dynamodb/deploy_seeds.js"
   },
   "pre-commit": [
-    "lintCommit",
+    "lint-commit",
     "test-unit"
   ],
   "repository": {
