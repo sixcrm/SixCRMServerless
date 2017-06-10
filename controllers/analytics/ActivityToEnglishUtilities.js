@@ -40,7 +40,8 @@ module.exports = class ActivityToEnglishUtilities {
 
         du.debug('Build Activity Statement');
 
-        return this.validateActivityRow().then(() => this.acquireResources())
+        return this.validateActivityRow()
+        .then(() => this.acquireResources())
         .then(() => this.setEnglishTemplate())
         .then(() => this.buildObject());
 
@@ -173,6 +174,8 @@ module.exports = class ActivityToEnglishUtilities {
 
         return this.getEntity(parameters).then((entity) => {
 
+            du.info(parameters);
+
             if(_.has(entity, 'id')){
 
                 this[type] = entity;
@@ -181,11 +184,11 @@ module.exports = class ActivityToEnglishUtilities {
 
             }
 
-            let error = new Error('Unable to identify '+type+'.');
+            du.warning('Unable to identify '+type+'.');
 
-            du.warning(error);
+            this[type] = parameters;
 
-            return Promise.reject(error);
+            return true;
 
         }).catch((error) => {
 
