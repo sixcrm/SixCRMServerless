@@ -11,6 +11,7 @@ module.exports = function(results, parameters){
 
     let result_array = [];
 
+    du.info(results);
     results.forEach((result) => {
 
         let result_array_entry = {
