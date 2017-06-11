@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/product",
-	"title": "Product",
+	"id":"/accesskey",
+	"title": "Access Key",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -17,36 +17,20 @@
 				{"type":"string", "enum":[""]},
 				{"$ref": "#/definitions/UUIDv4"}
 			]
-		},
-		"SixAccountIdentifier":{
-			"anyOf":[
-				{"$ref": "#/definitions/UUIDv4"},
-				{"type":"string", "enum":["*"]}
-			]
 		}
 	},
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
-		"name":{
+		"access_key":{
 			"type":"string",
 			"minLength":3
 		},
-		"sku":{
+		"secret_key":{
 			"type":"string",
 			"minLength":3
 		},
-		"ship":{
-			"type":"boolean"
-		},
-		"shipping_delay":{
-			"type": "integer",
-			"minimum": 0,
-			"exclusiveMinimum": false
-		},
-		"fulfillment_provider":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["name", "sku","ship", "account", "created_at", "updated_at"]
+	"required":["access_key", "secret_key", "created_at", "updated_at"]
 }

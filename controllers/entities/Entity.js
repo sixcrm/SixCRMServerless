@@ -5,6 +5,8 @@ const dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
+const cacheController = global.routes.include('controllers', 'providers/Cache.js');
+
 const entityUtilitiesController = global.routes.include('controllers','entities/EntityUtilities');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
@@ -14,6 +16,7 @@ const entityUtilitiesController = global.routes.include('controllers','entities/
 
 module.exports = class entityController extends entityUtilitiesController {
 
+    //Technical Debt:  The primary key definition should be set in the specific Entity class
     constructor(name){
 
         super();
@@ -25,28 +28,25 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //Technical Debt:  Cache this.
-    can(action){
+    can(action, die){
 
         du.debug('Can');
 
-        du.debug('Can check:', action, this.descriptive_name);
+        if(_.isUndefined(die)){
+            die = false;
+        }
 
-        return new Promise((resolve, reject) => {
+        return permissionutilities.validatePermissions(action, this.descriptive_name).then((permission) => {
 
-            permissionutilities.validatePermissions(action, this.descriptive_name).then((permission) => {
+            if(die === true && permission != true){
 
-                du.debug('Has permission:', permission);
+                return Promise.reject(new Error('Invalid Permissions: user can not '+action+' on '+this.descriptive_name));
 
-                return resolve(permission);
+            }
 
-            })
-            .catch((error) => {
+            du.deep('User can '+action+' on '+this.descriptive_name+': '+permission);
 
-                du.debug(error);
-
-                return reject(error);
-
-            });
+            return Promise.resolve(permission);
 
         });
 
@@ -179,6 +179,21 @@ module.exports = class entityController extends entityUtilitiesController {
             });
 
         });
+
+    }
+
+    getList(list_array){
+
+        if(!_.isArray(list_array)){
+            return Promise.reject(new Error('List array must be of type array.'));
+        }
+
+        if(list_array.length < 1){
+            return Promise.resolve([]);
+        }
+
+      //Technical Debt:  Replace this with a IN clause
+        return Promise.all(list_array.map(list_item => this.get(list_item)));
 
     }
 
@@ -533,23 +548,19 @@ module.exports = class entityController extends entityUtilitiesController {
 
         return new Promise((resolve, reject) => {
 
-            return this.can('create').then((permission) => {
-
-                if(permission != true){ return resolve(null); }
+            return this.can('create', true).then((permission) => {
 
                 entity = this.assignPrimaryKey(entity, primary_key);
 
                 entity = this.assignAccount(entity);
 
-                if(!_.has(entity, primary_key)){ return reject(new Error('Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
+                entity = this.setCreatedAt(entity);
 
-                return this.exists(entity, primary_key).then((exists) => {
+                return this.validate(entity)
+                .then(() => this.exists(entity, primary_key))
+                .then((exists) => {
 
                     if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
-
-                    entity = this.setCreatedAt(entity);
-
-                    //Technical Debt:  Validate that this model adheres to a entity in /model/entities/{model_name}.json
 
                     return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
@@ -559,24 +570,25 @@ module.exports = class entityController extends entityUtilitiesController {
 
                             return resolve(entity);
 
-                        })
-                        .catch((error) => {
+                        }).catch((error) => {
 
                             return reject(error);
 
                         });
 
+                    }).catch((error) => {
+
+                        return reject(error);
+
                     });
 
-                })
-                .catch((error) => {
+                }).catch((error) => {
 
                     return reject(error);
 
                 });
 
-            })
-            .catch((error) => {
+            }).catch((error) => {
 
                 return reject(error);
 

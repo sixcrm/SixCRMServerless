@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/rebill",
-	"title": "Rebill",
+	"id":"/customernote",
+	"title": "Customer Note",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -28,25 +28,13 @@
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
-		"amount":{
-			"type":["string","integer","float"]
+		"customer":{"$ref": "#/definitions/UUIDv4"},
+		"user":{"type":"string", "format":"email"},
+		"body": {
+			"type":"string"
 		},
-		"bill_at":{"$ref": "#/definitions/ISO8601"},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"},
-		"parentsession":{"$ref": "#/definitions/UUIDv4"},
-		"processing":{
-			"type":["string", "boolean"]
-		},
-		"product_schedules":{
-			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
-		},
-		"transactions":{
-			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
-		}
-
+		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession", "product_schedules"]
+	"required":["account", "customer", "user", "body", "created_at", "updated_at"]
 }

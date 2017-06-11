@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/rebill",
-	"title": "Rebill",
+	"id":"/customer",
+	"title": "Customer",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -28,25 +28,28 @@
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
-		"amount":{
-			"type":["string","integer","float"]
+		"email":{
+			"type":"string",
+			"format":"email"
 		},
-		"bill_at":{"$ref": "#/definitions/ISO8601"},
+		"firstname":{
+			"type":"string",
+			"minLength": 1
+		},
+		"lastname":{
+			"type":"string",
+			"minLength": 1
+		},
+		"phone":{
+			"type":"string"
+		},
+		"address":{"$ref": "/address"},
+		"creditcards":{
+			"type":"array",
+			"items":{"$ref": "#/definitions/UUIDv4"}
+		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"},
-		"parentsession":{"$ref": "#/definitions/UUIDv4"},
-		"processing":{
-			"type":["string", "boolean"]
-		},
-		"product_schedules":{
-			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
-		},
-		"transactions":{
-			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
-		}
-
+		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession", "product_schedules"]
+	"required":["account", "firstname", "lastname", "address", "email", "created_at", "updated_at"]
 }

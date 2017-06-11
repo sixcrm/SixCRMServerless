@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/user",
-	"title": "User",
+	"id":"/account",
+	"title": "Account",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -14,41 +14,16 @@
 		}
 	},
 	"properties": {
-		"id":{
-			"type":"string",
-			"format":"email"
-		},
+		"id":{"$ref": "#/definitions/UUIDv4"},
 		"name":{
-			"type":"string",
-			"minLength":3
-		},
-		"first_name":{
-			"type":"string",
-			"minLength":3
-		},
-		"last_name":{
-			"type":"string",
-			"minLength":3
-		},
-		"auth0_id":{
 			"type":"string",
 			"minLength":3
 		},
 		"active":{
 			"type":"boolean"
 		},
-		"termsandconditions":{
-			"type":"string",
-			"minLength":2
-		},
-		"alias":{
-			"type":"string",
-			"minLength":40,
-			"maxLength":40,
-			"format":"^[a-z0-9]*$"
-		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["id", "name", "first_name", "last_name", "active", "alias", "created_at", "updated_at"]
+	"required":["name", "active", "created_at", "updated_at"]
 }

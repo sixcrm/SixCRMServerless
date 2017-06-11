@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/user",
-	"title": "User",
+	"id":"/usersigningstring",
+	"title": "User Signing String",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -14,41 +14,25 @@
 		}
 	},
 	"properties": {
-		"id":{
+		"id":{"$ref": "#/definitions/UUIDv4"},
+		"user":{
 			"type":"string",
 			"format":"email"
 		},
 		"name":{
-			"type":"string",
-			"minLength":3
+			"type":"string"
 		},
-		"first_name":{
-			"type":"string",
-			"minLength":3
+		"signing_string":{
+			"type":"string"
 		},
-		"last_name":{
-			"type":"string",
-			"minLength":3
-		},
-		"auth0_id":{
-			"type":"string",
-			"minLength":3
-		},
-		"active":{
-			"type":"boolean"
-		},
-		"termsandconditions":{
-			"type":"string",
-			"minLength":2
-		},
-		"alias":{
-			"type":"string",
-			"minLength":40,
-			"maxLength":40,
-			"format":"^[a-z0-9]*$"
+		"used_at":{
+			"anyOf":[
+				{"$ref": "#/definitions/ISO8601"},
+				{"type":"null"}
+			]
 		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["id", "name", "first_name", "last_name", "active", "alias", "created_at", "updated_at"]
+	"required":["user", "name", "signing_string", "created_at", "updated_at"]
 }

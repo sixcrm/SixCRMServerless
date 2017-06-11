@@ -17,12 +17,18 @@
 				{"type":"string", "enum":[""]},
 				{"$ref": "#/definitions/UUIDv4"}
 			]
+		},
+		"SixAccountIdentifier":{
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string", "enum":["*"]}
+			]
 		}
 	},
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
 		"affiliate":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/UUIDv4"},
+		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"type":{
 			"type":"string",
 			"enum":["postback","html"]

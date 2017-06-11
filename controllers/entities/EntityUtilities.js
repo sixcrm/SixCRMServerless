@@ -8,6 +8,7 @@ const timestamp = global.routes.include('lib', 'timestamp.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const mvu = global.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
@@ -21,64 +22,17 @@ module.exports = class entityUtilitiesController{
 
     }
 
-		//Technical Debt: Like the Analytics class, this function should look for entity specific methods to attempt to identify a function that creates the validation schema
-    //OR it needs to load associated schemas based on the contents of the schema...
-    validate(object, object_type){
+    validate(object){
 
         du.debug('Validate');
 
-        return new Promise((resolve, reject) => {
+        let valid = mvu.validateModel(object, global.routes.path('model', 'entities/'+this.descriptive_name+'.json'));
 
-            if(_.isUndefined(object_type) || !_.isString(object_type)){
+        if(_.isError(valid)){
+            return Promise.reject(valid);
+        }
 
-                object_type = this.descriptive_name;
-
-            }
-
-            du.debug('Object: ', object, 'Object Type: ', object_type);
-
-            var v = new Validator();
-
-            var schema;
-
-            try{
-
-                schema = global.routes.include('model', 'entities/'+object_type);
-
-
-            } catch(e){
-
-                du.warning(e);
-                return reject(new Error('Unable to load validation schema for '+object_type));
-
-            }
-
-            du.debug('Validation Schema loaded');
-
-            var validation;
-
-            try{
-                v = new Validator();
-                validation = v.validate(object, schema);
-            }catch(e){
-                return reject(e);
-            }
-
-            if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
-
-                du.warning(validation.errors);
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map((e)=>{ return e.message; })
-                };
-
-                return reject(error);
-
-            }
-
-            return resolve(validation);
-
-        });
+        return Promise.resolve(valid);
 
     }
 

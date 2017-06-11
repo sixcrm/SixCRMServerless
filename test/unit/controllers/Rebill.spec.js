@@ -189,9 +189,9 @@ describe('controllers/Rebill.js', () => {
             let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
-            return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
+            return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).catch((error) => {
                 // then
-                expect(rebill).to.be.null;
+                expect(error.message).to.equal('Invalid Permissions: user can not create on rebill');
             });
         });
 

@@ -86,7 +86,7 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
-      SIX_VERBOSE: 2
+      SIX_VERBOSE: 3
       stage: ${opt:stage}
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}

@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/product",
-	"title": "Product",
+	"id":"/smtpprovider",
+	"title": "SMTP Provider",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -12,12 +12,6 @@
 			"type": "string",
 			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
 		},
-		"OptionalUUIDv4":{
-			"anyOf":[
-				{"type":"string", "enum":[""]},
-				{"$ref": "#/definitions/UUIDv4"}
-			]
-		},
 		"SixAccountIdentifier":{
 			"anyOf":[
 				{"$ref": "#/definitions/UUIDv4"},
@@ -27,26 +21,27 @@
 	},
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
-		"name":{
-			"type":"string",
-			"minLength":3
-		},
-		"sku":{
-			"type":"string",
-			"minLength":3
-		},
-		"ship":{
-			"type":"boolean"
-		},
-		"shipping_delay":{
-			"type": "integer",
-			"minimum": 0,
-			"exclusiveMinimum": false
-		},
-		"fulfillment_provider":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"name":{
+			"type":"string"
+		},
+		"hostname":{
+			"type":"string"
+		},
+		"ip_address":{
+			"type":"string"
+		},
+		"username":{
+			"type":"string"
+		},
+		"password":{
+			"type":"string"
+		},
+		"port":{
+			"type":"string"
+		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["name", "sku","ship", "account", "created_at", "updated_at"]
+	"required":["account", "created_at", "updated_at"]
 }
