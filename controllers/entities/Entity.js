@@ -576,10 +576,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
                         });
 
-                    }).catch((error) => {
-
-                        return reject(error);
-
                     });
 
                 }).catch((error) => {
