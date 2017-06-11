@@ -27,6 +27,8 @@ module.exports = class AnalyticsUtilities {
           {name:"year", seconds: 30412800}
         ];
 
+        this.cacheController = new cacheController();
+
         this.period_count_default = 30;
 
     }
@@ -39,7 +41,7 @@ module.exports = class AnalyticsUtilities {
 
             if(_.has(parameters.cache, 'use_cache') && parameters.cache.use_cache == false){
 
-                cacheController.setDisable(true);
+                this.cacheController.setDisable(true);
 
             }
 
@@ -70,7 +72,7 @@ module.exports = class AnalyticsUtilities {
 
                     let transformation_function = this.getTransformationFunction(query_name);
 
-                    return cacheController.useCache(query, redshift_query)
+                    return this.cacheController.useCache(query, redshift_query)
                     .then((results) => transformation_function(results, parameters))
                     .then((transformed_results) => { return resolve(transformed_results);});
 

@@ -5,11 +5,12 @@ const validator = require('validator');
 const Validator = require('jsonschema').Validator;
 
 const timestamp = global.routes.include('lib', 'timestamp.js');
-const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const mvu = global.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
+const cacheController = global.routes.include('controllers', 'providers/Cache.js');
+
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
@@ -19,6 +20,80 @@ const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
 module.exports = class entityUtilitiesController{
 
     constructor(){
+
+        this.permissionutilities = global.routes.include('lib', 'permission-utilities.js');
+
+    }
+
+    can(action, die){
+
+        du.debug('Can');
+
+        if(_.isUndefined(die)){ die = false; }
+
+        let permission_function = () => this.permissionutilities.validatePermissions(action, this.descriptive_name);
+
+        return permission_function();
+        /*
+        let cache_object_key = this.createCanCacheKeyObject(action, this.descriptive_name);
+
+        return this.getFromCache(cache_object_key, permission_function).then((permission) => {
+
+          if(die === true && permission !== true){
+
+            return new Error('Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+
+          }
+
+          du.deep('Can Results: ', cache_object_key, permission);
+
+          return permission;
+
+        });
+        */
+
+    }
+
+    getFromCache(cache_object_key, data_function){
+
+        du.debug('Get From Cache');
+
+        return this.assureCacheController().then(() => {
+
+            return this.cacheController.useCache(cache_object_key, data_function).then((permission) => {
+
+                return permission;
+
+            });
+
+        });
+
+    }
+
+    assureCacheController(){
+
+        du.debug('Assure Cache Controller');
+
+        if(!_.has(this, 'cacheController')){
+            this.cacheController = new cacheController();
+        }
+
+        return Promise.resolve(true);
+
+    }
+
+    createCanCacheKeyObject(action, entity){
+
+        let user = this.getID(this.acquireGlobalUser());
+
+        let account = this.acquireGlobalAccount();
+
+        return {
+            user: user,
+            account: account,
+            action: action,
+            entity: entity
+        };
 
     }
 
@@ -68,7 +143,7 @@ module.exports = class entityUtilitiesController{
 
         du.debug('Disable ACLs');
 
-        permissionutilities.disableACLs();
+        this.permissionutilities.disableACLs();
 
         return;
 
@@ -78,7 +153,7 @@ module.exports = class entityUtilitiesController{
 
         du.debug('Enable ACLs');
 
-        permissionutilities.enableACLs();
+        this.permissionutilities.enableACLs();
 
         return;
 
@@ -88,7 +163,7 @@ module.exports = class entityUtilitiesController{
 
         du.debug('Unset Global User');
 
-        permissionutilities.unsetGlobalUser();
+        this.permissionutilities.unsetGlobalUser();
 
         return;
 
@@ -100,7 +175,7 @@ module.exports = class entityUtilitiesController{
 
         if(_.has(user, 'id') || this.isEmail(user)){
 
-            permissionutilities.setGlobalUser(user);
+            this.permissionutilities.setGlobalUser(user);
 
         }
 
@@ -115,6 +190,20 @@ module.exports = class entityUtilitiesController{
         if(_.has(global, 'user')){
 
             return global.user;
+
+        }
+
+        return null;
+
+    }
+
+    acquireGlobalAccount(){
+
+        du.debug('Acquire Global Account');
+
+        if(_.has(global, 'account')){
+
+            return global.account;
 
         }
 
@@ -664,6 +753,10 @@ module.exports = class entityUtilitiesController{
                 return object[primary_key];
 
             }
+
+        }else if(_.isNull(object)){
+
+            return null;
 
         }
 

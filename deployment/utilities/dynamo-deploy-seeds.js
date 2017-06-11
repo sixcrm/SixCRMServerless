@@ -19,13 +19,17 @@ class DynamoDeploySeeds {
         du.highlight(`Seeding ${seed}`);
 
         seed_content.forEach((entity) => {
-            controller.store(entity).catch(error => {
+
+            controller.store(entity).then((result) => {
+                du.deep(result);
+            }).catch(error => {
                 du.error(`Error while seeding '${controller.descriptive_name}' with id '${entity.id}': ${error.message}`);
             });
+
         });
 
-
         return Promise.resolve(`Finished seeding '${seed}'.`);
+
     }
 
     // Technical Debt: This has troubles connecting to local DynamoDB instance.

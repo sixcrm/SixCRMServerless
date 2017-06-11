@@ -327,11 +327,9 @@ class userController extends entityController {
 
                     return this.getACLPartiallyHydrated(user).then((acl) => {
 
-                        du.debug('Partially hydrated User ACL object:', acl);
+                        du.deep('Partially hydrated User ACL object:', acl);
 
                         user.acl = acl;
-
-                        du.debug(this);
 
                         return this.isPartiallyHydratedUser(user).then((validated) => {
 

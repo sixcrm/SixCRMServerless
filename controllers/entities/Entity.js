@@ -2,10 +2,7 @@
 const _ = require('underscore');
 
 const dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
-const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
-
-const cacheController = global.routes.include('controllers', 'providers/Cache.js');
 
 const entityUtilitiesController = global.routes.include('controllers','entities/EntityUtilities');
 
@@ -24,31 +21,6 @@ module.exports = class entityController extends entityUtilitiesController {
         this.setNames(name);
 
         this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting', 'usersigningstring'];
-
-    }
-
-    //Technical Debt:  Cache this.
-    can(action, die){
-
-        du.debug('Can');
-
-        if(_.isUndefined(die)){
-            die = false;
-        }
-
-        return permissionutilities.validatePermissions(action, this.descriptive_name).then((permission) => {
-
-            if(die === true && permission != true){
-
-                return Promise.reject(new Error('Invalid Permissions: user can not '+action+' on '+this.descriptive_name));
-
-            }
-
-            du.deep('User can '+action+' on '+this.descriptive_name+': '+permission);
-
-            return Promise.resolve(permission);
-
-        });
 
     }
 
@@ -373,6 +345,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
             })
             .catch((error) => {
+                du.warning(error);
                 return reject(error);
             });
 

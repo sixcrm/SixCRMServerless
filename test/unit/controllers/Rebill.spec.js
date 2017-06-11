@@ -183,9 +183,27 @@ describe('controllers/Rebill.js', () => {
         it('fails when user does not have permissions', () => {
             // given
             PermissionTestGenerators.givenUserWithNoPermissions();
+
             let aSession = givenAnySession();
             let aProductSchedule = givenAnyProductSchedule();
             let aDayInCycle = givenAnyDayInCycle();
+
+            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, []);
+                },
+                saveRecord: (table, entity, callback) => {
+                    callback(null, entity);
+                }
+            });
+            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
+                addToSearchIndex: (entity, entity_type) => {
+                    return new Promise((resolve) => {
+                        resolve(true);
+                    });
+                }
+            });
+
             let rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
             // when
