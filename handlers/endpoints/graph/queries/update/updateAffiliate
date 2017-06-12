@@ -3,9 +3,10 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation {
-		updateaffiliate (affiliate: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", affiliate_id: \"test\"}) {
+		updateaffiliate (affiliate: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", name: \"wut\", affiliate_id: \"test\"}) {
 			id,
 			affiliate_id,
+			name,
 			created_at,
 			updated_at
 		}

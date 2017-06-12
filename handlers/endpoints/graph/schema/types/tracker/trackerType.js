@@ -2,6 +2,7 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
 
 let affiliateType = require('../affiliate/affiliateType');
 
@@ -23,6 +24,10 @@ module.exports.graphObj = new GraphQLObjectType({
         type: {
             type: new GraphQLNonNull(GraphQLString),
             description: '.',
+        },
+        event_type:{
+            type: new GraphQLList(GraphQLString),
+            description: ''
         },
         body: {
             type: new GraphQLNonNull(GraphQLString),

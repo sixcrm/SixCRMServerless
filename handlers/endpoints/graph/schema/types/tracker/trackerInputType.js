@@ -1,6 +1,7 @@
 'use strict';
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 module.exports.graphObj = new GraphQLInputObjectType({
@@ -9,6 +10,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         id:					{ type: new GraphQLNonNull(GraphQLString) },
         affiliate:	{ type: new GraphQLNonNull(GraphQLString) },
         type:       { type: new GraphQLNonNull(GraphQLString) },
+        event_type: { type: new GraphQLList(GraphQLString) },
         body:       { type: new GraphQLNonNull(GraphQLString) }
     })
 });

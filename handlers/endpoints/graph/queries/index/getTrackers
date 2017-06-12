@@ -9,6 +9,7 @@
 				affiliate {
 					id
 				},
+				event_type,
 				type,
 				body,
 				created_at,

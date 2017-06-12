@@ -15,6 +15,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: '.',
         },
+        name: {
+            type: GraphQLString,
+            description: ''
+        },
         created_at: {
 	        type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',

@@ -22,6 +22,9 @@
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"name":{
+			"type": "string"
+		},
 		"affiliate_id":{
 			"type":"string"
 		},
