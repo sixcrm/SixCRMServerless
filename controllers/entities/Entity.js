@@ -10,6 +10,7 @@ const entityUtilitiesController = global.routes.include('controllers','entities/
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 //Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
+//Technical Debt:  Methods that use "primary key" as argumentation should derive that value from patent class
 
 module.exports = class entityController extends entityUtilitiesController {
 
@@ -64,7 +65,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-		//ACL enabled
     list(pagination, query_parameters){
 
         du.debug('List');
@@ -101,7 +101,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-		//ACL enabled
     //Technical Debt:  You can only paginate against the index...
     queryBySecondaryIndex(field, index_value, index_name, pagination, reverse_order){
 
@@ -169,7 +168,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-		//ACL enabled
     getBySecondaryIndex(field, index_value, index_name, cursor, limit){
 
         du.debug('Get By Secondary Index');
@@ -258,7 +256,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-		//ACL enabled
     get(id, primary_key){
 
         du.debug('Get');
@@ -346,44 +343,6 @@ module.exports = class entityController extends entityUtilitiesController {
             })
             .catch((error) => {
                 du.warning(error);
-                return reject(error);
-            });
-
-        });
-
-    }
-
-    touch(key){
-
-        du.debug('Touch');
-
-        return new Promise((resolve, reject) => {
-
-            return this.can('read').then((permission) => {
-
-                if(permission != true){
-
-                    return resolve(null);
-
-                }
-
-                //Technical Debt: Add Kinesis Activity
-                return Promise.resolve(dynamoutilities.touchRecord(this.table_name, key, (error, data) => {
-
-                    if(_.isError(error)){
-
-                        du.warning(error);
-
-                        return reject(error);
-
-                    }
-
-                    return resolve(data);
-
-                }));
-
-            })
-            .catch((error) => {
                 return reject(error);
             });
 
@@ -511,7 +470,6 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
-    //ACL enabled
     //Technical Debt:  Add Kinesis Activity
     create(entity, primary_key){
 
@@ -530,32 +488,32 @@ module.exports = class entityController extends entityUtilitiesController {
                 entity = this.setCreatedAt(entity);
 
                 return this.validate(entity)
-                .then(() => this.exists(entity, primary_key))
-                .then((exists) => {
+          .then(() => this.exists(entity, primary_key))
+          .then((exists) => {
 
-                    if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
+              if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
 
-                    return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
+              return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
-                        if(_.isError(error)){ return reject(error);}
+                  if(_.isError(error)){ return reject(error);}
 
-                        this.addToSearchIndex(entity, this.descriptive_name).then(() => {
+                  this.addToSearchIndex(entity, this.descriptive_name).then(() => {
 
-                            return resolve(entity);
+                      return resolve(entity);
 
-                        }).catch((error) => {
+                  }).catch((error) => {
 
-                            return reject(error);
+                      return reject(error);
 
-                        });
+                  });
 
-                    });
+              });
 
-                }).catch((error) => {
+          }).catch((error) => {
 
-                    return reject(error);
+              return reject(error);
 
-                });
+          });
 
             }).catch((error) => {
 
@@ -577,23 +535,22 @@ module.exports = class entityController extends entityUtilitiesController {
 
         return new Promise((resolve, reject) => {
 
-            return this.can('update').then((permission) => {
-
-                if(permission != true){ return resolve(null); }
-
-                entity = this.assignAccount(entity);
+            return this.can('update', true).then((permission) => {
 
                 if(!_.has(entity, primary_key)){ return reject(new Error('Unable to update '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
 
-                return this.exists(entity, primary_key).then((exists) => {
+                entity = this.assignAccount(entity);
+
+                return this.validate(entity)
+                .then(() => this.exists(entity, primary_key))
+                .then((exists) => {
 
                     if(exists === false){ return reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
 
-                    entity = this.marryCreatedUpdated(entity, exists);
+                  //Note:  People can't change these automatically included fields...
+                    entity = this.persistCreatedUpdated(entity, exists);
 
                     entity = this.setUpdatedAt(entity);
-
-                    //Technical Debt:  Validate that this model adheres to a entity in /model/entities/{model_name}.json
 
                     return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
@@ -603,19 +560,49 @@ module.exports = class entityController extends entityUtilitiesController {
 
                             return resolve(entity);
 
-                        })
-              .catch((error) => {
+                        }).catch((error) => {
 
-                  return reject(error);
+                            return reject(error);
 
-              });
+                        });
 
                     });
 
-                })
-          .catch((error) => {
-              return reject(error);
-          });
+                }).catch((error) => {
+                    return reject(error);
+                });
+
+            }).catch((error) => {
+                return reject(error);
+            });
+
+        });
+
+    }
+
+    //Technical Debt:  Refactor
+    touch(key){
+
+        du.debug('Touch');
+
+        return new Promise((resolve, reject) => {
+
+            return this.can('update', true).then((permission) => {
+
+          //Technical Debt: Add Kinesis Activity
+                return Promise.resolve(dynamoutilities.touchRecord(this.table_name, key, (error, data) => {
+
+                    if(_.isError(error)){
+
+                        du.warning(error);
+
+                        return reject(error);
+
+                    }
+
+                    return resolve(data);
+
+                }));
 
             })
         .catch((error) => {
@@ -634,7 +621,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
         if(!_.has(entity, primary_key)){
 
-        //User is relying on the entity class's ability to auto-assign identifiers...
             return this.create(entity, primary_key);
 
         }else{
@@ -677,79 +663,64 @@ module.exports = class entityController extends entityUtilitiesController {
                 return reject(e);
             }
 
-            //Technical Debt:  Why is this "update"?
-            return this.can('update').then((permission) => {
+            return this.can('delete', true).then((permission) => {
 
-                if(permission != true){
+                let query_parameters = {
+                    key_condition_expression: primary_key+' = :primary_keyv',
+                    expression_attribute_values: {':primary_keyv': id}
+                };
 
-                    return resolve(null);
+                let delete_parameters = {};
 
-                }else{
+                delete_parameters[primary_key] = id;
 
-                    let query_parameters = {
-                        key_condition_expression: primary_key+' = :primary_keyv',
-                        expression_attribute_values: {':primary_keyv': id}
-                    };
+          //Technical Debt:  Refactor.
+          //Technical Debt:  What happens if this object that is being deleted is in non-accounts?
+                if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 
-                    let delete_parameters = {};
+                    if(global.account == '*'){
 
-                    delete_parameters[primary_key] = id;
+							//for now, do nothing
 
-                    //Technical Debt:  Refactor.
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+                    }else{
 
-                        if(global.account == '*'){
-
-													//for now, do nothing
-
-                        }else{
-
-                            query_parameters.filter_expression = 'account = :accountv';
-                            query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                        }
+                        query_parameters.filter_expression = 'account = :accountv';
+                        query_parameters.expression_attribute_values[':accountv'] = global.account;
 
                     }
 
-                    return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+                }
+
+          //Exists?
+                return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+
+                    if(_.isError(error)){ reject(error);}
+
+                    if(!_.isObject(data) || !_.isArray(data) || data.length !== 1){ return reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.')); }
+
+                    dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
 
                         if(_.isError(error)){ reject(error);}
 
-                        if(_.isObject(data) && _.isArray(data) && data.length == 1){
+                        this.removeFromSearchIndex(id, this.descriptive_name).then((removed) => {
 
-                            dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
+                            du.debug('Removed: '+removed);
 
-                                if(_.isError(error)){ reject(error);}
+                            return resolve(delete_parameters);
 
-                                this.removeFromSearchIndex(id, this.descriptive_name).then((removed) => {
+                        }).catch((error) => {
 
-                                    du.debug('Removed: '+removed);
+                            du.debug('Rejecting:', id);
 
-                                    return resolve(delete_parameters);
+                            return reject(error);
 
-                                })
-                                .catch((error) => {
+                        });
 
-                                    du.debug('Rejecting:', id);
+                    });
 
-                                    return reject(error);
+                }));
 
-                                });
-
-                            });
-
-                        }else{
-
-                            return reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.'));
-
-                        }
-
-                    }));
-
-                }
-
-            })
-            .catch((error) => {
+            }).catch((error) => {
                 reject(error);
             });
 
@@ -765,6 +736,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         if(!_.has(entity, primary_key)){
 
+            //Technical Debt:  What is this message?
             return Promise.reject(new Error('Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"'));
 
         }else{

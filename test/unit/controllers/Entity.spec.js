@@ -211,17 +211,19 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.update({}).catch((error) => {
                 // then
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('Unable to update entity. Missing property "id"');
             });
         });
 
         it('throws error when reading from database fails', () => {
             // given
             let anEntity = {
-                id: 1
+                id:"82478014-c96f-49ef-b31c-5408e99df66f",
+                secret_key:"secret-key",
+                access_key:"access-key"
             };
 
-            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+            PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
@@ -230,12 +232,13 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('entity');
+            let entityController = new EC('accesskey');
 
             // when
             return entityController.update(anEntity).catch((error) => {
                 // then
                 expect(error.message).to.equal('Reading failed.');
+
             });
         });
     });

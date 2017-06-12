@@ -277,9 +277,9 @@ module.exports = class entityUtilitiesController{
 
     }
 
-    marryCreatedUpdated(entity, exists){
+    persistCreatedUpdated(entity, exists){
 
-        du.debug('Marry Created Updated');
+        du.debug('Persist Created Updated');
 
         if(!_.has(exists, 'created_at')){
             throw new Error('Entity lacks "created_at" property.');
