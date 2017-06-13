@@ -2,18 +2,11 @@
   "Table": {
     "TableName": "notificationreads",
     "KeySchema": [{
-      "AttributeName": "user",
+      "AttributeName": "id",
       "KeyType": "HASH"
-    },
-    {
-      "AttributeName": "account",
-      "KeyType": "RANGE"
     }],
     "AttributeDefinitions": [{
-      "AttributeName": "user",
-      "AttributeType": "S"
-    }, {
-      "AttributeName": "account",
+      "AttributeName": "id",
       "AttributeType": "S"
     }],
     "ProvisionedThroughput": {

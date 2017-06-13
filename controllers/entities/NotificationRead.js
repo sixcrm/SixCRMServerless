@@ -31,12 +31,9 @@ class notificationReadController extends entityController {
      * database - create one.
      */
     getLastSeenTime() {
-        let key = {
-            user: global.user.id,
-            account: global.account
-        };
+        let id = `${global.user.id}/${global.account}`;
 
-        return this.getByKey(key).then((data) => {
+        return this.get(id).then((data) => {
             if (!data) {
                 return this.markNotificationsAsSeen().then(() => timestamp.getISO8601());
             } else {

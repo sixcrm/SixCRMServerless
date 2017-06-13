@@ -350,52 +350,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    //Technical Debt: Why is this useful?
-    getByKey(key){
-
-        du.debug('Get By Key');
-
-        return new Promise((resolve, reject) => {
-
-            return this.can('read').then((permission) => {
-
-                if(permission != true){
-
-                    return resolve(null);
-
-                }
-
-                return Promise.resolve(dynamoutilities.get(this.table_name, key, (error, data) => {
-
-                    if(_.isError(error)){
-
-                        du.warning(error);
-
-                        return reject(error);
-
-                    }
-
-                    if(_.isObject(data)){
-
-                        if (_.has(data, "Item")) {
-                        	resolve(data.Item);
-                        } else {
-                        	resolve(null);
-                        }
-
-                    }
-
-                }));
-
-            })
-            .catch((error) => {
-                return reject(error);
-            });
-
-        });
-
-    }
-
     countCreatedAfterBySecondaryIndex(date_time, field, index_name, cursor, limit) {
 
         du.debug('Count Created After Secondary Index');
