@@ -815,4 +815,12 @@ module.exports = class entityUtilitiesController{
 
     }
 
+    createRedshiftActivityRecord(actor, action, acted_upon, associated_with){
+
+        let activityHelper = global.routes.include('helpers', 'redshift/Activity.js');
+
+        return activityHelper.createActivity(actor, action, acted_upon, associated_with);
+
+    }
+
 }

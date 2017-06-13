@@ -497,7 +497,9 @@ module.exports = class entityController extends entityUtilitiesController {
 
                   if(_.isError(error)){ return reject(error);}
 
-                  this.addToSearchIndex(entity, this.descriptive_name).then(() => {
+                  return this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null)
+                  .then(() => this.addToSearchIndex(entity, this.descriptive_name))
+                  .then(() => {
 
                       return resolve(entity);
 
