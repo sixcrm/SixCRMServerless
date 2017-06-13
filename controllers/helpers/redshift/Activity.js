@@ -56,7 +56,9 @@ module.exports = new class activityHelper extends redshiftHelperController {
 
         return Promise.all([actor, acted_upon, associated_with]).then((promises) => {
 
-            let [actor, acted_upon, associated_with] = promises;
+            let actor = promises[0];
+            let acted_upon = promises[1];
+            let associated_with = promises[2];
 
             let account = this.getActivityAccount(acted_upon);
             let now = timestamp.getISO8601()
