@@ -184,15 +184,26 @@ module.exports = new class activityHelper extends redshiftHelperController {
 
         if(_.isNull(return_object)){
 
-          //Note:  May be a user
             let actor = this.acquireGlobalUser();
 
             if(!_.isNull(actor)){
 
-                return_object = {id: actor, type:'user'};
+                if(_.isString(actor)){
+
+                    return_object = {id: actor, type:'user'};
+
+                }else if(_.isObject(actor)){
+
+                    if(_.has(actor, 'id')){
+
+                        return_object = {id: actor.id, type:'user'};
+
+                    }
+
+                }
+
 
             }else{
-
 
                 return_object = {id:'system', type:'system'};
 
