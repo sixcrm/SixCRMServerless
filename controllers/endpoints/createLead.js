@@ -60,17 +60,17 @@ class createLeadController extends transactionEndpointController{
         du.debug('Validate Event Schema');
 
         let lead_schema = global.routes.include('model', 'endpoints/lead');
-        let customer_schema = global.routes.include('model', 'general/customer');
-        let address_schema = global.routes.include('model', 'general/address');
-        let creditcard_schema = global.routes.include('model', 'general/creditcard');
-        let affiliates_schema = global.routes.include('model', 'endpoints/affiliates');
+        let customer_schema = global.routes.include('model', 'endpoints/components/customer');
+        let address_schema = global.routes.include('model', 'endpoints/components/address');
+        let creditcard_schema = global.routes.include('model', 'endpoints/components/creditcard');
+        let affiliates_schema = global.routes.include('model', 'endpoints/components/affiliates');
 
         let v = new Validator();
 
-        v.addSchema(address_schema, '/Address');
-        v.addSchema(creditcard_schema, '/CreditCard');
-        v.addSchema(affiliates_schema, '/Affiliates');
-        v.addSchema(customer_schema, '/Customer');
+        v.addSchema(address_schema, '/address');
+        v.addSchema(creditcard_schema, '/creditcard');
+        v.addSchema(affiliates_schema, '/affiliates');
+        v.addSchema(customer_schema, '/customer');
 
         return v.validate(event, lead_schema);
 

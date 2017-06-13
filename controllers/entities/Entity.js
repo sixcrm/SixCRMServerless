@@ -433,7 +433,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         return new Promise((resolve, reject) => {
 
-            return this.can('create', true).then((permission) => {
+            return this.can('create', true).then(() => {
 
                 entity = this.assignPrimaryKey(entity, primary_key);
 
@@ -482,7 +482,6 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
-    //Technical Debt: Add Kinesis Activity
     update(entity, primary_key){
 
         du.debug('Update');
@@ -491,7 +490,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         return new Promise((resolve, reject) => {
 
-            return this.can('update', true).then((permission) => {
+            return this.can('update', true).then(() => {
 
                 if(!_.has(entity, primary_key)){ return reject(new Error('Unable to update '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
 
@@ -512,7 +511,9 @@ module.exports = class entityController extends entityUtilitiesController {
 
                         if(_.isError(error)){ return reject(error);}
 
-                        this.addToSearchIndex(entity, this.descriptive_name).then(() => {
+                        return this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null)
+                        .then(() => this.addToSearchIndex(entity, this.descriptive_name))
+                        .then(() => {
 
                             return resolve(entity);
 
@@ -545,14 +546,15 @@ module.exports = class entityController extends entityUtilitiesController {
             return this.can('update', true).then(() => {
 
                 //Technical Debt: Add Kinesis Activity
-                this.exists(entity).then((exists) => {
+                return this.exists(entity).then((exists) => {
 
                     if (!exists) {
                         return resolve(this.create(entity));
                     } else {
                         return resolve(this.update(entity));
                     }
-                })
+                });
+
             }).catch((error) => {
                 return reject(error);
             });
@@ -610,7 +612,7 @@ module.exports = class entityController extends entityUtilitiesController {
                 return reject(e);
             }
 
-            return this.can('delete', true).then((permission) => {
+            return this.can('delete', true).then(() => {
 
                 let query_parameters = {
                     key_condition_expression: primary_key+' = :primary_keyv',

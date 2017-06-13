@@ -1,0 +1,27 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/address",
+	"title": "Address",
+	"type": "object",
+	"properties": {
+		"line1":{
+			"type":"string"
+		},
+		"line2":{
+			"type":"string"
+		},
+		"city":{
+			"type":"string"
+		},
+		"state":{
+			"type":"string"
+		},
+		"zip":{
+			"type":"string"
+		},
+		"country":{
+			"type":"string"
+		}
+	},
+	"required":["line1","city","state","zip","country"]
+}

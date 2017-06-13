@@ -43,9 +43,9 @@ class acquireTokenController extends transactionEndpointController {
 
         let v = new Validator();
         let schema = global.routes.include('model', 'endpoints/token');
-        let affiliates_schema = global.routes.include('model', 'endpoints/affiliates');
+        let affiliates_schema = global.routes.include('model', 'endpoints/components/affiliates');
 
-        v.addSchema(affiliates_schema, '/Affiliates');
+        v.addSchema(affiliates_schema, '/affiliates');
         return v.validate(parameters, schema);
 
     }
