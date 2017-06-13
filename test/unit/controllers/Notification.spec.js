@@ -23,7 +23,7 @@ describe('controllers/Notification.js', () => {
             global.disableactionchecks = false;
         });
 
-        xit('should return number of notifications after last seen date', () => {
+        it('should return number of notifications after last seen date', () => {
             // given
             global.disableactionchecks = true;
             PermissionTestGenerators.givenAnyUser();
@@ -31,9 +31,6 @@ describe('controllers/Notification.js', () => {
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 countRecords: (table, parameters, index, callback) => {
                     callback(null, 2);
-                },
-                touchRecord: (table, key, callback) => {
-                    callback(null, {});
                 },
                 get: (table, key, callback) => {
                     callback(null, {
@@ -49,9 +46,14 @@ describe('controllers/Notification.js', () => {
                     callback();
                 }
             });
-            mockery.registerMock('../lib/indexing-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: () => {
                     return Promise.resolve(true);
+                }
+            });
+            mockery.registerMock(global.routes.path('lib', 'kinesis-firehose-utilities.js'), {
+                putRecord: () => {
+                    return Promise.resolve();
                 }
             });
 
