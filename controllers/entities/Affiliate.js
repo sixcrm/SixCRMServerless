@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
 
+const du = global.routes.include('lib', 'debug-utilities');
 var trackerController = global.routes.include('controllers', 'entities/Tracker.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 
@@ -12,6 +13,8 @@ class affiliateController extends entityController {
     }
 
     assureAffiliate(value){
+
+        du.debug('Assure Affiliate');
 
         return this.get(value).then((result) => {
 

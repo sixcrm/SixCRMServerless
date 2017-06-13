@@ -38,6 +38,9 @@ class DynamoDeploySeeds {
         process.env.stage = environment;
         process.env.search_indexing_queue_url = this.getConfig().sqs.search_indexing_queue_url;
         process.env.dynamo_endpoint = this.getConfig().dynamodb.endpoint;
+        process.env.kinesis_firehose_events_stream = this.getConfig().dynamodb.endpoint;
+        process.env.kinesis_firehose_transactions_stream = this.getConfig().dynamodb.endpoint;
+        process.env.kinesis_firehose_activity_stream = this.getConfig().dynamodb.endpoint;
 
         this.initializeControllers();
 

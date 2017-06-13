@@ -48,32 +48,44 @@ module.exports = new class activityHelper extends redshiftHelperController {
 
         du.debug('Create Activity');
 
-        actor = this.getActor(actor);
-        let now = timestamp.getISO8601();
-        let account = this.getActivityAccount(acted_upon);
+        du.warning(acted_upon);
 
+        actor = this.getActor(actor);
         acted_upon = this.getActedUpon(acted_upon);
         associated_with = this.getAssociatedWith(associated_with, acted_upon);
 
-        let activity = {
-            actor: actor.id,
-            actor_type: actor.type,
-            action: action,
-            datetime: now,
-            account: account
-        };
+        return Promise.all([actor, acted_upon, associated_with]).then((promises) => {
 
-        if(!_.isNull(acted_upon) && _.has(acted_upon, 'id') && _.has(acted_upon, 'type')){
-            activity['acted_upon'] = acted_upon.id;
-            activity['acted_upon_type'] = acted_upon.type;
-        }
+            let [actor, acted_upon, associated_with] = promises;
 
-        if(!_.isNull(associated_with) && _.has(associated_with, 'id') && _.has(associated_with, 'type')){
-            activity['associated_with'] = associated_with.id;
-            activity['associated_with_type'] = associated_with.type;
-        }
+            let account = this.getActivityAccount(acted_upon);
+            let now = timestamp.getISO8601()
 
-        return this.pushActivityToRedshift(activity);
+            let activity = {
+                actor: actor.id,
+                actor_type: actor.type,
+                action: action,
+                datetime: now
+            };
+
+            if(!_.isNull(account)){
+                activity['account'] = account;
+            }
+
+
+            if(!_.isNull(acted_upon) && _.has(acted_upon, 'id') && _.has(acted_upon, 'type')){
+                activity['acted_upon'] = acted_upon.id;
+                activity['acted_upon_type'] = acted_upon.type;
+            }
+
+            if(!_.isNull(associated_with) && _.has(associated_with, 'id') && _.has(associated_with, 'type')){
+                activity['associated_with'] = associated_with.id;
+                activity['associated_with_type'] = associated_with.type;
+            }
+
+            return this.pushActivityToRedshift(activity);
+
+        });
 
     }
 
@@ -145,9 +157,15 @@ module.exports = new class activityHelper extends redshiftHelperController {
 
             }
 
+            if(_.has(object, 'entity') && _.has(object.entity, 'id')){
+
+                return_object = {id: object.entity.id, type: object.type};
+
+            }
+
         }else if(_.isString(object)){
 
-      //Technical Debt:  should I infer?
+          //Technical Debt:  should I infer?
 
         }
 
@@ -175,12 +193,14 @@ module.exports = new class activityHelper extends redshiftHelperController {
 
             }else{
 
-            //Note: If it's not explicit, and it's not a user, it's the system...
+
                 return_object = {id:'system', type:'system'};
 
             }
 
         }
+
+        du.warning('Actor: ', return_object);
 
         return Promise.resolve(return_object);
 
