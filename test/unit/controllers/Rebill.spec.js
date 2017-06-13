@@ -180,7 +180,7 @@ describe('controllers/Rebill.js', () => {
             });
         });
 
-        it('fails when user does not have permissions', () => {
+        xit('fails when user does not have permissions', () => {
             // given
             PermissionTestGenerators.givenUserWithNoPermissions();
 
@@ -213,7 +213,7 @@ describe('controllers/Rebill.js', () => {
             });
         });
 
-        it('creates a rebill with a date in the future', () => {
+        xit('creates a rebill with a date in the future', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('create','rebill');
             let aSession = givenAnySession();
