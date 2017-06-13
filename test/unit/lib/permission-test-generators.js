@@ -23,9 +23,10 @@ class PermissionTestGenerators {
 
     static givenAnyUser() {
         let user = {
+            id: 'super.user@test.com',
             acl: [{
                 account: {
-                    id: '1'
+                    id: '770cf6af-42c4-4ffd-ba7f-9ee4fcb1084b'
                 },
                 role: {
                     permissions: {

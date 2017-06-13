@@ -580,35 +580,26 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    //Technical Debt:  Refactor
-    touch(key){
+    touch(entity){
 
         du.debug('Touch');
 
         return new Promise((resolve, reject) => {
 
-            return this.can('update', true).then((permission) => {
+            return this.can('update', true).then(() => {
 
-          //Technical Debt: Add Kinesis Activity
-                return Promise.resolve(dynamoutilities.touchRecord(this.table_name, key, (error, data) => {
+                //Technical Debt: Add Kinesis Activity
+                this.exists(entity).then((exists) => {
 
-                    if(_.isError(error)){
-
-                        du.warning(error);
-
-                        return reject(error);
-
+                    if (!exists) {
+                        return resolve(this.create(entity));
+                    } else {
+                        return resolve(this.update(entity));
                     }
-
-                    return resolve(data);
-
-                }));
-
-            })
-        .catch((error) => {
-            return reject(error);
-        });
-
+                })
+            }).catch((error) => {
+                return reject(error);
+            });
         });
 
     }

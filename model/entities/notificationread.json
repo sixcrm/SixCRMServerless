@@ -4,29 +4,19 @@
 	"title": "Notification Read",
 	"type": "object",
 	"definitions": {
-		"UUIDv4": {
-			"type": "string",
-			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
-		},
 		"ISO8601": {
 			"type": "string",
 			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
 		},
-		"SixAccountIdentifier":{
-			"anyOf":[
-				{"$ref": "#/definitions/UUIDv4"},
-				{"type":"string", "enum":["*"]}
-			]
+		"SixUserAndSixAccount": {
+			"type": "string",
+			"pattern":"^([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,})\/([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}|\\*)$"
 		}
 	},
 	"properties": {
-		"user":{
-			"type":"string",
-			"format":"email"
-		},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"id": {"$ref": "#/definitions/SixUserAndSixAccount"},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["account", "user", "created_at", "updated_at"]
+	"required":["id", "created_at", "updated_at"]
 }

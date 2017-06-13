@@ -18,12 +18,11 @@ class notificationReadController extends entityController {
 
         du.debug('Mark notifications as seen.');
 
-        let key = {
-            user: global.user.id,
-            account: global.account
+        let notificationread = {
+            id: `${global.user.id}/${global.account}`
         };
 
-        return this.touch(key);
+        return this.touch(notificationread);
 
     }
 
