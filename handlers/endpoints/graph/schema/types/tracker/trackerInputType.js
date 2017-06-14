@@ -11,6 +11,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         affiliate:	{ type: new GraphQLNonNull(GraphQLString) },
         type:       { type: new GraphQLNonNull(GraphQLString) },
         event_type: { type: new GraphQLList(GraphQLString) },
-        body:       { type: new GraphQLNonNull(GraphQLString) }
+        body:       { type: new GraphQLNonNull(GraphQLString) },
+        name:       { type: GraphQLString }
     })
 });
