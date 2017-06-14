@@ -1,7 +1,6 @@
 'use strict';
 const _ = require('underscore');
 
-var dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 var du = global.routes.include('lib', 'debug-utilities.js');
 
 var productController = global.routes.include('controllers', 'entities/Product.js');
@@ -65,13 +64,11 @@ class productScheduleController extends entityController {
 	//Technical Debt:  This seems odd...
     getProductScheduleHydrated(id){
 
-        var controller_instance = this;
-
         return new Promise((resolve, reject) => {
 
-            this.get(id).then((product_schedule) => {
+            return this.get(id).then((product_schedule) => {
 
-                this.getProducts(product_schedule).then((products) => {
+                return this.getProducts(product_schedule).then((products) => {
 
                     for(var i = 0; i < product_schedule.schedule.length; i++){
 
