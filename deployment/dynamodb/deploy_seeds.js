@@ -6,5 +6,5 @@ const dynamo_deployment_utilities = global.routes.include('deployment', 'utiliti
 let environment = process.argv[2] || 'development';
 let region = process.argv[3] || process.env.AWS_REGION || 'us-east-1';
 
-du.highlight('Deploying DynamoDB Seeds');
+du.highlight('Deploying DynamoDB Seeds to '+environment+' in '+region);
 dynamo_deployment_utilities.deployAllSeeds(environment, region);

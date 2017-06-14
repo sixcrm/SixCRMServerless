@@ -1,7 +1,6 @@
 'use strict';
 const _ = require('underscore');
 
-const dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 const entityUtilitiesController = global.routes.include('controllers','entities/EntityUtilities');
@@ -22,6 +21,8 @@ module.exports = class entityController extends entityUtilitiesController {
         this.setNames(name);
 
         this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting', 'usersigningstring'];
+
+        this.dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 
     }
 
@@ -46,7 +47,7 @@ module.exports = class entityController extends entityUtilitiesController {
                 query_parameters = this.appendPagination(query_parameters, pagination);
                 query_parameters = this.appendAccountFilter(query_parameters);
 
-                return dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+                return this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
                     if(_.isError(error)){ return reject(error); }
 
@@ -82,7 +83,7 @@ module.exports = class entityController extends entityUtilitiesController {
                 query_parameters = this.appendPagination(query_parameters, pagination);
                 query_parameters = this.appendAccountFilter(query_parameters);
 
-                return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
                     if(_.isError(error)){ return reject(error); }
 
@@ -130,7 +131,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                 du.debug('Query Parameters: ', query_parameters);
 
-                return Promise.resolve(dynamoutilities.queryRecordsFull(this.table_name, query_parameters, index_name, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.queryRecordsFull(this.table_name, query_parameters, index_name, (error, data) => {
 
                     if(_.isError(error)){
 
@@ -222,7 +223,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                 du.debug(query_parameters);
 
-                return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 
                     if(_.isError(error)){ reject(error);}
 
@@ -282,7 +283,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
           //du.warning(query_parameters);
 
-            return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+            return Promise.resolve(this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
                 if(_.isError(error)){ return reject(error); }
 
@@ -356,7 +357,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                 }
 
-                return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
                     if(_.isError(error)){
 
@@ -456,7 +457,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                 du.debug(query_parameters);
 
-                return Promise.resolve(dynamoutilities.countRecords(this.table_name, query_parameters, index_name, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.countRecords(this.table_name, query_parameters, index_name, (error, data) => {
 
                     if(_.isError(error)){
 
@@ -497,7 +498,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
               if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
 
-              return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
+              return this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
                   if(_.isError(error)){ return reject(error);}
 
@@ -557,7 +558,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                     entity = this.setUpdatedAt(entity);
 
-                    return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
+                    return this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
                         if(_.isError(error)){ return reject(error);}
 
@@ -691,13 +692,13 @@ module.exports = class entityController extends entityUtilitiesController {
                 }
 
           //Exists?
-                return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
                     if(_.isError(error)){ reject(error);}
 
                     if(!_.isObject(data) || !_.isArray(data) || data.length !== 1){ return reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.')); }
 
-                    dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
+                    this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
 
                         if(_.isError(error)){ reject(error);}
 
@@ -749,7 +750,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
             return new Promise((resolve, reject) => {
 
-                dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+                this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
                     if(_.isError(error)){ return reject(error);}
 

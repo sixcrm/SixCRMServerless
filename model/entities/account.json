@@ -4,6 +4,13 @@
 	"title": "Account",
 	"type": "object",
 	"definitions": {
+		"SixAccountIdentifier":{
+			"type":"string",
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string","enum":["*"]}
+			]
+		},
 		"UUIDv4": {
 			"type": "string",
 			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
@@ -14,7 +21,7 @@
 		}
 	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
+		"id":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"name":{
 			"type":"string",
 			"minLength":3

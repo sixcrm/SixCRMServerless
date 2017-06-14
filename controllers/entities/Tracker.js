@@ -50,11 +50,25 @@ class trackerController extends entityController {
 
         let affiliate_id = this.getID(affiliate);
 
+        return this.scanByParameters({
+            filter_expression: 'contains(#f1, :affiliate_id)',
+            expression_attribute_names:{
+                '#f1': 'affiliates'
+            },
+            expression_attribute_values: {
+                ':affiliate_id': affiliate_id
+            }
+        });
+
+        /*
         return this.listBySecondaryIndex('affiliate', affiliate_id, 'affiliate-index').then((results) => {
 
             return results.trackers;
 
         });
+        */
+
+
 
     }
 

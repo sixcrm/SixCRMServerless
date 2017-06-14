@@ -34,5 +34,5 @@
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["account", "status", "trackingumber", "trackingstatus", "created_at", "updated_at"]
+	"required":["account", "status", "trackingstatus", "created_at", "updated_at"]
 }

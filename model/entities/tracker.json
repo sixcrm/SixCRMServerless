@@ -53,5 +53,5 @@
 			"type":{"$ref": "#/definitions/ISO8601"}
 		}
 	},
-	"required":["id", "affiliate", "account", "type", "body", "created_at", "updated_at"]
+	"required":["id", "account", "type", "body", "created_at", "updated_at"]
 }
