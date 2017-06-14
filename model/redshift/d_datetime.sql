@@ -10,5 +10,4 @@ create table d_datetime(
   datetime TIMESTAMP encode delta
 ) DISTSTYLE all sortkey (datetime);
 
-COMMENT ON TABLE d_datetime IS '24.04.2017 A.Zelen Date dimensional table
- Set distribution style to all, recommended for dimensional table';
+COMMENT ON TABLE d_datetime IS 'Date dimensional table distribution style set to all, recommended for dimensional table';
