@@ -15,9 +15,3 @@ insert into d_event_type(event_type) values('lead');
 insert into d_event_type(event_type) values('order');
 insert into d_event_type(event_type) values('upsell');
 insert into d_event_type(event_type) values('confirm');
-
-
-
-
-
-select * from d_event_type;
