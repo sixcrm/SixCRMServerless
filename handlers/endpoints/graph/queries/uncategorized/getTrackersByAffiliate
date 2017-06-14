@@ -6,8 +6,12 @@
 		trackerlistbyaffiliate (affiliate: \"6b6331f6-7f84-437a-9ac6-093ba301e455\") {
 			trackers{
 				id,
-				affiliate {
-					id
+				affiliates {
+					id,
+					name,
+					affiliate_id,
+					created_at,
+					updated_at
 				},
 				event_type,
 				type,

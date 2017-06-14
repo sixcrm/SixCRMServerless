@@ -547,8 +547,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                 entity = this.assignAccount(entity);
 
-                return this.validate(entity)
-                .then(() => this.exists(entity, primary_key))
+                return this.exists(entity, primary_key)
                 .then((exists) => {
 
                     if(exists === false){ return reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
@@ -558,19 +557,23 @@ module.exports = class entityController extends entityUtilitiesController {
 
                     entity = this.setUpdatedAt(entity);
 
-                    return this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
+                    return this.validate(entity).then(() => {
 
-                        if(_.isError(error)){ return reject(error);}
+                        this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
-                        return this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null)
-                        .then(() => this.addToSearchIndex(entity, this.descriptive_name))
-                        .then(() => {
+                            if(_.isError(error)){ return reject(error);}
 
-                            return resolve(entity);
+                            return this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null)
+                          .then(() => this.addToSearchIndex(entity, this.descriptive_name))
+                          .then(() => {
 
-                        }).catch((error) => {
+                              return resolve(entity);
 
-                            return reject(error);
+                          }).catch((error) => {
+
+                              return reject(error);
+
+                          });
 
                         });
 
