@@ -43,6 +43,9 @@
 				"enum":["click","lead","main","upsell","confirm"]
 			}
 		},
+		"name":{
+			"type":"string"
+		},
 		"body":{
 			"type":"string"
 		},
@@ -53,5 +56,5 @@
 			"type":{"$ref": "#/definitions/ISO8601"}
 		}
 	},
-	"required":["id", "account", "type", "body", "created_at", "updated_at"]
+	"required":["id", "account", "type", "name", "body", "created_at", "updated_at"]
 }

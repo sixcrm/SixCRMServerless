@@ -16,20 +16,6 @@ class trackerController extends entityController {
 
     }
 
-    getAffiliate(tracker){
-
-        du.debug('Get Affiliate');
-
-        if(_.has(tracker, 'affiliate')){
-
-            return this.affiliateController.get(tracker.affiliate);
-
-        }
-
-        return null;
-
-    }
-
     getAffiliates(tracker){
 
         du.debug('Get Affiliates');

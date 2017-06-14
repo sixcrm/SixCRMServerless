@@ -40,5 +40,5 @@
 			"type":"string"
 		}
 	},
-	"required":["id", "customer", "campaign", "created_at", "updated_at", "completed"]
+	"required":["id", "customer", "campaign", "created_at", "updated_at"]
 }
