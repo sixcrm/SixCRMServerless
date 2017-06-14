@@ -657,6 +657,19 @@ module.exports.graphObj = new GraphQLObjectType({
                 return customerController.listCustomerSessions(session.customer, session.pagination);
             }
         },
+        sessionlistbyaffiliate: {
+            type: sessionListType.graphObj,
+            args: {
+                affiliate: {
+                    description: 'The affiliate identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+                return sessionController.listSessionsByAffiliate(args.affiliate, args.pagination);
+            }
+        },
         rebilllistbycustomer: {
             type: rebillListType.graphObj,
             args: {

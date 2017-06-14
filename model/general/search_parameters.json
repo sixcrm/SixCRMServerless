@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/seachparameters",
+  "title": "Search Parameters",
+  "type": "object",
+  "properties": {
+    "filter_expression":{
+      "type":"string"
+    },
+    "expression_attribute_values":{
+      "type":"object",
+      "minProperties":1
+    },
+    "expression_attribute_names":{
+      "type":"object",
+      "minProperties":1
+    }
+  },
+  "additionalProperties":false,
+  "required":["filter_expression", "expression_attribute_values", "expression_attribute_names"]
+}

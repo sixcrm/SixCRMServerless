@@ -97,11 +97,15 @@ module.exports = class entityUtilitiesController{
 
     }
 
-    validate(object){
+    validate(object, path_to_model){
 
         du.debug('Validate');
 
-        let valid = mvu.validateModel(object, global.routes.path('model', 'entities/'+this.descriptive_name+'.json'));
+        if(_.isUndefined(path_to_model)){
+            path_to_model = global.routes.path('model', 'entities/'+this.descriptive_name+'.json');
+        }
+
+        let valid = mvu.validateModel(object, path_to_model);
 
         if(_.isError(valid)){
             return Promise.reject(valid);

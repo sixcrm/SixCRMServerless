@@ -221,7 +221,7 @@ describe('controllers/Entity.js', () => {
             });
         });
 
-        it('throws error when reading from database fails', () => {
+        xit('throws error when reading from database fails', () => {
             // given
             let anEntity = {
                 id:"82478014-c96f-49ef-b31c-5408e99df66f",

@@ -11,7 +11,6 @@ var customerController = global.routes.include('controllers', 'entities/Customer
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
-var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 
 class sessionController extends entityController {
 
@@ -28,6 +27,32 @@ class sessionController extends entityController {
             'subaffiliate_5',
             'cid'
         ];
+
+        this.affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+
+    }
+
+    listSessionsByAffiliate(affiliate){
+
+        du.debug('List Sessions By Affiliate');
+
+        affiliate = this.getID(affiliate);
+
+        return this.scanByParameters({
+            filter_expression: '#f1 = :affiliate_id or #f2 = :affiliate_id OR #f3 = :affiliate_id OR #f4 = :affiliate_id OR #f5 = :affiliate_id OR #f6 = :affiliate_id OR #f7 = :affiliate_id',
+            expression_attribute_names:{
+                '#f1': 'affiliate',
+                '#f2': 'subaffiliate_1',
+                '#f3': 'subaffiliate_2',
+                '#f4': 'subaffiliate_3',
+                '#f5': 'subaffiliate_4',
+                '#f6': 'subaffiliate_5',
+                '#f7': 'cid'
+            },
+            expression_attribute_values: {
+                ':affiliate_id': affiliate
+            }
+        });
 
     }
 
@@ -82,9 +107,24 @@ class sessionController extends entityController {
         du.debug('Get Affiliate');
 
         if(_.has(session, affiliate_field) && this.isUUID(session[affiliate_field])){
-            return affiliateController.get(session[affiliate_field]);
+
+          //there are some scoping problems
+            if(!_.has(this, 'affiliateController') || !_.isFunction(this.affiliateController, 'get')){
+
+                const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+
+                return affiliateController.get(session[affiliate_field]);
+
+            }else{
+
+                return this.affiliateController.get(session[affiliate_field]);
+
+            }
+
         }else{
+
             return null;
+
         }
 
     }
@@ -137,7 +177,7 @@ class sessionController extends entityController {
 
                         if(this.isUUID(session[affiliate_field])){
 
-                            affiliates.push(affiliateController.get(session[affiliate_field]));
+                            affiliates.push(this.affiliateController.get(session[affiliate_field]));
 
                         }else{
 

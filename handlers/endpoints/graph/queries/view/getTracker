@@ -5,8 +5,12 @@
 	{
 		tracker (id: \"8cf59d00-460b-42ad-b6be-d520975f27db\") {
 			id,
-			affiliate {
-				id
+			affiliates {
+				id,
+				affiliate_id,
+				name,
+				created_at,
+				updated_at
 			},
 			body,
 			type,

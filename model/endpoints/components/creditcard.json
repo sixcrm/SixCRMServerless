@@ -23,7 +23,7 @@
 		"expiration":{"$ref": "#/definitions/CreditCardExpirationDate"},
 		"name":{
 			"type":"string",
-			"minLength":12
+			"minLength":2
 		}
 	},
 	"required":["address", "number", "expiration","ccv", "name"]

@@ -27,7 +27,10 @@
 	},
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
-		"affiliate":{"$ref": "#/definitions/UUIDv4"},
+		"affiliates":{
+			"type":"array",
+			"items":{"$ref": "#/definitions/UUIDv4"}
+		},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"type":{
 			"type":"string",

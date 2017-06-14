@@ -2,14 +2,19 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities');
-var trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 
 
 class affiliateController extends entityController {
 
     constructor(){
+
         super('affiliate');
+
+        this.trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+        this.sessionController = global.routes.include('controllers', 'entities/Session.js');
+
     }
 
     assureAffiliate(value){
@@ -48,7 +53,7 @@ class affiliateController extends entityController {
 
         let affiliate_id = this.getID(affiliate);
 
-        return trackerController.listBySecondaryIndex('affiliate', affiliate_id, 'affiliate-index');
+        return this.trackerController.listBySecondaryIndex('affiliate', affiliate_id, 'affiliate-index');
 
     }
 

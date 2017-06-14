@@ -12,6 +12,7 @@ let productScheduleType = require('../productschedule/productScheduleType');
 let customerType = require('../customer/customerType');
 
 const sessionController = global.routes.include('controllers', 'entities/Session.js');
+const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Session',
