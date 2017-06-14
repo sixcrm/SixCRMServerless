@@ -210,14 +210,15 @@ describe('controllers/Entity.js', () => {
 
     describe('update', () => {
         before(() => {
-            entityController = new EntityController('entity');
+            entityController = new EntityController('accesskey');
         });
 
         it('fails when user is not defined', () => {
             // when
             return entityController.update({}).catch((error) => {
                 // then
-                expect(error.message).to.equal('Unable to update entity. Missing property "id"');
+                expect(error.message).to.equal('Invalid Permissions: user can not update on accesskey');
+
             });
         });
 
@@ -260,7 +261,7 @@ describe('controllers/Entity.js', () => {
 
         it('fails when user is not defined', () => {
             // given
-            let entityController = new EntityController('entity');
+            let entityController = new EntityController('accesskey');
 
             global.user = null;
 
@@ -276,7 +277,7 @@ describe('controllers/Entity.js', () => {
                 id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
-            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+            PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
@@ -285,7 +286,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('entity');
+            let entityController = new EC('accesskey');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -300,7 +301,7 @@ describe('controllers/Entity.js', () => {
                 id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
-            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+            PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
@@ -312,7 +313,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('entity');
+            let entityController = new EC('accesskey');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
@@ -327,7 +328,7 @@ describe('controllers/Entity.js', () => {
                 id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
-            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+            PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
@@ -336,13 +337,13 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('entity');
+            let entityController = new EC('accesskey');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal(
-                    `Unable to delete entity with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
+                expect(error.message).to.equal(`Unable to delete accesskey with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
+
             });
         });
 
@@ -352,7 +353,7 @@ describe('controllers/Entity.js', () => {
                 id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
-            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+            PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
@@ -361,13 +362,13 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('entity');
+            let entityController = new EC('accesskey');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal(
-                    `Unable to delete entity with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
+                expect(error.message).to.equal(`Unable to delete accesskey with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
+
             });
         });
 
@@ -377,7 +378,7 @@ describe('controllers/Entity.js', () => {
                 id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
             };
 
-            PermissionTestGenerators.givenUserWithAllowed('update', 'entity');
+            PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
@@ -395,7 +396,7 @@ describe('controllers/Entity.js', () => {
             });
 
             const EC = global.routes.include('controllers','entities/Entity.js')
-            let entityController = new EC('entity');
+            let entityController = new EC('accesskey');
 
             // when
             return entityController.delete(anEntity.id).catch((error) => {
