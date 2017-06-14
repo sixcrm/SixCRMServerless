@@ -38,7 +38,7 @@
 		"rebill":{"$ref": "#/definitions/UUIDv4"},
 		"alias":{
 			"type":"string",
-			"pattern":"^T[0-9A-Z]{7}$"
+			"pattern":"^T[0-9A-Z]{9}$"
 		},
 		"products":{
 			"type":"array",

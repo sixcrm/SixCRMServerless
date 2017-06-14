@@ -49,7 +49,20 @@ class affiliateController extends entityController {
 
     }
 
+    //Technical Debt:  Incomplete
+    getCampaigns(affiliate, pagination){
+
+        du.debug('Get Campaigns');
+
+        let affiliate_id = this.getID(affiliate);
+
+        return this.sessionController.listSessionsByAffiliate(affiliate, pagination);
+
+    }
+
     getTrackers(affiliate){
+
+        du.debug('Get Trackers');
 
         let affiliate_id = this.getID(affiliate);
 

@@ -136,7 +136,7 @@ class transactionController extends entityController {
             products: parameters.products,
             alias: this.createAlias(),
             merchant_provider: merchant_provider
-        }
+        };
 
         return return_object;
 
@@ -229,7 +229,7 @@ class transactionController extends entityController {
 
     }
 
-    createTransaction(entity){
+    truesaction(entity){
 
         if(!_.has(entity, 'alias')){
 

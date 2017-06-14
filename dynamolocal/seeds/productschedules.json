@@ -5,16 +5,16 @@
 	"schedule":[
 		{
 			"product_id":"616cc994-9480-4640-b26c-03810a679fe3",
-			"price":"4.99",
-			"start":"0",
-			"end":"14",
-			"period":"14"
+			"price":4.99,
+			"start":0,
+			"end":14,
+			"period":14
 		},
 		{
 			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
-			"price":"34.99",
-			"start":"14",
-			"period":"30"
+			"price":34.99,
+			"start":14,
+			"period":30
 		}
 	],
 	"created_at":"2017-04-06T18:40:41.405Z",
@@ -27,16 +27,16 @@
 	"schedule":[
 		{
 			"product_id":"616cc994-9480-4640-b26c-03810a679fe3",
-			"price":"4.99",
-			"start":"0",
-			"end":"14",
-			"period":"14"
+			"price":4.99,
+			"start":0,
+			"end":14,
+			"period":14
 		},
 		{
 			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
-			"price":"34.99",
-			"start":"14",
-			"period":"30"
+			"price":34.99,
+			"start":14,
+			"period":30
 		}
 	],
 	"created_at":"2017-04-06T18:40:41.405Z",
@@ -49,10 +49,10 @@
 	"schedule":[
 		{
 			"product_id":"00000000-0000-0000-0000-100000000000",
-			"price":"79.99",
-			"start":"0",
-			"end":"30",
-			"period":"30"
+			"price":79.99,
+			"start":0,
+			"end":30,
+			"period":30
 		}
 	],
 	"created_at":"2017-04-06T18:40:41.405Z",

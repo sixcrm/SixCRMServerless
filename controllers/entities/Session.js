@@ -32,13 +32,13 @@ class sessionController extends entityController {
 
     }
 
-    listSessionsByAffiliate(affiliate){
+    listSessionsByAffiliate(affiliate, pagination){
 
         du.debug('List Sessions By Affiliate');
 
         affiliate = this.getID(affiliate);
 
-        return this.scanByParameters({
+        let scan_parameters = {
             filter_expression: '#f1 = :affiliate_id or #f2 = :affiliate_id OR #f3 = :affiliate_id OR #f4 = :affiliate_id OR #f5 = :affiliate_id OR #f6 = :affiliate_id OR #f7 = :affiliate_id',
             expression_attribute_names:{
                 '#f1': 'affiliate',
@@ -52,7 +52,9 @@ class sessionController extends entityController {
             expression_attribute_values: {
                 ':affiliate_id': affiliate
             }
-        });
+        };
+
+        return this.scanByParameters(scan_parameters, pagination);
 
     }
 
