@@ -3,12 +3,13 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation {
-		createtracker (tracker: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", event_type:[\"main\"], affiliate: \"6b6331f6-7f84-437a-9ac6-093ba301e455\", type: \"postback\", body:\"http://sofun.com\"}) {
+		createtracker (tracker: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", event_type:[\"main\"], affiliates: [\"6b6331f6-7f84-437a-9ac6-093ba301e455\"], type: \"postback\", name:\"Testing Tracker 3\", body:\"http://sofun.com\"}) {
 			id,
 			affiliate{
 				id
 			},
 			type,
+			name,
 			body,
 			created_at,
 			updated_at

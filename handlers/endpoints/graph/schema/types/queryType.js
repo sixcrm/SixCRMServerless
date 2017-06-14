@@ -375,6 +375,16 @@ module.exports.graphObj = new GraphQLObjectType({
                 return trackerController.list(tracker.pagination);
             }
         },
+        trackerlistbyaffiliate: {
+            type: trackerListType.graphObj,
+            args: {
+                affiliate: {type: GraphQLString},
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+                return trackerController.getByAffiliateID(args.affiliate, args.pagination);
+            }
+        },
         creditcardlist: {
             type: creditCardListType.graphObj,
             args: {

@@ -8,7 +8,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'TrakerInput',
     fields: () => ({
         id:					{ type: new GraphQLNonNull(GraphQLString) },
-        affiliate:	{ type: new GraphQLNonNull(GraphQLString) },
+        affiliates:	{ type: new GraphQLList(GraphQLString) },
         type:       { type: new GraphQLNonNull(GraphQLString) },
         event_type: { type: new GraphQLList(GraphQLString) },
         body:       { type: new GraphQLNonNull(GraphQLString) },

@@ -3,8 +3,8 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		trackerlist {
-			trackers {
+		trackerlistbyaffiliate (affiliate: \"6b6331f6-7f84-437a-9ac6-093ba301e455\") {
+			trackers{
 				id,
 				affiliate {
 					id
@@ -15,12 +15,12 @@
 				body,
 				created_at,
 				updated_at
-			},
+			}
 			pagination {
 				count,
 				end_cursor,
 				has_next_page
 			}
-		},
+		}
 	}"
 }
