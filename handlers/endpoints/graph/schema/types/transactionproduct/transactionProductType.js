@@ -23,16 +23,16 @@ module.exports.graphObj = new GraphQLObjectType({
             type: productType.graphObj,
             description: 'The product.',
             resolve: function(transactionproduct){
-      	return transactionController.getProduct(transactionproduct.product);
+      	       return transactionController.getProduct(transactionproduct.product);
             }
         },
         shippingreceipt: {
-	    type: shippingReceiptType.graphObj,
-	    description: 'A shipping receipt associated with the transaction product.',
-	    resolve: function(transactionproduct){
-        if(!_.has(transactionproduct, "shippingreceipt")){ return null; }
-	      return shippingReceiptController.get(transactionproduct.shippingreceipt);
-	    }
+            type: shippingReceiptType.graphObj,
+            description: 'A shipping receipt associated with the transaction product.',
+            resolve: function(transactionproduct){
+                if(!_.has(transactionproduct, "shippingreceipt")){ return null; }
+                return shippingReceiptController.get(transactionproduct.shippingreceipt);
+            }
         }
     }),
     interfaces: []

@@ -120,6 +120,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    //Technical Debt:  update to transaction facet timeseries
     getMerchantProviderAmount(parameters){
 
         du.debug('Get Merchant Provider Amount');

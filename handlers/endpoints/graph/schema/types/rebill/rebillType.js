@@ -23,7 +23,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The date of the rebill.',
         },
         amount: {
-	  type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLString),
             description: 'The amount of the rebill.',
         },
         parentsession: {
