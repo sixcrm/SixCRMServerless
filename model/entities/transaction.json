@@ -24,16 +24,21 @@
 					"multipleOf":0.01
 				}
 			]
-
+		},
+		"SixAccountIdentifier":{
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string", "enum":["*"]}
+			]
 		}
 	},
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/UUIDv4"},
+		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"rebill":{"$ref": "#/definitions/UUIDv4"},
 		"alias":{
 			"type":"string",
-			"pattern":"^T[0-9A-Z]{7}$"
+			"pattern":"^T[0-9A-Z]{9}$"
 		},
 		"products":{
 			"type":"array",

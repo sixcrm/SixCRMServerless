@@ -6,13 +6,15 @@ const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const redisutilities = global.routes.include('lib', 'redis-utilities.js');
 
-class cacheController {
+module.exports = class cacheController {
 
     constructor(prefix){
 
         if(_.isString(prefix)){
             this.key_prefix = prefix;
         }
+
+        this.redisutilities = new redisutilities();
 
     }
 
@@ -22,43 +24,43 @@ class cacheController {
 
         du.debug('Use Cache');
 
+        this.validatePromise(data_promise);
+
         if(this.cacheActive() && this.cacheEnabled()){
 
-            return this.validatePromise(data_promise).then((validated) => {
+            let cache_key = this.createKey(parameters);
 
-                return this.createKey(parameters).then((key) => {
+            return this.getCache(cache_key).then((cached_result) => {
 
-                    return this.getCache(key).then((cached_result) => {
+                if(!_.isNull(cached_result)){
 
-                        if(!_.isNull(cached_result)){
+                    du.warning('Redis Hit: '+ cache_key);
 
-                            du.warning('Redis Hit: '+ key);
+                    cached_result = this.parseResult(cached_result);
 
-                            cached_result = this.parseResult(cached_result);
+                    du.deep('Cached Result', cached_result);
 
-                            return Promise.resolve(cached_result);
+                    return Promise.resolve(cached_result);
 
-                        }
+                }else{
 
-                        du.warning('Redis Miss: '+ key);
+                    du.warning('Redis Miss: '+ cache_key);
 
-                        return data_promise().then((results) => {
+                    return data_promise().then((results) => {
 
-                            du.info('Data Promise Result:', results);
+                        du.deep('Data Promise Result:', results);
 
-                            return this.setCache(key, JSON.stringify(results), expiration).then((reply) => {
+                        return this.setCache(cache_key, JSON.stringify(results), expiration).then((reply) => {
 
-                                du.warning('Redis Set for key "'+key+'": '+reply);
+                            du.warning('Redis Set for key "'+cache_key+'": '+reply);
 
-                                return Promise.resolve(results);
-
-                            });
+                            return Promise.resolve(results);
 
                         });
 
                     });
 
-                });
+                }
 
             });
 
@@ -115,13 +117,7 @@ class cacheController {
 
         du.debug('Get Cache');
 
-        if(this.cacheActive()){
-
-            return redisutilities.get(key);
-
-        }
-
-        return null;
+        return this.redisutilities.get(key);
 
     }
 
@@ -129,11 +125,7 @@ class cacheController {
 
         du.debug('Set Cache');
 
-        if(this.cacheActive()){
-            return redisutilities.set(key, result, expiration);
-        }
-
-        return Promise.resolve('Cache Deactivated');
+        return this.redisutilities.set(key, result, expiration);
 
     }
 
@@ -166,7 +158,7 @@ class cacheController {
 
         prehash = this.appendCachebuster(prehash);
 
-        return Promise.resolve(crypto.createHash('sha1').update(prehash).digest('hex'));
+        return crypto.createHash('sha1').update(prehash).digest('hex');
 
     }
 
@@ -200,11 +192,11 @@ class cacheController {
 
         if(!_.isFunction(data_promise)){
 
-            return Promise.reject(new Error('Callback_promise.then is not a function.'));
+            throw new Error('Callback_promise.then is not a function.');
 
         }
 
-        return Promise.resolve(true);
+        return true;
 
     }
 
@@ -259,5 +251,3 @@ class cacheController {
     }
 
 }
-
-module.exports = new cacheController();

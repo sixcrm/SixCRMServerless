@@ -159,9 +159,7 @@ class rebillController extends entityController {
             amount: rebill_parameters.amount
         });
 
-        return this.validate(rebill_object)
-			.then(() => this.create(rebill_object))
-			.catch((error) => { return Promise.reject(error)});
+        return this.create(rebill_object);
 
     }
 

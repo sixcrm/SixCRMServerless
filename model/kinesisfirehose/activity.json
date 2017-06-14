@@ -57,5 +57,5 @@
 		"associated_with": {"$ref": "#/definitions/OptionalSixDynamoIdentifier"},
 		"associated_with_type": {"$ref": "#/definitions/SixEntityTypes"}
 	},
-	"required":["id","datetime","actor","actor_type","action"]
+	"required":["datetime","actor","actor_type","action"]
 }

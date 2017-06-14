@@ -17,7 +17,7 @@
       "items": {"$ref": "#/definitions/UUIDv4"},
       "uniqueItems": true
 		},
-		"creditcard":{"$ref": "/CreditCard"}
+		"creditcard":{"$ref": "/creditcard"}
 	},
 	"required":["creditcard", "session", "product_schedules"]
 }

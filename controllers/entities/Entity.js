@@ -1,55 +1,28 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
-const validator = require('validator');
-const Validator = require('jsonschema').Validator;
 
-const timestamp = global.routes.include('lib', 'timestamp.js');
-const dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
-const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
-const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
+
+const entityUtilitiesController = global.routes.include('controllers','entities/EntityUtilities');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 //Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
+//Technical Debt:  Methods that use "primary key" as argumentation should derive that value from patent class
 
-module.exports = class entityController {
+module.exports = class entityController extends entityUtilitiesController {
 
+    //Technical Debt:  The primary key definition should be set in the specific Entity class
     constructor(name){
+
+        super();
 
         this.setNames(name);
 
         this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting', 'usersigningstring'];
 
-    }
-
-    //Technical Debt:  Cache this.
-    can(action){
-
-        du.debug('Can');
-
-        du.debug('Can check:', action, this.descriptive_name);
-
-        return new Promise((resolve, reject) => {
-
-            permissionutilities.validatePermissions(action, this.descriptive_name).then((permission) => {
-
-                du.debug('Has permission:', permission);
-
-                return resolve(permission);
-
-            })
-            .catch((error) => {
-
-                du.debug(error);
-
-                return reject(error);
-
-            });
-
-        });
+        this.dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 
     }
 
@@ -74,7 +47,7 @@ module.exports = class entityController {
                 query_parameters = this.appendPagination(query_parameters, pagination);
                 query_parameters = this.appendAccountFilter(query_parameters);
 
-                return dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+                return this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
                     if(_.isError(error)){ return reject(error); }
 
@@ -93,7 +66,6 @@ module.exports = class entityController {
 
     }
 
-		//ACL enabled
     list(pagination, query_parameters){
 
         du.debug('List');
@@ -111,7 +83,7 @@ module.exports = class entityController {
                 query_parameters = this.appendPagination(query_parameters, pagination);
                 query_parameters = this.appendAccountFilter(query_parameters);
 
-                return Promise.resolve(dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
                     if(_.isError(error)){ return reject(error); }
 
@@ -130,7 +102,6 @@ module.exports = class entityController {
 
     }
 
-		//ACL enabled
     //Technical Debt:  You can only paginate against the index...
     queryBySecondaryIndex(field, index_value, index_name, pagination, reverse_order){
 
@@ -160,7 +131,7 @@ module.exports = class entityController {
 
                 du.debug('Query Parameters: ', query_parameters);
 
-                return Promise.resolve(dynamoutilities.queryRecordsFull(this.table_name, query_parameters, index_name, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.queryRecordsFull(this.table_name, query_parameters, index_name, (error, data) => {
 
                     if(_.isError(error)){
 
@@ -183,7 +154,21 @@ module.exports = class entityController {
 
     }
 
-		//ACL enabled
+    getList(list_array){
+
+        if(!_.isArray(list_array)){
+            return Promise.reject(new Error('List array must be of type array.'));
+        }
+
+        if(list_array.length < 1){
+            return Promise.resolve([]);
+        }
+
+      //Technical Debt:  Replace this with a IN clause
+        return Promise.all(list_array.map(list_item => this.get(list_item)));
+
+    }
+
     getBySecondaryIndex(field, index_value, index_name, cursor, limit){
 
         du.debug('Get By Secondary Index');
@@ -238,7 +223,7 @@ module.exports = class entityController {
 
                 du.debug(query_parameters);
 
-                return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 
                     if(_.isError(error)){ reject(error);}
 
@@ -272,7 +257,56 @@ module.exports = class entityController {
 
     }
 
-		//ACL enabled
+    search(){
+
+    }
+
+    scanByParameters(parameters, pagination){
+
+        du.debug('Scan By Parameters');
+
+        return new Promise((resolve, reject) => {
+
+            du.info(parameters);
+            return this.can('read', true)
+        .then(() =>  this.validate(parameters, global.routes.path('model','general/search_parameters.json')))
+        .then(() => {
+
+            let query_parameters = {
+                filter_expression: parameters.filter_expression,
+                expression_attribute_values: parameters.expression_attribute_values,
+                expression_attribute_names: parameters.expression_attribute_names
+            };
+
+            query_parameters = this.appendPagination(query_parameters, pagination);
+            query_parameters = this.appendAccountFilter(query_parameters);
+
+          //du.warning(query_parameters);
+
+            return Promise.resolve(this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+
+                if(_.isError(error)){ return reject(error); }
+
+                return this.buildResponse(data, (error, response) => {
+
+                    if(error){ return reject(error); }
+
+                    return resolve(response);
+
+                });
+
+            }));
+
+        }).catch((error) => {
+
+            return reject(error);
+
+        });
+
+        });
+
+    }
+
     get(id, primary_key){
 
         du.debug('Get');
@@ -323,7 +357,7 @@ module.exports = class entityController {
 
                 }
 
-                return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
                     if(_.isError(error)){
 
@@ -359,89 +393,7 @@ module.exports = class entityController {
 
             })
             .catch((error) => {
-                return reject(error);
-            });
-
-        });
-
-    }
-
-    touch(key){
-
-        du.debug('Touch');
-
-        return new Promise((resolve, reject) => {
-
-            return this.can('read').then((permission) => {
-
-                if(permission != true){
-
-                    return resolve(null);
-
-                }
-
-                return Promise.resolve(dynamoutilities.touchRecord(this.table_name, key, (error, data) => {
-
-                    if(_.isError(error)){
-
-                        du.warning(error);
-
-                        return reject(error);
-
-                    }
-
-                    return resolve(data);
-
-                }));
-
-            })
-            .catch((error) => {
-                return reject(error);
-            });
-
-        });
-
-    }
-
-    //Technical Debt: Why is this useful?
-    getByKey(key){
-
-        du.debug('Get By Key');
-
-        return new Promise((resolve, reject) => {
-
-            return this.can('read').then((permission) => {
-
-                if(permission != true){
-
-                    return resolve(null);
-
-                }
-
-                return Promise.resolve(dynamoutilities.get(this.table_name, key, (error, data) => {
-
-                    if(_.isError(error)){
-
-                        du.warning(error);
-
-                        return reject(error);
-
-                    }
-
-                    if(_.isObject(data)){
-
-                        if (_.has(data, "Item")) {
-                        	resolve(data.Item);
-                        } else {
-                        	resolve(null);
-                        }
-
-                    }
-
-                }));
-
-            })
-            .catch((error) => {
+                du.warning(error);
                 return reject(error);
             });
 
@@ -505,7 +457,7 @@ module.exports = class entityController {
 
                 du.debug(query_parameters);
 
-                return Promise.resolve(dynamoutilities.countRecords(this.table_name, query_parameters, index_name, (error, data) => {
+                return Promise.resolve(this.dynamoutilities.countRecords(this.table_name, query_parameters, index_name, (error, data) => {
 
                     if(_.isError(error)){
 
@@ -523,7 +475,7 @@ module.exports = class entityController {
     }
 
     //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
-    //ACL enabled
+    //Technical Debt:  Add Kinesis Activity
     create(entity, primary_key){
 
         du.debug('Create');
@@ -532,50 +484,45 @@ module.exports = class entityController {
 
         return new Promise((resolve, reject) => {
 
-            return this.can('create').then((permission) => {
-
-                if(permission != true){ return resolve(null); }
+            return this.can('create', true).then(() => {
 
                 entity = this.assignPrimaryKey(entity, primary_key);
 
                 entity = this.assignAccount(entity);
 
-                if(!_.has(entity, primary_key)){ return reject(new Error('Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
+                entity = this.setCreatedAt(entity);
 
-                return this.exists(entity, primary_key).then((exists) => {
+                return this.validate(entity)
+          .then(() => this.exists(entity, primary_key))
+          .then((exists) => {
 
-                    if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
+              if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
 
-                    entity = this.setCreatedAt(entity);
+              return this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
-                    //Technical Debt:  Validate that this model adheres to a entity in /model/entities/{model_name}.json
+                  if(_.isError(error)){ return reject(error);}
 
-                    return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
+                  return this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null)
+                  .then(() => this.addToSearchIndex(entity, this.descriptive_name))
+                  .then(() => {
 
-                        if(_.isError(error)){ return reject(error);}
+                      return resolve(entity);
 
-                        this.addToSearchIndex(entity, this.descriptive_name).then(() => {
+                  }).catch((error) => {
 
-                            return resolve(entity);
+                      return reject(error);
 
-                        })
-                        .catch((error) => {
+                  });
 
-                            return reject(error);
+              });
 
-                        });
+          }).catch((error) => {
 
-                    });
+              return reject(error);
 
-                })
-                .catch((error) => {
+          });
 
-                    return reject(error);
-
-                });
-
-            })
-            .catch((error) => {
+            }).catch((error) => {
 
                 return reject(error);
 
@@ -594,51 +541,77 @@ module.exports = class entityController {
 
         return new Promise((resolve, reject) => {
 
-            return this.can('update').then((permission) => {
-
-                if(permission != true){ return resolve(null); }
-
-                entity = this.assignAccount(entity);
+            return this.can('update', true).then(() => {
 
                 if(!_.has(entity, primary_key)){ return reject(new Error('Unable to update '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
 
-                return this.exists(entity, primary_key).then((exists) => {
+                entity = this.assignAccount(entity);
+
+                return this.exists(entity, primary_key)
+                .then((exists) => {
 
                     if(exists === false){ return reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
 
-                    entity = this.marryCreatedUpdated(entity, exists);
+                  //Note:  People can't change these automatically included fields...
+                    entity = this.persistCreatedUpdated(entity, exists);
 
                     entity = this.setUpdatedAt(entity);
 
-                    //Technical Debt:  Validate that this model adheres to a entity in /model/entities/{model_name}.json
+                    return this.validate(entity).then(() => {
 
-                    return dynamoutilities.saveRecord(this.table_name, entity, (error) => {
+                        this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
-                        if(_.isError(error)){ return reject(error);}
+                            if(_.isError(error)){ return reject(error);}
 
-                        this.addToSearchIndex(entity, this.descriptive_name).then(() => {
+                            return this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null)
+                          .then(() => this.addToSearchIndex(entity, this.descriptive_name))
+                          .then(() => {
 
-                            return resolve(entity);
+                              return resolve(entity);
 
-                        })
-              .catch((error) => {
+                          }).catch((error) => {
 
-                  return reject(error);
+                              return reject(error);
 
-              });
+                          });
+
+                        });
 
                     });
 
-                })
-          .catch((error) => {
-              return reject(error);
-          });
+                }).catch((error) => {
+                    return reject(error);
+                });
 
-            })
-        .catch((error) => {
-            return reject(error);
+            }).catch((error) => {
+                return reject(error);
+            });
+
         });
 
+    }
+
+    touch(entity){
+
+        du.debug('Touch');
+
+        return new Promise((resolve, reject) => {
+
+            return this.can('update', true).then(() => {
+
+                //Technical Debt: Add Kinesis Activity
+                return this.exists(entity).then((exists) => {
+
+                    if (!exists) {
+                        return resolve(this.create(entity));
+                    } else {
+                        return resolve(this.update(entity));
+                    }
+                });
+
+            }).catch((error) => {
+                return reject(error);
+            });
         });
 
     }
@@ -651,7 +624,6 @@ module.exports = class entityController {
 
         if(!_.has(entity, primary_key)){
 
-        //User is relying on the entity class's ability to auto-assign identifiers...
             return this.create(entity, primary_key);
 
         }else{
@@ -677,6 +649,7 @@ module.exports = class entityController {
     }
 
 		//NOT ACL enabled
+    //Technical Debt:  Add Kinesis Activity
     delete(id, primary_key){
 
         du.debug('Delete');
@@ -693,79 +666,64 @@ module.exports = class entityController {
                 return reject(e);
             }
 
-            //Technical Debt:  Why is this "update"?
-            return this.can('update').then((permission) => {
+            return this.can('delete', true).then(() => {
 
-                if(permission != true){
+                let query_parameters = {
+                    key_condition_expression: primary_key+' = :primary_keyv',
+                    expression_attribute_values: {':primary_keyv': id}
+                };
 
-                    return resolve(null);
+                let delete_parameters = {};
 
-                }else{
+                delete_parameters[primary_key] = id;
 
-                    let query_parameters = {
-                        key_condition_expression: primary_key+' = :primary_keyv',
-                        expression_attribute_values: {':primary_keyv': id}
-                    };
+          //Technical Debt:  Refactor.
+          //Technical Debt:  What happens if this object that is being deleted is in non-accounts?
+                if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 
-                    let delete_parameters = {};
+                    if(global.account == '*'){
 
-                    delete_parameters[primary_key] = id;
+							//for now, do nothing
 
-                    //Technical Debt:  Refactor.
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+                    }else{
 
-                        if(global.account == '*'){
-
-													//for now, do nothing
-
-                        }else{
-
-                            query_parameters.filter_expression = 'account = :accountv';
-                            query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                        }
+                        query_parameters.filter_expression = 'account = :accountv';
+                        query_parameters.expression_attribute_values[':accountv'] = global.account;
 
                     }
 
-                    return Promise.resolve(dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+                }
+
+          //Exists?
+                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+
+                    if(_.isError(error)){ reject(error);}
+
+                    if(!_.isObject(data) || !_.isArray(data) || data.length !== 1){ return reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.')); }
+
+                    this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
 
                         if(_.isError(error)){ reject(error);}
 
-                        if(_.isObject(data) && _.isArray(data) && data.length == 1){
+                        this.removeFromSearchIndex(id, this.descriptive_name).then((removed) => {
 
-                            dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
+                            du.debug('Removed: '+removed);
 
-                                if(_.isError(error)){ reject(error);}
+                            return resolve(delete_parameters);
 
-                                this.removeFromSearchIndex(id, this.descriptive_name).then((removed) => {
+                        }).catch((error) => {
 
-                                    du.debug('Removed: '+removed);
+                            du.debug('Rejecting:', id);
 
-                                    return resolve(delete_parameters);
+                            return reject(error);
 
-                                })
-                                .catch((error) => {
+                        });
 
-                                    du.debug('Rejecting:', id);
+                    });
 
-                                    return reject(error);
+                }));
 
-                                });
-
-                            });
-
-                        }else{
-
-                            return reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.'));
-
-                        }
-
-                    }));
-
-                }
-
-            })
-            .catch((error) => {
+            }).catch((error) => {
                 reject(error);
             });
 
@@ -781,6 +739,7 @@ module.exports = class entityController {
 
         if(!_.has(entity, primary_key)){
 
+            //Technical Debt:  What is this message?
             return Promise.reject(new Error('Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"'));
 
         }else{
@@ -794,7 +753,7 @@ module.exports = class entityController {
 
             return new Promise((resolve, reject) => {
 
-                dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+                this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
                     if(_.isError(error)){ return reject(error);}
 
@@ -815,753 +774,6 @@ module.exports = class entityController {
             });
 
         }
-
-    }
-
-		//Technical Debt: Like the Analytics class, this function should look for entity specific methods to attempt to identify a function that creates the validation schema
-    //OR it needs to load associated schemas based on the contents of the schema...
-    validate(object, object_type){
-
-        du.debug('Validate');
-
-        return new Promise((resolve, reject) => {
-
-            if(_.isUndefined(object_type) || !_.isString(object_type)){
-
-                object_type = this.descriptive_name;
-
-            }
-
-            du.debug('Object: ', object, 'Object Type: ', object_type);
-
-            var v = new Validator();
-
-            var schema;
-
-            try{
-
-                schema = global.routes.include('model', 'entities/'+object_type);
-
-
-            } catch(e){
-
-                du.warning(e);
-                return reject(new Error('Unable to load validation schema for '+object_type));
-
-            }
-
-            du.debug('Validation Schema loaded');
-
-            var validation;
-
-            try{
-                v = new Validator();
-                validation = v.validate(object, schema);
-            }catch(e){
-                return reject(e);
-            }
-
-            if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
-
-                du.warning(validation.errors);
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map((e)=>{ return e.message; })
-                };
-
-                return reject(error);
-
-            }
-
-            return resolve(validation);
-
-        });
-
-    }
-
-    isUUID(string, version){
-
-        du.debug('Is UUID');
-
-        if(_.isString(string)){
-
-            return validator.isUUID(string, version);
-
-        }
-
-        return false;
-
-    }
-
-    isEmail(string){
-
-        du.debug('Is Email');
-
-        if(_.isString(string)){
-
-            return validator.isEmail(string);
-
-        }
-
-        return false;
-
-    }
-
-    disableACLs(){
-
-        du.debug('Disable ACLs');
-
-        permissionutilities.disableACLs();
-
-        return;
-
-    }
-
-    enableACLs(){
-
-        du.debug('Enable ACLs');
-
-        permissionutilities.enableACLs();
-
-        return;
-
-    }
-
-    unsetGlobalUser(){
-
-        du.debug('Unset Global User');
-
-        permissionutilities.unsetGlobalUser();
-
-        return;
-
-    }
-
-    setGlobalUser(user){
-
-        du.debug('Set Global User');
-
-        if(_.has(user, 'id') || this.isEmail(user)){
-
-            permissionutilities.setGlobalUser(user);
-
-        }
-
-        return;
-
-    }
-
-    acquireGlobalUser(){
-
-        du.debug('Acquire Global User');
-
-        if(_.has(global, 'user')){
-
-            return global.user;
-
-        }
-
-        return null;
-
-    }
-
-    removeFromSearchIndex(id, entity_type){
-
-        du.debug('Remove From Search Index');
-
-        let entity = {id:id, entity_type: entity_type};
-
-        return indexingutilities.removeFromSearchIndex(entity);
-
-    }
-
-    addToSearchIndex(entity, entity_type){
-
-        du.debug('Add To Search Index');
-
-        entity['entity_type'] = entity_type;
-
-        du.warning('Indexing:', entity);
-
-        return indexingutilities.addToSearchIndex(entity);
-
-    }
-
-    setCreatedAt(entity, created_at){
-
-        du.debug('Set Created At');
-
-        if(_.isUndefined(created_at)){
-
-            entity['created_at'] = timestamp.getISO8601();
-
-        }else{
-
-            entity['created_at'] = created_at;
-
-        }
-
-        entity = this.setUpdatedAt(entity);
-
-        return entity;
-
-    }
-
-    setUpdatedAt(entity){
-
-        du.debug('Set Updated At');
-
-        if(!_.has(entity, 'created_at')){
-
-            throw new Error('Entity lacks a "created_at" property');
-
-        }
-
-        if(!_.has(entity, 'updated_at')){
-
-            entity['updated_at'] = entity.created_at;
-
-        }else{
-
-            entity['updated_at'] = timestamp.getISO8601();
-
-        }
-
-        return entity;
-
-    }
-
-    marryCreatedUpdated(entity, exists){
-
-        du.debug('Marry Created Updated');
-
-        if(!_.has(exists, 'created_at')){
-            throw new Error('Entity lacks "created_at" property.');
-        }
-
-        if(!_.has(exists, 'updated_at')){
-            throw new Error('Entity lacks "updated_at" property.');
-        }
-
-        entity['created_at'] = exists.created_at;
-        entity['updated_at'] = exists.updated_at;
-
-        return entity;
-
-    }
-
-    assignPrimaryKey(entity, primary_key){
-
-        du.debug('Assign Primary Key');
-
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
-
-        if(!_.has(entity, primary_key)){
-
-            if(primary_key == 'id'){
-
-                entity.id = uuidV4();
-
-            }else{
-
-                du.warning('Unable to assign primary key "'+primary_key+'" property');
-
-            }
-
-        }
-
-        return entity;
-
-    }
-
-    assignAccount(entity){
-
-        du.debug('Assign Account');
-
-        if(!_.has(entity, 'account')){
-
-            du.debug('No account specified in the entity record');
-
-            if(_.has(global, 'account')){
-
-                du.debug('Global account identified.  Appending to the entity.');
-
-                if(!_.contains(this.nonaccounts, this.descriptive_name)){
-
-                    entity.account = global.account;
-
-                }else{
-
-                    du.debug('Entity exists in the non-account list.');
-
-                }
-
-            }else{
-
-                du.debug('No global account value available.');
-
-            }
-
-        }else{
-
-            du.debug('Entity already bound to a account.');
-
-        }
-
-        return entity;
-
-    }
-
-    appendAccountFilter(query_parameters){
-
-        du.debug('Append Account Filter');
-
-        if(global.disableaccountfilter !== true){
-
-            if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
-
-                if(global.account == '*'){
-
-                    du.warning('Master account in use.');
-
-                }else{
-
-                    query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
-
-                    query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
-
-                }
-
-            }
-
-        }else{
-
-            du.warning('Global Account Filter Disabled');
-
-        }
-
-        return query_parameters;
-
-    }
-
-    appendPagination(query_parameters, pagination){
-
-        du.debug('Append Pagination');
-
-        if(!_.isUndefined(pagination) && _.isObject(pagination)){
-
-            du.debug('Pagination Object:', pagination);
-
-            if(_.has(pagination, 'limit')){
-
-                query_parameters = this.appendLimit(query_parameters, pagination.limit);
-
-            }
-
-            if(_.has(pagination, 'exclusive_start_key')){
-
-                query_parameters = this.appendExclusiveStartKey(query_parameters, pagination.exclusive_start_key);
-
-            }else if(_.has(pagination, 'cursor')){
-
-                query_parameters = this.appendCursor(query_parameters, pagination.cursor);
-
-            }
-
-        }
-
-        return query_parameters;
-
-    }
-
-    appendLimit(query_parameters, limit){
-
-        du.debug('Append Limit');
-
-        if(!_.isUndefined(limit)){
-
-            if(_.isString(limit) || _.isNumber(limit)){
-
-                limit = parseInt(limit);
-
-                if(_.isNumber(limit) && limit > 0){
-
-                    query_parameters['limit'] = limit;
-
-                }else{
-
-                    throw new Error('Limit is a unrecognized format: '+limit);
-
-                }
-
-            }
-
-        }
-
-        return query_parameters;
-
-    }
-
-    appendExclusiveStartKey(query_parameters, exclusive_start_key){
-
-        du.debug('Append Exclusive Start Key');
-
-        if(!_.isUndefined(exclusive_start_key)){
-
-            if(_.isString(exclusive_start_key)){
-
-                if(this.isUUID(exclusive_start_key) || this.isEmail(exclusive_start_key)){
-
-                    query_parameters['ExclusiveStartKey'] = this.appendCursor(exclusive_start_key);
-
-                }else{
-
-                    query_parameters['ExclusiveStartKey'] =  JSON.parse(exclusive_start_key);
-
-                }
-
-            }else{
-
-                throw new Error('Unrecognized Exclusive Start Key format.');
-
-            }
-
-        }
-
-        return query_parameters;
-
-    }
-
-
-    appendCursor(query_parameters, cursor){
-
-        du.debug('Append Cursor');
-
-        du.debug(cursor);
-
-        if(!_.isUndefined(cursor) && !_.isNull(cursor)){
-
-            if(_.isString(cursor)){
-
-                if(this.isEmail(cursor) || this.isUUID(cursor) || cursor == '*'){
-
-                    query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify({id: cursor}));
-
-                  //query_parameters['ExclusiveStartKey'] = { id: cursor };
-
-                }else{
-
-                    let parsed_cursor;
-
-                    try{
-
-                        parsed_cursor = JSON.parse(cursor);
-
-                    }catch(e){
-
-                        du.warning('Unable to parse cursor:', cursor, e);
-
-                    }
-
-                    if(parsed_cursor){
-
-                        query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify(parsed_cursor));
-
-                    }else{
-
-                        throw new Error('Unrecognized format for Exclusive Start Key.')
-
-                    }
-
-                }
-
-            }else{
-
-                throw new Error('Unrecognized format for Cursor.')
-
-            }
-
-        }
-
-        return query_parameters;
-
-    }
-
-    assurePresence(thing, field, default_value){
-
-        du.debug('Assure Presence');
-
-        if(_.isUndefined(default_value)){
-
-            default_value = {};
-
-        }
-
-        if(!_.has(thing, field) || _.isNull(thing[field])){
-
-            thing[field] = default_value;
-
-        }
-
-        return thing;
-
-    }
-
-    appendExpressionAttributeNames(query_parameters, key, value){
-
-        du.debug('Append Expression Attribute Names');
-
-        query_parameters = this.assurePresence(query_parameters, 'expression_attribute_names');
-
-        query_parameters.expression_attribute_names[key] = value;
-
-        return query_parameters;
-
-    }
-
-    appendKeyConditionExpression(query_parameters, key, value){
-
-        du.debug('Append Key Condition Expression');
-
-        query_parameters = this.assurePresence(query_parameters, 'key_condition_expression');
-
-        query_parameters.key_condition_expression[key] = value;
-
-        return query_parameters;
-
-    }
-
-    appendExpressionAttributeValues(query_parameters, key, value){
-
-        du.debug('Append Expression Attribute Values');
-
-        query_parameters = this.assurePresence(query_parameters, 'expression_attribute_values');
-
-        query_parameters.expression_attribute_values[key] = value;
-
-        return query_parameters;
-
-    }
-
-
-    appendFilterExpression(query_parameters, filter_expression){
-
-        du.debug('Append Filter Expression');
-
-        if (_.has(query_parameters, 'filter_expression')){
-
-            if(_.isNull(query_parameters.filter_expression) || _.isUndefined(query_parameters.filter_expression)){
-
-                query_parameters.filter_expression = filter_expression;
-
-            }else if(_.isString(query_parameters.filter_expression)){
-
-                if(query_parameters.filter_expression.trim() == ''){
-
-                    query_parameters.filter_expression = filter_expression;
-
-                }else{
-
-                    query_parameters.filter_expression += ' AND '+filter_expression;
-
-                }
-
-            }else{
-
-                throw new Error('Unrecognized query parameter filter expression type.');
-
-            }
-
-        }else{
-
-            query_parameters.filter_expression = filter_expression;
-
-        }
-
-        return query_parameters;
-
-    }
-
-    buildPaginationObject(data){
-
-        du.debug('Build Pagnination Object');
-
-        var pagination_object = {
-            count: '',
-            end_cursor: '',
-            has_next_page: 'true',
-            last_evaluated: ''
-        }
-
-      // Technical Debt: We should improve the way we validate the data, either by using dedicated
-      // response objects, JSON schema validation or both.
-        if(_.has(data, "Count")){
-            pagination_object.count = data.Count;
-        }
-
-        if(_.has(data, "LastEvaluatedKey")){
-
-            pagination_object.last_evaluated = JSON.stringify(data.LastEvaluatedKey);
-
-            if(_.has(data.LastEvaluatedKey, "id")){
-                pagination_object.end_cursor = data.LastEvaluatedKey.id;
-            }
-
-        }
-
-      //Technical Debt:  This doesn't appear to be working correctly
-        if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
-            pagination_object.has_next_page = 'false';
-        }
-
-        du.info(data);
-
-        return pagination_object;
-
-    }
-
-    buildResponse(data, callback){
-
-        du.debug('Build Response');
-
-        if(_.isObject(data)){
-
-            let pagination_object = this.buildPaginationObject(data);
-
-            if (!_.has(data, "Items") || (!_.isArray(data.Items))) {
-                return callback(new Error('Data has no items.'), null);
-            }
-
-            if(data.Items.length < 1){
-                data.Items = null;
-            }
-
-            var resolve_object = {
-                pagination: pagination_object
-            };
-
-            resolve_object[this.descriptive_name+'s'] = data.Items;
-
-            return callback(null, resolve_object);
-
-        } else {
-
-            return callback(new Error('Data is not an object.'), null);
-
-        }
-
-    }
-
-    getResult(result, field){
-
-        du.debug('Get Result');
-
-        if(_.isUndefined(field)){
-            field = this.descriptive_name+'s';
-        }
-
-        if(_.has(result, field)){
-
-            return Promise.resolve(result[field]);
-
-        }else{
-
-            return Promise.resolve(null);
-
-        }
-
-    }
-
-    getID(object, primary_key){
-
-        du.debug('Get ID');
-
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
-
-        if(_.isString(object)){
-
-
-        //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
-            return object;
-
-            /*
-            if(this.isUUID(object)){
-
-                return object;
-
-            }else if(this.isEmail(object)){
-
-                return object;
-
-            }else if(object == '*'){
-
-                return object;
-
-            }
-            */
-
-        }else if(_.isObject(object)){
-
-            if(_.has(object, primary_key)){
-
-                return object[primary_key];
-
-            }
-
-        }
-
-        throw new Error('Could not determine identifier.');
-
-    }
-
-    setNames(name){
-
-        du.debug('Set Names');
-
-        this.descriptive_name = name;
-
-        this.setEnvironmentTableName(name);
-
-        this.setTableName(name);
-
-    }
-
-    setEnvironmentTableName(name){
-
-        du.debug('Set Environment Table Name');
-
-        let key = this.buildTableKey(name);
-        let value = this.buildTableName(name);
-
-        if(!_.has(process.env, key)){
-            process.env[key] = value;
-        }
-
-    }
-
-    setTableName(name){
-
-        du.debug('Set Table Name');
-
-        let key = this.buildTableKey(name);
-
-        this.table_name = process.env[key];
-
-    }
-
-    buildTableKey(name){
-
-        du.debug('Build Table Key');
-
-        return name+'s_table';
-
-    }
-
-    buildTableName(name){
-
-        du.debug('Build Table Name');
-
-        return process.env.stage+name+'s';
 
     }
 

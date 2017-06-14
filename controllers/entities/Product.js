@@ -1,5 +1,8 @@
 'use strict';
 const _ = require('underscore');
+const du = global.routes.include('lib', 'debug-utilities');
+const Validator = require('jsonschema').Validator;
+
 var dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 var fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
@@ -16,50 +19,11 @@ class ProductController extends entityController {
 
     }
 
-	//Technical Debt: what is this?
     getProducts(products_array){
 
-        return new Promise((resolve, reject) => {
+        du.debug('Get Products');
 
-            if(_.isArray(products_array)){
-
-                var products_object = {};
-                var index = 0;
-
-                products_array.forEach(function(value) {
-                    index++;
-                    var product_key = ":productvalue"+index;
-
-                    products_object[product_key.toString()] = value;
-                });
-
-				//Technical Debt:  This needs to go the entity controller
-                dynamoutilities.scanRecords(
-					process.env.products_table,
-                    {
-                        filter_expression:"id IN ("+Object.keys(products_object).toString()+ ")",
-                        expression_attribute_values: products_object
-                    },
-					(error, products) => {
-
-    if(_.isError(error)){ reject(error);}
-
-    if(!_.isEqual(products_array.length, products.length)){
-
-        reject(new Error('Unrecognized products in products list.'));
-    }
-
-    resolve(products);
-
-});
-
-            }else{
-
-                reject(new Error('products_array must be a array of product id\'s.'));
-
-            }
-
-        });
+        return this.getList(products_array);
 
     }
 

@@ -1,16 +1,16 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/User",
+	"id":"/user",
 	"title": "User",
 	"type": "object",
 	"definitions": {
+		"UUIDv4": {
+			"type": "string",
+			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+		},
 		"ISO8601": {
 			"type": "string",
 			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
-		},
-		"SHA1": {
-			"type": "string",
-			"pattern":"^[0-9a-f]{5,40}$"
 		}
 	},
 	"properties": {
@@ -19,26 +19,36 @@
 			"format":"email"
 		},
 		"name":{
-			"type":"string"
+			"type":"string",
+			"minLength":3
 		},
 		"first_name":{
-			"type":"string"
+			"type":"string",
+			"minLength":3
 		},
-		"last_name": {
-			"type":"string"
+		"last_name":{
+			"type":"string",
+			"minLength":3
 		},
 		"auth0_id":{
-			"type":"string"
+			"type":"string",
+			"minLength":3
 		},
 		"active":{
-			"type":"string"
+			"type":"boolean"
 		},
 		"termsandconditions":{
-			"type":"string"
+			"type":"string",
+			"minLength":2
 		},
-		"alias":{"$ref": "#/definitions/SHA1"},
+		"alias":{
+			"type":"string",
+			"minLength":40,
+			"maxLength":40,
+			"format":"^[a-z0-9]*$"
+		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["id", "name", "alias", "created_at", "updated_at"]
+	"required":["id", "name", "first_name", "last_name", "active", "alias", "created_at", "updated_at"]
 }

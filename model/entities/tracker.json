@@ -17,15 +17,34 @@
 				{"type":"string", "enum":[""]},
 				{"$ref": "#/definitions/UUIDv4"}
 			]
+		},
+		"SixAccountIdentifier":{
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string", "enum":["*"]}
+			]
 		}
 	},
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
-		"affiliate":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/UUIDv4"},
+		"affiliates":{
+			"type":"array",
+			"items":{"$ref": "#/definitions/UUIDv4"}
+		},
+		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"type":{
 			"type":"string",
 			"enum":["postback","html"]
+		},
+		"event_type":{
+			"type":"array",
+			"items":{
+				"type":"string",
+				"enum":["click","lead","main","upsell","confirm"]
+			}
+		},
+		"name":{
+			"type":"string"
 		},
 		"body":{
 			"type":"string"
@@ -37,5 +56,5 @@
 			"type":{"$ref": "#/definitions/ISO8601"}
 		}
 	},
-	"required":["id", "affiliate", "account", "type", "body", "created_at", "updated_at"]
+	"required":["id", "account", "type", "name", "body", "created_at", "updated_at"]
 }

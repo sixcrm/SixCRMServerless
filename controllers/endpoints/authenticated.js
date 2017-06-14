@@ -1,6 +1,5 @@
 'use strict';
 const _ = require("underscore");
-const validator = require('validator');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
@@ -103,7 +102,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
         }
 
-        if(validator.isEmail(user_string)){
+        if(userController.isEmail(user_string)){
 
             return userController.getUserStrict(user_string).then((user) => {
 

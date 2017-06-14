@@ -19,21 +19,37 @@ class DynamoDeploySeeds {
         du.highlight(`Seeding ${seed}`);
 
         seed_content.forEach((entity) => {
-            controller.store(entity).catch(error => {
+
+            controller.store(entity).then((result) => {
+                du.deep(result);
+            }).catch(error => {
                 du.error(`Error while seeding '${controller.descriptive_name}' with id '${entity.id}': ${error.message}`);
             });
+
         });
 
-
         return Promise.resolve(`Finished seeding '${seed}'.`);
+
     }
 
-    // Technical Debt: This has troubles connecting to local DynamoDB instance.
-    deployAllSeeds(environment) {
+    deployAllSeeds(environment, region) {
         PermissionUtilities.disableACLs();
         process.env.stage = environment;
         process.env.search_indexing_queue_url = this.getConfig().sqs.search_indexing_queue_url;
+
         process.env.dynamo_endpoint = this.getConfig().dynamodb.endpoint;
+
+        process.env.redshift_user = this.getConfig().redshift.user;
+        process.env.redshift_password = this.getConfig().redshift.password;
+        process.env.redshift_host = this.getConfig().redshift.host;
+        process.env.redshift_database = this.getConfig().redshift.database;
+        process.env.redshift_port = this.getConfig().redshift.port;
+        process.env.redshift_pool_max = this.getConfig().redshift.user;
+        process.env.redshift_idle_timeout = this.getConfig().redshift.idleTimeoutMillis;
+
+        if(!_.isUndefined(region)){
+            process.env.AWS_REGION = region;
+        }
 
         this.initializeControllers();
 

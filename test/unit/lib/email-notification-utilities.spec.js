@@ -24,7 +24,7 @@ describe('lib/notification-utilities', () => {
     let valid_notification_object = {
         id: 'aa26af35-5542-4c2b-9a75-45100e78fc97',
         account: '*',
-        user: 'any',
+        user: 'test@test.com',
         type: 'any',
         action: 'any',
         title: 'any',

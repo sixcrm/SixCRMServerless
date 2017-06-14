@@ -7,6 +7,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'AffiliateInput',
     fields: () => ({
         id:					{ type: new GraphQLNonNull(GraphQLString) },
-        affiliate_id:		{ type: new GraphQLNonNull(GraphQLString) }
+        affiliate_id:		{ type: new GraphQLNonNull(GraphQLString) },
+        name: { type: GraphQLString }
     })
 });

@@ -9,8 +9,8 @@
 	},
 	"properties": {
 		"campaign":{"$ref": "#/definitions/UUIDv4"},
-		"affiliates":{"$ref": "/Affiliates"},
-		"customer":{"$ref": "/Customer"}
+		"affiliates":{"$ref": "/affiliates"},
+		"customer":{"$ref": "/customer"}
 	},
 	"required":["campaign", "customer"]
 }

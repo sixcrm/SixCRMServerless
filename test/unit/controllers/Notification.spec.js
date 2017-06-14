@@ -32,21 +32,31 @@ describe('controllers/Notification.js', () => {
                 countRecords: (table, parameters, index, callback) => {
                     callback(null, 2);
                 },
-                touchRecord: (table, key, callback) => {
-                    callback(null, {});
-                },
                 get: (table, key, callback) => {
                     callback(null, {
-                        user: "nikola.bosic@toptal.com",
-                        account: "*",
+                        id: "nikola.bosic@toptal.com/*",
                         created_at: "2017-04-06T18:40:41.405Z",
                         updated_at: "2017-04-06T18:41:12.521Z"
                     })
+                },
+                queryRecords: (table, parameters, index, callback) => {
+                    callback(null, { Items: [] })
+                },
+                queryRecordsFull: (table, parameters, index, callback) => {
+                    callback(null, { Items: [] })
+                },
+                saveRecord: (table, item, callback) => {
+                    callback();
                 }
             });
-            mockery.registerMock('../lib/indexing-utilities.js', {
+            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: () => {
                     return Promise.resolve(true);
+                }
+            });
+            mockery.registerMock(global.routes.path('lib', 'kinesis-firehose-utilities.js'), {
+                putRecord: () => {
+                    return Promise.resolve();
                 }
             });
 

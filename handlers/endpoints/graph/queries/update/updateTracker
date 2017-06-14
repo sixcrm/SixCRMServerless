@@ -3,12 +3,17 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation {
-		updatetracker (tracker: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", affiliate: \"6b6331f6-7f84-437a-9ac6-093ba301e455\", type: \"postback\", body:\"http://sofunagain.com\"}) {
+		updatetracker (tracker: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", event_type: [\"lead\"], affiliates: [\"ad58ea78-504f-4a7e-ad45-128b6e76dc57\",\"6b6331f6-7f84-437a-9ac6-093ba301e455\"], type: \"postback\", name:\"Testing Tracker 3 Update\", body:\"http://sofunagain.com\"}) {
 			id,
-			affiliate{
-				id
+			affiliates {
+				id,
+				name,
+				affiliate_id,
+				created_at,
+				updated_at
 			},
 			type,
+			event_type,
 			body,
 			created_at,
 			updated_at

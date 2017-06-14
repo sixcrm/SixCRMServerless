@@ -2,6 +2,7 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
 
 let affiliateType = require('../affiliate/affiliateType');
 
@@ -15,13 +16,21 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the tracker.',
         },
-        affiliate: {
-            type: affiliateType.graphObj,
-            description: '.',
-            resolve: tracker => trackerController.getAffiliate(tracker),
+        affiliates: {
+            type: new GraphQLList(affiliateType.graphObj),
+            description: 'The associated affiliate entities.',
+            resolve: tracker => trackerController.getAffiliates(tracker)
         },
         type: {
             type: new GraphQLNonNull(GraphQLString),
+            description: '.',
+        },
+        event_type:{
+            type: new GraphQLList(GraphQLString),
+            description: ''
+        },
+        name:{
+            type: GraphQLString,
             description: '.',
         },
         body: {

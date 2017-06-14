@@ -1,35 +1,46 @@
 {
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/notification",
 	"title": "Notification",
 	"type": "object",
+	"definitions": {
+		"UUIDv4": {
+			"type": "string",
+			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+		},
+		"ISO8601": {
+			"type": "string",
+			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
+		},
+		"SixAccountIdentifier":{
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string", "enum":["*"]}
+			]
+		}
+	},
 	"properties": {
-		"id":{
-			"type":"string"
-		},
+		"id":{"$ref": "#/definitions/UUIDv4"},
 		"user":{
-			"type":"string"
-		},
-		"account":{
-			"type":"string"
-		},
-		"type":{
-			"type":"string"
+			"type":"string",
+			"format":"email"
 		},
 		"action":{
 			"type":"string"
 		},
-		"title":{
+		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"title": {
 			"type":"string"
 		},
-		"body":{
+		"type": {
 			"type":"string"
 		},
-		"created_at":{
+		"body": {
 			"type":"string"
 		},
-		"updated_at":{
-			"type":"string"
-		}
-
+		"read_at":{"$ref": "#/definitions/ISO8601"},
+		"created_at":{"$ref": "#/definitions/ISO8601"},
+		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["id", "account", "type", "action", "title", "body", "created_at", "updated_at"]
+	"required":["account", "user", "action", "body", "title", "type", "created_at", "updated_at"]
 }

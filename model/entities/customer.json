@@ -1,0 +1,78 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/customer",
+	"title": "Customer",
+	"type": "object",
+	"definitions": {
+		"UUIDv4": {
+			"type": "string",
+			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+		},
+		"ISO8601": {
+			"type": "string",
+			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
+		},
+		"OptionalUUIDv4":{
+			"anyOf":[
+				{"type":"string", "enum":[""]},
+				{"$ref": "#/definitions/UUIDv4"}
+			]
+		},
+		"SixAccountIdentifier":{
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string", "enum":["*"]}
+			]
+		}
+	},
+	"properties": {
+		"id":{"$ref": "#/definitions/UUIDv4"},
+		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"email":{
+			"type":"string",
+			"format":"email"
+		},
+		"firstname":{
+			"type":"string",
+			"minLength": 1
+		},
+		"lastname":{
+			"type":"string",
+			"minLength": 1
+		},
+		"phone":{
+			"type":"string"
+		},
+		"address":{
+			"type":"object",
+			"properties": {
+				"line1":{
+					"type":"string"
+				},
+				"line2":{
+					"type":"string"
+				},
+				"city":{
+					"type":"string"
+				},
+				"state":{
+					"type":"string"
+				},
+				"zip":{
+					"type":"string"
+				},
+				"country":{
+					"type":"string"
+				}
+			},
+			"required":["line1","city","state","zip","country"]
+		},
+		"creditcards":{
+			"type":"array",
+			"items":{"$ref": "#/definitions/UUIDv4"}
+		},
+		"created_at":{"$ref": "#/definitions/ISO8601"},
+		"updated_at":{"$ref": "#/definitions/ISO8601"}
+	},
+	"required":["account", "firstname", "lastname", "address", "email", "created_at", "updated_at"]
+}

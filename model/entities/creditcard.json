@@ -1,0 +1,71 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/creditcard",
+	"title": "Credit Card",
+	"type": "object",
+	"definitions": {
+		"UUIDv4": {
+			"type": "string",
+			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+		},
+		"ISO8601": {
+			"type": "string",
+			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
+		},
+		"CreditCardExpirationDate": {
+			"type": "string",
+			"pattern":"^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$"
+		},
+		"CreditCardCCV":{
+			"type":"string",
+			"pattern":"^[0-9]{3,4}$"
+		},
+		"SixAccountIdentifier":{
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string", "enum":["*"]}
+			]
+		}
+	},
+	"properties": {
+		"id":{"$ref": "#/definitions/UUIDv4"},
+		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"address":{
+			"type":"object",
+			"properties": {
+				"line1":{
+					"type":"string"
+				},
+				"line2":{
+					"type":"string"
+				},
+				"city":{
+					"type":"string"
+				},
+				"state":{
+					"type":"string"
+				},
+				"zip":{
+					"type":"string"
+				},
+				"country":{
+					"type":"string"
+				}
+			},
+			"required":["line1","city","state","zip","country"]
+		},
+		"number":{
+			"type":"string",
+			"minLength":12
+		},
+		"ccv":{"$ref": "#/definitions/CreditCardCCV"},
+		"expiration":{"$ref": "#/definitions/CreditCardExpirationDate"},
+		"name":{
+			"type":"string",
+			"minLength":12
+		},
+		"created_at":{"$ref": "#/definitions/ISO8601"},
+		"updated_at":{"$ref": "#/definitions/ISO8601"}
+	},
+	"required":["account", "address", "number", "expiration","ccv", "name", "created_at", "updated_at"]
+}

@@ -1,25 +1,52 @@
 {
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/product",
 	"title": "Product",
 	"type": "object",
-	"properties": {
-		"id":{
-			"type":"string"
+	"definitions": {
+		"UUIDv4": {
+			"type": "string",
+			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
 		},
-		"name":{
-			"type":"string"
+		"ISO8601": {
+			"type": "string",
+			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
 		},
-		"sku":{
-			"type":"string"
+		"OptionalUUIDv4":{
+			"anyOf":[
+				{"type":"string", "enum":[""]},
+				{"$ref": "#/definitions/UUIDv4"}
+			]
 		},
-		"ship":{
-			"type":"true"
-		},
-		"shipping_delay":{
-			"type":"string"
-		},
-		"fulfillment_provider":{
-			"type":["string", "object", "null"]
+		"SixAccountIdentifier":{
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string", "enum":["*"]}
+			]
 		}
 	},
-	"required":["name","sku","ship"]
+	"properties": {
+		"id":{"$ref": "#/definitions/UUIDv4"},
+		"name":{
+			"type":"string",
+			"minLength":3
+		},
+		"sku":{
+			"type":"string",
+			"minLength":3
+		},
+		"ship":{
+			"type":"boolean"
+		},
+		"shipping_delay":{
+			"type": "integer",
+			"minimum": 0,
+			"exclusiveMinimum": false
+		},
+		"fulfillment_provider":{"$ref": "#/definitions/UUIDv4"},
+		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"created_at":{"$ref": "#/definitions/ISO8601"},
+		"updated_at":{"$ref": "#/definitions/ISO8601"}
+	},
+	"required":["name", "sku","ship", "account", "created_at", "updated_at"]
 }

@@ -1,0 +1,28 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/customer",
+	"title": "Customer",
+	"type": "object",
+	"properties": {
+		"email":{
+			"type":"string",
+			"format":"email"
+		},
+		"firstname":{
+			"type":"string",
+			"minLength": 1
+		},
+		"lastname":{
+			"type":"string",
+			"minLength": 1
+		},
+		"phone":{
+			"type":"string"
+		},
+		"address":{"$ref": "/address"},
+		"creditcards":{
+			"type":"array",
+			"items":{"$ref": "/creditcard"}
+		}
+	}
+}

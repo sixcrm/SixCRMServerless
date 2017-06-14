@@ -1,38 +1,52 @@
 {
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/rebill",
 	"title": "Rebill",
 	"type": "object",
-	"properties": {
-		"id":{
-			"type":"string"
+	"definitions": {
+		"UUIDv4": {
+			"type": "string",
+			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
 		},
+		"ISO8601": {
+			"type": "string",
+			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
+		},
+		"OptionalUUIDv4":{
+			"anyOf":[
+				{"type":"string", "enum":[""]},
+				{"$ref": "#/definitions/UUIDv4"}
+			]
+		},
+		"SixAccountIdentifier":{
+			"anyOf":[
+				{"$ref": "#/definitions/UUIDv4"},
+				{"type":"string", "enum":["*"]}
+			]
+		}
+	},
+	"properties": {
+		"id":{"$ref": "#/definitions/UUIDv4"},
+		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"amount":{
 			"type":["string","integer","float"]
 		},
-		"bill_at":{
-			"type":["string"]
-		},
-		"modified":{
-			"type":["string","boolean"]
-		},
-		"parentsession":{
-			"type":"string"
-		},
+		"bill_at":{"$ref": "#/definitions/ISO8601"},
+		"created_at":{"$ref": "#/definitions/ISO8601"},
+		"updated_at":{"$ref": "#/definitions/ISO8601"},
+		"parentsession":{"$ref": "#/definitions/UUIDv4"},
 		"processing":{
 			"type":["string", "boolean"]
 		},
 		"product_schedules":{
 			"type":"array",
-			"items":{
-				"type":"string"
-			}
+			"items":{"$ref": "#/definitions/UUIDv4"}
 		},
 		"transactions":{
 			"type":"array",
-			"items":{
-				"type":"string"
-			}
+			"items":{"$ref": "#/definitions/UUIDv4"}
 		}
-		
+
 	},
-	"required":["amount", "bill_at", "id", "parentsession", "product_schedules"]
+	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession", "product_schedules"]
 }

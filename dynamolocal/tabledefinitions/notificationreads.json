@@ -2,20 +2,34 @@
   "Table": {
     "TableName": "notificationreads",
     "KeySchema": [{
-      "AttributeName": "user",
+      "AttributeName": "id",
       "KeyType": "HASH"
-    },
-    {
-      "AttributeName": "account",
-      "KeyType": "RANGE"
     }],
     "AttributeDefinitions": [{
-      "AttributeName": "user",
+      "AttributeName": "id",
       "AttributeType": "S"
     }, {
-      "AttributeName": "account",
+      "AttributeName": "user",
       "AttributeType": "S"
     }],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "user-index",
+        "KeySchema": [
+          {
+            "AttributeName": "user",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    ],
     "ProvisionedThroughput": {
       "ReadCapacityUnits": 1,
       "WriteCapacityUnits": 1

@@ -375,6 +375,16 @@ module.exports.graphObj = new GraphQLObjectType({
                 return trackerController.list(tracker.pagination);
             }
         },
+        trackerlistbyaffiliate: {
+            type: trackerListType.graphObj,
+            args: {
+                affiliate: {type: GraphQLString},
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+                return trackerController.getByAffiliateID(args.affiliate, args.pagination);
+            }
+        },
         creditcardlist: {
             type: creditCardListType.graphObj,
             args: {
@@ -655,6 +665,19 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, session){
                 return customerController.listCustomerSessions(session.customer, session.pagination);
+            }
+        },
+        sessionlistbyaffiliate: {
+            type: sessionListType.graphObj,
+            args: {
+                affiliate: {
+                    description: 'The affiliate identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+                return sessionController.listSessionsByAffiliate(args.affiliate, args.pagination);
             }
         },
         rebilllistbycustomer: {

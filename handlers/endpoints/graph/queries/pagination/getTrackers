@@ -6,11 +6,16 @@
 		trackerlist ({argumentation}) {
 			trackers {
 				id,
-				affiliate {
-					id
+				affiliates {
+					id,
+					name,
+					affiliate_id,
+					created_at,
+					updated_at
 				},
 				body,
 				type,
+				event_type,
 				created_at,
 				updated_at,
 			}

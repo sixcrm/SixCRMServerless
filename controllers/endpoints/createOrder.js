@@ -3,7 +3,6 @@ const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
-const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var customerController = global.routes.include('controllers', 'entities/Customer.js');
@@ -77,13 +76,13 @@ class createOrderController extends transactionEndpointController{
         du.debug('Validate Input');
 
         let order_schema = global.routes.include('model', 'endpoints/order');
-        let address_schema = global.routes.include('model', 'general/address');
-        let creditcard_schema = global.routes.include('model', 'general/creditcard');
+        let address_schema = global.routes.include('model', 'endpoints/components/address');
+        let creditcard_schema = global.routes.include('model', 'endpoints/components/creditcard');
 
         var v = new Validator();
 
-        v.addSchema(address_schema, '/Address');
-        v.addSchema(creditcard_schema, '/CreditCard');
+        v.addSchema(address_schema, '/address');
+        v.addSchema(creditcard_schema, '/creditcard');
 
         return v.validate(event, order_schema);
 
@@ -176,7 +175,7 @@ class createOrderController extends transactionEndpointController{
 
         return new Promise((resolve, reject) => {
 
-            customerController.addCreditCard(info.session.customer, info.creditcard).then((customer) => {
+            customerController.addCreditCard(info.session.customer, info.creditcard).then(() => {
 
                 return resolve(info);
 
@@ -289,14 +288,13 @@ class createOrderController extends transactionEndpointController{
         promises.push(updateSession);
         promises.push(rebillUpdates);
 
-        return Promise.all(promises).then((promises) => {
+        return Promise.all(promises).then(() => {
 
-            var rebills_added_to_queue = promises[0];
-            //var next_rebills = promises[1];
-            var updated_session = promises[2];
-            var updateRebills = promises[3];
-
-			//Technical Debt: add some validation here...
+          //Technical Debt: add some validation here...
+          //var rebills_added_to_queue = promises[0];
+          //var next_rebills = promises[1];
+          //var updated_session = promises[2];
+          //var updateRebills = promises[3];
 
             return info.transaction;
 
@@ -313,7 +311,7 @@ class createOrderController extends transactionEndpointController{
         promises.push(this.pushEventsRecord(info));
         promises.push(this.pushTransactionsRecord(info));
 
-        return Promise.all(promises).then((promises) => {
+        return Promise.all(promises).then(() => {
 
             return info;
 
@@ -327,7 +325,7 @@ class createOrderController extends transactionEndpointController{
 
         let product_schedule = info.schedulesToPurchase[0].id;
 
-        return this.pushEventToRedshift('order', info.session, product_schedule).then((result) => {
+        return this.pushEventToRedshift('order', info.session, product_schedule).then(() => {
 
             return info;
 
@@ -339,7 +337,7 @@ class createOrderController extends transactionEndpointController{
 
         du.debug('Push Transactions Record');
 
-        return this.pushTransactionToRedshift(info).then((result) => {
+        return this.pushTransactionToRedshift(info).then(() => {
 
             return info;
 

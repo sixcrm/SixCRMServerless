@@ -1,7 +1,7 @@
 root: /
 lib: /lib/
 controllers: /controllers/
-helpers: /helpers/
+helpers: /controllers/helpers/
 handlers: /handlers/
 test: /test/
 model: /model/

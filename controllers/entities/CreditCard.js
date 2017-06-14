@@ -25,7 +25,14 @@ class creditCardController extends entityController {
               .then((result) => this.getResult(result))
               .then((creditcards) => {
 
+                  du.warning(creditcards);
+
                   var card_identified = false;
+
+                  if(!_.isArray(creditcards)){
+
+                      return resolve(creditcard);
+                  }
 
                   creditcards.forEach(function(item){
 
