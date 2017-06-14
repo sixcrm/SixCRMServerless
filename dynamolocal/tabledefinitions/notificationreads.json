@@ -8,7 +8,28 @@
     "AttributeDefinitions": [{
       "AttributeName": "id",
       "AttributeType": "S"
+    }, {
+      "AttributeName": "user",
+      "AttributeType": "S"
     }],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "user-index",
+        "KeySchema": [
+          {
+            "AttributeName": "user",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    ],
     "ProvisionedThroughput": {
       "ReadCapacityUnits": 1,
       "WriteCapacityUnits": 1

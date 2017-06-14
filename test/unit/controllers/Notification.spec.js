@@ -40,7 +40,10 @@ describe('controllers/Notification.js', () => {
                     })
                 },
                 queryRecords: (table, parameters, index, callback) => {
-                    callback(null, [])
+                    callback(null, { Items: [] })
+                },
+                queryRecordsFull: (table, parameters, index, callback) => {
+                    callback(null, { Items: [] })
                 },
                 saveRecord: (table, item, callback) => {
                     callback();

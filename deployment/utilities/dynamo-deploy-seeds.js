@@ -32,7 +32,6 @@ class DynamoDeploySeeds {
 
     }
 
-    // Technical Debt: This has troubles connecting to local DynamoDB instance.
     deployAllSeeds(environment, region) {
         PermissionUtilities.disableACLs();
         process.env.stage = environment;
