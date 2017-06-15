@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
 const j2csv = require('json2csv');
+var XLSX = require('xlsx');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.routes.include('lib', 'random.js');
@@ -62,7 +63,7 @@ class DownloadController {
 
         du.debug('Create File Name');
 
-        let name = randomutilities.createRandomString(10);
+        let name = randomutilities.createRandomString(10).toLowerCase();
         let extension = this.getFileExtension();
 
         return name+extension;
@@ -78,7 +79,7 @@ class DownloadController {
         }else if(this.download_parameters.type == 'csv'){
             return '.csv';
         }else if(this.download_parameters.type == 'excel'){
-            return '.xls';
+            return '.xlsx';
         }
 
         return '.txt';
@@ -129,28 +130,81 @@ class DownloadController {
 
     }
 
-    JSONtoCSV(data){
+    recurseForArray(data){
 
-        du.debug('JSON to CSV');
+        du.debug('Recurse For Data');
 
-        let csv = null;
+        let data_array = null;
 
         for(var key in data){
             if(_.isArray(data[key])){
-                csv = j2csv({ data: data[key]});
+                data_array = data[key];
             }
         }
-        if(_.isNull(csv)){
-            csv = j2csv({data: data});
+
+        if(_.isNull(data_array)){
+            for(key in data){
+                for(var sub_key in data[key]){
+                    if(_.isArray(data[key][sub_key])){
+                        data_array = data[key][sub_key];
+                    }
+                }
+            }
         }
 
-        return csv;
+        if(_.isNull(data_array)){
+            for(key in data){
+                for(sub_key in data[key]){
+                    for(var sub_sub_key in data[key][sub_key]){
+                        if(_.isArray(data[key][sub_key][sub_sub_key])){
+                            data_array = data[key][sub_key][sub_sub_key];
+                        }
+                    }
+                }
+            }
+        }
+
+        du.info(data_array);
+
+        if(_.isNull(data_array)){
+            du.warning('Unable to identify suitable array');
+        }
+
+        return data_array;
+
+    }
+
+    JSONToCSV(data){
+
+        du.debug('JSON to CSV');
+
+        let data_array = this.recurseForArray(data);
+
+        if(_.isNull(data_array)){
+
+            data_array = data;
+
+        }
+
+        return j2csv({data: data_array});
 
     }
 
     JSONToExcel(data){
 
-        du.debug('JSON to Excel');
+        du.debug('JSON To Excel');
+
+        let data_array = this.recurseForArray(data);
+
+        if(_.isNull(data_array)){
+
+            data_array = [data];
+
+        }
+
+        var ws = XLSX.utils.json_to_sheet(JSON.parse(JSON.stringify(data_array)));
+
+        return ws;
 
     }
 
