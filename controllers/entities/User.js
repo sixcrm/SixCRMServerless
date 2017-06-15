@@ -566,7 +566,7 @@ class userController extends entityController {
                     let user_object = {
                         id: user_id,
                         termsandconditions: "0",
-                        active: "false",
+                        active: false,
                         auth0id: "-",
                         name: "-"
                     };
