@@ -10,6 +10,7 @@
 			last_name,
 			auth0_id,
 			active,
+			alias,
 			termsandconditions,
 			accesskey {
 				id,

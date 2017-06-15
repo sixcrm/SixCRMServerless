@@ -42,6 +42,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The active status of the user',
         },
+        alias: {
+            type: GraphQLString,
+            description: 'Alias of the user',
+        },
         termsandconditions:{
 	        type: GraphQLString,
             description: 'The accepted Terms and Conditions version.',
