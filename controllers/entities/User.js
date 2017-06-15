@@ -203,12 +203,14 @@ class userController extends entityController {
                     let proto_account = {
                         id: account_id,
                         name: email+'-pending-name',
-                        active: 'false'
+                        active: false
                     };
                     let proto_user = {
                         id: email,
                         name: email,
-                        active: "false"
+                        active: false,
+                        first_name: email, // Technical Debt: Find another way to pass validation instead of using email.
+                        last_name: email, // Technical Debt: Find another way to pass validation instead of using email.
                     };
                     let proto_user_setting = {
                         id: email,
@@ -566,7 +568,7 @@ class userController extends entityController {
                     let user_object = {
                         id: user_id,
                         termsandconditions: "0",
-                        active: "false",
+                        active: false,
                         auth0id: "-",
                         name: "-"
                     };

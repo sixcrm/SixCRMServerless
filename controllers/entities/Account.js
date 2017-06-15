@@ -12,7 +12,7 @@ class accountController extends entityController {
         return Promise.resolve({
             "id":"*",
             "name": "Master Account",
-            "active":"true"
+            "active": true
         });
 
     }

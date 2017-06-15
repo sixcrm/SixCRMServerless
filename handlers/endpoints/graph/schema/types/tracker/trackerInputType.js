@@ -7,7 +7,7 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'TrakerInput',
     fields: () => ({
-        id:					{ type: new GraphQLNonNull(GraphQLString) },
+        id:			{ type: GraphQLString },
         affiliates:	{ type: new GraphQLList(GraphQLString) },
         type:       { type: new GraphQLNonNull(GraphQLString) },
         event_type: { type: new GraphQLList(GraphQLString) },

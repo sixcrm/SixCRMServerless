@@ -62,7 +62,7 @@
 		"expiration":{"$ref": "#/definitions/CreditCardExpirationDate"},
 		"name":{
 			"type":"string",
-			"minLength":12
+			"minLength":2
 		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}

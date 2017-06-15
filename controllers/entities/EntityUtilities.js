@@ -33,7 +33,22 @@ module.exports = class entityUtilitiesController{
 
         let permission_function = () => this.permissionutilities.validatePermissions(action, this.descriptive_name);
 
-        return permission_function();
+        return permission_function().then((permission) => {
+
+            if(die === true && permission !== true){
+
+                throw new Error('Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+
+            }else{
+
+                return permission;
+
+            }
+
+        });
+
+
+
         /*
         let cache_object_key = this.createCanCacheKeyObject(action, this.descriptive_name);
 
