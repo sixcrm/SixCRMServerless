@@ -203,12 +203,12 @@ class userController extends entityController {
                     let proto_account = {
                         id: account_id,
                         name: email+'-pending-name',
-                        active: 'false'
+                        active: false
                     };
                     let proto_user = {
                         id: email,
                         name: email,
-                        active: "false"
+                        active: false
                     };
                     let proto_user_setting = {
                         id: email,
