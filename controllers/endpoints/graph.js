@@ -6,20 +6,21 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 
 let authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
 
-//Technical Debt:  This seems like the wrong place to keep the graph schema
-let SixSchema = global.routes.include('handlers', 'endpoints/graph/schema');
-
 class graphController extends authenticatedController{
 
     constructor(){
 
         super();
 
+        this.sixSchema = global.routes.include('handlers', 'endpoints/graph/schema');
+
         this.resolveController = global.routes.include('providers', 'Resolve.js');
 
     }
 
     execute(event){
+
+        du.debug('Execute');
 
         return this.parseEvent(event)
 			.then((event) => this.acquireAccount(event))
@@ -35,6 +36,8 @@ class graphController extends authenticatedController{
 
     setCacheParameters(event){
 
+        du.debug('Set Cache Parameters');
+
         if(_.has(this.queryString, 'use_cache')){
 
             this.resolveController.setCacheParameters({use_cache: this.queryString.use_cache});
@@ -46,6 +49,8 @@ class graphController extends authenticatedController{
     }
 
     acquireOutputParameters(event){
+
+        du.debug('Acquire Output Parameters');
 
         if(_.has(this, 'queryString') && _.has(this.queryString, 'download')){
 
@@ -92,7 +97,7 @@ class graphController extends authenticatedController{
 
         let graph_resolver = () => {
 
-            return graphql(SixSchema, this.query, null, null, this.query_parameters);
+            return graphql(this.sixSchema, this.query, null, null, this.query_parameters);
 
         };
 
