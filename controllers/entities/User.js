@@ -208,7 +208,9 @@ class userController extends entityController {
                     let proto_user = {
                         id: email,
                         name: email,
-                        active: false
+                        active: false,
+                        first_name: email, // Technical Debt: Find another way to pass validation instead of using email.
+                        last_name: email, // Technical Debt: Find another way to pass validation instead of using email.
                     };
                     let proto_user_setting = {
                         id: email,
