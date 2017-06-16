@@ -46,6 +46,34 @@ class RedshiftDeployment {
         });
     }
 
+    createClusterAndWait(parameters) {
+        return this.createCluster(parameters).then(() => {
+            return this.waitForCluster(parameters.ClusterIdentifier);
+        });
+    }
+
+    waitForCluster(cluster_identifier) {
+
+        let parameters = {
+            ClusterIdentifier: cluster_identifier
+        };
+
+        return new Promise((resolve, reject) => {
+            this.redshift.waitFor('clusterAvailable', parameters, (error, data) => {
+                if (error) {
+                    du.error(error.message);
+                    return reject(error);
+                } else {
+                    return resolve(data);
+                }
+            });
+        });
+    }
+
+    purgeTables() {
+        return Promise.resolve('unimplemented');
+    }
+
     getConfig(stage) {
         let config = global.routes.include('config', `${stage}/site.yml`);
 
@@ -54,6 +82,7 @@ class RedshiftDeployment {
         }
         return config;
     }
+
 }
 
 module.exports = RedshiftDeployment;

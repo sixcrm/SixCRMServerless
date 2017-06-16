@@ -14,7 +14,7 @@ du.highlight('Creating Redshift Cluster');
 
 let redshiftDeployment = new RedshiftDeployment(environment);
 
-var params = {
+var cluster_parameters = {
     ClusterIdentifier: 'sixcrm-development', /* required */
     MasterUserPassword: 'Jagodica9', /* required */
     MasterUsername: 'admin', /* required */
@@ -27,8 +27,18 @@ var params = {
     PubliclyAccessible: true
 };
 
-redshiftDeployment.createCluster(params).then(response => {
-    du.highlight(response);
-});
+redshiftDeployment.clusterExists(cluster_parameters.ClusterIdentifier).then(exists => {
+    if (exists) {
+        du.highlight('Cluster exists, purging tables.');
+        return redshiftDeployment.purgeTables().then(response => {
+            du.highlight(response);
+        });
+    } else {
+        du.highlight('Cluster does not exist, creating.');
+        return redshiftDeployment.createClusterAndWait(cluster_parameters).then(response => {
+            du.highlight(response);
+        });
+    }
+}).then(() => { du.highlight('Complete')});
 
 
