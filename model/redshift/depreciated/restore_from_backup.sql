@@ -4,14 +4,14 @@ select * from backup.bkp_f_transactions;
 insert into d_datetime
 select * from backup.bkp_d_datetime ;
 
-insert into d_event_type
-select * from backup.bkp_d_event_type;
+/*insert into d_event_type
+select * from backup.bkp_d_event_type;*/
 
 insert into d_merchant_provider
 select * from backup.bkp_d_merchant_provider;
 
-insert into d_processor_result
-select * from backup.bkp_d_processor_result;
+/*insert into d_processor_result
+select * from backup.bkp_d_processor_result;*/
 
 insert into f_activity
 select * from backup.bkp_f_activity;
