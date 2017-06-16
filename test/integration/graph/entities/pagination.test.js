@@ -75,7 +75,12 @@ entities.forEach((entity) => {
     assert.property(response.body.data[entity.lower+'list'].pagination, 'count');
     assert.property(response.body.data[entity.lower+'list'].pagination, 'last_evaluated');
 
-    assert.equal(response.body.data[entity.lower+'list'][entity.lower+'s'].length, limit);
+    if(_.isArray(response.body.data[entity.lower+'list'][entity.lower+'s'])){
+        assert.equal(response.body.data[entity.lower+'list'][entity.lower+'s'].length, limit);
+    }else{
+        du.warning('strange:',response.body.data[entity.lower+'list'][entity.lower+'s']);
+    }
+
     assert.isAtMost(response.body.data[entity.lower+'list'].pagination.count, limit);
 
     assert.property(response.body.data[entity.lower+'list'][entity.lower+'s'][0], 'id');

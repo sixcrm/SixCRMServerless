@@ -21,6 +21,8 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
 
+        this.userEmailHelperController = global.routes.include('controllers', 'helpers/user/Email.js');
+
     }
 
     setLocalParameters(parameters){
@@ -311,9 +313,17 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
+    handleEmail(pass_through){
+
+        du.debug('Handle Email');
+
+        return Promise.resolve(pass_through);
+
+    }
+
     handleNotifications(pass_through){
 
-        du.warning('Handle Notifications');
+        du.debug('Handle Notifications');
 
         return this.issueNotifications(this.notification_parameters).then(() => pass_through);
 
@@ -330,5 +340,17 @@ module.exports = class transactionEndpointController extends authenticatedContro
         return Promise.resolve(params);
 
     }
+
+    /*
+    sendEmail(event, info){
+
+      return this.userEmailHelperController.sendEmail(event, info.campaign, info).then(() => {
+
+          return Promise.resolve(info);
+
+      });
+
+    }
+    */
 
 }

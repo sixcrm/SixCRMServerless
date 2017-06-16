@@ -52,7 +52,7 @@ class graphController extends authenticatedController{
 
         du.debug('Acquire Output Parameters');
 
-        if(_.has(this, 'queryString') && _.has(this.queryString, 'download')){
+        if(_.has(this, 'queryString') && _.has(this.queryString, 'download') && !_.isNull(this.queryString.download)){
 
             this.resolveController.setDownloadParameters({type: this.queryString.download});
 
