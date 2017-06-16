@@ -19,7 +19,7 @@ class RedshiftDeployment {
     clusterExists(cluster_identifier) {
 
         let parameters = {
-            ClusterIdentifier: cluster_identifier
+            ClusterIdentifier: cluster_identifier,
         };
 
         return new Promise((resolve, reject) => {
@@ -34,6 +34,11 @@ class RedshiftDeployment {
     }
 
     createCluster(parameters) {
+
+        parameters['MasterUsername'] = this.config.redshift.user;
+        parameters['MasterUserPassword'] = this.config.redshift.password;
+        parameters['DBName'] = this.config.redshift.database;
+
         return new Promise((resolve, reject) => {
             this.redshift.createCluster(parameters, (error, data) => {
                 if (error) {
@@ -46,6 +51,53 @@ class RedshiftDeployment {
         });
     }
 
+    createClusterAndWait(parameters) {
+        return this.createCluster(parameters).then(() => {
+            return this.waitForCluster(parameters.ClusterIdentifier, 'clusterAvailable');
+        });
+    }
+
+    deleteCluster(parameters) {
+
+        return new Promise((resolve, reject) => {
+            this.redshift.deleteCluster(parameters, (error, data) => {
+                if (error) {
+                    du.error(error.message);
+                    return reject(error);
+                } else {
+                    return resolve(data);
+                }
+            });
+        });
+    }
+
+    deleteClusterAndWait(parameters) {
+        return this.deleteCluster(parameters).then(() => {
+            return this.waitForCluster(parameters.ClusterIdentifier, 'clusterDeleted');
+        });
+    }
+
+    waitForCluster(cluster_identifier, state) {
+        let parameters = {
+            ClusterIdentifier: cluster_identifier
+        };
+
+        return new Promise((resolve, reject) => {
+            this.redshift.waitFor(state, parameters, (error, data) => {
+                if (error) {
+                    du.error(error.message);
+                    return reject(error);
+                } else {
+                    return resolve(data);
+                }
+            });
+        });
+    }
+
+    purgeTables() {
+        return Promise.resolve('unimplemented');
+    }
+
     getConfig(stage) {
         let config = global.routes.include('config', `${stage}/site.yml`);
 
@@ -54,6 +106,7 @@ class RedshiftDeployment {
         }
         return config;
     }
+
 }
 
 module.exports = RedshiftDeployment;
