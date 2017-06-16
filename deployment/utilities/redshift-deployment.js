@@ -35,9 +35,12 @@ class RedshiftDeployment {
 
     createCluster(parameters) {
 
-        parameters['MasterUsername'] = this.config.redshift.user;
-        parameters['MasterUserPassword'] = this.config.redshift.password;
-        parameters['DBName'] = this.config.redshift.database;
+        let parametersList =  Object.keys(this.config.redshift.deployment);
+        let parameters = {};
+
+        parametersList.forEach((item) => {
+          parameters[item] = this.config.redshift.deployment[item]
+        });
 
         return new Promise((resolve, reject) => {
             this.redshift.createCluster(parameters, (error, data) => {
