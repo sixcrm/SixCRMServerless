@@ -77,6 +77,8 @@ module.exports = class EndpointController {
 
             this.queryString = duplicate_querystring;
 
+            du.info('Request Query String:', this.queryString);
+
         }
 
         return Promise.resolve(event);
