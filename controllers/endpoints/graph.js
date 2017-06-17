@@ -5,16 +5,19 @@ const graphql =  require('graphql').graphql;
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 let authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
+const resolveController = global.routes.include('providers', 'Resolve.js');
 
-class graphController extends authenticatedController{
+module.exports = class graphController extends authenticatedController {
 
     constructor(){
 
         super();
 
+        du.warning('Instantiate Graph Controller');
+
         this.sixSchema = global.routes.include('handlers', 'endpoints/graph/schema');
 
-        this.resolveController = global.routes.include('providers', 'Resolve.js');
+        this.resolveController = new resolveController();
 
     }
 
@@ -106,5 +109,3 @@ class graphController extends authenticatedController{
     }
 
 }
-
-module.exports = new graphController();

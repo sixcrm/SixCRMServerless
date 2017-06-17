@@ -113,45 +113,6 @@ let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
 let analyticsPaginationInputType = require('./analytics/analyticsPaginationInputType');
 let analyticsActivityFilterInputType = require('./analytics/analyticsActivityFilterInputType');
 
-const sessionController = global.routes.include('controllers', 'entities/Session.js');
-
-const productController = global.routes.include('controllers', 'entities/Product.js');
-
-const customerController = global.routes.include('controllers', 'entities/Customer.js');
-const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
-const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
-const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-const merchantProviderController = global.routes.include('controllers', 'entities/MerchantProvider.js');
-const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
-const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
-const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
-const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
-
-const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
-const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
-const userController = global.routes.include('controllers', 'entities/User.js');
-const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
-const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken');
-const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
-const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
-const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
-
-const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
-const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
-const accountController = global.routes.include('controllers', 'entities/Account.js');
-const roleController = global.routes.include('controllers', 'entities/Role.js');
-const notificationController = global.routes.include('controllers', 'entities/Notification');
-const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
-const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
-
-
-const searchController = global.routes.include('controllers', 'endpoints/search.js');
-const suggestController = global.routes.include('controllers', 'endpoints/suggest.js');
-
-const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
-
 let paginationInputType = require('./pagination/paginationInputType');
 let cacheInputType = require('./cache/cacheInputType');
 
@@ -166,6 +127,8 @@ module.exports.graphObj = new GraphQLObjectType({
               cache: {type: cacheInputType.graphObj}
   	        },
         	  resolve: function(root, search){
+              const searchController = global.routes.include('controllers', 'endpoints/search.js');
+
               return searchController.search(search.search);
         	  }
     	   },
@@ -177,6 +140,8 @@ module.exports.graphObj = new GraphQLObjectType({
             cache: {type: cacheInputType.graphObj}
       	  },
       	  resolve: function(root, suggest){
+            const suggestController = global.routes.include('controllers', 'endpoints/suggest.js');
+
             return suggestController.suggest(suggest.suggest);
       	  }
       	},
@@ -184,6 +149,8 @@ module.exports.graphObj = new GraphQLObjectType({
       	  type: userType.graphObj,
           description: 'Retrieves or creates a user.',
     	    resolve: function(){
+            const userController = global.routes.include('controllers', 'entities/User.js');
+
             return userController.introspection();
     	     }
       	},
@@ -196,6 +163,8 @@ module.exports.graphObj = new GraphQLObjectType({
               }
           },
           resolve: function(root, transaction){
+              const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+
               return transactionController.get(transaction.id);
           }
       },
@@ -208,6 +177,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, shippingreceipt){
+                const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
+
                 return shippingReceiptController.get(shippingreceipt.id);
             }
         },
@@ -220,6 +191,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, rebill){
+                const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+
                 return rebillController.get(rebill.id);
             }
         },
@@ -232,6 +205,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, session){
+                const sessionController = global.routes.include('controllers', 'entities/Session.js');
+
                 return sessionController.get(session.id);
             }
         },
@@ -244,6 +219,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, customer){
+                const customerController = global.routes.include('controllers', 'entities/Customer.js');
+
                 return customerController.get(customer.id);
             }
         },
@@ -256,6 +233,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, customernote){
+                const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
+
                 return customerNoteController.get(customernote.id);
             }
         },
@@ -268,6 +247,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, product){
+                const productController = global.routes.include('controllers', 'entities/Product.js');
+
                 return productController.get(product.id);
             }
         },
@@ -280,6 +261,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, emailtemplate){
+                const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+
                 return emailTemplateController.get(emailtemplate.id);
             }
         },
@@ -292,6 +275,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, smtpprovider){
+                const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
+
                 return SMTPProviderController.get(smtpprovider.id);
             }
         },
@@ -301,6 +286,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, emailtemplates){
+                const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+
                 return emailTemplateController.list(emailtemplates.pagination);
             }
         },
@@ -310,6 +297,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, smtpproviders){
+                const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
+
                 return SMTPProviderController.list(smtpproviders.pagination);
             }
         },
@@ -319,6 +308,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, products){
+                const productController = global.routes.include('controllers', 'entities/Product.js');
+
                 return productController.list(products.pagination);
             }
         },
@@ -328,6 +319,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, user){
+                const userController = global.routes.include('controllers', 'entities/User.js');
+
                 return userController.list(user.pagination);
             }
         },
@@ -337,6 +330,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, useracl){
+                const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
+
                 return userACLController.list(useracl.pagination);
             }
         },
@@ -346,6 +341,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, rebill){
+                const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+
       	       return rebillController.list(rebill.pagination);
             }
         },
@@ -355,6 +352,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, shippingreceipt){
+                const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
+
                 return shippingReceiptController.list(shippingreceipt.pagination); }
         },
         affiliatelist: {
@@ -363,6 +362,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, affiliate){
+                const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+
                 return affiliateController.list(affiliate.pagination);
             }
         },
@@ -372,6 +373,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, tracker){
+                const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+
                 return trackerController.list(tracker.pagination);
             }
         },
@@ -382,6 +385,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, args){
+                const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+
                 return trackerController.getByAffiliateID(args.affiliate, args.pagination);
             }
         },
@@ -391,6 +396,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, creditcard){
+                const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
+
                 return creditCardController.list(creditcard.pagination);
             }
         },
@@ -400,6 +407,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, merchantprovider){
+                const merchantProviderController = global.routes.include('controllers', 'entities/MerchantProvider.js');
+
       	       return merchantProviderController.list(merchantprovider.pagination);
             }
         },
@@ -409,6 +418,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, fulfillmentprovider){
+                const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
+
       	       return fulfillmentProviderController.list(fulfillmentprovider.pagination);
             }
         },
@@ -418,6 +429,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, accesskey){
+                const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
+
       	       return accessKeyController.list(accesskey.pagination);
             }
         },
@@ -427,6 +440,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, account){
+                const accountController = global.routes.include('controllers', 'entities/Account.js');
+
                 return accountController.list(account.pagination);
             }
         },
@@ -436,6 +451,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, role){
+                const roleController = global.routes.include('controllers', 'entities/Role.js');
+
       	       return roleController.list(role.pagination);
             }
         },
@@ -445,6 +462,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, customer){
+                const customerController = global.routes.include('controllers', 'entities/Customer.js');
+
       	       return customerController.list(customer.pagination);
             }
         },
@@ -454,6 +473,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, customernote){
+                const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
+
                 return customerNoteController.list(customernote.pagination);
             }
         },
@@ -467,6 +488,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, customernote){
+                const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
+
       	      return customerNoteController.listByCustomer(customernote.customer, customernote.pagination);
             }
         },
@@ -477,6 +500,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, loadbalancer){
+                const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+
       	       return loadBalancerController.list(loadbalancer.pagination);
             }
         },
@@ -486,6 +511,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, productschedule){
+                const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+
       	       return productScheduleController.list(productschedule.pagination);
             }
         },
@@ -495,6 +522,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, transaction){
+                const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+
       	       return transactionController.list(transaction.pagination);
             }
         },
@@ -505,6 +534,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionSummary');
             }
         },
@@ -516,6 +547,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactions');
             }
         },
@@ -527,6 +560,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getEvents');
             }
         },
@@ -537,6 +572,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getEventSummary');
             }
         },
@@ -547,6 +584,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionOverview');
             }
         },
@@ -558,6 +597,8 @@ module.exports.graphObj = new GraphQLObjectType({
 
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getEventFunnel');
             }
         },
@@ -568,6 +609,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getCampaignDelta');
             }
         },
@@ -578,6 +621,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getCampaignsByAmount');
             }
         },
@@ -592,6 +637,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getEventsByFacet');
             }
         },
@@ -606,6 +653,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByFacet');
             }
         },
@@ -616,6 +665,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderAmount');
             }
         },
@@ -627,6 +678,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getActivity');
             }
         },
@@ -638,6 +691,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
+                const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
                 return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
             }
         },
@@ -651,6 +706,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, transaction){
+                const customerController = global.routes.include('controllers', 'entities/Customer.js');
+
                 return customerController.listTransactionsByCustomer(transaction.customer, transaction.pagination);
             }
         },
@@ -664,6 +721,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, session){
+                const customerController = global.routes.include('controllers', 'entities/Customer.js');
+
                 return customerController.listCustomerSessions(session.customer, session.pagination);
             }
         },
@@ -677,6 +736,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, args){
+                const sessionController = global.routes.include('controllers', 'entities/Session.js');
+
                 return sessionController.listSessionsByAffiliate(args.affiliate, args.pagination);
             }
         },
@@ -692,6 +753,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, rebill){
+                const customerController = global.routes.include('controllers', 'entities/Customer.js');
+
                 return customerController.listCustomerRebills(rebill.customer, rebill.pagination);
             }
         },
@@ -701,6 +764,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, campaign){
+                const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+
                 return campaignController.list(campaign.pagination);
             }
         },
@@ -710,6 +775,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, session){
+                const sessionController = global.routes.include('controllers', 'entities/Session.js');
+
                 return sessionController.list(session.pagination);
             }
         },
@@ -722,6 +789,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, productschedule){
+                const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+
             	return productScheduleController.get(productschedule.id);
             }
         },
@@ -734,6 +803,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, merchantprovider){
+                const merchantProviderController = global.routes.include('controllers', 'entities/MerchantProvider.js');
+
       	       return merchantProviderController.get(merchantprovider.id);
             }
         },
@@ -746,6 +817,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, fulfillmentprovider){
+                const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
+
                 return fulfillmentProviderController.get(fulfillmentprovider.id);
             }
         },
@@ -758,6 +831,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, loadbalancer){
+                const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+
                 return loadBalancerController.get(loadbalancer.id);
             }
         },
@@ -770,6 +845,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, creditcard){
+                const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
+
                 return creditCardController.get(creditcard.id);
             }
         },
@@ -782,6 +859,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, campaign){
+                const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+
                 return campaignController.get(campaign.id);
             }
         },
@@ -794,6 +873,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, affiliate){
+                const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+
                 return affiliateController.get(affiliate.id);
             }
         },
@@ -806,6 +887,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, tracker){
+                const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+
                 return trackerController.get(tracker.id);
             }
         },
@@ -818,6 +901,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, accesskey){
+                const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
+
                 return accessKeyController.get(accesskey.id);
             }
         },
@@ -830,6 +915,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, account){
+                const accountController = global.routes.include('controllers', 'entities/Account.js');
+
                 return accountController.get(account.id);
             }
         },
@@ -842,6 +929,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, role){
+                const roleController = global.routes.include('controllers', 'entities/Role.js');
+
                 return roleController.get(role.id);
             }
         },
@@ -856,6 +945,8 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, user){
               //Technical Debt:  What is this logic for?
       	       if(_.has(user,"id")){
+                 const userController = global.routes.include('controllers', 'entities/User.js');
+
                  return userController.get(user.id);
              }else{
                  return null;
@@ -873,6 +964,8 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, useracl){
               //Technical Debt:  What is this logic for?
             	if(_.has(useracl, 'id')){
+                const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
+
                 return userACLController.get(useracl.id);
             }else{
                 return null;
@@ -893,8 +986,12 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (root, usersetting) => {
                 if (_.has(usersetting, 'user')) {
+                    const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+
                     return userSettingController.get(usersetting.user, 'user');
                 } else {
+                    const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+
                     return userSettingController.get(usersetting.id, 'id');
                 }
             }
@@ -905,6 +1002,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, user_setting) {
+                const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+
                 return userSettingController.list(user_setting.pagination);
             }
         },
@@ -917,6 +1016,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (root, user_signing_string) => {
+                const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
+
                 return userSigningStringController.get(user_signing_string.id);
             }
         },
@@ -926,6 +1027,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, user_signing_strings) {
+                const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
+
                 return userSigningStringController.list(user_signing_strings.pagination);
             }
         },
@@ -940,6 +1043,8 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (root, notification) => {
                //Technical Debt:  What is this logic for?
                 if (_.has(notification, 'id')) {
+                    const notificationController = global.routes.include('controllers', 'entities/Notification');
+
                     return notificationController.get(notification.id);
                 } else {
                     return null;
@@ -949,13 +1054,17 @@ module.exports.graphObj = new GraphQLObjectType({
         notificationcount: {
   	       type: notificationCountType.graphObj,
             resolve: function() {
+                const notificationController = global.routes.include('controllers', 'entities/Notification');
+
                 return notificationController.numberOfUnseenNotifications();
             }
         },
         notificationtest: {
             type: notificationTestType.graphObj,
             resolve: function() {
-                return notificationProvider.test();
+                const notificationProviderController = global.routes.include('controllers', 'providers/notification/notification-provider');
+
+                return notificationProviderController.test();
             }
         },
         notificationlist: {
@@ -964,6 +1073,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, notification) {
+                const notificationController = global.routes.include('controllers', 'entities/Notification');
+
                 return notificationController.listForCurrentUser(notification.pagination);
             }
         },
@@ -981,8 +1092,12 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (root, notificationsetting) => {
                 if (_.has(notificationsetting, 'user')) {
+                    const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
                     return notificationSettingController.get(notificationsetting.user, 'user');
                 } else {
+                    const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
                     return notificationSettingController.get(notificationsetting.id, 'id');
                 }
             }
@@ -993,12 +1108,16 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, notification_setting) {
+                const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
                 return notificationSettingController.list(notification_setting.pagination);
             }
         },
         notificationsettingdefault: {
             type: notificationSettingDefaultType.graphObj,
             resolve: () => {
+                const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
                 return notificationSettingController.getDefaultProfile();
             }
         },
@@ -1008,9 +1127,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, user_device_token) {
+                const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken');
 
                 return userDeviceTokenController.list(user_device_token.pagination);
-
             }
         },
         userdevicetokensbyuserlist: {
@@ -1022,6 +1141,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, user_device_token) {
+                const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken');
+
                 return userDeviceTokenController.getUserDeviceTokensByUser(user_device_token.user);
             }
         },
@@ -1040,6 +1161,8 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (root, user_device_token) => {
                 //Technical Debt:  What is this logic for?
                 if (_.has(user_device_token, 'id')) {
+                    const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken');
+
                     return userDeviceTokenController.get(user_device_token.id);
                 }else{
                     return null;

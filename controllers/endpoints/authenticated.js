@@ -4,7 +4,6 @@ const _ = require("underscore");
 const du = global.routes.include('lib', 'debug-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 
-const userController = global.routes.include('controllers', 'entities/User.js');
 const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 module.exports = class AuthenticatedController extends endpointController {
@@ -13,11 +12,15 @@ module.exports = class AuthenticatedController extends endpointController {
 
         super(parameters);
 
+        du.warning('Instantiate Authenticated Controller');
+
         if(_.has(parameters, 'required_permissions')){
 
             this.required_permissions = parameters.required_permissions;
 
         }
+
+        this.userController = global.routes.include('controllers', 'entities/User.js');
 
     }
 
@@ -102,9 +105,9 @@ module.exports = class AuthenticatedController extends endpointController {
 
         }
 
-        if(userController.isEmail(user_string)){
+        if(this.userController.isEmail(user_string)){
 
-            return userController.getUserStrict(user_string).then((user) => {
+            return this.userController.getUserStrict(user_string).then((user) => {
 
                 if(_.has(user, 'id')){
 
@@ -129,7 +132,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
         }else{
 
-            return userController.getUserByAlias(user_string).then((user) => {
+            return this.userController.getUserByAlias(user_string).then((user) => {
 
                 if(_.has(user, 'id')){
 

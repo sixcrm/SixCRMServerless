@@ -17,6 +17,8 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         super(parameters);
 
+        du.warning('Instantiate Transaction Controller');
+
         this.setLocalParameters(parameters);
 
         this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];

@@ -90,34 +90,6 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
-const sessionController = global.routes.include('controllers', 'entities/Session.js');
-const productController = global.routes.include('controllers', 'entities/Product.js');
-const customerController = global.routes.include('controllers', 'entities/Customer.js');
-const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
-const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
-const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-const merchantProviderController = global.routes.include('controllers', 'entities/MerchantProvider.js');
-const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
-const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
-const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
-const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
-const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
-const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
-const userController = global.routes.include('controllers', 'entities/User.js');
-const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
-const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
-const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
-const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
-const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
-const accountController = global.routes.include('controllers', 'entities/Account.js');
-const roleController = global.routes.include('controllers', 'entities/Role.js');
-const notificationController = global.routes.include('controllers', 'entities/Notification');
-const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
-const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
-const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken.js');
-
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Mutation',
     fields: () => ({
@@ -128,6 +100,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 invite: { type: inviteInputType.graphObj}
             },
             resolve: (value, invite) => {
+                const userController = global.routes.include('controllers', 'entities/User.js');
+
                 return userController.acceptInvite(invite.invite);
             }
         },
@@ -138,6 +112,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 userinvite: { type: userInviteInputType .graphObj}
             },
             resolve: (value, userinvite) => {
+                const userController = global.routes.include('controllers', 'entities/User.js');
+
                 return userController.invite(userinvite.userinvite);
             }
         },
@@ -148,6 +124,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 user: { type: userInputType .graphObj}
             },
             resolve: (value, user) => {
+                const userController = global.routes.include('controllers', 'entities/User.js');
+
                 return userController.create(user.user);
             }
         },
@@ -158,6 +136,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 user: { type: userInputType.graphObj }
             },
             resolve: (value, user) => {
+                const userController = global.routes.include('controllers', 'entities/User.js');
+
                 return userController.createStrict(user.user);
             }
         },
@@ -168,6 +148,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 user: { type: userInputType.graphObj }
             },
             resolve: (value, user) => {
+                const userController = global.routes.include('controllers', 'entities/User.js');
+
                 return userController.update(user.user);
             }
         },
@@ -182,6 +164,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, user) => {
                 var id = user.id;
+                const userController = global.routes.include('controllers', 'entities/User.js');
 
                 return userController.delete(id);
             }
@@ -193,6 +176,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 useracl: { type: userACLInputType.graphObj }
             },
             resolve: (value, useracl) => {
+                const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
+
                 return userACLController.create(useracl.useracl);
             }
         },
@@ -203,6 +188,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 useracl: { type: userACLInputType.graphObj }
             },
             resolve: (value, useracl) => {
+                const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
+
                 return userACLController.update(useracl.useracl);
             }
         },
@@ -217,6 +204,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, useracl) => {
                 var id = useracl.id;
+                const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
 
                 return userACLController.delete(id);
             }
@@ -228,6 +216,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 product: { type: productInputType.graphObj}
             },
             resolve: (value, product) => {
+                const productController = global.routes.include('controllers', 'entities/Product.js');
+
                 return productController.create(product.product);
             }
         },
@@ -238,6 +228,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 product: { type: productInputType.graphObj }
             },
             resolve: (value, product) => {
+                const productController = global.routes.include('controllers', 'entities/Product.js');
+
                 return productController.update(product.product);
             }
         },
@@ -252,6 +244,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, product) => {
                 var id = product.id;
+                const productController = global.routes.include('controllers', 'entities/Product.js');
 
                 return productController.delete(id);
             }
@@ -263,6 +256,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 accesskey: { type: accessKeyInputType .graphObj}
             },
             resolve: (value, accesskey) => {
+                const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
+
                 return accessKeyController.create(accesskey.accesskey);
             }
         },
@@ -273,6 +268,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 accesskey: { type: accessKeyInputType.graphObj }
             },
             resolve: (value, accesskey) => {
+                const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
+
                 return accessKeyController.update(accesskey.accesskey);
             }
         },
@@ -287,6 +284,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, accesskey) => {
                 var id = accesskey.id;
+                const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
 
                 return accessKeyController.delete(id);
             }
@@ -298,6 +296,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 account: { type: accountInputType.graphObj }
             },
             resolve: (value, account) => {
+                const accountController = global.routes.include('controllers', 'entities/Account.js');
+
                 return accountController.create(account.account);
             }
         },
@@ -308,6 +308,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 account: { type: accountInputType.graphObj }
             },
             resolve: (value, account) => {
+                const accountController = global.routes.include('controllers', 'entities/Account.js');
+
                 return accountController.update(account.account);
             }
         },
@@ -322,6 +324,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, account) => {
                 var id = account.id;
+                const accountController = global.routes.include('controllers', 'entities/Account.js');
 
                 return accountController.delete(id);
             }
@@ -333,6 +336,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 role: { type: roleInputType.graphObj }
             },
             resolve: (value, role) => {
+                const roleController = global.routes.include('controllers', 'entities/Role.js');
+
                 return roleController.create(role.role);
             }
         },
@@ -343,6 +348,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 role: { type: roleInputType.graphObj }
             },
             resolve: (value, role) => {
+                const roleController = global.routes.include('controllers', 'entities/Role.js');
+
                 return roleController.update(role.role);
             }
         },
@@ -357,6 +364,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, role) => {
                 var id = role.id;
+                const roleController = global.routes.include('controllers', 'entities/Role.js');
 
                 return roleController.delete(id);
             }
@@ -368,6 +376,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 tracker: { type: trackerInputType .graphObj}
             },
             resolve: (value, tracker) => {
+                const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+
                 return trackerController.create(tracker.tracker);
             }
         },
@@ -378,6 +388,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 tracker: { type: trackerInputType.graphObj }
             },
             resolve: (value, tracker) => {
+                const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
+
                 return trackerController.update(tracker.tracker);
             }
         },
@@ -392,6 +404,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, tracker) => {
                 var id = tracker.id;
+                const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
 
                 return trackerController.delete(id);
             }
@@ -403,6 +416,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 affiliate: { type: affiliateInputType .graphObj}
             },
             resolve: (value, affiliate) => {
+                const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+
                 return affiliateController.create(affiliate.affiliate);
             }
         },
@@ -413,6 +428,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 affiliate: { type: affiliateInputType.graphObj }
             },
             resolve: (value, affiliate) => {
+                const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+
                 return affiliateController.update(affiliate.affiliate);
             }
         },
@@ -427,6 +444,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, affiliate) => {
                 var id = affiliate.id;
+                const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 
                 return affiliateController.delete(id);
             }
@@ -438,6 +456,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 smtpprovider: { type: SMTPProviderInputType.graphObj}
             },
             resolve: (value, smtpprovider) => {
+                const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
+
                 return SMTPProviderController.create(smtpprovider.smtpprovider);
             }
         },
@@ -448,6 +468,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 smtpprovider: { type: SMTPProviderInputType.graphObj }
             },
             resolve: (value, smtpprovider) => {
+                const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
+
                 return SMTPProviderController.update(smtpprovider.smtpprovider);
             }
         },
@@ -462,6 +484,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, smtpprovider) => {
                 var id = smtpprovider.id;
+                const SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
 
                 return SMTPProviderController.delete(id);
             }
@@ -473,6 +496,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 merchantprovider: { type: merchantProviderInputType.graphObj}
             },
             resolve: (value, merchantprovider) => {
+                const merchantProviderController = global.routes.include('controllers', 'entities/MerchantProvider.js');
+
                 return merchantProviderController.create(merchantprovider.merchantprovider);
             }
         },
@@ -483,6 +508,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 merchantprovider: { type: merchantProviderInputType.graphObj }
             },
             resolve: (value, merchantprovider) => {
+                const merchantProviderController = global.routes.include('controllers', 'entities/MerchantProvider.js');
+
                 return merchantProviderController.update(merchantprovider.merchantprovider);
             }
         },
@@ -497,6 +524,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, merchantprovider) => {
                 var id = merchantprovider.id;
+                const merchantProviderController = global.routes.include('controllers', 'entities/MerchantProvider.js');
 
                 return merchantProviderController.delete(id);
             }
@@ -508,6 +536,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 fulfillmentprovider: { type: fulfillmentProviderInputType.graphObj}
             },
             resolve: (value, fulfillmentprovider) => {
+                const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
+
                 return fulfillmentProviderController.create(fulfillmentprovider.fulfillmentprovider);
             }
         },
@@ -518,6 +548,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 fulfillmentprovider: { type: fulfillmentProviderInputType.graphObj }
             },
             resolve: (value, fulfillmentprovider) => {
+                const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
+
                 return fulfillmentProviderController.update(fulfillmentprovider.fulfillmentprovider);
             }
         },
@@ -532,6 +564,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, fulfillmentprovider) => {
                 var id = fulfillmentprovider.id;
+                const fulfillmentProviderController = global.routes.include('controllers', 'entities/FulfillmentProvider.js');
 
                 return fulfillmentProviderController.delete(id);
             }
@@ -543,6 +576,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 emailtemplate: { type: emailTemplateInputType.graphObj }
             },
             resolve: (value, emailtemplate) => {
+                const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+
                 return emailTemplateController.create(emailtemplate.emailtemplate);
             }
         },
@@ -553,6 +588,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 emailtemplate: { type: emailTemplateInputType.graphObj }
             },
             resolve: (value, emailtemplate) => {
+                const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+
                 return emailTemplateController.update(emailtemplate.emailtemplate);
             }
         },
@@ -567,6 +604,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, emailtemplate) => {
                 var id = emailtemplate.id;
+                const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
 
                 return emailTemplateController.delete(id);
             }
@@ -578,6 +616,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 creditcard: { type: creditCardInputType .graphObj}
             },
             resolve: (value, creditcard) => {
+                const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
+
                 return creditCardController.create(creditcard.creditcard);
             }
         },
@@ -588,6 +628,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 creditcard: { type: creditCardInputType.graphObj }
             },
             resolve: (value, creditcard) => {
+                const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
+
                 return creditCardController.update(creditcard.creditcard);
             }
         },
@@ -602,6 +644,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, creditcard) => {
                 var id = creditcard.id;
+                const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
 
                 return creditCardController.delete(id);
             }
@@ -613,6 +656,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 customer: { type: customerInputType .graphObj}
             },
             resolve: (value, customer) => {
+                const customerController = global.routes.include('controllers', 'entities/Customer.js');
+
                 return customerController.create(customer.customer);
             }
         },
@@ -623,6 +668,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 customer: { type: customerInputType.graphObj }
             },
             resolve: (value, customer) => {
+                const customerController = global.routes.include('controllers', 'entities/Customer.js');
+
                 return customerController.update(customer.customer);
             }
         },
@@ -637,6 +684,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, customer) => {
                 var id = customer.id;
+                const customerController = global.routes.include('controllers', 'entities/Customer.js');
 
                 return customerController.delete(id);
             }
@@ -648,6 +696,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 customernote: { type: customerNoteInputType .graphObj}
             },
             resolve: (value, customernote) => {
+                const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
+
                 return customerNoteController.create(customernote.customernote);
             }
         },
@@ -658,6 +708,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 customernote: { type: customerNoteInputType.graphObj }
             },
             resolve: (value, customernote) => {
+                const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
+
                 return customerNoteController.update(customernote.customernote);
             }
         },
@@ -672,6 +724,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, customernote) => {
                 var id = customernote.id;
+                const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
 
                 return customerNoteController.delete(id);
             }
@@ -683,6 +736,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 loadbalancer: { type:loadBalancerInputType.graphObj }
             },
             resolve: (value, loadbalancer) => {
+                const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+
                 return loadBalancerController.create(loadbalancer.loadbalancer);
             }
         },
@@ -693,6 +748,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 loadbalancer: { type:loadBalancerInputType.graphObj }
             },
             resolve: (value, loadbalancer) => {
+                const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+
                 return loadBalancerController.update(loadbalancer.loadbalancer);
             }
         },
@@ -707,6 +764,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, loadbalancer) => {
                 var id = loadbalancer.id;
+                const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 
                 return loadBalancerController.delete(id);
             }
@@ -718,6 +776,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 productschedule: { type:productScheduleInputType.graphObj }
             },
             resolve: (value, productschedule) => {
+                const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+
                 return productScheduleController.create(productschedule.productschedule);
             }
         },
@@ -728,6 +788,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 productschedule: { type: productScheduleInputType.graphObj }
             },
             resolve: (value, productschedule) => {
+                const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+
                 return productScheduleController.update(productschedule.productschedule);
             }
         },
@@ -742,6 +804,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, productschedule) => {
                 var id = productschedule.id;
+                const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
 
                 return productScheduleController.delete(id);
             }
@@ -753,6 +816,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 rebill: { type: rebillInputType.graphObj }
             },
             resolve: (value, rebill) => {
+                const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+
                 return rebillController.create(rebill.rebill);
             }
         },
@@ -763,6 +828,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 rebill: { type: rebillInputType.graphObj }
             },
             resolve: (value, rebill) => {
+                const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+
                 return rebillController.update(rebill.rebill);
             }
         },
@@ -777,6 +844,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, rebill) => {
                 var id = rebill.id;
+                const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
                 return rebillController.delete(id);
             }
@@ -788,6 +856,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 transaction: { type: transactionInputType.graphObj }
             },
             resolve: (value, transaction) => {
+                const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+
                 return transactionController.createTransaction(transaction.transaction);
             }
         },
@@ -798,6 +868,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 transaction: { type: transactionInputType.graphObj }
             },
             resolve: (value, transaction) => {
+                const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+
                 return transactionController.updateTransaction(transaction.transaction);
             }
         },
@@ -812,6 +884,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, transaction) => {
                 var id = transaction.id;
+                const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 
                 return transactionController.delete(id);
             }
@@ -834,6 +907,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 transaction:{type: new GraphQLNonNull(GraphQLString)}
             },
             resolve: (value, args) => {
+                const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+
                 return transactionController.refundTransaction(args);
             }
         },
@@ -844,6 +919,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 campaign: { type: campaignInputType.graphObj }
             },
             resolve: (value, campaign) => {
+                const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+
                 return campaignController.create(campaign.campaign);
             }
         },
@@ -854,6 +931,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 campaign: { type: campaignInputType.graphObj }
             },
             resolve: (value, campaign) => {
+                const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+
                 return campaignController.update(campaign.campaign);
             }
         },
@@ -868,6 +947,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, campaign) => {
                 var id = campaign.id;
+                const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 
                 return campaignController.delete(id);
             }
@@ -879,6 +959,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 session: { type: sessionInputType.graphObj }
             },
             resolve: (value, session) => {
+                const sessionController = global.routes.include('controllers', 'entities/Session.js');
+
                 return sessionController.create(session.session);
             }
         },
@@ -889,6 +971,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 session: { type: sessionInputType.graphObj }
             },
             resolve: (value, session) => {
+                const sessionController = global.routes.include('controllers', 'entities/Session.js');
+
                 return sessionController.update(session.session);
             }
         },
@@ -903,6 +987,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, session) => {
                 var id = session.id;
+                const sessionController = global.routes.include('controllers', 'entities/Session.js');
 
                 return sessionController.delete(id);
             }
@@ -914,6 +999,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 shippingreceipt: { type: shippingReceiptInputType.graphObj }
             },
             resolve: (value, shippingreceipt) => {
+                const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
+
                 return shippingReceiptController.create(shippingreceipt.shippingreceipt);
             }
         },
@@ -924,6 +1011,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 shippingreceipt: { type: shippingReceiptInputType.graphObj }
             },
             resolve: (value, shippingreceipt) => {
+                const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
+
                 return shippingReceiptController.update(shippingreceipt.shippingreceipt);
             }
         },
@@ -938,6 +1027,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, shippingreceipt) => {
                 var id = shippingreceipt.id;
+                const shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
 
                 return shippingReceiptController.delete(id);
             }
@@ -949,6 +1039,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 notification: { type: notificationInputType.graphObj }
             },
             resolve: (value, notification) => {
+                const notificationController = global.routes.include('controllers', 'entities/Notification');
+
                 return notificationController.create(notification.notification);
             }
         },
@@ -959,6 +1051,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 notification: { type: notificationInputType.graphObj }
             },
             resolve: (value, notification) => {
+                const notificationController = global.routes.include('controllers', 'entities/Notification');
+
                 return notificationController.update(notification.notification);
             }
         },
@@ -972,6 +1066,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, notification) => {
+                const notificationController = global.routes.include('controllers', 'entities/Notification');
+
                 return notificationController.delete(notification.id);
             }
         },
@@ -982,6 +1078,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 notificationsetting: { type: notificationSettingInputType.graphObj }
             },
             resolve: (value, notificationsetting) => {
+                const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
                 return notificationSettingController.create(notificationsetting.notificationsetting);
             }
         },
@@ -992,6 +1090,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 notificationsetting: { type: notificationSettingInputType.graphObj }
             },
             resolve: (value, notificationsetting) => {
+                const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
                 return notificationSettingController.update(notificationsetting.notificationsetting);
             }
         },
@@ -1002,6 +1102,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 notificationsetting: { type: notificationSettingInputType.graphObj }
             },
             resolve: (value, notificationsetting) => {
+                const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
                 return notificationSettingController.store(notificationsetting.notificationsetting);
             }
         },
@@ -1015,6 +1117,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, notificationsetting) => {
+                const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
+
                 return notificationSettingController.delete(notificationsetting.id);
             }
         },
@@ -1025,6 +1129,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 userdevicetoken: { type: userDeviceTokenInputType.graphObj }
             },
             resolve: (value, userdevicetoken) => {
+                const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken.js');
+
                 return userDeviceTokenController.create(userdevicetoken.userdevicetoken);
             }
         },
@@ -1035,6 +1141,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 userdevicetoken : { type: userDeviceTokenInputType.graphObj }
             },
             resolve: (value, userdevicetoken) => {
+                const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken.js');
+
                 return userDeviceTokenController.update(userdevicetoken.userdevicetoken);
             }
         },
@@ -1045,6 +1153,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 userdevicetoken: { type: userDeviceTokenInputType.graphObj }
             },
             resolve: (value, userdevicetoken) => {
+                const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken.js');
+
                 return userDeviceTokenController.store(userdevicetoken.userdevicetoken);
             }
         },
@@ -1058,6 +1168,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, userdevicetoken) => {
+                const userDeviceTokenController = global.routes.include('controllers', 'entities/UserDeviceToken.js');
+
                 return userDeviceTokenController.delete(userdevicetoken.id);
             }
         },
@@ -1068,6 +1180,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersetting: { type: userSettingInputType.graphObj }
             },
             resolve: (value, usersetting) => {
+                const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+
                 return userSettingController.create(usersetting.usersetting);
             }
         },
@@ -1078,6 +1192,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersetting: { type: userSettingInputType.graphObj }
             },
             resolve: (value, usersetting) => {
+                const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+
                 return userSettingController.update(usersetting.usersetting);
             }
         },
@@ -1088,6 +1204,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersetting: { type: userSettingInputType.graphObj }
             },
             resolve: (value, usersetting) => {
+                const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+
                 return userSettingController.store(usersetting.usersetting);
             }
         },
@@ -1101,6 +1219,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, usersetting) => {
+                const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
+
                 return userSettingController.delete(usersetting.id);
             }
         },
@@ -1111,6 +1231,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersigningstring: { type: userSigningStringInputType.graphObj }
             },
             resolve: (value, usersigningstring) => {
+                const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
+
                 return userSigningStringController.create(usersigningstring.usersigningstring);
             }
         },
@@ -1121,6 +1243,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersigningstring: { type: userSigningStringInputType.graphObj }
             },
             resolve: (value, usersigningstring) => {
+                const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
+
                 return userSigningStringController.update(usersigningstring.usersigningstring);
             }
         },
@@ -1131,6 +1255,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersigningstring: { type: userSigningStringInputType.graphObj }
             },
             resolve: (value, usersigningstring) => {
+                const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
+
                 return userSigningStringController.store(usersigningstring.usersigningstring);
             }
         },
@@ -1144,6 +1270,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, usersigningstring) => {
+                const userSigningStringController = global.routes.include('controllers', 'entities/UserSigningString');
+
                 return userSigningStringController.delete(usersigningstring.id);
             }
         }

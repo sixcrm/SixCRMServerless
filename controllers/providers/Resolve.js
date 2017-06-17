@@ -2,7 +2,7 @@
 const _ = require("underscore");
 const du = global.routes.include('lib', 'debug-utilities.js');
 
-class ResolveController {
+module.exports = class ResolveController {
 
     constructor(){
 
@@ -46,5 +46,3 @@ class ResolveController {
     }
 
 }
-
-module.exports = new ResolveController();
