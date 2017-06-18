@@ -29,10 +29,10 @@ module.exports = class AuthenticatedController extends endpointController {
         du.debug('Preprocessing');
 
         return this.validateEvent(event)
-			.then(this.parseEvent)
-			.then(this.acquireAccount)
-			.then(this.acquireUser)
-			.then((event) => this.validateRequiredPermissions(event));
+  			.then((event) => this.parseEvent(event))
+  			.then((event) => this.acquireAccount(event))
+  			.then((event) => this.acquireUser(event))
+  			.then((event) => this.validateRequiredPermissions(event));
 
     }
 
@@ -104,6 +104,8 @@ module.exports = class AuthenticatedController extends endpointController {
             return Promise.reject(new Error('Event request context authorizer user is an unrecognized format.'));
 
         }
+
+        du.warning(this.userController);
 
         if(this.userController.isEmail(user_string)){
 
