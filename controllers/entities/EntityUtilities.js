@@ -785,7 +785,7 @@ module.exports = class entityUtilitiesController{
 
     setNames(name){
 
-        du.debug('Set Names');
+        du.deep('Set Names');
 
         this.descriptive_name = name;
 
@@ -797,7 +797,7 @@ module.exports = class entityUtilitiesController{
 
     setEnvironmentTableName(name){
 
-        du.debug('Set Environment Table Name');
+        du.deep('Set Environment Table Name');
 
         let key = this.buildTableKey(name);
         let value = this.buildTableName(name);
@@ -810,7 +810,7 @@ module.exports = class entityUtilitiesController{
 
     setTableName(name){
 
-        du.debug('Set Table Name');
+        du.deep('Set Table Name');
 
         let key = this.buildTableKey(name);
 
@@ -820,7 +820,7 @@ module.exports = class entityUtilitiesController{
 
     buildTableKey(name){
 
-        du.debug('Build Table Key');
+        du.deep('Build Table Key');
 
         return name+'s_table';
 
@@ -828,7 +828,7 @@ module.exports = class entityUtilitiesController{
 
     buildTableName(name){
 
-        du.debug('Build Table Name');
+        du.deep('Build Table Name');
 
         return process.env.stage+name+'s';
 
