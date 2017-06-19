@@ -4,7 +4,6 @@ const _ = require("underscore");
 const du = global.routes.include('lib', 'debug-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 
-const userController = global.routes.include('controllers', 'entities/User.js');
 const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 module.exports = class AuthenticatedController extends endpointController {
@@ -13,11 +12,15 @@ module.exports = class AuthenticatedController extends endpointController {
 
         super(parameters);
 
+        du.warning('Instantiate Authenticated Controller');
+
         if(_.has(parameters, 'required_permissions')){
 
             this.required_permissions = parameters.required_permissions;
 
         }
+
+        this.userController = global.routes.include('controllers', 'entities/User.js');
 
     }
 
@@ -26,10 +29,10 @@ module.exports = class AuthenticatedController extends endpointController {
         du.debug('Preprocessing');
 
         return this.validateEvent(event)
-			.then(this.parseEvent)
-			.then(this.acquireAccount)
-			.then(this.acquireUser)
-			.then((event) => this.validateRequiredPermissions(event));
+  			.then((event) => this.parseEvent(event))
+  			.then((event) => this.acquireAccount(event))
+  			.then((event) => this.acquireUser(event))
+  			.then((event) => this.validateRequiredPermissions(event));
 
     }
 
@@ -102,9 +105,11 @@ module.exports = class AuthenticatedController extends endpointController {
 
         }
 
-        if(userController.isEmail(user_string)){
+        du.warning(this.userController);
 
-            return userController.getUserStrict(user_string).then((user) => {
+        if(this.userController.isEmail(user_string)){
+
+            return this.userController.getUserStrict(user_string).then((user) => {
 
                 if(_.has(user, 'id')){
 
@@ -129,7 +134,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
         }else{
 
-            return userController.getUserByAlias(user_string).then((user) => {
+            return this.userController.getUserByAlias(user_string).then((user) => {
 
                 if(_.has(user, 'id')){
 

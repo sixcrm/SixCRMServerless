@@ -8,11 +8,11 @@ const graphController = global.routes.include('controllers', 'endpoints/graph.js
 
 module.exports.graph = (event, context, callback) => {
 
-    timer.set();
     let response;
+    let gc = new graphController();
 
-    graphController.execute(event).then((result) => {
-        timer.get(true);
+    gc.execute(event).then((result) => {
+
         response = new LambdaResponse().issueResponse(200, result, callback);
         return response;
 

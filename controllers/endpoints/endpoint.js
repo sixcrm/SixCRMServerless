@@ -8,6 +8,18 @@ module.exports = class EndpointController {
 
     constructor(){
 
+        du.warning('Instantiate Endpoint Controller');
+        this.clearState();
+
+    }
+
+    clearState(){
+
+        du.debug('Clear State');
+
+        this.pathParameters = undefined;
+        this.queryString = undefined;
+
     }
 
     acquireBody(event){
