@@ -82,15 +82,12 @@ redshift:
   port: 5439
   max: 10
   idleTimeoutMillis: 30000
-  deployment:
+  cluster:
     cluster_identifier: 'sixcrm-development'
     node_type: 'dc1.large'
     automated_snapshot_retention_period: 3
     cluster_type: 'single-node'
     publicly_accessible: true
-    master_username: 'admin'
-    master_user_password: 'Jagodica9'
-    d_b_name: 'dev'
   randomdata:
     staging_bucket: 'sixcrm-development-redshift/sixcrm-random-generator'
     interval: 300 #this is provided in seconds
