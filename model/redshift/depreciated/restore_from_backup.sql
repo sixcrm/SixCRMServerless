@@ -34,3 +34,4 @@ union
 select count(*) from f_activity
 union
 select count(*) from f_events
+

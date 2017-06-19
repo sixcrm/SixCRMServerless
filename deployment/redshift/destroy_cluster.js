@@ -15,7 +15,9 @@ du.highlight('Destroying Redshift Cluster');
 let redshiftDeployment = new RedshiftDeployment(environment);
 
 let cluster_parameters = {
-    ClusterIdentifier: redshiftDeployment.config.cluster['cluster_identifier']
+    ClusterIdentifier: redshiftDeployment.config.cluster['cluster_identifier'],
+    FinalClusterSnapshotIdentifier: redshiftDeployment.config.cluster['final_cluster_snapshot_identifier'],
+    SkipFinalClusterSnapshot: redshiftDeployment.config.cluster['skip_final_cluster_snapshot']
 };
 
 redshiftDeployment.clusterExists(cluster_parameters.ClusterIdentifier).then(exists => {
@@ -29,5 +31,3 @@ redshiftDeployment.clusterExists(cluster_parameters.ClusterIdentifier).then(exis
         });
     }
 }).then(() => { du.highlight('Complete')});
-
-
