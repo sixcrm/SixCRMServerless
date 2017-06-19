@@ -64,8 +64,12 @@ deployment:
       - npm run deploy-tables $CIRCLE_BRANCH $AWS_REGION
       - npm run deploy-seeds $CIRCLE_BRANCH
 
+      #Redshift
+      #Create cluster if does not exist.
+      - node ./deployment/redshift/create_cluster.js $CIRCLE_BRANCH
+      #Purge tables.
+      - node ./deployment/redshift/purge_redshift.js $CIRCLE_BRANCH
 
-      # Tecnhincal Debt: Add Redshift
       # Technical Debt:  Add Elasticache and NAT Instance (where necessary)
       # Technical Debt:  Use Route53 for resource mappings
       # Technical Debt: API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"

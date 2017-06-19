@@ -20,6 +20,7 @@ Object.keys(redshiftDeployment.config).forEach((key) => {
     let key_name = stringUtilities.toPascalCase(key);
 
     cluster_parameters[key_name] = redshiftDeployment.config[key];
+    du.output('Cluster parameters are:', cluster_parameters);
 });
 
 redshiftDeployment.clusterExists(cluster_parameters.ClusterIdentifier).then(exists => {
