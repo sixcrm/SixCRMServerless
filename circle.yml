@@ -67,8 +67,8 @@ deployment:
       #Redshift
       #Create cluster if does not exist.
       - node ./deployment/redshift/create_cluster.js $CIRCLE_BRANCH
-      #Purge tables.
-      - node ./deployment/redshift/purge_redshift.js $CIRCLE_BRANCH
+      #Create tables.
+      - node ./deployment/redshift/deploy_redshift.js $CIRCLE_BRANCH
 
       # Technical Debt:  Add Elasticache and NAT Instance (where necessary)
       # Technical Debt:  Use Route53 for resource mappings
