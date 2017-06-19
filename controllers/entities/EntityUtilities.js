@@ -2,10 +2,8 @@
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 const validator = require('validator');
-const Validator = require('jsonschema').Validator;
 
 const timestamp = global.routes.include('lib', 'timestamp.js');
-const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const mvu = global.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
