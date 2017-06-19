@@ -14,14 +14,9 @@ du.highlight('Destroying Redshift Cluster');
 
 let redshiftDeployment = new RedshiftDeployment(environment);
 
-let cluster_parameters = {};
-
-Object.keys(redshiftDeployment.config).forEach((key) => {
-    let key_name = stringUtilities.toPascalCase(key);
-
-    cluster_parameters[key_name] = redshiftDeployment.config[key];
-    du.output('Cluster parameters are:', cluster_parameters);
-});
+let cluster_parameters = {
+    ClusterIdentifier: redshiftDeployment.config.cluster['cluster_identifier']
+};
 
 redshiftDeployment.clusterExists(cluster_parameters.ClusterIdentifier).then(exists => {
     if (!exists) {

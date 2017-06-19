@@ -16,10 +16,13 @@ let redshiftDeployment = new RedshiftDeployment(environment);
 
 let cluster_parameters = {};
 
-Object.keys(redshiftDeployment.config).forEach((key) => {
+Object.keys(redshiftDeployment.config.cluster).forEach((key) => {
     let key_name = stringUtilities.toPascalCase(key);
 
-    cluster_parameters[key_name] = redshiftDeployment.config[key];
+    cluster_parameters[key_name] = redshiftDeployment.config[key].cluster;
+    cluster_parameters['MasterUsername'] = redshiftDeployment.config['user'];
+    cluster_parameters['MasterUserPassword'] = redshiftDeployment.config['password'];
+    cluster_parameters['DBName'] = redshiftDeployment.config['database'];
     du.output('Cluster parameters are:', cluster_parameters);
 });
 
