@@ -16,15 +16,17 @@ let redshiftDeployment = new RedshiftDeployment(environment);
 
 let cluster_parameters = {};
 
+cluster_parameters['MasterUsername'] = redshiftDeployment.config['user'];
+cluster_parameters['MasterUserPassword'] = redshiftDeployment.config['password'];
+cluster_parameters['DBName'] = redshiftDeployment.config['database'];
+
 Object.keys(redshiftDeployment.config.cluster).forEach((key) => {
     let key_name = stringUtilities.toPascalCase(key);
-
     cluster_parameters[key_name] = redshiftDeployment.config[key].cluster;
-    cluster_parameters['MasterUsername'] = redshiftDeployment.config['user'];
-    cluster_parameters['MasterUserPassword'] = redshiftDeployment.config['password'];
-    cluster_parameters['DBName'] = redshiftDeployment.config['database'];
-    du.output('Cluster parameters are:', cluster_parameters);
+
 });
+
+du.output('Cluster parameters are:', cluster_parameters);
 
 redshiftDeployment.clusterExists(cluster_parameters.ClusterIdentifier).then(exists => {
     if (exists) {
@@ -37,5 +39,3 @@ redshiftDeployment.clusterExists(cluster_parameters.ClusterIdentifier).then(exis
         });
     }
 }).then(() => { du.highlight('Complete')});
-
-
