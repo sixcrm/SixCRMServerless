@@ -9,6 +9,7 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 class RedshiftDeployment {
 
     constructor(stage) {
+        this.stage = stage;
         this.config = this.getConfig(stage);
         this.redshift = new AWS.Redshift({
             region: 'us-east-1',
@@ -34,13 +35,6 @@ class RedshiftDeployment {
     }
 
     createCluster(parameters) {
-
-        let parametersList =  Object.keys(this.config.redshift.deployment);
-        let parameters = {};
-
-        parametersList.forEach((item) => {
-          parameters[item] = this.config.redshift.deployment[item]
-        });
 
         return new Promise((resolve, reject) => {
             this.redshift.createCluster(parameters, (error, data) => {
@@ -97,12 +91,8 @@ class RedshiftDeployment {
         });
     }
 
-    purgeTables() {
-        return Promise.resolve('unimplemented');
-    }
-
-    getConfig(stage) {
-        let config = global.routes.include('config', `${stage}/site.yml`);
+    getConfig() {
+        let config = global.routes.include('config', `${this.stage}/site.yml`).redshift.deployment;
 
         if (!config) {
             throw 'Unable to find config file.';

@@ -83,14 +83,14 @@ redshift:
   max: 10
   idleTimeoutMillis: 30000
   deployment:
-    ClusterIdentifier: 'sixcrm-development'
-    NodeType: 'dc1.large'
-    AutomatedSnapshotRetentionPeriod: 3
-    ClusterType: 'single-node'
-    PubliclyAccessible: true
-    MasterUsername: 'admin'
-    MasterUserPassword: 'Jagodica9'
-    DBName: 'dev'
+    cluster_identifier: 'sixcrm-development'
+    node_type: 'dc1.large'
+    automated_snapshot_retention_period: 3
+    cluster_type: 'single-node'
+    publicly_accessible: true
+    master_username: 'admin'
+    master_user_password: 'Jagodica9'
+    d_b_name: 'dev'
   randomdata:
     staging_bucket: 'sixcrm-development-redshift/sixcrm-random-generator'
     interval: 300 #this is provided in seconds
