@@ -184,3 +184,6 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
+
+aws:
+  region: 'us-east-1'
