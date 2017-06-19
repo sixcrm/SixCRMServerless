@@ -92,7 +92,7 @@ class RedshiftDeployment {
     }
 
     getConfig() {
-        let config = global.routes.include('config', `${this.stage}/site.yml`).redshift.deployment;
+        let config = global.routes.include('config', `${this.stage}/site.yml`).redshift;
 
         if (!config) {
             throw 'Unable to find config file.';

@@ -8,6 +8,7 @@ const stringUtilities = global.routes.include('deployment', 'utilities/string-ut
 const RedshiftDeployment = global.routes.include('deployment', 'utilities/redshift-deployment.js');
 
 let environment = process.argv[2] || 'development';
+
 let region = process.argv[3] || process.env.AWS_REGION || 'us-east-1';
 
 du.highlight('Creating Redshift Cluster');
@@ -22,7 +23,7 @@ cluster_parameters['DBName'] = redshiftDeployment.config['database'];
 
 Object.keys(redshiftDeployment.config.cluster).forEach((key) => {
     let key_name = stringUtilities.toPascalCase(key);
-    cluster_parameters[key_name] = redshiftDeployment.config[key].cluster;
+    cluster_parameters[key_name] = redshiftDeployment.config.cluster[key];
 
 });
 
