@@ -35,3 +35,7 @@ select count(*) from f_activity
 union
 select count(*) from f_events
 
+
+select * from f_transactions --1011127
+where id in ('b6eb7048-de89-4932-a460-1f9659d80688',
+  'd77c89e4-e57e-4164-887f-a5fa8f005b3a')

@@ -52,3 +52,18 @@ var firehose = new AWS.Firehose({apiVersion: '2015-08-04',  region: 'us-east-1'}
   if (err) console.log(err, err.stack); // an error occurred
   else     console.log(data);           // successful response
 });*/
+
+
+du.output('Stream parameters are:', cluster_parameters);
+
+kinesisDeployment.clusterExists(stream_parameters.StreamIdentifier).then(exists => {
+    if (exists) {
+        du.warning('Stream exists, aborting.');
+        return Promise.resolve();
+    } else {
+        du.output('Stream does not exist, creating.');
+        return kinesisDeployment.createClusterAndWait(stream_parameters).then(response => {
+            du.output(response);
+        });
+    }
+}).then(() => { du.highlight('Complete')});
