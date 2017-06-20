@@ -105,8 +105,6 @@ module.exports = class AuthenticatedController extends endpointController {
 
         }
 
-        du.warning(this.userController);
-
         if(this.userController.isEmail(user_string)){
 
             return this.userController.getUserStrict(user_string).then((user) => {
