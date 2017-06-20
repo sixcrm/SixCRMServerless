@@ -82,6 +82,8 @@ Scripts:
   `node ./deployment/redshift/deploy_redshift.js {stage}`
  - Truncate all tables:
  `node ./deployment/redshift/purge_redshift.js {stage}`
+ - Seed static data:
+  `node ./deployment/redshift/seed_redshift.js {stage}`
  - Drop all tables:
   `node ./deployment/redshift/destroy_redshift.js {stage}`
  - Destroy cluster:
