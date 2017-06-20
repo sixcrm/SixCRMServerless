@@ -11,14 +11,29 @@ class KinesisDeployment {
     constructor(stage) {
         this.stage = stage;
         this.config = this.getConfig(stage);
-        this.redshift = new AWS.Redshift({
+        this.kinesis = new AWS.Kinesis({
             region: 'us-east-1',
-            apiVersion: '2013-01-01',
+            apiVersion: '2013-12-02',
         });
     }
 
-    clusterExists(cluster_identifier) {
+    streamExists(stream_identifier) {
        /* Test if stream exists */
+
+       let parameters = {
+           StreamName: stream_identifier
+       };
+       console.log(parameters);
+       return new Promise((resolve, reject) => {
+           this.kinesis.describeStream(parameters, (error, data) => {
+               if (error) {
+                   return resolve(false);
+               } else {
+                   return resolve(true);
+               }
+           });
+       });
+
     }
 
     createStream(parameters) {
