@@ -1,53 +1,91 @@
 'use strict'
-const du =  global.routes.include('lib', 'debug-utilities.js');
+const  _ = require('underscore');
 
-//const SMTPProvider = global.routes.include('controllers', 'providers/SMTP.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.routes.include('lib', 'object-utilities.js');
+const parserutilities = global.routes.include('lib', 'parser-utilities.js');
+const SMTPProvider = global.routes.include('controllers', 'providers/SMTP.js');
 
-class userEmailHelperController {
+module.exports = class userEmailHelperController {
 
-    contructor(){
+    constructor(){
 
-        this.campaignController = global.routes.include('controllers','Campaign.js');
+        this.campaignController = global.routes.include('entities','Campaign.js');
+        this.emailTemplateController = global.routes.include('entities','EmailTemplate.js');
+        this.customerController = global.routes.include('entities','Customer.js');
 
     }
 
-  /*
-  sendEmail(event, campaign, data){
+    acquireRecipient(data){
 
-    return this.campaignController.get(campaign).then((campaign) => {
+        du.debug('Acquire Recipient');
 
-      let email_template_promises = [];
+        let customer = objectutilities.discover('customer', data);
 
-      return campaignController.getEmailTemplatesByEvent(campaign, event).then((email_templates) => {
+        return this.customerController.get(customer);
 
-        email_template_promises.push(email_templates.forEach((email_template) => {
+    }
 
-            return this.emailTemplateController.getSMTPProvider(email_template).then((smtp_provider) => {
+    sendEmail(event_type, data){
 
-              let smtp_provider = new SMTPProvider({});
+        du.debug('Send Email');
 
-              let parsed_body = this.parserutilities.parse(email_template.body, data);
+        let campaign = objectutilities.discover('campaign', data);
 
-              let parsed_subject = this.parserutilities.parse(email_template.subject, data);
+        if(_.isNull(campaign)){ return Promise.reject(new Error('Unable to identify a campaign.')); }
 
-              let recepient = this.acquireRecipient(data);
+        return this.campaignController.get(campaign).then((campaign) => {
 
-              return smtp_provider.send({
-                subject: parsed_subject,
-                body: parsed_body,
-                recepient_email: recepient.email,
-                recepient_name: recepient.name
-              });
+            if(_.isNull(campaign)){ return Promise.reject(new Error('Unable to identify a campaign.')); }
+
+            return this.campaignController.getEmailTemplatesByEventType(campaign, event_type).then((email_templates) => {
+
+                if(!_.isArray(email_templates) || email_templates.length < 1){ return Promise.resolve(null); }
+
+                let email_template_promises;
+
+                email_template_promises = email_templates.map((email_template) => {
+
+                    return this.emailTemplateController.getSMTPProvider(email_template).then((smtp_provider) => {
+
+                        let parsed_body = parserutilities.parse(email_template.body, data);
+
+                        let parsed_subject = parserutilities.parse(email_template.subject, data);
+
+                        return this.acquireRecipient(data).then((recepient) => {
+
+                            let SMTPProviderInstance = new SMTPProvider(smtp_provider);
+
+                          //Technical Debt:  Need to acquire the sender information from some data properties...
+                            let send_object = {
+                                sender_email: 'donotreply@sixcrm.com',
+                                sender_name: 'SixCRM',
+                                subject: parsed_subject,
+                                body: parsed_body,
+                                recepient_emails: [recepient.email],
+                                recepient_name: this.customerController.getFullName(recepient)
+                            };
+
+                            return SMTPProviderInstance.send(send_object);
+
+                        });
+
+                    });
+
+                });
+
+                return Promise.all(email_template_promises).then((email_template_promises) => {
+
+                    du.info(email_template_promises);
+
+                    return data;
+
+                });
 
             });
 
         });
 
-      });
-
-    });
-
-  }
-  */
+    }
 
 }
