@@ -244,7 +244,7 @@ module.exports = class entityUtilitiesController{
 
         entity['entity_type'] = entity_type;
 
-        du.warning('Indexing:', entity);
+        du.info('Indexing:', entity);
 
         return indexingutilities.addToSearchIndex(entity);
 

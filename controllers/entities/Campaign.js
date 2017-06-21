@@ -16,15 +16,48 @@ class campaignController extends entityController {
         super('campaign');
     }
 
+    getEmailTemplatesByEventType(campaign, event_type){
+
+        du.debug('Get Email Templates By Event Type');
+
+      //Technical Debt:  Update this query to be a compound condition
+        return this.getEmailTemplates(campaign).then((email_templates) => {
+
+            let typed_email_templates = [];
+
+            email_templates.forEach((email_template) => {
+
+                if(_.has(email_template, 'type') && email_template.type == event_type){
+
+                    typed_email_templates.push(email_template);
+
+                }
+
+            });
+
+            return typed_email_templates;
+
+        });
+
+    }
+
     getEmailTemplates(campaign){
 
-        if(_.has(campaign, "emails")){
+        du.debug('Get Email Templates');
 
-            return campaign.emailtemplates.map(id => emailTemplateController.get(id));
+        if(_.has(campaign, "emailtemplates")){
+
+            let acquisitions = campaign.emailtemplates.map(id => emailTemplateController.get(id));
+
+            return Promise.all(acquisitions).then((acquisitions) => {
+
+                return acquisitions;
+
+            });
 
         }else{
 
-            return null;
+            return Promise.resolve(null);
 
         }
 

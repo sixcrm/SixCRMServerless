@@ -48,8 +48,6 @@ module.exports = new class activityHelper extends redshiftHelperController {
 
         du.debug('Create Activity');
 
-        du.warning(acted_upon);
-
         actor = this.getActor(actor);
         acted_upon = this.getActedUpon(acted_upon);
         associated_with = this.getAssociatedWith(associated_with, acted_upon);
@@ -212,8 +210,6 @@ module.exports = new class activityHelper extends redshiftHelperController {
             }
 
         }
-
-        du.warning('Actor: ', return_object);
 
         return Promise.resolve(return_object);
 

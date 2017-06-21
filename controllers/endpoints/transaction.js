@@ -11,19 +11,17 @@ const notificationProvider = global.routes.include('controllers', 'providers/not
 const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 const authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
 
+const userEmailHelperController = global.routes.include('controllers', 'helpers/user/Email.js');
+
 module.exports = class transactionEndpointController extends authenticatedController {
 
     constructor(parameters){
 
         super(parameters);
 
-        du.warning('Instantiate Transaction Controller');
-
         this.setLocalParameters(parameters);
 
         this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
-
-        this.userEmailHelperController = global.routes.include('controllers', 'helpers/user/Email.js');
 
     }
 
@@ -343,16 +341,16 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    /*
-    sendEmail(event, info){
+    sendEmails(event, info){
 
-      return this.userEmailHelperController.sendEmail(event, info.campaign, info).then(() => {
+        this.userEmailHelperController = new userEmailHelperController();
 
-          return Promise.resolve(info);
+        return this.userEmailHelperController.sendEmail(event, info).then(() => {
 
-      });
+            return Promise.resolve(info);
+
+        });
 
     }
-    */
 
 }

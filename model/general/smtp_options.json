@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/smtp_options",
+  "title": "SMTP Options",
+  "type": "object",
+  "properties": {
+    "hostname":{
+      "anyOf":[
+        {"type":"string", "format":"hostname"},
+        {"type":"string", "format":"ipv4"},
+        {"type":"string", "format":"ipv6"}
+      ]
+    },
+    "username":{
+      "type":"string"
+    },
+    "password":{
+      "type":"string"
+    },
+    "port":{
+      "type":"integer",
+      "minimum":"1",
+      "exclusiveMinimum": false
+    }
+  },
+  "required":["hostname", "username", "password"]
+}

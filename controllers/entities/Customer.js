@@ -2,21 +2,56 @@
 const _ = require('underscore');
 
 const du =  global.routes.include('lib', 'debug-utilities.js');
+const arrayutilities =  global.routes.include('lib', 'array-utilities.js');
 
 const entityController = global.routes.include('controllers', 'entities/Entity.js');
-const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
-const sessionController = global.routes.include('controllers', 'entities/Session.js');
-const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 
 class customerController extends entityController {
 
     constructor(){
+
         super('customer');
+
+        this.creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
+        this.sessionController = global.routes.include('controllers', 'entities/Session.js');
+        this.rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+        this.transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+
+    }
+
+    getFullName(customer){
+
+        du.debug('Get Full Name');
+
+        let fullname = [];
+
+        if(_.has(customer, 'firstname')){
+
+            fullname.push(customer.firstname);
+
+        }
+
+        if(_.has(customer, 'lastname')){
+
+            fullname.push(customer.lastname);
+
+        }
+
+        if(fullname.length > 0){
+
+            return arrayutilities.compress(fullname, ' ', '');
+
+        }
+
+        return '';
+
+
     }
 
     getAddress(customer){
+
         return Promise.resolve(customer.address);
+
     }
 
     addCreditCard(customer, creditcard){
@@ -97,7 +132,7 @@ class customerController extends entityController {
 
         if(_.has(customer, "creditcards")){
 
-            return customer.creditcards.map(id => creditCardController.get(id));
+            return customer.creditcards.map(id => this.creditCardController.get(id));
 
         }else{
 
@@ -192,15 +227,15 @@ class customerController extends entityController {
         }
 
         //Technical Debt:  Observe the inelegance of the below solution!
-        if(!_.contains(_.functions(sessionController), 'getSessionByCustomerID')){
+        if(!_.contains(_.functions(this.sessionController), 'getSessionByCustomerID')){
 
-            let sessionController = global.routes.include('controllers', 'entities/Session.js');
+            this.sessionController = global.routes.include('controllers', 'entities/Session.js');
 
-            return sessionController.getSessionByCustomerID(customer_id);
+            return this.sessionController.getSessionByCustomerID(customer_id);
 
         }else{
 
-            return sessionController.getSessionByCustomerID(customer_id);
+            return this.sessionController.getSessionByCustomerID(customer_id);
 
         }
 
@@ -218,7 +253,7 @@ class customerController extends entityController {
 
         return this.getCustomerSessions(customer).then((sessions) => {
 
-            let rebill_promises = sessions.map((session) => rebillController.getRebillsBySessionID(session.id));
+            let rebill_promises = sessions.map((session) => this.rebillController.getRebillsBySessionID(session.id));
 
             return Promise.all(rebill_promises);
 
@@ -242,7 +277,7 @@ class customerController extends entityController {
 
             du.info(sessions);
 
-            let rebill_promises = sessions.map((session) => rebillController.getRebillsBySessionID(session.id));
+            let rebill_promises = sessions.map((session) => this.rebillController.getRebillsBySessionID(session.id));
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
 
@@ -257,7 +292,7 @@ class customerController extends entityController {
                 let transaction_promises = [];
 
                 rebill_ids.forEach((rebill) => {
-                    transaction_promises.push(transactionController.listBySecondaryIndex('rebill', rebill, 'rebill-index', pagination));
+                    transaction_promises.push(this.transactionController.listBySecondaryIndex('rebill', rebill, 'rebill-index', pagination));
                 });
 
                 return Promise.all(transaction_promises).then(transaction_responses => {
@@ -299,15 +334,15 @@ class customerController extends entityController {
 
         // Technical Debt:  Observe the inelegance of the below solution!
         // For some reason graph is unable to call 'listSessionsByCustomerID' unless we do this. Why?
-        if(!_.contains(_.functions(sessionController), 'listSessionsByCustomerID')){
+        if(!_.contains(_.functions(this.sessionController), 'listSessionsByCustomerID')){
 
-            let sessionController = global.routes.include('controllers', 'entities/Session.js');
+            this.sessionController = global.routes.include('controllers', 'entities/Session.js');
 
-            return sessionController.listSessionsByCustomerID(customer_id, pagination);
+            return this.sessionController.listSessionsByCustomerID(customer_id, pagination);
 
         }else{
 
-            return sessionController.listSessionsByCustomerID(customer_id, pagination);
+            return this.sessionController.listSessionsByCustomerID(customer_id, pagination);
 
         }
 
@@ -318,7 +353,7 @@ class customerController extends entityController {
     listCustomerRebills(customer, pagination) {
         return this.getCustomerSessions(customer).then((sessions) => {
 
-            let rebill_promises = sessions.map((session) => rebillController.listRebillsBySessionID(session.id));
+            let rebill_promises = sessions.map((session) => this.rebillController.listRebillsBySessionID(session.id));
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
 

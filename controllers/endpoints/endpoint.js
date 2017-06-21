@@ -8,7 +8,6 @@ module.exports = class EndpointController {
 
     constructor(){
 
-        du.warning('Instantiate Endpoint Controller');
         this.clearState();
 
     }
