@@ -12,8 +12,6 @@ module.exports = class AuthenticatedController extends endpointController {
 
         super(parameters);
 
-        du.warning('Instantiate Authenticated Controller');
-
         if(_.has(parameters, 'required_permissions')){
 
             this.required_permissions = parameters.required_permissions;
