@@ -56,7 +56,6 @@
 						id,
 						name,
 						hostname,
-						ip_address,
 						username,
 						password,
 						port

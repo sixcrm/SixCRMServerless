@@ -2,7 +2,7 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		emailtemplatelist {
 			emailtemplates {
 				id,
@@ -14,7 +14,6 @@
 					id,
 					name,
 					hostname,
-					ip_address,
 					username,
 					password,
 					port
@@ -30,4 +29,3 @@
 		},
 	}"
 }
-

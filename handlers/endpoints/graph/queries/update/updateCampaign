@@ -2,13 +2,13 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
-		updatecampaign ( campaign: { id: \"75274431-7de3-4836-82eb-568fc368f88d\", name: \"Testing Campaign2\", loadbalancer: \"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\", productschedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"], emailtemplates:[\"b44ce483-861c-4843-a7d6-b4c649d6bdde\"] } ) { 
+	mutation {
+		updatecampaign ( campaign: { id: \"75274431-7de3-4836-82eb-568fc368f88d\", name: \"Testing Campaign2\", loadbalancer: \"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\", productschedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"], emailtemplates:[\"b44ce483-861c-4843-a7d6-b4c649d6bdde\"] } ) {
 			id,
 			name,
 			created_at,
 			updated_at,
-			productschedules { 
+			productschedules {
 				id,
 				schedule {
 					price,
@@ -22,7 +22,7 @@
 						ship,
 						shipping_delay,
 						fulfillment_provider {
-							id, 
+							id,
 							name,
 							provider,
 							username,
@@ -36,7 +36,7 @@
 				id,
 				merchantproviderconfigurations {
 					merchantprovider {
-						id, 
+						id,
 						username,
 						password,
 						endpoint,
@@ -55,12 +55,11 @@
 					id,
 					name,
 					hostname,
-					ip_address,
 					username,
 					password,
 					port
 				}
 			}
-		} 
+		}
 	}"
 }

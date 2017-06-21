@@ -2,14 +2,14 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		campaignlist {
 			campaigns {
 				id,
 				name,
 				created_at,
 				updated_at,
-				productschedules { 
+				productschedules {
 					id,
 					schedule {
 						price,
@@ -23,7 +23,7 @@
 							ship,
 							shipping_delay,
 							fulfillment_provider {
-								id, 
+								id,
 								name,
 								provider,
 								username,
@@ -37,7 +37,7 @@
 					id,
 					merchantproviderconfigurations {
 						merchantprovider {
-							id, 
+							id,
 							username,
 							password,
 							endpoint,
@@ -56,7 +56,6 @@
 						id,
 						name,
 						hostname,
-						ip_address,
 						username,
 						password,
 						port
@@ -71,4 +70,3 @@
 		},
 	}"
 }
-
