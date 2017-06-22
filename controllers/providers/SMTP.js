@@ -23,8 +23,6 @@ module.exports = class SMTPProvider {
 
         du.debug('Set Options');
 
-        du.warning(smtp_provider);
-
         this.required_options.forEach((required_option) => {
 
             if(!_.has(smtp_provider, required_option)){

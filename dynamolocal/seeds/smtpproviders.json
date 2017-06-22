@@ -7,7 +7,7 @@
 		"username":"kris@reefbuzz.com",
 		"password":"Kris123!!!",
 		"port":465,
-		"from_email":"do_not_reply@testsmtpprovider.com",
+		"from_email":"donotreply@sixcrm.com",
 		"from_name":"Do Not Reply",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"

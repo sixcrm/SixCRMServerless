@@ -349,6 +349,12 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
             return Promise.resolve(info);
 
+        }).catch((error) => {
+
+            du.error(error);
+
+            return Promise.resolve(info);
+
         });
 
     }
