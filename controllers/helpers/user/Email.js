@@ -16,13 +16,37 @@ module.exports = class userEmailHelperController {
 
     }
 
-    acquireRecipient(data){
+    getRecipient(data){
 
         du.debug('Acquire Recipient');
 
-        let customer = objectutilities.discover('customer', data);
+        let customer = objectutilities.recurse(data, function(key, value){
+            if(key == 'customer' && value !== 'customer'){
+                return true;
+            }
+            return false;
+        });
+
+        if(_.isNull(customer)){ return Promise.reject(new Error('Unable to get recepient.')); }
 
         return this.customerController.get(customer);
+
+    }
+
+    getCampaign(data){
+
+        du.debug('Get Campaign');
+
+        let campaign = objectutilities.recurse(data, function(key, value){
+            if(key == 'campaign' && value !== 'campaign'){
+                return true;
+            }
+            return false;
+        });
+
+        if(_.isNull(campaign)){ return Promise.reject(new Error('Unable to get campaign.')); }
+
+        return this.campaignController.get(campaign);
 
     }
 
@@ -30,11 +54,7 @@ module.exports = class userEmailHelperController {
 
         du.debug('Send Email');
 
-        let campaign = objectutilities.discover('campaign', data);
-
-        if(_.isNull(campaign)){ return Promise.reject(new Error('Unable to identify a campaign.')); }
-
-        return this.campaignController.get(campaign).then((campaign) => {
+        return this.getCampaign(data).then((campaign) => {
 
             if(_.isNull(campaign)){ return Promise.reject(new Error('Unable to identify a campaign.')); }
 
@@ -52,7 +72,7 @@ module.exports = class userEmailHelperController {
 
                         let parsed_subject = parserutilities.parse(email_template.subject, data);
 
-                        return this.acquireRecipient(data).then((recepient) => {
+                        return this.getRecipient(data).then((recepient) => {
 
                             let SMTPProviderInstance = new SMTPProvider(smtp_provider);
 

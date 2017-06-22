@@ -147,9 +147,9 @@ class DownloadController {
 
         du.debug('Recurse For Data');
 
-        let discovered_data = objectutilities.orderedRecursion(data, function(thing){
+        let discovered_data = objectutilities.recurseByDepth(data, function(key, value){
 
-            return _.isArray(thing);
+            return _.isArray(value);
 
         });
 
