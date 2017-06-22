@@ -6,7 +6,7 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'ProductInput',
     fields: () => ({
-        id:						{ type: new GraphQLNonNull(GraphQLString) },
+        id:						{ type: GraphQLString },
         name:					{ type: new GraphQLNonNull(GraphQLString) },
         sku:					{ type: new GraphQLNonNull(GraphQLString) },
         ship:					{ type: new GraphQLNonNull(GraphQLString) },
