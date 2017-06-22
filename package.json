@@ -54,6 +54,7 @@
     "yaml-lint": "0.0.4"
   },
   "scripts": {
+    "test-transactions":"node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/transaction/*.test.js",
     "test-integration": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/integration/graph/**/*.test.js test/integration/transaction/*.test.js",
     "test-unit": "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive  './test/unit/**/*.spec.js'",
     "test-local-integration": "ENV=local mocha ./test/integration/local/createOrder/createOrder.test.js",

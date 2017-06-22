@@ -8,10 +8,7 @@ const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-
 const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
 
 const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
-const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 const authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
-
-const userEmailHelperController = global.routes.include('controllers', 'helpers/user/Email.js');
 
 module.exports = class transactionEndpointController extends authenticatedController {
 
@@ -21,7 +18,11 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         this.setLocalParameters(parameters);
 
+        this.setUserEmailHelperController();
+
         this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
+
+        this.affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
 
     }
 
@@ -90,7 +91,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
                 if(_.has(event.affiliates, assurance_field) && event.affiliates[assurance_field] != ''){
 
-                    promises[i] = affiliateController.assureAffiliate(event.affiliates[assurance_field]);
+                    promises[i] = this.affiliateController.assureAffiliate(event.affiliates[assurance_field]);
 
                 }else{
 
@@ -341,9 +342,25 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    sendEmails(event, info){
+    setUserEmailHelperController(){
+
+        du.debug('Set User Email Helper Controller');
+
+        let userEmailHelperController = global.routes.include('controllers', 'helpers/user/Email.js');
 
         this.userEmailHelperController = new userEmailHelperController();
+
+    }
+
+    sendEmails(event, info){
+
+        du.debug('Send Email');
+
+        if(!_.has(this, 'userEmailHelperController')){
+
+            this.setUserEmailHelperController();
+
+        }
 
         return this.userEmailHelperController.sendEmail(event, info).then(() => {
 
