@@ -72,14 +72,18 @@ module.exports = class userEmailHelperController {
 
                         let parsed_subject = parserutilities.parse(email_template.subject, data);
 
+                        //Technical Debt:  These default properties should be configured...
+                        let sender_email = (_.has(smtp_provider, 'sender_email'))?smtp_provider.sender_email:'donotreply@sixcrm.com';
+
+                        let sender_name = (_.has(smtp_provider, 'sender_name'))?smtp_provider.sender_name:'SixCRM';
+
                         return this.getRecipient(data).then((recepient) => {
 
                             let SMTPProviderInstance = new SMTPProvider(smtp_provider);
 
-                          //Technical Debt:  Need to acquire the sender information from some data properties...
                             let send_object = {
-                                sender_email: 'donotreply@sixcrm.com',
-                                sender_name: 'SixCRM',
+                                sender_email: sender_email,
+                                sender_name: sender_name,
                                 subject: parsed_subject,
                                 body: parsed_body,
                                 recepient_emails: [recepient.email],
