@@ -12,6 +12,16 @@ module.exports.graphObj = new GraphQLInputObjectType({
         hostname:			{ type: new GraphQLNonNull(GraphQLString) },
         username:			{ type: new GraphQLNonNull(GraphQLString) },
         password:			{ type: new GraphQLNonNull(GraphQLString) },
+        from_email:{
+            type: GraphQLString,
+            description: 'The email address that the emails from this SMTP Provider will be sent as.',
+            example: "do_not_reply@sixcrm.com"
+        },
+        from_name:{
+            type: GraphQLString,
+            description: 'The name that the emails from this SMTP Provider will be sent as.',
+            example: "Do Not Reply"
+        },
         port:				{ type: GraphQLInt }
     })
 });

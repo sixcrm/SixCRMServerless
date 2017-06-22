@@ -32,6 +32,16 @@ module.exports.graphObj = new GraphQLObjectType({
             type: GraphQLInt,
             description: 'The SMTP port for the the SMTP Provider',
         },
+        from_email:{
+            type: GraphQLString,
+            description: 'The email address that the emails from this SMTP Provider will be sent as.',
+            example: "do_not_reply@sixcrm.com"
+        },
+        from_name:{
+            type: GraphQLString,
+            description: 'The name that the emails from this SMTP Provider will be sent as.',
+            example: "Do Not Reply"
+        },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',

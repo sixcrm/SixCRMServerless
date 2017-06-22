@@ -6,6 +6,7 @@ var XLSX = require('xlsx');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.routes.include('lib', 'random.js');
 const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
+const objectutilities = global.routes.include('lib', 'object-utilities.js');
 
 class DownloadController {
 
@@ -99,15 +100,21 @@ class DownloadController {
         du.debug('Set Download Parameters');
 
         if(!_.isObject(parameters)){
+
             throw new Error('Invalid download parameter type.');
+
         }
 
         if(!_.has(parameters, 'type')){
+
             throw new Error('Download parameters missing type field.');
+
         }
 
         if(!_.contains(this.available_types, parameters.type)){
+
             throw new Error('Download type is not supported.');
+
         }
 
         this.download_parameters = parameters;
@@ -119,11 +126,17 @@ class DownloadController {
         du.debug('Transform Data');
 
         if(this.download_parameters.type == 'json'){
+
             return JSON.stringify(data);
+
         }else if(this.download_parameters.type == 'csv'){
+
             return this.JSONToCSV(data);
+
         }else if(this.download_parameters.type == 'excel'){
+
             return this.JSONToExcel(data);
+
         }
 
         return data;
@@ -134,43 +147,19 @@ class DownloadController {
 
         du.debug('Recurse For Data');
 
-        let data_array = null;
+        let discovered_data = objectutilities.orderedRecursion(data, function(thing){
 
-        for(var key in data){
-            if(_.isArray(data[key])){
-                data_array = data[key];
-            }
+            return _.isArray(thing);
+
+        });
+
+        if(_.isNull(discovered_data)){
+
+            du.warning('Unable to identify suitable discovered_data.');
+
         }
 
-        if(_.isNull(data_array)){
-            for(key in data){
-                for(var sub_key in data[key]){
-                    if(_.isArray(data[key][sub_key])){
-                        data_array = data[key][sub_key];
-                    }
-                }
-            }
-        }
-
-        if(_.isNull(data_array)){
-            for(key in data){
-                for(sub_key in data[key]){
-                    for(var sub_sub_key in data[key][sub_key]){
-                        if(_.isArray(data[key][sub_key][sub_sub_key])){
-                            data_array = data[key][sub_key][sub_sub_key];
-                        }
-                    }
-                }
-            }
-        }
-
-        du.info(data_array);
-
-        if(_.isNull(data_array)){
-            du.warning('Unable to identify suitable array');
-        }
-
-        return data_array;
+        return discovered_data;
 
     }
 
