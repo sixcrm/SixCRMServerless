@@ -1,9 +1,10 @@
 'use strict';
 const Validator = require('jsonschema').Validator;
-var _ = require("underscore");
+const _ = require('underscore');
+const du = global.routes.include('lib','debug-utilities.js');
 
-var rebillController = global.routes.include('controllers','entities/Rebill.js');
-var sessionController = global.routes.include('controllers','entities/Session.js');
+const rebillController = global.routes.include('controllers','entities/Rebill.js');
+const sessionController = global.routes.include('controllers','entities/Session.js');
 
 module.exports = class workerController {
 
@@ -159,7 +160,7 @@ module.exports = class workerController {
 
             } catch(e){
 
-                reject(new Error('Unable to load validation schemas. Error:' + e));
+                return reject(new Error('Unable to load validation schemas. Error:' + e));
 
             }
 
@@ -170,7 +171,7 @@ module.exports = class workerController {
 
                 validation = v.validate(session, session_schema);
             }catch(e){
-                reject(e);
+                return reject(e);
             }
 
             if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
@@ -180,11 +181,13 @@ module.exports = class workerController {
                     issues: validation.errors.map((e) => { return e.message; })
                 };
 
-                reject(error);
+                du.warning(validation.errors);
+
+                return reject(error);
 
             }
 
-            resolve(session);
+            return resolve(session);
 
         });
 
