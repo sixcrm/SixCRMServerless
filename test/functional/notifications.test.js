@@ -1,13 +1,21 @@
 const expect = require('chai').expect;
 const TestUtils = require('./test-utils');
+const ModelGenerator = require('../model-generator');
 let notificationController;
+let aNotification;
 
 describe('notificationController', function () {
-    before(() => {
-        TestUtils.setGlobalUser();
-        TestUtils.setEnvironmentVariables();
-        // we need to initialize controller _after_ the variables has been set, that's why it's not on top of the file
-        notificationController = global.routes.include('controllers', 'entities/Notification.js')
+    before((done) => {
+        ModelGenerator.randomEntityWithId('notification').then((notification) => {
+            aNotification = notification;
+
+            TestUtils.setGlobalUser({account: notification.account, user: notification.user});
+            TestUtils.setEnvironmentVariables();
+
+            // we need to initialize controller _after_ the variables has been set, that's why it's not on top of the file
+            notificationController = global.routes.include('controllers', 'entities/Notification.js');
+            done();
+        });
 
     });
 
@@ -17,6 +25,7 @@ describe('notificationController', function () {
     });
 
     it('should create a notification', function (done) {
+
         notificationController.get(aNotification.id).then((response) => {
             // given we don't have a notification with such id
             return expect(response).to.be.null;
@@ -68,7 +77,11 @@ describe('notificationController', function () {
             // when we see the notifications
             return notificationController.listForCurrentUser();
         }).then(() => {
-            return notificationController.numberOfUnseenNotifications();
+            return notificationController.numberOfUnseenNotifications().then(() => {
+
+                // Technical Debt: We call this twice to buy some time, otherwise the counter is outdated.
+                return notificationController.numberOfUnseenNotifications();
+            });
         }).then((response) => {
             // then we should see count of 0
             expect(response.count).to.equal(0);
@@ -77,16 +90,6 @@ describe('notificationController', function () {
             done(error);
         });
     });
-
-
-    let aNotification = {
-        id: "8e4fdf13-e16a-4112-8238-1055e2439903",
-        user: "admin.user@test.com",
-        account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        type: "payment",
-        action: "succeeded",
-        message: "a message"
-    };
 
 });
 

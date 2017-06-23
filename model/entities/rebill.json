@@ -29,7 +29,7 @@
 		"id":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"amount":{
-			"type":["string","integer","float"]
+			"type":["string","number"]
 		},
 		"bill_at":{"$ref": "#/definitions/ISO8601"},
 		"created_at":{"$ref": "#/definitions/ISO8601"},

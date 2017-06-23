@@ -1,6 +1,7 @@
 'use strict';
 
 const jsf = require('json-schema-faker');
+const uuidV4 = require('uuid/v4');
 
 
 class ModelGenerator {
@@ -20,6 +21,14 @@ class ModelGenerator {
 
     randomEntity(name) {
         return this.random(`entities/${name}`);
+    }
+
+    randomEntityWithId(name) {
+        return this.random(`entities/${name}`).then((entity) => {
+            entity['id'] = uuidV4();
+
+            return entity;
+        });
     }
 
     /**
