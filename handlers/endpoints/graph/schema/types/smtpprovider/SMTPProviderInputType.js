@@ -7,7 +7,7 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'SMTPProviderInput',
     fields: () => ({
-        id:					{ type: new GraphQLNonNull(GraphQLString) },
+        id:					{ type: GraphQLString },
         name:				{ type: new GraphQLNonNull(GraphQLString) },
         hostname:			{ type: new GraphQLNonNull(GraphQLString) },
         username:			{ type: new GraphQLNonNull(GraphQLString) },

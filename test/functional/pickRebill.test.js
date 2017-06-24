@@ -1,9 +1,10 @@
 const expect = require('chai').expect;
 const SqSTestUtils = require('./sqs-test-utils');
 const TestUtils = require('./test-utils');
-const TimestampUtils = require('../../lib/timestamp');
-const uuidV4 = require('uuid/v4');
+const ModelGenerator = require('../model-generator');
 const mockery = require('mockery');
+
+let randomRebill;
 
 describe('Pick Rebill', function () {
 
@@ -18,9 +19,10 @@ describe('Pick Rebill', function () {
     });
 
     beforeEach((done) => {
-        SqSTestUtils.purgeAllQueues().then(() => {
-            done();
-        });
+        Promise.all([
+            SqSTestUtils.purgeAllQueues(),
+            ModelGenerator.randomEntityWithId('rebill').then(rebill => { randomRebill = rebill })
+        ]).then(() => { done() });
     });
 
     afterEach(() => {
@@ -33,7 +35,7 @@ describe('Pick Rebill', function () {
 
 
     it('should not move anything to bill queue when bill table is empty', function () {
-        mockery.registerMock('../lib/dynamodb-utilities.js', {
+        mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
             scanRecords: (table, parameters, callback) => {
                 callback(null, []);
             }
@@ -49,7 +51,8 @@ describe('Pick Rebill', function () {
 
     it('should move eligible messages to bill queue', function () {
         // given
-        let rebill = { id: uuidV4(), created_at: TimestampUtils.getISO8601(), updated_at: TimestampUtils.getISO8601() };
+        // let rebill = { id: uuidV4(), created_at: TimestampUtils.getISO8601(), updated_at: TimestampUtils.getISO8601() };
+        let rebill = randomRebill;
 
         mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
             scanRecords: (table, parameters, callback) => {

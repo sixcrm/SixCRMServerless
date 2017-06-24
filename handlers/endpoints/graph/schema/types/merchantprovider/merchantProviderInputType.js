@@ -33,7 +33,6 @@ module.exports.graphObj = new GraphQLInputObjectType({
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
         description: 'Allowed payment methods.'
     },
-
         processor:{
     			type: new GraphQLNonNull(merchantProviderProcessorInputType.graphObj),
             description: 'The merchant provider instance\'s processor.'

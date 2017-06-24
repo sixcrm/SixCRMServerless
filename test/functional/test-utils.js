@@ -1,10 +1,23 @@
 class TestUtils {
 
-    setGlobalUser() {
+    setGlobalUser(parameters) {
+        let account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c'; // Default values.
+        let user = 'admin.user@test.com';
+
+        if (parameters) {
+            if (parameters.account) {
+                account = parameters.account;
+            }
+
+            if (parameters.user) {
+                user = parameters.user;
+            }
+        }
+
         global.user = {
             acl: [{
                 account: {
-                    id: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
+                    id: account
                 },
                 role: {
                     permissions: {
@@ -13,7 +26,7 @@ class TestUtils {
                     }
                 }
             }],
-            id: 'admin.user@test.com'
+            id: user
         };
 
         global.account = global.user.acl[0].account.id;
