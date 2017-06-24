@@ -21,13 +21,11 @@
 		},
 		"enabled":true,
 		"gateway": {
-				"name":"NMI",
-				"username":"demo",
-				"password":"password",
-				"endpoint":"https://secure.networkmerchants.com/api/transact.php",
-				"additional":{
-					"processor_id":123
-				}
+			"name":"NMI",
+			"username":"demo",
+			"password":"password",
+			"endpoint":"https://secure.networkmerchants.com/api/transact.php",
+			"additional":"{\"processor_id\":123}"
 		},
 		"allow_prepaid":true,
 		"accepted_payment_methods":["Visa", "Mastercard", "American Express"],
@@ -61,13 +59,11 @@
 		},
 		"enabled":true,
 		"gateway": {
-				"name":"NMI",
-				"username":"demo",
-				"password":"password",
-				"endpoint":"https://secure.networkmerchants.com/api/transact.php",
-				"additional":{
-					"processor_id":123
-				}
+			"name":"NMI",
+			"username":"demo",
+			"password":"password",
+			"endpoint":"https://secure.networkmerchants.com/api/transact.php",
+			"additional":"{\"processor_id\":123}"
 		},
 		"allow_prepaid":true,
 		"accepted_payment_methods":["Visa", "Mastercard", "American Express"],

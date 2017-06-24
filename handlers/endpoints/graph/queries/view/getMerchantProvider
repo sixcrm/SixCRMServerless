@@ -2,17 +2,43 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	{ 
-		merchantprovider (id: \"6c40761d-8919-4ad6-884d-6a46a776cfb9\") { 
+	{
+		merchantprovider (id: \"6c40761d-8919-4ad6-884d-6a46a776cfb9\") {
 			id,
 			name,
-			username,
-			password,
-			endpoint,
-			processor,
+			processor {
+				name,
+				id
+			},
+			processing {
+				monthly_cap,
+				discount_rate,
+				transaction_fee,
+				reserve_rate,
+				maximum_chargeback_ratio,
+				transaction_counts {
+					daily,
+					weekly,
+					monthly
+				}
+			},
+			enabled,
+			gateway {
+				name,
+				username,
+				password,
+				endpoint,
+				additional
+			},
+			allow_prepaid,
+			accepted_payment_methods,
+			customer_service {
+				email,
+				url,
+				description
+			},
 			created_at,
 			updated_at
-		} 
+		}
 	}"
 }
-

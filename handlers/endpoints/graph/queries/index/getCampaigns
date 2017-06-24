@@ -33,19 +33,6 @@
 						}
 					}
 				}
-				loadbalancer {
-					id,
-					merchantproviderconfigurations {
-						merchantprovider {
-							id,
-							username,
-							password,
-							endpoint,
-							processor
-						},
-						distribution
-					}
-				},
 				emailtemplates {
 					id,
 					name,

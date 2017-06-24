@@ -2,16 +2,79 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
-		updatemerchantprovider (merchantprovider: { id: \"45f3af80-f313-4008-ac9d-48d80aa921b4\", name: \"test\", username: \"test\", password: \"test\", endpoint: \"test\", processor: \"NMI\"}) { 
+	mutation {
+		updatemerchantprovider (
+			merchantprovider:{
+				id:\"45f3af80-f313-4008-ac9d-48d80aa921b4\",
+				name:\"test2\",
+				enabled:false,
+				allow_prepaid:false,
+				accepted_payment_methods:[\"American Express\"],
+				processing:{
+					monthly_cap: 35000,
+					discount_rate: 0.2,
+					transaction_fee: 0.12,
+					reserve_rate: 0.23,
+					maximum_chargeback_ratio: 0.45,
+					transaction_counts: {
+						daily:18,
+						weekly:50,
+						monthly:200
+					}
+				},
+				processor:{
+					name:\"NMA\",
+					id:\"Some ID\"
+				},
+				gateway:{
+					name:\"NMI\",
+					username:\"test2\",
+					password:\"test23123123\",
+					endpoint:\"https://nmi.com/someendpoint.php\",
+					additional:\"{\\\"processor_id\\\":12354}\"
+				},
+				customer_service:{
+					email:\"customerservice.isnt.great@dot.com\",
+					url:\"http://dot.com/whatever/forwardslash\",
+					description:\"Dot com dot com\"
+				}
+			}
+		) {
 			id,
 			name,
-			username,
-			password,
-			endpoint,
-			processor,
+			processor {
+				name,
+				id
+			},
+			processing {
+				monthly_cap,
+				discount_rate,
+				transaction_fee,
+				reserve_rate,
+				maximum_chargeback_ratio,
+				transaction_counts {
+					daily,
+					weekly,
+					monthly
+				}
+			},
+			enabled,
+			gateway {
+				name,
+				username,
+				password,
+				endpoint,
+				additional
+			},
+			allow_prepaid,
+			accepted_payment_methods,
+			customer_service {
+				email,
+				url,
+				description
+			},
 			created_at,
 			updated_at
-		} 
+		}
 	}"
 }
