@@ -5,6 +5,8 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
+//Technical Debt:  All of these types frequently have the same fields (id, account, active, created_at, updated_at).  This would be a excellent usage of fragments...
+
 let accessKeyType = require('./accesskey/accessKeyType');
 let accessKeyListType = require('./accesskey/accessKeyListType');
 

@@ -4,15 +4,15 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 module.exports.graphObj = new GraphQLInputObjectType({
-    name: 'MerchantProviderConfigutationInputType',
+    name: 'MerchantProviderProcessorInput',
     fields: () => ({
-        id:	{
+        name: {
             type: new GraphQLNonNull(GraphQLString),
-            description: ''
+            description: 'The name of the merchant provider processor instance.',
         },
-        distribution:	{
-            type: new GraphQLNonNull(GraphQLString),
-            description: ''
+        id: {
+            type: GraphQLString,
+            description: 'The id of the merchant provider processor instance.',
         }
     })
 });

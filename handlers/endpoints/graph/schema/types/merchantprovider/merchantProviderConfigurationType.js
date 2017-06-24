@@ -11,13 +11,13 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'merchantproviderconfiguration',
     description: 'A merchant provider configuration.',
     fields: () => ({
-  	distribution: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The distribution of the merchantprovider.',
-  },
+  	   distribution: {
+         type: new GraphQLNonNull(GraphQLString),
+         description: 'The distribution target for the merchant provider instance.',
+     },
         merchantprovider: {
             type: merchantProviderType.graphObj,
-            description: 'The merchant provider associated with the load balancer',
+            description: 'The merchant provider instance associated with the load balancer',
             resolve: merchantproviderconfiguration => loadBalancerController.getMerchantProviderConfiguration(merchantproviderconfiguration)
         }
     }),
