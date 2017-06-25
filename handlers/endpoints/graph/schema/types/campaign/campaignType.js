@@ -5,7 +5,6 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
 
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
-let loadBalancerType = require('../loadbalancer/loadBalancerType');
 let productScheduleType = require('../productschedule/productScheduleType');
 
 module.exports.graphObj = new GraphQLObjectType({

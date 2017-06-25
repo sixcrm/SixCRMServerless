@@ -4,7 +4,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
 let SMTPProviderType = require('../smtpprovider/SMTPProviderType');
-let emailTemplateTypeEnum = require('./emailTemplateTypeEnum');
+//let emailTemplateTypeEnum = require('./emailTemplateTypeEnum');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'emailtemplate',
