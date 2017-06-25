@@ -42,6 +42,10 @@
 			"type":"string",
 			"minLength":3
 		},
+		"loadbalancers":{
+			"type":"array",
+			"items":{"$ref": "#/definitions/UUIDv4"}
+		},
 		"schedule":{
 			"type":"array",
 			"items":{

@@ -8,8 +8,9 @@ let productScheduleProductConfigurationInputType = require('./productSchedulePro
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'ProductScheduleInputType',
     fields: () => ({
-        id:					{ type: GraphQLString },
-        name:				{ type: GraphQLString },
-        schedule:			{ type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) }
+        id:					    { type: GraphQLString },
+        name:           { type: GraphQLString },
+        schedule:			  { type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) },
+        loadbalancers:  { type: new GraphQLList(GraphQLString) }
     })
 });

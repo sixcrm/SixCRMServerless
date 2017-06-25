@@ -9,7 +9,6 @@ module.exports.graphObj = new GraphQLInputObjectType({
     fields: () => ({
         id:					{ type: GraphQLString },
         name:				{ type: new GraphQLNonNull(GraphQLString) },
-        loadbalancer:		{ type: new GraphQLNonNull(GraphQLString) },
         productschedules:	{ type: new GraphQLList(GraphQLString) },
         emailtemplates:		{ type: new GraphQLList(GraphQLString) }
     })

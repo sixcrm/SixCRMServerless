@@ -34,7 +34,6 @@
 			"type":"array",
 			"items":{"$ref": "#/definitions/UUIDv4"}
 		},
-		"loadbalancer":{"$ref": "#/definitions/UUIDv4"},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
