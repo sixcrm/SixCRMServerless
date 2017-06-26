@@ -183,6 +183,7 @@ class processBillingController extends workerController {
 				//Technical Debt:  If they have multiple cards, how do I select a credit card?
                 var creditcard = creditCardController.get(session.customer.creditcards[0]).then((creditcard) => {
 
+                    //Technical Debt: Deprecated!
                     loadBalancerController.process(session.campaign.loadbalancer, {customer: session.customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
 
                         resolve(processor_response);
