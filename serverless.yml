@@ -15,7 +15,7 @@ package:
 
 provider:
   name: aws
-  runtime: nodejs4.3
+  runtime: nodejs6.10
   stage: ${opt:stage, 'development'}
   region: us-east-1
   profile: six
