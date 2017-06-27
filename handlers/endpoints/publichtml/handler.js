@@ -20,7 +20,9 @@ module.exports.publichtml = (event, context, callback) => {
         return response;
 
     }).catch((error) =>{
+
         return new LambdaResponse().issueError(error, event, callback);
+
     });
 
 };

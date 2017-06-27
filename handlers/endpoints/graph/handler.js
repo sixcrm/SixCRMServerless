@@ -11,26 +11,16 @@ const graphController = global.routes.include('controllers', 'endpoints/graph.js
 
 module.exports.graph = (event, context, callback) => {
 
-    let response;
     let gc = new graphController();
 
     gc.execute(event).then((result) => {
 
-      if(_.has(result, 'errors') && _.isArray(result.errors) && result.errors.length > 0){
-
-        response = new LambdaResponse().issueError(result.errors[0], event, callback);
-        return response;
-
-      }
-
-      response = new LambdaResponse().issueSuccess(result, callback);
-      return response;
+      return new LambdaResponse().issueSuccess(result, callback);
 
     })
     .catch((error) =>{
 
-        response = new LambdaResponse().issueError(error, event, callback);
-        return response;
+      return new LambdaResponse().issueError(error, event, callback);
 
     });
 

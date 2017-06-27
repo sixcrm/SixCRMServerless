@@ -523,11 +523,11 @@ module.exports = class entityController extends entityUtilitiesController {
 
           });
 
-            }).catch((error) => {
+        }).catch((error) =>{
 
-                return reject(error);
+          return reject(error);
 
-            });
+        });
 
         });
 

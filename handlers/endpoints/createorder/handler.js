@@ -10,15 +10,7 @@ module.exports.createorder= (event, context, callback) => {
 
     createOrderController.execute(event).then((response) => {
 
-        if(_.has(response, 'errors') && _.isArray(response.errors) && response.errors.length > 0){
-
-          response = new LambdaResponse().issueError(response.errors[0], event, callback);
-          return response;
-
-        }
-
-        response = new LambdaResponse().issueSuccess(response, callback);
-        return response;
+        return new LambdaResponse().issueSuccess(response, callback);
 
     }).catch((error) =>{
 

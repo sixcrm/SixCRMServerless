@@ -37,11 +37,11 @@ module.exports = class entityUtilitiesController{
 
             if(die === true && permission !== true){
 
-                eu.throwError('forbidden','Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+              eu.throwError('forbidden', 'Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
 
             }else{
 
-                return permission;
+              return permission;
 
             }
 
