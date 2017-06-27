@@ -5,8 +5,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
 let scheduleType = require('./scheduleType');
-
-const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+let loadBalancerType = require('../loadbalancer/loadBalancerType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'ProductSchedule',
@@ -23,7 +22,20 @@ module.exports.graphObj = new GraphQLObjectType({
         schedule: {
       	  type: new GraphQLList(scheduleType.graphObj),
             description:'The schedules associated with the product schedule',
-      	  resolve: productschedule => productScheduleController.getSchedule(productschedule)
+      	  resolve: (productschedule) => {
+            var productScheduleController = global.routes.include('controllers','entities/ProductSchedule');
+
+            return productScheduleController.getSchedule(productschedule);
+        }
+        },
+        loadbalancers:{
+            type: new GraphQLList(loadBalancerType.graphObj),
+            description: 'The load balancers associated with the product schedule.',
+            resolve: (productschedule) => {
+                var productScheduleController = global.routes.include('controllers','entities/ProductSchedule');
+
+                return productScheduleController.getLoadBalancers(productschedule);
+            }
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),

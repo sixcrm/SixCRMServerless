@@ -20,5 +20,16 @@
 		"type":"initialfulfillment",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id": "102131a0-4cc4-4463-a614-e3157c3f03c2",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name": "Lead Email",
+		"subject":"This is the subject line.",
+		"body":"This is the body.",
+		"smtp_provider":"18213d0b-cd6d-4cea-91b9-993d7443468b",
+		"type":"lead",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
 	}
 ]

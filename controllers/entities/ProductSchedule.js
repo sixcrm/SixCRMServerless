@@ -3,13 +3,28 @@ const _ = require('underscore');
 
 var du = global.routes.include('lib', 'debug-utilities.js');
 
-var productController = global.routes.include('controllers', 'entities/Product.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 
 class productScheduleController extends entityController {
 
     constructor(){
+
         super('productschedule');
+
+        this.productController = global.routes.include('controllers', 'entities/Product.js');
+
+        this.loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+
+    }
+
+    getLoadBalancers(product_schedule){
+
+        du.debug('Get Load Balancers');
+
+        if(!_.has(product_schedule, 'loadbalancers')){ return Promise.resolve(null); }
+
+        return Promise.all(product_schedule.loadbalancers.map((loadbalancer) => this.loadBalancerController.get(loadbalancer)));
+
     }
 
     getTransactionProducts(day_in_schedule, schedules_to_purchase){
@@ -33,7 +48,7 @@ class productScheduleController extends entityController {
 
     getProduct(scheduled_product){
 
-        return productController.get(scheduled_product.product);
+        return this.productController.get(scheduled_product.product);
 
     }
 
@@ -57,7 +72,7 @@ class productScheduleController extends entityController {
 
     getProducts(product_schedule){
 
-        return Promise.all(product_schedule.schedule.map(ps => productController.get(ps.product_id)));
+        return Promise.all(product_schedule.schedule.map(ps => this.productController.get(ps.product_id)));
 
     }
 

@@ -13,8 +13,6 @@ module.exports = class graphController extends authenticatedController {
 
         super();
 
-        du.warning('Instantiate Graph Controller');
-
         this.sixSchema = global.routes.include('handlers', 'endpoints/graph/schema');
 
         this.resolveController = new resolveController();

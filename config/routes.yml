@@ -1,6 +1,7 @@
 root: /
 lib: /lib/
 controllers: /controllers/
+entities: /controllers/entities/
 helpers: /controllers/helpers/
 handlers: /handlers/
 test: /test/

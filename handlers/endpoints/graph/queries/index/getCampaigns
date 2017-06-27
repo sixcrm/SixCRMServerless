@@ -2,15 +2,60 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		campaignlist {
 			campaigns {
 				id,
 				name,
 				created_at,
 				updated_at,
-				productschedules { 
+				productschedules {
 					id,
+					loadbalancers{
+						id,
+						merchantproviderconfigurations {
+							merchantprovider {
+								id,
+								name,
+								processor {
+									name,
+									id
+								},
+								processing {
+									monthly_cap,
+									discount_rate,
+									transaction_fee,
+									reserve_rate,
+									maximum_chargeback_ratio,
+									transaction_counts {
+										daily,
+										weekly,
+										monthly
+									}
+								},
+								enabled,
+								gateway {
+									name,
+									username,
+									password,
+									endpoint,
+									additional
+								},
+								allow_prepaid,
+								accepted_payment_methods,
+								customer_service {
+									email,
+									url,
+									description
+								},
+								created_at,
+								updated_at
+							},
+							distribution
+						},
+						created_at,
+						updated_at
+					},
 					schedule {
 						price,
 						start,
@@ -23,7 +68,7 @@
 							ship,
 							shipping_delay,
 							fulfillment_provider {
-								id, 
+								id,
 								name,
 								provider,
 								username,
@@ -33,19 +78,6 @@
 						}
 					}
 				}
-				loadbalancer {
-					id,
-					merchantproviderconfigurations {
-						merchantprovider {
-							id, 
-							username,
-							password,
-							endpoint,
-							processor
-						},
-						distribution
-					}
-				},
 				emailtemplates {
 					id,
 					name,
@@ -56,7 +88,6 @@
 						id,
 						name,
 						hostname,
-						ip_address,
 						username,
 						password,
 						port
@@ -71,4 +102,3 @@
 		},
 	}"
 }
-

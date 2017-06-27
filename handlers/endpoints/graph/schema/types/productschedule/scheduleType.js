@@ -1,36 +1,40 @@
 'use strict';
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLFloat = require('graphql').GraphQLFloat;
+const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 let productType = require('../product/productType');
-
-const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'schedule',
     description: 'A scheduled product.',
     fields: () => ({
         price: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLFloat),
             description: 'The price of schedule.',
         },
         start: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLInt),
             description: 'The start of schedule.',
         },
         end: {
-            type: GraphQLString,
+            type: GraphQLInt,
             description: 'The end of schedule.',
         },
         period: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLInt),
             description: 'The period of schedule.',
         },
         product: {
 	        type: productType.graphObj,
             description:'The product associated with the schedule',
-	        resolve: schedule => productScheduleController.getProduct(schedule)
+	        resolve: (schedule) => {
+            var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+
+            return productScheduleController.getProduct(schedule)
+        }
         },
         created_at: {
 	        type: new GraphQLNonNull(GraphQLString),

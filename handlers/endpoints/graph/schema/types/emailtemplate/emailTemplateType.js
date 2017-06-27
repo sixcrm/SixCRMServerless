@@ -2,10 +2,9 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
 
 let SMTPProviderType = require('../smtpprovider/SMTPProviderType');
-let emailTemplateTypeEnum = require('./emailTemplateTypeEnum');
+//let emailTemplateTypeEnum = require('./emailTemplateTypeEnum');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'emailtemplate',
@@ -28,16 +27,22 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The email template body.',
         },
         type: {
-            type: new GraphQLNonNull(emailTemplateTypeEnum.graphObj),
+            //Technical Debt:  This is actually a good idea...
+            //type: new GraphQLNonNull(emailTemplateTypeEnum.graphObj),
+            type: new GraphQLNonNull(GraphQLString),
             description: 'The email template type (see enumeration).',
         },
         smtp_provider: {
             type: SMTPProviderType.graphObj,
             description: 'The SMTP Provider for the email template.',
-            resolve: emailtemplate => emailTemplateController.getSMTPProvider(emailtemplate)
+            resolve: (emailtemplate) => {
+                let emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+
+                emailTemplateController.getSMTPProvider(emailtemplate)
+            }
         },
         created_at: {
-	  type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',
         },
         updated_at: {

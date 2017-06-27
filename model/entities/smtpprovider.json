@@ -26,22 +26,27 @@
 			"type":"string"
 		},
 		"hostname":{
-			"type":"string"
-		},
-		"ip_address":{
-			"type":"string"
+			"anyOf":[
+				{"type":"string", "format":"hostname"},
+				{"type":"string", "format":"ipv4"},
+				{"type":"string", "format":"ipv6"}
+			]
 		},
 		"username":{
-			"type":"string"
+			"type":"string",
+			"minLength":3
 		},
 		"password":{
-			"type":"string"
+			"type":"string",
+			"minLength":3
 		},
 		"port":{
-			"type":"string"
+			"type":"integer",
+			"minimum": 0,
+			"exclusiveMinimum": false
 		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["account", "created_at", "updated_at"]
+	"required":["account", "hostname", "username", "password", "created_at", "updated_at"]
 }

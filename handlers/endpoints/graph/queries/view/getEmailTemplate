@@ -2,7 +2,7 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	{ 
+	{
 		emailtemplate (id: \"b44ce483-861c-4843-a7d6-b4c649d6bdde\") {
 			id,
 			name,
@@ -13,14 +13,12 @@
 				id,
 				name,
 				hostname,
-				ip_address,
 				username,
 				password,
 				port
 			},
 			created_at,
 			updated_at
-		} 
+		}
 	}"
 }
-

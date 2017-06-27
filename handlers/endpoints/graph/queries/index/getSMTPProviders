@@ -2,13 +2,12 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
+	query {
 		smtpproviderlist {
 			smtpproviders{
 				id,
 				name,
 				hostname,
-				ip_address,
 				username,
 				password,
 				port,
@@ -23,4 +22,3 @@
 		},
 	}"
 }
-

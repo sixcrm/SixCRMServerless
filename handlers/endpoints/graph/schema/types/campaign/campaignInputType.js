@@ -7,9 +7,8 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'CampaignInputType',
     fields: () => ({
-        id:					{ type: new GraphQLNonNull(GraphQLString) },
+        id:					{ type: GraphQLString },
         name:				{ type: new GraphQLNonNull(GraphQLString) },
-        loadbalancer:		{ type: new GraphQLNonNull(GraphQLString) },
         productschedules:	{ type: new GraphQLList(GraphQLString) },
         emailtemplates:		{ type: new GraphQLList(GraphQLString) }
     })

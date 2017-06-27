@@ -2,10 +2,68 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
-		createproductschedule ( productschedule: {id: \"e751afbd-f314-4e71-8afc-6469e9ffe9b3\", name:\"Testing Name\", schedule: [ { product_id:\"668ad918-0d09-4116-a6fe-0e7a9eda36f8\", start:\"0\", end:\"30\", price:\"49.00\", period: \"30\" } ] } ) { 
+	mutation {
+		createproductschedule ( productschedule: {
+			id: \"e751afbd-f314-4e71-8afc-6469e9ffe9b3\",
+			name:\"Testing Name\",
+			loadbalancers: [\"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\"],
+			schedule: [
+				{
+					product_id:\"668ad918-0d09-4116-a6fe-0e7a9eda36f8\",
+					start:0,
+					end:30,
+					price:49.00,
+					period:30
+				}
+			]
+		}) {
 			id,
 			name,
+			loadbalancers{
+				id,
+				merchantproviderconfigurations {
+					merchantprovider {
+						id,
+						name,
+						processor {
+							name,
+							id
+						},
+						processing {
+							monthly_cap,
+							discount_rate,
+							transaction_fee,
+							reserve_rate,
+							maximum_chargeback_ratio,
+							transaction_counts {
+								daily,
+								weekly,
+								monthly
+							}
+						},
+						enabled,
+						gateway {
+							name,
+							username,
+							password,
+							endpoint,
+							additional
+						},
+						allow_prepaid,
+						accepted_payment_methods,
+						customer_service {
+							email,
+							url,
+							description
+						},
+						created_at,
+						updated_at
+					},
+					distribution
+				},
+				created_at,
+				updated_at
+			},
 			schedule {
 				price,
 				start,
@@ -18,7 +76,7 @@
 					ship,
 					shipping_delay,
 					fulfillment_provider {
-						id, 
+						id,
 						name,
 						provider,
 						username,
@@ -29,6 +87,6 @@
 			},
 			created_at,
 			updated_at
-		} 
+		}
 	}"
 }

@@ -6,7 +6,7 @@ const exec = require('child-process-promise').exec;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
-const retryCount = 3;
+const retryCount = 5;
 
 class DynamoDeployTables {
     constructor(){}

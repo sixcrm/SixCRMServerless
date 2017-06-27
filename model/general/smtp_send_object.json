@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/smtp_connection_options",
+  "title": "SMTP Connection Options",
+  "type": "object",
+  "properties": {
+    "sender_email": {
+      "type":"string",
+      "format":"email"
+    },
+    "sender_name": {
+      "type":"string",
+      "minLength":2
+    },
+    "subject": {
+      "type":"string",
+      "minLength":2
+    },
+    "body": {
+      "type":"string",
+      "minLength":2
+    },
+    "recepient_emails":{
+      "type":"array",
+      "items": {
+        "type":"string",
+        "format":"email"
+      }
+    },
+    "recepient_name": {
+      "type":"string",
+      "minLength":2
+    }
+  },
+  "required":["sender_email", "subject", "body","recepient_emails"]
+}

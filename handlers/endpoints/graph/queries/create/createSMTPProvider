@@ -2,17 +2,18 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
-		createsmtpprovider (smtpprovider: { id: \"8363bc50-a409-4503-93f8-1f50965ff87a\", name: \"test\", hostname: \"test\", ip_address: \"test\", username: \"test\", password: \"test\", port: \"test\"}) { 
+	mutation {
+		createsmtpprovider (smtpprovider: { id: \"8363bc50-a409-4503-93f8-1f50965ff87a\", name: \"test\", hostname: \"123.123.123.123\", username: \"test\", password: \"test\", from_email:\"test@test.com\", from_name:\"Test\", port: 25}) {
 			id,
 			name,
 			hostname,
-			ip_address,
 			username,
 			password,
+			from_email,
+			from_name,
 			port,
 			created_at,
 			updated_at
-		} 
+		}
 	}"
 }

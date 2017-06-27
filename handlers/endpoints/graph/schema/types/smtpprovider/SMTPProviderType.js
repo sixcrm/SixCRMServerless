@@ -1,4 +1,5 @@
 'use strict';
+const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
@@ -19,10 +20,6 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The hostname of the SMTP Provider.',
         },
-        ip_address: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The ip_address of the SMTP Provider.',
-        },
         username: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'A username associated with the SMTP Provider.',
@@ -32,8 +29,18 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The password associated with the username.',
         },
         port: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: GraphQLInt,
             description: 'The SMTP port for the the SMTP Provider',
+        },
+        from_email:{
+            type: GraphQLString,
+            description: 'The email address that the emails from this SMTP Provider will be sent as.',
+            example: "do_not_reply@sixcrm.com"
+        },
+        from_name:{
+            type: GraphQLString,
+            description: 'The name that the emails from this SMTP Provider will be sent as.',
+            example: "Do Not Reply"
         },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),

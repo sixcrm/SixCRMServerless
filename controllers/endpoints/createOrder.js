@@ -10,7 +10,6 @@ var productScheduleController = global.routes.include('controllers', 'entities/P
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
-var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
 const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
@@ -232,35 +231,38 @@ class createOrderController extends transactionEndpointController{
 
         du.debug('Create Order');
 
+        return Promise.resolve(info);
+        //Technical Debt: Deprecated!
+        /*
         return loadBalancerController.process( info.campaign.loadbalancer, {customer: info.customer, creditcard: info.creditcard, amount: info.amount})
-		    .then((processor) => {
+  		    .then((processor) => {
 
-        du.highlight(processor);
-          //Technical Debt:  Are there further actions to take if a transaction is denied?
+          du.highlight(processor);
+            //Technical Debt:  Are there further actions to take if a transaction is denied?
 
-          //validate processor
-        if(!_.has(processor, "message") || processor.message !== 'Success' || !_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'){
+            //validate processor
+          if(!_.has(processor, "message") || processor.message !== 'Success' || !_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'){
 
-            throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
+              throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
 
-        }
+          }
 
-        info.processor = processor;
+          info.processor = processor;
 
-        return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
+          return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
 
-            //Techincal Debt: validate transaction above
+              //Techincal Debt: validate transaction above
 
-            info.transaction = transaction;
+              info.transaction = transaction;
 
-            du.debug('Info:', info);
+              du.debug('Info:', info);
 
-            return info;
+              return info;
+
+          });
 
         });
-
-    });
-
+        */
     }
 
     postOrderProcessing(info) {
