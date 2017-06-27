@@ -3,6 +3,7 @@ const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
@@ -71,8 +72,8 @@ class confirmOrderController extends transactionEndpointController{
 
         return sessionController.get(querystring['session']).then((session) => {
 
-            if(_.isNull(session)){ throw new Error('The specified session is unavailable.'); }
-            if(session.completed == 'true'){ throw new Error('The specified session is already complete.'); }
+            if(_.isNull(session)){ eu.throwError('not_found','Unable to identify session.'); }
+            if(session.completed == 'true'){ eu.throwError('bad_request','The specified session is already complete.'); }
 
             var getCustomer = sessionController.getCustomer(session);
             var getTransactions = sessionController.getTransactions(session);

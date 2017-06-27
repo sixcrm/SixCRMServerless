@@ -3,6 +3,7 @@ const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
@@ -106,15 +107,15 @@ class createUpsellController extends transactionEndpointController{
             du.debug('Info Object:', info);
 
             if(!_.isObject(info.session) || !_.has(info.session, 'id')){
-                throw new Error('No available session.');
+                eu.throwError('not_found', 'No available session.');
             }
 
             if(info.session.completed == 'true'){
-                throw new Error('The specified session is already complete.');
+                eu.throwError('bad_request', 'The specified session is already complete.');
             }
 
             if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
-                throw new Error('No available schedules to purchase.');
+                eu.throwError('not_found', 'No available schedules to purchase.');
             }
 
             sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
@@ -145,11 +146,11 @@ class createUpsellController extends transactionEndpointController{
             du.debug('Info', info);
 
             if(!_.isObject(info.campaign) || !_.has(info.campaign, 'id')){
- 			 	throw new Error('No available campaign.');
+       			 	eu.throwError('not_found', 'No available campaign.');
             }
 
             if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
- 			 	throw new Error('No available creditcard.');
+ 			 	      eu.throwError('not_found', 'No available creditcard.');
             }
 
             campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
@@ -182,7 +183,7 @@ class createUpsellController extends transactionEndpointController{
 
 			//more validation
             if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
- 			 	throw new Error('No available customer.');
+ 			 	       eu.throwError('not_found', 'No available customer.');
             }
 
 			//Technical Debt: refactor this to use the transaction products above....
@@ -210,7 +211,7 @@ class createUpsellController extends transactionEndpointController{
           if( !_.has(processor, "message") || processor.message !== 'Success' ||
       				!_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'
       			) {
-              throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
+              eu.throwError('server','The processor didn\'t approve the transaction: ' + processor.message);
           }
 
           info.processor = processor;

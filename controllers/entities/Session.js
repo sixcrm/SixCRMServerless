@@ -4,6 +4,7 @@ const uuidV4 = require('uuid/v4');
 
 var timestamp = global.routes.include('lib', 'timestamp.js');
 var du = global.routes.include('lib', 'debug-utilities.js');
+var eu = global.routes.include('lib', 'error-utilities.js');
 
 var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
@@ -417,13 +418,13 @@ class sessionController extends entityController {
 
         if(!_.has(params,'customer')){
 
-            return new Error('A session must be associated with a Customer.');
+            return eu.getError('bad_request','A session must be associated with a Customer.');
 
         }
 
         if(!_.has(params,'campaign')){
 
-            return new Error('A session must be associated with a Campaign.');
+            return eu.getError('bad_request','A session must be associated with a Campaign.');
 
         }
 
@@ -460,11 +461,11 @@ class sessionController extends entityController {
         return new Promise((resolve, reject) => {
 
             if(!_.has(parameters, 'customer')){
-                reject(new Error('Parameters object must have a customer'));
+                reject(eu.getError('bad_request','Parameters object must have a customer'));
             }
 
             if(!_.has(parameters, 'campaign')){
-                reject(new Error('Parameters object must have a customer'));
+                reject(eu.getError('bad_request','Parameters object must have a customer'));
             }
 
             /*
@@ -521,7 +522,7 @@ class sessionController extends entityController {
                     });
 
                 } else {
-                    return reject(`Session with CustomerID '${parameters.customer}' not found`);
+                    return reject(eu.getError('not_found',`Session with CustomerID '${parameters.customer}' not found`));
                 }
 
             }).catch((error) => {
@@ -573,7 +574,7 @@ class sessionController extends entityController {
 
             for(var j = 0; j < session.product_schedules.length; j++){
                 if(_.isEqual(product_schedule_id, session.product_schedules[j])){
-                    throw new Error('Product schedule already belongs to this session');
+                    eu.throwError('bad_request','Product schedule already belongs to this session');
                 }
             }
         }

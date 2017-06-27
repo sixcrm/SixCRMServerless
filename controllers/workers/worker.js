@@ -2,6 +2,7 @@
 const Validator = require('jsonschema').Validator;
 const _ = require('underscore');
 const du = global.routes.include('lib','debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 const rebillController = global.routes.include('controllers','entities/Rebill.js');
 const sessionController = global.routes.include('controllers','entities/Session.js');
@@ -64,7 +65,7 @@ module.exports = class workerController {
 
             }else{
 
-                reject(new Error('Unrecognized event format: '+event));
+                reject(eu.getError('validation','Unrecognized event format: '+event));
 
             }
 
@@ -119,7 +120,7 @@ module.exports = class workerController {
 
             } catch(e){
 
-                reject(new Error('Unable to load validation schemas. Error:' + e));
+                reject(eu.getError('server','Unable to load validation schemas. Error:' + e));
 
             }
 
@@ -140,7 +141,7 @@ module.exports = class workerController {
                     issues: validation.errors.map((e) => { return e.message; })
                 };
 
-                reject(new Error(error.message));
+                reject(eu.getError('server',error.message));
 
             }
 
@@ -160,7 +161,7 @@ module.exports = class workerController {
 
             } catch(e){
 
-                return reject(new Error('Unable to load validation schemas. Error:' + e));
+                return reject(eu.getError('server','Unable to load validation schemas. Error:' + e));
 
             }
 

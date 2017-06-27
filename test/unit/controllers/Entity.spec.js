@@ -5,6 +5,8 @@ let chai = require('chai');
 let expect = chai.expect;
 let EntityController = global.routes.include('controllers','entities/Entity');
 let PermissionTestGenerators = require('../../unit/lib/permission-test-generators');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 
 describe('controllers/Entity.js', () => {
     let entityController;
@@ -193,7 +195,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
-                    callback(new Error('Reading failed.'), null);
+                    callback(eu.getError('server','Reading failed.'), null);
                 }
             });
 
@@ -234,7 +236,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
-                    callback(new Error('Reading failed.'), null);
+                    callback(eu.getError('server','Reading failed.'), null);
                 }
             });
 
@@ -281,7 +283,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
-                    callback(new Error('Reading failed.'), null);
+                    callback(eu.getError('server', 'Reading failed.'), null);
                 }
             });
 
@@ -308,7 +310,7 @@ describe('controllers/Entity.js', () => {
                     callback(null, [anEntity]);
                 },
                 deleteRecord: (table, key, expression, expression_params, callback) => {
-                    callback(new Error('Deleting failed.'), null);
+                    callback(eu.getError('server','Deleting failed.'), null);
                 }
             });
 
@@ -461,7 +463,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
-                    callback(new Error('Reading failed.'), null);
+                    callback(eu.getError('server','Reading failed.'), null);
                 }
             });
 
@@ -603,7 +605,7 @@ describe('controllers/Entity.js', () => {
 
             // when
             return entityController.list({limit: 10}).catch((error) => {
-                // then
+
                 expect(error.message).to.equal('Data is not an object.');
             });
         });
@@ -614,7 +616,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
-                    callback(new Error('Scanning failed.'), null);
+                    callback(eu.getError('server','Scanning failed.'), null);
                 }
             });
 
@@ -741,7 +743,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecordsFull: (table, parameters, index, callback) => {
-                    callback(new Error('Query failed.'), null);
+                    callback(eu.getError('server','Query failed.'), null);
                 }
             });
 

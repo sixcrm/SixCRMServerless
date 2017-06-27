@@ -5,6 +5,7 @@ const Validator = require('jsonschema').Validator;
 
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.routes.include('lib', 'parser-utilities');
 const arrayutilities = global.routes.include('lib', 'array-utilities');
 const redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
@@ -184,7 +185,7 @@ module.exports = class AnalyticsUtilities {
 
         du.debug(parameters);
         if(!_.isArray(parameters)){
-            throw new Error('Create Filter List only supports array arguments.');
+            eu.throwError('server','Create Filter List only supports array arguments.');
         }
 
         return arrayutilities.compress(parameters);
@@ -234,20 +235,19 @@ module.exports = class AnalyticsUtilities {
 
                 }catch(e){
 
-                    return reject(new Error('Unable to instantiate validator.'));
+                    return reject(eu.getError('server','Unable to instantiate validator.'));
 
                 }
 
                 if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
 
-                    var error = {
-                        message: 'One or more validation errors occurred.',
-                        issues: validation.errors.map((e) => { return e.property+' '+e.message; })
-                    };
+                    du.warning(validation.errors);
 
-                    du.warning('Input parameters do not validate.', error);
-
-                    return reject(error);
+                    return reject(eu.getError(
+                      'bad_request',
+                      'One or more validation errors occurred.',
+                      {issues: validation.errors.map((e) => { return e.property+' '+e.message; })}
+                    ));
 
                 }
 

@@ -4,6 +4,7 @@ const _ = require('underscore');
 const smtputilities = global.routes.include('lib', 'smtp-utilities.js');
 const mvu = global.routes.include('lib', 'model-validator-utilities.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.routes.include('lib','array-utilities.js');
 
 module.exports = class SMTPProvider {
@@ -27,7 +28,7 @@ module.exports = class SMTPProvider {
 
             if(!_.has(smtp_provider, required_option)){
 
-                throw new Error('SMTP Object requires "'+required_option+'" option.');
+                eu.throwError('server','SMTP Object requires "'+required_option+'" option.');
 
             }else{
 

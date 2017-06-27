@@ -41,7 +41,9 @@ module.exports = class ResolveController {
 
         }
 
-        return data_aquisition_function();
+        let result = data_aquisition_function();
+
+        return result;
 
     }
 

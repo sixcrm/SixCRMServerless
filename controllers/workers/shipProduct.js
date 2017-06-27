@@ -1,6 +1,8 @@
 'use strict';
 var _ =  require('underscore');
 
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 var shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
@@ -64,7 +66,7 @@ class shipProductController extends workerController {
                 }
 
                 if(found == false){
-                    throw new Error('Unable to re-acquire transaction');
+                    eu.getError('not_found','Unable to re-acquire transaction');
                 }
 
             }).then((updated_transaction) => {
@@ -195,7 +197,7 @@ class shipProductController extends workerController {
 
             }else{
 
-                reject(new Error('No product in transaction?'));
+                reject(eu.getError('server','No product in transaction?'));
 
             }
 

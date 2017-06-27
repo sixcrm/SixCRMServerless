@@ -3,6 +3,7 @@ const _ = require('underscore');
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 const notificationReadController = global.routes.include('controllers', 'entities/NotificationRead');
 const entityController = global.routes.include('controllers', 'entities/Entity.js');
@@ -59,7 +60,7 @@ class notificationController extends entityController {
         try {
             schema = global.routes.include('model','entities/notification.json');
         } catch(e){
-            return Promise.reject(new Error('Unable to load validation schemas.'));
+            return Promise.reject(eu.getError('server','Unable to load validation schemas.'));
         }
 
         let validation;
@@ -70,18 +71,19 @@ class notificationController extends entityController {
 
             validation = v.validate(params, schema);
         }catch(e){
-            return Promise.reject(new Error('Unable to instantiate validator.'));
+            return Promise.reject(eu.getError('server','Unable to instantiate validator.'));
         }
 
         if(validation['errors'].length > 0) {
-            let error = {
-                message: 'One or more validation errors occurred.',
-                issues: validation.errors.map(e => e.message)
-            };
 
-            du.warning(error);
+            du.warning(validation['errors']);
 
-            return Promise.reject(error);
+            return Promise.reject(eu.getError(
+            'validation',
+            'One or more validation errors occurred.',
+            {issues: validation.errors.map(e => e.message)}
+          ));
+
         }
 
         return Promise.resolve(params);

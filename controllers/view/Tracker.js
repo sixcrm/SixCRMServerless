@@ -2,6 +2,8 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
 const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
 
@@ -17,9 +19,9 @@ class trackerViewController{
 
         du.highlight(argumentation_object);
 
-        if(!_.has(argumentation_object, 'pathParameters')){ return Promise.reject(new Error('Argumentation object missing pathParameters.')); }
+        if(!_.has(argumentation_object, 'pathParameters')){ return Promise.reject(eu.getError('bad_request','Argumentation object missing pathParameters.')); }
 
-        if(!_.has(argumentation_object.pathParameters, 'tracker')){ return Promise.reject(new Error('Invalid Argumentation')); }
+        if(!_.has(argumentation_object.pathParameters, 'tracker')){ return Promise.reject(eu.getError('bad_request','Invalid Argumentation')); }
 
         let tracker = argumentation_object.pathParameters.tracker;
 
@@ -41,7 +43,7 @@ class trackerViewController{
 
             }
 
-            return Promise.reject(new Error('404'));
+            return Promise.reject(eu.throwError('not_found','Tracker not found.'));
 
         });
 

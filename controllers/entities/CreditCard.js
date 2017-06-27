@@ -2,6 +2,7 @@
 const _ = require('underscore');
 const entityController = global.routes.include('controllers', 'entities/Entity.js');
 const du = global.routes.include('lib', 'debug-utilities');
+const eu = global.routes.include('lib', 'error-utilities');
 
 class creditCardController extends entityController {
 
@@ -62,7 +63,7 @@ class creditCardController extends entityController {
 
                   } else {
 
-                      return reject(new Error('Card not identified.'));
+                      return reject(eu.getError('server','Card not identified.'));
 
                   }
 

@@ -1,5 +1,8 @@
 'use strict';
 var _ = require('underscore');
+
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 var HashtagController = global.routes.include('controllers', 'vendors/fulfillmentproviders/Hashtag.js');
 var fulfillmentProviderController = global.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
 
@@ -21,7 +24,7 @@ class fulfillmentTriggerController {
 
             if(!_.has(transaction_product.product, "fulfillment_provider") || !_.has(transaction_product.product.fulfillment_provider, "name")){
 
-                reject(new Error('Unable to identify fulfillment provider associated with the transaction_product.'));
+                reject(eu.getError('bad_request', 'Unable to identify fulfillment provider associated with the transaction_product.'));
 
             }
 
@@ -41,7 +44,7 @@ class fulfillmentTriggerController {
 
             default:
 
-                reject(new Error('Unknown fulfillment provider: ' + transaction_product.product.fulfillment_provider.provider));
+                reject(eu.getError('not_implemented','Unknown fulfillment provider: ' + transaction_product.product.fulfillment_provider.provider));
 
                 break;
 

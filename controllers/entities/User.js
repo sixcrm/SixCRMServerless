@@ -3,6 +3,8 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 const mungeutilities = global.routes.include('lib', 'munge-utilities.js');
 const inviteutilities = global.routes.include('lib', 'invite-utilities.js');
 
@@ -116,7 +118,7 @@ class userController extends entityController {
 
             }else{
 
-                return reject(new Error('A user identifier or a email is required.'));
+                return reject(eu.getError('bad_request','A user identifier or a email is required.'));
 
             }
 
@@ -149,7 +151,7 @@ class userController extends entityController {
 
                             }else{
 
-                                return reject(new Error('User created in profile is not a partially-hydrated user.'));
+                                return reject(eu.getError('server','User created in profile is not a partially-hydrated user.'));
 
                             }
 
@@ -171,13 +173,13 @@ class userController extends entityController {
 
                 }else{
 
-                    return reject(new Error('Global User must be of type User or Email.'));
+                    return reject(eu.getError('bad_request','Global User must be of type User or Email.'));
 
                 }
 
             }else{
 
-                return reject(new Error('Introspection method requires a global user.'));
+                return reject(eu.getError('bad_request','Introspection method requires a global user.'));
 
             }
 
@@ -195,7 +197,7 @@ class userController extends entityController {
 
                 if(_.has(user, 'id')){
 
-                    return reject(new Error('The user already exists.'));
+                    return reject(eu.getError('bad_request','The user already exists.'));
 
                 }else{
 
@@ -261,7 +263,7 @@ class userController extends entityController {
                         let user_setting = promises[3];
 
                         if(!_.has(account, 'id') || !_.has(user, 'id') || !_.has(role, 'id') || !_.has(user_setting, 'id')){
-                            return reject(new Error('Unable to create new profile'));
+                            return reject(eu.getError('server','Unable to create new profile'));
                         }
 
                         du.debug('User', user);
@@ -341,7 +343,7 @@ class userController extends entityController {
 
                             }else{
 
-                                return reject(new Error('The user is not partially hydrated.'));
+                                return reject(eu.getError('server','The user is not partially hydrated.'));
 
                             }
 
@@ -585,7 +587,7 @@ class userController extends entityController {
 
                         }else{
 
-                            return reject(new Error('Unable to assure user.'));
+                            return reject(eu.getError('server','Unable to assure user.'));
 
                         }
 
@@ -663,7 +665,7 @@ class userController extends entityController {
             du.highlight('User Invite: ', userinvite);
 
             if(!this.isEmail(userinvite.email)){
-                reject(new Error('Invalid user email address.'));
+                reject(eu.getError('bad_request','Invalid user email address.'));
             }
 
             var promises = [];
@@ -683,10 +685,10 @@ class userController extends entityController {
                 du.highlight(role);
                 du.highlight(invited_user);
 
-                if(!_.has(account, 'id')){ reject(new Error('Invalid account.')); }
+                if(!_.has(account, 'id')){ reject(eu.getError('bad_request','Invalid account.')); }
 				//is the account that we are operating against
 
-                if(!_.has(role, 'id')){ reject(new Error('Invalid role.')); }
+                if(!_.has(role, 'id')){ reject(eu.getError('bad_request','Invalid role.')); }
 				//is not the owner
 				//role is not higher than the inviting user's role
 

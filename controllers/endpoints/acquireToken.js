@@ -4,6 +4,7 @@ const Validator = require('jsonschema').Validator;
 
 const jwtutilities  = global.routes.include('lib', 'jwt-utilities');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
@@ -27,6 +28,8 @@ class acquireTokenController extends transactionEndpointController {
     }
 
     execute(event){
+
+        du.debug('Execute');
 
         return this.preprocessing(event)
       .then((event) => this.acquireBody(event))
@@ -57,7 +60,7 @@ class acquireTokenController extends transactionEndpointController {
 
         return this.campaignController.get(event.campaign).then((campaign) => {
 
-            if(!_.has(campaign, 'id')){ throw new Error('Invalid Campaign ID: '+event.campaign); }
+            if(!_.has(campaign, 'id')){ eu.throwError('bad_request','Invalid Campaign ID: '+event.campaign); }
 
             return event;
 

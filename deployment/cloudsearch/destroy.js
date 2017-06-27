@@ -3,6 +3,7 @@ require('../../routes.js');
 const AWS = require("aws-sdk");
 const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 //Technical Debt:  This should use a lib here instead of making raw AWS calls
 let cs = new AWS.CloudSearch({
@@ -18,7 +19,7 @@ getDomainNames()
 .then(deleteDomain)
 .then(du.highlight('Complete'))
 .catch((error) => {
-    throw new Error(error);
+    eu.throwError(error);
 });
 
 function deleteDomain(domain_array){

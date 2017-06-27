@@ -154,7 +154,7 @@ class productScheduleController extends entityController {
 
 						if(data.length > 1){
 
-							reject(new Error('Multiple product schedules returned where one should be returned.'));
+							reject(eu.getError('server','Multiple product schedules returned where one should be returned.'));
 
 						}else{
 

@@ -2,6 +2,7 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
@@ -57,7 +58,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         }else{
 
-            return Promise.reject(new Error('AnalyticsController.'+function_name+' is not defined.'));
+            return Promise.reject(eu.getError('server', 'AnalyticsController.'+function_name+' is not defined.'));
 
         }
 

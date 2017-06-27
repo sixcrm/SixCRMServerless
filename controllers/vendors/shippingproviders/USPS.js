@@ -1,6 +1,8 @@
 'use strict';
 var _ = require('underscore');
 var request = require('request');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 var shippingProviderController = global.routes.include('controllers', 'vendors/shippingproviders/ShippingProvider');
 var parseString = require('xml2js').parseString;
 
@@ -53,7 +55,7 @@ class USPSController extends shippingProviderController {
 
           if(_.isError(err)){ reject(error); }
 
-    				if(!_.has(result, 'TrackResponse') || !_.has(result.TrackResponse, 'TrackInfo')){ return reject(new Error('Unexpected response from USPS.')); }
+    				if(!_.has(result, 'TrackResponse') || !_.has(result.TrackResponse, 'TrackInfo')){ return reject(eu.getError('server','Unexpected response from USPS.')); }
 
           var usps_response = result.TrackResponse.TrackInfo[0].TrackSummary[0].Event[0];
 
@@ -65,7 +67,7 @@ class USPSController extends shippingProviderController {
 
           }else{
 
-              return reject(new Error('Unexpected response from USPS.'));
+              return reject(eu.getError('server','Unexpected response from USPS.'));
 
           }
 

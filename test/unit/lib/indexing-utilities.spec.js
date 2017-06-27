@@ -2,6 +2,8 @@ let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 
 describe('lib/indexing-utilities', () => {
 
@@ -184,7 +186,7 @@ describe('lib/indexing-utilities', () => {
 
             mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
-                    callback(new Error('Sending message failed.'), null);
+                    callback(eu.getError('server','Sending message failed.'), null);
                 }
             });
             let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');

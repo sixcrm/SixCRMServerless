@@ -9,6 +9,8 @@ const maxReceiveCount = 5;
 const _ = require('underscore');
 const fs = require('fs');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 
 const sqsUtils = global.routes.include('lib', 'sqs-utilities.js');
 
@@ -33,7 +35,7 @@ getQueueDefinitions()
     .then(() => {du.highlight('Complete')})
     .catch((error) => {
         du.error(error);
-        throw new Error(error);
+        eu.throwError('server', error);
     });
 
 function getQueueDefinitions() {

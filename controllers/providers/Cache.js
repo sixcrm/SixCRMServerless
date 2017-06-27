@@ -4,6 +4,7 @@ const crypto = require('crypto');
 
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const redisutilities = global.routes.include('lib', 'redis-utilities.js');
 
 module.exports = class cacheController {
@@ -192,7 +193,7 @@ module.exports = class cacheController {
 
         if(!_.isFunction(data_promise)){
 
-            throw new Error('Callback_promise.then is not a function.');
+            eu.throwError('server','Callback_promise.then is not a function.');
 
         }
 

@@ -3,6 +3,7 @@ var _ = require("underscore");
 var sqs = global.routes.include('lib', 'sqs-utilities.js');
 var lambda = global.routes.include('lib', 'lambda-utilities.js');
 var du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 var workerController = global.routes.include('controllers', 'workers/worker.js');
 
@@ -116,7 +117,7 @@ class forwardMessageController extends workerController {
                                 reject(error);
                                 return;
                             }
-                            if(workerdata.StatusCode !== 200){ reject(new Error('Non-200 Status Code returned from Lambda invokation.')); }
+                            if(workerdata.StatusCode !== 200){ reject(eu.getError('server','Non-200 Status Code returned from Lambda invokation.')); }
 
                             controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
 
@@ -127,7 +128,8 @@ class forwardMessageController extends workerController {
                                     if(_.has(response, 'body')){
                                         error_message += response.body;
                                     }
-                                    reject(new Error(error_message));
+
+                                    reject(eu.getError('server',error_message));
 
                                 }
 
@@ -138,7 +140,7 @@ class forwardMessageController extends workerController {
                                     if(_.has(response, 'body')){
                                         error_message += response.body;
                                     }
-                                    reject(new Error(error_message));
+                                    reject(eu.getError('server', error_message));
 
                                 }
 

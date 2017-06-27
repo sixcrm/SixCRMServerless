@@ -3,6 +3,8 @@ const _ = require("underscore");
 const luhn = require("luhn");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
 const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
@@ -47,11 +49,11 @@ module.exports = class transactionEndpointController extends authenticatedContro
         return new Promise((resolve, reject) => {
 
             if(!_.isFunction(validation_function)){
-                return reject(new Error('Validation function is not a function.'));
+                return reject(eu.getError('server', 'Validation function is not a function.'));
             }
 
             if(_.isUndefined(event)){
-                return reject(new Error('Undefined event input.'));
+                return reject(eu.getError('server', 'Undefined event input.'));
             }
 
             var params = JSON.parse(JSON.stringify(event || {}));
@@ -62,12 +64,11 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
                 du.warning(validation);
 
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map((e)=>{ return e.message; })
-                };
-
-                return reject(error);
+                return reject(eu.getError(
+                  'validation',
+                  'One or more validation errors occurred.',
+                  {issues: validation.errors.map((e)=>{ return e.message; })}
+                ));
 
             }
 
@@ -189,7 +190,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         }
 
-        throw new Error('Unrecognized Transaction Subtype');
+        eu.throwError('server', 'Unrecognized Transaction Subtype');
 
     }
 

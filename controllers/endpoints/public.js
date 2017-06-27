@@ -2,6 +2,7 @@
 let _ = require('underscore');
 let encodeutilities = global.routes.include('lib', 'encode.js');
 let du = global.routes.include('lib', 'debug-utilities');
+let eu = global.routes.include('lib', 'error-utilities');
 const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
 
 module.exports = class PublicController extends endpointController {
@@ -53,11 +54,11 @@ module.exports = class PublicController extends endpointController {
         du.debug('Validate Path');
 
         if(!_.has(this.path_object, 'class')){
-            return Promise.reject(new Error('The path parameters object requires a class property.'));
+            return Promise.reject(eu.getError('bad_request', 'The path parameters object requires a class property.'));
         }
 
         if(!_.has(this.path_object, 'method')){
-            return Promise.reject(new Error('The path parameters object requires a method property.'));
+            return Promise.reject(eu.getError('bad_request', 'The path parameters object requires a method property.'));
         }
 
         //Technical Debt:  Make sure that the class exists in the views directory
@@ -92,7 +93,7 @@ module.exports = class PublicController extends endpointController {
 
         }
 
-        return Promise.reject(new Error('View controller lacks appropriate class method: '+this.path_object.method));
+        return Promise.reject(eu.getError('bad_request', 'View controller lacks corresponding class method: '+this.path_object.method));
 
     }
 

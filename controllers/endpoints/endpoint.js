@@ -3,6 +3,7 @@ const _ = require("underscore");
 const querystring = require('querystring');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 module.exports = class EndpointController {
 
@@ -53,7 +54,7 @@ module.exports = class EndpointController {
 
         }
 
-        return Promise.reject(new Error('Event does not have path parameters'));
+        return Promise.reject(eu.getError('bad_request','Event does not have path parameters'));
 
     }
 
@@ -67,7 +68,7 @@ module.exports = class EndpointController {
 
             if(!_.isObject(duplicate_querystring) && !_.isString(duplicate_querystring)){
 
-                return Promise.reject(new Error('Request querystring is an unexpected format.'));
+                return Promise.reject(eu.getError('bad_request','Request querystring is an unexpected format.'));
 
             }
 
@@ -105,11 +106,11 @@ module.exports = class EndpointController {
             du.highlight('Event:', event);
 
             if(!_.has(event, 'requestContext')){
-                return reject(new Error('Missing requestContext'));
+                return reject(eu.getError('bad_request','Missing requestContext'));
             }
 
             if(!_.has(event, 'pathParameters')){
-                return reject(new Error('Missing pathParameters'));
+                return reject(eu.getError('bad_request','Missing pathParameters'));
             }
 
             return resolve(event);

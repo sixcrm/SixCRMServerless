@@ -3,6 +3,7 @@ const _ = require("underscore");
 const graphql =  require('graphql').graphql;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+//const eu = global.routes.include('lib', 'error-utilities.js');
 
 let authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
 const resolveController = global.routes.include('providers', 'Resolve.js');
@@ -21,9 +22,9 @@ module.exports = class graphController extends authenticatedController {
 
     execute(event){
 
-        du.debug('Execute');
+      du.debug('Execute');
 
-        return this.parseEvent(event)
+      return this.parseEvent(event)
 			.then((event) => this.acquireAccount(event))
       .then((event) => this.acquireUser(event))
       .then((event) => this.acquireQuerystring(event))

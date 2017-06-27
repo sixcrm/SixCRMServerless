@@ -2,9 +2,9 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities');
+const eu = global.routes.include('lib', 'error-utilities');
 
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
-
 
 class affiliateController extends entityController {
 
@@ -39,7 +39,7 @@ class affiliateController extends entityController {
                         return result;
                     }
 
-                    throw new Error('Unable to assure affiliate.');
+                    eu.throwError('server','Unable to assure affiliate.');
 
                 });
 

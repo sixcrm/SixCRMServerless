@@ -3,6 +3,7 @@ const _ = require('underscore');
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib','debug-utilities');
+const eu = global.routes.include('lib','error-utilities');
 const permissionUtils = global.routes.include('lib','permission-utilities');
 const emailNotificationUtils = global.routes.include('lib','email-notification-utilities');
 const smsNotificationUtils = global.routes.include('lib','sms-notification-utilities');
@@ -254,11 +255,11 @@ class NotificationProvider {
         try{
             schema = global.routes.include('model','actions/create_notification.json');
         } catch(e){
-            return Promise.reject(new Error('Unable to load validation schemas.'));
+            return Promise.reject(eu.getError('server','Unable to load validation schemas.'));
         }
 
         if (user_required && !create_notification_object.user) {
-            return Promise.reject(new Error('User is mandatory.'));
+            return Promise.reject(eu.getError('server','User is mandatory.'));
         }
 
         let validation;
@@ -269,7 +270,7 @@ class NotificationProvider {
 
             validation = v.validate(params, schema);
         }catch(e){
-            return Promise.reject(new Error('Unable to instantiate validator.'));
+            return Promise.reject(eu.getError('server','Unable to instantiate validator.'));
         }
 
         if(validation['errors'].length > 0) {
@@ -279,9 +280,13 @@ class NotificationProvider {
             };
 
             du.error(error);
-            du.debug(create_notification_object);
 
-            return Promise.reject(error);
+            return Promise.reject(eu.getError(
+              'server',
+              'One or more validation errors occurred.',
+              {issues: validation.errors.map(e => e.message)}
+            ));
+
         }
 
         return Promise.resolve(params);

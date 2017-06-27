@@ -5,6 +5,8 @@ const validator = require('validator');
 
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 const mvu = global.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
 const cacheController = global.routes.include('controllers', 'providers/Cache.js');
@@ -35,7 +37,7 @@ module.exports = class entityUtilitiesController{
 
             if(die === true && permission !== true){
 
-                throw new Error('Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+                eu.throwError('forbidden','Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
 
             }else{
 
@@ -54,7 +56,7 @@ module.exports = class entityUtilitiesController{
 
           if(die === true && permission !== true){
 
-            return new Error('Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+            eu.throwError('forbidden','Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
 
           }
 
@@ -276,7 +278,7 @@ module.exports = class entityUtilitiesController{
 
         if(!_.has(entity, 'created_at')){
 
-            throw new Error('Entity lacks a "created_at" property');
+            eu.throwError('validation','Entity lacks a "created_at" property');
 
         }
 
@@ -299,11 +301,11 @@ module.exports = class entityUtilitiesController{
         du.debug('Persist Created Updated');
 
         if(!_.has(exists, 'created_at')){
-            throw new Error('Entity lacks "created_at" property.');
+            eu.throwError('validation','Entity lacks "created_at" property.');
         }
 
         if(!_.has(exists, 'updated_at')){
-            throw new Error('Entity lacks "updated_at" property.');
+            eu.throwError('validation','Entity lacks "updated_at" property.');
         }
 
         entity['created_at'] = exists.created_at;
@@ -453,7 +455,7 @@ module.exports = class entityUtilitiesController{
 
                 }else{
 
-                    throw new Error('Limit is a unrecognized format: '+limit);
+                    eu.throwError('bad_request','Limit is a unrecognized format: '+limit);
 
                 }
 
@@ -485,7 +487,7 @@ module.exports = class entityUtilitiesController{
 
             }else{
 
-                throw new Error('Unrecognized Exclusive Start Key format.');
+                eu.throwError('bad_request','Unrecognized Exclusive Start Key format.');
 
             }
 
@@ -532,7 +534,7 @@ module.exports = class entityUtilitiesController{
 
                     }else{
 
-                        throw new Error('Unrecognized format for Exclusive Start Key.')
+                        eu.throwError('validation','Unrecognized format for Exclusive Start Key.')
 
                     }
 
@@ -540,7 +542,7 @@ module.exports = class entityUtilitiesController{
 
             }else{
 
-                throw new Error('Unrecognized format for Cursor.')
+                eu.throwError('validation','Unrecognized format for Cursor.')
 
             }
 
@@ -631,7 +633,7 @@ module.exports = class entityUtilitiesController{
 
             }else{
 
-                throw new Error('Unrecognized query parameter filter expression type.');
+                eu.throwError('bad_request','Unrecognized query parameter filter expression type.');
 
             }
 
@@ -692,7 +694,7 @@ module.exports = class entityUtilitiesController{
             let pagination_object = this.buildPaginationObject(data);
 
             if (!_.has(data, "Items") || (!_.isArray(data.Items))) {
-                return callback(new Error('Data has no items.'), null);
+                return callback(eu.getError('not_found','Data has no items.'), null);
             }
 
             if(data.Items.length < 1){
@@ -709,7 +711,7 @@ module.exports = class entityUtilitiesController{
 
         } else {
 
-            return callback(new Error('Data is not an object.'), null);
+            return callback(eu.getError('not_found','Data is not an object.'), null);
 
         }
 
@@ -777,7 +779,7 @@ module.exports = class entityUtilitiesController{
 
         }
 
-        throw new Error('Could not determine identifier.');
+        eu.throwError('bad_request','Could not determine identifier.');
 
     }
 
