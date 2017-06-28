@@ -11,21 +11,21 @@ class KinesisDeployment {
     constructor(stage) {
         this.stage = stage;
         this.config = this.getConfig(stage);
-        this.kinesis = new AWS.Kinesis({
+        this.kinesis = new AWS.Firehose({
             region: 'us-east-1',
-            apiVersion: '2013-12-02',
+            apiVersion: '2015-08-04',
         });
     }
 
     streamExists(stream_identifier) {
        /* Test if stream exists */
 
-       let parameters = {
-           StreamName: stream_identifier
+       var parameters = {
+           DeliveryStreamName: stream_identifier
        };
        console.log(parameters);
        return new Promise((resolve, reject) => {
-           this.kinesis.describeStream(parameters, (error, data) => {
+           this.kinesis.describeDeliveryStream(parameters, (error, data) => {
                if (error) {
                    return resolve(false);
                } else {
@@ -38,22 +38,65 @@ class KinesisDeployment {
 
     createStream(parameters) {
         /* Create stream */
+
+        return new Promise((resolve, reject) => {
+            this.kinesis.createDeliveryStream(parameters, (error, data) => {
+                if (error) {
+                    du.error(error.message);
+                    return reject(error);
+                } else {
+                    return resolve(data);
+                }
+            });
+        });
     }
 
     createStreamAndWait(parameters) {
-        /* Create stream and wait */
+      return this.createStream(parameters).then(() => {
+          return this.waitForStream(parameters.DeliveryStreamName, 'streamAvailable');
+      });
     }
 
     deleteStream(parameters) {
         /* Delete stream */
+
+      return new Promise((resolve, reject) => {
+          this.kinesis.deleteDeliveryStream(parameters, (error, data) => {
+              if (error) {
+                  du.error(error.message);
+                  return reject(error);
+              } else {
+                  return resolve(data);
+              }
+          });
+      });
     }
 
     deleteStreamAndWait(parameters) {
         /* Delete stream and wait */
+
+        return this.deleteStream(parameters).then(() => {
+            return this.waitForStream(parameters.ClusterIdentifier, 'clusterDeleted');
+        });
     }
 
     waitForStream(stream_identifier, state) {
         /* Wait for stream creation */
+
+        let parameters = {
+            StreamIdentifier: stream_identifier
+        };
+
+        return new Promise((resolve, reject) => {
+            this.kinesis.waitFor(state, parameters, (error, data) => {
+                if (error) {
+                    du.error(error.message);
+                    return reject(error);
+                } else {
+                    return resolve(data);
+                }
+            });
+        });
     }
 
     getConfig() {

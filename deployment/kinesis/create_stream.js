@@ -17,6 +17,10 @@ du.highlight('Creating Kinesis Stream');
 
 let kinesisDeployment = new KinesisDeployment(environment);
 
+// Need to add recursive read of paramaters
+
+let stream_parameters = {};
+
 /* Set the list of relevant streams*/
 
 let stream_list = Object.keys(kinesisDeployment.getConfig().streams).filter(name => name.match(/\_stream$/));
@@ -34,37 +38,10 @@ stream_list.map( stream =>  {
           return Promise.resolve();
       } else {
           du.output('Stream does not exist, creating.');
-          return Promise.resolve();
+          return kinesisDeployment.createStreamAndWait(stream_parameters).then(response => {
+              du.output(response);
+          });
       }
   }).then(() => { du.highlight('Complete')});
 }
 );
-
-
-/*var params = {
-  DeliveryStreamName: 'Test',
-  RedshiftDestinationConfiguration: {
-    ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev',
-    CopyCommand: {
-      DataTableName: 'f_transactions',
-      CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'",
-    },
-    Password: 'Jagodica9',
-    RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role',
-    S3Configuration: {
-      BucketARN: 'arn:aws:s3:::sixcrm-development-redshift',
-      RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role',
-      BufferingHints: {
-        IntervalInSeconds: 60,
-        SizeInMBs: 1
-      },
-      CompressionFormat: 'UNCOMPRESSED' ,
-      Prefix: 'sixcrm-kinesis-transactions/'
-    },
-    Username: 'admin',
-    RetryOptions: {
-      DurationInSeconds: 1
-    },
-    S3BackupMode: 'Disabled'
-  }
-}; */

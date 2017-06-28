@@ -21,7 +21,6 @@ let kinesisDeployment = new KinesisDeployment(environment);
 
 let stream_list = Object.keys(kinesisDeployment.getConfig().streams).filter(name => name.match(/\_stream$/));
 
-
 stream_list.map( stream =>  {
 
   let stream_parameters = {
@@ -31,11 +30,13 @@ stream_list.map( stream =>  {
 
   kinesisDeployment.streamExists(stream_parameters.StreamName).then(exists => {
       if (exists) {
-          du.warning('Stream exists, destroying.');
+          du.warning('Stream exists, aborting.');
           return Promise.resolve();
       } else {
-          du.output('Stream does not exist, aborting.');
-          return Promise.resolve();
+          du.output('Stream does not exist, creating.');
+          return kinesisDeployment.deleteStreamAndWait(stream_parameters).then(response => {
+              du.output(response);
+          });
       }
   }).then(() => { du.highlight('Complete')});
 }
