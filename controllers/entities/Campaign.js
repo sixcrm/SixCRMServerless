@@ -2,6 +2,7 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 var productController = global.routes.include('controllers', 'entities/Product.js');
 var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
@@ -183,7 +184,7 @@ class campaignController extends entityController {
 
         if(!_.has(campaign, 'productschedules') || !_.isArray(campaign.productschedules) || campaign.productschedules.length < 1){
 
-            throw new Error('Invalid product schedule.');
+            eu.throwError('server','Invalid product schedule.');
 
         }
 
@@ -213,7 +214,7 @@ class campaignController extends entityController {
 
             if(schedule_found == false){
 
-                throw new Error('Product schedule does not agree with campaign product schedule: '+product_schedules[i].id);
+                eu.throwError('server','Product schedule does not agree with campaign product schedule: '+product_schedules[i].id);
 
             }
 

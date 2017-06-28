@@ -2,6 +2,7 @@
 const  _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.routes.include('lib', 'parser-utilities.js');
 const SMTPProvider = global.routes.include('controllers', 'providers/SMTP.js');
@@ -27,7 +28,7 @@ module.exports = class userEmailHelperController {
             return false;
         });
 
-        if(_.isNull(customer)){ return Promise.reject(new Error('Unable to get recepient.')); }
+        if(_.isNull(customer)){ return Promise.reject(eu.getError('not_found','Unable to get recepient.')); }
 
         return this.customerController.get(customer);
 
@@ -44,7 +45,7 @@ module.exports = class userEmailHelperController {
             return false;
         });
 
-        if(_.isNull(campaign)){ return Promise.reject(new Error('Unable to get campaign.')); }
+        if(_.isNull(campaign)){ return Promise.reject(eu.getError('not_found','Unable to get campaign.')); }
 
         return this.campaignController.get(campaign);
 
@@ -56,7 +57,7 @@ module.exports = class userEmailHelperController {
 
         return this.getCampaign(data).then((campaign) => {
 
-            if(_.isNull(campaign)){ return Promise.reject(new Error('Unable to identify a campaign.')); }
+            if(_.isNull(campaign)){ return Promise.reject(eu.getError('not_found','Unable to identify a campaign.')); }
 
             return this.campaignController.getEmailTemplatesByEventType(campaign, event_type).then((email_templates) => {
 

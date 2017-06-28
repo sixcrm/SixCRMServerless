@@ -7,6 +7,7 @@ const dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 const sqsutilities = global.routes.include('lib', 'sqs-utilities.js');
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
@@ -181,7 +182,7 @@ class rebillController extends entityController {
                 queue_url = process.env.hold_queue_url;
                 break;
             default:
-                reject(new Error('Bad queue name.'));
+                reject(eu.getError('server','Bad queue name.'));
                 break;
 
             }

@@ -1,4 +1,7 @@
 'use strict';
+
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 var USPSController = global.routes.include('controllers', 'vendors/shippingproviders/USPS.js');
 
 class shippingStatusController {
@@ -20,7 +23,7 @@ class shippingStatusController {
             });
 
         default:
-            return Promise.reject(new Error('Unknown shipping provider: '+provider));
+            return Promise.reject(eu.getError('not_implemented','Unknown shipping provider: '+provider));
         }
 
     }
@@ -34,7 +37,9 @@ class shippingStatusController {
             return USPSController.getStatus(tracking_number);
 
         default:
-            throw new Error('Unknown shipping provider: '+provider);
+
+            eu.throwError('not_implemented','Unknown shipping provider: '+provider);
+
         }
 
     }

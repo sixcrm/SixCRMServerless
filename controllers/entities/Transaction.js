@@ -2,6 +2,7 @@
 const _ = require('underscore');
 var random = global.routes.include('lib', 'random.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 var productController = global.routes.include('controllers', 'entities/Product.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
@@ -172,7 +173,7 @@ class transactionController extends entityController {
         //make sure that the transaction was successful
 
         if(refund.amount > transaction.amount){
-            throw new Error('Refund amount is greater than the transaction amount');
+            eu.throwError('validation', 'Refund amount is greater than the transaction amount');
         }
 
         return Promise.resolve(true);

@@ -3,6 +3,7 @@ const _ = require('underscore');
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 var customerController = global.routes.include('controllers', 'entities/Customer.js');
 var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
@@ -96,7 +97,7 @@ class createLeadController extends transactionEndpointController{
 
                         }
 
-                        return reject(new Error('Unable to create a new customer.'));
+                        return reject(eu.getError('not_implemented', 'Unable to create a new customer.'));
 
                     }).catch((error) => {
 
@@ -139,9 +140,9 @@ class createLeadController extends transactionEndpointController{
                 let campaign = promises[0];
                 let customer = promises[1];
 
-                if(!_.has(campaign, 'id')){ return reject(new Error('A invalid campaign id is specified.')); }
+                if(!_.has(campaign, 'id')){ return reject(eu.getError('bad_request','A invalid campaign id is specified.')); }
 
-                if(!_.has(customer, "id")){ return reject(new Error('A invalid customer id is specified.')); }
+                if(!_.has(customer, "id")){ return reject(eu.getError('bad_request','A invalid customer id is specified.')); }
 
                 let session_object = {
                     customer: customer.id,

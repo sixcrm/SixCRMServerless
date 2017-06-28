@@ -2,6 +2,7 @@
 
 const jsf = require('json-schema-faker');
 const uuidV4 = require('uuid/v4');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 
 class ModelGenerator {
@@ -49,7 +50,7 @@ class ModelGenerator {
 
         }
 
-        return Promise.reject(new Error(`Can't find seed for entity with name '${name}'.`));
+        return Promise.reject(eu.getError('server',`Can't find seed for entity with name '${name}'.`));
 
     }
 

@@ -1,6 +1,8 @@
 'use strict';
 const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities');
+const eu = global.routes.include('lib', 'error-utilities');
+
 const mathutilities = global.routes.include('lib', 'math-utilities');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 const NMIController = global.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
@@ -45,11 +47,11 @@ class merchantProviderController extends entityController {
             try{
                 processor_response = JSON.parse(transaction.processor_response);
             }catch(e){
-                throw new Error('Unable to parse processor response: '+transaction.processor_response);
+                eu.throwError('server','Unable to parse processor response: '+transaction.processor_response);
             }
 
             if(!_.has(processor_response, 'results') || !_.has(processor_response.results, 'transactionid')){
-                throw new Error('Unable identify the processor "transactionid" field from the processor response: '+transaction.processor_response);
+                eu.throwError('server','Unable identify the processor "transactionid" field from the processor response: '+transaction.processor_response);
             }
 
             refund_parameters.transactionid = processor_response.results.transactionid;
@@ -75,7 +77,7 @@ class merchantProviderController extends entityController {
         return _nmi;
 
     	}else{
-        throw new Error('Unrecognized merchant provider: '+merchant_provider.processor);
+        eu.throwError('server','Unrecognized merchant provider: '+merchant_provider.processor);
     }
 
     }

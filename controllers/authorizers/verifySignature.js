@@ -4,6 +4,7 @@ const _ = require("underscore");
 var timestamp = global.routes.include('lib', 'timestamp.js');
 var signature = global.routes.include('lib', 'signature.js');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 const userController = global.routes.include('controllers', 'entities/User.js');
 const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
@@ -59,7 +60,7 @@ class verifySignatureController {
 
              }else{
 
-                 return reject(new Error('Unset Access Key properties.'));
+                 return reject(eu.getError('not_implemented', 'Unset Access Key properties.'));
 
              }
 

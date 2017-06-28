@@ -7,7 +7,8 @@ const anyCode = 200;
 const anyBody = {};
 const anyEvent = {};
 const anyIssues = [];
-const anyError = { issues: [] };
+const anyError = { code: 500, name:'Server Error', message: 'Internal Service Error.', issues: [] };
+const du = global.routes.include('lib', 'debug-utilities.js');
 
 describe('lib/lambda-response', () => {
     describe('response', () => {
@@ -54,7 +55,6 @@ describe('lib/lambda-response', () => {
             new LambdaResponse().issueResponse(aCode, aBody, (first, second) => {
                 let response = second;
 
-                // then
                 expect(response).to.deep.equal(expectedResponse);
                 done();
             });
@@ -69,7 +69,7 @@ describe('lib/lambda-response', () => {
             let expectedResponse = anyErrorResponse();
 
             // when
-            new LambdaResponse().issueError(aMessage, aCode, anEvent, anError, (first, second) => {
+            new LambdaResponse().issueError(anError, anEvent, (first, second) => {
                 let response = second;
 
                 // then
@@ -87,7 +87,7 @@ describe('lib/lambda-response', () => {
             let expectedResponse = anyErrorResponse();
 
             // when
-            new LambdaResponse().issueError(aMessage, aCode, anEvent, anError, (first, second) => {
+            new LambdaResponse().issueError(anError, anEvent, (first, second) => {
                 let response = second;
 
                 // then
@@ -105,7 +105,7 @@ describe('lib/lambda-response', () => {
             let expectedResponse = anErrorResponseWithGenericMessage();
 
             // when
-            new LambdaResponse().issueError(aMessage, aCode, anEvent, anError, (first, second) => {
+            new LambdaResponse().issueError(anError, anEvent, (first, second) => {
                 let response = second;
 
                 // then
@@ -142,32 +142,46 @@ describe('lib/lambda-response', () => {
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
-            body: 'An unexpected error occurred.'
+            body: JSON.stringify({
+              success: false,
+              code: 500,
+              data: null,
+              error_type: "Server Error",
+              message: "Internal Service Error."
+            })
         };
     }
 
     function anyErrorResponse() {
         return {
-            statusCode: anyCode,
+            statusCode: 500,
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
-            body: JSON.stringify({
-                message: anyMessage,
-                issues: anyIssues
+            body:JSON.stringify({
+              success:false,
+              code:500,
+              data:null,
+              error_type: "Server Error",
+              message: "Internal Service Error.",
+              issues:[]
             })
         };
     }
 
     function anErrorResponseWithGenericMessage() {
         return {
-            statusCode: anyCode,
+            statusCode: 500,
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
-                message: 'An unexpected error occurred.',
-                issues: anyIssues
+              success:false,
+              code:500,
+              data:null,
+              error_type: "Server Error",
+              message: "Internal Service Error.",
+              issues:[]
             })
         };
     }

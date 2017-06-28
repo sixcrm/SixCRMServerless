@@ -3,6 +3,7 @@ const _ = require("underscore");
 
 const jwtutilities = global.routes.include('lib', 'jwt-utilities');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 class verifyTransactionJWTController {
 
@@ -30,7 +31,7 @@ class verifyTransactionJWTController {
 
         if(!_.has(process.env, 'transaction_jwt_secret_key')){
 
-            throw new Error('JWT verification requires a secret key.');
+            eu.throwError('server', 'Missing JWT secret key.');
 
         }
 

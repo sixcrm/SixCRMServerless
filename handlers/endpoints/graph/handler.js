@@ -1,25 +1,27 @@
 'use strict';
 require('../../../routes.js');
 
+const _ = require('underscore');
+
 const timer = global.routes.include('lib', 'timer');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
 const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
 const graphController = global.routes.include('controllers', 'endpoints/graph.js');
 
 module.exports.graph = (event, context, callback) => {
 
-    let response;
     let gc = new graphController();
 
     gc.execute(event).then((result) => {
 
-        response = new LambdaResponse().issueResponse(200, result, callback);
-        return response;
+      return new LambdaResponse().issueSuccess(result, callback);
 
     })
     .catch((error) =>{
-        response = new LambdaResponse().issueError(error, 500, event, error, callback);
-        return response;
+
+      return new LambdaResponse().issueError(error, event, callback);
+
     });
 
 }

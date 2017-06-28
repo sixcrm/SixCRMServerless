@@ -2,6 +2,7 @@
 var _ = require("underscore");
 
 var timestamp = global.routes.include('lib', 'timestamp.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
@@ -37,9 +38,9 @@ class processBillingController extends workerController {
 
             let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
 
-            if(timestamp.getTimeDifference(bill_at_timestamp) < 0){ return reject(new Error('Rebill is not eligible for processing at this time.')); }
+            if(timestamp.getTimeDifference(bill_at_timestamp) < 0){ return reject(eu.getError('bad_request','Rebill is not eligible for processing at this time.')); }
 
-            if(_.has(rebill, 'second_attempt')){  return reject(new Error('The rebill has already been attempted three times.')); }
+            if(_.has(rebill, 'second_attempt')){  return reject(eu.getError('bad_request','The rebill has already been attempted three times.')); }
 
             if(_.has(rebill, 'first_attempt')){
 
@@ -47,7 +48,7 @@ class processBillingController extends workerController {
 
                 if(time_difference < (60 * 60 * 24)){
 
-                    return reject(new Error('Rebill\'s first attempt is too recent.'));
+                    return reject(eu.getError('bad_request','Rebill\'s first attempt is too recent.'));
 
                 }
 
@@ -66,21 +67,21 @@ class processBillingController extends workerController {
                 var parent_session = promises[2];
 
 				//review this rule.  For instance, if there are successful transactions, but a single failed...
-				//if(transactions.length > 0){ return reject(new Error('Rebill already has processed transactions.')); }
+				//if(transactions.length > 0){ return reject(eu.getError('bad_request','Rebill already has processed transactions.')); }
 
 				//session needs load balancers
 				//Technical Debt:  With capacity
 
-                if(product_schedules.length < 1){ return reject(new Error('A Rebill must be associated with atleast one product schedule.')); }
+                if(product_schedules.length < 1){ return reject(eu.getError('not_found','A Rebill must be associated with atleast one product schedule.')); }
 
                 sessionController.validate(parent_session).then((validated) => {
 
-                    if(validated.errors.length > 0 ){ return reject( new Error('Invalid Session returned.')); }
+                    if(validated.errors.length > 0 ){ return reject( eu.getError('not_found','Invalid Session returned.')); }
 
                     var day_in_cycle = rebillController.calculateDayInCycle(parent_session.created);
 
                     if(!_.isNumber(day_in_cycle) || day_in_cycle < 0){
-                        return reject( new Error('Invalid day in cycle returned for session.'));
+                        return reject( eu.getError('server','Invalid day in cycle returned for session.'));
                     }
 
                     var transaction_products = productScheduleController.getTransactionProducts(day_in_cycle, product_schedules);
@@ -89,9 +90,9 @@ class processBillingController extends workerController {
 
                     transaction_products.forEach((transaction_product) => {
 
-                        if(!_.has(transaction_product, "amount")){ return reject(new Error('Transaction product missing an amount: '+transaction_product)); }
+                        if(!_.has(transaction_product, "amount")){ return reject(eu.getError('validation','Transaction product missing an amount: '+transaction_product)); }
 
-                        if(!_.has(transaction_product, "product")){ return reject(new Error('Transaction product missing a product: '+transaction_product)); }
+                        if(!_.has(transaction_product, "product")){ return reject(eu.getError('validation','Transaction product missing a product: '+transaction_product)); }
 
                         promises.push(productController.get(transaction_product.product));
 
@@ -117,7 +118,7 @@ class processBillingController extends workerController {
 
                                 if(validation_result.errors.length > 0){
 
-                                    return reject( new Error('Invalid product associated with product schedule.'));
+                                    return reject( eu.getError('validation','Invalid product associated with product schedule.'));
 
                                 }
                             });

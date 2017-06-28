@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const _ = require('underscore');
 const fs = require('fs');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 //Technical Debt:  THis should use a lib utility instead of making raw AWS calls
 const cs = new AWS.CloudSearch({
@@ -21,7 +22,7 @@ createDomain()
 .then(indexDocuments)
 .then(du.highlight('Complete'))
 .catch((error) => {
-    throw new Error(error);
+    eu.throwError('server', error);
 });
 
 function createDomain() {

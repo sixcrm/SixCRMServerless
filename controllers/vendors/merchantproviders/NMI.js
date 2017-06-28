@@ -4,6 +4,7 @@ const request = require('request');
 const querystring = require('querystring');
 
 const du = global.routes.include('lib', 'debug-utilities');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 class NMIController {
 
@@ -77,7 +78,7 @@ class NMIController {
 
                 }else{
 
-                    new Error('Unexpected Error posting to NMI.');
+                    eu.throwError('server', 'Unexpected Error posting to NMI.');
 
                 }
 
@@ -143,7 +144,7 @@ class NMIController {
 
                 }else{
 
-                    new Error('Unexpected Error posting to NMI.');
+                    eu.throwError('server','Unexpected Error posting to NMI.');
 
                 }
 
@@ -207,7 +208,7 @@ class NMIController {
 
                 }else{
 
-                    new Error('Unexpected Error posting to NMI.');
+                    eu.throwError('server','Unexpected Error posting to NMI.');
 
                 }
 

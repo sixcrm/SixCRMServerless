@@ -3,6 +3,7 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const mathutilities = global.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.routes.include('lib', 'random.js');
 const timestamp = global.routes.include('lib', 'timestamp.js');
@@ -75,19 +76,19 @@ class RandomRedshiftData extends workerController {
 
             if(!_.has(this, 'start_datetime') || !_.has(this, 'end_datetime')){
 
-                return Promise.reject(new Error('Invalid datetime fields -  both start and end are required if any one of them is provided.'));
+                return Promise.reject(eu.getError('validation','Invalid datetime fields -  both start and end are required if any one of them is provided.'));
 
             }
 
             if(!timestamp.isISO8601(this.start_datetime) || !timestamp.isISO8601(this.end_datetime)){
 
-                return Promise.reject(new Error('Invalid datetimes -  the start and end datetimes must be ISO8601 format compliant.'));
+                return Promise.reject(eu.getError('validation','Invalid datetimes -  the start and end datetimes must be ISO8601 format compliant.'));
 
             }
 
             if(this.start_datetime > this.end_datetime){
 
-                return Promise.reject(new Error('Invalid datetimes -  the start datetime must be less than or equal to the end datetime.'));
+                return Promise.reject(eu.getError('validation','Invalid datetimes -  the start datetime must be less than or equal to the end datetime.'));
 
             }
 
@@ -434,13 +435,13 @@ class RandomRedshiftData extends workerController {
 
             }else{
 
-                throw new Error('Amount not defined for product schedule obect.');
+                eu.throwError('validation','Amount not defined for product schedule obect.');
 
             }
 
         }
 
-        throw new Error('No product schedule in the event object');
+        eu.throwError('validation','No product schedule in the event object');
 
     }
 
@@ -457,7 +458,7 @@ class RandomRedshiftData extends workerController {
             }
         }
 
-        throw new Error('No product schedule defined for the campaign object');
+        eu.throwError('validation','No product schedule defined for the campaign object');
 
     }
 

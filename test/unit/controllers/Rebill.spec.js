@@ -3,6 +3,8 @@ const TimestampUtils = require('../../../lib/timestamp');
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 
 describe('controllers/Rebill.js', () => {
     const oneDayInSeconds = 86400;
@@ -392,7 +394,7 @@ describe('controllers/Rebill.js', () => {
             // mock sqs utilities that always fails
             mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
-                    callback(new Error('Sending message failed.'), null);
+                    callback(eu.getError('server','Sending message failed.'), null);
                 }
 
             });
@@ -403,7 +405,7 @@ describe('controllers/Rebill.js', () => {
             return rebillController.sendMessageAndMarkRebill(aRebill).catch((error) => {
                 // then
                 expect(aRebill.processing).not.to.be.equal('true');
-                expect(error.message).to.be.equal('Sending message failed.');
+                expect(error.message).to.be.equal('[500] Sending message failed.');
             });
         });
     });

@@ -1,6 +1,8 @@
 'use strict';
 var _ = require("underscore");
 
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 var workerController = global.routes.include('controllers', 'workers/worker.js');
@@ -119,7 +121,7 @@ class archiveController extends workerController {
 
                 default:
 
-                    return reject(new Error('Unrecognized archive filter: '+process.env.archivefilter));
+                    return reject(eu.getError('not_implemented','Unrecognized archive filter: '+process.env.archivefilter));
 
                 }
 

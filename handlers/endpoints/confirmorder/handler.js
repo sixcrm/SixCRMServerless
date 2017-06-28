@@ -7,12 +7,13 @@ var confirmOrderController = global.routes.include('controllers', 'endpoints/con
 module.exports.confirmorder = (event, context, callback) => {
 
     confirmOrderController.execute(event).then((response) => {
-        return new LambdaResponse().issueResponse(200, {
-            message: 'Success',
-            results: response
-        }, callback);
+
+        return new LambdaResponse().issueSuccess(response, callback);
+
     }).catch((error) =>{
-        return new LambdaResponse().issueError(error.message, 500, event, error, callback);
+
+        return new LambdaResponse().issueError(error, event, callback);
+
     });
 
 };

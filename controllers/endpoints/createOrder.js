@@ -3,6 +3,7 @@ const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 var sessionController = global.routes.include('controllers', 'entities/Session.js');
 var customerController = global.routes.include('controllers', 'entities/Customer.js');
@@ -124,14 +125,20 @@ class createOrderController extends transactionEndpointController{
 
         du.debug('Get Order Campaign');
 
-        if(!_.isObject(info.session) || !_.has(info.session, 'campaign')){
-            throw new Error('No available session campaign.');
+        if(!_.isObject(info.session)){
+            eu.throwError('not_found', 'Unable to identify session.');
+        }
+
+        if(!_.has(info.session, 'campaign')){
+            eu.throwError('not_found', 'Unable to identify session campaign.');
         }
 
         return campaignController.getHydratedCampaign(info.session['campaign']).then((campaign) => {
 
             if(!_.isObject(campaign) || !_.has(campaign, 'id')){
-                throw new Error('No available campaign.');
+
+                eu.throwError('not_found', 'Unable to identify session campaign.');
+
             }
 
             info['campaign'] = campaign;
@@ -145,19 +152,19 @@ class createOrderController extends transactionEndpointController{
     validateInfo(info){
 
         if(!_.isObject(info.session) || !_.has(info.session, 'id')){
-            throw new Error('No available session.');
+            eu.throwError('not_found', 'Unable to identify session.');
         }
 
         if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
-            throw new Error('No available creditcard.');
+            eu.throwError('not_found', 'Unable to identify credit card.');
         }
 
         if(info.session.completed == 'true'){
-            throw new Error('The specified session is already complete.');
+            eu.throwError('bad_request', 'The specified session is already complete.');
         }
 
         if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
-            throw new Error('No available schedules to purchase.');
+            eu.throwError('not_found', 'No available schedules to purchase.');
         }
 
         sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
@@ -213,7 +220,7 @@ class createOrderController extends transactionEndpointController{
 
 			      //more validation
             if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
- 			 	        throw new Error('No available customer.');
+                eu.throwError('not_found', 'Customer not found.');
             }
 
 			      //Technical Debt: refactor this to use the transaction products above....
@@ -243,7 +250,7 @@ class createOrderController extends transactionEndpointController{
             //validate processor
           if(!_.has(processor, "message") || processor.message !== 'Success' || !_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'){
 
-              throw new Error('The processor didn\'t approve the transaction: ' + processor.message);
+              eu.throwError('server', 'The processor didn\'t approve the transaction: ' + processor.message);
 
           }
 

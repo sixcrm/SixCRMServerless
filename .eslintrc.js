@@ -12,7 +12,7 @@ module.exports = {
         "eslint:recommended"
     ],
     "rules": {
-        "indent": ["warn", 4],
+        //"indent": ["warn", 4],
         "linebreak-style": [ "error", "unix" ],
         "newline-after-var": ["warn", "always"],
         //"newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }],

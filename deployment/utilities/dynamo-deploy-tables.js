@@ -5,6 +5,8 @@ const fs = require('fs');
 const exec = require('child-process-promise').exec;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
 const retryCount = 5;
 
@@ -123,7 +125,7 @@ class DynamoDeployTables {
         let name = (obj.Table || {}).TableName || '';
 
         if (!name) {
-            throw new Error('Unable to identify table name in DynamoDB migration JSON.');
+            eu.throwError('server','Unable to identify table name in DynamoDB migration JSON.');
         }
         return name
     }

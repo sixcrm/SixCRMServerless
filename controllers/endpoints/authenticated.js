@@ -2,6 +2,7 @@
 const _ = require("underscore");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 
 const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
@@ -49,7 +50,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
             }else{
 
-                return reject(new Error('Unset pathParameters in the event.'));
+                return reject(eu.getError('bad_request','Unset pathParameters in the event.'));
 
             }
 
@@ -59,13 +60,13 @@ module.exports = class AuthenticatedController extends endpointController {
 
             }else{
 
-                return reject(new Error('Unable to identify account in pathParameters.'));
+                return reject(eu.getError('bad_request', 'Unable to identify account in pathParameters.'));
 
             }
 
             if(!_.isString(account)){
 
-                return reject('Unrecognized account format.');
+                return reject(eu.getError('bad_request', 'Unrecognized account format.'));
 
             }
 
@@ -83,13 +84,13 @@ module.exports = class AuthenticatedController extends endpointController {
 
         if(!_.has(event.requestContext, "authorizer")){
 
-            return Promise.reject(new Error('Unable to identify the authorizer property in the event request context.'));
+            return Promise.reject(eu.getError('server','Unable to identify the authorizer property in the event request context.'));
 
         }
 
         if(!_.has(event.requestContext.authorizer, "user")){
 
-            return Promise.reject(new Error('Unable to identify the user node in the event request context authorizer property.'));
+            return Promise.reject(eu.getError('server','Unable to identify the user node in the event request context authorizer property.'));
 
         }
 
@@ -99,7 +100,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
         if(!_.isString(user_string)){
 
-            return Promise.reject(new Error('Event request context authorizer user is an unrecognized format.'));
+            return Promise.reject(eu.getError('server','Event request context authorizer user is an unrecognized format.'));
 
         }
 
@@ -114,7 +115,7 @@ module.exports = class AuthenticatedController extends endpointController {
                 }else if(user == false){
 
                     if (!this.isUserIntrospection(event)) {
-                        return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                        return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
                     }
 
                     du.warning('Unable to acquire user, setting global user to email.');
@@ -139,7 +140,7 @@ module.exports = class AuthenticatedController extends endpointController {
                 }else if(user == false){
 
                     if (!this.isUserIntrospection(event)) {
-                        return Promise.reject(new Error('Unknown user.  Please contact the system administrator.'));
+                        return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
                     }
 
                     du.warning('Unable to acquire user, setting global user to alias.');
@@ -172,7 +173,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
                     let error_string = 'Unable to execute action - user lacks permissions: '+permission_object.permission_failures.join(', ');
 
-                    return reject(new Error(error_string));
+                    return reject(eu.getError('fobidden', error_string));
 
                 }
 

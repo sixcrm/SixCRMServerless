@@ -7,12 +7,13 @@ var acquireTokenController = global.routes.include('controllers','endpoints/acqu
 module.exports.acquiretoken = (event, context, callback) => {
 
     acquireTokenController.execute(event).then((response) => {
-        return new LambdaResponse().issueResponse(200, {
-            message: 'Success',
-            token: response
-        }, callback);
+
+        return new LambdaResponse().issueSuccess(response, callback);
+
     }).catch((error) =>{
-        return new LambdaResponse().issueError(error.message, 500, event, error, callback);
+
+        return new LambdaResponse().issueError(error, event, callback);
+
     });
 
 }

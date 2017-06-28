@@ -3,6 +3,7 @@ const _ = require("underscore");
 const graphql =  require('graphql').graphql;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 let authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
 const resolveController = global.routes.include('providers', 'Resolve.js');
@@ -21,9 +22,9 @@ module.exports = class graphController extends authenticatedController {
 
     execute(event){
 
-        du.debug('Execute');
+      du.debug('Execute');
 
-        return this.parseEvent(event)
+      return this.parseEvent(event)
 			.then((event) => this.acquireAccount(event))
       .then((event) => this.acquireUser(event))
       .then((event) => this.acquireQuerystring(event))
@@ -31,7 +32,8 @@ module.exports = class graphController extends authenticatedController {
       .then((event) => this.acquireQueryParameters(event))
       .then((event) => this.acquireOutputParameters(event))
       .then((event) => this.setCacheParameters(event))
-			.then((event) => this.graphQuery(event));
+			.then((event) => this.graphQuery(event))
+      .then((response) => this.handleGraphErrors(response));
 
     }
 
@@ -103,6 +105,34 @@ module.exports = class graphController extends authenticatedController {
         };
 
         return this.resolveController.resolve(graph_resolver);
+
+    }
+
+    handleGraphErrors(response){
+
+      if(_.has(response, 'errors') && _.isArray(response.errors) && response.errors.length > 0){
+
+        let graph_error = response.errors[0];
+
+        let error_name = graph_error.stack.substring(0, graph_error.stack.indexOf(':'));
+
+        let correct_error = eu.getErrorByName(error_name);
+
+        if(_.isError(correct_error)){
+
+          if(_.has(graph_error, "message")){
+            correct_error.message = graph_error.message;
+          }
+
+          throw correct_error;
+
+        }
+
+        throw graph_error;
+
+      }
+
+      return response;
 
     }
 

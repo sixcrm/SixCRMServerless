@@ -4,6 +4,8 @@ const j2csv = require('json2csv');
 var XLSX = require('xlsx');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 const randomutilities = global.routes.include('lib', 'random.js');
 const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
 const objectutilities = global.routes.include('lib', 'object-utilities.js');
@@ -101,19 +103,19 @@ class DownloadController {
 
         if(!_.isObject(parameters)){
 
-            throw new Error('Invalid download parameter type.');
+            eu.throwError('bad_request','Invalid download parameter type.');
 
         }
 
         if(!_.has(parameters, 'type')){
 
-            throw new Error('Download parameters missing type field.');
+            eu.throwError('bad_request','Download parameters missing type field.');
 
         }
 
         if(!_.contains(this.available_types, parameters.type)){
 
-            throw new Error('Download type is not supported.');
+            eu.throwError('bad_request','Download type is not supported.');
 
         }
 

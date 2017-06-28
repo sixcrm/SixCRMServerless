@@ -2,6 +2,8 @@ let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 
 describe('lib/indexing-utilities', () => {
 
@@ -77,7 +79,7 @@ describe('lib/indexing-utilities', () => {
             try {
                 IndexingUtilities.parseMessage(aMessage);
             } catch (error) {
-                expect(error.message).to.equal('Unable to acquire message body.');
+                expect(error.message).to.equal('[500] Unable to acquire message body.');
             }
 
         });
@@ -92,7 +94,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
-                expect(error.message).to.equal('Missing search_indexing_queue_url definition in the process.env object.');
+                expect(error.message).to.equal('[500] Missing search_indexing_queue_url definition in the process.env object.');
             });
         });
 
@@ -104,7 +106,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
-                expect(error.message).to.equal('Indexable entities must have a "index_action" which is either "add" or "delete".');
+                expect(error.message).to.equal('[500] Indexable entities must have a "index_action" which is either "add" or "delete".');
             });
         });
 
@@ -118,7 +120,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
-                expect(error.message).to.equal('Indexable entities must have a "index_action" which is either "add" or "delete".');
+                expect(error.message).to.equal('[500] Indexable entities must have a "index_action" which is either "add" or "delete".');
             });
         });
 
@@ -132,7 +134,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
-                expect(error.message).to.equal('Indexable entities must have a "Entity Type".');
+                expect(error.message).to.equal('[500] Indexable entities must have a "Entity Type".');
             });
         });
 
@@ -184,14 +186,14 @@ describe('lib/indexing-utilities', () => {
 
             mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
-                    callback(new Error('Sending message failed.'), null);
+                    callback(eu.getError('server','Sending message failed.'), null);
                 }
             });
             let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
-                expect(error.message).to.equal('Sending message failed.');
+                expect(error.message).to.equal('[500] Sending message failed.');
             });
         });
     });

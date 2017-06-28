@@ -38,7 +38,7 @@ describe('lib/permission-utilities', () => {
                 // then
                 expect(result).to.equal(false);
             }).catch(error => {
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('[500] Missing request parameters');
             });
         });
 
@@ -216,7 +216,7 @@ describe('lib/permission-utilities', () => {
                 // then
                 expect(result).to.equal(false);
             }).catch(error => {
-                expect(error.message).to.equal('Unexpected ACL object structure');
+                expect(error.message).to.equal('[500] Unexpected ACL object structure');
             });
         });
 
@@ -232,7 +232,7 @@ describe('lib/permission-utilities', () => {
                 // then
                 expect(result).to.equal(false);
             }).catch(error => {
-                expect(error.message).to.equal('Unexpected ACL object structure');
+                expect(error.message).to.equal('[500] Unexpected ACL object structure');
             });
         });
 
@@ -248,7 +248,7 @@ describe('lib/permission-utilities', () => {
                 // then
                 expect(result).to.equal(false);
             }).catch(error => {
-                expect(error.message).to.equal('Unexpected ACL object structure');
+                expect(error.message).to.equal('[500] Unexpected ACL object structure');
             });
         });
 
@@ -264,7 +264,7 @@ describe('lib/permission-utilities', () => {
                 // then
                 expect(result).to.equal(false);
             }).catch(error => {
-                expect(error.message).to.equal('Unset ACL Account');
+                expect(error.message).to.equal('[404] Unset ACL Account');
             });
         });
     });
@@ -473,7 +473,7 @@ describe('lib/permission-utilities', () => {
                 PermissionUtilities.buildPermissionObject();
             } catch(error) {
                 // then
-                expect(error.message).to.equal('Unexpected ACL object structure');
+                expect(error.message).to.equal('[500] Unexpected ACL object structure');
             }
         });
 
@@ -487,7 +487,7 @@ describe('lib/permission-utilities', () => {
                 PermissionUtilities.buildPermissionObject();
             } catch(error) {
                 // then
-                expect(error.message).to.equal('Unexpected ACL object structure');
+                expect(error.message).to.equal('[500] Unexpected ACL object structure');
             }
         });
 
@@ -501,7 +501,7 @@ describe('lib/permission-utilities', () => {
                 PermissionUtilities.buildPermissionObject();
             } catch(error) {
                 // then
-                expect(error.message).to.equal('Unexpected ACL object structure');
+                expect(error.message).to.equal('[500] Unexpected ACL object structure');
             }
         });
 
@@ -515,7 +515,7 @@ describe('lib/permission-utilities', () => {
                 PermissionUtilities.buildPermissionObject();
             } catch(error) {
                 // then
-                expect(error.message).to.equal('Unset ACL Account');
+                expect(error.message).to.equal('[404] Unset ACL Account');
             }
         });
     });
@@ -528,7 +528,7 @@ describe('lib/permission-utilities', () => {
 
             // when
             return PermissionUtilities.getPermissions().then().catch(error => {
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('[500] Missing request parameters');
             });
         });
 
@@ -539,7 +539,7 @@ describe('lib/permission-utilities', () => {
 
             // when
             return PermissionUtilities.getPermissions().then().catch(error => {
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('[500] Missing request parameters');
             });
         });
 
@@ -550,7 +550,7 @@ describe('lib/permission-utilities', () => {
 
             // when
             return PermissionUtilities.getPermissions().then().catch(error => {
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('[500] Missing request parameters');
             });
         });
 
@@ -561,7 +561,7 @@ describe('lib/permission-utilities', () => {
 
             // when
             return PermissionUtilities.getPermissions().then().catch(error => {
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('[500] Missing request parameters');
             });
         });
 

@@ -2,6 +2,7 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 
 const entityUtilitiesController = global.routes.include('controllers','entities/EntityUtilities');
 
@@ -157,7 +158,7 @@ module.exports = class entityController extends entityUtilitiesController {
     getList(list_array){
 
         if(!_.isArray(list_array)){
-            return Promise.reject(new Error('List array must be of type array.'));
+            return Promise.reject(eu.getError('bad_request','List array must be of type array.'));
         }
 
         if(list_array.length < 1){
@@ -237,7 +238,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                             if(data.length > 1){
 
-                                return reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
+                                return reject(eu.getError('bad_request','Multiple '+this.descriptive_name+'s returned where one should be returned.'));
 
                             }else{
 
@@ -377,7 +378,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                             if(data.length > 1){
 
-                                reject(new Error('Multiple '+this.descriptive_name+'s returned where one should be returned.'));
+                                reject(eu.getError('bad_request','Multiple '+this.descriptive_name+'s returned where one should be returned.'));
 
                             }else{
 
@@ -496,7 +497,7 @@ module.exports = class entityController extends entityUtilitiesController {
           .then(() => this.exists(entity, primary_key))
           .then((exists) => {
 
-              if(exists !== false){ return reject(new Error('A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
+              if(exists !== false){ return reject(eu.getError('bad_request','A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
 
               return this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
@@ -522,11 +523,11 @@ module.exports = class entityController extends entityUtilitiesController {
 
           });
 
-            }).catch((error) => {
+        }).catch((error) =>{
 
-                return reject(error);
+          return reject(error);
 
-            });
+        });
 
         });
 
@@ -543,14 +544,14 @@ module.exports = class entityController extends entityUtilitiesController {
 
             return this.can('update', true).then(() => {
 
-                if(!_.has(entity, primary_key)){ return reject(new Error('Unable to update '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
+                if(!_.has(entity, primary_key)){ return reject(eu.getError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
 
                 entity = this.assignAccount(entity);
 
                 return this.exists(entity, primary_key)
                 .then((exists) => {
 
-                    if(exists === false){ return reject(new Error('Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
+                    if(exists === false){ return reject(eu.getError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
 
                   //Note:  People can't change these automatically included fields...
                     entity = this.persistCreatedUpdated(entity, exists);
@@ -699,7 +700,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                     if(_.isError(error)){ reject(error);}
 
-                    if(!_.isObject(data) || !_.isArray(data) || data.length !== 1){ return reject(new Error('Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.')); }
+                    if(!_.isObject(data) || !_.isArray(data) || data.length !== 1){ return reject(eu.getError('not_found','Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.')); }
 
                     this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
 
@@ -740,7 +741,7 @@ module.exports = class entityController extends entityUtilitiesController {
         if(!_.has(entity, primary_key)){
 
             //Technical Debt:  What is this message?
-            return Promise.reject(new Error('Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"'));
+            return Promise.reject(eu.getError('bad_request','Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"'));
 
         }else{
 
@@ -763,7 +764,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                     }else if(data.length > 1){
 
-                        return reject(new Error('Non-unique data present in the database for '+primary_key+': '+entity[primary_key]));
+                        return reject(eu.getError('bad_request','Non-unique data present in the database for '+primary_key+': '+entity[primary_key]));
 
                     }
 

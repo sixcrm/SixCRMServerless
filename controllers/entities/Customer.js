@@ -2,6 +2,7 @@
 const _ = require('underscore');
 
 const du =  global.routes.include('lib', 'debug-utilities.js');
+const eu =  global.routes.include('lib', 'error-utilities.js');
 const arrayutilities =  global.routes.include('lib', 'array-utilities.js');
 
 const entityController = global.routes.include('controllers', 'entities/Entity.js');
@@ -72,7 +73,7 @@ class customerController extends entityController {
 
             if(!_.has(creditcard, 'id')){
 
-                return reject(new Error('Invalid customer provided.'));
+                return reject(eu.getError('bad_request','Invalid customer provided.'));
 
             }
 
@@ -103,7 +104,7 @@ class customerController extends entityController {
 
                 }else{
 
-                    return reject(new Error('Unexpected customer structure.'));
+                    return reject(eu.getError('bad_request','Unexpected customer structure.'));
 
                 }
 
@@ -200,7 +201,7 @@ class customerController extends entityController {
 
                     }
 
-                    return reject(new Error('Unable to identify most recent credit card.'));
+                    return reject(eu.getError('not_found','Unable to identify most recent credit card.'));
 
                 });
 

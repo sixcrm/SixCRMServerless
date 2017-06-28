@@ -7,12 +7,13 @@ var createLeadController = global.routes.include('controllers', 'endpoints/creat
 module.exports.createlead = (event, context, callback) => {
 
     createLeadController.execute(event).then((response) => {
-        return new LambdaResponse().issueResponse(200, {
-            message: 'Success',
-            results: response
-        }, callback);
+
+        return new LambdaResponse().issueSuccess(response, callback);
+
     }).catch((error) =>{
-        return new LambdaResponse().issueError(error.message, 500, event, error, callback);
+
+        return new LambdaResponse().issueError(error, event, callback);
+
     });
 
 };

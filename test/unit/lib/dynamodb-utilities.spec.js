@@ -5,6 +5,8 @@ let expect = chai.expect;
 let anyItem = { property: 'value' };
 let anyTableName = 'tableName';
 
+const eu = global.routes.include('lib', 'error-utilities.js');
+
 describe('lib/dynamodb-utilities', () => {
     describe('dynamodb-utilities', () => {
 
@@ -37,7 +39,7 @@ describe('lib/dynamodb-utilities', () => {
 
             DynamoDBUtilities.dynamodb = {
                 put: (params, callback) => {
-                    callback(new Error('An error occurred.'), 'A stacktrace.');
+                    callback(eu.getError('server','An error occurred.'), 'A stacktrace.');
                 }
             };
 
@@ -121,7 +123,7 @@ describe('lib/dynamodb-utilities', () => {
 
             DynamoDBUtilities.dynamodb = {
                 scan: (params, callback) => {
-                    callback(new Error('An error occurred.'), 'A stacktrace.');
+                    callback(eu.getError('server','An error occurred.'), 'A stacktrace.');
                 }
             };
 

@@ -2,6 +2,7 @@
 const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
 const mvu = global.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 
@@ -48,7 +49,7 @@ module.exports = class Process{
 
             }else{
 
-                throw new Error('Process class parameters missing required field:"'+required_parameter+'".');
+                eu.throwError('server','Process class parameters missing required field:"'+required_parameter+'".');
 
             }
 
@@ -82,22 +83,22 @@ module.exports = class Process{
 
         du.debug('Select Customer Credit Card');
 
-      /*
-      Note:  This method selects (in order)
-      (1) the card marked default
-      (2) the most recently updated card
-      (3) the first credit card in the list
-      */
+        /*
+        Note:  This method selects (in order)
+        (1) the card marked default
+        (2) the most recently updated card
+        (3) the first credit card in the list
+        */
 
         if(!_.has(this.customer, 'creditcards') || !_.isArray(this.customer.creditcards) || this.customer.creditcards.length < 1){
-            throw new Error('Customer is not associated with a credit card.');
+            eu.throwError('bad_request','Customer is not associated with a credit card.');
         }
 
         let selected_credit_card = null;
 
         this.customer.creditcards.forEach((credit_card) => {
 
-            if(!_.has(credit_card, 'updated_at')){ throw new Error('Credit card is missing the "updated_at" field.'); }
+            if(!_.has(credit_card, 'updated_at')){ eu.throwError('validation','Credit card is missing the "updated_at" field.'); }
 
             if(_.has(credit_card, 'default') && credit_card.default == true){
 
@@ -116,7 +117,7 @@ module.exports = class Process{
         });
 
         if(_.isNull(selected_credit_card)){
-            throw new Error('Unable to set credit card for customer');
+            eu.throwError('not_found','Unable to set credit card for customer');
         }
 
         this.credit_card = selected_credit_card;
@@ -133,7 +134,7 @@ module.exports = class Process{
 
             if(_.isNull(properties)){
 
-                du.warning('Unable to identify credit card properties.');
+                eu.throwError('not_found','Unable to identify credit card properties.');
 
                 return false;
 
@@ -210,7 +211,7 @@ module.exports = class Process{
         let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
             if(!_.has(merchant_provider, 'enabled')){
-                throw new Error('Merchant Provider missing "enabled" field.');
+                eu.throwError('server','Merchant Provider missing "enabled" field.');
             }
 
             return merchant_provider.enabled;
@@ -229,7 +230,7 @@ module.exports = class Process{
 
         //Finish
             if(!_.has(merchant_provider, 'enabled')){
-                throw new Error('Merchant Provider missing "enabled" field.');
+                eu.throwError('server','Merchant Provider missing "enabled" field.');
             }
 
             return merchant_provider.enabled;
@@ -248,7 +249,7 @@ module.exports = class Process{
 
         //Finish
             if(!_.has(merchant_provider, 'enabled')){
-                throw new Error('Merchant Provider missing "enabled" field.');
+                eu.throwError('server','Merchant Provider missing "enabled" field.');
             }
 
             return merchant_provider.enabled;
@@ -267,7 +268,7 @@ module.exports = class Process{
 
         //Finish
             if(!_.has(merchant_provider, 'enabled')){
-                throw new Error('Merchant Provider missing "enabled" field.');
+                eu.throwError('server','Merchant Provider missing "enabled" field.');
             }
 
             return merchant_provider.enabled;

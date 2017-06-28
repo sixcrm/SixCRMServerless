@@ -2,6 +2,8 @@
 require('../../routes.js');
 const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.routes.include('lib', 'debug-utilities.js');
+
 const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
 
 du.highlight('Executing CloudSearch Index Purge');
@@ -24,7 +26,7 @@ cloudsearchutilities.search(query_parameters).then((results) => {
 
         }else{
 
-            throw new Error('Unable to identify found count in search results.');
+            eu.throwError('server','Unable to identify found count in search results.');
 
         }
 
@@ -38,13 +40,13 @@ cloudsearchutilities.search(query_parameters).then((results) => {
 
         }else{
 
-            throw new Error('Unable to identify hit property in search results hits.');
+            eu.throwError('server','Unable to identify hit property in search results hits.');
 
         }
 
     }else{
 
-        throw new Error('Unable to identify hits property in search results.');
+        eu.throwError('server','Unable to identify hits property in search results.');
 
     }
 
@@ -76,6 +78,6 @@ cloudsearchutilities.search(query_parameters).then((results) => {
 
 }).catch((error) => {
 
-    throw new Error(error);
+    eu.throwError('server', error);
 
 });
