@@ -145,7 +145,7 @@ describe('lib/lambda-response', () => {
             body: JSON.stringify({
               success: false,
               code: 500,
-              data: null,
+              response: null,
               error_type: "Server Error",
               message: "Internal Service Error."
             })
@@ -161,7 +161,7 @@ describe('lib/lambda-response', () => {
             body:JSON.stringify({
               success:false,
               code:500,
-              data:null,
+              response:null,
               error_type: "Server Error",
               message: "Internal Service Error.",
               issues:[]
@@ -178,7 +178,7 @@ describe('lib/lambda-response', () => {
             body: JSON.stringify({
               success:false,
               code:500,
-              data:null,
+              response:null,
               error_type: "Server Error",
               message: "Internal Service Error.",
               issues:[]
