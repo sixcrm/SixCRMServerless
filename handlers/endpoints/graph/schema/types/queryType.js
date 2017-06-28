@@ -784,6 +784,18 @@ module.exports.graphObj = new GraphQLObjectType({
                 return campaignController.list(campaign.pagination);
             }
         },
+        campaignlistbyproductschedule: {
+            type: campaignListType.graphObj,
+            args: {
+              productschedule: {type: new GraphQLNonNull(GraphQLString)},
+              pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+              const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+
+              return campaignController.listCampaignsByProductSchedule(args);
+            }
+        },
         sessionlist: {
             type: sessionListType.graphObj,
             args: {

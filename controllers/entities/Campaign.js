@@ -4,17 +4,37 @@ const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
 
-var productController = global.routes.include('controllers', 'entities/Product.js');
-var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
-var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-var affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
-var emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 
 class campaignController extends entityController {
 
     constructor(){
         super('campaign');
+        this.productController = global.routes.include('controllers', 'entities/Product.js');
+        this.loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+        this.productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+        this.affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+        this.emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+    }
+
+    listCampaignsByProductSchedule(args){
+
+      du.debug('List Campaigns By Product Schedule');
+
+      let product_schedule_id = this.getID(args.productschedule);
+
+      let scan_parameters = {
+        filter_expression: 'contains(#f1, :product_schedule_id)',
+        expression_attribute_names:{
+            '#f1': 'productschedules'
+        },
+        expression_attribute_values: {
+            ':product_schedule_id': product_schedule_id
+        }
+      };
+
+      return this.scanByParameters(scan_parameters, args.pagination);
+
     }
 
     getEmailTemplatesByEventType(campaign, event_type){
@@ -48,7 +68,7 @@ class campaignController extends entityController {
 
         if(_.has(campaign, "emailtemplates")){
 
-            let acquisitions = campaign.emailtemplates.map(id => emailTemplateController.get(id));
+            let acquisitions = campaign.emailtemplates.map(id => this.emailTemplateController.get(id));
 
             return Promise.all(acquisitions).then((acquisitions) => {
 
@@ -68,7 +88,7 @@ class campaignController extends entityController {
 
         if(_.has(campaign, "products")){
 
-            return campaign.products.map(id => productController.get(id));
+            return campaign.products.map(id => this.productController.get(id));
 
         }else{
 
@@ -78,15 +98,17 @@ class campaignController extends entityController {
 
     }
 
+    //Technical Debt:  Deprecated
     getLoadBalancerHydrated(campaign){
 
-        return loadBalancerController.getLoadBalancerHydrated(campaign.loadbalancer);
+        return this.loadBalancerController.getLoadBalancerHydrated(campaign.loadbalancer);
 
     }
 
+    //Technical Debt:  Deprecated
     getLoadBalancer(campaign){
 
-        return loadBalancerController.get(campaign.loadbalancer);
+        return this.loadBalancerController.get(campaign.loadbalancer);
 
     }
 
@@ -94,7 +116,7 @@ class campaignController extends entityController {
 
         if(_.has(campaign, "productschedules")){
 
-            return campaign.productschedules.map(id => productScheduleController.get(id));
+            return campaign.productschedules.map(id => this.productScheduleController.get(id));
 
         }else{
 
@@ -108,7 +130,7 @@ class campaignController extends entityController {
 
         if(_.has(campaign, "productschedules")){
 
-            return Promise.all(campaign.productschedules.map(id => productScheduleController.getProductScheduleHydrated(id)));
+            return Promise.all(campaign.productschedules.map(id => this.productScheduleController.getProductScheduleHydrated(id)));
 
         }else{
 
@@ -120,18 +142,16 @@ class campaignController extends entityController {
 
     getAffiliate(campaign){
 
-        return affiliateController.get(campaign.affiliate);
+        return this.affiliateController.get(campaign.affiliate);
 
     }
 
 	// is there a better way?
     hydrate(campaign){
 
-        var controller_instance = this;
-
         return new Promise((resolve) => {
 
-            return controller_instance.getLoadBalancerHydrated(campaign).then((loadbalancer) => {
+            return this.getLoadBalancerHydrated(campaign).then((loadbalancer) => {
 
                 campaign.loadbalancer = loadbalancer;
 
@@ -139,7 +159,7 @@ class campaignController extends entityController {
 
             }).then((campaign) =>{
 
-                return controller_instance.getProductSchedulesHydrated(campaign).then((product_schedules) => {
+                return this.getProductSchedulesHydrated(campaign).then((product_schedules) => {
 
                     campaign.productschedules = product_schedules;
 
@@ -149,21 +169,12 @@ class campaignController extends entityController {
 
                     return resolve(campaign);
 
-					/*
-					controller_instance.getAffiliate(campaign).then((affiliate) => {
-
-						campaign.affiliate = affiliate;
-
-						resolve(campaign);
-
-					}).catch((error) => {
-						throw error;
-					});
-					*/
-
                 });
+
             }).then((campaign) => {
+
                 return campaign;
+
             });
 
         });
