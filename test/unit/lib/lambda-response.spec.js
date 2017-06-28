@@ -8,7 +8,6 @@ const anyBody = {};
 const anyEvent = {};
 const anyIssues = [];
 const anyError = { code: 500, name:'Server Error', message: 'Internal Service Error.', issues: [] };
-const du = global.routes.include('lib', 'debug-utilities.js');
 
 describe('lib/lambda-response', () => {
     describe('response', () => {
@@ -62,8 +61,6 @@ describe('lib/lambda-response', () => {
 
         it('should issue an error', (done) => {
             // given
-            let aMessage = anyMessage;
-            let aCode = anyCode;
             let anEvent = anyEvent;
             let anError = anyError;
             let expectedResponse = anyErrorResponse();
@@ -80,8 +77,6 @@ describe('lib/lambda-response', () => {
 
         it('should issue an error when nested message provided', (done) => {
             // given
-            let aMessage = { message: 'a message' };
-            let aCode = anyCode;
             let anEvent = anyEvent;
             let anError = anyError;
             let expectedResponse = anyErrorResponse();
