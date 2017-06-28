@@ -1,0 +1,86 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		productschedulelistbyproduct (product: \"616cc994-9480-4640-b26c-03810a679fe3\") {
+			productschedules {
+				id,
+				name,
+				schedule {
+					price,
+					start,
+					end,
+					period,
+					product {
+						id,
+						name,
+						sku,
+						ship,
+						shipping_delay,
+						fulfillment_provider {
+							id,
+							name,
+							provider,
+							username,
+							password,
+							endpoint
+						}
+					}
+				},
+				loadbalancers{
+					id,
+					merchantproviderconfigurations {
+						merchantprovider {
+							id,
+							name,
+							processor {
+								name,
+								id
+							},
+							processing {
+								monthly_cap,
+								discount_rate,
+								transaction_fee,
+								reserve_rate,
+								maximum_chargeback_ratio,
+								transaction_counts {
+									daily,
+									weekly,
+									monthly
+								}
+							},
+							enabled,
+							gateway {
+								name,
+								username,
+								password,
+								endpoint,
+								additional
+							},
+							allow_prepaid,
+							accepted_payment_methods,
+							customer_service {
+								email,
+								url,
+								description
+							},
+							created_at,
+							updated_at
+						},
+						distribution
+					},
+					created_at,
+					updated_at
+				},
+				created_at,
+				updated_at
+			},
+			pagination {
+				count,
+				end_cursor,
+				has_next_page
+			}
+		}
+	}"
+}
