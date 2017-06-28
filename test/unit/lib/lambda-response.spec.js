@@ -2,11 +2,9 @@ let LambdaResponse = global.routes.include('lib', 'lambda-response.js');
 let chai = require('chai');
 let expect = chai.expect;
 
-const anyMessage = 'a message';
 const anyCode = 200;
 const anyBody = {};
 const anyEvent = {};
-const anyIssues = [];
 const anyError = { code: 500, name:'Server Error', message: 'Internal Service Error.', issues: [] };
 
 describe('lib/lambda-response', () => {
@@ -93,8 +91,6 @@ describe('lib/lambda-response', () => {
 
         it('should issue an error with generic message when no message provided', (done) => {
             // given
-            let aMessage = '';
-            let aCode = anyCode;
             let anEvent = anyEvent;
             let anError = anyError;
             let expectedResponse = anErrorResponseWithGenericMessage();
