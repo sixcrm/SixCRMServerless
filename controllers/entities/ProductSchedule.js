@@ -16,6 +16,9 @@ class productScheduleController extends entityController {
     }
 
     //Technical Debt: This only works insofar as Scan Parameters returns all results (not true)
+    //Technical Debt:  Expensive!
+    //Technical Debt:  Slow
+    //Technical Debt:  Dynamo scan't query on map attributes of lists
     listProductSchedulesByProduct(args){
 
         du.debug('List Product Schedules By Product');
