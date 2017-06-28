@@ -1,11 +1,6 @@
 'use strict';
 require('../../../routes.js');
 
-const _ = require('underscore');
-
-const timer = global.routes.include('lib', 'timer');
-const du = global.routes.include('lib', 'debug-utilities.js');
-
 const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
 const graphController = global.routes.include('controllers', 'endpoints/graph.js');
 
