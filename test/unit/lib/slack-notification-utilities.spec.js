@@ -53,7 +53,7 @@ describe('lib/notification-utilities', () => {
             return SlackNotificationUtilities.sendNotificationViaSlack(notification_object, webhook).catch((error) => {
                 // then
                 expect(error).not.to.be.null;
-                return expect(error.message).to.equal('One or more validation errors occurred.');
+                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
             });
         });
 

@@ -21,7 +21,7 @@ chai.use(require('../../chaiAssertionHelper'));
 describe('endpoints/confirmOrder', function () {
     describe('validateInputs', function () {
         it('should NOT be valid with no arguments', function () {
-            return assert.isRejected(confirmOrder.validateInput(), Error, 'Validation function is not a function.');
+            return assert.isRejected(confirmOrder.validateInput(), Error, '[500] Validation function is not a function.');
         });
         it('should pass validation', function () {
             var actual = confirmOrder.validateInput(require('./fixtures/validSession'), confirmOrder.validateEventSchema);

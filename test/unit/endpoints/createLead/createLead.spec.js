@@ -14,7 +14,7 @@ describe('endpoints/createLead', function () {
             var actual = createLead.validateInput({});
 
             return actual.catch((err) => {
-                return expect(err.message).to.equal('Validation function is not a function.');
+                return expect(err.message).to.equal('[500] Validation function is not a function.');
             });
 
         });

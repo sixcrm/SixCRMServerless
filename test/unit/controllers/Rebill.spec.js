@@ -405,7 +405,7 @@ describe('controllers/Rebill.js', () => {
             return rebillController.sendMessageAndMarkRebill(aRebill).catch((error) => {
                 // then
                 expect(aRebill.processing).not.to.be.equal('true');
-                expect(error.message).to.be.equal('Sending message failed.');
+                expect(error.message).to.be.equal('[500] Sending message failed.');
             });
         });
     });

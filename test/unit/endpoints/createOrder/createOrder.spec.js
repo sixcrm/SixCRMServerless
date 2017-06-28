@@ -12,7 +12,7 @@ describe('endpoints/createOrder', function () {
             var actual = createOrder.validateInput();
 
             return actual.then(res => expect(false).to.be.true).catch((err) => {
-                return expect(err.message).to.equal('Validation function is not a function.');
+                return expect(err.message).to.equal('[500] Validation function is not a function.');
             })
         });
 

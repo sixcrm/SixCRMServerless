@@ -100,7 +100,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.create({}).catch((error) => {
                 // then
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('[500] Missing request parameters');
             });
         });
 
@@ -180,7 +180,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.create(anEntity).catch((error) => {
                 // then
-                expect(error.message).to.equal(`A accesskey already exists with ID: "${anEntity.id}"`);
+                expect(error.message).to.equal(`[400] A accesskey already exists with ID: "${anEntity.id}"`);
             });
         });
 
@@ -205,7 +205,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.create(anEntity).catch((error) => {
                 // then
-                expect(error.message).to.equal('Reading failed.');
+                expect(error.message).to.equal('[500] Reading failed.');
             });
         });
     });
@@ -219,7 +219,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.update({}).catch((error) => {
                 // then
-                expect(error.message).to.equal('Invalid Permissions: user can not update on accesskey');
+                expect(error.message).to.equal('[403] Invalid Permissions: user can not update on accesskey');
 
             });
         });
@@ -246,7 +246,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.update(anEntity).catch((error) => {
                 // then
-                expect(error.message).to.equal('Reading failed.');
+                expect(error.message).to.equal('[500] Reading failed.');
 
             });
         });
@@ -269,7 +269,7 @@ describe('controllers/Entity.js', () => {
 
             // when
             return entityController.delete({}).catch((error) => {
-                expect(error.message).to.equal('Could not determine identifier.');
+                expect(error.message).to.equal('[400] Could not determine identifier.');
             });
         });
 
@@ -293,7 +293,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.delete(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal('Reading failed.');
+                expect(error.message).to.equal('[500] Reading failed.');
             });
         });
 
@@ -320,7 +320,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.delete(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal('Deleting failed.');
+                expect(error.message).to.equal('[500] Deleting failed.');
             });
         });
 
@@ -344,7 +344,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.delete(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal(`Unable to delete accesskey with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
+                expect(error.message).to.equal(`[404] Unable to delete accesskey with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
 
             });
         });
@@ -369,7 +369,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.delete(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal(`Unable to delete accesskey with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
+                expect(error.message).to.equal(`[404] Unable to delete accesskey with ID: "${anEntity.id}" -  record doesn't exist or multiples returned.`);
 
             });
         });
@@ -403,7 +403,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.delete(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal('Deleting failed.');
+                expect(error.message).to.equal('[500] Deleting failed.');
             });
         });
     });
@@ -425,7 +425,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.get(1).catch((error) => {
                 // then
-                expect(error.message).to.equal('Could not determine identifier.');
+                expect(error.message).to.equal('[400] Could not determine identifier.');
             });
         });
 
@@ -473,7 +473,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.get(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal('Reading failed.');
+                expect(error.message).to.equal('[500] Reading failed.');
             });
         });
 
@@ -497,7 +497,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.get(anEntity.id).catch((error) => {
                 // then
-                expect(error.message).to.equal('Multiple entitys returned where one should be returned.');
+                expect(error.message).to.equal('[400] Multiple entitys returned where one should be returned.');
             });
         });
 
@@ -586,7 +586,7 @@ describe('controllers/Entity.js', () => {
 
             return entityController.list({limit: 10}).catch((error) => {
                 // then
-                expect(error.message).to.equal('Data has no items.');
+                expect(error.message).to.equal('[404] Data has no items.');
             });
         });
 
@@ -606,7 +606,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.list({limit: 10}).catch((error) => {
 
-                expect(error.message).to.equal('Data is not an object.');
+                expect(error.message).to.equal('[404] Data is not an object.');
             });
         });
 
@@ -626,7 +626,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.list({limit: 10}).catch((error) => {
                 // then
-                expect(error.message).to.equal('Scanning failed.');
+                expect(error.message).to.equal('[500] Scanning failed.');
             });
         });
 
@@ -733,7 +733,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
                 // then
-                expect(error.message).to.equal('Data has no items.');
+                expect(error.message).to.equal('[404] Data has no items.');
             });
         });
 
@@ -753,7 +753,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).catch((error) => {
                 // then
-                expect(error.message).to.equal('Query failed.');
+                expect(error.message).to.equal('[500] Query failed.');
             });
         });
 

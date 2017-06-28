@@ -39,7 +39,7 @@ describe('lib/notification-utilities', () => {
 
             return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
-                return expect(error.message).to.equal('One or more validation errors occurred.');
+                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
             });
         });
 
@@ -52,7 +52,7 @@ describe('lib/notification-utilities', () => {
 
             return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
-                return expect(error.message).to.equal('One or more validation errors occurred.');
+                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
             });
         });
 
@@ -65,7 +65,7 @@ describe('lib/notification-utilities', () => {
 
             return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
-                return expect(error.message).to.equal('One or more validation errors occurred.');
+                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
             });
         });
 
@@ -78,7 +78,7 @@ describe('lib/notification-utilities', () => {
 
             return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
                 // then
-                return expect(error.message).to.equal('One or more validation errors occurred.');
+                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
             });
         });
 
@@ -105,7 +105,7 @@ describe('lib/notification-utilities', () => {
 
             mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
-                    expect(notification_object).not.to.equal(notification_object, 'Notification utilities should not have been called.');
+                    expect(notification_object).not.to.equal(notification_object, '[500] Notification utilities should not have been called.');
                 }
             });
 
@@ -114,7 +114,7 @@ describe('lib/notification-utilities', () => {
 
             return NotificationUtilities.createNotificationsForAccount(notification_object).catch((error) => {
                 // then
-                return expect(error.message).to.equal('One or more validation errors occurred.');
+                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
             });
         });
 
@@ -159,7 +159,7 @@ describe('lib/notification-utilities', () => {
 
             mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
-                    expect(notification_object).not.to.equal(notification_object, 'Notification utilities should not have been called.');
+                    expect(notification_object).not.to.equal(notification_object, '[500] Notification utilities should not have been called.');
                 }
             });
 
@@ -168,7 +168,7 @@ describe('lib/notification-utilities', () => {
 
             return NotificationUtilities.createNotificationForAccountAndUser(notification_object).catch((error) => {
                 // then
-                return expect(error.message).to.equal('User is mandatory.');
+                return expect(error.message).to.equal('[500] User is mandatory.');
             });
         });
 
