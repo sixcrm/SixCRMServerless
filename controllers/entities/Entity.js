@@ -282,8 +282,6 @@ module.exports = class entityController extends entityUtilitiesController {
             query_parameters = this.appendPagination(query_parameters, pagination);
             query_parameters = this.appendAccountFilter(query_parameters);
 
-          //du.warning(query_parameters);
-
             return Promise.resolve(this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
 
                 if(_.isError(error)){ return reject(error); }

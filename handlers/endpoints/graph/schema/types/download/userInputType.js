@@ -10,7 +10,7 @@ let userACLInputType = require('../useracl/userACLInputType');
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'UserInput',
     fields: () => ({
-        id:			{ type: new GraphQLNonNull(GraphQLString) },
+        id:			{ type: GraphQLString },
         name:		{ type: new GraphQLNonNull(GraphQLString) },
         first_name: { type: GraphQLString },
         last_name:	{ type: GraphQLString },

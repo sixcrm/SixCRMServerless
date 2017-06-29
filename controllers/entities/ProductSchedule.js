@@ -10,10 +10,61 @@ class productScheduleController extends entityController {
     constructor(){
 
         super('productschedule');
-
         this.productController = global.routes.include('controllers', 'entities/Product.js');
-
         this.loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+
+    }
+
+    //Technical Debt: This only works insofar as Scan Parameters returns all results (not true)
+    //Technical Debt:  Expensive!
+    //Technical Debt:  Slow
+    //Technical Debt:  Dynamo scan't query on map attributes of lists
+    listProductSchedulesByProduct(args){
+
+        du.debug('List Product Schedules By Product');
+
+        let product_id = this.getID(args.product);
+
+        let scan_parameters = {
+
+        };
+
+        return this.scanByParameters(scan_parameters, args.pagination).then((results) => {
+
+          du.warning(results);
+          let return_array = [];
+
+          if(_.has(results, 'productschedules') && _.isArray(results.productschedules) && results.productschedules.length > 0){
+
+            results.productschedules.forEach((result) => {
+
+              if(_.has(result, 'schedule') && _.isArray(result.schedule) && result.schedule.length > 0){
+
+                let found = result.schedule.find((schedule) => {
+                  return (_.has(schedule, 'product_id') && schedule.product_id == product_id);
+                });
+
+                if(_.isObject(found)){
+                  return_array.push(result);
+                }
+
+              }
+
+            });
+
+            results.productschedules = return_array;
+            results.pagination.count = return_array.length;
+            results.has_next_page = false;
+
+            return results;
+
+          }else{
+
+            return results;
+
+          }
+
+        });
 
     }
 
@@ -29,158 +80,121 @@ class productScheduleController extends entityController {
 
     getTransactionProducts(day_in_schedule, schedules_to_purchase){
 
-        var transaction_products = [];
+      du.debug('Get Transaction Products');
 
-        schedules_to_purchase.forEach((schedule) => {
+      let transaction_products = [];
 
-            var product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
+      schedules_to_purchase.forEach((schedule) => {
 
-            transaction_products.push({
-                amount: parseFloat(product_for_purchase.price),
-                product: product_for_purchase.product_id
-            });
+        let product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
 
+        transaction_products.push({
+          amount: parseFloat(product_for_purchase.price),
+          product: product_for_purchase.product_id
         });
 
-        return transaction_products;
+      });
+
+      return transaction_products;
 
     }
 
     getProduct(scheduled_product){
 
-        return this.productController.get(scheduled_product.product);
+      du.debug('Get Product');
+
+      return this.productController.get(scheduled_product.product);
 
     }
 
     getSchedule(product_schedule){
 
-        return product_schedule.schedule.map(scheduled_product => this.getScheduledProduct(scheduled_product));
+      du.debug('Get Schedule');
+
+      return product_schedule.schedule.map(scheduled_product => this.getScheduledProduct(scheduled_product));
 
     }
 
     getScheduledProduct(scheduled_product){
 
-        return {
-            price: scheduled_product.price,
-            start: scheduled_product.start,
-            end: scheduled_product.end,
-            period: scheduled_product.period,
-            product: scheduled_product.product_id
-        };
+      du.debug('Get Scheduled Product');
+
+      return {
+          price: scheduled_product.price,
+          start: scheduled_product.start,
+          end: scheduled_product.end,
+          period: scheduled_product.period,
+          product: scheduled_product.product_id
+      };
 
     }
 
     getProducts(product_schedule){
 
-        return Promise.all(product_schedule.schedule.map(ps => this.productController.get(ps.product_id)));
+      du.debug('Get Products');
+
+      return Promise.all(product_schedule.schedule.map(ps => this.productController.get(ps.product_id)));
 
     }
 
-	//Technical Debt:  This seems odd...
+    //Technical Debt:  Can we make this work better?
     getProductScheduleHydrated(id){
 
-        return new Promise((resolve, reject) => {
+      du.debug('Get Product Schedule Hydrated');
 
-            return this.get(id).then((product_schedule) => {
+      return new Promise((resolve, reject) => {
 
-                return this.getProducts(product_schedule).then((products) => {
+        return this.get(id).then((product_schedule) => {
 
-                    for(var i = 0; i < product_schedule.schedule.length; i++){
+          return this.getProducts(product_schedule).then((products) => {
 
-                        for(var j = 0; j < products.length; j++){
+            for(var i = 0; i < product_schedule.schedule.length; i++){
 
-                            if(product_schedule.schedule[i].product_id == products[j].id){
+              for(var j = 0; j < products.length; j++){
 
-                                product_schedule.schedule[i].product = products[j];
+                if(product_schedule.schedule[i].product_id == products[j].id){
 
-                                delete product_schedule.schedule[i].product_id;
+                  product_schedule.schedule[i].product = products[j];
 
-                            }
+                  delete product_schedule.schedule[i].product_id;
 
-                        }
+                }
 
-                    }
+              }
 
-                    return resolve(product_schedule);
+            }
 
-                }).catch((error) => {
+            return resolve(product_schedule);
 
-                    return reject(error);
+          }).catch((error) => {
 
-                });
+            return reject(error);
 
-            }).catch((error) => {
+          });
 
-                return reject(error);
+        }).catch((error) => {
 
-            });
-
-			/*
-			dynamoutilities.queryRecords(process.env.product_schedules_table, 'id = :idv', {':idv': id}, null, (error, data) => {
-
-				if(_.isError(error)){ reject(error);}
-
-				if(_.isObject(data) && _.isArray(data)){
-
-					if(data.length == 1){
-
-						var product_schedule = data[0];
-
-						controller_instance.getProducts(product_schedule).then((products) => {
-
-							for(var i = 0; i < product_schedule.schedule.length; i++){
-
-								for(var j = 0; j < products.length; j++){
-
-									if(product_schedule.schedule[i].product_id == products[j].id){
-
-										product_schedule.schedule[i].product = products[j];
-
-										delete product_schedule.schedule[i].product_id;
-
-									}
-
-								}
-
-							}
-
-							return resolve(product_schedule);
-
-						}).catch((error) => {
-							reject(error);
-						});
-
-					}else{
-
-						if(data.length > 1){
-
-							reject(eu.getError('server','Multiple product schedules returned where one should be returned.'));
-
-						}else{
-
-							resolve([]);
-
-						}
-
-					}
-
-				}
-
-			});*/
+          return reject(error);
 
         });
+
+      });
 
     }
 
     getProductSchedules(product_schedules){
-        du.warning(product_schedules);
+
+      du.debug('Get Product Schedules');
+
     	return Promise.all(product_schedules.map(product_schedule => this.get(product_schedule)));
 
     }
 
     getProductForPurchase(day, schedule){
 
-        var return_product;
+      du.debug('Get Product For Purchase');
+
+      let return_product;
 
     	schedule.forEach((scheduled_product) => {
 
@@ -212,17 +226,19 @@ class productScheduleController extends entityController {
 
     productSum(day_in_schedule, schedules_for_purchase){
 
-        var return_amount = 0.0;
+      du.debug('Product Sum');
 
-        schedules_for_purchase.forEach((schedule) => {
+      let return_amount = 0.0;
 
-            var product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
+      schedules_for_purchase.forEach((schedule) => {
 
-            return_amount += parseFloat(product_for_purchase.price);
+        let product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
 
-        });
+        return_amount += parseFloat(product_for_purchase.price);
 
-        return parseFloat(return_amount);
+      });
+
+      return parseFloat(return_amount);
 
     }
 

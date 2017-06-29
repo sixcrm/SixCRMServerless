@@ -60,7 +60,7 @@ describe('Get '+test_name+' Test', function() {
 
 					//du.debug(response.body);
 
-    assert.isObject(response.body.data, JSON.stringify(response.body));
+    assert.isObject(response.body.response, JSON.stringify(response.body));
 
     done();
 

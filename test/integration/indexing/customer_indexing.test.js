@@ -62,7 +62,7 @@ describe('Customer indexing test', function() {
                     expect(err).not.to.be.defined;
                     expect(response).to.be.defined;
 
-                    let results = response.body.data.search.hits.hit;
+                    let results = response.body.response.search.hits.hit;
 
                     expect(results[0]).to.be.defined;
                     expect(results.length).to.equal(1, 'Search index should have the entity.');
@@ -90,7 +90,7 @@ describe('Customer indexing test', function() {
                     expect(err).not.to.be.defined;
                     expect(response).to.be.defined;
 
-                    let results = response.body.data.search.hits.hit;
+                    let results = response.body.response.search.hits.hit;
 
                     expect(results.length).to.equal(0, 'Search index should not have the entity anymore.');
 

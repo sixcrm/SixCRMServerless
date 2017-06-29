@@ -513,11 +513,24 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, productschedule){
+
                 const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
 
       	       return productScheduleController.list(productschedule.pagination);
             }
         },
+          productschedulelistbyproduct: {
+              type: productScheduleListType.graphObj,
+              args: {
+                  product: {type: GraphQLString},
+                  pagination: {type: paginationInputType.graphObj}
+              },
+              resolve: function(root, args){
+                const productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+
+                return productScheduleController.listProductSchedulesByProduct(args);
+              }
+          },
         transactionlist: {
             type: transactionListType.graphObj,
             args: {
@@ -769,6 +782,18 @@ module.exports.graphObj = new GraphQLObjectType({
                 const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 
                 return campaignController.list(campaign.pagination);
+            }
+        },
+        campaignlistbyproductschedule: {
+            type: campaignListType.graphObj,
+            args: {
+              productschedule: {type: new GraphQLNonNull(GraphQLString)},
+              pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+              const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+
+              return campaignController.listCampaignsByProductSchedule(args);
             }
         },
         sessionlist: {
