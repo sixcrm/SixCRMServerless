@@ -23,7 +23,7 @@ class KinesisDeployment {
        var parameters = {
            DeliveryStreamName: stream_identifier
        };
-       console.log(parameters);
+
        return new Promise((resolve, reject) => {
            this.kinesis.describeDeliveryStream(parameters, (error, data) => {
                if (error) {
