@@ -19,7 +19,7 @@ try {
 var endpoint = config.endpoint;
 var appropriate_spacing = '        ';
 
-describe('Round Trip Test', function() {
+describe.only('Round Trip Test', function() {
     describe('Confirms a sales funnel purchase with partial and multiple upsells.', function() {
         it('Returns a confirmed sale', function (done) {
 
@@ -73,12 +73,11 @@ describe('Round Trip Test', function() {
 			.end(function(err, response){
     du.debug(response.body);
     assert.isObject(response.body);
-    assert.property(response.body, "message");
-    assert.equal(response.body.message, "Success");
-    assert.property(response.body, "token");
-    assert.isString(response.body.token);
+    assert.property(response.body, "success");
+    assert.equal(response.body.success, true);
+    assert.isString(response.body.response);
 
-    var jwt = response.body.token;
+    var jwt = response.body.response;
 
     du.debug('Acquired JWT:', jwt);
 
@@ -132,14 +131,14 @@ describe('Round Trip Test', function() {
 					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 					.end(function(err, response){
     du.debug('Create Lead Response', response.body);
-    assert.property(response.body, "message");
-    assert.equal(response.body.message, "Success");
-    assert.property(response.body, "results");
-    assert.property(response.body.results, "id");
-    assert.property(response.body.results, "customer");
+    assert.property(response.body, "success");
+    assert.equal(response.body.success, true);
+    assert.property(response.body, "response");
+    assert.property(response.body.response, "id");
+    assert.property(response.body.response, "customer");
 						//Technical Debt:  Let's dig in here a little further.  This is pretty light testing.
 
-    var session_id = response.body.results.id;
+    var session_id = response.body.response.id;
 					  	var product_schedules = ["12529a17-ac32-4e46-b05b-83862843055d"]
 
 					  	var order_create = {
@@ -175,15 +174,15 @@ describe('Round Trip Test', function() {
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
     du.debug('Create Order Response:', response.body);
-    assert.property(response.body, "message");
-    assert.equal(response.body.message, "Success");
+    assert.property(response.body, "success");
+    assert.equal(response.body.success, true);
     assert.property(response.body, "results");
-    assert.property(response.body.results, "processor_response");
-    var processor_response = JSON.parse(response.body.results.processor_response);
+    assert.property(response.body.response, "processor_response");
+    var processor_response = JSON.parse(response.body.response.processor_response);
 
     assert.isObject(processor_response);
-    assert.property(processor_response, "message");
-    assert.equal(processor_response.message, "Success");
+    assert.property(processor_response, "success");
+    assert.equal(processor_response.message, true);
     assert.property(processor_response, 'results');
     assert.property(processor_response.results, 'response');
     assert.equal(processor_response.results.response, '1');
@@ -212,18 +211,18 @@ describe('Round Trip Test', function() {
 									.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 									.end(function(err, response){
     du.debug('Upsell Result: ', response.body);
-    assert.property(response.body, "message");
-    assert.equal(response.body.message, "Success");
+    assert.property(response.body, "success");
+    assert.equal(response.body.success, true);
     assert.property(response.body, "results");
-//										assert.property(response.body.results, "parentsession");
-//										assert.isString(response.body.results.parentsession);
-    assert.property(response.body.results, "processor_response");
+//										assert.property(response.body.response, "parentsession");
+//										assert.isString(response.body.response.parentsession);
+    assert.property(response.body.response, "processor_response");
 
-    var processor_response = JSON.parse(response.body.results.processor_response);
+    var processor_response = JSON.parse(response.body.response.processor_response);
 
     assert.isObject(processor_response);
-    assert.property(processor_response, "message");
-    assert.equal(processor_response.message, "Success");
+    assert.property(processor_response, "success");
+    assert.equal(processor_response.message, true);
     assert.property(processor_response, 'results');
     assert.property(processor_response.results, 'response');
     assert.equal(processor_response.results.response, '1');
@@ -243,17 +242,17 @@ describe('Round Trip Test', function() {
 											.end(function(err, response){
 
     du.debug('Confirm Order results', response.body);
-    assert.property(response.body, "message");
-    assert.equal(response.body.message, "Success");
+    assert.property(response.body, "success");
+    assert.equal(response.body.success, true);
     assert.property(response.body, "results");
-    assert.property(response.body.results, "session");
-    assert.property(response.body.results, "customer");
-    assert.property(response.body.results, "transactions");
-    assert.property(response.body.results, "transaction_products");
+    assert.property(response.body.response, "session");
+    assert.property(response.body.response, "customer");
+    assert.property(response.body.response, "transactions");
+    assert.property(response.body.response, "transaction_products");
 
-												//console.log(response.body.results.transactions);
-    assert.equal(response.body.results.transactions.length, 2);
-    assert.equal(response.body.results.transaction_products.length, 2);
+												//console.log(response.body.response.transactions);
+    assert.equal(response.body.response.transactions.length, 2);
+    assert.equal(response.body.response.transaction_products.length, 2);
 												//should have 2 transactions
 												//should have 2 products
 
