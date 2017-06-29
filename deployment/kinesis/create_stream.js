@@ -17,29 +17,28 @@ du.highlight('Creating Kinesis Stream');
 
 let kinesisDeployment = new KinesisDeployment(environment);
 
-// Need to add recursive read of paramaters
-
-let stream_parameters = {};
-
 /* Set the list of relevant streams*/
 
 let stream_list = Object.keys(kinesisDeployment.getConfig().streams).filter(name => name.match(/\_stream$/));
 
 stream_list.map( stream =>  {
 
-  let stream_parameters = {
-    StreamName: kinesisDeployment.getConfig().streams[stream].DeliveryStreamName
-  };
-  du.output('Stream parameters are:', stream_parameters);
+  let stream_parameters = {};
 
-  kinesisDeployment.streamExists(stream_parameters.StreamName).then(exists => {
+  Object.keys(kinesisDeployment.getConfig().streams[stream]).forEach((key) => {
+      let key_name = stringUtilities.toPascalCase(key);
+      stream_parameters[key_name] = kinesisDeployment.getConfig().streams[stream][key];
+
+  });
+
+  kinesisDeployment.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
       if (exists) {
           du.warning('Stream exists, aborting.');
           return Promise.resolve();
       } else {
           du.output('Stream does not exist, creating.');
           return kinesisDeployment.createStreamAndWait(stream_parameters).then(response => {
-              du.output(response);
+          du.output(response);
           });
       }
   }).then(() => { du.highlight('Complete')});

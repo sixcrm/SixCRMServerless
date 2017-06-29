@@ -24,19 +24,19 @@ let stream_list = Object.keys(kinesisDeployment.getConfig().streams).filter(name
 stream_list.map( stream =>  {
 
   let stream_parameters = {
-    StreamName: kinesisDeployment.getConfig().streams[stream].DeliveryStreamName
+    DeliveryStreamName: kinesisDeployment.getConfig().streams[stream].DeliveryStreamName
   };
   du.output('Stream parameters are:', stream_parameters);
 
-  kinesisDeployment.streamExists(stream_parameters.StreamName).then(exists => {
+  kinesisDeployment.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
       if (exists) {
-          du.warning('Stream exists, aborting.');
-          return Promise.resolve();
+        du.output('Stream exist, destroying.');
+        return kinesisDeployment.deleteStreamAndWait(stream_parameters).then(response => {
+            du.output(response);
+        });
       } else {
-          du.output('Stream does not exist, creating.');
-          return kinesisDeployment.deleteStreamAndWait(stream_parameters).then(response => {
-              du.output(response);
-          });
+        du.warning('Stream does not exists, aborting.');
+        return Promise.resolve();
       }
   }).then(() => { du.highlight('Complete')});
 }

@@ -53,7 +53,7 @@ class KinesisDeployment {
 
     createStreamAndWait(parameters) {
       return this.createStream(parameters).then(() => {
-          return this.waitForStream(parameters.DeliveryStreamName, 'streamAvailable');
+          return this.waitForStreamToExist(parameters.DeliveryStreamName);
       });
     }
 
@@ -76,27 +76,43 @@ class KinesisDeployment {
         /* Delete stream and wait */
 
         return this.deleteStream(parameters).then(() => {
-            return this.waitForStream(parameters.ClusterIdentifier, 'clusterDeleted');
+            return this.waitForStreamNotExist(parameters.DeliveryStreamName);
         });
     }
 
     waitForStream(stream_identifier, state) {
-        /* Wait for stream creation */
+        /* Wait for stream  */
 
         let parameters = {
             StreamIdentifier: stream_identifier
         };
-
         return new Promise((resolve, reject) => {
-            this.kinesis.waitFor(state, parameters, (error, data) => {
-                if (error) {
-                    du.error(error.message);
-                    return reject(error);
-                } else {
-                    return resolve(data);
-                }
-            });
+
+          this.kinesis.describeDeliveryStream(parameters,(err, data) => {
+            if (err) {
+              return resolve(false);
+            }
+
+            if (data.DeliveryStreamDescription.DeliveryStreamStatus === state){
+              du.output(stream_identifier+' is now active');
+              return resolve(true);
+            }
+
+            setTimeout(function() {
+              waitForStream(stream_identifier, state);
+            }, 1000);
         });
+      });
+    }
+
+    waitForStreamToExist(stream_identifier) {
+        /* Exists wrapper */
+        return this.waitForStream(stream_identifier, 'ACTIVE');
+    }
+
+    waitForStreamNotExist(stream_identifier) {
+        /* Exists wrapper */
+        return this.waitForStream(stream_identifier, 'DELETING');
     }
 
     getConfig() {
