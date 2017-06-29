@@ -268,10 +268,9 @@ module.exports = class entityController extends entityUtilitiesController {
 
         return new Promise((resolve, reject) => {
 
-            du.info(parameters);
-            return this.can('read', true)
-        .then(() =>  this.validate(parameters, global.routes.path('model','general/search_parameters.json')))
-        .then(() => {
+          return this.can('read', true)
+          .then(() =>  this.validate(parameters, global.routes.path('model','general/search_parameters.json')))
+          .then(() => {
 
             let query_parameters = {
                 filter_expression: parameters.filter_expression,

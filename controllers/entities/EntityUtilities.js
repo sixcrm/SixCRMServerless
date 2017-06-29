@@ -679,7 +679,7 @@ module.exports = class entityUtilitiesController{
             pagination_object.has_next_page = 'false';
         }
 
-        du.info(data);
+        //du.info(data);
 
         return pagination_object;
 

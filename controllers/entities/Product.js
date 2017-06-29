@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities');
+const eu = global.routes.include('lib', 'error-utilities');
 
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 
@@ -28,11 +29,15 @@ class ProductController extends entityController {
 
     }
 
-    getProductSchedules(product){
+    getProductSchedules(args){
 
       du.debug('Get Product Schedules');
 
-      return this.productScheduleController.getProductSchedulesByProduct(product);
+      if(!_.has(args, 'product')){
+        eu.throwError('bad_request','getProductSchedules requires a product argument.');
+      }
+
+      return this.productScheduleController.listProductSchedulesByProduct({product: args.product, pagination: args.pagination});
 
     }
 
