@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/graph",
+  "title": "Graph Response",
+  "type": "object",
+
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "code": {
+      "type": "number",
+      "minimum": 200,
+      "maximum": 599
+    },
+    "response" :{
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "required":["success", "code", "response"]
+}

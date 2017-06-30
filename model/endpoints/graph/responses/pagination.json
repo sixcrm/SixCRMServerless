@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/pagination",
+  "title": "Pagination",
+  "type": "object",
+  "properties": {
+
+    "order": {
+      "type": "string",
+      "pattern": "asc|desc"
+    },
+    "limit": {
+      "type": "number",
+      "minimum": 0
+    },
+    "offset": {
+      "type": "number",
+      "minimum": 0
+    },
+    "count": {
+      "type": "number",
+      "minimum": 0
+    }
+
+
+  },
+  "required":["order", "limit", "offset", "count"]
+}
