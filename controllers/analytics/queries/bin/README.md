@@ -17,7 +17,7 @@ Query returns  :
 * `percent_change_count` - percent of change in the transaction count
 * `percent_change_amount`- percent of change in the transaction amount
 
-* `number_id` - Identifier
+* `binnumber` - Identifier
 * `brand` - Brand of credit card
 * `bank` - Bank of credit card
 * `type` - Type of credit card
