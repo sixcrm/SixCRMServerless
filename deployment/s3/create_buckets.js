@@ -15,4 +15,5 @@ let region = process.argv[3] || process.env.AWS_REGION || 'us-east-1';
 
 du.highlight('Creating S3 Bucket');
 
-let s3Deployment = new S3Deployment(environment);
+//Technical Debt:  Missing Dependency
+//let s3Deployment = new S3Deployment(environment);

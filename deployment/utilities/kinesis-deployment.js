@@ -86,6 +86,7 @@ class KinesisDeployment {
         let parameters = {
             StreamIdentifier: stream_identifier
         };
+
         return new Promise((resolve, reject) => {
 
           this.kinesis.describeDeliveryStream(parameters,(err, data) => {
@@ -99,7 +100,7 @@ class KinesisDeployment {
             }
 
             setTimeout(function() {
-              waitForStream(stream_identifier, state);
+              this.waitForStream(stream_identifier, state);
             }, 1000);
         });
       });
