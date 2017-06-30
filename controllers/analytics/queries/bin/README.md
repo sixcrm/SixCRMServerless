@@ -5,7 +5,6 @@ ____
 ## Arguments:
 
 ### Required
-* `number_id` - a 6 digit number
 
 ---
 ### Query notes

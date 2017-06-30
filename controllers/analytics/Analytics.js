@@ -16,26 +16,41 @@ class AnalyticsController extends AnalyticsUtilities{
         super();
 
         this.default_query_filters = [
-            'campaign',
-            'merchant_provider',
-            'affiliate',
-            's1',
-            's2',
-            's3',
-            's4',
-            's5',
-            'account'
+          'campaign',
+          'merchant_provider',
+          'affiliate',
+          's1',
+          's2',
+          's3',
+          's4',
+          's5',
+          'account'
         ];
 
         this.default_activity_query_filters = [
-            'action',
-            'actor',
-            'actor_type',
-            'acted_upon',
-            'acted_upon_type',
-            'associated_with',
-            'associated_with_type',
-            'account'
+          'action',
+          'actor',
+          'actor_type',
+          'acted_upon',
+          'acted_upon_type',
+          'associated_with',
+          'associated_with_type',
+          'account'
+        ];
+
+        this.default_bin_query_filters = [
+          'binnumber',
+          'brand',
+          'bank',
+          'type',
+          'level',
+          'country',
+          'info',
+          'country_iso',
+          'country2_iso',
+          'country3_iso',
+          'webpage',
+          'phone'
         ];
 
     }
@@ -88,6 +103,16 @@ class AnalyticsController extends AnalyticsUtilities{
           });
 
         });
+
+    }
+
+    getBINList(parameters){
+
+      du.debug('Get BIN List');
+
+      parameters = paginationutilities.mergePagination(parameters.binfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      return this.getResults('bin', parameters, this.default_bin_query_filters);
 
     }
 
@@ -214,9 +239,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         let parameters = paginationutilities.mergePagination(args.activityfilter, paginationutilities.createSQLPaginationInput(args.pagination));
 
-        let filters = this.default_activity_query_filters;
-
-        return this.getResults('activity', parameters, filters);
+        return this.getResults('activity', parameters, this.default_activity_query_filters);
 
     }
 
@@ -247,6 +270,16 @@ class AnalyticsController extends AnalyticsUtilities{
         }
 
         return null;
+
+    }
+
+    getBINNumber(parameters){
+
+      if(_.has(parameters, 'binnumber')){
+        return parameters.binnumber;
+      }
+
+      return null;
 
     }
 

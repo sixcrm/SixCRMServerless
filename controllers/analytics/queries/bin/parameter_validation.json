@@ -3,12 +3,15 @@
 	"id":"/binQuery",
 	"type": "object",
 	"properties": {
-		"number_id":{
-			"type": ["integer"],
-			"minimum": 100000,
-			"maximum": 999999,
-  		"exclusiveMaximum": false,
-			"exclusiveMinimum": true
+		"binnumber":{
+			"type": "array",
+			"items":{
+					"type":"integer",
+					"minimum": 100000,
+					"maximum": 999999,
+		  		"exclusiveMaximum": false,
+					"exclusiveMinimum": true
+			}
 		},
 		"brand":{
 			"type": "array",
@@ -67,5 +70,5 @@
 			"uniqueItems": true
 		}
 	},
-	"required":["number_id"]
+	"required":[]
 }

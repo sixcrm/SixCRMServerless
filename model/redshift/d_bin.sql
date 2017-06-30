@@ -8,7 +8,7 @@ DROP TABLE d_bin;
 
 CREATE TABLE d_bin
 (
-  number_id    INTEGER      NOT NULL PRIMARY KEY,
+  binnumber    INTEGER      NOT NULL PRIMARY KEY,
   brand        VARCHAR(128) NOT NULL,
   bank         VARCHAR(128) NOT NULL,
   type         VARCHAR(128) ,
@@ -22,9 +22,6 @@ CREATE TABLE d_bin
   phone        VARCHAR(128)
 
 )
-   DISTSTYLE all sortkey (number_id);
+   DISTSTYLE all sortkey (binnumber);
 
 COMMENT ON TABLE d_bin IS 'Bin dimensional table loaded on create';
-
-
-
