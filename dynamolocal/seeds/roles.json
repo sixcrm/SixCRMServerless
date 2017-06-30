@@ -16,6 +16,7 @@
 	"active":true,
 	"permissions":{
 		"allow":[
+			"analytics/*",
 			"accesskey/*",
 			"affiliate/*",
 			"account/*",
@@ -35,16 +36,15 @@
 			"smtprovider/*",
 			"transaction/*",
 			"account/read",
-			"user/read",
-			"useracl/*",
 			"notification/*",
 			"notificationread/*",
 			"notificationsetting/*",
+			"user/*",
+			"useracl/*",
 			"usersetting/*",
 			"usersigningstring/*",
 			"userdevicetoken/*",
-			"tracker/*",
-			"analytics/*"
+			"tracker/*"
 		],
 		"deny":["*"]
 	},

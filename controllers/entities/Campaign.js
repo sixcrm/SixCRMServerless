@@ -3,18 +3,121 @@ const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 
 var entityController = global.routes.include('controllers', 'entities/Entity.js');
 
 class campaignController extends entityController {
 
     constructor(){
+
         super('campaign');
+
         this.productController = global.routes.include('controllers', 'entities/Product.js');
         this.loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
         this.productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
         this.affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
         this.emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+
+    }
+
+    listAffiliatesByCampaign(args){
+
+      du.debug('List Affiliates By Campaign');
+
+      let affiliate_id = this.getID(args.affiliate);
+
+      let query_parameters = {
+        filter_expression: '#f1 = :affiliate_id OR #f2 = :affiliate_id OR #f3 = :affiliate_id OR #f4 = :affiliate_id OR #f5 = :affiliate_id OR #f6 = :affiliate_id',
+        expression_attribute_values: {
+          ':affiliate_id':affiliate_id
+        },
+        expression_attribute_names: {
+          '#f1':'affiliate',
+          '#f2':'subaffiliate_1',
+          '#f3':'subaffiliate_2',
+          '#f4':'subaffiliate_3',
+          '#f5':'subaffiliate_4',
+          '#f6':'subaffiliate_5',
+        }
+      };
+
+      this.sessionController.queryByParameters(query_parameters, args.pagination);
+
+    }
+
+    listCampaignsByProduct(args){
+
+      du.debug('Get Campaigns');
+
+      if(!_.has(args, 'product')){
+        eu.throwError('bad_request','listCampaignsByProduct requires a product argument.');
+      }
+
+      //Technical Debt: Due to the way that controllers extend other controllers...
+      let psc = this.productScheduleController;
+
+      if(!_.isFunction(psc.listProductSchedulesByProduct)){
+        psc = global.routes.include('controllers', 'entities/ProductSchedule.js');
+      }
+
+      return psc.listProductSchedulesByProduct({product: args.product, pagination: args.pagination}).then((product_schedules) => {
+
+        if(_.has(product_schedules, 'productschedules') && _.isArray(product_schedules.productschedules)){
+
+          let campaigns = product_schedules.productschedules.map((product_schedule) => this.listCampaignsByProductSchedule({productschedule: product_schedule, pagination: args.pagination}));
+
+          return Promise.all(campaigns).then((responses) => {
+
+            let return_array = [];
+
+            responses.forEach((response) => {
+
+              if(_.has(response, 'campaigns') && _.isArray(response.campaigns) && response.campaigns.length > 0){
+
+                response.campaigns.forEach((campaign) => {
+
+                  return_array.push(campaign);
+
+                });
+
+              }
+
+            });
+
+            return_array = arrayutilities.filter(return_array, (possible_duplicate, index) => {
+
+              let duplicate = false;
+
+              for(var i = 0; i < return_array.length; i++){
+                if(possible_duplicate.id == return_array[i].id){
+                  if(i > index){
+                    duplicate = true;
+                    return;
+                  }
+                }
+              }
+
+              return !duplicate;
+
+            });
+
+            return {
+              campaigns: return_array,
+              pagination: {
+                count: return_array.length,
+                end_cursor: '',
+                has_next_page: false,
+                last_evaluated: ''
+              }
+            };
+
+          });
+
+        }
+
+      });
+
     }
 
     listCampaignsByProductSchedule(args){
@@ -116,7 +219,14 @@ class campaignController extends entityController {
 
         if(_.has(campaign, "productschedules")){
 
-            return campaign.productschedules.map(id => this.productScheduleController.get(id));
+          //Technical Debt: Due to the way that controllers extend other controllers...
+          let psc = this.productScheduleController;
+
+          if(!_.isFunction(psc.get)){
+            psc = global.routes.include('controllers', 'entities/ProductSchedule.js');
+          }
+
+          return campaign.productschedules.map(id => psc.get(id));
 
         }else{
 
@@ -130,7 +240,7 @@ class campaignController extends entityController {
 
         if(_.has(campaign, "productschedules")){
 
-            return Promise.all(campaign.productschedules.map(id => this.productScheduleController.getProductScheduleHydrated(id)));
+          return Promise.all(campaign.productschedules.map(id => this.productScheduleController.getProductScheduleHydrated(id)));
 
         }else{
 

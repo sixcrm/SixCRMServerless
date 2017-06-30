@@ -11,7 +11,18 @@ class productScheduleController extends entityController {
 
         super('productschedule');
         this.productController = global.routes.include('controllers', 'entities/Product.js');
+        this.campaignController = global.routes.include('controllers', 'entities/Campaign.js');
         this.loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+
+    }
+
+    getCampaigns(args){
+
+      du.debug('Get Campaigns');
+
+      let product_schedule_id = this.getID(args.productschedule);
+
+      return this.campaignController.listCampaignsByProductSchedule({productschedule: product_schedule_id}, args.pagination);
 
     }
 
@@ -25,13 +36,10 @@ class productScheduleController extends entityController {
 
         let product_id = this.getID(args.product);
 
-        let scan_parameters = {
-
-        };
+        let scan_parameters = {};
 
         return this.scanByParameters(scan_parameters, args.pagination).then((results) => {
 
-          du.warning(results);
           let return_array = [];
 
           if(_.has(results, 'productschedules') && _.isArray(results.productschedules) && results.productschedules.length > 0){

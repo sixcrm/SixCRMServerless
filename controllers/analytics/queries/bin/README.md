@@ -5,7 +5,6 @@ ____
 ## Arguments:
 
 ### Required
-* `binnumber` - a 6 digit number
 
 ---
 ### Query notes

@@ -22,9 +22,6 @@ CREATE TABLE d_bin
   phone        VARCHAR(128)
 
 )
-   DISTSTYLE all sortkey (number_id);
+   DISTSTYLE all sortkey (binnumber);
 
 COMMENT ON TABLE d_bin IS 'Bin dimensional table loaded on create';
-
-
-

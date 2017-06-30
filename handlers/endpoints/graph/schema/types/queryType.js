@@ -4,6 +4,7 @@ const _  = require('underscore');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLInt = require('graphql').GraphQLInt;
 
 //Technical Debt:  All of these types frequently have the same fields (id, account, active, created_at, updated_at).  This would be a excellent usage of fragments...
 
@@ -104,6 +105,8 @@ let transactionOverviewType =  require('./analytics/transactionOverviewType');
 let eventFunnelType =  require('./analytics/eventFunnelType');
 let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
+let listBINsType =  require('./analytics/listBINsType');
+
 
 let listActivityType = require('./analytics/listActivityType');
 
@@ -111,9 +114,10 @@ let eventsByFacetType =  require('./analytics/eventsByFacetType');
 let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
 
 let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
-let analyticsFilterInputType = require('./analytics/analyticsFilterInputType');
-let analyticsPaginationInputType = require('./analytics/analyticsPaginationInputType');
-let analyticsActivityFilterInputType = require('./analytics/analyticsActivityFilterInputType');
+let analyticsFilterInputType = require('./analytics/filterInputType');
+let analyticsPaginationInputType = require('./analytics/paginationInputType');
+let analyticsActivityFilterInputType = require('./analytics/activityFilterInputType');
+let analyticsBINFilterInputType = require('./analytics/BINFilterInputType');
 
 let paginationInputType = require('./pagination/paginationInputType');
 let cacheInputType = require('./cache/cacheInputType');
@@ -542,6 +546,19 @@ module.exports.graphObj = new GraphQLObjectType({
       	       return transactionController.list(transaction.pagination);
             }
         },
+        binlist: {
+            type: listBINsType.graphObj,
+            args: {
+                binfilter: { type: analyticsBINFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj},
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+              const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
+              return analyticsController.executeAnalyticsFunction(args, 'getBINList');
+            }
+        },
         transactionsummary: {
             type: transactionSummaryType.graphObj,
             args: {
@@ -794,6 +811,18 @@ module.exports.graphObj = new GraphQLObjectType({
               const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
 
               return campaignController.listCampaignsByProductSchedule(args);
+            }
+        },
+        campaignlistbyproduct: {
+            type: campaignListType.graphObj,
+            args: {
+              product: {type: new GraphQLNonNull(GraphQLString)},
+              pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+              const campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+
+              return campaignController.listCampaignsByProduct(args);
             }
         },
         sessionlist: {

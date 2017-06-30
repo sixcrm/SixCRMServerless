@@ -47,18 +47,6 @@
 	"updated_at":"2017-04-06T18:41:12.521Z"
 },
 {
-	"name":"Jared Esguerra",
-	"first_name": "Jared",
-	"last_name": "Esguerra",
-	"auth0_id":"abc123",
-	"id":"jared@sixcrm.com",
-	"active":true,
-	"termsandconditions":"0.1",
-	"alias":"e17b15604b465bda8aee62efacaceea157b3be02",
-	"created_at":"2017-04-06T18:40:41.405Z",
-	"updated_at":"2017-04-06T18:41:12.521Z"
-},
-{
 	"name":"Mychael Walton",
 	"first_name": "Mychael",
 	"last_name": "Walton",

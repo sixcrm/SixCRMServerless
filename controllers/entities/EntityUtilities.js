@@ -47,26 +47,6 @@ module.exports = class entityUtilitiesController{
 
         });
 
-
-
-        /*
-        let cache_object_key = this.createCanCacheKeyObject(action, this.descriptive_name);
-
-        return this.getFromCache(cache_object_key, permission_function).then((permission) => {
-
-          if(die === true && permission !== true){
-
-            eu.throwError('forbidden','Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
-
-          }
-
-          du.deep('Can Results: ', cache_object_key, permission);
-
-          return permission;
-
-        });
-        */
-
     }
 
     getFromCache(cache_object_key, data_function){
@@ -679,7 +659,7 @@ module.exports = class entityUtilitiesController{
             pagination_object.has_next_page = 'false';
         }
 
-        du.info(data);
+        //du.info(data);
 
         return pagination_object;
 

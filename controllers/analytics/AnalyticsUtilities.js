@@ -155,7 +155,15 @@ module.exports = class AnalyticsUtilities {
 
                 du.highlight(filter, parameters[filter]);
 
-                filter_array.push(filter+" IN ("+arrayutilities.compress(parameters[filter])+")");
+                if(_.isArray(parameters[filter])){
+
+                  filter_array.push(filter+" IN ("+arrayutilities.compress(parameters[filter])+")");
+
+                }else{
+
+                  filter_array.push(filter+" IN ("+parameters[filter]+")");
+
+                }
 
             }
 

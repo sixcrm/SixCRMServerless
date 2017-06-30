@@ -13,4 +13,7 @@ SELECT
   phone
 FROM
   d_bin
-where binnumber = {{binnumber}};
+WHERE 1
+ {{filter}}
+ORDER BY number_id {{order}}
+LIMIT {{limit}} OFFSET {{offset}};

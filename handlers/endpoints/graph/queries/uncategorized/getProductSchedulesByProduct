@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		productschedulelistbyproduct (product: \"616cc994-9480-4640-b26c-03810a679fe3\") {
+		productschedulelistbyproduct (product: \"be992cea-e4be-4d3e-9afa-8e020340ed16\") {
 			productschedules {
 				id,
 				name,

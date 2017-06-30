@@ -3,12 +3,31 @@
 	"id":"/binQuery",
 	"type": "object",
 	"properties": {
+<<<<<<< HEAD:controllers/analytics/queries/bin_query/parameter_validation.json
 		"binnumber":{
 			"type": ["integer"],
 			"minimum": 100000,
 			"maximum": 999999,
   		"exclusiveMaximum": false,
 			"exclusiveMinimum": true
+||||||| merged common ancestors
+		"number_id":{
+			"type": ["integer"],
+			"minimum": 100000,
+			"maximum": 999999,
+  		"exclusiveMaximum": false,
+			"exclusiveMinimum": true
+=======
+		"binnumber":{
+			"type": "array",
+			"items":{
+					"type":"integer",
+					"minimum": 100000,
+					"maximum": 999999,
+		  		"exclusiveMaximum": false,
+					"exclusiveMinimum": true
+			}
+>>>>>>> 0d984b5f8d8de6e0bd20e3cd8972615dc7f77998:controllers/analytics/queries/bin/parameter_validation.json
 		},
 		"brand":{
 			"type": "array",
@@ -67,5 +86,11 @@
 			"uniqueItems": true
 		}
 	},
+<<<<<<< HEAD:controllers/analytics/queries/bin_query/parameter_validation.json
 	"required":["binnumber"]
+||||||| merged common ancestors
+	"required":["number_id"]
+=======
+	"required":[]
+>>>>>>> 0d984b5f8d8de6e0bd20e3cd8972615dc7f77998:controllers/analytics/queries/bin/parameter_validation.json
 }
