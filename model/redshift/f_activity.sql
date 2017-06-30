@@ -20,15 +20,7 @@ CREATE TABLE f_activity
   associated_with      VARCHAR(100),
   associated_with_type VARCHAR(20)
 )
-  sortkey (datetime
-);
+  SORTKEY (datetime);
 
 
-COMMENT ON TABLE f_activity IS 'Fact' || TABLE builed around activities OF actors';
-
-
-
-
-
-
-
+COMMENT ON TABLE f_activity IS 'Fact table builed around activities of actors';

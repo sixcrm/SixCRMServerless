@@ -20,4 +20,6 @@ CREATE TABLE f_events
   subaffiliate_4   VARCHAR(128) encode ZSTD,
   subaffiliate_5   VARCHAR(128)
 )
-  sortkey (account,datetime);
+  SORTKEY (account,datetime);
+
+COMMENT ON TABLE d_datetime IS 'Fact table with information about events';

@@ -26,5 +26,6 @@ CREATE TABLE f_transactions
   subaffiliate_4      VARCHAR(128) encode ZSTD,
   subaffiliate_5      VARCHAR(128) encode ZSTD
 )
-  interleaved sortkey (account, datetime);
+  INTERLEAVED SORTKEY (account, datetime);
 
+COMMENT ON TABLE f_transactions IS 'Main Fact table with information about facts';

@@ -72,6 +72,23 @@ cache:
 
 Make sure that your local connection information is correct in the `/config/local/site.yml` file if connection trouble persists.
 
+#### Redshift
+
+Scripts:
+
+ - Create a cluster: 
+ `node ./deployment/redshift/create_cluster.js {stage}`
+ - Create tables: 
+  `node ./deployment/redshift/deploy_redshift.js {stage}`
+ - Truncate all tables:
+ `node ./deployment/redshift/purge_redshift.js {stage}`
+ - Seed static data:
+  `node ./deployment/redshift/seed_redshift.js {stage}`
+ - Drop all tables:
+  `node ./deployment/redshift/destroy_redshift.js {stage}`
+ - Destroy cluster:
+  `node ./deployment/redshift/destroy_cluster.js {stage}`
+
 ## Testing
 
 Six comes with a robust testing package.

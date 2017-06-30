@@ -146,7 +146,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
     getEventFunnel(parameters){
 
-        du.debug('Get Campaign Delta');
+        du.debug('Get Event Funnel');
 
         return this.getResults('event_funnel', parameters.analyticsfilter, this.default_query_filters);
 

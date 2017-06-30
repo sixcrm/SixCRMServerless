@@ -82,6 +82,14 @@ redshift:
   port: 5439
   max: 10
   idleTimeoutMillis: 30000
+  cluster:
+    cluster_identifier: 'sixcrm-development'
+    node_type: 'dc1.large'
+    automated_snapshot_retention_period: 3
+    cluster_type: 'single-node'
+    publicly_accessible: true
+    skip_final_cluster_snapshot: true
+    final_cluster_snapshot_identifier: ''
   randomdata:
     staging_bucket: 'sixcrm-development-redshift/sixcrm-random-generator'
     interval: 300 #this is provided in seconds
@@ -111,8 +119,84 @@ kinesis:
   firehose:
     streams:
       transactions: 'six-development-transactions'
+      transaction_stream:
+        DeliveryStreamName: 'six-development-transactions'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_transactions'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
+            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-transactions/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
       events: 'six-development-events'
+      event_stream:
+        DeliveryStreamName: 'six-development-events'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_events'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
+            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-events/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
       activity: 'six-development-activity'
+      activity_stream:
+        DeliveryStreamName: 'six-development-activity'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_events'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
+            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-activity/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
 
 aws:
   region: 'us-east-1'
+
+s3:
+  redshift:
+    node: 'sixcrm-development-redshift'
+    child:
+      node1:'sixcrm-kinesis-activity'
+      node2:'sixcrm-kinesis-events'
+      node3:'sixcrm-kinesis-merchant-processor'
+      node4:'sixcrm-kinesis-transactions'
+      node5:'sixcrm-manual-upload'
+      node6:'sixcrm-output'
+      node7:'sixcrm-random-generator'
+      node8:'sixcrm-resources'
