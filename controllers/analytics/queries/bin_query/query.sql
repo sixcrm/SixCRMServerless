@@ -1,5 +1,5 @@
 SELECT
-  number_id,
+  binnumber,
   brand,
   bank,
   type,
@@ -13,4 +13,4 @@ SELECT
   phone
 FROM
   d_bin
-where number_id = {{number_id}};
+where binnumber = {{binnumber}};

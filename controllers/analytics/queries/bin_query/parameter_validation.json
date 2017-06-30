@@ -3,7 +3,7 @@
 	"id":"/binQuery",
 	"type": "object",
 	"properties": {
-		"number_id":{
+		"binnumber":{
 			"type": ["integer"],
 			"minimum": 100000,
 			"maximum": 999999,
@@ -67,5 +67,5 @@
 			"uniqueItems": true
 		}
 	},
-	"required":["number_id"]
+	"required":["binnumber"]
 }

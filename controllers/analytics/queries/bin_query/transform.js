@@ -19,7 +19,7 @@ module.exports = function(results, parameters){
 
           //Technical Debt:  Marry the campaigns to thier names
                 return_object.campaigns.push({
-                    number_id: result.number_id,
+                    binnumber: result.binnumber,
                     brand: result.brand,
                     bank: result.bank,
                     type: result.type,
