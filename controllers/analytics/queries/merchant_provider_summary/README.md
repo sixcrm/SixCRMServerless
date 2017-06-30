@@ -6,6 +6,7 @@ ____
 
 ### Required
 * `merchant_provider` -  a array of UUIDv4 strings
+* `metric` -  a row on which we sort data. Possible values are : "num_transactions_today", "num_transactions_week","num_transactions_month","amount_transactions_today","amount_transactions_week","amount_transactions_month"
 
 ### Optional
 * `account` - a UUIDv4

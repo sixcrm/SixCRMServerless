@@ -34,4 +34,6 @@ FROM f_transactions
 WHERE 1
   {{filter}}
 AND datetime BETWEEN add_months(getdate(),-1) AND getdate()
-GROUP BY merchant_provider;
+GROUP BY merchant_provider
+ORDER BY {{metric}} {{order}}
+LIMIT {{limit}} OFFSET {{offset}};
