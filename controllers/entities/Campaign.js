@@ -10,12 +10,40 @@ var entityController = global.routes.include('controllers', 'entities/Entity.js'
 class campaignController extends entityController {
 
     constructor(){
+
         super('campaign');
+
         this.productController = global.routes.include('controllers', 'entities/Product.js');
         this.loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
         this.productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
         this.affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
         this.emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+
+    }
+
+    listAffiliatesByCampaign(args){
+
+      du.debug('List Affiliates By Campaign');
+
+      let affiliate_id = this.getID(args.affiliate);
+
+      let query_parameters = {
+        filter_expression: '#f1 = :affiliate_id OR #f2 = :affiliate_id OR #f3 = :affiliate_id OR #f4 = :affiliate_id OR #f5 = :affiliate_id OR #f6 = :affiliate_id',
+        expression_attribute_values: {
+          ':affiliate_id':affiliate_id
+        },
+        expression_attribute_names: {
+          '#f1':'affiliate',
+          '#f2':'subaffiliate_1',
+          '#f3':'subaffiliate_2',
+          '#f4':'subaffiliate_3',
+          '#f5':'subaffiliate_4',
+          '#f6':'subaffiliate_5',
+        }
+      };
+
+      this.sessionController.queryByParameters(query_parameters, args.pagination);
+
     }
 
     listCampaignsByProduct(args){

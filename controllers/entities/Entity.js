@@ -262,6 +262,57 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    queryByParameters(parameters, pagination){
+
+      du.debug('Query By Parameters');
+
+      //du.debug('Query by secondary index', field, index_value, index_name, pagination);
+
+      return new Promise((resolve, reject) => {
+
+          return this.can('read', true)
+          .then(() =>  this.validate(parameters, global.routes.path('model','general/search_parameters.json')))
+          .then(() => {
+
+              let query_parameters = {
+                  filter_expression: parameters.filter_expression,
+                  expression_attribute_values: parameters.expression_attribute_values,
+                  expression_attribute_names: parameters.expression_attribute_names
+              };
+
+              query_parameters = this.appendPagination(query_parameters, pagination);
+              query_parameters = this.appendAccountFilter(query_parameters);
+
+              if(_.has(parameters, 'reverse_order')) {
+                  query_parameters['scan_index_forward'] = !parameters.reverse_order;
+              }
+
+              du.debug('Query Parameters: ', query_parameters);
+
+              return Promise.resolve(this.dynamoutilities.queryRecordsFull(this.table_name, query_parameters, null, (error, data) => {
+
+                  if(_.isError(error)){
+
+                      return reject(error);
+
+                  }
+
+                  return this.buildResponse(data, (error, response) => {
+
+                      if(error){ return reject(error); }
+                      return resolve(response);
+
+                  });
+
+              }));
+
+          });
+
+      });
+
+
+    }
+
     scanByParameters(parameters, pagination){
 
         du.debug('Scan By Parameters');
