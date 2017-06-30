@@ -116,6 +116,16 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    getMerchantProviderSummary(parameters){
+
+      du.debug('Get Merchant Provider Summary');
+
+      parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      return this.getResults('merchant_provider_summary', parameters, this.default_query_filters);
+
+    }
+
     getTransactions(parameters){
 
         du.debug('Get Transactions');

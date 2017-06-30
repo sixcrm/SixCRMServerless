@@ -1,0 +1,18 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"*\" }",
+	"body":"
+	query {
+		merchantprovidersummary(analyticsfilter:{merchant_provider:[\"6c40761d-8919-4ad6-884d-6a46a776cfb9\"]}) {
+			merchantproviders{
+
+			},
+			pagination {
+				order,
+				limit,
+				offset,
+				count
+			}
+		}
+	}"
+}
