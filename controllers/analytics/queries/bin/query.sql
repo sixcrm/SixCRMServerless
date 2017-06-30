@@ -15,5 +15,5 @@ FROM
   d_bin
 WHERE 1
  {{filter}}
-ORDER BY number_id {{order}}
+ORDER BY binnumber {{order}}
 LIMIT {{limit}} OFFSET {{offset}};
