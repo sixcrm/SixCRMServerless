@@ -19,7 +19,7 @@ try {
 var endpoint = config.endpoint;
 var appropriate_spacing = '        ';
 
-describe.only('Round Trip Test', function() {
+describe('Round Trip Test', function() {
     describe('Confirms a sales funnel purchase with partial and multiple upsells.', function() {
         it('Returns a confirmed sale', function (done) {
 
