@@ -22,4 +22,3 @@ CREATE TABLE f_sessions
 );
 
 COMMENT ON TABLE f_sessions IS 'Fact table build for session data';
-

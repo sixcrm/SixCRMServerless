@@ -8,7 +8,7 @@ CREATE TABLE f_product_schedules
   updated_at       TIMESTAMP
 
 )
-  SORTKEY (id
+  DISTKEY (session_id
 );
 
 COMMENT ON TABLE f_product_schedules IS 'Child fact table build on different product schedules in data';
