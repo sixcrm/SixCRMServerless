@@ -10,7 +10,11 @@ ____
 * `f_transactions` - main fact table of transactional type holds data on transaction level of granularity
 * `f_events` - fact table of events types holds data on events level of granularity
 * `f_activity` - fact table of activities
+* `f_sessions` - fact table of sessions
+* `f_product_schedules` - fact table of product schedules
 * `f_products` - **IN WORK** fact table of products in transactions
+* `f_products` - **IN WORK** fact table of products in transactions
+
 
 Transactional tables are defined with the distribution key based on the account.
 Sort key is chosen to be date.
@@ -29,6 +33,11 @@ Sort key is chosen to be date.
 Redshift is a pure column store analytical database and as such lacks fatures for procedural control and optimal data generation. It is intended to be filled from external source. Optimal way of filling Redshift is via S3 buckets.
 
 ### Loading scripts
+* `loading_f_transacions.sql` - script for loading fixed csv file from S3 bucket to  `f_transactions`
+* `loading_d_datetime.sql` - script for loading fixed csv file from S3 bucket to  `d_datetime`
+* `generate_insert_data.sql` - script for generating spoofed insert statements in Redshift, **slow**
+
+### Seeds
 * `loading_f_transacions.sql` - script for loading fixed csv file from S3 bucket to  `f_transactions`
 * `loading_d_datetime.sql` - script for loading fixed csv file from S3 bucket to  `d_datetime`
 * `generate_insert_data.sql` - script for generating spoofed insert statements in Redshift, **slow**

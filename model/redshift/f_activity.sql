@@ -23,4 +23,4 @@ CREATE TABLE f_activity
   SORTKEY (datetime);
 
 
-COMMENT ON TABLE f_activity IS 'Fact table builed around activities of actors';
+COMMENT ON TABLE f_activity IS 'Fact table build around activities of actors';
