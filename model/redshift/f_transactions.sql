@@ -5,6 +5,22 @@
 
 /*DROP TABLE f_transactions;*/
 
+/*
+Logic fro idempotent versioning
+
+BEGIN TRANSACTION
+
+INSERT INTO sys_sixcrm.sys_table_version
+    SELECT 'ime',0,getdate();
+
+UPDATE sys_sixcrm.sys_table_version SET version = 1 AND datetime = getdate() WHERE table_name ='ime';
+
+DELETE FROM sys_sixcrm.sys_table_version WHERE  VERSION = 1 AND table_name ='ime';
+
+END TRANSACTION ;
+
+*/
+
 CREATE TABLE f_transactions
 (
   id                  VARCHAR(128)   NOT NULL PRIMARY KEY encode ZSTD,
