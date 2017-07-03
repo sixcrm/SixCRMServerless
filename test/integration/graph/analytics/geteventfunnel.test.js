@@ -20,7 +20,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Campaign Delta';
-let test_query = global.routes.path('handlers','endpoints/graph/queries/analytics/getCampaignDelta');
+let test_query = global.routes.path('handlers','endpoints/graph/queries/analytics/getEventFunnel');
 
 //set the test user
 let test_user = {
@@ -41,7 +41,7 @@ describe('Get '+test_name+' Test', function() {
 
     let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
 
-    it('Should return return a 200 HTTP response code', function (done) {
+    it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
         var query = tu.getQuery(test_query);
 
         this_request.post('graph/'+account.id)
@@ -60,6 +60,8 @@ describe('Get '+test_name+' Test', function() {
 					//du.debug(response.body);
 
     assert.isObject(response.body.response, JSON.stringify(response.body));
+
+    assert.isTrue(tu.validateGraphResponse(response.body, 'event/eventfunnel'));
 
     done();
 

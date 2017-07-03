@@ -19,7 +19,7 @@ Add Cache response group
 Check Pagination Response Group
 */
 
-let test_name = 'Event Summary';
+let test_name = 'Campaign delta';
 
 //set the test user
 let test_user = {
@@ -34,7 +34,7 @@ let account = {
     id: '*'
 };
 
-let test_query = global.routes.path('handlers','endpoints/graph/queries/analytics/getEventSummary');
+let test_query = global.routes.path('handlers','endpoints/graph/queries/analytics/getCampaignDelta');
 
 let this_request = request(global.integration_test_config.endpoint);
 
@@ -42,7 +42,7 @@ describe('Get '+test_name+' Test', function() {
 
     let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
 
-    it('Should return return a 200 HTTP response code', function (done) {
+    it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
         var query = tu.getQuery(test_query);
 
         this_request.post('graph/'+account.id)
@@ -58,9 +58,11 @@ describe('Get '+test_name+' Test', function() {
 						//du.warning(err);
     }
 
-					//du.debug(response.body);
+					du.debug(response.body);
 
     assert.isObject(response.body.response, JSON.stringify(response.body));
+
+    assert.isTrue(tu.validateGraphResponse(response.body, 'campaign/campaigndelta'));
 
     done();
 

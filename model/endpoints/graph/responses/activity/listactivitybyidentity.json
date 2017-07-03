@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/listactivity",
+  "id": "/listactivitybyidentity",
   "title": "List of activity objects",
   "type": "object",
 
@@ -17,7 +17,7 @@
 
               "properties": {
 
-                "listactivity": {
+                "listactivitybyidentifier": {
                   "properties": {
 
                     "activity": {
@@ -26,12 +26,12 @@
                     },
                     "pagination": { "$ref": "../pagination" }
                   },
-                  "required":["activity", "pagination"]
+                  "required":["activity"]
 
                 }
 
               },
-              "required":["listactivity"]
+              "required":["listactivitybyidentifier"]
 
             }
 

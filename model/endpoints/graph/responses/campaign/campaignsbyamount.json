@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/listactivity",
-  "title": "List of activity objects",
+  "id": "/campaignsbyamount",
+  "title": "Campaigns by amount",
   "type": "object",
 
   "allOf": [
@@ -17,21 +17,21 @@
 
               "properties": {
 
-                "listactivity": {
+                "campaignsbyamount": {
                   "properties": {
 
-                    "activity": {
+                    "campaigns": {
                       "type": "array",
-                      "items": { "$ref": "activity" }
+                      "items": { "$ref": "campaign" }
                     },
                     "pagination": { "$ref": "../pagination" }
                   },
-                  "required":["activity", "pagination"]
+                  "required":["campaigns"]
 
                 }
 
               },
-              "required":["listactivity"]
+              "required":["campaignsbyamount"]
 
             }
 
