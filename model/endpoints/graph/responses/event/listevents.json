@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/listactivity",
-  "title": "List of activity objects",
+  "id": "/listevents",
+  "title": "List of event objects",
   "type": "object",
 
   "allOf": [
@@ -17,21 +17,21 @@
 
               "properties": {
 
-                "listactivity": {
+                "listevents": {
                   "properties": {
 
-                    "activity": {
+                    "events": {
                       "type": "array",
-                      "items": { "$ref": "activity" }
+                      "items": { "$ref": "event" }
                     },
                     "pagination": { "$ref": "../pagination" }
                   },
-                  "required":["activity", "pagination"]
+                  "required":["events", "pagination"]
 
                 }
 
               },
-              "required":["listactivity"]
+              "required":["listevents"]
 
             }
 
