@@ -18,6 +18,19 @@ ____
 * `subaffiliate_4` -  a sub-affiliate string
 * `subaffiliate_5` -  a sub-affiliate string
 * `product_schedule` -  a array of UUIDv4 strings
+* `union` - a construct for *every* merchant provider listed in a list. Example as f872e07c-ef56-4829-b9ec-1ff861fc35a9 for merchant provider :
+```   
+   UNION ALL
+   SELECT
+     'f872e07c-ef56-4829-b9ec-1ff861fc35a9' merchant_provider,
+     0                                      num_transactions_today,
+     0                                      num_transactions_week,
+     0                                      num_transactions_month,
+     0                                      amount_transactions_today,
+     0                                      amount_transactions_week,
+     0                                      amount_transactions_month
+     ```
+
 
 ---
 ### Query notes
