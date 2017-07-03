@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/eventummary",
+  "title": "Event summary",
+  "type": "object",
+
+  "allOf": [
+    { "$ref": "../graph" },
+    {
+      "properties": {
+
+        "response" :{
+
+          "properties": {
+
+            "data": {
+
+              "properties": {
+
+                "eventsummary": {
+                  "properties": {
+
+                    "events": {
+                      "type": "array",
+                      "items": { "$ref": "event" }
+                    },
+                    "pagination": { "$ref": "../pagination" }
+                  },
+                  "required":["events"]
+
+                }
+
+              },
+              "required":["eventsummary"]
+
+            }
+
+          },
+          "required":["data"]
+
+        }
+
+      },
+      "required":["response"]
+    }
+  ]
+
+}
