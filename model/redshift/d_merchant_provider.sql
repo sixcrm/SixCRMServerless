@@ -5,7 +5,7 @@ Dimensional table is needed for faster upload.
 */
 
 
-DROP TABLE d_merchant_provider;
+/*DROP TABLE d_merchant_provider;*/
 
 CREATE TABLE d_merchant_provider
 (

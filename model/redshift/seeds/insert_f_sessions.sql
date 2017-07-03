@@ -29,6 +29,3 @@ INSERT INTO f_sessions
     'd515c0df-f9e4-4a87-8fe8-c53dcace0995',
     '45f025bb-a9dc-45c7-86d8-d4b7a4443426',
     'fb10d33f-da7d-4765-9b2b-4e5e42287726'
-
-
-select * from f_sessions;

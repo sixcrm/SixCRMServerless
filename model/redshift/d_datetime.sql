@@ -4,7 +4,7 @@
 
 */
 
-drop table d_datetime;
+/*drop table d_datetime;*/
 
 create table d_datetime(
   datetime TIMESTAMP encode delta

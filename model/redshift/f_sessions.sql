@@ -1,4 +1,4 @@
-DROP TABLE f_sessions;
+/*DROP TABLE f_sessions;*/
 
 CREATE TABLE f_sessions
 (

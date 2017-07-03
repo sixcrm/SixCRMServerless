@@ -3,7 +3,7 @@
 
 */
 
-DROP TABLE f_events;
+/*DROP TABLE f_events;*/
 
 CREATE TABLE f_events
 (

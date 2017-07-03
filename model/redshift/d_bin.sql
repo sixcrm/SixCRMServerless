@@ -4,7 +4,7 @@
 
 */
 
-DROP TABLE d_bin;
+/*DROP TABLE d_bin;*/
 
 CREATE TABLE d_bin
 (

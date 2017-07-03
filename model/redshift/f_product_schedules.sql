@@ -1,4 +1,4 @@
-DROP TABLE f_product_schedules;
+/*DROP TABLE f_product_schedules;**/
 
 CREATE TABLE f_product_schedules
 (
