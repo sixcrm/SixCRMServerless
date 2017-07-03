@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/listactivity",
-  "title": "List of activity objects",
+  "id": "/eventfunnel",
+  "title": "Event funnel",
   "type": "object",
 
   "allOf": [
@@ -17,21 +17,18 @@
 
               "properties": {
 
-                "listactivity": {
+                "eventfunnel": {
                   "properties": {
 
-                    "activity": {
-                      "type": "array",
-                      "items": { "$ref": "activity" }
-                    },
+                    "funnel": { "$ref": "funnel" },
                     "pagination": { "$ref": "../pagination" }
                   },
-                  "required":["activity", "pagination"]
+                  "required":["funnel"]
 
                 }
 
               },
-              "required":["listactivity"]
+              "required":["eventfunnel"]
 
             }
 
