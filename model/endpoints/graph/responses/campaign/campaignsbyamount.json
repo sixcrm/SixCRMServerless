@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/campaignsbyamount",
+  "title": "Campaigns by amount",
+  "type": "object",
+
+  "allOf": [
+    { "$ref": "../graph" },
+    {
+      "properties": {
+
+        "response" :{
+
+          "properties": {
+
+            "data": {
+
+              "properties": {
+
+                "campaignsbyamount": {
+                  "properties": {
+
+                    "campaigns": {
+                      "type": "array",
+                      "items": { "$ref": "campaign" }
+                    },
+                    "pagination": { "$ref": "../pagination" }
+                  },
+                  "required":["campaigns"]
+
+                }
+
+              },
+              "required":["campaignsbyamount"]
+
+            }
+
+          },
+          "required":["data"]
+
+        }
+
+      },
+      "required":["response"]
+    }
+  ]
+
+}
