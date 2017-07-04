@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/getentity",
+  "title": "Get a single entity",
+  "type": "object",
+
+  "allOf": [
+    { "$ref": "../graph" },
+    {
+      "properties": {
+
+        "response" :{
+
+          "properties": {
+
+            "data": {
+
+              "properties": {
+
+                "placeholder_getentity": {
+                  "properties": {
+
+                    "placeholder_entity": {
+                      "type": "array",
+                      "items": { "$ref": "entity" }
+                    },
+                    "pagination": { "$ref": "../pagination" }
+                  },
+                  "required":["placeholder_entity", "pagination"]
+
+                }
+
+              },
+              "required":["placeholder_getentity"]
+
+            }
+
+          },
+          "required":["data"]
+
+        }
+
+      },
+      "required":["response"]
+    }
+  ]
+
+}

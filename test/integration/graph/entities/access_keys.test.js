@@ -57,19 +57,20 @@ describe('Graph '+entity+' Test', function() {
                   this_request.post('graph/'+account)
 							.set('Authorization', test_jwt)
 							.send(query)
-							.expect(200)
+							// .expect(200)
 							.expect('Content-Type', 'application/json')
 							.expect('Access-Control-Allow-Origin','*')
 							//.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 							//.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
-    if(err){
-        du.error(err);
-    }
-    du.warning(response.body);
-    tu.assertResultSet(response, test_user.role);
-    done();
-});
+                        if(err){
+                            du.error(err);
+                        }
+                        du.warning(response.body);
+                        tu.assertResultSet(response, test_user.role);
+
+                        done();
+                    });
               });
           });
 

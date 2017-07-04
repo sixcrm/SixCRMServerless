@@ -1,14 +1,14 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/event",
-  "title": "Event",
+  "id": "/entity",
+  "title": "Entity",
   "type": "object",
   "properties": {
 
     "session": {
-      "type": "string"
+      "type": "id"
     }
 
   },
-  "required":["session"]
+  "required":["id"]
 }
