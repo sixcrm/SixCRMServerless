@@ -24,7 +24,7 @@
                       "type": "array",
                       "items": { "$ref": "campaign" }
                     },
-                    "pagination": { "$ref": "../../pagination" }
+                    "pagination": { "$ref": "../../sql_pagination" }
                   },
                   "required":["campaigns"]
 
