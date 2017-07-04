@@ -13,13 +13,24 @@
       "minimum": 200,
       "maximum": 599
     },
+    "error_type": {
+      "type": "string"
+    },
     "response" :{
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "null"
         }
-      }
+      ]
+
     }
   },
   "required":["success", "code", "response"]
