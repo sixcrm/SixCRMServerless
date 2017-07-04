@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/eventfunnel",
-  "title": "Event funnel",
+  "id": "/campaigndelta",
+  "title": "Campaign delta",
   "type": "object",
 
   "allOf": [
-    { "$ref": "../graph" },
+    { "$ref": "../../graph" },
     {
       "properties": {
 
@@ -17,18 +17,21 @@
 
               "properties": {
 
-                "eventfunnel": {
+                "campaigndelta": {
                   "properties": {
 
-                    "funnel": { "$ref": "funnel" },
-                    "pagination": { "$ref": "../pagination" }
+                    "campaigns": {
+                      "type": "array",
+                      "items": { "$ref": "campaign" }
+                    },
+                    "pagination": { "$ref": "../../pagination" }
                   },
-                  "required":["funnel"]
+                  "required":["campaigns"]
 
                 }
 
               },
-              "required":["eventfunnel"]
+              "required":["campaigndelta"]
 
             }
 

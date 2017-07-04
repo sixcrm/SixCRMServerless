@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/listevents",
-  "title": "List of event objects",
+  "id": "/eventfunnel",
+  "title": "Event funnel",
   "type": "object",
 
   "allOf": [
-    { "$ref": "../graph" },
+    { "$ref": "../../graph" },
     {
       "properties": {
 
@@ -17,21 +17,18 @@
 
               "properties": {
 
-                "listevents": {
+                "eventfunnel": {
                   "properties": {
 
-                    "events": {
-                      "type": "array",
-                      "items": { "$ref": "event" }
-                    },
-                    "pagination": { "$ref": "../pagination" }
+                    "funnel": { "$ref": "funnel" },
+                    "pagination": { "$ref": "../../pagination" }
                   },
-                  "required":["events", "pagination"]
+                  "required":["funnel"]
 
                 }
 
               },
-              "required":["listevents"]
+              "required":["eventfunnel"]
 
             }
 

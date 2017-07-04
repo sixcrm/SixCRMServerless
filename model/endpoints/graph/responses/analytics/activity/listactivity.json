@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/listactivitybyidentity",
+  "id": "/listactivity",
   "title": "List of activity objects",
   "type": "object",
 
   "allOf": [
-    { "$ref": "../graph" },
+    { "$ref": "../../graph" },
     {
       "properties": {
 
@@ -17,21 +17,21 @@
 
               "properties": {
 
-                "listactivitybyidentifier": {
+                "listactivity": {
                   "properties": {
 
                     "activity": {
                       "type": "array",
                       "items": { "$ref": "activity" }
                     },
-                    "pagination": { "$ref": "../pagination" }
+                    "pagination": { "$ref": "../../pagination" }
                   },
-                  "required":["activity"]
+                  "required":["activity", "pagination"]
 
                 }
 
               },
-              "required":["listactivitybyidentifier"]
+              "required":["listactivity"]
 
             }
 

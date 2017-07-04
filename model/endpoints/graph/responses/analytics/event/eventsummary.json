@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/campaigndelta",
-  "title": "Campaign delta",
+  "id": "/eventummary",
+  "title": "Event summary",
   "type": "object",
 
   "allOf": [
-    { "$ref": "../graph" },
+    { "$ref": "../../graph" },
     {
       "properties": {
 
@@ -17,21 +17,21 @@
 
               "properties": {
 
-                "campaigndelta": {
+                "eventsummary": {
                   "properties": {
 
-                    "campaigns": {
+                    "events": {
                       "type": "array",
-                      "items": { "$ref": "campaign" }
+                      "items": { "$ref": "event" }
                     },
-                    "pagination": { "$ref": "../pagination" }
+                    "pagination": { "$ref": "../../pagination" }
                   },
-                  "required":["campaigns"]
+                  "required":["events"]
 
                 }
 
               },
-              "required":["campaigndelta"]
+              "required":["eventsummary"]
 
             }
 
