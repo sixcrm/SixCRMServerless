@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/entity",
+  "title": "Entity",
+  "type": "object",
+  "properties": {
+
+    "session": {
+      "type": "id"
+    }
+
+  },
+  "required":["id"]
+}
