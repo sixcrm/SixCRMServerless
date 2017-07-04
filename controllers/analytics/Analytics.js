@@ -116,11 +116,20 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getMerchantProviderSummary(parameters){
+    getMerchantProviderSummaries(parameters){
 
-      du.debug('Get Merchant Provider Summary');
+      du.debug('Get Merchant Provider Summaries');
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      if(!_.has(parameters, 'order_field')){
+        parameters.order_field = 'merchant_provider';
+      }
+
+      //Technical Debt: Get this out of here...
+      if(_.has(parameters, 'merchantprovider')){
+        parameters.merchant_provider = parameters.merchantprovider;
+      }
 
       return this.getResults('merchant_provider_summary', parameters, this.default_query_filters);
 

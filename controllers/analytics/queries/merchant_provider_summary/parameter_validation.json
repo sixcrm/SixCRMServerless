@@ -23,9 +23,9 @@
 					"type":"string",
 					"enum": ["asc", "desc"]
 		},
-		"metric":{
-					"type":"string",
-					"enum": ["num_transactions_today", "num_transactions_week","num_transactions_month","amount_transactions_today","amount_transactions_week","amount_transactions_month"]
+		"order_field":{
+			"type":"string",
+			"enum": ["merchant_provider","num_transactions_today", "num_transactions_week","num_transactions_month","amount_transactions_today","amount_transactions_week","amount_transactions_month"]
 		},
 		"account":{
 			"type": "array",
@@ -142,10 +142,8 @@
 		"offset":{
 			"type": ["integer"],
 			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
+			"exclusiveMinimum": false
 		}
 	},
-	"required":["merchant_provider","limit","offset","order","metric"]
+	"required":["limit","offset","order","order_field"]
 }

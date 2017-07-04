@@ -365,8 +365,10 @@ module.exports = class entityController extends entityUtilitiesController {
             if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
             try{
+                du.info(id);
                 id = this.getID(id, primary_key);
             }catch(e){
+                du.warning(e);
                 return reject(e);
             }
 

@@ -10,11 +10,11 @@ module.exports.graphObj = new GraphQLInputObjectType({
     fields: () => ({
         start: {
             description: 'The transaction summary start daytime.',
-            type: new GraphQLNonNull(GraphQLString)
+            type: GraphQLString
         },
         end: {
             description: 'The transaction summary start daytime.',
-            type: new GraphQLNonNull(GraphQLString)
+            type: GraphQLString
         },
         campaign:{
             description: 'The transaction summary campaign filter list.',

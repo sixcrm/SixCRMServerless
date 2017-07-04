@@ -1,5 +1,6 @@
 'use strict';
 let du = global.routes.include('lib', 'debug-utilities.js');
+let paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
 
 module.exports = function(results, parameters){
 
@@ -8,27 +9,41 @@ module.exports = function(results, parameters){
 
         let return_array = [];
 
+        du.info(results);
+
         results.forEach((result) => {
 
           return_array.push({
-              id:result.merchant_provider,
-              today: {
+              merchantprovider:{
+                id: result.merchant_provider,
+              },
+              summary: {
+                today: {
                   count: result.num_transactions_today,
                   amount: result.amount_transactions_today
-              },
-              thisweek: {
+                },
+                thisweek: {
                   count: result.num_transactions_week,
                   amount: result.amount_transactions_week
-              },
-              thismonth: {
+                },
+                thismonth: {
                   count: result.num_transactions_month,
                   amount: result.amount_transactions_month
+                }
               }
           });
 
         });
 
-        return resolve(return_array);
+        parameters['count'] = results.length;
+
+        let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
+
+        let return_object = {merchantproviders:return_array, pagination: pagination_object};
+
+        du.output(return_object);
+
+        return resolve(return_object);
 
     });
 

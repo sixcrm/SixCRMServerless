@@ -97,6 +97,7 @@ let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
 let searchResultsType = require('./search/searchResultsType');
 
+let listMerchantProviderSummariesType = require('./analytics/listMerchantProviderSummariesType');
 let transactionSummaryType = require('./analytics/transactionSummaryType');
 let listTransactionsType = require('./analytics/listTransactionsType');
 let listEventsType = require('./analytics/listEventsType');
@@ -546,7 +547,22 @@ module.exports.graphObj = new GraphQLObjectType({
       	       return transactionController.list(transaction.pagination);
             }
         },
-        binlist: {
+        listmerchantprovidersummaries: {
+            type: listMerchantProviderSummariesType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj},
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+
+              const analyticsController = global.routes.include('controllers', 'analytics/Analytics.js');
+
+              return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderSummaries');
+
+            }
+        },
+        listbins: {
             type: listBINsType.graphObj,
             args: {
                 binfilter: { type: analyticsBINFilterInputType.graphObj },

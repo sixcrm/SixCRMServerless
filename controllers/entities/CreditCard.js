@@ -14,6 +14,32 @@ class creditCardController extends entityController {
         return Promise.resolve(creditcard.address);
     }
 
+    getBINNumber(creditcard){
+
+      du.debug('Get BIN Number');
+
+      let cc_number = null;
+
+      if(_.has(creditcard, 'number')){
+
+        cc_number = creditcard.number;
+
+      }else if(_.isString(creditcard)){
+
+        cc_number = creditcard;
+
+      }
+
+      if(!_.isNull(cc_number)){
+
+        cc_number = cc_number.slice(0,6);
+
+      }
+
+      return cc_number;
+
+    }
+
     storeCreditCard(creditcard) {
 
         du.debug('Store Credit Card.');
