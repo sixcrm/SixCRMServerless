@@ -66,8 +66,8 @@ describe('Graph '+entity+' Test', function() {
                         if(err){
                             du.error(err);
                         }
-                        du.warning(response.body);
-                        tu.assertResultSet(response, test_user.role);
+                        du.output(response.body);
+                        tu.assertResultSet(response, test_user.role, test.name);
 
                         done();
                     });
