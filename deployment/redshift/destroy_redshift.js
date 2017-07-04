@@ -41,9 +41,9 @@ function setupEnvironmentVariables() {
 function collectFileName(file_name, env) {
     du.highlight(file_name);
 
-    let table_name = file_name.replace('.sql', '');
+    let table_name = file_name.replace('.sql', '').replace(/[0-9]_/,'');
 
-    query += `DROP TABLE ${table_name};`;
+    query += `DROP TABLE IF EXISTS ${table_name};`;
 }
 
 function collectFileNames(tables, env) {

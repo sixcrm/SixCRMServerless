@@ -46,6 +46,8 @@ function collectQueryFromPath(path, env) {
     query += `${content};`;
 }
 
+//
+
 function collectQueries(files, env) {
 
     let directory = global.routes.path('model', 'redshift');
@@ -53,6 +55,15 @@ function collectQueries(files, env) {
     files.forEach((file) => {
         collectQueryFromPath(`${directory}/${file}`);
     });
+}
+
+function extractVersionNumber(path, env) {
+
+    du.highlight('Reading Version Number' + path);
+
+    let version_number = Number(fs.readFileSync(path,'utf-8').split('\n').filter( line => line.match(/TABLE_VERSION/)).toString().replace(/[^0-9]/g,''));
+
+    return Promise.resolve(version_number);
 }
 
 function execute() {
@@ -68,6 +79,17 @@ function getTableNames(){
 
     files.sort();
     return Promise.resolve(files);
+}
+
+function getTableVersion(name) {
+
+    du.debug('Get Redshift Table Version');
+    du.debug(name);
+    let query = 'select version from sys_sixcrm.sys_table_version where table_name =\''+name +'\';';
+    let version = redshiftutilities.query(query);
+
+    du.debug(version);
+    return Promise.resolve(version);
 }
 
 function getConfig() {

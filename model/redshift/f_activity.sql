@@ -3,11 +3,13 @@
 02.06.2017 A.Zelen Changing the activity table
 07.06.2017 A.Zelen Added account
 
+TABLE_VERSION 1
+
 */
 
 /*DROP TABLE f_activity;*/
 
-CREATE TABLE f_activity
+CREATE TABLE IF NOT EXISTS f_activity
 (
   id                   VARCHAR(36)  NOT NULL,
   datetime             TIMESTAMP    NOT NULL,
@@ -19,8 +21,7 @@ CREATE TABLE f_activity
   acted_upon_type      VARCHAR(20),
   associated_with      VARCHAR(100),
   associated_with_type VARCHAR(20)
-)
-  SORTKEY (datetime);
+) SORTKEY (datetime);
 
 
 COMMENT ON TABLE f_activity IS 'Fact table build around activities of actors';

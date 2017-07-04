@@ -1,6 +1,10 @@
-/*DROP TABLE f_sessions;*/
+/*
+DROP TABLE f_sessions;
 
-CREATE TABLE f_sessions
+TABLE_VERSION 1
+*/
+
+CREATE TABLE IF NOT EXISTS f_sessions
 (
   id             VARCHAR(36) NOT NULL,
   account        VARCHAR(36) NOT NULL,
@@ -17,8 +21,6 @@ CREATE TABLE f_sessions
   subaffiliate_5 VARCHAR(128),
   cid            VARCHAR(36)
 
-)
-  SORTKEY (id
-);
+) SORTKEY (id);
 
 COMMENT ON TABLE f_sessions IS 'Fact table build for session data';

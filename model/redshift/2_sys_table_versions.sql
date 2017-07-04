@@ -3,7 +3,8 @@
 */
 
 
-CREATE TABLE IF NOT EXISTS sys_sixcrm.sys_table_version(
+CREATE TABLE IF NOT EXISTS sys_sixcrm.sys_table_version
+(
   table_name varchar(100),
   version integer,
   datetime timestamp

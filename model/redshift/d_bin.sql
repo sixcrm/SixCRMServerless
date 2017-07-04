@@ -2,11 +2,13 @@
  27.06.2017 A.Zelen Date dimensional table
  Set distribution style to all, recommended for dimensional table
 
+TABLE_VERSION 1
+
 */
 
 /*DROP TABLE d_bin;*/
 
-CREATE TABLE d_bin
+CREATE TABLE IF NOT EXISTS d_bin
 (
   binnumber    INTEGER      NOT NULL PRIMARY KEY,
   brand        VARCHAR(128) NOT NULL,
@@ -21,7 +23,6 @@ CREATE TABLE d_bin
   webpage      VARCHAR(128) ,
   phone        VARCHAR(128)
 
-)
-   DISTSTYLE all sortkey (binnumber);
+) DISTSTYLE all sortkey (binnumber);
 
 COMMENT ON TABLE d_bin IS 'Bin dimensional table loaded on create';
