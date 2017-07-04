@@ -34,3 +34,7 @@ union
 select count(*) from f_activity
 union
 select count(*) from f_events;
+
+create table d_datetime(
+  datetime TIMESTAMP encode delta
+) DISTSTYLE all sortkey (datetime);

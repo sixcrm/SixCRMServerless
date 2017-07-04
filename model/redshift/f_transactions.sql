@@ -44,4 +44,4 @@ CREATE TABLE f_transactions
 )
   INTERLEAVED SORTKEY (account, datetime);
 
-COMMENT ON TABLE f_transactions IS 'Main Fact table with information about facts';
+COMMENT ON TABLE f_transactions IS 'Main Fact table with information about transactions';

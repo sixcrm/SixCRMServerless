@@ -66,6 +66,7 @@ function getTableNames(){
     let directory = global.routes.path('model', 'redshift');
     let files = fs.readdirSync(directory).filter(file => file.match(/\.sql$/));
 
+    files.sort();
     return Promise.resolve(files);
 }
 
