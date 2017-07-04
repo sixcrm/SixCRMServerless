@@ -5,7 +5,7 @@
   "type": "object",
 
   "allOf": [
-    { "$ref": "../graph" },
+    { "$ref": "../../graph" },
     {
       "properties": {
 
@@ -24,7 +24,7 @@
                       "type": "array",
                       "items": { "$ref": "activity" }
                     },
-                    "pagination": { "$ref": "../pagination" }
+                    "pagination": { "$ref": "../../sql_pagination" }
                   },
                   "required":["activity", "pagination"]
 

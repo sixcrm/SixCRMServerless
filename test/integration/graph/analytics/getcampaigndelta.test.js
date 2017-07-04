@@ -62,7 +62,7 @@ describe('Get '+test_name+' Test', function() {
 
     assert.isObject(response.body.response, JSON.stringify(response.body));
 
-    assert.isTrue(tu.validateGraphResponse(response.body, 'campaign/campaigndelta'));
+    assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/campaign/campaigndelta'));
 
     done();
 
