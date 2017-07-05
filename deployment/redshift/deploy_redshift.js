@@ -38,32 +38,44 @@ function setupEnvironmentVariables() {
     return Promise.resolve();
 }
 
-function collectQueryFromPath(path, env) {
-    du.highlight('Reading ' + path);
+function collectQueryFromPath(path, file) {
+    du.highlight('Constructing Query '+file);
 
-    let content = fs.readFileSync(path, 'utf-8');
+    return Promise.all([
+        getTableVersion(file),
+        extractVersionNumber(path)
+    ]).then((results) => {
 
-    query += `${content};`;
+        let versionInDb = results[0];
+        let versionInFile = results[1];
+
+        if (versionInDb < versionInFile && !file.match(/^\d/)) {
+            du.highlight(' T '+file+' '+versionInDb+versionInFile);
+            let content = fs.readFileSync(path, 'utf-8');
+
+            query += `${content};`;
+
+        }
+
+    });
+
 }
 
-//
-
-function collectQueries(files, env) {
+function collectQueries(files) {
 
     let directory = global.routes.path('model', 'redshift');
 
     files.forEach((file) => {
-        collectQueryFromPath(`${directory}/${file}`);
+        collectQueryFromPath(`${directory}/${file}`,file);
     });
 }
 
-function extractVersionNumber(path, env) {
+function extractVersionNumber(path) {
 
-    du.highlight('Reading Version Number' + path);
+    du.highlight('Reading Version Number');
 
-    let version_number = Number(fs.readFileSync(path,'utf-8').split('\n').filter( line => line.match(/TABLE_VERSION/)).toString().replace(/[^0-9]/g,''));
+    return Number(fs.readFileSync(path,'utf-8').split('\n').filter( line => line.match(/TABLE_VERSION/)).toString().replace(/[^0-9]/g,''));
 
-    return Promise.resolve(version_number);
 }
 
 function execute() {
@@ -72,7 +84,7 @@ function execute() {
 
 function getTableNames(){
 
-    du.debug('Get Redshift Table Names');
+    du.highlight('Get Redshift Table Names');
 
     let directory = global.routes.path('model', 'redshift');
     let files = fs.readdirSync(directory).filter(file => file.match(/\.sql$/));
@@ -83,13 +95,12 @@ function getTableNames(){
 
 function getTableVersion(name) {
 
-    du.debug('Get Redshift Table Version');
-    du.debug(name);
-    let query = 'select version from sys_sixcrm.sys_table_version where table_name =\''+name +'\';';
-    let version = redshiftutilities.query(query);
+    du.highlight('Get Redshift Table Version');
 
-    du.debug(version);
-    return Promise.resolve(version);
+    //let query = 'select version from sys_sixcrm.sys_table_version where table_name =\''+name.replace('.sql', '')+'\'';
+    let query = 'select 1';
+
+    return redshiftutilities.query(query).catch((e) => {  console.log(e) });
 }
 
 function getConfig() {
