@@ -5,9 +5,9 @@
   "type": "object",
   "properties": {
 
-    "id": { "$ref": "../definitions/sixcrmidentifier" },
-    "created_at": { "$ref": "../definitions/iso8601" },
-    "updated_at": { "$ref": "../definitions/iso8601" }
+    "id": { "$ref": "sixcrmidentifier" },
+    "created_at": { "$ref": "iso8601" },
+    "updated_at": { "$ref": "iso8601" }
 
   },
   "required":["id", "created_at", "updated_at"]
