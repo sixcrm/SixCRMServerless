@@ -1,12 +1,16 @@
 /*
  05.05.2017 A.Zelen Results dimensional table
- Set event types for aggregation
+ 05.07.2017 A.Zelen Logic from idempotent versioning
+ // TABLE_VERSION 1
 
-TABLE_VERSION 1
+ DROP TABLE d_event_type;
 
-*/
+ DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_event_type';
 
-/*drop table d_event_type;*/
+ INSERT INTO sys_sixcrm.sys_table_version
+     SELECT 'd_event_type',1,getdate();
+
+ */
 
 CREATE TABLE IF NOT EXISTS d_event_type
 (

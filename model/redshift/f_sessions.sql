@@ -1,7 +1,14 @@
 /*
+05.07.2017 A.Zelen Logic from idempotent versioning
+// TABLE_VERSION 1
+
 DROP TABLE f_sessions;
 
-TABLE_VERSION 1
+DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_sessions';
+
+INSERT INTO sys_sixcrm.sys_table_version
+     SELECT 'f_sessions',1,getdate();
+
 */
 
 CREATE TABLE IF NOT EXISTS f_sessions
