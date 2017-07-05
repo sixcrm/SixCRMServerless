@@ -37,6 +37,7 @@ module.exports = class Process{
       .then(() => this.validateParameters)
       .then(() => this.selectCustomerCreditCard)
       .then(() => this.getSelectedCreditCardProperties)
+      .then(() => this.validateProcessClass('pre'))
       .then(() => this.selectMerchantProvider)
       .then(() => this.processTransaction)
       .then(() => this.storeTransaction)
@@ -238,22 +239,78 @@ module.exports = class Process{
 
     }
 
+    validateProcessClass(process_stage){
+
+      du.debug('Validate Process Class');
+
+      if(process_stage == 'pre'){
+
+        mvu.validateModel(this, global.routes.path('model','transaction/process_class_pre.json'));
+
+      }else if(process_stage == 'post'){
+
+        mvu.validateModel(this, global.routes.path('model','transaction/process_class_post.json'));
+
+      }
+
+    }
+
     selectMerchantProvider(){
 
-        du.debug('Select Merchant Provider');
+      du.debug('Select Merchant Provider');
 
-        return this.getLoadBalancers()
-      .then((loadbalancers) => this.selectLoadBalancer(loadbalancers))
-      .then((loadbalancer) => this.getMerchantProviders(loadbalancer))
-      .then((merchant_providers) => this.filterMerchantProviders(merchant_providers))
-      .then((merchant_providers) => this.selectMerchantProviderWithDistributionLeastSumOfSquares(merchant_providers))
+      return this.getLoadBalancers()
+      .then(() => this.selectLoadBalancer())
+      .then(() => this.getMerchantProviders())
+      .then(() => this.getMerchantProviderSummaries())
+      .then(() => this.marryMerchantProviderSummaries())
+      .then(() => this.filterMerchantProviders())
+      .then(() => this.selectMerchantProviderWithDistributionLeastSumOfSquares())
       .then((merchant_provider) => {
 
-          this.selected_merchant_provider = merchant_provider;
+        this.selected_merchant_provider = merchant_provider;
 
-          return true;
+        return true;
 
       });
+
+    }
+
+    selectMerchantProviderWithDistributionLeastSumOfSquares(){
+
+      if(this.merchantproviders.length < 1){
+
+        return Promise.resolve(null);
+
+      }else if(this.merchantproviders.length == 1){
+
+        return Promise.resolve(this.merchantproviders[0]);
+
+      }else{
+
+        return this.calculateLoadBalancerSum()
+        .then(() => this.calculateMerchantProviderPercentages())
+        .then(() => this.selectMerchantProviderFromLSS());
+
+      }
+
+    }
+
+    calculateLoadBalancerSum(){
+
+      //Finish
+
+    }
+
+    calculateMerchantProcessorPercentages(){
+
+      //Finish
+
+    }
+
+    selecteMerchatProviderFromLSS(){
+
+      //Finish
 
     }
 
@@ -261,36 +318,124 @@ module.exports = class Process{
 
         du.debug('Get Loadbalancers');
 
-        return this.productScheduleController.getLoadBalancers(this.product_schedule);
+        return this.productScheduleController.getLoadBalancers(this.product_schedule).then((loadbalancers) => {
 
-    }
+          this.loadbalancers = loadbalancers;
 
-    getMerchantProviders(loadbalancer){
+          return loadbalancers;
 
-        du.debug('Get Merchant Providers');
-
-        return this.loadBalancerController.getMerchantProviders(loadbalancer);
+        });
 
     }
 
     //Technical Debt:  Finish
     //Note:  I believe that load balancer properties like "prepaid need to be set..."
-    selectLoadBalancer(loadbalancers){
+    selectLoadBalancer(){
 
-        du.debug('Select Load Balancer');
+      du.debug('Select Load Balancer');
 
-        return Promise.resolve(loadbalancers[0]);
+      if(!_.has(this, 'loadbalancers')){ return Promise.reject(eu.getError('server','Loadbalancers must be set before selecting a loadbalancer.')); }
+
+      this.selected_loadbalancer = this.loadbalancers[0];
+
+      return Promise.resolve(this.selected_loadbalancer);
+
+    }
+
+    getMerchantProviders(){
+
+      du.debug('Get Merchant Providers');
+
+      if(!_.has(this, 'selected_loadbalancer')){ eu.throwError('server', 'A load balancer must be selected before selecting merchant providers.'); }
+
+      return this.loadBalancerController.getMerchantProviders(this.selected_loadbalancer).then((merchantproviders) => {
+
+        this.merchantproviders = merchantproviders;
+
+        return merchantproviders;
+
+      });
+
+    }
+
+    getMerchantProviderSummaries(){
+
+      du.debug('Get Merchant Provider Summaries');
+
+      let merchantprovider_ids = this.merchantproviders.map(merchantprovider => {
+        return merchantprovider.id;
+      });
+
+      let parameters = {merchantprovider: merchantprovider_ids};
+
+      return this.analyticsController.getMerchantProviderSummaries(parameters).then(results => {
+
+        this.merchantprovider_summaries = results;
+
+        return results;
+
+      });
+
+    }
+
+    marryMerchantProviderSummaries(){
+
+      du.debug('Marry Merchant Provider Summaries');
+
+      this.merchantprovider_summaries.forEach(summary => {
+
+        let match_array = arrayutilities.filter(this.merchantproviders, (merchantprovider, index) => {
+
+          if(merchantprovider.id == summary.merchantprovider.id){
+            this.merchantproviders[index].summary = summary;
+          }
+
+        });
+
+      });
+
+      return Promise.resolve(this.merchantproviders);
 
     }
 
     filterMerchantProviders(merchant_providers){
 
-        du.debug('Filter Merchant Providers');
+      du.debug('Filter Merchant Providers');
 
-        return this.filterDiabledMerchantProviders(merchant_providers)
-      .then((merchant_providers) => this.filterTypeMismatchedMerchantProviders(merchant_providers))
-      .then((merchant_providers) => this.filterCAPShortageMerchantProviders(merchant_providers))
-      .then((merchant_providers) => this.filterCountShortageMerchantProviders(merchant_providers));
+      this.filterInvalidMerchantProviders(this.merchantproviders)
+      .then((merchant_providers) => this.filterDisabledMerchantProviders(merchant_providers))
+      .then((merchantproviders) => this.filterTypeMismatchedMerchantProviders(merchantproviders))
+      .then((merchantproviders) => this.filterCAPShortageMerchantProviders(merchantproviders))
+      .then((merchantproviders) => this.filterCountShortageMerchantProviders(merchantproviders))
+      .then((merchantproviders) => {
+        this.merchantproviders = merchantproviders
+        return merchantproviders;
+      })
+
+    }
+
+    filterInvalidMerchantProviders(merchant_providers){
+
+        du.debug('Filter Invalid Merchant Providers');
+
+        let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
+
+
+          try{
+
+            return mvu.validateModel(merchant_provider, global.routes.path('model','transaction/merchantprovider.json'));
+
+          }catch(e){
+
+            du.warning('Invalid merchant provider: ', merchant_provider);
+
+          }
+
+          return false;
+
+        });
+
+        return Promise.resolve(return_array);
 
     }
 
@@ -318,12 +463,11 @@ module.exports = class Process{
 
         let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        //Finish
-            if(!_.has(merchant_provider, 'enabled')){
-                eu.throwError('server','Merchant Provider missing "enabled" field.');
-            }
+          if(!_.has(merchant_provider, 'accepted_payment_methods')){ eu.throwError('server', 'Merchant Provider does not have the "accepted_payment_methods" property.'); }
 
-            return merchant_provider.enabled;
+          if(!_.isArray(merchant_provider.accepted_payment_methods)){ eu.throwError('server', 'Merchant Provider "accepted_payment_methods" is not an array.'); }
+
+          return _.contains(merchant_provider.accepted_payment_methods, this.selected_credit_card.properties.brand);
 
         });
 
@@ -337,12 +481,11 @@ module.exports = class Process{
 
         let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        //Finish
-            if(!_.has(merchant_provider, 'enabled')){
-                eu.throwError('server','Merchant Provider missing "enabled" field.');
-            }
+          if((parseFloat(merchant_provider.summary.summary.thismonth.amount) + parseFloat(this.amount)) >= merchant_provider.processing.monthly_cap){
+            return false;
+          }
 
-            return merchant_provider.enabled;
+          return true;
 
         });
 
@@ -356,12 +499,19 @@ module.exports = class Process{
 
         let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        //Finish
-            if(!_.has(merchant_provider, 'enabled')){
-                eu.throwError('server','Merchant Provider missing "enabled" field.');
-            }
+          if(parseInt(merchant_provider.summary.summary.today.count) >= parseInt(merchant_provider.processing.transaction_counts.daily)){
+            return false;
+          }
 
-            return merchant_provider.enabled;
+          if(parseInt(merchant_provider.summary.summary.thisweek.count) >= parseInt(merchant_provider.processing.transaction_counts.weekly)){
+            return false;
+          }
+
+          if(parseInt(merchant_provider.summary.summary.thismonth.count) >= parseInt(merchant_provider.processing.transaction_counts.monthly)){
+            return false;
+          }
+
+          return true;
 
         });
 

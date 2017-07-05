@@ -11,11 +11,134 @@ let timestamp = global.routes.include('lib', 'timestamp.js');
 
 const processHelperController = global.routes.include('helpers', 'transaction/Process.js');
 
+function getValidMerchantProviderSummaries(){
+  return [{
+    merchantprovider:{
+      id: '6c40761d-8919-4ad6-884d-6a46a776cfb9'
+    },
+    summary: {
+      today: {
+        count: 0,
+        amount: 0
+      },
+      thisweek: {
+        count: 0,
+        amount: 0
+      },
+      thismonth: {
+        count: 0,
+        amount: 0
+      }
+    }
+  },{
+    merchantprovider:{
+      id: '79189a4a-ed89-4742-aa96-afcd7f6c08fb'
+    },
+    summary: {
+      today: {
+        count: 0,
+        amount: 0
+      },
+      thisweek: {
+        count: 0,
+        amount: 0
+      },
+      thismonth: {
+        count: 0,
+        amount: 0
+      }
+    }
+  }];
+}
+
+function getValidMerchantProviders(){
+
+  return [
+  	{
+  		id:"6c40761d-8919-4ad6-884d-6a46a776cfb9",
+  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+  		name:"NMI Account 1",
+  		processor:{
+  			name:"NMA",
+  			id:"someIDValue"
+  		},
+  		processing:{
+  			monthly_cap: 50000.00,
+  			discount_rate:0.9,
+  			transaction_fee:0.06,
+  			reserve_rate: 0.5,
+  			maximum_chargeback_ratio:0.17,
+  			transaction_counts:{
+  				daily:30,
+  				monthly:30,
+  				weekly:30
+  			}
+  		},
+  		enabled:true,
+  		gateway: {
+  			name:"NMI",
+  			username:"demo",
+  			password:"password",
+  			endpoint:"https://secure.networkmerchants.com/api/transact.php",
+  			additional:"{\"processor_id\":123}"
+  		},
+  		allow_prepaid:true,
+  		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
+  		customer_service:{
+  			email:"customer.service@mid.com",
+  			url:"http://mid.com",
+  			description:"Some string here..."
+  		},
+  		created_at:"2017-04-06T18:40:41.405Z",
+  		updated_at:"2017-04-06T18:41:12.521Z"
+  	},
+  	{
+  		id:"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
+  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+  		name:"NMI Account 2",
+  		processor:{
+  			name:"NMA",
+  			id:"someIDValue"
+  		},
+  		processing:{
+  			monthly_cap: 50000.00,
+  			discount_rate:0.9,
+  			transaction_fee:0.06,
+  			reserve_rate: 0.5,
+  			maximum_chargeback_ratio:0.17,
+  			transaction_counts:{
+  				daily:30,
+  				monthly:30,
+  				weekly:30
+  			}
+  		},
+  		enabled:true,
+  		gateway: {
+  			name:"NMI",
+  			username:"demo",
+  			password:"password",
+  			endpoint:"https://secure.networkmerchants.com/api/transact.php",
+  			additional:"{\"processor_id\":123}"
+  		},
+  		allow_prepaid:true,
+  		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
+  		customer_service:{
+  			email:"customer.service@mid.com",
+  			url:"http://mid.com",
+  			description:"Some string here..."
+  		},
+  		created_at:"2017-04-06T18:40:41.405Z",
+  		updated_at:"2017-04-06T18:41:12.521Z"
+  	}
+  ];
+
+}
+
 function getValidCreditCardProperties(){
 
   return {
     binnumber: 411111,
-    brand: 'Some Brand',
+    brand: 'Visa',
     bank: 'Some Bank',
     type: 'Classic',
     level: 'level',
@@ -106,17 +229,17 @@ function getValidProductSchedule(){
     loadbalancers:["927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"],
     schedule:[
       {
-        "product_id":"616cc994-9480-4640-b26c-03810a679fe3",
-        "price":4.99,
-        "start":0,
-        "end":14,
-        "period":14
+        product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+        price:4.99,
+        start:0,
+        end:14,
+        period:14
       },
       {
-        "product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
-        "price":34.99,
-        "start":14,
-        "period":30
+        product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+        price:34.99,
+        start:14,
+        period:30
       }
     ],
     created_at:"2017-04-06T18:40:41.405Z",
@@ -565,7 +688,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
     });
 
-    it('retrieves a load balancer', () => {
+    it('retrieves the loadbalancers', () => {
 
       let lb_1 = getValidLoadBalancer();
       let lb_2 = lb_1;
@@ -596,18 +719,321 @@ describe('helpers/transaction/Process.spec.js', () => {
       return ph.getLoadBalancers().then(loadbalancers => {
 
         expect(loadbalancers).to.deep.equal([lb_1, lb_2]);
+        expect(ph.loadbalancers).to.deep.equal([lb_1, lb_2]);
 
       });
 
     });
 
-    xit('retrieves merchant providers', () => {});
-    xit('retrieves merchant provider details', () => {})
-    xit('filters merchant provider list', () => {});
-    xit('filter disabled merchant provider list', () => {});
-    xit('filter mismatched merchant provider list', () => {});
-    xit('filter count shortage (day) merchant provider list', () => {});
-    xit('filter count shortage (week) merchant provider list', () => {});
-    xit('filter count shortage (month) merchant provider list', () => {});
+    it('fails to select a loadbalancer if loadbalancers are not set', () => {
 
+      let ph = new processHelperController();
+
+      return ph.selectLoadBalancer().catch(error => {
+        expect(error.message).to.equal('[500] Loadbalancers must be set before selecting a loadbalancer.');
+      });
+
+    });
+
+    it('selects a load balancer', () => {
+
+      let lb_1 = getValidLoadBalancer();
+      let lb_2 = lb_1;
+
+      lb_2.id = uuidV4();
+
+      let parameters = {
+        customer: getValidCustomer(),
+        productschedule: getValidProductSchedule(),
+        amount: '12.99'
+      };
+
+      let cc_1 = getValidCreditCard();
+
+      parameters.customer.creditcards = [cc_1];
+      parameters.productschedule.loadbalancers.push(lb_2.id);
+
+      let ph = new processHelperController();
+
+      ph.loadbalancers = [lb_1, lb_2];
+
+      ph.setParameters(parameters);
+
+      return ph.selectLoadBalancer().then(loadbalancer => {
+
+        expect(ph).to.have.property('selected_loadbalancer');
+        expect(ph.selected_loadbalancer).to.equal(lb_1);
+
+      });
+
+    });
+
+    it('retrieves merchant providers', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+
+      mockery.registerMock(global.routes.path('entities', 'LoadBalancer.js'), {
+        getMerchantProviders:(loadbalancer) => {
+            ph.merchantproviders = merchantproviders;
+            return Promise.resolve(merchantproviders);
+        }
+      });
+
+      let ph = new processHelperController();
+
+      let lb_1 = getValidLoadBalancer();
+
+      ph.selected_loadbalancer = lb_1;
+
+      return ph.getMerchantProviders().then(result => {
+
+        expect(result).to.equal(merchantproviders);
+        expect(ph.merchantproviders).to.equal(merchantproviders);
+
+      });
+
+    });
+
+    it('filter disabled merchant provider list', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+
+      merchantproviders[0].enabled = false;
+      merchantproviders[1].enabled = true;
+
+      let ph = new processHelperController();
+
+      return ph.filterDisabledMerchantProviders(merchantproviders).then(filtered_merchantproviders => {
+
+        expect(filtered_merchantproviders).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('no filter of typed merchant provider list', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+
+      merchantproviders[0].allowed_payment_methods = ['Visa','Mastercard'];
+      merchantproviders[1].allowed_payment_methods = ['Visa', 'American Express'];
+
+      let ph = new processHelperController();
+
+      ph.selected_credit_card = getValidCreditCard();
+      ph.selected_credit_card.properties = getValidCreditCardProperties();
+
+      return ph.filterTypeMismatchedMerchantProviders(merchantproviders).then(filtered_merchantproviders => {
+
+        expect(filtered_merchantproviders).to.deep.equal(merchantproviders);
+
+      });
+
+    });
+
+    it('filter type mismatched merchant provider', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+
+      merchantproviders[0].accepted_payment_methods = ['Visa','Mastercard'];
+      merchantproviders[1].accepted_payment_methods = ['Visa', 'American Express'];
+
+      let ph = new processHelperController();
+
+      ph.selected_credit_card = getValidCreditCard();
+      ph.selected_credit_card.properties = getValidCreditCardProperties();
+      ph.selected_credit_card.properties.brand = 'American Express';
+
+      return ph.filterTypeMismatchedMerchantProviders(merchantproviders).then(filtered_merchantproviders => {
+
+        expect(filtered_merchantproviders).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('gets merchant provider summaries', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      mockery.registerMock(global.routes.path('controllers', 'analytics/Analytics.js'), {
+        getMerchantProviderSummaries: (parameters) => {
+          return Promise.resolve(merchantprovider_summaries);
+        }
+      });
+
+      let ph = new processHelperController();
+
+      ph.merchantproviders = merchantproviders;
+
+      return ph.getMerchantProviderSummaries().then(results => {
+
+        expect(results).to.deep.equal(merchantprovider_summaries);
+
+      });
+
+    });
+
+    it('marries merchant provider list merchant provider summaries', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      let ph = new processHelperController();
+
+      ph.merchantproviders = merchantproviders;
+      ph.merchantprovider_summaries = merchantprovider_summaries;
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      return ph.marryMerchantProviderSummaries().then(() => {
+
+        expect(ph.merchantproviders).to.deep.equal(merchantproviders);
+
+      });
+
+    });
+
+    it('should not filter merchant provider list by model validation', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let ph = new processHelperController();
+
+      ph.merchantproviders = merchantproviders;
+
+      return ph.filterInvalidMerchantProviders(ph.merchantproviders).then(results => {
+        expect(results).to.deep.equal(ph.merchantproviders);
+      });
+
+    });
+
+    it('should filter merchant provider list by model validation', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let ph = new processHelperController();
+
+      return ph.filterInvalidMerchantProviders(merchantproviders).then((results) => {
+        expect(results).to.deep.equal([merchantproviders[1]]);
+      });
+
+    });
+
+    it('should not filter the merchant provider list by cap shoratges', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let ph = new processHelperController();
+
+      ph.merchantproviders = merchantproviders;
+
+      return ph.filterCAPShortageMerchantProviders(ph.merchantproviders).then(results => {
+
+        expect(results).to.deep.equal(merchantproviders);
+
+      });
+
+    });
+
+    it('should not filter the merchant provider list by count shoratges', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let ph = new processHelperController();
+
+      return ph.filterCountShortageMerchantProviders(merchantproviders).then(results => {
+
+        expect(results).to.deep.equal(merchantproviders);
+
+      });
+
+    });
+
+    it('filter count shortage (day) merchant provider list', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].summary.summary.today.count = merchantproviders[0].processing.transaction_counts.daily;
+
+      let ph = new processHelperController();
+
+      return ph.filterCountShortageMerchantProviders(merchantproviders).then(results => {
+
+        expect(results).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('filter count shortage (week) merchant provider list', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].summary.summary.thisweek.count = merchantproviders[0].processing.transaction_counts.weekly;
+
+      let ph = new processHelperController();
+
+      return ph.filterCountShortageMerchantProviders(merchantproviders).then(results => {
+
+        expect(results).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('filter count shortage (month) merchant provider list', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].summary.summary.thismonth.count = merchantproviders[0].processing.transaction_counts.monthly;
+
+      let ph = new processHelperController();
+
+      return ph.filterCountShortageMerchantProviders(merchantproviders).then(results => {
+
+        expect(results).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    //note:  this is the composite of all the filter functions
+    xit('filters merchant provider list', () => {});
+
+    xit('retrieves merchant provider details', () => {});
+
+    xit('filter merchant provider list by least sum of squares goal analysis', () => {});
+    xit('process class validates (pre)', () => {});
+    xit('process class validates (post)', () => {});
 });
