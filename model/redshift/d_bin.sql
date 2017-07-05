@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS d_bin
   webpage      VARCHAR(128) ,
   phone        VARCHAR(128)
 
-) DISTSTYLE all sortkey (binnumber);
+)
+   DISTSTYLE all sortkey (binnumber);
 
 COMMENT ON TABLE d_bin IS 'Bin dimensional table loaded on create';

@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/listentity",
-  "title": "List of entities",
+  "id": "/campaignsbyamount",
+  "title": "Campaigns by amount",
   "type": "object",
 
   "allOf": [
-    { "$ref": "../graph" },
+    { "$ref": "../../graph" },
     {
       "properties": {
 
@@ -17,21 +17,21 @@
 
               "properties": {
 
-                "placeholder_listentity": {
+                "campaignsbyamount": {
                   "properties": {
 
-                    "placeholder_entity": {
+                    "campaigns": {
                       "type": "array",
-                      "items": { "$ref": "entity" }
+                      "items": { "$ref": "campaign" }
                     },
-                    "pagination": { "$ref": "../pagination" }
+                    "pagination": { "$ref": "../../sql_pagination" }
                   },
-                  "required":["placholder_entity", "pagination"]
+                  "required":["campaigns"]
 
                 }
 
               },
-              "required":["placeholder_listentity"]
+              "required":["campaignsbyamount"]
 
             }
 

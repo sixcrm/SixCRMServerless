@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/pagination",
+  "id": "/sql_pagination",
   "title": "Pagination",
   "type": "object",
   "properties": {
@@ -24,5 +24,6 @@
 
 
   },
+  "additionalProperties": false,
   "required":["order", "limit", "offset", "count"]
 }

@@ -1,11 +1,10 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/eventsbyfacet",
-  "title": "Events by facet",
+  "id": "/deleteentity",
   "type": "object",
 
   "allOf": [
-    { "$ref": "../graph" },
+    { "$ref": "../../graph" },
     {
       "properties": {
 
@@ -15,20 +14,16 @@
 
             "data": {
 
-              "properties": {
+              "patternProperties": {
 
-                "eventsbyfacet": {
+                "delete.+": {
 
                   "properties": {
 
-                    "count": {
-                      "type": "number"
-                    },
-                    "facet_type": {
+                    "id": {
+
                       "type": "string"
-                    },
-                    "facets": {
-                      "type": "array"
+
                     }
 
                   }
@@ -36,7 +31,8 @@
                 }
 
               },
-              "required":["eventsbyfacet"]
+              "maxProperties": 1,
+              "minProperties": 1
 
             }
 
