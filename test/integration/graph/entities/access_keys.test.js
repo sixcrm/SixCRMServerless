@@ -67,9 +67,7 @@ describe('Graph '+entity+' Test', function() {
                             du.error(err);
                         }
                         du.output(response.body);
-                        tu.assertResultSet(response, test_user.role, test.name);
-
-                        done();
+                        tu.assertResultSetAsync(response, test_user.role, test.name, done);
                     });
               });
           });

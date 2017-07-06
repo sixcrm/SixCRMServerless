@@ -64,8 +64,7 @@ describe('Graph '+entity+' Test', function() {
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
                         du.output(response.body);
-                        tu.assertResultSet(response, test_user.role, test.name);
-                        done();
+                        tu.assertResultSetAsync(response, test_user.role, test.name, done);
                     });
               });
           });
