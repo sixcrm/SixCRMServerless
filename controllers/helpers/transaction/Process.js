@@ -661,8 +661,6 @@ module.exports = class Process{
       return this.analyticsController.getMerchantProviderSummaries(parameters).then(results => {
         this.analyticsController.enableACLs();
 
-        du.warning(results);  process.exit();
-
         this.merchantprovider_summaries = results;
 
         return results;
