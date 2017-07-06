@@ -8,6 +8,8 @@ let expect = chai.expect;
 let du = global.routes.include('lib', 'debug-utilities.js');
 let mvu = global.routes.include('lib', 'model-validator-utilities.js');
 let timestamp = global.routes.include('lib', 'timestamp.js');
+let mathutilities = global.routes.include('lib', 'math-utilities.js');
+let arrayutilities = global.routes.include('lib', 'array-utilities.js');
 
 const processHelperController = global.routes.include('helpers', 'transaction/Process.js');
 
@@ -27,7 +29,7 @@ function getValidMerchantProviderSummaries(){
       },
       thismonth: {
         count: 0,
-        amount: 0
+        amount: 400.00
       }
     }
   },{
@@ -45,7 +47,7 @@ function getValidMerchantProviderSummaries(){
       },
       thismonth: {
         count: 0,
-        amount: 0
+        amount: 34.29
       }
     }
   }];
@@ -266,6 +268,299 @@ describe('helpers/transaction/Process.spec.js', () => {
         mockery.deregisterAll();
     });
 
+    it('filters the merchantprovider list', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      creditcard.properties = creditcard_properties;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.filterMerchantProviders().then((result) => {
+
+        expect(result).to.deep.equal(merchantproviders);
+
+      });
+
+    });
+
+    it('selects a merchantprovider', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      creditcard.properties = creditcard_properties;
+
+      let product_schedule = {};
+
+      mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
+        getLoadBalancers: (product_schedule) => {
+          return Promise.resolve([loadbalancer]);
+        }
+      });
+
+      mockery.registerMock(global.routes.path('entities', 'LoadBalancer.js'), {
+        getMerchantProviders: (loadbalancer) => {
+          return Promise.resolve(merchantproviders);
+        },
+        disableACLs: () => {},
+        enableACLs: () => {}
+      });
+
+      mockery.registerMock(global.routes.path('analytics', 'Analytics.js'), {
+        getMerchantProviderSummaries: (parameters) => {
+          return Promise.resolve(merchantprovider_summaries);
+        }
+      });
+
+      let ph = new processHelperController();
+
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.selectMerchantProvider().then((result) => {
+
+        expect(result).to.deep.equal(merchantproviders[1]);
+
+      });
+
+    });
+
+    it('filters the first merchant provider the merchantprovider list due to disabled status', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].enabled = false;
+
+      creditcard.properties = creditcard_properties;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.filterMerchantProviders().then((result) => {
+
+        expect(result).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('filters the first merchant provider the merchantprovider list due to invalid accepted_payment_methods', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].accepted_payment_methods = ["Monopoly Money"];
+
+      creditcard.properties = creditcard_properties;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.filterMerchantProviders().then((result) => {
+
+        expect(result).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('filters the first merchant provider the merchantprovider list due to CAP restrictions', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].summary.summary.thismonth.amount = 52000.00;
+
+      creditcard.properties = creditcard_properties;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.filterMerchantProviders().then((result) => {
+
+        expect(result).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('filters the first merchant provider the merchantprovider list due to daily count restrictions', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].summary.summary.today.count = 30;
+
+      creditcard.properties = creditcard_properties;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.filterMerchantProviders().then((result) => {
+
+        expect(result).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('filters the first merchant provider the merchantprovider list due to weekly count restrictions', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].summary.summary.thisweek.count = 120;
+
+      creditcard.properties = creditcard_properties;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.filterMerchantProviders().then((result) => {
+
+        expect(result).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('filters the first merchant provider the merchantprovider list due to monthly count restrictions', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      merchantproviders[0].summary.summary.thismonth.count = 628;
+
+      creditcard.properties = creditcard_properties;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.filterMerchantProviders().then((result) => {
+
+        expect(result).to.deep.equal([merchantproviders[1]]);
+
+      });
+
+    });
+
+    it('filters the merchant provider list by LSS', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let creditcard = getValidCreditCard();
+      let creditcard_properties = getValidCreditCardProperties();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      creditcard.properties = creditcard_properties;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.selected_credit_card = creditcard;
+
+      return ph.selectMerchantProviderWithDistributionLeastSumOfSquares().then((result) => {
+
+        expect(result).to.deep.equal(merchantproviders[1]);
+
+      });
+
+    });
+
     it('fails when required parameters are not presented', () => {
 
       let ph = new processHelperController();
@@ -359,9 +654,9 @@ describe('helpers/transaction/Process.spec.js', () => {
       let productschedule = getValidProductSchedule();
 
       mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-          queryRecords: (table, parameters, index, callback) => {
-              callback(null, [customer]);
-          }
+        queryRecords: (table, parameters, index, callback) => {
+            callback(null, [customer]);
+        }
       });
 
       let ph = new processHelperController();
@@ -389,9 +684,20 @@ describe('helpers/transaction/Process.spec.js', () => {
       let customer = getValidCustomer();
 
       mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
-          queryRecords: (table, parameters, index, callback) => {
-              callback(null, [productschedule]);
-          }
+        queryRecords: (table, parameters, index, callback) => {
+            callback(null, [productschedule]);
+        }
+      });
+
+      mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
+        get: (product_schedule_id) => {
+          return Promise.resolve(productschedule);
+        },
+        isUUID:() => {
+          return true;
+        },
+        disableACLs: () => {},
+        enableACLs: () => {}
       });
 
       let ph = new processHelperController();
@@ -776,7 +1082,9 @@ describe('helpers/transaction/Process.spec.js', () => {
         getMerchantProviders:(loadbalancer) => {
             ph.merchantproviders = merchantproviders;
             return Promise.resolve(merchantproviders);
-        }
+        },
+        disableACLs: () => {},
+        enableACLs: () => {}
       });
 
       let ph = new processHelperController();
@@ -1028,12 +1336,418 @@ describe('helpers/transaction/Process.spec.js', () => {
 
     });
 
-    //note:  this is the composite of all the filter functions
-    xit('filters merchant provider list', () => {});
+    it('retrieves the load balancer sum', () => {
 
-    xit('retrieves merchant provider details', () => {});
+      let loadbalancer = getValidLoadBalancer();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
 
-    xit('filter merchant provider list by least sum of squares goal analysis', () => {});
-    xit('process class validates (pre)', () => {});
-    xit('process class validates (post)', () => {});
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let sum = 0;
+
+      merchantproviders.forEach(merchantprovider => {
+        sum += merchantprovider.summary.summary.thismonth.amount;
+      });
+
+      let ph = new processHelperController();
+
+      ph.merchantproviders = merchantproviders;
+      ph.selected_loadbalancer = loadbalancer;
+
+      return ph.calculateLoadBalancerSum().then(result => {
+
+        expect(result).to.equal(sum);
+
+      });
+
+    });
+
+    it('fails to retrieve the load balancer sum due to missing selected_loadbalancer property', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let sum = 0;
+
+      merchantproviders.forEach(merchantprovider => {
+        sum += merchantprovider.summary.summary.thismonth.amount;
+      });
+
+      let ph = new processHelperController();
+
+      ph.merchantproviders = merchantproviders;
+
+      try{
+        ph.calculateLoadBalancerSum();
+      }catch(error){
+          expect(error.message).to.equal('[500] Process.calculateLoadBalancerSum assumes the selected_loadbalancer property is set');
+      }
+
+    });
+
+    it('should get a merchant provider target distribution', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+
+      return ph.getMerchantProviderTargetDistribution(merchantproviders[1]).then((target_distribution) => {
+        expect(target_distribution).to.equal(loadbalancer.merchantproviders[1].distribution);
+      });
+
+    });
+
+    it('should get a merchant provider actual distribution', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+      merchantproviders[1].summary.summary.thismonth.amount = 3000.00;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.amount = 100.00;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+
+      let expected_percentage = (mathutilities.safePercentage(3000, (4000+100), 8))/100;
+
+      let hypothetical_distribution = ph.getMerchantProviderHypotheticalBaseDistribution(merchantproviders[1]);
+
+      expect(hypothetical_distribution).to.equal(expected_percentage);
+
+    });
+
+    it('should get a merchant provider actual distribution with additional amount', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+      merchantproviders[1].summary.summary.thismonth.amount = 3000.00;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.amount = 100.00;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+
+      let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
+
+      let base_distribution = ph.getMerchantProviderHypotheticalBaseDistribution(merchantproviders[1], 100);
+
+      expect(base_distribution).to.equal(expected_percentage);
+
+    });
+
+    it('fails to get merchant provider actual distribution due to missing amount property', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+      merchantproviders[1].summary.summary.thismonth.amount = 3000.00;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+
+      let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
+
+      try {
+
+          ph.getMerchantProviderHypotheticalBaseDistribution(merchantproviders[1], 100);
+
+      }catch(error){
+
+        expect(error.message).to.equal('[500] Process.getMerchantProviderDistribution assumes that amount property is set');
+
+      }
+
+    });
+
+    it('fails to get a merchant provider actual distribution due to incorrect amount property type', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+      merchantproviders[1].summary.summary.thismonth.amount = 3000.00;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.amount = '100';
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+
+      let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
+
+      try{
+        ph.getMerchantProviderHypotheticalBaseDistribution(merchantproviders[1], 100);
+      }catch(error){
+        expect(error.message).to.equal('[500] Process.getMerchantProviderDistribution assumes that amount property is numeric');
+      }
+
+    });
+
+    it('fails to get a merchant provider actual distribution because additional amount is incorrectly typed', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+      merchantproviders[1].summary.summary.thismonth.amount = 3000.00;
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.amount = 100.00;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+
+      let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
+
+      try{
+        ph.getMerchantProviderHypotheticalBaseDistribution(merchantproviders[1], '100')
+      }catch(error){
+        expect(error.message).to.equal('[500] Process.getMerchantProviderDistribution assumes that additional_amount argument is numeric');
+      }
+
+    });
+
+    it('fails to select a merchant provider by Least Sum of Squares goal analysis because amount is not set', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+
+      try{
+        ph.selectMerchantProviderFromLSS()
+      }catch(error){
+        expect(error.message).to.equal('[500] Process.selectMerchantProviderFromLSS assumes hypothetical_distribution_base_array is set');
+      }
+
+    });
+
+    it('selects a merchant provider by Least Sum of Squares goal analysis', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.target_distribution_array = [0.75, 0.25];
+      ph.hypothetical_distribution_base_array = [0.84, 0.16];
+
+      return ph.selectMerchantProviderFromLSS().then(result => {
+
+        expect(result).to.equal(merchantproviders[1]);
+
+      });
+
+    });
+
+    it('selects a different merchant provider by Least Sum of Squares goal analysis', () => {
+
+      let loadbalancer = getValidLoadBalancer();
+
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      merchantproviders[0].summary = merchantprovider_summaries[0];
+      merchantproviders[1].summary = merchantprovider_summaries[1];
+
+      let ph = new processHelperController();
+
+      ph.selected_loadbalancer = loadbalancer;
+      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.merchantproviders = merchantproviders;
+      ph.amount = 40.00;
+      ph.target_distribution_array = [0.75, 0.25];
+      ph.hypothetical_distribution_base_array = [0.1, 0.9];
+
+      return ph.selectMerchantProviderFromLSS().then(result => {
+
+        expect(result).to.equal(merchantproviders[0]);
+
+      });
+
+    });
+
+    it('instantiates a processor class ', () => {
+
+      let merchantproviders = getValidMerchantProviders();
+
+      let ph = new processHelperController();
+
+      ph.selected_merchantprovider = merchantproviders[0];
+
+      return ph.instantiateGateway().then(response => {
+
+        expect((ph.instantiated_gateway.constructor.name)).to.equal('NMIController');
+
+      });
+
+    });
+
+    it('creates the processor parameters object', () => {
+
+      let customer = getValidCustomer();
+      let creditcard = getValidCreditCard();
+      let amount = 40.00;
+      let ph = new processHelperController();
+
+      ph.customer = customer;
+      ph.selected_credit_card = creditcard;
+      ph.amount = amount;
+
+      return ph.createProcessingParameters().then(parameters => {
+
+        expect(parameters).to.deep.equal({customer: customer, creditcard: creditcard, amount: amount});
+
+      });
+
+    });
+
+    it('processes a transaction', () => {
+
+      let customer = getValidCustomer();
+      let productschedule = getValidProductSchedule();
+      let creditcard = getValidCreditCard();
+      let creditcards = [creditcard];
+      let loadbalancer = getValidLoadBalancer();
+      let merchantproviders = getValidMerchantProviders();
+      let merchantprovider_summaries = getValidMerchantProviderSummaries();
+
+      let parameters = {
+        customer: customer,
+        productschedule: productschedule,
+        amount: 40.00
+      };
+
+      let cc_properties= getValidCreditCardProperties();
+
+      mockery.registerMock(global.routes.path('analytics', 'Analytics.js'), {
+        getBINList: (parameters) => {
+          return Promise.resolve({bins:[cc_properties], pagination: {}});
+        },
+        getMerchantProviderSummaries: (parameters) => {
+          return Promise.resolve(merchantprovider_summaries);
+        }
+      });
+
+      mockery.registerMock(global.routes.path('entities', 'CreditCard.js'), {
+        get:(creditcard_id) => {
+          let creditcard = arrayutilities.find(creditcards, (a_creditcard) => {
+            if(a_creditcard.id == creditcard_id){ return true; }
+            return false;
+          })
+
+          return Promise.resolve(creditcard);
+        },
+        disableACLs: () => {},
+        enableACLs: () => {},
+        getBINNumber: (creditcard_number) => { return creditcard_number.slice(0, 6); }
+      });
+
+      mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
+        getLoadBalancers: (product_schedule) => {
+          return Promise.resolve([loadbalancer]);
+        }
+      });
+
+      mockery.registerMock(global.routes.path('entities', 'LoadBalancer.js'), {
+        getMerchantProviders: (loadbalancer) => {
+          return Promise.resolve(merchantproviders);
+        },
+        disableACLs: () => {},
+        enableACLs: () => {}
+      });
+
+      let mock_nmi_class = class NMIController {
+        constructor(parameters){
+          return true;
+        }
+        process(parameters){
+          return {
+            message: 'Success',
+            results:{
+              response: '1',
+              responsetext: 'SUCCESS',
+              authcode: '123456',
+              transactionid: '3690478718',
+              avsresponse: 'N',
+              cvvresponse: '',
+              orderid: '',
+              type: 'sale',
+              response_code: '100'
+            },
+            merchant_provider: '79189a4a-ed89-4742-aa96-afcd7f6c08fb'
+          }
+        }
+      }
+
+      mockery.registerMock(global.routes.path('controllers', 'vendors/merchantproviders/NMI.js'), mock_nmi_class);
+
+      let ph = new processHelperController();
+
+      return ph.process(parameters).then((response) => {
+
+        expect(response.message).to.equal('Success');
+        expect(response.merchant_provider).to.equal(merchantproviders[1].id);
+        expect(response.results).to.include({
+          response: '1',
+          responsetext: 'SUCCESS',
+          authcode: '123456',
+          avsresponse: 'N',
+          cvvresponse: '',
+          orderid: '',
+          type: 'sale',
+          response_code: '100'
+        });
+
+      });
+
+    });
+
 });
