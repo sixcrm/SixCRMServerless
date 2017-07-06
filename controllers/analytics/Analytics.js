@@ -5,7 +5,6 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
-const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
 
 const AnalyticsUtilities = global.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 
@@ -53,6 +52,9 @@ class AnalyticsController extends AnalyticsUtilities{
           'phone'
         ];
 
+        this.permissionutilities = global.routes.include('lib', 'permission-utilities.js');
+
+
     }
 
     executeAnalyticsFunction(argumentation, function_name){
@@ -87,7 +89,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         return new Promise((resolve, reject) => {
 
-            permissionutilities.validatePermissions(function_name, 'analytics').then((permission) => {
+            this.permissionutilities.validatePermissions(function_name, 'analytics').then((permission) => {
 
                 du.debug('Has permission:', permission);
 

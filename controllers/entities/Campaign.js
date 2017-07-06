@@ -201,20 +201,6 @@ class campaignController extends entityController {
 
     }
 
-    //Technical Debt:  Deprecated
-    getLoadBalancerHydrated(campaign){
-
-        return this.loadBalancerController.getLoadBalancerHydrated(campaign.loadbalancer);
-
-    }
-
-    //Technical Debt:  Deprecated
-    getLoadBalancer(campaign){
-
-        return this.loadBalancerController.get(campaign.loadbalancer);
-
-    }
-
     getProductSchedules(campaign){
 
         if(_.has(campaign, "productschedules")){
@@ -238,15 +224,17 @@ class campaignController extends entityController {
 
     getProductSchedulesHydrated(campaign){
 
-        if(_.has(campaign, "productschedules")){
+      du.highlight('Get Product Schedule Hydrated');
 
-          return Promise.all(campaign.productschedules.map(id => this.productScheduleController.getProductScheduleHydrated(id)));
+      if(!_.has(campaign, "productschedules")){ return null; }
 
-        }else{
+      let psc = this.productScheduleController;
 
-            return null;
+      if(!_.isFunction(psc.getProductScheduleHydrated)){
+        psc = global.routes.include('controllers', 'entities/ProductSchedule.js');
+      }
 
-        }
+      return Promise.all(campaign.productschedules.map(id => psc.getProductScheduleHydrated(id)));
 
     }
 
@@ -256,48 +244,21 @@ class campaignController extends entityController {
 
     }
 
-	// is there a better way?
     hydrate(campaign){
 
-        return new Promise((resolve) => {
+      return this.getProductSchedulesHydrated(campaign).then((product_schedules) => {
 
-            return this.getLoadBalancerHydrated(campaign).then((loadbalancer) => {
+          campaign.productschedules = product_schedules;
 
-                campaign.loadbalancer = loadbalancer;
+          return campaign;
 
-                return campaign;
-
-            }).then((campaign) =>{
-
-                return this.getProductSchedulesHydrated(campaign).then((product_schedules) => {
-
-                    campaign.productschedules = product_schedules;
-
-                    return campaign;
-
-                }).then((campaign) => {
-
-                    return resolve(campaign);
-
-                });
-
-            }).then((campaign) => {
-
-                return campaign;
-
-            });
-
-        });
+      });
 
     }
 
     getHydratedCampaign(id) {
 
-        return this.get(id).then((campaign) => {
-
-            return this.hydrate(campaign);
-
-        });
+      return this.get(id).then((campaign) => this.hydrate(campaign));
 
     }
 

@@ -595,7 +595,7 @@ module.exports = class Process{
 
       du.debug('Get Loadbalancers');
 
-      return this.productScheduleController.getLoadBalancers(this.product_schedule).then((loadbalancers) => {
+      return this.productScheduleController.getLoadBalancers(this.productschedule).then((loadbalancers) => {
 
         this.loadbalancers = loadbalancers;
 
@@ -655,9 +655,13 @@ module.exports = class Process{
         return merchantprovider.id;
       });
 
-      let parameters = {merchantprovider: merchantprovider_ids};
+      let parameters = {analyticsfilter:{merchantprovider: merchantprovider_ids}};
 
+      this.analyticsController.disableACLs();
       return this.analyticsController.getMerchantProviderSummaries(parameters).then(results => {
+        this.analyticsController.enableACLs();
+
+        du.warning(results);  process.exit();
 
         this.merchantprovider_summaries = results;
 
@@ -670,6 +674,8 @@ module.exports = class Process{
     marryMerchantProviderSummaries(){
 
       du.debug('Marry Merchant Provider Summaries');
+
+      du.warning(this.merchantprovider_summaries);
 
       this.merchantprovider_summaries.forEach(summary => {
 

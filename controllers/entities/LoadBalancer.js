@@ -52,8 +52,11 @@ class loadBalancerController extends entityController {
 
         du.debug('Get Loadbalancer Hydrated');
 
+        du.warning(id);
+
         return this.get(id).then((loadbalancer) => {
 
+          du.warning(loadbalancer);
             return this.getMerchantProviders(loadbalancer).then((merchant_providers) =>{
 
                 //Note: This marries the merchant provider to the meta object.
