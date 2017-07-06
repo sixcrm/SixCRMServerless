@@ -38,35 +38,85 @@ function setupEnvironmentVariables() {
     return Promise.resolve();
 }
 
-function collectQueryFromPath(path, env) {
-    du.highlight('Reading ' + path);
+function collectQueryFromPath(path, file, env) {
 
-    let content = fs.readFileSync(path, 'utf-8');
+  return Promise.all([
+        getTableVersion(file),
+        extractVersionNumber(path)
+    ]).then(([result1, result2]) => {
 
-    query += `${content};`;
+        let versionInDb = result1;
+        let versionInFile = result2;
+
+        console.log(versionInDb+' '+' '+versionInFile+' '+file)
+        if (versionInDb < versionInFile || file.match(/^\d/)) {
+
+            let content = fs.readFileSync(path, 'utf-8');
+
+            query += `${content};`;
+
+        }
+
+    }).catch(e => {
+        du.error(e);
+  });
+
 }
 
 function collectQueries(files, env) {
 
     let directory = global.routes.path('model', 'redshift');
 
-    files.forEach((file) => {
-        collectQueryFromPath(`${directory}/${file}`);
+    redshiftutilities.instantiateRedshift();
+
+    return redshiftutilities.openConnection().then(() => {
+        return Promise.all(files.map((file) => collectQueryFromPath(`${directory}/${file}`,file)));
+    }).then(() => {
+        return redshiftutilities.closeConnection();
     });
+
+}
+
+function extractVersionNumber(path) {
+
+    du.highlight('Reading Version Number');
+
+    return Number(fs.readFileSync(path,'utf-8').split('\n').filter( line => line.match(/TABLE_VERSION/)).toString().replace(/[^0-9]/g,''));
+
 }
 
 function execute() {
+    console.log(process.env.AWS_ACCESS_KEY_ID +' ' +process.env.AWS_SECRET_ACCESS_KEY)
     redshiftutilities.query(query);
 }
 
+
+
 function getTableNames(){
 
-    du.debug('Get Redshift Table Names');
+    du.highlight('Get Redshift Table Names');
 
     let directory = global.routes.path('model', 'redshift');
     let files = fs.readdirSync(directory).filter(file => file.match(/\.sql$/));
 
+    files.sort();
     return Promise.resolve(files);
+}
+
+function getTableVersion(name, env) {
+
+    du.highlight('Get Redshift Table Version');
+
+    let version_query = 'select version from sys_sixcrm.sys_table_version where table_name =\''+name.replace('.sql', '')+'\'';
+
+    return redshiftutilities.queryRaw(version_query).then(result => {
+
+        if (result && result.length > 0) {
+            return result[0].version;
+        }
+
+        return 0;
+    });
 }
 
 function getConfig() {

@@ -1,12 +1,19 @@
 /*
- 27.06.2017 A.Zelen Date dimensional table
- Set distribution style to all, recommended for dimensional table
+27.06.2017 A.Zelen Date dimensional table.Set distribution style to all, recommended for dimensional table
+05.07.2017 A.Zelen Logic from idempotent versioning
 
+TABLE_VERSION 1
 */
 
---DROP TABLE d_bin;
+DROP TABLE d_bin;
 
-CREATE TABLE d_bin
+DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_bin';
+
+INSERT INTO sys_sixcrm.sys_table_version
+   SELECT 'd_bin',1,getdate();
+
+
+CREATE TABLE IF NOT EXISTS d_bin
 (
   binnumber    INTEGER      NOT NULL PRIMARY KEY,
   brand        VARCHAR(128) NOT NULL,
