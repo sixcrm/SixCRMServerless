@@ -11,3 +11,4 @@ deployment: /deployment/
 providers: /controllers/providers/
 tabledefinitions: /dynamolocal/tabledefinitions/
 seeds: /dynamolocal/seeds/
+analytics: /controllers/analytics/

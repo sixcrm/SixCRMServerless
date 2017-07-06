@@ -5,15 +5,9 @@
   "type": "object",
   "properties": {
 
-    "session": {
-      "type": "id"
-    },
-    "created_at" :{
-      "type": "string"
-    },
-    "updated_at" :{
-      "type": "string"
-    }
+    "id": { "$ref": "../definitions/sixcrmidentifier" },
+    "created_at": { "$ref": "../definitions/iso8601" },
+    "updated_at": { "$ref": "../definitions/iso8601" }
 
   },
   "required":["id", "created_at", "updated_at"]

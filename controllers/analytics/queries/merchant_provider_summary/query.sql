@@ -39,6 +39,14 @@ FROM
    {{union}}
  )
 GROUP BY merchant_provider
+<<<<<<< HEAD
 ORDER BY {{metric}} {{order}}
 LIMIT {{limit}}
 OFFSET {{offset}};
+||||||| merged common ancestors
+ORDER BY {{metric}} {{order}}
+LIMIT {{limit}} OFFSET {{offset}};
+=======
+ORDER BY {{order_field}} {{order}}
+LIMIT {{limit}} OFFSET {{offset}};
+>>>>>>> development

@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/sixcrmidentifier",
+  "title": "SixCrmIdentifier",
+
+  "type":"string",
+  "anyOf":[
+    {"$ref": "uuidv4"},
+    {"type":"string","enum":["*"]},
+    {"type":"string","format":"email"}
+  ]
+
+}

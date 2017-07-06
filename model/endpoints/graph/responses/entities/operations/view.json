@@ -16,7 +16,12 @@
 
               "patternProperties": {
 
-                ".+": { "$ref": "../entity" }
+                ".+": {
+                  "anyOf": [
+                    { "$ref": "../entity" },
+                    { "type": null }
+                  ]
+                }
 
               },
               "maxProperties": 1,

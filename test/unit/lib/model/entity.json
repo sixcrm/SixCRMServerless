@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/entity",
+  "title": "Entity",
+  "type": "object",
+  "properties": {
+
+    "id": { "$ref": "sixcrmidentifier" },
+    "created_at": { "$ref": "iso8601" },
+    "updated_at": { "$ref": "iso8601" }
+
+  },
+  "required":["id", "created_at", "updated_at"]
+}

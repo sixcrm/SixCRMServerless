@@ -160,6 +160,8 @@ class NMIController {
 
         return new Promise((resolve, reject) => {
 
+          //validate parameters here!
+
             var parameter_group = this.createParameterGroup(parameters_array);
 
             var request_options = {
