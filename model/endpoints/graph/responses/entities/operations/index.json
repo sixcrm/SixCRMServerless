@@ -28,9 +28,9 @@
                   "properties": {
                     "pagination": { "$ref": "../../dynamo_pagination" }
                   },
-                  "required":["pagination"],
+                  "required":[],
                   "maxProperties": 2,
-                  "minProperties": 2
+                  "minProperties": 1
 
                 }
 
