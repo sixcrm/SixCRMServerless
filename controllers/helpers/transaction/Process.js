@@ -693,16 +693,19 @@ module.exports = class Process{
 
         let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
+          let validation = false;
 
           try{
 
-            return mvu.validateModel(merchant_provider, global.routes.path('model','transaction/merchantprovider.json'));
+            validation = mvu.validateModel(merchant_provider, global.routes.path('model','transaction/merchantprovider.json'));
 
           }catch(e){
 
             du.warning('Invalid merchant provider: ', merchant_provider);
 
           }
+
+          if(validation === true){ return true; }
 
           return false;
 
