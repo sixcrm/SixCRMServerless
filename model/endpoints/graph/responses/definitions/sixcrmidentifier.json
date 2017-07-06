@@ -6,7 +6,8 @@
   "type":"string",
   "anyOf":[
     {"$ref": "uuidv4"},
-    {"type":"string","enum":["*"]}
+    {"type":"string","enum":["*"]},
+    {"type":"string","format":"email"}
   ]
 
 }
