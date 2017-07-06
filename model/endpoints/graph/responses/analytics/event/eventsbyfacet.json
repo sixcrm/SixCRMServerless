@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/eventsbyfacet",
+  "title": "Events by facet",
+  "type": "object",
+
+  "allOf": [
+    { "$ref": "../../graph" },
+    {
+      "properties": {
+
+        "response" :{
+
+          "properties": {
+
+            "data": {
+
+              "properties": {
+
+                "eventsbyfacet": {
+
+                  "properties": {
+
+                    "count": {
+                      "type": "number"
+                    },
+                    "facet_type": {
+                      "type": "string"
+                    },
+                    "facets": {
+                      "type": "array"
+                    }
+
+                  }
+
+                }
+
+              },
+              "required":["eventsbyfacet"]
+
+            }
+
+          },
+          "required":["data"]
+
+        }
+
+      },
+      "required":["response"]
+    }
+  ]
+
+}

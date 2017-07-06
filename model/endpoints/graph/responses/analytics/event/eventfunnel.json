@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/eventfunnel",
+  "title": "Event funnel",
+  "type": "object",
+
+  "allOf": [
+    { "$ref": "../../graph" },
+    {
+      "properties": {
+
+        "response" :{
+
+          "properties": {
+
+            "data": {
+
+              "properties": {
+
+                "eventfunnel": {
+                  "properties": {
+
+                    "funnel": { "$ref": "funnel" },
+                    "pagination": { "$ref": "../../sql_pagination" }
+                  },
+                  "required":["funnel"]
+
+                }
+
+              },
+              "required":["eventfunnel"]
+
+            }
+
+          },
+          "required":["data"]
+
+        }
+
+      },
+      "required":["response"]
+    }
+  ]
+
+}

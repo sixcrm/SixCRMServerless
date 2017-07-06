@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/listevents",
+  "title": "List of event objects",
+  "type": "object",
+
+  "allOf": [
+    { "$ref": "../../graph" },
+    {
+      "properties": {
+
+        "response" :{
+
+          "properties": {
+
+            "data": {
+
+              "properties": {
+
+                "listevents": {
+                  "properties": {
+
+                    "events": {
+                      "type": "array",
+                      "items": { "$ref": "event" }
+                    },
+                    "pagination": { "$ref": "../../sql_pagination" }
+                  },
+                  "required":["events", "pagination"]
+
+                }
+
+              },
+              "required":["listevents"]
+
+            }
+
+          },
+          "required":["data"]
+
+        }
+
+      },
+      "required":["response"]
+    }
+  ]
+
+}

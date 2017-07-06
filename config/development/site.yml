@@ -92,7 +92,7 @@ redshift:
     final_cluster_snapshot_identifier: ''
   randomdata:
     staging_bucket: 'sixcrm-development-redshift/sixcrm-random-generator'
-    interval: 300 #this is provided in seconds
+    interval: 15768000 #this is provided in seconds
 
 notifications:
   apn:
