@@ -1,7 +1,9 @@
 /*
 02.05.2017 A.Zelen Initial table definition
 05.07.2017 A.Zelen Logic from idempotent versioning
-// TABLE_VERSION 1
+
+TABLE_VERSION 1
+*/
 
 DROP TABLE f_events;
 
@@ -10,7 +12,6 @@ DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_events';
 INSERT INTO sys_sixcrm.sys_table_version
      SELECT 'f_events',1,getdate();
 
-*/
 
 CREATE TABLE IF NOT EXISTS f_events
 (

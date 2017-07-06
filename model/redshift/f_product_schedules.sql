@@ -1,6 +1,8 @@
 /*
 05.07.2017 A.Zelen Logic from idempotent versioning
-// TABLE_VERSION 1
+
+TABLE_VERSION 1
+*/
 
 DROP TABLE f_product_schedules;
 
@@ -9,7 +11,6 @@ DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_product_schedules'
 INSERT INTO sys_sixcrm.sys_table_version
      SELECT 'f_product_schedules',1,getdate();
 
-*/
 
 CREATE TABLE IF NOT EXISTS f_product_schedules
 (

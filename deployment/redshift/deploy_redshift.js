@@ -48,6 +48,7 @@ function collectQueryFromPath(path, file, env) {
         let versionInDb = result1;
         let versionInFile = result2;
 
+        console.log(versionInDb+' '+' '+versionInFile+' '+file)
         if (versionInDb < versionInFile || file.match(/^\d/)) {
 
             let content = fs.readFileSync(path, 'utf-8');
@@ -59,9 +60,6 @@ function collectQueryFromPath(path, file, env) {
     }).catch(e => {
         du.error(e);
   });
-  // return getTableVersion(file).then((versionInDb) => {
-  //     du.highlight('  AA ');
-  // });
 
 }
 
@@ -88,10 +86,11 @@ function extractVersionNumber(path) {
 }
 
 function execute() {
-    // redshiftutilities.query(query);
-
-    du.output(query);
+    console.log(process.env.AWS_ACCESS_KEY_ID +' ' +process.env.AWS_SECRET_ACCESS_KEY)
+    redshiftutilities.query(query);
 }
+
+
 
 function getTableNames(){
 
@@ -109,10 +108,8 @@ function getTableVersion(name, env) {
     du.highlight('Get Redshift Table Version');
 
     let version_query = 'select version from sys_sixcrm.sys_table_version where table_name =\''+name.replace('.sql', '')+'\'';
-    // let version_query = 'select 1';
 
     return redshiftutilities.queryRaw(version_query).then(result => {
-        du.output(result);
 
         if (result && result.length > 0) {
             return result[0].version;

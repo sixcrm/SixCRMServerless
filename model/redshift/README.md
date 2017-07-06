@@ -12,8 +12,6 @@ ____
 * `f_activity` - fact table of activities
 * `f_sessions` - fact table of sessions
 * `f_product_schedules` - fact table of product schedules
-* `f_products` - **IN WORK** fact table of products in transactions
-* `f_products` - **IN WORK** fact table of products in transactions
 
 
 Transactional tables are defined with the distribution key based on the account.
@@ -21,12 +19,12 @@ Sort key is chosen to be date.
 
 ### Dimensional tables
 * `d_datetimes` - Dimensional table of *minutes* from 01.01.2017 to 01.01.2027
+* `d_bin` - Dimensional table of BIN's - BANK IDENTIFICATION NUMBERS *NEED TO LOAD DATA INTO THIS FILE BY HAND*
 * `d_processor_result` - Dimensional table of processor results [`success`, `decline`, `error`]
 * `d_merchant_provider` - Dimensional table of merchant processors
-* `d_trans_type` - **IN WORK** Dimensional table of transaction types [`new`, `rebill`]
-* `d_products` - **IN WORK** Dimensional table of available products
 
-
+### System table
+* `sys_sixcrm.sys_table_version` - System table of versions of tables in the model necessary for idempotency of the database model
 ---
 ## Loading scripts
 
