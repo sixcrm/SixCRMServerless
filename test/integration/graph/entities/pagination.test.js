@@ -70,32 +70,31 @@ entities.forEach((entity) => {
     du.debug(response.body);
     tu.assertResultSet(response, global.test_users[0].role);
 
-    assert.property(response.body.response[entity.lower+'list'].pagination, 'end_cursor');
-    assert.property(response.body.response[entity.lower+'list'].pagination, 'has_next_page');
-    assert.property(response.body.response[entity.lower+'list'].pagination, 'count');
-    assert.property(response.body.response[entity.lower+'list'].pagination, 'last_evaluated');
+    du.output(response.body.response);
 
-    if(_.isArray(response.body.response[entity.lower+'list'][entity.lower+'s'])){
-        assert.equal(response.body.response[entity.lower+'list'][entity.lower+'s'].length, limit);
+    tu.validateGraphResponse(response.body, `entities/operations/index_mandatory_pagination`);
+
+    if(_.isArray(response.body.response.data[entity.lower+'list'][entity.lower+'s'])){
+        assert.equal(response.body.response.data[entity.lower+'list'][entity.lower+'s'].length, limit);
     }else{
         du.warning('strange:',response.body.response[entity.lower+'list'][entity.lower+'s']);
     }
 
-    assert.isAtMost(response.body.response[entity.lower+'list'].pagination.count, limit);
+    assert.isAtMost(response.body.response.data[entity.lower+'list'].pagination.count, limit);
 
-    assert.property(response.body.response[entity.lower+'list'][entity.lower+'s'][0], 'id');
-    var returned_id = response.body.response[entity.lower+'list'][entity.lower+'s'][0].id;
-    var cursor = response.body.response[entity.lower+'list'].pagination.end_cursor;
-    var last_evaluated = response.body.response[entity.lower+'list'].pagination.last_evaluated;
+    assert.property(response.body.response.data[entity.lower+'list'][entity.lower+'s'][0], 'id');
+    var returned_id = response.body.response.data[entity.lower+'list'][entity.lower+'s'][0].id;
+    var cursor = response.body.response.data[entity.lower+'list'].pagination.end_cursor;
+    var last_evaluated = response.body.response.data[entity.lower+'list'].pagination.last_evaluated;
 
     assert.equal(returned_id, cursor);
 
 					//Technical Debt:  this doesn't appear to work yet...
-    if(response.body.response[entity.lower+'list'].pagination.has_next_page == 'true'){
+    if(response.body.response.data[entity.lower+'list'].pagination.has_next_page == 'true'){
 
-        assert.equal(response.body.response[entity.lower+'list'].pagination.count, limit);
-        assert.isString(response.body.response[entity.lower+'list'].pagination.end_cursor);
-        assert.isAbove(response.body.response[entity.lower+'list'].pagination.end_cursor.length, 0);
+        assert.equal(response.body.response.data[entity.lower+'list'].pagination.count, limit);
+        assert.isString(response.body.response.data[entity.lower+'list'].pagination.end_cursor);
+        assert.isAbove(response.body.response.data[entity.lower+'list'].pagination.end_cursor.length, 0);
 
         var query = raw_query.split('{argumentation}');
         var query_arguments = 'pagination:{limit:"'+limit+'", cursor: "'+cursor+'", exclusive_start_key: '+JSON.stringify(last_evaluated)+'}';
@@ -117,10 +116,10 @@ entities.forEach((entity) => {
     						du.debug(response.body);
     						tu.assertResultSet(response, global.test_users[0].role);
 
-    						if(response.body.response[entity.lower+'list'].pagination.count > 0){
-        					assert.equal(response.body.response[entity.lower+'list'].pagination.count, limit);
+    						if(response.body.response.data[entity.lower+'list'].pagination.count > 0){
+        					assert.equal(response.body.response.data[entity.lower+'list'].pagination.count, limit);
 
-        					var new_returned_id = response.body.response[entity.lower+'list'][entity.lower+'s'][0].id;
+        					var new_returned_id = response.body.response.data[entity.lower+'list'][entity.lower+'s'][0].id;
 
         					assert.isNotTrue(new_returned_id == returned_id);
 

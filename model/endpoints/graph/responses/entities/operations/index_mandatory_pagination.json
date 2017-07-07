@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/listentity",
+  "title": "List of entities",
+  "type": "object",
+
+  "allOf": [
+    { "$ref": "../../graph" },
+    {
+      "properties": {
+
+        "response" :{
+
+          "properties": {
+
+            "data": {
+
+              "patternProperties": {
+
+                ".+list": {
+
+                  "patternProperties": {
+                    ".+s": {
+                      "type": "array",
+                      "items": { "$ref": "../entity" }
+                    }
+                  },
+                  "properties": {
+                    "pagination": { "$ref": "../../dynamo_pagination" }
+                  },
+                  "required":["pagination"],
+                  "maxProperties": 2,
+                  "minProperties": 2
+
+                }
+
+              },
+              "required":[]
+
+            }
+
+          },
+          "required":["data"]
+
+        }
+
+      },
+      "required":["response"]
+    }
+  ]
+
+}
