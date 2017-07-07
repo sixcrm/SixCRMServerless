@@ -176,13 +176,14 @@ describe('Round Trip Test', function() {
     du.debug('Create Order Response:', response.body);
     assert.property(response.body, "success");
     assert.equal(response.body.success, true);
-    assert.property(response.body, "results");
+
+    assert.property(response.body, "response");
     assert.property(response.body.response, "processor_response");
     var processor_response = JSON.parse(response.body.response.processor_response);
 
     assert.isObject(processor_response);
-    assert.property(processor_response, "success");
-    assert.equal(processor_response.message, true);
+    assert.property(processor_response, "message");
+    assert.equal(processor_response.message, "Success");
     assert.property(processor_response, 'results');
     assert.property(processor_response.results, 'response');
     assert.equal(processor_response.results.response, '1');
@@ -213,7 +214,7 @@ describe('Round Trip Test', function() {
     du.debug('Upsell Result: ', response.body);
     assert.property(response.body, "success");
     assert.equal(response.body.success, true);
-    assert.property(response.body, "results");
+    assert.property(response.body, "response");
 //										assert.property(response.body.response, "parentsession");
 //										assert.isString(response.body.response.parentsession);
     assert.property(response.body.response, "processor_response");
@@ -221,8 +222,8 @@ describe('Round Trip Test', function() {
     var processor_response = JSON.parse(response.body.response.processor_response);
 
     assert.isObject(processor_response);
-    assert.property(processor_response, "success");
-    assert.equal(processor_response.message, true);
+    assert.property(processor_response, "message");
+    assert.equal(processor_response.message, "Success");
     assert.property(processor_response, 'results');
     assert.property(processor_response.results, 'response');
     assert.equal(processor_response.results.response, '1');
@@ -244,7 +245,7 @@ describe('Round Trip Test', function() {
     du.debug('Confirm Order results', response.body);
     assert.property(response.body, "success");
     assert.equal(response.body.success, true);
-    assert.property(response.body, "results");
+    assert.property(response.body, "response");
     assert.property(response.body.response, "session");
     assert.property(response.body.response, "customer");
     assert.property(response.body.response, "transactions");
