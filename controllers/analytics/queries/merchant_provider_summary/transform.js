@@ -9,8 +9,6 @@ module.exports = function(results, parameters){
 
         let return_array = [];
 
-        du.info(results);
-
         results.forEach((result) => {
 
           return_array.push({
@@ -19,16 +17,16 @@ module.exports = function(results, parameters){
               },
               summary: {
                 today: {
-                  count: result.num_transactions_today,
-                  amount: result.amount_transactions_today
+                  count: parseInt(result.num_transactions_today),
+                  amount: parseFloat(result.amount_transactions_today)
                 },
                 thisweek: {
-                  count: result.num_transactions_week,
-                  amount: result.amount_transactions_week
+                  count: parseInt(result.num_transactions_week),
+                  amount: parseFloat(result.amount_transactions_week)
                 },
                 thismonth: {
-                  count: result.num_transactions_month,
-                  amount: result.amount_transactions_month
+                  count: parseInt(result.num_transactions_month),
+                  amount: parseFloat(result.amount_transactions_month)
                 }
               }
           });

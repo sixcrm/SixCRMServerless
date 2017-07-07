@@ -40,6 +40,7 @@ module.exports = class Process{
       .then(() => this.validateParameters())
       .then(() => this.hydrateCreditCards())
       .then(() => this.selectCustomerCreditCard())
+      .then(() => this.setBINNumber())
       .then(() => this.getSelectedCreditCardProperties())
       //.then(() => this.validateProcessClass('pre'))
       .then(() => this.selectMerchantProvider())
@@ -81,8 +82,6 @@ module.exports = class Process{
       .then((merchantproviders) => {
         this.merchantproviders = merchantproviders
         return merchantproviders;
-      }).catch(error => {
-        return Promise.reject(error);
       });
 
     }
@@ -303,15 +302,23 @@ module.exports = class Process{
 
       this.selected_credit_card.bin = binnumber;
 
-      return binnumber;
+      return Promise.resolve(binnumber);
 
     }
 
     getSelectedCreditCardProperties(){
 
-      du.debug('Get Credit Card Properties');
+      du.debug('Get Selected Credit Card Properties');
 
-      let analytics_parameters = {binnumber:[this.selected_credit_card.bin]};
+      if(!_.has(this, 'selected_credit_card')){
+        eu.throwError('server', 'Process.getSelectedCreditCardProperties assumes selected_credit_card property');
+      }
+
+      if(!_.has(this.selected_credit_card, 'bin')){
+        eu.throwError('server', 'Process.getSelectedCreditCardProperties assumes selected_credit_card.bin property');
+      }
+
+      let analytics_parameters = {binfilter: {binnumber:[parseInt(this.selected_credit_card.bin)]}};
 
       return this.analyticsController.getBINList(analytics_parameters).then((properties) => {
 
@@ -661,7 +668,7 @@ module.exports = class Process{
       return this.analyticsController.getMerchantProviderSummaries(parameters).then(results => {
         this.analyticsController.enableACLs();
 
-        this.merchantprovider_summaries = results;
+        this.merchantprovider_summaries = results.merchantproviders;
 
         return results;
 
@@ -715,6 +722,8 @@ module.exports = class Process{
 
         });
 
+        du.info(merchant_providers, return_array);
+
         return Promise.resolve(return_array);
 
     }
@@ -733,6 +742,8 @@ module.exports = class Process{
 
         });
 
+        du.info(merchant_providers, return_array);
+
         return Promise.resolve(return_array);
 
     }
@@ -741,15 +752,43 @@ module.exports = class Process{
 
         du.debug('Filter Type Mismatched Merchant Providers');
 
+        du.warning(this.selected_credit_card);
+
+        if(!_.has(this, 'selected_credit_card')){
+          eu.throwError('server', 'Process.filterTypeMismatchedMerchantProviders assumes selected_credit_card property');
+        }
+
+        if(!_.has(this.selected_credit_card, 'properties')){
+          eu.throwError('server', 'Process.filterTypeMismatchedMerchantProviders assumes selected_credit_card.properties property');
+        }
+
+        if(!_.has(this.selected_credit_card.properties, 'brand')){
+          eu.throwError('server', 'Process.filterTypeMismatchedMerchantProviders assumes selected_credit_card.properties.brand property');
+        }
+
+        let cleanstring = (a_string) => {
+          return a_string.toLowerCase().replace(/\s\t\r\n/g,'');
+        }
+
         let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-          if(!_.has(merchant_provider, 'accepted_payment_methods')){ eu.throwError('server', 'Merchant Provider does not have the "accepted_payment_methods" property.'); }
+          if(!_.has(merchant_provider, 'accepted_payment_methods')){
+            eu.throwError('server', 'Merchant Provider does not have the "accepted_payment_methods" property.');
+          }
 
-          if(!_.isArray(merchant_provider.accepted_payment_methods)){ eu.throwError('server', 'Merchant Provider "accepted_payment_methods" is not an array.'); }
+          if(!_.isArray(merchant_provider.accepted_payment_methods)){
+            eu.throwError('server', 'Merchant Provider "accepted_payment_methods" is not an array.');
+          }
 
-          return _.contains(merchant_provider.accepted_payment_methods, this.selected_credit_card.properties.brand);
+          let accepted_payment_methods_array = merchant_provider.accepted_payment_methods.map((accepted_payment_method) => {
+            return cleanstring(accepted_payment_method);
+          });
+
+          return _.contains(accepted_payment_methods_array, cleanstring(this.selected_credit_card.properties.brand));
 
         });
+
+        du.info(merchant_providers, return_array);
 
         return Promise.resolve(return_array);
 
@@ -768,6 +807,8 @@ module.exports = class Process{
           return true;
 
         });
+
+        du.info(merchant_providers, return_array);
 
         return Promise.resolve(return_array);
 
@@ -795,6 +836,8 @@ module.exports = class Process{
 
         });
 
+        du.info(merchant_providers, return_array);
+
         return Promise.resolve(return_array);
 
     }
@@ -806,6 +849,8 @@ module.exports = class Process{
       if(!_.has(this, 'selected_merchantprovider')){
         eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider property');
       }
+
+      du.warning(this.selected_merchantprovider);
 
       if(!_.has(this.selected_merchantprovider, 'gateway')){
         eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider.gateway property');
@@ -834,9 +879,9 @@ module.exports = class Process{
         var NMIController = global.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
 
         var _nmi = new NMIController({
-        username: this.selected_merchantprovider.gateway.username,
-        password: this.selected_merchantprovider.gateway.password,
-        endpoint: this.selected_merchantprovider.gateway.endpoint
+          username: this.selected_merchantprovider.gateway.username,
+          password: this.selected_merchantprovider.gateway.password,
+          endpoint: this.selected_merchantprovider.gateway.endpoint
         });
 
         gateway = _nmi;

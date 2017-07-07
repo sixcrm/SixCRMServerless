@@ -14,43 +14,45 @@ let arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const processHelperController = global.routes.include('helpers', 'transaction/Process.js');
 
 function getValidMerchantProviderSummaries(){
-  return [{
-    merchantprovider:{
-      id: '6c40761d-8919-4ad6-884d-6a46a776cfb9'
-    },
-    summary: {
-      today: {
-        count: 0,
-        amount: 0
+  return [
+    {
+      merchantprovider:{
+        id: '6c40761d-8919-4ad6-884d-6a46a776cfb9'
       },
-      thisweek: {
-        count: 0,
-        amount: 0
+      summary: {
+        today: {
+          count: 0,
+          amount: 0
+        },
+        thisweek: {
+          count: 0,
+          amount: 0
+        },
+        thismonth: {
+          count: 0,
+          amount: 400.00
+        }
+      }
+    },{
+      merchantprovider:{
+        id: '79189a4a-ed89-4742-aa96-afcd7f6c08fb'
       },
-      thismonth: {
-        count: 0,
-        amount: 400.00
+      summary: {
+        today: {
+          count: 0,
+          amount: 0
+        },
+        thisweek: {
+          count: 0,
+          amount: 0
+        },
+        thismonth: {
+          count: 0,
+          amount: 34.29
+        }
       }
     }
-  },{
-    merchantprovider:{
-      id: '79189a4a-ed89-4742-aa96-afcd7f6c08fb'
-    },
-    summary: {
-      today: {
-        count: 0,
-        amount: 0
-      },
-      thisweek: {
-        count: 0,
-        amount: 0
-      },
-      thismonth: {
-        count: 0,
-        amount: 34.29
-      }
-    }
-  }];
+  ];
 }
 
 function getValidMerchantProviders(){
@@ -328,7 +330,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       mockery.registerMock(global.routes.path('analytics', 'Analytics.js'), {
         getMerchantProviderSummaries: (parameters) => {
-          return Promise.resolve(merchantprovider_summaries);
+          return Promise.resolve({merchantproviders: merchantprovider_summaries});
         },
         disableACLs: () => {},
         enableACLs: () => {}
@@ -967,9 +969,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       ph.selected_credit_card = getValidCreditCard();
 
-      let bin_number = ph.setBINNumber();
+      return ph.setBINNumber().then(binnumber => {
 
-      expect(bin_number).to.equal(ph.selected_credit_card.bin.substring(0, 6));
+        expect(binnumber).to.equal(ph.selected_credit_card.bin.substring(0, 6));
+
+      });
 
     });
 
@@ -1170,7 +1174,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       mockery.registerMock(global.routes.path('controllers', 'analytics/Analytics.js'), {
         getMerchantProviderSummaries: (parameters) => {
-          return Promise.resolve(merchantprovider_summaries);
+          return Promise.resolve({merchantproviders: merchantprovider_summaries});
         },
         disableACLs: () => {},
         enableACLs: () => {}
@@ -1182,7 +1186,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       return ph.getMerchantProviderSummaries().then(results => {
 
-        expect(results).to.deep.equal(merchantprovider_summaries);
+        expect(results).to.deep.equal({merchantproviders: merchantprovider_summaries});
 
       });
 
@@ -1676,7 +1680,7 @@ describe('helpers/transaction/Process.spec.js', () => {
           return Promise.resolve({bins:[cc_properties], pagination: {}});
         },
         getMerchantProviderSummaries: (parameters) => {
-          return Promise.resolve(merchantprovider_summaries);
+          return Promise.resolve({merchantproviders: merchantprovider_summaries});
         },
         disableACLs: () => {},
         enableACLs: () => {}
