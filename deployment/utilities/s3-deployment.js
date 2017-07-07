@@ -11,7 +11,7 @@ class S3Deployment {
     constructor(stage) {
         this.stage = stage;
         this.config = this.getConfig(stage);
-        this.s3 = new AWS.s3({
+        this.s3 = new AWS.S3({
             region: 'us-east-1',
             apiVersion: '2006-03-01',
         });

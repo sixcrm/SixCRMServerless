@@ -212,13 +212,15 @@ aws:
 
 s3:
   redshift:
-    node: 'sixcrm-development-redshift'
-    child:
-      node1:'sixcrm-kinesis-activity'
-      node2:'sixcrm-kinesis-events'
-      node3:'sixcrm-kinesis-merchant-processor'
-      node4:'sixcrm-kinesis-transactions'
-      node5:'sixcrm-manual-upload'
-      node6:'sixcrm-output'
-      node7:'sixcrm-random-generator'
-      node8:'sixcrm-resources'
+    buckets:
+      bucketRedshift:
+        bucket: 'sixcrm-development-redshift'
+        folders:
+          folder1: 'sixcrm-kinesis-activity/'
+          folder2: 'sixcrm-kinesis-events/'
+          folder3: 'sixcrm-kinesis-merchant-processor/'
+          folder4: 'sixcrm-kinesis-transactions/'
+          folder5: 'sixcrm-manual-upload/'
+          folder6: 'sixcrm-output/'
+          folder7: 'sixcrm-random-generator/'
+          folder8: 'sixcrm-resources/'
