@@ -574,7 +574,7 @@ class sessionController extends entityController {
 
             for(var j = 0; j < session.product_schedules.length; j++){
                 if(_.isEqual(product_schedule_id, session.product_schedules[j])){
-                    //eu.throwError('bad_request','Product schedule already belongs to this session');
+                    eu.throwError('bad_request','Product schedule already belongs to this session');
                 }
             }
         }
