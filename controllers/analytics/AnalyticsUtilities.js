@@ -396,7 +396,7 @@ module.exports = class AnalyticsUtilities {
 
         du.debug('Append Account');
 
-        if(global.account !== '*'){
+        if(this.permissionutilities.areACLsDisabled() != true && global.account !== '*'){
 
             parameters['account'] = [global.account];
 
@@ -413,6 +413,26 @@ module.exports = class AnalyticsUtilities {
         parameters['period'] = period.name;
 
         return parameters;
+
+    }
+
+    disableACLs(){
+
+      du.debug('Disable ACLs');
+
+      this.permissionutilities.disableACLs();
+
+      return;
+
+    }
+
+    enableACLs(){
+
+      du.debug('Disable ACLs');
+
+      this.permissionutilities.enableACLs();
+
+      return;
 
     }
 

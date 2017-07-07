@@ -13,6 +13,8 @@ var transactionController = global.routes.include('controllers', 'entities/Trans
 var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
 var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
 
+const processHelperController = global.routes.include('helpers', 'transaction/Process.js');
+
 const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
 
 class createOrderController extends transactionEndpointController{
@@ -232,44 +234,40 @@ class createOrderController extends transactionEndpointController{
 
     }
 
-
-
     createOrder(info) {
 
-        du.debug('Create Order');
+      du.debug('Create Order');
 
-        return Promise.resolve(info);
-        //Technical Debt: Deprecated!
-        /*
-        return loadBalancerController.process( info.campaign.loadbalancer, {customer: info.customer, creditcard: info.creditcard, amount: info.amount})
-  		    .then((processor) => {
+      let ph = new processHelperController();
 
-          du.highlight(processor);
-            //Technical Debt:  Are there further actions to take if a transaction is denied?
+      //Technical Debt:  Assumes a single schedule for purchase
+      let productschedule = info.schedulesToPurchase[0];
 
-            //validate processor
-          if(!_.has(processor, "message") || processor.message !== 'Success' || !_.has(processor, "results") || !_.has(processor.results, 'response') || processor.results.response !== '1'){
+      return ph.process({customer: info.customer, productschedule: productschedule, amount:info.amount}).then((result) => {
 
-              eu.throwError('server', 'The processor didn\'t approve the transaction: ' + processor.message);
+        //validate response
+        if(!_.has(result, "message") || result.message !== 'Success' || !_.has(result, "results") || !_.has(result.results, 'response') || result.results.response !== '1'){
 
-          }
+          eu.throwError('server', 'The processor didn\'t approve the transaction: ' + result.message);
 
-          info.processor = processor;
+        }
 
-          return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, processor).then((transaction) => {
+        info.processor = result;
 
-              //Techincal Debt: validate transaction above
+        return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, result).then((transaction) => {
 
-              info.transaction = transaction;
+          //Techincal Debt: validate transaction above
 
-              du.debug('Info:', info);
+          info.transaction = transaction;
 
-              return info;
+          du.debug('Info:', info);
 
-          });
+          return info;
 
         });
-        */
+
+      });
+
     }
 
     postOrderProcessing(info) {

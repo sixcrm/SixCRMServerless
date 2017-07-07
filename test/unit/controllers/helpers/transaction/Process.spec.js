@@ -329,7 +329,9 @@ describe('helpers/transaction/Process.spec.js', () => {
       mockery.registerMock(global.routes.path('analytics', 'Analytics.js'), {
         getMerchantProviderSummaries: (parameters) => {
           return Promise.resolve(merchantprovider_summaries);
-        }
+        },
+        disableACLs: () => {},
+        enableACLs: () => {}
       });
 
       let ph = new processHelperController();
@@ -1169,7 +1171,9 @@ describe('helpers/transaction/Process.spec.js', () => {
       mockery.registerMock(global.routes.path('controllers', 'analytics/Analytics.js'), {
         getMerchantProviderSummaries: (parameters) => {
           return Promise.resolve(merchantprovider_summaries);
-        }
+        },
+        disableACLs: () => {},
+        enableACLs: () => {}
       });
 
       let ph = new processHelperController();
@@ -1673,7 +1677,9 @@ describe('helpers/transaction/Process.spec.js', () => {
         },
         getMerchantProviderSummaries: (parameters) => {
           return Promise.resolve(merchantprovider_summaries);
-        }
+        },
+        disableACLs: () => {},
+        enableACLs: () => {}
       });
 
       mockery.registerMock(global.routes.path('entities', 'CreditCard.js'), {

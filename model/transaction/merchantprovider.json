@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/MerchantProvider",
+	"id":"/merchantprovider.json",
 	"title": "Merchant Provider",
 	"type": "object",
 	"definitions": {
@@ -146,7 +146,7 @@
 		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"},
-		"summary":{"$ref":"./merchantprovidersummary"}
+		"summary":{"$ref":"merchantprovidersummary.json"}
 	},
 	"required":["id", "account", "name", "processor", "processing", "gateway", "enabled", "allow_prepaid", "accepted_payment_methods", "created_at", "updated_at", "summary"]
 }
