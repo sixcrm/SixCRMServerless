@@ -468,7 +468,14 @@ functions:
         search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
         kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
         kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
-
+        redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
+        redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
+        redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
+        redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
+        redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
+        redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
+        redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
+        
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
     events:

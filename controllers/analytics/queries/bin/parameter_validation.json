@@ -6,11 +6,11 @@
 		"binnumber":{
 			"type": "array",
 			"items":{
-					"type":"integer",
-					"minimum": 100000,
-					"maximum": 999999,
-		  		"exclusiveMaximum": false,
-					"exclusiveMinimum": true
+				"type":"integer",
+				"minimum": 100000,
+				"maximum": 999999,
+	  		"exclusiveMaximum": false,
+				"exclusiveMinimum": true
 			}
 		},
 		"brand":{

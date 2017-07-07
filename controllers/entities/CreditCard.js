@@ -56,9 +56,11 @@ class creditCardController extends entityController {
 
                   var card_identified = false;
 
-                  if(!_.isArray(creditcards)){
+                  if(!_.isArray(creditcards) && creditcards){
 
                       return resolve(creditcard);
+                  } else {
+                      creditcards = [];
                   }
 
                   creditcards.forEach(function(item){

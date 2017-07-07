@@ -14,9 +14,9 @@
 			"reserve_rate": 0.5,
 			"maximum_chargeback_ratio":0.17,
 			"transaction_counts":{
-				"daily":30,
-				"monthly":30,
-				"weekly":30
+				"daily":3000,
+				"monthly":3000,
+				"weekly":3000
 			}
 		},
 		"enabled":true,
@@ -28,7 +28,7 @@
 			"additional":"{\"processor_id\":123}"
 		},
 		"allow_prepaid":true,
-		"accepted_payment_methods":["Visa", "Mastercard", "American Express"],
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
 		"customer_service":{
 			"email":"customer.service@mid.com",
 			"url":"http://mid.com",
@@ -52,9 +52,9 @@
 			"reserve_rate": 0.5,
 			"maximum_chargeback_ratio":0.17,
 			"transaction_counts":{
-				"daily":30,
-				"monthly":30,
-				"weekly":30
+				"daily":3000,
+				"monthly":3000,
+				"weekly":3000
 			}
 		},
 		"enabled":true,
@@ -66,7 +66,7 @@
 			"additional":"{\"processor_id\":123}"
 		},
 		"allow_prepaid":true,
-		"accepted_payment_methods":["Visa", "Mastercard", "American Express"],
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
 		"customer_service":{
 			"email":"customer.service@mid.com",
 			"url":"http://mid.com",

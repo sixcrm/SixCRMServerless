@@ -133,7 +133,23 @@ class AnalyticsController extends AnalyticsUtilities{
         parameters.merchant_provider = parameters.merchantprovider;
       }
 
-      return this.getResults('merchant_provider_summary', parameters, this.default_query_filters);
+      //Technical Debt:  What.  A.  Mess.
+      if(_.has(parameters, 'merchant_provider') && _.isArray(parameters.merchant_provider) && parameters.merchant_provider.length > 0){
+
+        let union = [];
+
+        parameters.merchant_provider.forEach((merchant_provider) => {
+
+          union.push("UNION ALL\nSELECT\n\t'"+merchant_provider+"'merchant_provider,\n\t0 num_transactions_today,\n\t0 num_transactions_week,\n\t0 num_transactions_month,\n\t0 amount_transactions_today,\n\t0 amount_transactions_week,\n\t0 amount_transactions_month");
+
+        });
+
+        union = arrayutilities.compress(union,"\n",'');
+        parameters.union = union;
+
+      }
+
+      return this.getResults('merchant_provider_summary', parameters, arrayutilities.merge(this.default_query_filters));
 
     }
 
