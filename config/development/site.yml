@@ -140,6 +140,28 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
+      sessions: 'six-development-sessions'
+      sessions_stream:
+        DeliveryStreamName: 'six-development-sessions'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_sessions'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
+            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-transactions/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
       events: 'six-development-events'
       event_stream:
         DeliveryStreamName: 'six-development-events'
