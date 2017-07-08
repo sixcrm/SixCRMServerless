@@ -3,6 +3,7 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
 let affiliateAllowDenyType = require('../affiliate/affiliateAllowDenyType');
@@ -19,6 +20,14 @@ module.exports.graphObj = new GraphQLObjectType({
       name: {
           type: new GraphQLNonNull(GraphQLString),
           description: 'The name of the campaign.',
+      },
+      allow_prepaid: {
+          type: new GraphQLNonNull(GraphQLBoolean),
+          description: 'Allow prepaid on the campaign.'
+      },
+      show_prepaid: {
+          type: new GraphQLNonNull(GraphQLBoolean),
+          description: 'Show prepaid on the campaign to affiliates.'
       },
       productschedules: {
           type: new GraphQLList(productScheduleType.graphObj),

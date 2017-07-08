@@ -7,6 +7,8 @@
 			campaign: {
 				id: \"75274431-7de3-4836-82eb-568fc368f88d\",
 				name: \"Testing Campaign2\",
+				allow_prepaid: false,
+				show_prepaid: false,
 				productschedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"],
 				emailtemplates:[\"b44ce483-861c-4843-a7d6-b4c649d6bdde\"],
 				affiliate_allow:[\"*\"],
@@ -15,6 +17,8 @@
 		) {
 			id,
 			name,
+			allow_prepaid,
+			show_prepaid,
 			created_at,
 			updated_at,
 			productschedules {
