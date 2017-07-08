@@ -7,7 +7,7 @@
 			productschedules {
 				id,
 				name,
-				loadbalancers{
+				loadbalancer{
 					id,
 					merchantproviderconfigurations {
 						merchantprovider {

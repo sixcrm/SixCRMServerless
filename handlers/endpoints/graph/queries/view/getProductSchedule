@@ -6,7 +6,7 @@
 		productschedule (id: \"12529a17-ac32-4e46-b05b-83862843055d\") {
 			id,
 			name,
-			loadbalancers{
+			loadbalancer{
 				id,
 				merchantproviderconfigurations {
 					merchantprovider {

@@ -76,13 +76,13 @@ class productScheduleController extends entityController {
 
     }
 
-    getLoadBalancers(product_schedule){
+    getLoadBalancer(product_schedule){
 
-        du.debug('Get Load Balancers');
+        du.debug('Get Load Balancer');
 
-        if(!_.has(product_schedule, 'loadbalancers')){ return Promise.resolve(null); }
+        if(!_.has(product_schedule, 'loadbalancer')){ return Promise.resolve(null); }
 
-        return Promise.all(product_schedule.loadbalancers.map((loadbalancer) => this.loadBalancerController.get(loadbalancer)));
+        return this.loadBalancerController.get(product_schedule.loadbalancer);
 
     }
 

@@ -21,6 +21,44 @@ class campaignController extends entityController {
 
     }
 
+    getAffiliateAllowDenyList(list){
+
+      du.debug('Get Affiliate Allow Deny List');
+
+      if(!_.isArray(list)){
+        eu.throwError('server', 'campaignController.getAffiliateAllowDenyList assumes list argument is an array');
+      }
+
+      if(list.length < 1){
+        return null;
+      }
+
+      let ac = this.affiliateController;
+
+      if(!_.isFunction(ac.get)){
+        ac = global.routes.include('controllers', 'entities/Affiliate.js');
+      }
+
+      let list_promises = list.map((list_item) => {
+
+        du.warning(list_item);
+        if(this.isUUID(list_item)){
+          return ac.get(list_item);
+        }
+
+        if(list_item == '*'){
+          return Promise.resolve({id:'*', name:'All'});
+        }
+
+      });
+
+      return Promise.all(list_promises).then(list_promises => {
+        du.info(list_promises);
+        return list_promises;
+      });
+
+    }
+
     listAffiliatesByCampaign(args){
 
       du.debug('List Affiliates By Campaign');

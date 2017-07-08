@@ -7,6 +7,8 @@
 			campaigns {
 				id,
 				name,
+				allow_prepaid,
+				show_prepaid,
 				created_at,
 				updated_at,
 				productschedules {
@@ -91,6 +93,32 @@
 						username,
 						password,
 						port
+					}
+				},
+				affiliate_allow {
+					... on AffiliateGroup {
+						id,
+						name
+					}
+					... on Affiliate {
+						id,
+						affiliate_id,
+						name,
+						created_at,
+						updated_at
+					}
+				}
+				affiliate_deny {
+					... on AffiliateGroup {
+						id,
+						name
+					}
+					... on Affiliate {
+						id,
+						affiliate_id,
+						name,
+						created_at,
+						updated_at
 					}
 				}
 			},

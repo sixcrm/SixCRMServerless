@@ -22,6 +22,12 @@
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"allow_prepaid":{
+			"type":"boolean"
+		},
+		"show_prepaid":{
+			"type":"boolean"
+		},
 		"name":{
 			"type":"string",
 			"minLength":3
@@ -34,8 +40,26 @@
 			"type":"array",
 			"items":{"$ref": "#/definitions/UUIDv4"}
 		},
+		"affiliate_allow":{
+			"type":"array",
+			"items":{
+				"anyOf":[
+					{"$ref": "#/definitions/UUIDv4"},
+					{"type": "string", "enum":["*"]}
+				]
+			}
+		},
+		"affiliate_deny":{
+			"type":"array",
+			"items":{
+				"anyOf":[
+					{"$ref": "#/definitions/UUIDv4"},
+					{"type": "string", "enum":["*"]}
+				]
+			}
+		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["account", "name", "created_at", "updated_at"]
+	"required":["account", "name", "show_prepaid", "allow_prepaid", "created_at", "updated_at"]
 }

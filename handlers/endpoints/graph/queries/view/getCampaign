@@ -6,6 +6,8 @@
 		campaign (id: \"70a6689a-5814-438b-b9fd-dd484d0812f9\") {
 			id,
 			name,
+			allow_prepaid,
+			show_prepaid,
 			productschedules {
 				id,
 				loadbalancers{
@@ -90,6 +92,32 @@
 					port
 				}
 			},
+			affiliate_allow {
+				... on AffiliateGroup {
+					id,
+					name
+				}
+				... on Affiliate {
+					id,
+					affiliate_id,
+					name,
+					created_at,
+					updated_at
+				}
+			}
+			affiliate_deny {
+				... on AffiliateGroup {
+					id,
+					name
+				}
+				... on Affiliate {
+					id,
+					affiliate_id,
+					name,
+					created_at,
+					updated_at
+				}
+			}
 			created_at,
 			updated_at
 		}

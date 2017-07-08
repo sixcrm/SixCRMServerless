@@ -28,7 +28,7 @@
 						}
 					}
 				},
-				loadbalancers{
+				loadbalancer{
 					id,
 					merchantproviderconfigurations {
 						merchantprovider {
