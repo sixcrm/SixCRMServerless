@@ -34,6 +34,24 @@
 			"type":"array",
 			"items":{"$ref": "#/definitions/UUIDv4"}
 		},
+		"affiliate_allow":{
+			"type":"array",
+			"items":{
+				"anyOf":[
+					{"$ref": "#/definitions/UUIDv4"},
+					{"type": "string", "enum":["*"]}
+				]
+			}
+		},
+		"affiliate_deny":{
+			"type":"array",
+			"items":{
+				"anyOf":[
+					{"$ref": "#/definitions/UUIDv4"},
+					{"type": "string", "enum":["*"]}
+				]
+			}
+		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
