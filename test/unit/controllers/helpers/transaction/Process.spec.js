@@ -230,7 +230,7 @@ function getValidProductSchedule(){
     id:"12529a17-ac32-4e46-b05b-83862843055d",
     name:"Product Schedule 1",
     account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    loadbalancers:["927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"],
+    loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
     schedule:[
       {
         product_id:"616cc994-9480-4640-b26c-03810a679fe3",
@@ -315,8 +315,8 @@ describe('helpers/transaction/Process.spec.js', () => {
       let product_schedule = {};
 
       mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
-        getLoadBalancers: (product_schedule) => {
-          return Promise.resolve([loadbalancer]);
+        getLoadBalancer: (product_schedule) => {
+          return Promise.resolve(loadbalancer);
         }
       });
 
@@ -1000,16 +1000,13 @@ describe('helpers/transaction/Process.spec.js', () => {
 
     });
 
-    it('retrieves the loadbalancers', () => {
+    it('retrieves the loadbalancer', () => {
 
       let lb_1 = getValidLoadBalancer();
-      let lb_2 = lb_1;
-
-      lb_2.id = uuidV4();
 
       mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
-          getLoadBalancers: (product_schedule) => {
-              return Promise.resolve([lb_1, lb_2]);
+          getLoadBalancer: (product_schedule) => {
+              return Promise.resolve(lb_1);
           }
       });
 
@@ -1024,25 +1021,25 @@ describe('helpers/transaction/Process.spec.js', () => {
       let cc_1 = getValidCreditCard();
 
       parameters.customer.creditcards = [cc_1];
-      parameters.productschedule.loadbalancers.push(lb_2.id);
+      parameters.productschedule.loadbalancer = lb_1;
 
       ph.setParameters(parameters);
 
-      return ph.getLoadBalancers().then(loadbalancers => {
+      return ph.getLoadBalancer().then(loadbalancer => {
 
-        expect(loadbalancers).to.deep.equal([lb_1, lb_2]);
-        expect(ph.loadbalancers).to.deep.equal([lb_1, lb_2]);
+        expect(loadbalancer).to.deep.equal(lb_1);
+        expect(ph.loadbalancer).to.deep.equal(lb_1);
 
       });
 
     });
 
-    it('fails to select a loadbalancer if loadbalancers are not set', () => {
+    it('fails to select a loadbalancer if loadbalancer are not set', () => {
 
       let ph = new processHelperController();
 
       return ph.selectLoadBalancer().catch(error => {
-        expect(error.message).to.equal('[500] Loadbalancers must be set before selecting a loadbalancer.');
+        expect(error.message).to.equal('[500] Loadbalancer must be set before selecting a loadbalancer.');
       });
 
     });
@@ -1050,9 +1047,6 @@ describe('helpers/transaction/Process.spec.js', () => {
     it('selects a load balancer', () => {
 
       let lb_1 = getValidLoadBalancer();
-      let lb_2 = lb_1;
-
-      lb_2.id = uuidV4();
 
       let parameters = {
         customer: getValidCustomer(),
@@ -1063,11 +1057,11 @@ describe('helpers/transaction/Process.spec.js', () => {
       let cc_1 = getValidCreditCard();
 
       parameters.customer.creditcards = [cc_1];
-      parameters.productschedule.loadbalancers.push(lb_2.id);
+      parameters.productschedule.loadbalancer = lb_1;
 
       let ph = new processHelperController();
 
-      ph.loadbalancers = [lb_1, lb_2];
+      ph.loadbalancer = lb_1;
 
       ph.setParameters(parameters);
 
@@ -1701,8 +1695,8 @@ describe('helpers/transaction/Process.spec.js', () => {
       });
 
       mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
-        getLoadBalancers: (product_schedule) => {
-          return Promise.resolve([loadbalancer]);
+        getLoadBalancer: (product_schedule) => {
+          return Promise.resolve(loadbalancer);
         }
       });
 

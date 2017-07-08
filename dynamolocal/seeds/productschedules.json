@@ -2,7 +2,7 @@
 	"id":"12529a17-ac32-4e46-b05b-83862843055d",
 	"name":"Product Schedule 1",
 	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-	"loadbalancers":["927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"],
+	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
 	"schedule":[
 		{
 			"product_id":"616cc994-9480-4640-b26c-03810a679fe3",
@@ -25,7 +25,7 @@
 	"id":"8d1e896f-c50d-4a6b-8c84-d5661c16a046",
 	"name":"Product Schedule 2",
 	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-	"loadbalancers":["927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"],
+	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
 	"schedule":[
 		{
 			"product_id":"616cc994-9480-4640-b26c-03810a679fe3",
@@ -48,7 +48,7 @@
 	"id":"0e3652bf-f1d3-4325-840e-c93806289d7e",
 	"name":"Product Schedule 3",
 	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-	"loadbalancers":["927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"],
+	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
 	"schedule":[
 		{
 			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",

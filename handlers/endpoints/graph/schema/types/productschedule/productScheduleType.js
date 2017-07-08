@@ -26,15 +26,15 @@ module.exports.graphObj = new GraphQLObjectType({
             var productScheduleController = global.routes.include('controllers','entities/ProductSchedule');
 
             return productScheduleController.getSchedule(productschedule);
-        }
+          }
         },
-        loadbalancers:{
-            type: new GraphQLList(loadBalancerType.graphObj),
-            description: 'The load balancers associated with the product schedule.',
+        loadbalancer:{
+            type: loadBalancerType.graphObj,
+            description: 'The load balancer associated with the product schedule.',
             resolve: (productschedule) => {
                 var productScheduleController = global.routes.include('controllers','entities/ProductSchedule');
 
-                return productScheduleController.getLoadBalancers(productschedule);
+                return productScheduleController.getLoadBalancer(productschedule);
             }
         },
         created_at: {

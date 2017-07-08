@@ -53,7 +53,7 @@ module.exports = class Process{
 
       du.debug('Select Merchant Provider');
 
-      return this.getLoadBalancers()
+      return this.getLoadBalancer()
       .then(() => this.selectLoadBalancer())
       .then(() => this.getMerchantProviders())
       .then(() => this.getMerchantProviderSummaries())
@@ -598,39 +598,30 @@ module.exports = class Process{
 
     }
 
-    getLoadBalancers(){
+    getLoadBalancer(){
 
-      du.debug('Get Loadbalancers');
+      du.debug('Get Loadbalancer');
 
-      return this.productScheduleController.getLoadBalancers(this.productschedule).then((loadbalancers) => {
+      return this.productScheduleController.getLoadBalancer(this.productschedule).then((loadbalancer) => {
 
-        this.loadbalancers = loadbalancers;
+        this.loadbalancer = loadbalancer;
 
-        return loadbalancers;
+        return loadbalancer;
 
       });
 
     }
 
-    //Technical Debt:  Finish
-    //Note:  I believe that load balancer properties like "prepaid need to be set..."
+    //Technical Debt:  Deprecated
     selectLoadBalancer(){
 
       du.debug('Select Load Balancer');
 
-      if(!_.has(this, 'loadbalancers')){
-        return Promise.reject(eu.getError('server','Loadbalancers must be set before selecting a loadbalancer.'));
+      if(!_.has(this, 'loadbalancer')){
+        return Promise.reject(eu.getError('server','Loadbalancer must be set before selecting a loadbalancer.'));
       }
 
-      if(!_.isArray(this.loadbalancers)){
-        return Promise.reject(eu.getError('server','Process.selectLoadBalancer assumes that loadbalancers property is an array'));
-      }
-
-      if(this.loadbalancers.length < 1){
-        return Promise.reject(eu.getError('server','Process.selectLoadBalancer assumes that loadbalancers property is not an empty array'));
-      }
-
-      this.selected_loadbalancer = this.loadbalancers[0];
+      this.selected_loadbalancer = this.loadbalancer;
 
       return Promise.resolve(this.selected_loadbalancer);
 

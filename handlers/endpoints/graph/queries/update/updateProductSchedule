@@ -7,7 +7,7 @@
 			productschedule: {
 				id: \"e751afbd-f314-4e71-8afc-6469e9ffe9b3\",
 				name:\"Testing Name\",
-				loadbalancers: [\"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\"],
+				loadbalancer:\"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\",
 				schedule: [
 					{
 						product_id:\"668ad918-0d09-4116-a6fe-0e7a9eda36f8\",
@@ -30,7 +30,7 @@
 			name,
 			created_at,
 			updated_at,
-			loadbalancers{
+			loadbalancer{
 				id,
 				merchantproviderconfigurations {
 					merchantprovider {
