@@ -1,0 +1,16 @@
+{
+  "environments":{
+    "development":{
+      "account":"068070110666",
+      "region":"us-east-1",
+      "access_key_id":"AKIAJDMBNSJLEZG4OIDQ",
+      "secret_access_key":"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"
+    },
+    "staging":{
+      "account":"",
+      "region":"us-east-1",
+      "access_key_id":"",
+      "secret_access_key":""
+    }
+  }
+}
