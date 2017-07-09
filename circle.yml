@@ -16,11 +16,11 @@ machine:
   node:
     version: 7.6.0
   environment:
-    AWS_ACCOUNT: cat ./deployment/config/aws_environments.template.json | jq '.environments.development.account'
-    AWS_REGION: 'us-east-1'
+    AWS_ACCOUNT: cat ./deployment/config/aws_environments.template.json | jq ".environments.$CIRCLE_BRANCH.account"
+    AWS_REGION: cat ./deployment/config/aws_environments.template.json | jq ".environments.$CIRCLE_BRANCH.region"
     SIX_VERBOSE: '2'
-    AWS_ACCESS_KEY_ID: 'AKIAJDMBNSJLEZG4OIDQ'
-    AWS_SECRET_ACCESS_KEY: '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'
+    AWS_ACCESS_KEY_ID: cat ./deployment/config/aws_environments.template.json | jq ".environments.$CIRCLE_BRANCH.access_key_id"
+    AWS_SECRET_ACCESS_KEY: cat ./deployment/config/aws_environments.template.json | jq ".environments.$CIRCLE_BRANCH.secret_access_key"
 
   services:
     #- redis
@@ -29,6 +29,7 @@ machine:
 
 dependencies:
   post:
+    - echo "AWS Account: $AWS_ACCOUNT"
     - serverless dynamodb install --stage $CIRCLE_BRANCH
 
 test:
