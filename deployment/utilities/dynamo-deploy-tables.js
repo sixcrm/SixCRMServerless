@@ -8,7 +8,7 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
 
 const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
-const retryCount = 5;
+const retryCount = 25;
 
 class DynamoDeployTables {
     constructor(){}
