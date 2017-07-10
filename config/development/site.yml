@@ -214,18 +214,14 @@ s3:
   redshift:
     buckets:
       bucketRedshift:
-        bucket: 'sixcrm-development-redshiftff'
-        folders:
-          folder1: '1sixcrm-kinesis-activity/'
-          folder2: '1sixcrm-kinesis-events/'
-          folder3: '1sixcrm-kinesis-merchant-processor/'
-          folder4: '1sixcrm-kinesis-transactions/'
-          folder5: '1sixcrm-manual-upload/'
-          folder6: '1sixcrm-output/'
-          folder7: '1sixcrm-random-generator/'
-          folder8: '1sixcrm-resources/'
-          folder9: '1sixcrm-test/'
-      bucketTest:
-        bucket: 'sixcrm-test'
+        bucket: 'sixcrm-development-redshift'
         folders:
           folder1: 'sixcrm-kinesis-activity/'
+          folder2: 'sixcrm-kinesis-events/'
+          folder3: 'sixcrm-kinesis-merchant-processor/'
+          folder4: 'sixcrm-kinesis-transactions/'
+          folder5: 'sixcrm-manual-upload/'
+          folder6: 'sixcrm-output/'
+          folder7: 'sixcrm-random-generator/'
+          folder8: 'sixcrm-resources/'
+          folder9: 'sixcrm-test/'

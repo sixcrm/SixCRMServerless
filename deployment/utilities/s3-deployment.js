@@ -226,6 +226,25 @@ class S3Deployment {
         return config;
     }
 
+    listObjects(parameters) {
+
+      var param = {
+          Bucket: parameters.Bucket
+      };
+
+      return new Promise((resolve, reject) => { this.s3.listObjects(param, (error, data) => {
+              if (error) {
+                  du.error(error.message);
+                  return reject(error);
+              } else {
+                  //console.log(data.Contents)
+                  return resolve(data.Contents);
+              }
+          });
+        });
+
+    }
+
 }
 
 module.exports = S3Deployment;
