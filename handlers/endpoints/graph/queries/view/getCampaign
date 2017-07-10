@@ -10,7 +10,7 @@
 			show_prepaid,
 			productschedules {
 				id,
-				loadbalancers{
+				loadbalancer{
 					id,
 					merchantproviderconfigurations {
 						merchantprovider {
