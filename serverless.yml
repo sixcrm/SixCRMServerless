@@ -30,10 +30,8 @@ custom:
       inMemory: true
       migration: true
     migration:
-      table_prefix: ${opt:stage}
       dir: ./dynamolocal/tabledefinitions
     seed:
-      table_prefix: ${opt:stage}
       dir: ./dynamolocal/seeds
 
 site_config: ${file(./config/${opt:stage}/site.yml)}
@@ -475,7 +473,7 @@ functions:
         redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
         redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
         redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
-        
+
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
     events:

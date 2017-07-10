@@ -810,7 +810,7 @@ module.exports = class entityUtilitiesController{
 
         du.deep('Build Table Name');
 
-        return process.env.stage+name+'s';
+        return name+'s';
 
     }
 

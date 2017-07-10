@@ -15,7 +15,7 @@ class DynamoDeployTables {
 
     deployTable(tableFileName, env, region, counter) {
         let executionCount = counter || 0;
-        let tableName = env+this.getTableName(tableFileName);
+        let tableName = this.getTableName(tableFileName);
 
         return exec(`serverless dynamodb execute -s ${env} -n ${tableFileName} -r ${region}`)
         .then(() => {
