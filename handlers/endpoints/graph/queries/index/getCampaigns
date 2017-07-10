@@ -13,7 +13,7 @@
 				updated_at,
 				productschedules {
 					id,
-					loadbalancers{
+					loadbalancer{
 						id,
 						merchantproviderconfigurations {
 							merchantprovider {

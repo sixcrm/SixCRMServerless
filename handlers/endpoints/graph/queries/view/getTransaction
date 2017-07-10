@@ -19,7 +19,7 @@
 				bill_at,
 				product_schedules {
 					id,
-					loadbalancers{
+					loadbalancer{
 						id,
 						merchantproviderconfigurations {
 							merchantprovider {

@@ -230,7 +230,7 @@ class transactionController extends entityController {
 
     }
 
-    truesaction(entity){
+    createTransaction(entity){
 
         if(!_.has(entity, 'alias')){
 

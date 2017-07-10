@@ -21,8 +21,7 @@
                   "properties": {
 
                     "events": {
-                      "type": "array",
-                      "items": { "$ref": "event" }
+                      "type": "array"
                     },
                     "pagination": { "$ref": "../../sql_pagination" }
                   },

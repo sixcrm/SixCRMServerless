@@ -35,6 +35,10 @@ class notificationReadController extends entityController {
         let account_id = global.account;
 
         return this.queryBySecondaryIndex('user', user_id, 'user-index').then((response) => {
+            if (!response) {
+                return null;
+            }
+
             let notification_reads = response.notificationreads;
 
             if (!notification_reads || notification_reads.length === 0) {
