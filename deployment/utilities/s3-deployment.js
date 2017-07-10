@@ -75,6 +75,26 @@ class S3Deployment {
         });
     }
 
+    createFolder(parameters) {
+        /* Create Bucket */
+
+        var param = {
+            Bucket: parameters.Bucket,
+            Key: parameters.Key
+        };
+
+        return new Promise((resolve, reject) => {
+            this.s3.putObject(param, (error, data) => {
+                if (error) {
+                    du.error(error.message);
+                    return reject(error);
+                } else {
+                    return resolve(data);
+                }
+            });
+        });
+    }
+
     createBucketAndWait(parameters) {
       return this.createBucket(parameters).then(() => {
           return this.waitForBucketToExist(parameters.Bucket);
@@ -83,7 +103,7 @@ class S3Deployment {
 
     createFolderAndWait(parameters) {
       return this.createFolder(parameters).then(() => {
-          return this.waitForFolderToExist(parameters.Bucket);
+          return this.waitForFolderToExist(parameters);
       });
     }
 
@@ -114,12 +134,58 @@ class S3Deployment {
         });
     }
 
+    deleteFolder(parameters) {
+        /* Delete Bucket */
+
+      var param = {
+          Bucket: parameters.Bucket,
+          Key: parameters.Key
+      };
+
+      return new Promise((resolve, reject) => {
+          this.s3.deleteObject(param, (error, data) => {
+              if (error) {
+                  du.error(error.message);
+                  return reject(error);
+              } else {
+                  return resolve(data);
+              }
+          });
+      });
+    }
+
+    deleteFolderAndWait(parameters) {
+        /* Delete Bucket and wait */
+
+        return this.deleteFolder(parameters).then(() => {
+            return this.waitForFolderNotExist(parameters);
+        });
+    }
     waitForBucket(cluster_identifier, state) {
         let param = {
             Bucket: cluster_identifier
         };
 
         return new Promise((resolve, reject) => {
+            this.s3.waitFor(state, param, (error, data) => {
+                if (error) {
+                    du.error(error.message);
+                    return reject(error);
+                } else {
+                    return resolve(data);
+                }
+            });
+        });
+    }
+
+    waitForFolder(parameters, state) {
+
+      var param = {
+          Bucket: parameters.Bucket,
+          Key: parameters.Key
+      };
+
+      return new Promise((resolve, reject) => {
             this.s3.waitFor(state, param, (error, data) => {
                 if (error) {
                     du.error(error.message);
@@ -139,6 +205,16 @@ class S3Deployment {
     waitForBucketNotExist(bucket_identifier) {
         /* Exists wrapper */
         return this.waitForBucket(bucket_identifier, 'bucketNotExists');
+    }
+
+    waitForFolderToExist(parameters) {
+        /* Exists wrapper */
+        return this.waitForFolder(parameters, 'objectExists');
+    }
+
+    waitForFolderNotExist(parameters) {
+        /* Exists wrapper */
+        return this.waitForFolder(parameters, 'objectNotExists');
     }
 
     getConfig() {

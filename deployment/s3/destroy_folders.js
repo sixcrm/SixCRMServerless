@@ -31,14 +31,14 @@ bucket_list.map(bucket => {
         bucket_parameters.Key = s3Deployment.getConfig().buckets[bucket][key][folder];
         s3Deployment.folderExists(bucket_parameters).then(exists => {
           if (exists) {
-            du.warning('Folder exists, Aborting.');
-            console.log('Folder exists, Aborting.');
-          } else {
-            du.warning('Folder does not exists, creating.');
-            console.log('Folder does not exists, creating.');
-            return s3Deployment.createFolderAndWait(bucket_parameters).then(response => {
+            du.warning('Folder exists, deleting');
+            console.log('Folder exists, deleting');
+            return s3Deployment.deleteFolderAndWait(bucket_parameters).then(response => {
               du.output(response);
             });
+          } else {
+            du.warning('Folder does not exists, Aborting.');
+            console.log('Folder does not exists, Aborting.');
           }
         }).then(() => {
           du.highlight('Complete')
