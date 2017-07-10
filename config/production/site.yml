@@ -40,35 +40,6 @@ lambda:
     forwardmessage_recovertoarchive: 'sixtransaction-production-recovertoarchive'
     forwardmessage_indextoarchive: 'sixtransaction-production-indextoarchive'
 
-sqs:
-  bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill'
-  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-bill-failed'
-  recover_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-recover'
-  hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-hold'
-  pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending'
-  pending_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-pending-failed'
-  shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-shipped'
-  delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-delivered'
-  rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill'
-  rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-rebill-failure'
-  search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/development-searchindex'
-  bill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill_deadletter'
-  bill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-bill-failed_deadletter'
-  recover_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-recover_deadletter'
-  hold_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-hold_deadletter'
-  pending_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending_deadletter'
-  pending_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-pending-failed_deadletter'
-  shipped_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-shipped_deadletter'
-  delivered_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-delivered_deadletter'
-  rebill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-rebill_deadletter'
-  rebill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-rebill-failure_deadletter'
-  search_indexing_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/production-searchindex_deadletter'
-
-nmi:
-  username: 'demo'
-  password: 'password'
-  endpoint: 'https://secure.networkmerchants.com/api/transact.php'
-
 shipping_providers:
   usps:
     user_id: '005SIXCR2114'
@@ -110,6 +81,3 @@ kinesis:
       transactions: 'six-production-transactions'
       events: 'six-production-events'
       activity: 'six-production-activity'
-
-aws:
-  region: 'us-east-1'

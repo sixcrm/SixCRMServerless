@@ -11,7 +11,7 @@ process.env.user_acls_table = site_config.dynamodb.user_acls_table;
 process.env.notifications_table = site_config.dynamodb.notifications_table;
 process.env.notifications_read_table = site_config.dynamodb.notifications_read_table;
 process.env.dynamo_endpoint = site_config.dynamodb.endpoint;
-process.env.search_indexing_queue_url = site_config.sqs.search_indexing_queue_url;
+process.env.search_indexing_queue = 'search_indexing'
 
 if (process.env.stage === 'local') {
     process.env.users_table = 'local' + process.env.users_table;

@@ -24,6 +24,22 @@ provider:
     aws_region: ${opt:region, self:provider.region}
     aws_account: ${AWS::AccountId}
     dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+    search_indexing_queue: 'search_indexing'
+    rebill_queue: 'rebill'
+    bill_queue: 'bill'
+    hold_queue: 'hold'
+    bill_failed_queue: 'bill_failed'
+    redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
+    redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
+    redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
+    redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
+    redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
+    redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
+    redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
+    redshift_random_data_staging_bucket: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.staging_bucket}
+    redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
+    kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+    kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
 
 plugins:
   - serverless-dynamodb-local
@@ -85,13 +101,6 @@ functions:
     environment:
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
-      redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-      redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-      redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-      redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-      redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-      redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
-      redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
       elasticache_endpoint: ${file(./config/${opt:stage}/site.yml):elasticache.endpoint}
       elasticache_port: ${file(./config/${opt:stage}/site.yml):elasticache.port}
       elasticache_retry_time: ${file(./config/${opt:stage}/site.yml):elasticache.retry_time}
@@ -253,16 +262,6 @@ functions:
       - schedule:
           rate: rate(5 minutes)
           enabled: true
-    environment:
-      redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-      redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-      redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-      redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-      redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-      redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
-      redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
-      redshift_random_data_staging_bucket: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.staging_bucket}
-      redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
 
 
   sesnotifications:
@@ -295,8 +294,6 @@ functions:
       - schedule:
           rate: rate(2 hours)
           enabled: true
-    environment:
-      rebill_queue: 'rebill'
 
   pickrebill:
     handler: handlers/workers/pickrebill/handler.pickrebill
@@ -304,8 +301,6 @@ functions:
       - schedule:
           rate: rate(2 hours)
           enabled: true
-    environment:
-      bill_queue: 'bill'
 
   processbilling:
     handler: handlers/workers/processbilling/handler.processbilling
@@ -356,8 +351,7 @@ functions:
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
-      kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-      search_indexing_queue: 'search_indexing'
+
 
 
   createlead:
@@ -371,9 +365,6 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-    environment:
-        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-        search_indexing: 'search_indexing'
 
   createorder:
     handler: handlers/endpoints/createorder/handler.createorder
@@ -386,19 +377,6 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-    environment:
-        hold_queue: 'hold'
-        bill_failed_queue: 'bill_failed'
-        search_indexing_queue: 'search_indexing'
-        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-        kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
-        redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-        redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-        redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-        redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-        redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-        redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
-        redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
 
   createupsell:
     handler: handlers/endpoints/createupsell/handler.createupsell
@@ -411,19 +389,6 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-    environment:
-        hold_queue: 'hold'
-        bill_failed_queue: 'bill_failed'
-        search_indexing_queue: 'search_indexing'
-        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-        kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
-        redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-        redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-        redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-        redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-        redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-        redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
-        redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
 
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
@@ -436,9 +401,6 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-    environment:
-        search_indexing_queue: 'search_indexing'
-        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
 
   publichtml:
     handler: handlers/endpoints/publichtml/handler.publichtml

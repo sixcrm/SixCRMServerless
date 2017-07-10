@@ -24,6 +24,7 @@ let purge_promises = [];
 
 du.debug('Serverless Config: ', serverless_config);
 
+// Technical Debt: Deprecated.
 for(const resource in serverless_config.resources.Resources) {
 
     let resource_definition = serverless_config.resources.Resources[resource];
@@ -34,11 +35,9 @@ for(const resource in serverless_config.resources.Resources) {
 
             let queue_name = buildQueueName(resource_definition.Properties.QueueName);
 
-            let queue_url = buildQueueUrl(queue_name);
-
             du.highlight('Purging Queue: '+queue_name);
 
-            purge_promises.push(purgeQueue(queue_url));
+            purge_promises.push(purgeQueue(queue_name));
 
         }
 
@@ -57,13 +56,13 @@ Promise.all(purge_promises).then((purge_results) => {
 
 });
 
-function purgeQueue(queue_url){
+function purgeQueue(queue_shortname){
 
     du.debug('Purge Queue');
 
     return new Promise((resolve, reject) => {
 
-        sqsutilities.purgeQueue({queue_url: queue_url}, (error, data) => {
+        sqsutilities.purgeQueue({queue: queue_shortname}, (error, data) => {
 
             if(error){
 
@@ -86,13 +85,5 @@ function buildQueueName(proto_queue_name){
     du.debug('Build Queue Name');
 
     return proto_queue_name.replace('${opt:stage}', environment);
-
-}
-
-function buildQueueUrl(queue_name){
-
-    du.debug('Build Queue URL');
-
-    return 'https://sqs.'+region+'.amazonaws.com/'+environment_account_id+'/'+queue_name;
 
 }

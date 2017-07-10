@@ -35,7 +35,7 @@ class DynamoDeploySeeds {
     deployAllSeeds(environment, region) {
         PermissionUtilities.disableACLs();
         process.env.stage = environment;
-        process.env.search_indexing_queue_url = this.getConfig().sqs.search_indexing_queue_url;
+        process.env.search_indexing_queue = 'search_indexing';
 
         process.env.dynamo_endpoint = this.getConfig().dynamodb.endpoint;
 

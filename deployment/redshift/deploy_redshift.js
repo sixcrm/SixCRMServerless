@@ -21,7 +21,7 @@ setupEnvironmentVariables()
 
 function setupEnvironmentVariables() {
     process.env.stage = environment;
-    process.env.search_indexing_queue_url = getConfig().sqs.search_indexing_queue_url;
+    process.env.search_indexing_queue = 'seach_indexing';
 
     process.env.dynamo_endpoint = getConfig().dynamodb.endpoint;
 
@@ -118,6 +118,8 @@ function getTableVersion(name, env) {
         return 0;
     });
 }
+
+
 
 function getConfig() {
     let config = global.routes.include('config', `${process.env.stage}/site.yml`);
