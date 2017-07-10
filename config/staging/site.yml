@@ -1,0 +1,206 @@
+jwt:
+  issuer: 'https://api.sixcrm.com'
+  staging_bypass: 'deathstalker'
+  site: #This is the key for all graph requests (AKA Six users)
+    secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
+    domain: ''
+    expiration: 3600
+  transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
+    secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+    expiration: 3600
+  #Technical Debt:  The site key may be deprecated...
+  site_key: 'anwdadawdjaklwdlakd'
+
+dynamodb:
+  endpoint: ''
+
+lambda:
+  endpoint: ''
+  function_names:
+    deliveredtoarchive: 'sixtransaction-staging-archivedelivered'
+    shippedtodelivered: 'sixtransaction-staging-confirmdelivery'
+    pendingtoshipped: 'sixtransaction-staging-confirmshipped'
+    pendingfailedtopending: 'sixtransaction-staging-shipproduct'
+    holdtopending: 'sixtransaction-staging-shipproduct'
+    holdtoarchive: 'sixtransaction-staging-archivehold'
+    billtohold: 'sixtransaction-staging-processbilling'
+    recovertohold: 'sixtransaction-staging-processbilling'
+    createrebillstoarchive: 'sixtransaction-staging-createrebills'
+    recovertoarchive: 'sixtransaction-staging-archiverecover'
+    indextoarchive: 'sixtransaction-staging-indexentities'
+    forwardmessage_deliveredtoarchive: 'sixtransaction-staging-deliveredtoarchive'
+    forwardmessage_shippedtodelivered: 'sixtransaction-staging-shippedtodelivered'
+    forwardmessage_pendingtoshipped: 'sixtransaction-staging-pendingtoshipped'
+    forwardmessage_pendingfailedtopending: 'sixtransaction-staging-pendingfailedtopending'
+    forwardmessage_holdtopending: 'sixtransaction-staging-holdtopending'
+    forwardmessage_holdtoarchive: 'sixtransaction-staging-holdtoarchive'
+    forwardmessage_billtohold: 'sixtransaction-staging-billtohold'
+    forwardmessage_recovertohold: 'sixtransaction-staging-recovertohold'
+    forwardmessage_createrebillstoarchive: 'sixtransaction-staging-rebilltoarchive'
+    forwardmessage_recovertoarchive: 'sixtransaction-staging-recovertoarchive'
+    forwardmessage_indextoarchive: 'sixtransaction-staging-indextoarchive'
+
+sqs:
+  bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-bill'
+  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-bill-failed'
+  recover_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-recover'
+  hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-hold'
+  pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-pending'
+  pending_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-pending-failed'
+  shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-shipped'
+  delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-delivered'
+  rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-rebill'
+  rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-rebill-failure'
+  search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-searchindex'
+  bill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-bill_deadletter'
+  bill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-bill-failed_deadletter'
+  recover_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-recover_deadletter'
+  hold_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-hold_deadletter'
+  pending_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-pending_deadletter'
+  pending_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-pending-failed_deadletter'
+  shipped_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-shipped_deadletter'
+  delivered_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-delivered_deadletter'
+  rebill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-rebill_deadletter'
+  rebill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-rebill-failure_deadletter'
+  search_indexing_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-searchindex_deadletter'
+
+#Technical Debt: Why is this here?!
+nmi:
+  username: 'demo'
+  password: 'password'
+  endpoint: 'https://secure.networkmerchants.com/api/transact.php'
+
+shipping_providers:
+  usps:
+    user_id: '005SIXCR2114'
+    password: '392VM80MW850'
+
+#Technical Debt: This all needs to be configured elsewhere?
+redshift:
+  user: 'admin'
+  database: 'dev'
+  password: 'Jagodica9'
+  host: 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com'
+  port: 5439
+  max: 10
+  idleTimeoutMillis: 30000
+  cluster:
+    cluster_identifier: 'sixcrm-staging'
+    node_type: 'dc1.large'
+    automated_snapshot_retention_period: 3
+    cluster_type: 'single-node'
+    publicly_accessible: true
+    skip_final_cluster_snapshot: true
+    final_cluster_snapshot_identifier: ''
+  randomdata:
+    staging_bucket: 'sixcrm-staging-redshift/sixcrm-random-generator'
+    interval: 15768000 #this is provided in seconds
+
+notifications:
+  apn:
+    token_key: ''
+    token_key_id: ''
+    token_team_id: ''
+    production: false
+
+#Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
+cache:
+  usecache: 1
+  cachebuster: 'somerandomthing1'
+
+#Technical Debt:  This needs to be deployed elsewhere
+elasticache:
+  max_attempts: 3
+  retry_time: 1800000
+  endpoint: '34.204.230.178'
+  port: 6379
+
+logging:
+  loglevel: 0
+
+kinesis:
+  firehose:
+    streams:
+      transactions: 'six-staging-transactions'
+      transaction_stream:
+        DeliveryStreamName: 'six-staging-transactions'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_transactions'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
+            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-transactions/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
+      events: 'six-staging-events'
+      event_stream:
+        DeliveryStreamName: 'six-staging-events'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_events'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
+            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-events/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
+      activity: 'six-staging-activity'
+      activity_stream:
+        DeliveryStreamName: 'six-staging-activity'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_events'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
+            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-activity/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
+
+#Technical Debt:  Is this necessary?
+aws:
+  region: 'us-east-1'
+
+s3:
+  redshift:
+    node: 'sixcrm-staging-redshift'
+    child:
+      node1:'sixcrm-kinesis-activity'
+      node2:'sixcrm-kinesis-events'
+      node3:'sixcrm-kinesis-merchant-processor'
+      node4:'sixcrm-kinesis-transactions'
+      node5:'sixcrm-manual-upload'
+      node6:'sixcrm-output'
+      node7:'sixcrm-random-generator'
+      node8:'sixcrm-resources'
