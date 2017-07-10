@@ -76,9 +76,9 @@ Make sure that your local connection information is correct in the `/config/loca
 
 Scripts:
 
- - Create a cluster: 
+ - Create a cluster:
  `node ./deployment/redshift/create_cluster.js {stage}`
- - Create tables: 
+ - Create tables:
   `node ./deployment/redshift/deploy_redshift.js {stage}`
  - Truncate all tables:
  `node ./deployment/redshift/purge_redshift.js {stage}`
@@ -127,6 +127,7 @@ In order to disable rules in code (for example for false positives, or old depre
 Currently deployment is (mostly) handled via CircleCI.  There are a few issues:
 
 * API Gateway requires some manual configuration - certificates, custom domain names for example.
+ - Specifically:  On the first deployment, you must configure the custom domain name in API Gateway and map it to the new API Gateway deployment.  In doing so, you must first add the SixCRM wildcard cert to ACM.
 
 ## Data Spoofing
 

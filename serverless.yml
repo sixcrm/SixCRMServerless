@@ -17,12 +17,12 @@ provider:
   name: aws
   runtime: nodejs6.10
   stage: ${opt:stage, 'development'}
-  region: ${AWS::Region}
+  region: ${env:AWS_REGION}
   profile: six
   environment:
     stage: ${opt:stage, self:provider.stage}
     aws_region: ${opt:region, self:provider.region}
-    aws_account: ${AWS::AccountId}
+    aws_account: ${env:AWS_ACCOUNT}
     dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
     search_indexing_queue: 'search_indexing'
     rebill_queue: 'rebill'
