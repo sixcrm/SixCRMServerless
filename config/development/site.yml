@@ -224,3 +224,8 @@ s3:
           folder6: 'sixcrm-output/'
           folder7: 'sixcrm-random-generator/'
           folder8: 'sixcrm-resources/'
+          folder9: 'sixcrm-test/'
+      bucketTest:
+        bucket: 'sixcrm-test'
+        folders:
+          folder1: 'sixcrm-kinesis-activity/'

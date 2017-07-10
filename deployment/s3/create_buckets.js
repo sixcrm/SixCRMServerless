@@ -19,13 +19,21 @@ let s3Deployment = new S3Deployment(environment);
 let bucket_list = Object.keys(s3Deployment.getConfig().buckets);
 
 bucket_list.map(bucket => {
-  let bucket_parameters = {}
+  let bucket_parameters = {Bucket: s3Deployment.getConfig().buckets[bucket].bucket,Key:'',Body: s3Deployment.getConfig().buckets[bucket].bucket}
 
   Object.keys(s3Deployment.getConfig().buckets[bucket]).forEach((key) => {
-    if (key=='bucket'){
-      bucket_parameters = {Bucket: s3Deployment.getConfig().buckets[bucket][key], Body: bucket };
-    }
-    console.log(bucket_parameters);
+    if (key=='bucket')
+        s3Deployment.bucketExists(bucket_parameters).then(exists => {
+            if (exists) {
+                du.warning('Bucket exists, Aborting');
+                console.log('Bucket exists, Aborting');
+            } else {
+                du.output('Bucket does not exist, creating.');
+                console.log('Bucket does not exist, creating.');
+                return s3Deployment.createBucketAndWait(bucket_parameters).then(response => {
+                  du.output(response);
+                });
+            }
+        }).then(() => { du.highlight('Complete')})
   });
-
 });

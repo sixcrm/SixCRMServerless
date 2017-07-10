@@ -17,15 +17,35 @@ class S3Deployment {
         });
     }
 
-    bucketExists(Bucket_identifier) {
+    bucketExists(parameters) {
        /* Test if Bucket exists */
 
-       var parameters = {
-           Bucket: Bucket_identifier
+       var param = {
+           Bucket: parameters.Bucket
        };
 
        return new Promise((resolve, reject) => {
-           this.s3.headBucket(parameters, (error, data) => {
+           this.s3.headBucket(param, (error, data) => {
+               if (error) {
+                   return resolve(false);
+               } else {
+                   return resolve(true);
+               }
+           });
+       });
+
+    }
+
+    folderExists(parameters) {
+       /* Test if Bucket exists */
+
+       var param = {
+           Bucket: parameters.Bucket,
+           Key: parameters.Key
+       };
+
+       return new Promise((resolve, reject) => {
+           this.s3.headObject(param, (error, data) => {
                if (error) {
                    return resolve(false);
                } else {
@@ -39,8 +59,12 @@ class S3Deployment {
     createBucket(parameters) {
         /* Create Bucket */
 
+        var param = {
+            Bucket: parameters.Bucket
+        };
+
         return new Promise((resolve, reject) => {
-            this.s3.createBucket(parameters, (error, data) => {
+            this.s3.createBucket(param, (error, data) => {
                 if (error) {
                     du.error(error.message);
                     return reject(error);
@@ -53,15 +77,25 @@ class S3Deployment {
 
     createBucketAndWait(parameters) {
       return this.createBucket(parameters).then(() => {
-          return this.waitForBucketToExist(parameters.DeliveryBucketName);
+          return this.waitForBucketToExist(parameters.Bucket);
+      });
+    }
+
+    createFolderAndWait(parameters) {
+      return this.createFolder(parameters).then(() => {
+          return this.waitForFolderToExist(parameters.Bucket);
       });
     }
 
     deleteBucket(parameters) {
         /* Delete Bucket */
 
+      var param = {
+          Bucket: parameters.Bucket
+      };
+
       return new Promise((resolve, reject) => {
-          this.s3.deleteBucket(parameters, (error, data) => {
+          this.s3.deleteBucket(param, (error, data) => {
               if (error) {
                   du.error(error.message);
                   return reject(error);
@@ -76,17 +110,17 @@ class S3Deployment {
         /* Delete Bucket and wait */
 
         return this.deleteBucket(parameters).then(() => {
-            return this.waitForBucketNotExist(parameters.DeliveryBucketName);
+            return this.waitForBucketNotExist(parameters.Bucket);
         });
     }
 
     waitForBucket(cluster_identifier, state) {
-        let parameters = {
+        let param = {
             Bucket: cluster_identifier
         };
 
         return new Promise((resolve, reject) => {
-            this.s3.waitFor(state, parameters, (error, data) => {
+            this.s3.waitFor(state, param, (error, data) => {
                 if (error) {
                     du.error(error.message);
                     return reject(error);

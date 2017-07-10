@@ -68,6 +68,10 @@
 			"type": "array",
 			"minItems": 1,
 			"uniqueItems": true
+		},
+		"order":{
+			"type":"string",
+		  "enum": ["asc", "desc"]
 		}
 	},
 	"required":[]
