@@ -1,6 +1,6 @@
 jwt:
   issuer: 'https://api.sixcrm.com'
-  staging_bypass: 'deathstalker'
+  development_bypass: 'deathstalker'
   site: #This is the key for all graph requests (AKA Six users)
     secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
     domain: ''
@@ -39,36 +39,6 @@ lambda:
     forwardmessage_createrebillstoarchive: 'sixtransaction-staging-rebilltoarchive'
     forwardmessage_recovertoarchive: 'sixtransaction-staging-recovertoarchive'
     forwardmessage_indextoarchive: 'sixtransaction-staging-indextoarchive'
-
-sqs:
-  bill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-bill'
-  bill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-bill-failed'
-  recover_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-recover'
-  hold_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-hold'
-  pending_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-pending'
-  pending_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-pending-failed'
-  shipped_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-shipped'
-  delivered_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-delivered'
-  rebill_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-rebill'
-  rebill_failed_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-rebill-failure'
-  search_indexing_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-searchindex'
-  bill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-bill_deadletter'
-  bill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-bill-failed_deadletter'
-  recover_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-recover_deadletter'
-  hold_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-hold_deadletter'
-  pending_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-pending_deadletter'
-  pending_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-pending-failed_deadletter'
-  shipped_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-shipped_deadletter'
-  delivered_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-delivered_deadletter'
-  rebill_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-rebill_deadletter'
-  rebill_failed_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-rebill-failure_deadletter'
-  search_indexing_deadletter_queue_url: 'https://sqs.us-east-1.amazonaws.com/068070110666/staging-searchindex_deadletter'
-
-#Technical Debt: Why is this here?!
-nmi:
-  username: 'demo'
-  password: 'password'
-  endpoint: 'https://secure.networkmerchants.com/api/transact.php'
 
 shipping_providers:
   usps:
@@ -187,10 +157,6 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
-
-#Technical Debt:  Is this necessary?
-aws:
-  region: 'us-east-1'
 
 s3:
   redshift:
