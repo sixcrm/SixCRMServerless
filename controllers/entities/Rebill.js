@@ -168,18 +168,18 @@ class rebillController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            var queue_url = '';
+            var queue_shortname = '';
 
             switch(queue_name){
 
             case 'bill':
-                queue_url = process.env.bill_queue_url;
+                queue_shortname = process.env.bill_queue;
                 break;
             case 'billfailure':
-                queue_url = process.env.bill_failed_queue_url;
+                queue_shortname = process.env.bill_failed_queue;
                 break;
             case 'hold':
-                queue_url = process.env.hold_queue_url;
+                queue_shortname = process.env.hold_queue;
                 break;
             default:
                 reject(eu.getError('server','Bad queue name.'));
@@ -187,7 +187,7 @@ class rebillController extends entityController {
 
             }
 
-            return sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: queue_url}, (error) =>{
+            return sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: queue_shortname}, (error) =>{
 
                 if(_.isError(error)){ reject(error);}
 
@@ -266,7 +266,7 @@ class rebillController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue_url: process.env.bill_queue_url}, (error) =>{
+            sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: process.env.bill_queue}, (error) =>{
 
                 if(_.isError(error)){ return reject(error);}
 

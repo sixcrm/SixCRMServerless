@@ -8,14 +8,14 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
 
 const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
-const retryCount = 5;
+const retryCount = 25;
 
 class DynamoDeployTables {
     constructor(){}
 
     deployTable(tableFileName, env, region, counter) {
         let executionCount = counter || 0;
-        let tableName = env+this.getTableName(tableFileName);
+        let tableName = this.getTableName(tableFileName);
 
         return exec(`serverless dynamodb execute -s ${env} -n ${tableFileName} -r ${region}`)
         .then(() => {

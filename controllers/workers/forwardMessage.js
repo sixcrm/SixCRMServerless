@@ -95,7 +95,7 @@ class forwardMessageController extends workerController {
 
         return new Promise((resolve, reject) => {
 
-            sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}).then((messages) => {
+            sqs.receiveMessages({queue: process.env.origin_queue, limit: 10}).then((messages) => {
 
                 if (messages && messages.length > 0) {
 
@@ -148,15 +148,15 @@ class forwardMessageController extends workerController {
 
                                     if(_.has(response, "forward")){
 
-                                        if(_.has(process.env, "destination_queue_url")){
+                                        if(_.has(process.env, "destination_queue")){
 
-                                            sqs.sendMessage({message_body: response.forward, queue_url: process.env.destination_queue_url}, (error, data) => {
+                                            sqs.sendMessage({message_body: response.forward, queue: process.env.destination_queue}, (error, data) => {
 
                                                 if(_.isError(error)){
                                                     reject(error);
                                                 }
 
-                                                sqs.deleteMessage({queue_url: process.env.origin_queue_url, receipt_handle: message.ReceiptHandle}, (error, data) => {
+                                                sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle}, (error, data) => {
 
                                                     if(_.isError(error)){ reject(error) }
 
@@ -168,7 +168,7 @@ class forwardMessageController extends workerController {
 
                                         }else{
 
-                                            sqs.deleteMessage({queue_url: process.env.origin_queue_url, receipt_handle: message.ReceiptHandle}, (error, data) => {
+                                            sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle}, (error, data) => {
 
                                                 if(_.isError(error)){ reject(error); }
 
@@ -180,15 +180,15 @@ class forwardMessageController extends workerController {
 
                                     }else{
 
-                                        if(_.has(process.env, 'failure_queue_url')){
+                                        if(_.has(process.env, 'failure_queue')){
 
                                             if(_.has(response, "failed")){
 
-                                                sqs.sendMessage({message_body: response.failed, queue_url: process.env.failure_queue_url}, (error, data) => {
+                                                sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error, data) => {
 
                                                     if(_.isError(error)){ reject(error); }
 
-                                                    sqs.deleteMessage({queue_url: process.env.origin_queue_url, receipt_handle: message.ReceiptHandle}, (error, data) => {
+                                                    sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle}, (error, data) => {
 
                                                         if(_.isError(error)){ reject(error) }
 

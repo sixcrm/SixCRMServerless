@@ -17,34 +17,35 @@ dynamodb:
 lambda:
   endpoint: ''
   function_names:
-    deliveredtoarchive: 'sixtransaction-development-archivedelivered'
-    shippedtodelivered: 'sixtransaction-development-confirmdelivery'
-    pendingtoshipped: 'sixtransaction-development-confirmshipped'
-    pendingfailedtopending: 'sixtransaction-development-shipproduct'
-    holdtopending: 'sixtransaction-development-shipproduct'
-    holdtoarchive: 'sixtransaction-development-archivehold'
-    billtohold: 'sixtransaction-development-processbilling'
-    recovertohold: 'sixtransaction-development-processbilling'
-    createrebillstoarchive: 'sixtransaction-development-createrebills'
-    recovertoarchive: 'sixtransaction-development-archiverecover'
-    indextoarchive: 'sixtransaction-development-indexentities'
-    forwardmessage_deliveredtoarchive: 'sixtransaction-development-deliveredtoarchive'
-    forwardmessage_shippedtodelivered: 'sixtransaction-development-shippedtodelivered'
-    forwardmessage_pendingtoshipped: 'sixtransaction-development-pendingtoshipped'
-    forwardmessage_pendingfailedtopending: 'sixtransaction-development-pendingfailedtopending'
-    forwardmessage_holdtopending: 'sixtransaction-development-holdtopending'
-    forwardmessage_holdtoarchive: 'sixtransaction-development-holdtoarchive'
-    forwardmessage_billtohold: 'sixtransaction-development-billtohold'
-    forwardmessage_recovertohold: 'sixtransaction-development-recovertohold'
-    forwardmessage_createrebillstoarchive: 'sixtransaction-development-rebilltoarchive'
-    forwardmessage_recovertoarchive: 'sixtransaction-development-recovertoarchive'
-    forwardmessage_indextoarchive: 'sixtransaction-development-indextoarchive'
+    deliveredtoarchive: 'sixtransaction-staging-archivedelivered'
+    shippedtodelivered: 'sixtransaction-staging-confirmdelivery'
+    pendingtoshipped: 'sixtransaction-staging-confirmshipped'
+    pendingfailedtopending: 'sixtransaction-staging-shipproduct'
+    holdtopending: 'sixtransaction-staging-shipproduct'
+    holdtoarchive: 'sixtransaction-staging-archivehold'
+    billtohold: 'sixtransaction-staging-processbilling'
+    recovertohold: 'sixtransaction-staging-processbilling'
+    createrebillstoarchive: 'sixtransaction-staging-createrebills'
+    recovertoarchive: 'sixtransaction-staging-archiverecover'
+    indextoarchive: 'sixtransaction-staging-indexentities'
+    forwardmessage_deliveredtoarchive: 'sixtransaction-staging-deliveredtoarchive'
+    forwardmessage_shippedtodelivered: 'sixtransaction-staging-shippedtodelivered'
+    forwardmessage_pendingtoshipped: 'sixtransaction-staging-pendingtoshipped'
+    forwardmessage_pendingfailedtopending: 'sixtransaction-staging-pendingfailedtopending'
+    forwardmessage_holdtopending: 'sixtransaction-staging-holdtopending'
+    forwardmessage_holdtoarchive: 'sixtransaction-staging-holdtoarchive'
+    forwardmessage_billtohold: 'sixtransaction-staging-billtohold'
+    forwardmessage_recovertohold: 'sixtransaction-staging-recovertohold'
+    forwardmessage_createrebillstoarchive: 'sixtransaction-staging-rebilltoarchive'
+    forwardmessage_recovertoarchive: 'sixtransaction-staging-recovertoarchive'
+    forwardmessage_indextoarchive: 'sixtransaction-staging-indextoarchive'
 
 shipping_providers:
   usps:
     user_id: '005SIXCR2114'
     password: '392VM80MW850'
 
+#Technical Debt: This all needs to be configured elsewhere?
 redshift:
   user: 'admin'
   database: 'dev'
@@ -54,7 +55,7 @@ redshift:
   max: 10
   idleTimeoutMillis: 30000
   cluster:
-    cluster_identifier: 'sixcrm-development'
+    cluster_identifier: 'sixcrm-staging'
     node_type: 'dc1.large'
     automated_snapshot_retention_period: 3
     cluster_type: 'single-node'
@@ -62,7 +63,7 @@ redshift:
     skip_final_cluster_snapshot: true
     final_cluster_snapshot_identifier: ''
   randomdata:
-    staging_bucket: 'sixcrm-development-redshift/sixcrm-random-generator'
+    staging_bucket: 'sixcrm-staging-redshift/sixcrm-random-generator'
     interval: 15768000 #this is provided in seconds
 
 notifications:
@@ -77,6 +78,7 @@ cache:
   usecache: 1
   cachebuster: 'somerandomthing1'
 
+#Technical Debt:  This needs to be deployed elsewhere
 elasticache:
   max_attempts: 3
   retry_time: 1800000
@@ -89,9 +91,9 @@ logging:
 kinesis:
   firehose:
     streams:
-      transactions: 'six-development-transactions'
+      transactions: 'six-staging-transactions'
       transaction_stream:
-        DeliveryStreamName: 'six-development-transactions'
+        DeliveryStreamName: 'six-staging-transactions'
         RedshiftDestinationConfiguration:
           ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:
@@ -100,7 +102,7 @@ kinesis:
           Password: 'Jagodica9'
           RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
           S3Configuration:
-            BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
+            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
             RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
@@ -111,31 +113,9 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
-      sessions: 'six-development-sessions'
-      sessions_stream:
-        DeliveryStreamName: 'six-development-sessions'
-        RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
-          CopyCommand:
-            DataTableName: 'f_sessions'
-            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
-          Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
-          S3Configuration:
-            BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
-            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
-            BufferingHints:
-              IntervalInSeconds: 60
-              SizeInMBs: 1
-            CompressionFormat: 'UNCOMPRESSED'
-            Prefix: 'sixcrm-kinesis-transactions/'
-          Username: 'admin'
-          RetryOptions:
-            DurationInSeconds: 1
-          S3BackupMode: 'Disabled'
-      events: 'six-development-events'
+      events: 'six-staging-events'
       event_stream:
-        DeliveryStreamName: 'six-development-events'
+        DeliveryStreamName: 'six-staging-events'
         RedshiftDestinationConfiguration:
           ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:
@@ -144,7 +124,7 @@ kinesis:
           Password: 'Jagodica9'
           RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
           S3Configuration:
-            BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
+            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
             RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
@@ -155,9 +135,9 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
-      activity: 'six-development-activity'
+      activity: 'six-staging-activity'
       activity_stream:
-        DeliveryStreamName: 'six-development-activity'
+        DeliveryStreamName: 'six-staging-activity'
         RedshiftDestinationConfiguration:
           ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:
@@ -166,7 +146,7 @@ kinesis:
           Password: 'Jagodica9'
           RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
           S3Configuration:
-            BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
+            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
             RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
@@ -180,16 +160,13 @@ kinesis:
 
 s3:
   redshift:
-    buckets:
-      bucketRedshift:
-        bucket: 'sixcrm-development-redshift'
-        folders:
-          folder1: 'sixcrm-kinesis-activity/'
-          folder2: 'sixcrm-kinesis-events/'
-          folder3: 'sixcrm-kinesis-merchant-processor/'
-          folder4: 'sixcrm-kinesis-transactions/'
-          folder5: 'sixcrm-manual-upload/'
-          folder6: 'sixcrm-output/'
-          folder7: 'sixcrm-random-generator/'
-          folder8: 'sixcrm-resources/'
-          folder9: 'sixcrm-test/'
+    node: 'sixcrm-staging-redshift'
+    child:
+      node1:'sixcrm-kinesis-activity'
+      node2:'sixcrm-kinesis-events'
+      node3:'sixcrm-kinesis-merchant-processor'
+      node4:'sixcrm-kinesis-transactions'
+      node5:'sixcrm-manual-upload'
+      node6:'sixcrm-output'
+      node7:'sixcrm-random-generator'
+      node8:'sixcrm-resources'

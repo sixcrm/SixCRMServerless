@@ -17,8 +17,29 @@ provider:
   name: aws
   runtime: nodejs6.10
   stage: ${opt:stage, 'development'}
-  region: us-east-1
+  region: ${env:AWS_REGION}
   profile: six
+  environment:
+    stage: ${opt:stage, self:provider.stage}
+    aws_region: ${opt:region, self:provider.region}
+    aws_account: ${env:AWS_ACCOUNT}
+    dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+    search_indexing_queue: 'search_indexing'
+    rebill_queue: 'rebill'
+    bill_queue: 'bill'
+    hold_queue: 'hold'
+    bill_failed_queue: 'bill_failed'
+    redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
+    redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
+    redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
+    redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
+    redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
+    redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
+    redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
+    redshift_random_data_staging_bucket: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.staging_bucket}
+    redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
+    kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+    kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
 
 plugins:
   - serverless-dynamodb-local
@@ -30,10 +51,8 @@ custom:
       inMemory: true
       migration: true
     migration:
-      table_prefix: ${opt:stage}
       dir: ./dynamolocal/tabledefinitions
     seed:
-      table_prefix: ${opt:stage}
       dir: ./dynamolocal/seeds
 
 site_config: ${file(./config/${opt:stage}/site.yml)}
@@ -46,9 +65,6 @@ functions:
 
   verifysignature:
     handler: handlers/authorizers/verifysignature/handler.verifysignature
-    environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   verifytransactionjwt:
     handler: handlers/authorizers/verifytransactionjwt/handler.verifyjwt
@@ -56,9 +72,8 @@ functions:
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
       transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
-      stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+
 
   verifysitejwt:
     handler: handlers/authorizers/verifysitejwt/handler.verifyjwt
@@ -66,9 +81,7 @@ functions:
       site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
       site_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.site.expiration}
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
-      stage: ${opt:stage}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
 ########################
 # Backend Graph Endpoint renders entity data to the website
@@ -86,18 +99,8 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
-      stage: ${opt:stage}
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-      redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-      redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-      redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-      redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-      redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
-      redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
-      search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
       elasticache_endpoint: ${file(./config/${opt:stage}/site.yml):elasticache.endpoint}
       elasticache_port: ${file(./config/${opt:stage}/site.yml):elasticache.port}
       elasticache_retry_time: ${file(./config/${opt:stage}/site.yml):elasticache.retry_time}
@@ -118,11 +121,10 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_billtohold}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
-      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
-      failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
+      origin_queue: 'bill'
+      destination: 'hold'
+      failure_queue: 'bill_failed'
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billtohold}
 
   recovertohold:
@@ -132,10 +134,9 @@ functions:
           rate: cron(0 1 ? * FRI *)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertohold}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
-      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
+      origin_queue: 'recover'
+      destination_queue: 'hold'
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
 
   holdtopending:
@@ -145,12 +146,12 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtopending}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
-      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
+      origin_queue: 'hold'
+      destination_queue: 'pending'
+      failure_queue: 'pending_failed'
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
-      failure_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
+
 
   pendingfailedtopending:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -159,11 +160,11 @@ functions:
           rate: rate(6 hours)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingfailedtopending}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_failed_queue_url}
-      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
+      origin_queue: 'pending_failed'
+      destination_queue: 'pending'
+
 
   pendingtoshipped:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -172,11 +173,11 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingtoshipped}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.pending_queue_url}
-      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
+      origin_queue: 'pending'
+      destination_queue: 'shipped'
+
 
   shippedtodelivered:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -185,11 +186,11 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_shippedtodelivered}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.shipped_queue_url}
-      destination_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
+      origin_queue: 'shipped'
+      destination_queue: 'delivered'
+
 
 # Archive Methods (Exit Points)
 
@@ -200,11 +201,9 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_deliveredtoarchive}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.delivered_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):lambda.endpoint} #Technical Debt:  Why is this here?
+      origin_queue: 'delivered'
       archivefilter: 'ALL'
 
   holdtoarchive:
@@ -214,10 +213,9 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtoarchive}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtoarchive}
+      origin_queue: 'hold'
       archivefilter: 'NOSHIP'
 
   rebilltoarchive:
@@ -227,9 +225,8 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_createrebillstoarchive}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url}
+      origin_queue: 'rebill'
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.createrebillstoarchive}
       archivefilter: 'ALL'
 
@@ -240,9 +237,8 @@ functions:
           rate: rate(6 hours)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertoarchive}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.recover_queue_url}
+      origin_queue: 'recover'
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertoarchive}
       archivefilter: 'TWOATTEMPTS'
 
@@ -253,9 +249,8 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      stage: ${opt:stage}
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_indextoarchive}
-      origin_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
+      origin_queue: 'search_indexing'
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
       archivefilter: 'ALL'
 
@@ -267,18 +262,6 @@ functions:
       - schedule:
           rate: rate(5 minutes)
           enabled: true
-    environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-      redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-      redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-      redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-      redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-      redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-      redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
-      redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
-      redshift_random_data_staging_bucket: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.staging_bucket}
-      redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
 
 
   sesnotifications:
@@ -287,9 +270,6 @@ functions:
       - sns:
           topicName: SESNotifications
           displayName: SES Notifications
-    environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   slackalarm:
     handler: handlers/workers/slackalarm/exports.handler
@@ -298,7 +278,6 @@ functions:
           topicName: SlackAlarm
           displayName: Slack Alarm
     environment:
-      stage: ${opt:stage}
       slackChannel: '#lambdas'
       kmsEncryptedHookUrl: AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ==
 
@@ -308,8 +287,6 @@ functions:
       - schedule:
           rate: rate(1 minute)
           enabled: true
-    environment:
-      stage: ${opt:stage}
 
   createrebills:
     handler: handlers/workers/createrebills/handler.createrebills
@@ -317,10 +294,6 @@ functions:
       - schedule:
           rate: rate(2 hours)
           enabled: true
-    environment:
-      stage: ${opt:stage}
-      rebill_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.rebill_queue_url}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   pickrebill:
     handler: handlers/workers/pickrebill/handler.pickrebill
@@ -328,56 +301,35 @@ functions:
       - schedule:
           rate: rate(2 hours)
           enabled: true
-    environment:
-      stage: ${opt:stage}
-      bill_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_queue_url}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   processbilling:
     handler: handlers/workers/processbilling/handler.processbilling
-    environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   shipproduct:
     handler: handlers/workers/shipproduct/handler.shipproduct
-    environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   confirmshipped:
     handler: handlers/workers/confirmshipped/handler.confirmshipped
-    environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
   confirmdelivered:
     handler: handlers/workers/confirmdelivered/handler.confirmdelivered
     environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
       usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
 
   archivedelivered:
     handler: handlers/workers/archive/handler.archive
     environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'ALL'
 
   archivehold:
     handler: handlers/workers/archive/handler.archive
     environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'NOSHIP'
 
   archiverecover:
     handler: handlers/workers/archive/handler.archive
     environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       archivefilter: 'TWOATTEMPTS'
 
 ########################
@@ -396,13 +348,10 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
     environment:
-      stage: ${opt:stage}
-      dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
-      kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-      search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
+
 
 
   createlead:
@@ -416,11 +365,6 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-    environment:
-        stage: ${opt:stage}
-        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
 
   createorder:
     handler: handlers/endpoints/createorder/handler.createorder
@@ -433,21 +377,6 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-    environment:
-        stage: ${opt:stage}
-        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
-        bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
-        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-        kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
-        redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-        redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-        redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-        redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-        redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-        redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
-        redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
 
   createupsell:
     handler: handlers/endpoints/createupsell/handler.createupsell
@@ -460,22 +389,7 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-    environment:
-        stage: ${opt:stage}
-        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        hold_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.hold_queue_url}
-        bill_failed_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.bill_failed_queue_url}
-        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-        kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
-        redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-        redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-        redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-        redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-        redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-        redshift_pool_max: ${file(./config/${opt:stage}/site.yml):redshift.user}
-        redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
-        
+
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
     events:
@@ -487,11 +401,6 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-    environment:
-        stage: ${opt:stage}
-        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-        search_indexing_queue_url: ${file(./config/${opt:stage}/site.yml):sqs.search_indexing_queue_url}
-        kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
 
   publichtml:
     handler: handlers/endpoints/publichtml/handler.publichtml
@@ -500,9 +409,6 @@ functions:
          path: publichtml/{encoded}
          method: get
          cors: true
-    environment:
-        stage: ${opt:stage}
-        dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
 
 
 ########################
@@ -552,31 +458,3 @@ resources:
              Resource: "*"
         Roles:
           - Ref: IamRoleLambdaExecution
-#    SixEncryptionKey:
-#        Type: AWS::KMS::Key
-#        Properties:
-#          Description: 'A sample key'
-#          KeyPolicy:
-#            Version: '2012-10-17'
-#            Id: 'key-default-1'
-#            Statement:
-#              -
-#                Sid: 'Allow administration of the key'
-#                Effect: 'Allow'
-#                Principal:
-#                  AWS: 'arn:aws:iam::068070110666:user/TimothyDalbey'
-#                Action:
-#                  - 'kms:*'
-#                Resource: '*'
-#              -
-#                Sid: 'Allow use of the key'
-#                Effect: 'Allow'
-#                Principal:
-#                  AWS: 'arn:aws:iam::068070110666:role/sixtransaction-development-us-east-1-lambdaRole'
-#                Action:
-#                  - 'kms:Encrypt'
-#                  - 'kms:Decrypt'
-#                  - 'kms:ReEncrypt*'
-#                  - 'kms:GenerateDataKey*'
-#                  - 'kms:DescribeKey'
-#                Resource: '*'

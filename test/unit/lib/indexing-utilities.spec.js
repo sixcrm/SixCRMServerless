@@ -90,19 +90,18 @@ describe('lib/indexing-utilities', () => {
             // given
             let entity = {};
 
-            delete process.env.search_indexing_queue_url;
-
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
+
                 expect(error.message).to.equal('[500] Missing search_indexing_queue_url definition in the process.env object.');
+
             });
+
         });
 
         it('should throw an error when entity does not have "index_action"', () => {
             // given
             let entity = {};
-
-            process.env.search_indexing_queue_url = 'url';
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
@@ -116,8 +115,6 @@ describe('lib/indexing-utilities', () => {
                 index_action: 'fail'
             };
 
-            process.env.search_indexing_queue_url = 'url';
-
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
                 expect(error.message).to.equal('[500] Indexable entities must have a "index_action" which is either "add" or "delete".');
@@ -129,8 +126,6 @@ describe('lib/indexing-utilities', () => {
             let entity = {
                 index_action: 'add'
             };
-
-            process.env.search_indexing_queue_url = 'url';
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
@@ -145,8 +140,6 @@ describe('lib/indexing-utilities', () => {
                 entity_type: 'potato'
             };
 
-            process.env.search_indexing_queue_url = 'url';
-
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).then((response) => {
                 expect(response).to.equal(false);
@@ -159,8 +152,6 @@ describe('lib/indexing-utilities', () => {
                 index_action: 'add',
                 entity_type: 'customer' // indexable type
             };
-
-            process.env.search_indexing_queue_url = 'url';
 
             mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
@@ -181,8 +172,6 @@ describe('lib/indexing-utilities', () => {
                 index_action: 'add',
                 entity_type: 'customer'
             };
-
-            process.env.search_indexing_queue_url = 'url';
 
             mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
@@ -206,8 +195,6 @@ describe('lib/indexing-utilities', () => {
                 entity_type: 'customer'
             };
 
-            process.env.search_indexing_queue_url = 'url';
-
             mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
@@ -230,8 +217,6 @@ describe('lib/indexing-utilities', () => {
                 id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7',
                 entity_type: 'customer'
             };
-
-            process.env.search_indexing_queue_url = 'url';
 
             mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {

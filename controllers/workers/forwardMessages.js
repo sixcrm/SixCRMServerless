@@ -94,7 +94,7 @@ class forwardMessagesController extends workerController {
 
             let parameters = {
                 'messages': messages,
-                'queue_url': process.env.origin_queue_url
+                'queue': process.env.origin_queue
             };
 
             sqs.deleteMessages(parameters).then((deleted) => {
@@ -117,7 +117,7 @@ class forwardMessagesController extends workerController {
 
 			//Technical Debt:  This handles a maximum of 10 messages at a time...
 			//this should clear the queue where possible...
-            sqs.receiveMessages({queue_url: process.env.origin_queue_url, limit: 10}).then((messages) => {
+            sqs.receiveMessages({queue: process.env.origin_queue, limit: 10}).then((messages) => {
 
                 du.debug('Messages', messages);
 
@@ -198,9 +198,9 @@ class forwardMessagesController extends workerController {
 
                                 if(_.has(response, "forward")){
 
-                                    if(_.has(process.env, "destination_queue_url")){
+                                    if(_.has(process.env, "destination_queue")){
 
-                                        sqs.sendMessage({message_body: response.forward, queue_url: process.env.destination_queue_url}, (error, data) => {
+                                        sqs.sendMessage({message_body: response.forward, queue: process.env.destination_queue}, (error, data) => {
 
                                             if(_.isError(error)){
                                                 reject(error);
@@ -235,11 +235,11 @@ class forwardMessagesController extends workerController {
 
                                 }else{
 
-                                    if(_.has(process.env, 'failure_queue_url')){
+                                    if(_.has(process.env, 'failure_queue')){
 
                                         if(_.has(response, "failed")){
 
-                                            sqs.sendMessage({message_body: response.failed, queue_url: process.env.failure_queue_url}, (error, data) => {
+                                            sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error, data) => {
 
                                                 if(_.isError(error)){ return reject(error); }
 
