@@ -6,7 +6,6 @@ const fs = require('fs');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 let environment = process.argv[2] || 'development';
-let region = process.argv[3] || process.env.AWS_REGION || 'us-east-1';
 let redshiftutilities;
 
 du.highlight('Purging Redshift Tables');

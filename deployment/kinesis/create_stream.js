@@ -6,7 +6,6 @@ const stringUtilities = global.routes.include('deployment', 'utilities/string-ut
 const KinesisDeployment = global.routes.include('deployment', 'utilities/kinesis-deployment.js');
 
 let environment = process.argv[2] || 'development';
-let region = process.argv[3] || process.env.AWS_REGION || 'us-east-1';
 
 du.highlight('Creating Kinesis Stream');
 
