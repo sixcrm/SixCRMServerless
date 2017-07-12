@@ -1,61 +1,125 @@
 'use strict'
 require('require-yaml');
+//Technical Debt:  This use of bluebird should be eliminated
 const Promise = require('bluebird');
 const fs = require('fs');
 const exec = require('child-process-promise').exec;
+const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
-
 const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
-const retryCount = 25;
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
+const parserutilities = global.routes.include('lib', 'parser-utilities.js');
 
 class DynamoDeployTables {
-    constructor(){}
 
-    deployTable(tableFileName, env, region, counter) {
-        let executionCount = counter || 0;
-        let tableName = this.getTableName(tableFileName);
+    constructor(){
 
-        return exec(`serverless dynamodb execute -s ${env} -n ${tableFileName} -r ${region}`)
+      this.migration_directory = global.routes.path('tabledefinitions');
+
+      this.deploy_table_command = 'serverless dynamodb execute -s {{stage}} -n {{table_name}}  -r {{region}}';
+
+      this.retry_count = 25;
+
+    }
+
+    buildDeploymentCommand(table_name){
+
+      let parameters = {
+        region:this.region,
+        stage:this.stage,
+        table_name: table_name
+      };
+
+      return parserutilities.parse(this.deploy_table_command, parameters);
+
+    }
+
+    deployTable(table_definition_filename, counter) {
+
+        let execution_count = counter || 0;
+
+        let table_name = this.getTableName(table_definition_filename);
+        let parsed_command = this.buildDeploymentCommand(table_name);
+
+        return exec(parsed_command)
         .then(() => {
-            return tableName;
+            return table_name;
         })
         .then(this.waitForCreation.bind(this))
         .then(() => {
-            let val = `Successfully created ${tableName}`;
 
-            du.highlight(val);
-            return val;
+            let message = 'Successfully created table: '+table_name;
+
+            du.highlight(message);
+            return message;
+
         })
-        .catch((err) => {
-            if (executionCount++ < retryCount) {
-                return this.deployTable(tableFileName, env, region, executionCount)
+        .catch((error) => {
+
+            if (execution_count++ < this.retry_count) {
+
+                return this.deployTable(table_definition_filename, execution_count)
+
             } else {
-                let val = `Failed to create ${tableName}`;
 
-                du.error(val);
-                du.debug(err);
+                let message = 'Failed to create table: '+table_name;
 
-                return val;
+                du.error(message);
+                du.debug(error);
+
+                return message;
+
             }
+
         });
+
     }
 
-    deployAll(env, region) {
-        let tables = this.getMigrationFileNames(env);
+    setStage(stage){
 
-        return Promise.map(tables, (table) => {
-            return this.deployTable(table, env, region);
-        }, {concurrency: 7})
-        .then((vals) => {
-            du.debug(vals);
-            return vals;
-        })
-        .catch((vals) => {
-            du.error(vals);
-            return vals;
-        })
+      this.stage = configurationutilities.resolveStage(stage);
+
+    }
+
+    setRegion(region){
+
+      if(_.isUndefined(region)){
+
+        let configuration = configurationutilities.getSiteConfig(this.stage);
+
+        if(_.has(configuration, 'aws') && _.has(configuration.aws, 'region')){
+
+          region = configuration.aws.region;
+
+        }
+
+      }
+
+      this.region = region;
+
+    }
+
+    deployAll(stage) {
+
+      this.setStage(stage);
+
+      this.setRegion();
+
+      let tables = this.getMigrationFileNames();
+
+      return Promise.map(tables, (table) => {
+          return this.deployTable(table, this.stage, this.region);
+      }, {concurrency: 7})
+      .then((vals) => {
+          du.debug(vals);
+          return vals;
+      })
+      .catch((vals) => {
+          du.error(vals);
+          return vals;
+      })
     }
 
     deleteTable(tableName){
@@ -81,11 +145,12 @@ class DynamoDeployTables {
         });
     }
 
-    deleteAll(env) {
-        let tables = this.getTableNames(env);
+    deleteAll() {
+
+        let tables = this.getTableNames();
 
         return Promise.map(tables, (table) => {
-            return this.deleteTable(env+table);
+            return this.deleteTable(table);
         }, {concurrency: 7})
         .then((vals) => {
             du.debug(vals);
@@ -94,65 +159,53 @@ class DynamoDeployTables {
         .catch((err) => {
             du.error(err);
         })
+
     }
 
     getMigrationFileNames(){
 
-	      du.debug('Get DynamoDB Migration FileNames');
+      du.debug('Get DynamoDB Migration FileNames');
 
-	      let migration_directory = this.getConfigDir();
-	      let files = fs.readdirSync(migration_directory);
+      let files = fs.readdirSync(this.migration_directory);
 
-	      return files.map(file => {
-		        return file.replace('.json','');
-	      });
+      return files.map(file => {
+	        return file.replace('.json','');
+      });
+
     }
 
     getTableNames(){
 
-	      du.debug('Get DynamoDB Table Names');
+      du.debug('Get DynamoDB Table Names');
 
-	      let migration_directory = this.getConfigDir();
-	      let files = fs.readdirSync(migration_directory);
+      let files = fs.readdirSync(this.migration_directory);
 
-	      return files.map(file => {
-		        return this.getTableName(file);
-	      });
+      return files.map(file => {
+	        return this.getTableName(file);
+      });
+
     }
 
-    getTableName(tableFileName) {
-        let obj = require(this.getConfigDir() + '/' + tableFileName);
+    getTableName(table_definition_filename) {
+
+        let obj = global.routes.include('tabledefinitions', table_definition_filename);
+
         let name = (obj.Table || {}).TableName || '';
 
         if (!name) {
             eu.throwError('server','Unable to identify table name in DynamoDB migration JSON.');
         }
-        return name
-    }
 
-    getConfig() {
-	      let config = require(__dirname+'/../../serverless.yml') || false;
+        return name;
 
-        if (!config) {
-            throw 'Unable to find config file';
-        }
-        return config;
-    }
-
-    getConfigDir() {
-        let config = this.getConfig();
-        let migration = ((config.custom || {}).dynamodb || {}).migration || {};
-        let path = migration.dir || '';
-
-        if (!path) {
-            throw 'custom.dynamodb.migration.dir not set in serverless yml';
-        }
-	      return  __dirname+'/../../'+path;
     }
 
     //random time between 2-7 seconds
     getWaitTime() {
+
+      //Technical Debt:  Use Timestamp
         return (Math.random() * 100 % 5 + 2) * 1000;
+
     }
 
     waitForCreation(tableName) {

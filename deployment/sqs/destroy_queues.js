@@ -4,14 +4,11 @@ const _ = require('underscore');
 const fs = require('fs');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
+const sqsutilities = global.routes.include('lib', 'sqs-utilities.js');
+const timestamp = global.routes.include('lib', 'timestamp.js');
 
-const sqsUtils = global.routes.include('lib', 'sqs-utilities.js');
-
-// Techincal Debt:  KISS or die
-let delay = (time) => (result) => new Promise(resolve => setTimeout(() => resolve(result), time));
-
-//const maxReceiveCount = 5;
-const stage = process.argv[2];
+const stage = configurationutilities.resolveStage(process.argv[2]);
 
 return setEnvironment(stage)
 .then(() => getQueueDefinitions())
@@ -21,7 +18,7 @@ return setEnvironment(stage)
     du.highlight('Pausing for deletes...');
     return queueDefinitions;
 })
-.then(delay(70000))
+.then(timestamp.delay(70000))
 .then(() => {
   du.highlight('Queue Deletion Complete')
 })
@@ -35,8 +32,8 @@ function deleteQueues(queue_definitions) {
     let delete_promises = [];
 
     queue_definitions.map((queue_definition) => {
-      delete_promises.push(sqsUtils.deleteQueue(queue_definition.QueueName));
-      delete_promises.push(sqsUtils.deleteQueue(createDeadletterQueueName(queue_definition)));
+      delete_promises.push(sqsutilities.deleteQueue(queue_definition.QueueName));
+      delete_promises.push(sqsutilities.deleteQueue(createDeadletterQueueName(queue_definition)));
     });
 
     return Promise.all(delete_promises).then(() => {
@@ -47,7 +44,7 @@ function deleteQueues(queue_definitions) {
 
 function setEnvironment(stage){
 
-  let config = getConfig(stage);
+  let config = configurationutilities.getSiteConfig(stage);
 
   if(_.has(config, 'aws') && _.has(config.aws, 'region')){
 
@@ -131,28 +128,8 @@ function createDeadletterQueueName(queue){
 
   }
 
-  let new_queue_name = queue_name + sqsUtils.deadletter_postfix;
+  let new_queue_name = queue_name + sqsutilities.deadletter_postfix;
 
   return new_queue_name;
-
-}
-
-function getConfig(stage) {
-
-  if(_.isUndefined(stage)){
-    if(_.has(process.env, 'stage')){
-      stage = process.env.stage;
-    }else{
-      eu.throwError('server', 'stage environment variable is not set.');
-    }
-  }
-
-  let config = global.routes.include('config', stage+'/site.yml');
-
-  if (!config) {
-      throw 'Unable to find config file.';
-  }
-
-  return config;
 
 }

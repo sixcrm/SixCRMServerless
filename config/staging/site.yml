@@ -14,6 +14,7 @@ jwt:
 dynamodb:
   endpoint: ''
 
+#Technical Debt:  Let's eliminate this.
 lambda:
   endpoint: ''
   function_names:

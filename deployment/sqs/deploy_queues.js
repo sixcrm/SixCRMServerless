@@ -4,10 +4,10 @@ const _ = require('underscore');
 const fs = require('fs');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
+const sqsutilities = global.routes.include('lib', 'sqs-utilities.js');
 
-const sqsUtils = global.routes.include('lib', 'sqs-utilities.js');
-
-const maxReceiveCount = 5;
+const max_receive_count = 5;
 
 const stage = process.argv[2];
 
@@ -27,7 +27,7 @@ return setEnvironment(stage)
 
 function setEnvironment(stage){
 
-  let config = getConfig(stage);
+  let config = configurationutilities.getSiteConfig(stage);
 
   if(_.has(config, 'aws') && _.has(config.aws, 'region')){
 
@@ -82,7 +82,7 @@ function createDeadletterQueues(queue_definitions) {
 
       let deadletter_queue_definition = createDeadletterQueueDefinition(queue_definition);
 
-      create_promises.push(sqsUtils.createQueue(deadletter_queue_definition));
+      create_promises.push(sqsutilities.createQueue(deadletter_queue_definition));
 
     });
 
@@ -105,7 +105,7 @@ function createQueues(queue_definitions) {
 
       queue_definition = configureQueueRedrive(queue_definition);
 
-      create_promises.push(sqsUtils.createQueue(queue_definition));
+      create_promises.push(sqsutilities.createQueue(queue_definition));
 
     });
 
@@ -155,7 +155,7 @@ function createDeadletterQueueName(queue){
 
   }
 
-  let new_queue_name = queue_name + sqsUtils.deadletter_postfix;
+  let new_queue_name = queue_name + sqsutilities.deadletter_postfix;
 
   return new_queue_name;
 
@@ -165,11 +165,11 @@ function configureQueueRedrive(queue_definition) {
 
   du.warning(queue_definition);
 
-  let deadletter_queue_arn = sqsUtils.getQueueARN(createDeadletterQueueName(queue_definition));
+  let deadletter_queue_arn = sqsutilities.getQueueARN(createDeadletterQueueName(queue_definition));
 
   queue_definition.Attributes["RedrivePolicy"] = JSON.stringify({
     deadLetterTargetArn: deadletter_queue_arn,
-    maxReceiveCount: maxReceiveCount
+    maxReceiveCount: max_receive_count
   });
 
   return queue_definition;

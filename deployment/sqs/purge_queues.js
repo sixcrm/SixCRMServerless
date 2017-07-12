@@ -7,16 +7,13 @@ const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const sqsutilities = global.routes.include('lib', 'sqs-utilities.js');
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
 
 let environment = process.argv[2];
 let environment_account_id = process.argv[3];
 let region = process.argv[4];
 
-try {
-    var serverless_config = yaml.safeLoad(fs.readFileSync(global.routes.path('root', 'serverless.yml'), 'utf8'));
-} catch (e) {
-    du.warning(e);
-}
+let serverless_config = configurationutilities.getServerlessConfig();
 
 du.highlight('Executing SQS Purge');
 
