@@ -1,18 +1,19 @@
 'use strict';
 require('require-yaml');
-const fs = require('fs');
 const _ = require('underscore');
 const AWS = require("aws-sdk");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const BaseDeployment = global.routes.include('deployment', 'utilities/base-deployment.js');
 
-class S3Deployment {
+class S3Deployment extends BaseDeployment {
 
     constructor(stage) {
+        super(stage);
         this.stage = stage;
         this.config = this.getConfig(stage);
         this.s3 = new AWS.S3({
-            region: 'us-east-1',
+            region: this.aws_config.region,
             apiVersion: '2006-03-01',
         });
     }
