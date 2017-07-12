@@ -10,7 +10,7 @@ const sqsUtils = global.routes.include('lib', 'sqs-utilities.js');
 // Techincal Debt:  KISS or die
 let delay = (time) => (result) => new Promise(resolve => setTimeout(() => resolve(result), time));
 
-const maxReceiveCount = 5;
+//const maxReceiveCount = 5;
 const stage = process.argv[2];
 
 return setEnvironment(stage)
