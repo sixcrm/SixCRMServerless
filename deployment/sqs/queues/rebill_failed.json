@@ -1,5 +1,5 @@
 {
-    "QueueName": "searchindex",
+    "QueueName": "rebill_failed",
     "Attributes": {
         "MessageRetentionPeriod": "345600",
         "VisibilityTimeout": "300",
