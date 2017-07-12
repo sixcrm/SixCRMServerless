@@ -53,9 +53,9 @@ deployment:
       - node ./deployment/cloudsearch/deploy.js sixcrm-$CIRCLE_BRANCH
 
       #DynamoDB
-      #- npm run purge-tables $CIRCLE_BRANCH
-      - npm run deploy-tables $CIRCLE_BRANCH
-      - npm run deploy-seeds $CIRCLE_BRANCH
+      #- node ./deployment/dynamodb/purge_tables.js $CIRCLE_BRANCH
+      - node ./deployment/dynamodb/deploy_tables.js $CIRCLE_BRANCH
+      - node ./deployment/dynamodb/deploy_seeds.js $CIRCLE_BRANCH
 
       #Redshift
       #Create cluster if does not exist.
@@ -91,7 +91,7 @@ deployment:
       #Technical Debt:  This needs to be configured for multi-environment purges
       - node ./deployment/cloudsearch/purge_index.js $CIRCLE_BRANCH
       # - node ./deployment/cloudsearch/deploy.js sixcrm-$CIRCLE_BRANCH
-      
+
       #Redshift
       #Create cluster if does not exist.
       - node ./deployment/redshift/create_cluster.js $CIRCLE_BRANCH
