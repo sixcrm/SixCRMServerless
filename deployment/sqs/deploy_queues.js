@@ -175,23 +175,3 @@ function configureQueueRedrive(queue_definition) {
   return queue_definition;
 
 }
-
-function getConfig(stage) {
-
-  if(_.isUndefined(stage)){
-    if(_.has(process.env, 'stage')){
-      stage = process.env.stage;
-    }else{
-      eu.throwError('server', 'stage environment variable is not set.');
-    }
-  }
-
-  let config = global.routes.include('config', stage+'/site.yml');
-
-  if (!config) {
-      throw 'Unable to find config file.';
-  }
-
-  return config;
-
-}

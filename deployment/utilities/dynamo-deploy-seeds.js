@@ -1,6 +1,5 @@
 'use strict';
 const fs = require('fs');
-const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
