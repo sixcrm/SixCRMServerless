@@ -48,7 +48,8 @@ deployment:
       - serverless deploy --stage $CIRCLE_BRANCH
 
       #SQS
-      - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
+      - node ./deployment/sqs/destroy_queues.js $CIRCLE_BRANCH
+    #- node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
       - node ./deployment/sqs/deploy_queues.js $CIRCLE_BRANCH
 
       #CloudSearch
@@ -83,7 +84,8 @@ deployment:
       - serverless deploy --stage $CIRCLE_BRANCH
 
       #SQS
-      - node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
+      - node ./deployment/sqs/destroy_queues.js $CIRCLE_BRANCH
+      #- node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
       - node ./deployment/sqs/deploy_queues.js $CIRCLE_BRANCH
 
       #CloudSearch

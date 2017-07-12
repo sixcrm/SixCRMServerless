@@ -158,6 +158,10 @@ kinesis:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
 
+aws:
+  region: 'us-east-1'
+  account: '821071795213'
+
 s3:
   redshift:
     node: 'sixcrm-staging-redshift'
