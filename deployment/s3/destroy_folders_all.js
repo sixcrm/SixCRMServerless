@@ -1,11 +1,9 @@
 'use strict';
 require('../../routes.js');
 
-const fs = require('fs');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const stringUtilities = global.routes.include('deployment', 'utilities/string-utilities.js');
-const AWS = require("aws-sdk");
 const S3Deployment = global.routes.include('deployment', 'utilities/s3-deployment.js');
 
 let environment = process.argv[2] || 'development';
@@ -32,7 +30,6 @@ bucket_list.map(bucket => {
         s3Deployment.folderExists(bucket_parameters).then(exists => {
           if (exists) {
             du.warning('Folder exists, deleting files and folder');
-            console.log('Folder exists, deleting files and folder');
             return s3Deployment.listObjects(bucket_parameters).then(files => {
               files.filter(folder => folder.Key.match(bucket_parameters.Key)).reverse().forEach((file) => {
                 let folder_parameters = {
@@ -40,7 +37,6 @@ bucket_list.map(bucket => {
                   Key: file.Key
                 };
 
-                console.log(folder_parameters);
                 return s3Deployment.deleteFolderAndWait(folder_parameters).then(response => {
                   du.output(response);
                 });

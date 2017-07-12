@@ -1,11 +1,8 @@
 'use strict';
 require('../../routes.js');
 
-const fs = require('fs');
-
 const du = global.routes.include('lib', 'debug-utilities.js');
 const stringUtilities = global.routes.include('deployment', 'utilities/string-utilities.js');
-const AWS = require("aws-sdk");
 const S3Deployment = global.routes.include('deployment', 'utilities/s3-deployment.js');
 
 let environment = process.argv[2] || 'development';
@@ -26,10 +23,8 @@ bucket_list.map(bucket => {
         s3Deployment.bucketExists(bucket_parameters).then(exists => {
             if (exists) {
                 du.warning('Bucket exists, Aborting');
-                console.log('Bucket exists, Aborting');
             } else {
                 du.output('Bucket does not exist, creating.');
-                console.log('Bucket does not exist, creating.');
                 return s3Deployment.createBucketAndWait(bucket_parameters).then(response => {
                   du.output(response);
                 });

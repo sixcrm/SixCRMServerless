@@ -1,11 +1,8 @@
 'use strict';
 require('../../routes.js');
 
-const fs = require('fs');
-
 const du = global.routes.include('lib', 'debug-utilities.js');
 const stringUtilities = global.routes.include('deployment', 'utilities/string-utilities.js');
-const AWS = require("aws-sdk");
 const S3Deployment = global.routes.include('deployment', 'utilities/s3-deployment.js');
 
 let environment = process.argv[2] || 'development';
@@ -32,10 +29,8 @@ bucket_list.map(bucket => {
         s3Deployment.folderExists(bucket_parameters).then(exists => {
           if (exists) {
             du.warning('Folder exists, Aborting.');
-            console.log('Folder exists, Aborting.');
           } else {
             du.warning('Folder does not exists, creating.');
-            console.log('Folder does not exists, creating.');
             return s3Deployment.createFolderAndWait(bucket_parameters).then(response => {
               du.output(response);
             });
