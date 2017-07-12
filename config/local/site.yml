@@ -78,6 +78,10 @@ elasticache:
 logging:
   loglevel: 2
 
+aws:
+  region: 'us-east-1'
+  account: '068070110666'
+
 kinesis:
   firehose:
     streams:

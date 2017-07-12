@@ -17,12 +17,12 @@ provider:
   name: aws
   runtime: nodejs6.10
   stage: ${opt:stage, 'development'}
-  region: ${env:AWS_REGION}
+  region: ${file(./config/${opt:stage}/site.yml):aws.region}
   profile: six
   environment:
     stage: ${opt:stage, self:provider.stage}
     aws_region: ${opt:region, self:provider.region}
-    aws_account: ${env:AWS_ACCOUNT}
+    aws_account: ${file(./config/${opt:stage}/site.yml):aws.account}
     dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
     search_indexing_queue: 'search_indexing'
     rebill_queue: 'rebill'
@@ -40,6 +40,7 @@ provider:
     redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
     kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
     kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
+    kinesis_firehose_activity_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.activity}
 
 plugins:
   - serverless-dynamodb-local
