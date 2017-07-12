@@ -178,6 +178,10 @@ kinesis:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
 
+aws:
+  region: 'us-east-1'
+  account: '068070110666'
+
 s3:
   redshift:
     buckets:

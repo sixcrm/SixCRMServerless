@@ -7,23 +7,43 @@ const eu = global.routes.include('lib', 'error-utilities.js');
 
 const sqsUtils = global.routes.include('lib', 'sqs-utilities.js');
 
-const maxReceiveCount = 5;
+// Techincal Debt:  KISS or die
+let delay = (time) => (result) => new Promise(resolve => setTimeout(() => resolve(result), time));
 
+//const maxReceiveCount = 5;
 const stage = process.argv[2];
-
-du.highlight(`Executing SQS Deployment`);
 
 return setEnvironment(stage)
 .then(() => getQueueDefinitions())
-.then((queue_definitions) => createDeadletterQueues(queue_definitions))
-.then((queue_definitions) => createQueues(queue_definitions))
+.then(queueDefinitions => deleteQueues(queueDefinitions))
+//Technical Debt:  we should just check the status of the operations with AWS CLI
+.then((queueDefinitions) => {
+    du.highlight('Pausing for deletes...');
+    return queueDefinitions;
+})
+.then(delay(70000))
 .then(() => {
-  du.highlight('Queue Creation Complete')
+  du.highlight('Queue Deletion Complete')
 })
 .catch((error) => {
     du.error(error);
     eu.throwError('server', error);
 });
+
+function deleteQueues(queue_definitions) {
+
+    let delete_promises = [];
+
+    queue_definitions.map((queue_definition) => {
+      delete_promises.push(sqsUtils.deleteQueue(queue_definition.QueueName));
+      delete_promises.push(sqsUtils.deleteQueue(createDeadletterQueueName(queue_definition)));
+    });
+
+    return Promise.all(delete_promises).then(() => {
+        return queue_definitions;
+    });
+
+}
 
 function setEnvironment(stage){
 
@@ -73,52 +93,7 @@ function getQueueDefinitions(){
 
 }
 
-function createDeadletterQueues(queue_definitions) {
-
-    let create_promises = [];
-
-    //Note:  From existing queue definitions, create deadletter queue definitions
-    queue_definitions.forEach((queue_definition) => {
-
-      let deadletter_queue_definition = createDeadletterQueueDefinition(queue_definition);
-
-      create_promises.push(sqsUtils.createQueue(deadletter_queue_definition));
-
-    });
-
-    return Promise.all(create_promises).then(create_promises => {
-
-      du.deep('Create results:', create_promises);
-
-      du.info(queue_definitions);
-
-      return queue_definitions;
-
-    });
-}
-
-function createQueues(queue_definitions) {
-
-    let create_promises = [];
-
-    queue_definitions.map((queue_definition) => {
-
-      queue_definition = configureQueueRedrive(queue_definition);
-
-      create_promises.push(sqsUtils.createQueue(queue_definition));
-
-    });
-
-    return Promise.all(create_promises).then(() => {
-
-      du.deep('Create results:', create_promises);
-
-      return queue_definitions;
-
-    });
-
-}
-
+/*
 function createDeadletterQueueDefinition(queue) {
 
     //Note: the JSON method are necessary for parsing
@@ -129,6 +104,7 @@ function createDeadletterQueueDefinition(queue) {
     return dlq_definition;
 
 }
+*/
 
 function createDeadletterQueueName(queue){
 
@@ -158,21 +134,6 @@ function createDeadletterQueueName(queue){
   let new_queue_name = queue_name + sqsUtils.deadletter_postfix;
 
   return new_queue_name;
-
-}
-
-function configureQueueRedrive(queue_definition) {
-
-  du.warning(queue_definition);
-
-  let deadletter_queue_arn = sqsUtils.getQueueARN(createDeadletterQueueName(queue_definition));
-
-  queue_definition.Attributes["RedrivePolicy"] = JSON.stringify({
-    deadLetterTargetArn: deadletter_queue_arn,
-    maxReceiveCount: maxReceiveCount
-  });
-
-  return queue_definition;
 
 }
 
