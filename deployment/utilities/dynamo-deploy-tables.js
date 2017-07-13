@@ -111,7 +111,7 @@ class DynamoDeployTables {
 
       return Promise.map(tables, (table) => {
           return this.deployTable(table, this.stage, this.region);
-      }, {concurrency: 7})
+      }, {concurrency: 1})
       .then((vals) => {
           du.debug(vals);
           return vals;
