@@ -9,6 +9,7 @@ var yaml = require('js-yaml');
 const du = global.routes.include('lib','debug-utilities.js');
 const random = global.routes.include('lib','random.js');
 const signatureutilities = global.routes.include('lib','signature.js');
+const tu = global.routes.include('lib','test-utilities.js');
 
 try {
     var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));
@@ -72,10 +73,7 @@ describe('Round Trip Test', function() {
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
     du.debug(response.body);
-    assert.isObject(response.body);
-    assert.property(response.body, "success");
-    assert.equal(response.body.success, true);
-    assert.isString(response.body.response);
+    tu.assertSuccessfulResponse(response.body, 'graph');
 
     var jwt = response.body.response;
 
@@ -131,9 +129,7 @@ describe('Round Trip Test', function() {
 					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 					.end(function(err, response){
     du.debug('Create Lead Response', response.body);
-    assert.property(response.body, "success");
-    assert.equal(response.body.success, true);
-    assert.property(response.body, "response");
+    tu.assertSuccessfulResponse(response.body, 'graph');
     assert.property(response.body.response, "id");
     assert.property(response.body.response, "customer");
 						//Technical Debt:  Let's dig in here a little further.  This is pretty light testing.
@@ -174,10 +170,9 @@ describe('Round Trip Test', function() {
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end(function(err, response){
     du.debug('Create Order Response:', response.body);
-    assert.property(response.body, "success");
-    assert.equal(response.body.success, true);
 
-    assert.property(response.body, "response");
+    tu.assertSuccessfulResponse(response.body, 'graph');
+
     assert.property(response.body.response, "processor_response");
     var processor_response = JSON.parse(response.body.response.processor_response);
 

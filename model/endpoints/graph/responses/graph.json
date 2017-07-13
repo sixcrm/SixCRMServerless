@@ -28,7 +28,8 @@
         },
         {
           "type": "null"
-        }
+        },
+        { "$ref": "definitions/jwt" }
       ]
 
     }
