@@ -1,59 +1,68 @@
 'use strict';
-require('require-yaml');
 const fs = require('fs');
-const _ = require('underscore');
 
 const du = global.routes.include('lib', 'debug-utilities.js');
-const PermissionUtilities = global.routes.include('lib', 'permission-utilities.js');
+const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
 
 class DynamoDeploySeeds {
     constructor(){
         this.controllers = [];
     }
 
-    deploySeed(seed) {
-        let entity_name = this.getEntityName(seed);
+    deploySeed(seed_type) {
+
+        let entity_name = this.getEntityName(seed_type);
         let controller = this.getController(entity_name);
-        let seed_content = global.routes.include('seeds', seed + '.json');
+        let seeds = global.routes.include('seeds', seed_type + '.json');
 
-        du.highlight(`Seeding ${seed}`);
+        du.highlight('Seeding '+seed_type);
 
-        seed_content.forEach((entity) => {
+        seeds.forEach((seed) => {
 
-            controller.store(entity).then((result) => {
+            controller.store(seed).then((result) => {
                 du.deep(result);
             }).catch(error => {
-                du.error(`Error while seeding '${controller.descriptive_name}' with id '${entity.id}': ${error.message}`);
+                du.error('Error while seeding '+controller.descriptive_name+' with seed id '+seed.id+': '+error.message);
             });
 
         });
 
-        return Promise.resolve(`Finished seeding '${seed}'.`);
+        return Promise.resolve('Finished seeding '+seed_type+'.');
 
     }
 
-    deployAllSeeds(environment, region) {
-        PermissionUtilities.disableACLs();
-        process.env.stage = environment;
-        process.env.search_indexing_queue = 'search_indexing';
+    setEnvironment(stage){
 
-        process.env.dynamo_endpoint = this.getConfig().dynamodb.endpoint;
+      stage = configurationutilities.resolveStage(stage)
 
-        process.env.redshift_user = this.getConfig().redshift.user;
-        process.env.redshift_password = this.getConfig().redshift.password;
-        process.env.redshift_host = this.getConfig().redshift.host;
-        process.env.redshift_database = this.getConfig().redshift.database;
-        process.env.redshift_port = this.getConfig().redshift.port;
-        process.env.redshift_pool_max = this.getConfig().redshift.user;
-        process.env.redshift_idle_timeout = this.getConfig().redshift.idleTimeoutMillis;
+      this.stage_configuration = configurationutilities.getSiteConfig(stage);
+      this.serverless_configuration = configurationutilities.getServerlessConfig();
 
-        if(!_.isUndefined(region)){
-            process.env.AWS_REGION = region;
-        }
+      process.env.stage = stage;
+      process.env.search_indexing_queue = this.serverless_configuration.provider.environment.search_indexing_queue;
+      process.env.dynamo_endpoint = this.stage_configuration.dynamodb.endpoint;
+      process.env.redshift_user = this.stage_configuration.redshift.user;
+      process.env.redshift_password = this.stage_configuration.redshift.password;
+      process.env.redshift_host = this.stage_configuration.redshift.host;
+      process.env.redshift_database = this.stage_configuration.redshift.database;
+      process.env.redshift_port = this.stage_configuration.redshift.port;
+      process.env.redshift_pool_max = this.stage_configuration.redshift.user;
+      process.env.redshift_idle_timeout = this.stage_configuration.redshift.idleTimeoutMillis;
+      process.env.aws_region = this.stage_configuration.aws.region;
+      process.env.aws_account = this.stage_configuration.aws.account;
+
+    }
+
+    deployAllSeeds(stage) {
+
+        permissionutilities.disableACLs();
+
+        this.setEnvironment(stage);
 
         this.initializeControllers();
 
-        du.highlight(`Deploying seeds on ${environment} environment.`);
+        du.highlight('Deploying seeds on '+process.env.stage+' environment.');
 
         let seeds = this.getSeedFileNames();
 
@@ -62,13 +71,19 @@ class DynamoDeploySeeds {
                 du.debug(output);
             });
         });
+
     }
 
     initializeControllers() {
+
         let controller_directory = global.routes.path('controllers', 'entities');
+
         let files = fs.readdirSync(controller_directory);
 
-        files.forEach((file) => { this.controllers.push(global.routes.include('controllers', `entities/${file}`)) });
+        files.forEach((file) => {
+          this.controllers.push(global.routes.include('entities', file));
+        });
+
     }
 
     getSeedFileNames(){
@@ -81,40 +96,36 @@ class DynamoDeploySeeds {
         return files.map(file => {
             return file.replace('.json','');
         });
+
     }
 
-    getController(name) {
-        du.debug('Get controller for entity ' + name);
+    getController(controller_name) {
+
+        du.debug('Get controller for entity ' + controller_name);
 
         let matched_controllers =  this.controllers
             .filter(controller => controller.descriptive_name)
-            .filter(controller => controller.descriptive_name === name);
+            .filter(controller => controller.descriptive_name === controller_name);
 
         if (matched_controllers.length < 1) {
-            du.error(`No entity controller found for entity '${name}'.`);
+            du.error('No entity controller found for entity "'+controller_name+'"');
             return null;
         }
 
         if (matched_controllers.length > 1) {
-            du.error(`More than one controller found for entity '${name}'.`);
+            du.error('More than one controller found for entity "'+controller_name+'"');
             return null;
         }
 
         return matched_controllers[0];
     }
 
-    getEntityName(seed) {
+    getEntityName(seed){
+
         return seed.replace(/s$/, '');
+
     }
 
-    getConfig() {
-        let config = global.routes.include('config', `${process.env.stage}/site.yml`);
-
-        if (!config) {
-            throw 'Unable to find config file.';
-        }
-        return config;
-    }
 }
 
 module.exports = new DynamoDeploySeeds();
