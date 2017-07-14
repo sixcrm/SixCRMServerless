@@ -1,12 +1,8 @@
 'use strict';
-const fs = require('fs');
-const _ = require('underscore');
-
 const AWS = require("aws-sdk");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const stringutilities = global.routes.include('lib', 'string-utilities.js');
 
 class KinesisDeployment {
 
@@ -62,12 +58,14 @@ class KinesisDeployment {
            DeliveryStreamName: stream_identifier
        };
 
-       return new Promise((resolve, reject) => {
+       return new Promise((resolve) => {
            this.kinesis.describeDeliveryStream(parameters, (error, data) => {
                if (error) {
                    return resolve(false);
                } else {
-                   return resolve(true);
+                  if(data){ // test for properties///
+                  }
+                  return resolve(true);
                }
            });
        });
@@ -125,7 +123,7 @@ class KinesisDeployment {
             StreamIdentifier: stream_identifier
         };
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
 
           this.kinesis.describeDeliveryStream(parameters,(err, data) => {
             if (err) {

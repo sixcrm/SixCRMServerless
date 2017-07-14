@@ -33,7 +33,7 @@ class RedshiftDeployment {
 
               du.output('Cluster exists, destroying.');
 
-              return this.deleteClusterAndWait().then(response => {
+              return this.deleteClusterAndWait().then(() => {
 
                   return 'Cluster destroyed.';
 
@@ -59,7 +59,7 @@ class RedshiftDeployment {
 
               du.output('Cluster does not exist, creating.');
 
-              return this.createClusterAndWait().then(response => {
+              return this.createClusterAndWait().then(() => {
 
                   return 'Cluster created.';
 
@@ -75,7 +75,7 @@ class RedshiftDeployment {
 
       let parameters = this.createParametersObject('describe');
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
 
           return this.redshift.describeClusters(parameters, (error, data) => {
               if (error) {
@@ -187,7 +187,7 @@ class RedshiftDeployment {
 
       configuration_groups[group_name].forEach((key) => {
 
-        let discovered_data = objectutilities.recurseByDepth(this.site_config.redshift, function(p_key, p_value){
+        let discovered_data = objectutilities.recurseByDepth(this.site_config.redshift, function(p_key){
 
           return (_.contains(translation_object[key], p_key));
 
