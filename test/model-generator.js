@@ -16,8 +16,24 @@ class ModelGenerator {
     random(name) {
         let schema = global.routes.include('model', `${name}.json`);
 
-        return jsf.resolve(schema);
+        return jsf.resolve(schema).then((generated_object) => {
+            // Technical Debt: Avoid this workarounds.
+            //
+            // Library that we use for generating valid data ('json-schema-faker') does not generate uris the way our
+            // validator utilities accept. We either need to generate better uris, or have more correct validation.
+            // In the meantime here we manually change the values of uris when whe _know_ they are needed.
 
+            if (name === 'entities/fulfillmentprovider') {
+                generated_object.endpoint = 'http://test.com';
+
+            }
+
+            if (name === 'entities/merchantprovider') {
+                generated_object.gateway.endpoint = 'http://test.com';
+            }
+
+            return generated_object;
+        });
     }
 
     randomEntity(name) {
