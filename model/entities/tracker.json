@@ -49,12 +49,8 @@
 		"body":{
 			"type":"string"
 		},
-		"created_at":{
-			"type":{"$ref": "#/definitions/ISO8601"}
-		},
-		"updated_at":{
-			"type":{"$ref": "#/definitions/ISO8601"}
-		}
+		"created_at":{"$ref": "#/definitions/ISO8601"},
+		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
 	"required":["id", "account", "type", "name", "body", "created_at", "updated_at"]
 }
