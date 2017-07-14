@@ -27,6 +27,12 @@ Invoke lambda functions locally as follows:
 
 Note that when lambdas are executed locally, the API gateway implementation which is in use in AWS environments is not implemented.  This may have unexpected consequences, particularly when HTTP requests are being simulated.
 
+### Pruning Lambdas
+
+Once in a while we run out of space for lambdas on AWS because we keep the old versions uploaded. If you get errors like `Code storage limit exceeded` when deploying
+that is why. In order to proceed, run `AWS_PROFILE=six sls prune -n <number of versions to keep> --stage <environment>` for example `AWS_PROFILE=six sls prune -n 10 --stage development`. You might need to login to AWS console and manually trigger
+stack rollback in CloudFormation, because it's probably stuck in rollback state due to missing space. After stack rolls back, deploy again.
+
 ### Committing to the Repository
 
 When pushing to the repository, the commit will not be deployed to production unless it has been tagged with a appropriate version number.  Version numbers are provided as `v\d+.*`
