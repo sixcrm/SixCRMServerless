@@ -45,6 +45,7 @@ provider:
 
 plugins:
   - serverless-dynamodb-local
+  - serverless-prune-plugin
 
 custom:
   dynamodb:
