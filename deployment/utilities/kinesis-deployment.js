@@ -1,20 +1,58 @@
 'use strict';
-require('require-yaml');
 const fs = require('fs');
 const _ = require('underscore');
+
 const AWS = require("aws-sdk");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
+const stringutilities = global.routes.include('lib', 'string-utilities.js');
 
 class KinesisDeployment {
 
     constructor(stage) {
-        this.stage = stage;
-        this.config = this.getConfig(stage);
-        this.kinesis = new AWS.Firehose({
-            region: 'us-east-1',
-            apiVersion: '2015-08-04',
+
+      this.stage = configurationutilities.resolveStage(stage);
+      this.site_config = configurationutilities.getSiteConfig(this.stage);
+
+      this.kinesis = new AWS.Firehose({
+          region: this.site_config.aws.region,
+          apiVersion: '2015-08-04',
+      });
+
+    }
+
+    deployStreams(){
+
+      let stream_list = Object.keys(this.site_config.kinesis.firehose.streams).filter(name => name.match(/\_stream$/));
+
+      stream_list.map(stream => {
+
+        let stream_parameters = {};
+
+        Object.keys(this.site_config.kinesis.firehose.streams[stream]).forEach((key) => {
+
+            stream_parameters[key] = this.site_config.kinesis.firehose.streams[stream][key];
+
         });
+
+        this.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
+            if (exists) {
+                du.warning('Stream exists, aborting.');
+                return Promise.resolve();
+            } else {
+                du.output('Stream does not exist, creating.');
+                return this.createStreamAndWait(stream_parameters).then(response => {
+                  du.output(response);
+                });
+            }
+        })
+        .then(() => {
+          du.highlight('Complete')
+        });
+
+      });
+
     }
 
     streamExists(stream_identifier) {
@@ -114,15 +152,6 @@ class KinesisDeployment {
     waitForStreamNotExist(stream_identifier) {
         /* Exists wrapper */
         return this.waitForStream(stream_identifier, 'DELETING');
-    }
-
-    getConfig() {
-        let config = global.routes.include('config', `${this.stage}/site.yml`).kinesis.firehose;
-
-        if (!config) {
-            throw 'Unable to find config file.';
-        }
-        return config;
     }
 
 }

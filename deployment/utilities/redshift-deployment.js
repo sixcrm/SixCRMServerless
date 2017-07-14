@@ -1,103 +1,206 @@
 'use strict';
-require('require-yaml');
-const fs = require('fs');
 const _ = require('underscore');
 const AWS = require("aws-sdk");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
+const objectutilities = global.routes.include('lib', 'object-utilities.js');
 
 class RedshiftDeployment {
 
     constructor(stage) {
-        this.stage = stage;
-        this.config = this.getConfig(stage);
+
+        this.stage = configurationutilities.resolveStage(stage);
+
+        this.site_config = configurationutilities.getSiteConfig(this.stage);
+
         this.redshift = new AWS.Redshift({
-            region: 'us-east-1',
+            region: this.site_config.aws.region,
             apiVersion: '2013-01-01',
         });
+
     }
 
-    clusterExists(cluster_identifier) {
+    destroyCluster(){
 
-        let parameters = {
-            ClusterIdentifier: cluster_identifier,
-        };
+      return this.clusterExists().then(exists => {
 
-        return new Promise((resolve, reject) => {
-            this.redshift.describeClusters(parameters, (error, data) => {
-                if (error) {
-                    return resolve(false);
-                } else {
-                    return resolve(true);
+          if (!exists) {
+
+              return Promise.resolve('Cluster does not exist, aborting.');
+
+          } else {
+
+              du.output('Cluster exists, destroying.');
+
+              return this.deleteClusterAndWait().then(response => {
+
+                  return 'Cluster destroyed.';
+
+              });
+
+          }
+
+      });
+
+    }
+
+    deployCluster(){
+
+      //du.output('Cluster parameters:', this.site_config.redshift.cluster);
+
+      return this.clusterExists().then(exists => {
+
+          if (exists) {
+
+              return Promise.resolve('Cluster exists, aborting.');
+
+          } else {
+
+              du.output('Cluster does not exist, creating.');
+
+              return this.createClusterAndWait().then(response => {
+
+                  return 'Cluster created.';
+
+              });
+
+          }
+
+      });
+
+    }
+
+    clusterExists() {
+
+      let parameters = this.createParametersObject('describe');
+
+      return new Promise((resolve, reject) => {
+
+          return this.redshift.describeClusters(parameters, (error, data) => {
+              if (error) {
+                  return resolve(false);
+              } else {
+                if(_.has(data, 'Clusters') && _.isArray(data.Clusters) && data.Clusters.length > 0){
+                  return resolve(true);
+                }else{
+                  return resolve(false)
                 }
-            });
-        });
+
+              }
+          });
+
+      });
+
     }
 
-    createCluster(parameters) {
+    createCluster() {
 
-        return new Promise((resolve, reject) => {
-            this.redshift.createCluster(parameters, (error, data) => {
-                if (error) {
-                    du.error(error.message);
-                    return reject(error);
-                } else {
-                    return resolve(data);
-                }
-            });
-        });
+      let parameters = this.createParametersObject('create');
+
+      return new Promise((resolve, reject) => {
+          this.redshift.createCluster(parameters, (error, data) => {
+              if (error) {
+                  du.error(error.message);
+                  return reject(error);
+              } else {
+                  return resolve(data);
+              }
+          });
+      });
+
     }
 
-    createClusterAndWait(parameters) {
-        return this.createCluster(parameters).then(() => {
-            return this.waitForCluster(parameters.ClusterIdentifier, 'clusterAvailable');
+    createClusterAndWait() {
+
+        return this.createCluster().then(() => {
+            return this.waitForCluster('clusterAvailable');
         });
+
     }
 
-    deleteCluster(parameters) {
+    deleteCluster() {
 
-        return new Promise((resolve, reject) => {
-            this.redshift.deleteCluster(parameters, (error, data) => {
-                if (error) {
-                    du.error(error.message);
-                    return reject(error);
-                } else {
-                    return resolve(data);
-                }
-            });
-        });
+      let parameters = this.createParametersObject('destroy');
+
+      return new Promise((resolve, reject) => {
+          this.redshift.deleteCluster(parameters, (error, data) => {
+              if (error) {
+                  du.error(error.message);
+                  return reject(error);
+              } else {
+                  return resolve(data);
+              }
+          });
+      });
+
     }
 
-    deleteClusterAndWait(parameters) {
-        return this.deleteCluster(parameters).then(() => {
-            return this.waitForCluster(parameters.ClusterIdentifier, 'clusterDeleted');
+    deleteClusterAndWait() {
+
+        return this.deleteCluster().then(() => {
+            return this.waitForCluster('clusterDeleted');
         });
+
     }
 
-    waitForCluster(cluster_identifier, state) {
-        let parameters = {
-            ClusterIdentifier: cluster_identifier
-        };
+    waitForCluster(state) {
 
-        return new Promise((resolve, reject) => {
-            this.redshift.waitFor(state, parameters, (error, data) => {
-                if (error) {
-                    du.error(error.message);
-                    return reject(error);
-                } else {
-                    return resolve(data);
-                }
-            });
-        });
+      let parameters = this.createParametersObject('wait');
+
+      return new Promise((resolve, reject) => {
+          this.redshift.waitFor(state, parameters, (error, data) => {
+              if (error) {
+                  du.error(error.message);
+                  return reject(error);
+              } else {
+                  return resolve(data);
+              }
+          });
+      });
+
     }
 
-    getConfig() {
-        let config = global.routes.include('config', `${this.stage}/site.yml`).redshift;
+    createParametersObject(group_name){
 
-        if (!config) {
-            throw 'Unable to find config file.';
-        }
-        return config;
+      let response_object = {};
+
+      let configuration_groups = {
+        'describe': ['ClusterIdentifier'],
+        'wait': ['ClusterIdentifier'],
+        'create': ['ClusterIdentifier', 'NodeType', 'MasterUsername','MasterUserPassword','ClusterType', 'AutomatedSnapshotRetentionPeriod','PubliclyAccessible', 'Port'],
+        'destroy': ['ClusterIdentifier', 'FinalClusterSnapshotIdentifier', 'SkipFinalClusterSnapshot']
+      }
+
+      let translation_object = {
+        ClusterIdentifier: ['cluster_identifier'],
+        NodeType:['node_type'],
+        MasterUsername: ['user'],
+        MasterUserPassword: ['password'],
+        ClusterType:['cluster_type'],
+        AutomatedSnapshotRetentionPeriod: ['automated_snapshot_retention_period'],
+        PubliclyAccessible: ['publicly_accessible'],
+        SkipFinalClusterSnapshot: ['skip_final_cluster_snapshot'],
+        FinalClusterSnapshotIdentifier: ['final_cluster_snapshot_identifier'],
+        Port: ['port']
+      };
+
+      configuration_groups[group_name].forEach((key) => {
+
+        let discovered_data = objectutilities.recurseByDepth(this.site_config.redshift, function(p_key, p_value){
+
+          return (_.contains(translation_object[key], p_key));
+
+        });
+
+        response_object[key] = discovered_data;
+
+      });
+
+      //validate
+
+      return response_object;
+
     }
 
 }
