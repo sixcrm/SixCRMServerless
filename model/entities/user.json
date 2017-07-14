@@ -45,7 +45,7 @@
 			"type":"string",
 			"minLength":40,
 			"maxLength":40,
-			"format":"^[a-z0-9]*$"
+			"pattern":"[a-z0-9]*"
 		},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}

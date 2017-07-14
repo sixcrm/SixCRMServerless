@@ -1,5 +1,8 @@
 let mvu = global.routes.include('lib', 'model-validator-utilities.js');
+let du = global.routes.include('lib', 'debug-utilities.js');
+let modelgenerator = require('../../model-generator.js');
 let chai = require('chai');
+let fs = require('fs');
 let expect = chai.expect;
 
 let schemaWithNoReferences = `${__dirname}/model/sql_pagination.json`;
@@ -74,6 +77,44 @@ describe('lib/permission-utilities', () => {
                 expect(e.message).to.equal('[500] One or more validation errors occurred.');
             }
         });
+
+    });
+
+    describe('entities', () => {
+
+        fs.readdirSync(global.routes.path('model', 'entities'))
+            // .filter((filename) => filename.indexOf('merchantprovider.json') > -1) // uncomment this for testing a single entity definition
+            .filter((filename) => filename.indexOf('.json') > -1)
+            .forEach((file) => {
+                let entity = file.substring(0, file.indexOf('.json'));
+
+                it('validates valid ' + entity, () => {
+
+                    let schema = global.routes.path('model', 'entities/' + file);
+
+                    return modelgenerator.randomEntity(entity).then((valid_model) => {
+                        du.debug('Model:', valid_model);
+                        du.debug('Schema:', schema);
+                        return expect(mvu.validateModel(valid_model, schema)).to.be.true;
+                    });
+
+                });
+
+                it('validates invalid ' + entity, () => {
+                    let invalid_model = {};
+                    let schema = global.routes.path('model', 'entities/' + file);
+
+                    du.debug('Model:', invalid_model);
+                    du.debug('Schema:', schema);
+
+                    try {
+                        mvu.validateModel(invalid_model, schema);
+                    } catch (e) {
+                        expect(e.message).to.equal('[500] One or more validation errors occurred.');
+                    }
+                });
+
+            });
 
     });
 
