@@ -18,11 +18,63 @@ class KinesisDeployment {
 
     }
 
+    destroyStreams(){
+
+      let stream_list = this.getStreamList();
+
+      let destroy_promises = stream_list.map(stream =>  {
+
+        let stream_parameters = {
+          DeliveryStreamName: this.site_config.kinesis.firehose.streams[stream].DeliveryStreamName
+        };
+
+        du.output('Attempting to destroy "'+stream_parameters.DeliveryStreamName+'"');
+
+        return this.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
+
+          if (exists) {
+
+            du.output('Stream exists,  destroying...');
+
+            return this.deleteStreamAndWait(stream_parameters).then(response => {
+
+              return response;
+
+            });
+
+          } else {
+
+            du.warning('Stream does not exist.');
+
+            return Promise.resolve();
+
+          }
+
+        });
+
+      });
+
+      return Promise.all(destroy_promises).then((destroy_promises) => {
+
+        return 'Process Complete.'
+
+      });
+
+    }
+
+    getStreamList(){
+
+      return Object.keys(this.site_config.kinesis.firehose.streams).filter(name => name.match(/\_stream$/));
+
+    }
+
     deployStreams(){
 
-      let stream_list = Object.keys(this.site_config.kinesis.firehose.streams).filter(name => name.match(/\_stream$/));
+      let stream_list = this.getStreamList();
 
-      stream_list.map(stream => {
+      let deployment_promises = stream_list.map((stream) => {
+
+        du.output('Attempting to create "'+this.site_config.kinesis.firehose.streams[stream].DeliveryStreamName+'"');
 
         let stream_parameters = {};
 
@@ -32,20 +84,43 @@ class KinesisDeployment {
 
         });
 
-        this.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
+        return this.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
+
             if (exists) {
-                du.warning('Stream exists, aborting.');
+
+                du.warning('Stream exists.');
+
                 return Promise.resolve();
+
             } else {
+
                 du.output('Stream does not exist, creating.');
+
                 return this.createStreamAndWait(stream_parameters).then(response => {
-                  du.output(response);
+
+                  du.output('AWS Response: '+response);
+
+                  return true;
+
                 });
+
             }
-        })
-        .then(() => {
-          du.highlight('Complete')
+
+        }).then(() => {
+
+          du.highlight('Stream created.');
+
+        }).catch(error => {
+
+          du.error(error);
+
         });
+
+      });
+
+      return Promise.all(deployment_promises).then((deployment_promises) => {
+
+        return 'Process Complete.';
 
       });
 

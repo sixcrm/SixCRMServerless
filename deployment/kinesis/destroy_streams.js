@@ -5,8 +5,13 @@ const KinesisDeployment = global.routes.include('deployment', 'utilities/kinesis
 
 let stage = process.argv[2] || 'development';
 
-du.highlight('Creating Kinesis Stream');
+du.highlight('Destroying Kinesis Streams');
 
 let kinesisDeployment = new KinesisDeployment(stage);
 
-kinesisDeployment .deployStreams();
+return kinesisDeployment.destroyStreams().then((result) => {
+  du.highlight(result);
+}).catch(error => {
+  du.error(error);
+  du.warning(error.message);
+});
