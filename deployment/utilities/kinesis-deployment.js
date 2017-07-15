@@ -1,24 +1,130 @@
 'use strict';
-require('require-yaml');
-require('../../routes.js');
-const fs = require('fs');
-const _ = require('underscore');
 const AWS = require("aws-sdk");
 
 
 const du = global.routes.include('lib', 'debug-utilities.js');
-const BaseDeployment = global.routes.include('deployment', 'utilities/base-deployment.js');
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
 
-class KinesisDeployment extends BaseDeployment {
+class KinesisDeployment {
 
     constructor(stage) {
-        super(stage);
-        this.stage = stage;
-        this.config = this.getConfig();
-        this.kinesis = new AWS.Firehose({
-            region: this.aws_config.region,
-            apiVersion: '2015-08-04',
+
+      this.stage = configurationutilities.resolveStage(stage);
+      this.site_config = configurationutilities.getSiteConfig(this.stage);
+
+      this.kinesis = new AWS.Firehose({
+          region: this.site_config.aws.region,
+          apiVersion: '2015-08-04',
+      });
+
+    }
+
+    destroyStreams(){
+
+      let stream_list = this.getStreamList();
+
+      let destroy_promises = stream_list.map(stream =>  {
+
+        let stream_parameters = {
+          DeliveryStreamName: this.site_config.kinesis.firehose.streams[stream].DeliveryStreamName
+        };
+
+        du.output('Attempting to destroy "'+stream_parameters.DeliveryStreamName+'"');
+
+        return this.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
+
+          if (exists) {
+
+            du.output('Stream exists,  destroying...');
+
+            return this.deleteStreamAndWait(stream_parameters).then(response => {
+
+              return response;
+
+            });
+
+          } else {
+
+            du.warning('Stream does not exist.');
+
+            return Promise.resolve();
+
+          }
+
         });
+
+      });
+
+      return Promise.all(destroy_promises).then(() => {
+
+        return 'Process Complete.'
+
+      });
+
+    }
+
+    getStreamList(){
+
+      return Object.keys(this.site_config.kinesis.firehose.streams).filter(name => name.match(/\_stream$/));
+
+    }
+
+    deployStreams(){
+
+      let stream_list = this.getStreamList();
+
+      let deployment_promises = stream_list.map((stream) => {
+
+        du.output('Attempting to create "'+this.site_config.kinesis.firehose.streams[stream].DeliveryStreamName+'"');
+
+        let stream_parameters = {};
+
+        Object.keys(this.site_config.kinesis.firehose.streams[stream]).forEach((key) => {
+
+            stream_parameters[key] = this.site_config.kinesis.firehose.streams[stream][key];
+
+        });
+
+        return this.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
+
+            if (exists) {
+
+                du.warning('Stream exists.');
+
+                return Promise.resolve();
+
+            } else {
+
+                du.output('Stream does not exist, creating.');
+
+                return this.createStreamAndWait(stream_parameters).then(response => {
+
+                  du.output('AWS Response: '+response);
+
+                  return true;
+
+                });
+
+            }
+
+        }).then(() => {
+
+          du.highlight('Stream created.');
+
+        }).catch(error => {
+
+          du.error(error);
+
+        });
+
+      });
+
+      return Promise.all(deployment_promises).then(() => {
+
+        return 'Process Complete.';
+
+      });
+
     }
 
     streamExists(stream_identifier) {
@@ -28,12 +134,14 @@ class KinesisDeployment extends BaseDeployment {
            DeliveryStreamName: stream_identifier
        };
 
-       return new Promise((resolve, reject) => {
+       return new Promise((resolve) => {
            this.kinesis.describeDeliveryStream(parameters, (error, data) => {
                if (error) {
                    return resolve(false);
                } else {
-                   return resolve(true);
+                  if(data){ // test for properties///
+                  }
+                  return resolve(true);
                }
            });
        });
@@ -91,7 +199,7 @@ class KinesisDeployment extends BaseDeployment {
             StreamIdentifier: stream_identifier
         };
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
 
           this.kinesis.describeDeliveryStream(parameters,(err, data) => {
             if (err) {
@@ -118,15 +226,6 @@ class KinesisDeployment extends BaseDeployment {
     waitForStreamNotExist(stream_identifier) {
         /* Exists wrapper */
         return this.waitForStream(stream_identifier, 'DELETING');
-    }
-
-    getConfig() {
-        let config = global.routes.include('config', `${this.stage}/site.yml`).kinesis.firehose;
-
-        if (!config) {
-            throw 'Unable to find config file.';
-        }
-        return config;
     }
 
 }

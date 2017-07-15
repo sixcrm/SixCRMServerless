@@ -3,6 +3,7 @@
 const jsf = require('json-schema-faker');
 const uuidV4 = require('uuid/v4');
 const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.routes.include('lib', 'debug-utilities.js');
 
 
 class ModelGenerator {
@@ -14,9 +15,11 @@ class ModelGenerator {
      * @returns {Promise}
      */
     random(name) {
-        let schema = global.routes.include('model', `${name}.json`);
+
+        let schema = global.routes.include('model', name+'.json');
 
         return jsf.resolve(schema).then((generated_object) => {
+
             // Technical Debt: Avoid this workarounds.
             //
             // Library that we use for generating valid data ('json-schema-faker') does not generate uris the way our
@@ -32,16 +35,20 @@ class ModelGenerator {
                 generated_object.gateway.endpoint = 'http://test.com';
             }
 
+            du.info(generated_object);
+
             return generated_object;
+
         });
+
     }
 
     randomEntity(name) {
-        return this.random(`entities/${name}`);
+        return this.random('entities/'+name);
     }
 
     randomEntityWithId(name) {
-        return this.random(`entities/${name}`).then((entity) => {
+        return this.random('entities/'+name).then((entity) => {
             entity['id'] = uuidV4();
 
             return entity;
@@ -58,7 +65,7 @@ class ModelGenerator {
 
         // Technical Debt: This method might be better suited in another class.
 
-        let seeds = global.routes.include('seeds', `${name}s.json`);
+        let seeds = global.routes.include('seeds', name+'s.json');
 
         if (seeds.length > 0) {
 
@@ -66,7 +73,7 @@ class ModelGenerator {
 
         }
 
-        return Promise.reject(eu.getError('server',`Can't find seed for entity with name '${name}'.`));
+        return Promise.reject(eu.getError('server','Can\'t find seed for entity with name '+name+'.'));
 
     }
 
