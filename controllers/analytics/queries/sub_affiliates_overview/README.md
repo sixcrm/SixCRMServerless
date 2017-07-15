@@ -10,7 +10,7 @@ ____
 
 
 ### Optional
-* `affiliate` -  a affiliate string (the affiliate alias)
+* `affiliate` -  a affiliate string (the affiliate alias) or array
 ---
 ### Query notes
 
