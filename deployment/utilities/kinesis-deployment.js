@@ -54,7 +54,7 @@ class KinesisDeployment {
 
       });
 
-      return Promise.all(destroy_promises).then((destroy_promises) => {
+      return Promise.all(destroy_promises).then(() => {
 
         return 'Process Complete.'
 
@@ -118,7 +118,7 @@ class KinesisDeployment {
 
       });
 
-      return Promise.all(deployment_promises).then((deployment_promises) => {
+      return Promise.all(deployment_promises).then(() => {
 
         return 'Process Complete.';
 
