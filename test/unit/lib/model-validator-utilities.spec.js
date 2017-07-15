@@ -88,7 +88,7 @@ describe('lib/permission-utilities', () => {
             .forEach((file) => {
                 let entity = file.substring(0, file.indexOf('.json'));
 
-                it('validates valid ' + entity, () => {
+                xit('validates valid ' + entity, () => {
 
                     let schema = global.routes.path('model', 'entities/' + file);
 
