@@ -1,21 +1,117 @@
 'use strict';
-require('require-yaml');
 const _ = require('underscore');
-const AWS = require("aws-sdk");
-
 const du = global.routes.include('lib', 'debug-utilities.js');
-const BaseDeployment = global.routes.include('deployment', 'utilities/base-deployment.js');
+const eu = global.routes.include('lib', 'error-utilities.js');
+const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
+const arrayutilities = global.routes.include('lib', 'array-utilities.js');
+const fileutilities = global.routes.include('lib', 'file-utilities.js');
 
-class S3Deployment extends BaseDeployment {
+class S3Deployment{
 
     constructor(stage) {
-        super(stage);
-        this.stage = stage;
-        this.config = this.getConfig(stage);
-        this.s3 = new AWS.S3({
-            region: this.aws_config.region,
-            apiVersion: '2006-03-01',
-        });
+
+      this.stage = configurationutilities.resolveStage(stage);
+
+      this.site_config = configurationutilities.getSiteConfig(this.stage);
+
+      this.s3utilities = global.routes.include('lib', 's3-utilities.js');
+
+    }
+
+    createBuckets(){
+
+      du.debug('Create Buckets');
+
+      let bucket_group_files = fileutilities.getDirectoryFilesSync(global.routes.path('deployment','s3/buckets'));
+
+      if(!_.isArray(bucket_group_files)){
+        eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.');
+      }
+
+      let bucket_promises = [];
+
+      bucket_group_files.forEach((bucket_group_file) => {
+
+        let bucket_group_file_contents = global.routes.include('deployment', 's3/buckets/'+bucket_group_file);
+
+        if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
+
+        bucket_promises.push(this.createBucketFromGroupFileDefinition(bucket_group_file_contents));
+
+      });
+
+      return Promise.all(bucket_promises).then(() => {
+
+        return 'Complete';
+
+      });
+
+    }
+
+    destroyBuckets(){
+
+      du.debug('Destroy Buckets');
+
+      let bucket_group_files = fileutilities.getDirectoryFilesSync(global.routes.path('deployment','s3/buckets'));
+
+      if(!_.isArray(bucket_group_files)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.'); }
+
+      let bucket_promises = [];
+
+      bucket_group_files.forEach((bucket_group_file) => {
+
+        let bucket_group_file_contents = global.routes.include('deployment', 's3/buckets/'+bucket_group_file);
+
+        if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
+
+        bucket_promises.push(this.deleteBucketFromGroupFileDefinition(bucket_group_file_contents));
+
+      });
+
+      return Promise.all(bucket_promises).then(() => {
+
+        return 'Complete';
+
+      });
+
+    }
+
+    createBucketPath(bucket_name, prepended_path){
+
+      let return_path = bucket_name;
+
+      if(!_.isUndefined(prepended_path)){
+
+        return_path = prepended_path+'/'+return_path;
+
+      }
+
+      return return_path;
+
+    }
+
+    createBucketFromGroupFileDefinition(group_file_definition){
+
+      let group_file_definition_promises = group_file_definition.map((sub_definition) => {
+
+        return this.s3utilities.assure_bucket(sub_definition.Bucket);
+
+      });
+
+      return Promise.all(group_file_definition_promises);
+
+    }
+
+    deleteBucketFromGroupFileDefinition(group_file_definition){
+
+      let group_file_definition_promises = group_file_definition.map((sub_definition) => {
+
+        return this.s3utilities.assure_delete(sub_definition.Bucket);
+
+      });
+
+      return Promise.all(group_file_definition_promises);
+
     }
 
     bucketExists(parameters) {
@@ -55,25 +151,6 @@ class S3Deployment extends BaseDeployment {
            });
        });
 
-    }
-
-    createBucket(parameters) {
-        /* Create Bucket */
-
-        var param = {
-            Bucket: parameters.Bucket
-        };
-
-        return new Promise((resolve, reject) => {
-            this.s3.createBucket(param, (error, data) => {
-                if (error) {
-                    du.error(error.message);
-                    return reject(error);
-                } else {
-                    return resolve(data);
-                }
-            });
-        });
     }
 
     createFolder(parameters) {

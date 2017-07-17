@@ -1,34 +1,18 @@
 'use strict';
 require('../../routes.js');
 
-
 const du = global.routes.include('lib', 'debug-utilities.js');
-const stringUtilities = global.routes.include('deployment', 'utilities/string-utilities.js');
 const S3Deployment = global.routes.include('deployment', 'utilities/s3-deployment.js');
 
-let environment = process.argv[2] || 'development';
+let stage = process.argv[2] || 'development';
 
-du.highlight('Creating S3 Bucket');
+du.highlight('Destroying S3 Directories');
 
-let s3Deployment = new S3Deployment(environment);
+let s3Deployment = new S3Deployment(stage);
 
-/* Epic */
-let bucket_list = Object.keys(s3Deployment.getConfig().buckets);
-
-bucket_list.map(bucket => {
-  let bucket_parameters = {Bucket: s3Deployment.getConfig().buckets[bucket].bucket,Key:'',Body: s3Deployment.getConfig().buckets[bucket].bucket}
-
-  Object.keys(s3Deployment.getConfig().buckets[bucket]).forEach((key) => {
-    if (key=='bucket')
-        s3Deployment.bucketExists(bucket_parameters).then(exists => {
-            if (exists) {
-                du.warning('Bucket exists, destroying');
-                return s3Deployment.deleteBucketAndWait(bucket_parameters).then(response => {
-                  du.output(response);
-                });
-            } else {
-                du.output('Bucket does not exist, Aborting.');
-            }
-        }).then(() => { du.highlight('Complete')})
-  });
+s3Deployment.destroyBuckets().then(result => {
+  du.highlight(result);
+}).catch((error) => {
+  du.error(error);
+  du.warning(error.message);
 });

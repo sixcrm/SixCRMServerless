@@ -181,19 +181,3 @@ kinesis:
 aws:
   region: 'us-east-1'
   account: '068070110666'
-
-s3:
-  redshift:
-    buckets:
-      bucketRedshift:
-        bucket: 'sixcrm-development-redshift'
-        folders:
-          folder1: 'sixcrm-kinesis-activity/'
-          folder2: 'sixcrm-kinesis-events/'
-          folder3: 'sixcrm-kinesis-merchant-processor/'
-          folder4: 'sixcrm-kinesis-transactions/'
-          folder5: 'sixcrm-manual-upload/'
-          folder6: 'sixcrm-output/'
-          folder7: 'sixcrm-random-generator/'
-          folder8: 'sixcrm-resources/'
-          folder9: 'sixcrm-test/'

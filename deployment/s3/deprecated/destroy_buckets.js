@@ -1,6 +1,7 @@
 'use strict';
 require('../../routes.js');
 
+
 const du = global.routes.include('lib', 'debug-utilities.js');
 const stringUtilities = global.routes.include('deployment', 'utilities/string-utilities.js');
 const S3Deployment = global.routes.include('deployment', 'utilities/s3-deployment.js');
@@ -21,12 +22,12 @@ bucket_list.map(bucket => {
     if (key=='bucket')
         s3Deployment.bucketExists(bucket_parameters).then(exists => {
             if (exists) {
-                du.warning('Bucket exists, Aborting');
-            } else {
-                du.output('Bucket does not exist, creating.');
-                return s3Deployment.createBucketAndWait(bucket_parameters).then(response => {
+                du.warning('Bucket exists, destroying');
+                return s3Deployment.deleteBucketAndWait(bucket_parameters).then(response => {
                   du.output(response);
                 });
+            } else {
+                du.output('Bucket does not exist, Aborting.');
             }
         }).then(() => { du.highlight('Complete')})
   });

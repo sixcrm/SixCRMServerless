@@ -1,0 +1,32 @@
+[
+  {
+    "Bucket": "sixcrm-redshift"
+  },
+  {
+    "Bucket": "sixcrm-kinesis-activity"
+  },
+  {
+    "Bucket": "sixcrm-kinesis-events"
+  },
+  {
+    "Bucket": "sixcrm-kinesis-merchant-processor"
+  },
+  {
+    "Bucket": "sixcrm-kinesis-transactions"
+  },
+  {
+    "Bucket": "sixcrm-manual-upload"
+  },
+  {
+    "Bucket": "sixcrm-output"
+  },
+  {
+    "Bucket": "sixcrm-random-generator"
+  },
+  {
+    "Bucket": "sixcrm-resources"
+  },
+  {
+    "Bucket": "sixcrm-test"
+  }
+]
