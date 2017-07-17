@@ -141,7 +141,7 @@ class S3Deployment{
            Key: parameters.Key
        };
 
-       return new Promise((resolve, reject) => {
+       return new Promise((resolve) => {
            this.s3.headObject(param, (error) => {
                if (error) {
                   //Technical Debt:  False negatives...
