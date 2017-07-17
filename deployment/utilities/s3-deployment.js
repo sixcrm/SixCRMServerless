@@ -3,7 +3,6 @@ const _ = require('underscore');
 const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
 const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const fileutilities = global.routes.include('lib', 'file-utilities.js');
 
 class S3Deployment{
@@ -121,8 +120,8 @@ class S3Deployment{
            Bucket: parameters.Bucket
        };
 
-       return new Promise((resolve, reject) => {
-           this.s3.headBucket(param, (error, data) => {
+       return new Promise((resolve) => {
+           this.s3.headBucket(param, (error) => {
                if (error) {
                    return resolve(false);
                } else {
@@ -133,6 +132,7 @@ class S3Deployment{
 
     }
 
+    //Technical Debt:  So, folders aren't actually things in S3?
     folderExists(parameters) {
        /* Test if Bucket exists */
 
@@ -142,8 +142,9 @@ class S3Deployment{
        };
 
        return new Promise((resolve, reject) => {
-           this.s3.headObject(param, (error, data) => {
+           this.s3.headObject(param, (error) => {
                if (error) {
+                  //Technical Debt:  False negatives...
                    return resolve(false);
                } else {
                    return resolve(true);
