@@ -80,15 +80,15 @@ describe('lib/permission-utilities', () => {
 
     });
 
-    describe('entities', () => {
+    describe.only('entities', () => {
 
         fs.readdirSync(global.routes.path('model', 'entities'))
-            // .filter((filename) => filename.indexOf('merchantprovider.json') > -1) // uncomment this for testing a single entity definition
+            // .filter((filename) => filename.indexOf('accesskey.json') > -1) // uncomment this for testing a single entity definition
             .filter((filename) => filename.indexOf('.json') > -1)
             .forEach((file) => {
                 let entity = file.substring(0, file.indexOf('.json'));
 
-                xit('validates valid ' + entity, () => {
+                it('validates valid ' + entity, () => {
 
                     let schema = global.routes.path('model', 'entities/' + file);
 
