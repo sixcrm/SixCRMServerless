@@ -9,7 +9,7 @@ let schemaWithNoReferences = `${__dirname}/model/sql_pagination.json`;
 let schemaWithReferences = `${__dirname}/model/sixcrmidentifier.json`;
 let schemaWithNestedReferences = `${__dirname}/model/entity.json`;
 
-describe('lib/permission-utilities', () => {
+describe('lib/model-validator-utilities', () => {
 
     describe('validateModel', () => {
         it('validates valid model without references', () => {
@@ -80,7 +80,7 @@ describe('lib/permission-utilities', () => {
 
     });
 
-    describe.only('entities', () => {
+    describe('entities', () => {
 
         fs.readdirSync(global.routes.path('model', 'entities'))
             // .filter((filename) => filename.indexOf('accesskey.json') > -1) // uncomment this for testing a single entity definition
@@ -88,7 +88,7 @@ describe('lib/permission-utilities', () => {
             .forEach((file) => {
                 let entity = file.substring(0, file.indexOf('.json'));
 
-                it('validates valid ' + entity, () => {
+                xit('validates valid ' + entity, () => {
 
                     let schema = global.routes.path('model', 'entities/' + file);
 
