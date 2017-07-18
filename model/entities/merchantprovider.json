@@ -107,7 +107,7 @@
 					"format":"uri"
 				},
 				"additional":{
-					"type":"object"
+					"type":"string"
 				}
 			},
 			"required":["name","username","password","endpoint"]
