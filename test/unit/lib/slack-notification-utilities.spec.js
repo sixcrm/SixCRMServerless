@@ -3,7 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('lib/notification-utilities', () => {
+describe('lib/slack-notification-utilities', () => {
 
     before(() => {
         mockery.enable({
@@ -50,11 +50,13 @@ describe('lib/notification-utilities', () => {
             delete notification_object.id;
             delete notification_object.user;
 
-            return SlackNotificationUtilities.sendNotificationViaSlack(notification_object, webhook).catch((error) => {
+            try {
+                return SlackNotificationUtilities.sendNotificationViaSlack(notification_object, webhook);
+            } catch(error) {
                 // then
                 expect(error).not.to.be.null;
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
-            });
+            }
         });
 
         it('should attempt to send a message when the object is valid', (done) => {

@@ -16,9 +16,18 @@ class ModelGenerator {
      */
     random(name) {
 
+        du.debug('Generating random ' + name);
+
         let schema = global.routes.include('model', name+'.json');
 
+        du.debug('Schema is', schema);
+
+        let working_directory =  process.cwd();
+
+        process.chdir(global.routes.path('model') + name.substring(0, name.lastIndexOf('/')));
+
         return jsf.resolve(schema).then((generated_object) => {
+            process.chdir(working_directory);
 
             // Technical Debt: Avoid this workarounds.
             //
