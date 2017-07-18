@@ -4,7 +4,7 @@
 	"title": "Transaction Product",
 	"type": "object",
 	"definitions": {
-		"UUIDv4": {"$ref": "model/definitions/uuidv4.json"},
+		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
 		"CURRENCY":{
 			"type":"string",
 			"pattern":"^\\$[0-9]+\\.[0-9]{2}$"

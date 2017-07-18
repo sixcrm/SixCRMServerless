@@ -4,9 +4,9 @@
 	"title": "Merchant Provider",
 	"type": "object",
 	"definitions": {
-		"UUIDv4": {"$ref": "model/definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "model/definitions/iso8601.json"},
-		"SixAccountIdentifier":{"$ref": "model/definitions/sixcrmidentifier.json"},
+		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
+		"ISO8601": {"$ref": "../definitions/iso8601.json"},
+		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"Percentage": {
 			"type":"number",
 			"minimum":0,

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/definitions/jwt",
+  "id": "/definitions/jwt.json",
   "title": "jwt",
 
   "type": "string",

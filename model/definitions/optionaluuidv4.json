@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/definitions/optionaluuidv4",
+  "id": "/definitions/optionaluuidv4.json",
   "title": "SixCrmIdentifier",
 
   "type":"string",

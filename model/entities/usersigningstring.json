@@ -4,8 +4,8 @@
 	"title": "User Signing String",
 	"type": "object",
 	"definitions": {
-		"UUIDv4": {"$ref": "model/definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "model/definitions/iso8601.json"}
+		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
+		"ISO8601": {"$ref": "../definitions/iso8601.json"}
 	},
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},

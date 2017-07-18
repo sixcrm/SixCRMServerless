@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "/definitions/sixcrmidentifier",
+  "id": "/definitions/sixcrmidentifier.json",
   "title": "SixCrmIdentifier",
 
   "type":"string",
