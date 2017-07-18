@@ -1,7 +1,6 @@
 'use strict';
 
 const _ = require('underscore');
-//const AWS = require("aws-sdk");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
@@ -58,6 +57,8 @@ module.exports = class RedshiftDeployment{
         files = files.filter(file => file.match(/\.sql$/));
 
         //Technical Debt:  (Aldo) Why does this matter?
+        //  A.Zelen It's here because we need the model to be deployed in certain order
+
         files.sort();
 
         return files;
@@ -153,43 +154,25 @@ module.exports = class RedshiftDeployment{
 
     }
 
-    createCluster() {
-
-      let parameters = this.createParametersObject('create');
-
-      return new Promise((resolve, reject) => {
-          this.redshift.createCluster(parameters, (error, data) => {
-              if (error) {
-                  du.error(error.message);
-                  return reject(error);
-              } else {
-                  return resolve(data);
-              }
-          });
-      });
-
-    }
-
     deleteClusterAndWait() {
 
-        return this.deleteCluster().then(() => {
-            return this.waitForCluster('clusterDeleted');
+        return this.redshiftutilities.deleteCluster().then(() => {
+            return this.redshiftutilities.waitForCluster('clusterDeleted');
         });
 
     }
 
     createClusterAndWait() {
 
-        return this.createCluster().then(() => {
-            return this.waitForCluster('clusterAvailable');
+        return this.redshiftutilities.createCluster().then(() => {
+            return this.redshiftutilities.waitForCluster('clusterAvailable');
         });
 
     }
 
-
     destroyCluster(){
 
-      return this.clusterExists().then(exists => {
+      return this.redshiftutilities.clusterExists().then(exists => {
 
           if (!exists) {
 
@@ -215,7 +198,7 @@ module.exports = class RedshiftDeployment{
 
       //du.output('Cluster parameters:', this.site_config.redshift.cluster);
 
-      return this.clusterExists().then(exists => {
+      return this.redshiftutilities.clusterExists().then(exists => {
 
           if (exists) {
 
