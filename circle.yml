@@ -77,16 +77,22 @@ deployment:
       #Serverless (Lambdas, API Gateway, Roles)
       - serverless deploy --stage $CIRCLE_BRANCH
 
-      #Redshift
-      #Create cluster if does not exist.
-      - node ./deployment/redshift/create_cluster.js $CIRCLE_BRANCH
-      #Create tables.
-      - node ./deployment/redshift/deploy_redshift.js $CIRCLE_BRANCH
-
       #SQS
       - node ./deployment/sqs/destroy_queues.js $CIRCLE_BRANCH
       #- node ./deployment/sqs/purge_queues.js $CIRCLE_BRANCH $AWS_ACCOUNT $AWS_REGION
       - node ./deployment/sqs/deploy_queues.js $CIRCLE_BRANCH
+
+      #S3
+      - node ./deployment/s3/destroy_buckets.js $CIRCLE_BRANCH
+      - node ./deployment/s3/deploy_buckets.js $CIRCLE_BRANCH
+
+      #Redshift
+      #This works but, slows down deployments significantly...
+      #- node ./deployment/redshift/destroy_cluster.js $CIRCLE_BRANCH
+      - node ./deployment/redshift/deploy_cluster.js $CIRCLE_BRANCH
+
+      #here...
+      - node ./deployment/redshift/deploy_redshift.js $CIRCLE_BRANCH
 
       #CloudSearch
       #Technical Debt:  This needs to be configured for multi-environment purges

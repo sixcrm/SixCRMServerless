@@ -283,6 +283,8 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       creditcard.properties = creditcard_properties;
 
+      process.env.stage = 'development';
+
       let ph = new processHelperController();
 
       ph.selected_loadbalancer = loadbalancer;

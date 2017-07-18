@@ -6,7 +6,7 @@ const fs = require('fs');
 const du = global.routes.include('lib', 'debug-utilities.js');
 
 let environment = process.argv[2] || 'development';
-let redshiftutilities;
+let redshiftqueryutilities;
 
 du.highlight('Purging Redshift Tables');
 
@@ -32,7 +32,7 @@ function setupEnvironmentVariables() {
     process.env.redshift_pool_max = getConfig().redshift.user;
     process.env.redshift_idle_timeout = getConfig().redshift.idleTimeoutMillis;
 
-    redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
+    redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
 
     return Promise.resolve();
 }
@@ -54,7 +54,7 @@ function collectFileNames(tables, env) {
 function executePurge() {
     du.warning(truncate_query);
 
-    redshiftutilities.query(truncate_query);
+    redshiftqueryutilities.query(truncate_query);
 }
 
 function getTableNames() {

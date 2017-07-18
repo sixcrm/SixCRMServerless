@@ -7,9 +7,9 @@ const RedshiftDeployment = global.routes.include('deployment', 'utilities/redshi
 let stage = process.argv[2] || 'development';
 let redshiftDeployment = new RedshiftDeployment(stage);
 
-return redshiftDeployment.destroyCluster().then(result => {
+return redshiftDeployment.deployTables().then((result) => {
   du.highlight(result);
-}).catch((error) => {
+}).catch(error => {
   du.error(error);
   du.warning(error.message);
 });

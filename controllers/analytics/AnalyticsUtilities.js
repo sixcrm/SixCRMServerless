@@ -8,7 +8,6 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.routes.include('lib', 'parser-utilities');
 const arrayutilities = global.routes.include('lib', 'array-utilities');
-const redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
 
 const cacheController = global.routes.include('controllers', 'providers/Cache.js');
 
@@ -27,6 +26,8 @@ module.exports = class AnalyticsUtilities {
           {name:"quarter", seconds: 7776000},
           {name:"year", seconds: 30412800}
         ];
+
+        this.redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
 
         this.cacheController = new cacheController();
 
@@ -69,7 +70,7 @@ module.exports = class AnalyticsUtilities {
 
                     du.highlight('Query:', query);
 
-                    let redshift_query = () => redshiftutilities.query(query, []);
+                    let redshift_query = () => this.redshiftqueryutilities.query(query, []);
 
                     let transformation_function = this.getTransformationFunction(query_name);
 

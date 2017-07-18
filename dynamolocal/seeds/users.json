@@ -179,5 +179,18 @@
   "alias":"dd4bd0402361565396cae86de96fab8e180e6929",
   "created_at":"2017-04-06T18:40:41.405Z",
   "updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+  "name":"Logan Egbert",
+  "first_name": "Logan",
+  "last_name": "Egbert",
+  "auth0_id":"awdawdawdawdawd",
+  "id":"logan.egbert@sixcrm.com",
+  "active":true,
+  "termsandconditions":"0.1",
+  "alias":"",
+  "created_at":"2017-04-06T18:40:41.405Z",
+  "updated_at":"2017-04-06T18:41:12.521Z"
 }
+
 ]

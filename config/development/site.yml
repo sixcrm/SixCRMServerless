@@ -52,7 +52,7 @@ redshift:
   host: 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com'
   port: 5439
   max: 10
-  idleTimeoutMillis: 30000
+  idle_timeout: 30000
   cluster:
     cluster_identifier: 'sixcrm-development'
     node_type: 'dc1.large'

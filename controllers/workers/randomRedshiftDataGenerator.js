@@ -8,7 +8,7 @@ const mathutilities = global.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.routes.include('lib', 'random.js');
 const timestamp = global.routes.include('lib', 'timestamp.js');
 const s3utilities = global.routes.include('lib', 's3-utilities.js');
-const redshiftutilities =  global.routes.include('lib', 'redshift-utilities.js');
+
 const workerController = global.routes.include('controllers', 'workers/worker.js');
 
 //Fix Product Schedule.
@@ -39,6 +39,8 @@ class RandomRedshiftData extends workerController {
             events: 'f_events',
             activity: 'f_activity'
         };
+
+        this.redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
 
     }
 
@@ -498,7 +500,7 @@ class RandomRedshiftData extends workerController {
 
         let query = queries.join('; ');
 
-        return redshiftutilities.query(query, []);
+        return this.redshiftqueryutilities.query(query, []);
 
     }
 
