@@ -159,7 +159,7 @@ module.exports = class RedshiftDeployment {
 
     return this.redshiftqueryutilities.queryRaw(version_query).then(result => {
 
-      du.highlight('Got response', result)
+      du.highlight('Got response table_name ', table_name)
       if (result && result.length > 0) {
         return result[0].version;
       }

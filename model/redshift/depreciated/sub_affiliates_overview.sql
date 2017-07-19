@@ -12,8 +12,9 @@ CREATE TABLE IF NOT EXISTS sys_sixcrm.sys_table_version
 );
 
 
-SELECT *
-FROM sys_sixcrm.sys_table_version;
+SELECT version
+FROM sys_sixcrm.sys_table_version
+where table_name ='f_transactions'
 
 create schema if not exists sys_sixcrm;
 create schema if not exists backup;
