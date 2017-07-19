@@ -30,12 +30,6 @@ provider:
     bill_queue: 'bill'
     hold_queue: 'hold'
     bill_failed_queue: 'bill_failed'
-    redshift_user: ${file(./config/${opt:stage}/site.yml):redshift.user}
-    redshift_password: ${file(./config/${opt:stage}/site.yml):redshift.password}
-    redshift_host: ${file(./config/${opt:stage}/site.yml):redshift.host}
-    redshift_database: ${file(./config/${opt:stage}/site.yml):redshift.database}
-    redshift_port: ${file(./config/${opt:stage}/site.yml):redshift.port}
-    redshift_idle_timeout: ${file(./config/${opt:stage}/site.yml):redshift.idleTimeoutMillis}
     redshift_random_data_staging_bucket: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.staging_bucket}
     redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
     kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
@@ -459,4 +453,4 @@ resources:
                - sns:*
              Resource: "*"
         Roles:
-          - Ref: IamRoleLambdaExecution
+          - Ref: IamRoleLambdaExecution 
