@@ -1,3 +1,7 @@
+aws:
+  region: 'us-east-1'
+  account: '068070110666'
+
 jwt:
   issuer: 'https://api.sixcrm.com'
   development_bypass: 'deathstalker'
@@ -180,7 +184,3 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
-
-aws:
-  region: 'us-east-1'
-  account: '068070110666'

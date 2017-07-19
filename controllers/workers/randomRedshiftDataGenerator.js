@@ -516,7 +516,7 @@ class RandomRedshiftData extends workerController {
 
         du.debug('Push to S3');
 
-        return s3utilities.assure_bucket(this.s3_bucket)
+        return s3utilities.assureBucket(this.s3_bucket)
         .then(() => {
 
             let promises = [];
@@ -529,7 +529,7 @@ class RandomRedshiftData extends workerController {
                     Body: this.s3_files[k]
                 };
 
-                promises.push(s3utilities.put_object(parameters));
+                promises.push(s3utilities.putObject(parameters));
 
             }
 

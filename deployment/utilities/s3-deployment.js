@@ -98,7 +98,7 @@ class S3Deployment{
 
         let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
 
-        return this.s3utilities.assure_bucket(bucket_name);
+        return this.s3utilities.assureBucket(bucket_name);
 
       });
 
@@ -112,7 +112,7 @@ class S3Deployment{
 
         let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
 
-        return this.s3utilities.assure_delete(bucket_name);
+        return this.s3utilities.assureDelete(bucket_name);
 
       });
 
