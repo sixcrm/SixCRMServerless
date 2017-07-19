@@ -1,9 +1,9 @@
 'use strict';
 const _ = require('underscore');
-const Validator = require('jsonschema').Validator;
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
+const mvu = global.routes.include('lib', 'model-validator-utilities.js');
 
 const notificationReadController = global.routes.include('controllers', 'entities/NotificationRead');
 const entityController = global.routes.include('controllers', 'entities/Entity.js');
@@ -45,9 +45,6 @@ class notificationController extends entityController {
         });
     }
 
-
-    //Technical Debt:  Just use the native validation method in Entity.js
-
     /**
      * Whether a given object is a valid notification.
      *
@@ -55,38 +52,9 @@ class notificationController extends entityController {
      * @returns {Promise}
      */
     isValidNotification(notification_object) {
-        let schema;
 
-        try {
-            schema = global.routes.include('model','entities/notification.json');
-        } catch(e){
-            return Promise.reject(eu.getError('server','Unable to load validation schemas.'));
-        }
-
-        let validation;
-        let params = JSON.parse(JSON.stringify(notification_object || {}));
-
-        try{
-            let v = new Validator();
-
-            validation = v.validate(params, schema);
-        }catch(e){
-            return Promise.reject(eu.getError('server','Unable to instantiate validator.'));
-        }
-
-        if(validation['errors'].length > 0) {
-
-            du.warning(validation['errors']);
-
-            return Promise.reject(eu.getError(
-            'validation',
-            'One or more validation errors occurred.',
-            {issues: validation.errors.map(e => e.message)}
-          ));
-
-        }
-
-        return Promise.resolve(params);
+        return Promise.resolve(
+            mvu.validateModel(notification_object, global.routes.path('model', 'entities/notification.json')));
     }
 }
 

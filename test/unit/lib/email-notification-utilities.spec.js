@@ -50,11 +50,13 @@ describe('lib/notification-utilities', () => {
             delete notification_object.id;
             delete notification_object.user;
 
-            return EmailNotificationUtilities.sendNotificationViaEmail(notification_object, email_address).catch((error) => {
+            try {
+                return EmailNotificationUtilities.sendNotificationViaEmail(notification_object, email_address);
+            } catch (error) {
                 // then
                 expect(error).not.to.be.null;
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
-            });
+            }
         });
 
         it('should attempt to send a message when the object is valid', (done) => {

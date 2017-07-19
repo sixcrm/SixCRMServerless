@@ -1,7 +1,6 @@
 'use strict';
 
 const _ = require('underscore');
-//const AWS = require("aws-sdk");
 
 const du = global.routes.include('lib', 'debug-utilities.js');
 const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
@@ -57,7 +56,9 @@ module.exports = class RedshiftDeployment{
 
         files = files.filter(file => file.match(/\.sql$/));
 
-        //Technical Debt:  (Aldo) Why does this matter?
+        //  Technical Debt:  (Aldo) Why does this matter?
+        //  A.Zelen It's here because we need the model to be deployed in certain order (1,2 go first)
+
         files.sort();
 
         return files;
@@ -68,15 +69,18 @@ module.exports = class RedshiftDeployment{
 
     collectQueries(table_filenames) {
 
-      let directory = global.routes.path('model', 'redshift');
+      let path_to_model = global.routes.path('model', 'redshift');
 
       this.redshiftqueryutilities.instantiateRedshift();
 
-      //Technical Debt:  Use Array Utilities method.
-      //Technical Debt:  This is clumsy...
-      let query_promises = table_filenames.map((filename) => this.collectQueryFromPath(directory+'/'+filename, filename));
+      // Technical Debt:  This is clumsy...
+      // A.Zelen Need sugestion
 
-      //Finish
+      let query_promises = arrayutilities.map(table_filenames, (filename) => {
+        this.collectQueryFromPath(path_to_model+'/'+filename, filename)
+      });
+
+      return Promise.all(query_promises);
 
     }
 
@@ -87,6 +91,8 @@ module.exports = class RedshiftDeployment{
         this.getVersionNumberFromFile(path)
       ];
 
+      let query ='';
+
       return Promise.all(version_promises).then((version_promises) => {
 
         let database_version = version_promises[0];
@@ -94,18 +100,21 @@ module.exports = class RedshiftDeployment{
 
         du.info('Filename: '+ filename, 'Database Version Number: '+database_version, 'File Version Number '+file_version);
 
-        //Technical Debt:  Why do we care if the file starts with a digit?
+        // Technical Debt:  Why do we care if the file starts with a digit?
+        // A.Zelen If the table starts with a digit then it will always execute
+
         if (database_version < file_version || filename.match(/^[0-9]/)) {
 
           let content = fileutilities.getFileContentsSync(path);
 
+          // what's this?
+          // A.Zelen Construction of a table deploy query, tables with not changed versions are skiped
 
-          //what's this?
-          //query += `${content};`;
+          query = `${content};`;
 
         }
 
-        return true;
+        return query;
 
       });
 
@@ -120,7 +129,7 @@ module.exports = class RedshiftDeployment{
       let file_contents_array = file_contents.split('\n');
 
       let version_number = arrayutilities.filter(file_contents_array, (line) => {
-        return line.match(/TABLE_VERSION/).toString().replace(/[^0-9]/g,'');
+        return line.match(/TABLE_VERSION/) ? line.match(/TABLE_VERSION/).toString().replace(/[^0-9]/g,'') : '';
       });
 
       return mathutilities.toNumber(version_number);
@@ -153,43 +162,25 @@ module.exports = class RedshiftDeployment{
 
     }
 
-    createCluster() {
-
-      let parameters = this.createParametersObject('create');
-
-      return new Promise((resolve, reject) => {
-          this.redshift.createCluster(parameters, (error, data) => {
-              if (error) {
-                  du.error(error.message);
-                  return reject(error);
-              } else {
-                  return resolve(data);
-              }
-          });
-      });
-
-    }
-
     deleteClusterAndWait() {
 
-        return this.deleteCluster().then(() => {
-            return this.waitForCluster('clusterDeleted');
+        return this.redshiftutilities.deleteCluster().then(() => {
+            return this.redshiftutilities.waitForCluster('clusterDeleted');
         });
 
     }
 
     createClusterAndWait() {
 
-        return this.createCluster().then(() => {
-            return this.waitForCluster('clusterAvailable');
+        return this.redshiftutilities.createCluster().then(() => {
+            return this.redshiftutilities.waitForCluster('clusterAvailable');
         });
 
     }
 
-
     destroyCluster(){
 
-      return this.clusterExists().then(exists => {
+      return this.redshiftutilities.clusterExists().then(exists => {
 
           if (!exists) {
 
@@ -213,9 +204,7 @@ module.exports = class RedshiftDeployment{
 
     deployCluster(){
 
-      //du.output('Cluster parameters:', this.site_config.redshift.cluster);
-
-      return this.clusterExists().then(exists => {
+      return this.redshiftutilities.clusterExists().then(exists => {
 
           if (exists) {
 

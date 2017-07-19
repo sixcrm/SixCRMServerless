@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/optionaluuidv4.json",
+  "title": "SixCrmIdentifier",
+
+  "type":"string",
+  "anyOf":[
+    {"$ref": "uuidv4.json"},
+    {"type":"string","enum":[""]}
+  ]
+
+}

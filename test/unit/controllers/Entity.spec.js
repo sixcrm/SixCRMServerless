@@ -43,7 +43,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.can(anAction).catch((error) => {
                 // then
-                expect(error.message).to.equal('Missing request parameters');
+                expect(error.message).to.equal('[500] Missing request parameters');
             });
         });
 
