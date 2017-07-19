@@ -1,32 +1,32 @@
 [
   {
-    "Bucket": "sixcrm-redshift"
+    "Bucket": "redshift"
   },
   {
-    "Bucket": "sixcrm-kinesis-activity"
+    "Bucket": "kinesis-activity"
   },
   {
-    "Bucket": "sixcrm-kinesis-events"
+    "Bucket": "kinesis-events"
   },
   {
-    "Bucket": "sixcrm-kinesis-merchant-processor"
+    "Bucket": "kinesis-merchant-processor"
   },
   {
-    "Bucket": "sixcrm-kinesis-transactions"
+    "Bucket": "kinesis-transactions"
   },
   {
-    "Bucket": "sixcrm-manual-upload"
+    "Bucket": "manual-upload"
   },
   {
-    "Bucket": "sixcrm-output"
+    "Bucket": "output"
   },
   {
-    "Bucket": "sixcrm-random-generator"
+    "Bucket": "random-generator"
   },
   {
-    "Bucket": "sixcrm-resources"
+    "Bucket": "resources"
   },
   {
-    "Bucket": "sixcrm-test"
+    "Bucket": "test"
   }
 ]

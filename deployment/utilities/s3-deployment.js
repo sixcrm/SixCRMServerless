@@ -4,6 +4,7 @@ const du = global.routes.include('lib', 'debug-utilities.js');
 const eu = global.routes.include('lib', 'error-utilities.js');
 const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
 const fileutilities = global.routes.include('lib', 'file-utilities.js');
+const parserutilities = global.routes.include('lib', 'parser-utilities.js');
 
 class S3Deployment{
 
@@ -14,6 +15,8 @@ class S3Deployment{
       this.site_config = configurationutilities.getSiteConfig(this.stage);
 
       this.s3utilities = global.routes.include('lib', 's3-utilities.js');
+
+      this.bucket_name_template = 'sixcrm-{{stage}}-{{bucket_name}}';
 
     }
 
@@ -93,7 +96,9 @@ class S3Deployment{
 
       let group_file_definition_promises = group_file_definition.map((sub_definition) => {
 
-        return this.s3utilities.assure_bucket(sub_definition.Bucket);
+        let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
+
+        return this.s3utilities.assure_bucket(bucket_name);
 
       });
 
@@ -105,7 +110,9 @@ class S3Deployment{
 
       let group_file_definition_promises = group_file_definition.map((sub_definition) => {
 
-        return this.s3utilities.assure_delete(sub_definition.Bucket);
+        let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
+
+        return this.s3utilities.assure_delete(bucket_name);
 
       });
 
@@ -321,6 +328,12 @@ class S3Deployment{
               }
           });
         });
+
+    }
+
+    createEnvironmentSpecificBucketName(bucket_name){
+
+      return parserutilities.parse(this.bucket_name_template, {stage: this.stage, bucket_name: bucket_name});
 
     }
 
