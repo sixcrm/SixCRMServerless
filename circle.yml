@@ -61,7 +61,7 @@ deployment:
       #Create cluster if does not exist.
       - node ./deployment/redshift/create_cluster.js $CIRCLE_BRANCH
       #Create tables.
-      - node ./deployment/redshift/deploy_redshift.js $CIRCLE_BRANCH
+      #- node ./deployment/redshift/deploy_redshift.js $CIRCLE_BRANCH
 
       # Technical Debt:  Add Elasticache and NAT Instance (where necessary)
       # Technical Debt: API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
@@ -96,7 +96,7 @@ deployment:
 
       #Kinesis
       # node ./deployment/kinesis/deploy_kinesis.js $CIRCLE_BRANCH
-      
+
       #CloudSearch
       # - node ./deployment/cloudsearch/deploy.js $CIRCLE_BRANCH
       - node ./deployment/cloudsearch/purge.js $CIRCLE_BRANCH
