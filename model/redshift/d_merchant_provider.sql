@@ -5,7 +5,7 @@
 TABLE_VERSION 1
 */
 
-DROP TABLE d_merchant_provider;
+DROP TABLE IF EXISTS d_merchant_provider;
 
 DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_merchant_provider';
 

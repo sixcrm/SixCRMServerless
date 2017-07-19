@@ -4,7 +4,7 @@
 TABLE_VERSION 1
 */
 
-DROP TABLE f_sessions;
+DROP TABLE IF EXISTS f_sessions;
 
 DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_sessions';
 

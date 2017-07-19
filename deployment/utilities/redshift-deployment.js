@@ -9,7 +9,6 @@ const objectutilities = global.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.routes.include('lib', 'math-utilities.js');
 
-let query = '';
 
 module.exports = class RedshiftDeployment {
 
@@ -44,9 +43,9 @@ module.exports = class RedshiftDeployment {
 
   execute(query) {
 
-    du.debug('Execute' + query);
+    du.debug('Execute');
 
-    return this.redshiftqueryutilities.query(query);
+    return this.redshiftqueryutilities.query(query.join(';'));
 
   }
 
@@ -79,13 +78,12 @@ module.exports = class RedshiftDeployment {
     // A.Zelen Need sugestion
 
     let query_promises = arrayutilities.map(table_filenames, (filename) => {
-      this.collectQueryFromPath(path_to_model+'/'+filename, filename)
+      return this.collectQueryFromPath(path_to_model+'/'+filename, filename)
     });
 
     return this.redshiftqueryutilities.openConnection().then(() => {
         return Promise.all(query_promises).then((query_promises) => {
             this.redshiftqueryutilities.closeConnection();
-            console.log(query_promises);
             return query_promises;
         });
       });
@@ -119,7 +117,7 @@ module.exports = class RedshiftDeployment {
         query = ''+content+';';
 
       }
-      //console.log(query);
+
       return query;
     }).catch(e => {
       du.error(e);
@@ -163,8 +161,6 @@ module.exports = class RedshiftDeployment {
       if (result && result.length > 0) {
         return result[0].version;
       }
-      return 0;
-    }).catch(reason => {
       return 0;
     });
 

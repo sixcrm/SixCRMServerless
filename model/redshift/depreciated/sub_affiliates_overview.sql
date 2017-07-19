@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS sys_sixcrm.sys_table_version
 );
 
 
-SELECT version
+SELECT *
 FROM sys_sixcrm.sys_table_version
 where table_name ='f_transactions'
 
