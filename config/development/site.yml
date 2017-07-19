@@ -16,7 +16,7 @@ dynamodb:
 
 cloudsearch:
   domainname: 'sixcrm'
-  
+
 lambda:
   endpoint: ''
   function_names:
@@ -52,7 +52,7 @@ redshift:
   user: 'admin'
   database: 'dev'
   password: 'Jagodica9'
-  host: 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com'
+  host: 'sixcrm-development.ch9ptr45aofu.us-east-1.redshift.amazonaws.com'
   port: 5439
   max: 10
   idle_timeout: 30000

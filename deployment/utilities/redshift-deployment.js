@@ -42,7 +42,7 @@ module.exports = class RedshiftDeployment{
 
     execute(query) {
 
-      du.debug('Execute');
+      du.debug('Execute'+query);
 
       return this.redshiftqueryutilities.query(query);
 
@@ -77,7 +77,7 @@ module.exports = class RedshiftDeployment{
       // A.Zelen Need sugestion
 
       let query_promises = arrayutilities.map(table_filenames, (filename) => {
-        this.collectQueryFromPath(path_to_model+'/'+filename, filename)
+        this.collectQueryFromPath(path_to_model+'/'+filename, filename);
       });
 
       return Promise.all(query_promises);
@@ -86,23 +86,23 @@ module.exports = class RedshiftDeployment{
 
     collectQueryFromPath(path, filename) {
 
+      let query ='';
+
       let version_promises = [
         this.getTableVersion(filename),
         this.getVersionNumberFromFile(path)
       ];
 
-      let query ='';
-
       return Promise.all(version_promises).then((version_promises) => {
 
         let database_version = version_promises[0];
-        let file_version = version_promises[0];
+        let file_version = version_promises[1];
 
-        du.info('Filename: '+ filename, 'Database Version Number: '+database_version, 'File Version Number '+file_version);
+        du.debug('Filename: '+ filename, 'Database Version Number: '+database_version, 'File Version Number '+file_version);
 
         // Technical Debt:  Why do we care if the file starts with a digit?
         // A.Zelen If the table starts with a digit then it will always execute
-
+        console.log(version_promises)
         if (database_version < file_version || filename.match(/^[0-9]/)) {
 
           let content = fileutilities.getFileContentsSync(path);
@@ -129,10 +129,10 @@ module.exports = class RedshiftDeployment{
       let file_contents_array = file_contents.split('\n');
 
       let version_number = arrayutilities.filter(file_contents_array, (line) => {
-        return line.match(/TABLE_VERSION/) ? line.match(/TABLE_VERSION/).toString().replace(/[^0-9]/g,'') : '';
+        return line.match(/TABLE_VERSION/);
       });
 
-      return mathutilities.toNumber(version_number);
+      return mathutilities.toNumber(version_number.toString().replace(/[^0-9]/g,''));
 
     }
 
@@ -150,17 +150,18 @@ module.exports = class RedshiftDeployment{
         WHERE \
           table_name = "'+table_name+'"';
 
+
       return this.redshiftqueryutilities.queryRaw(version_query).then(result => {
-
-          if (result && result.length > 0) {
-              return result[0].version;
+          if (result && result.length > 0){
+            return result[0].version;
           }
-
           return 0;
-
+      }).catch(reason => {
+          return 0;
       });
 
     }
+
 
     deleteClusterAndWait() {
 
