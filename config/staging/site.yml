@@ -1,3 +1,8 @@
+aws:
+  region: 'us-east-1'
+  account: '821071795213'
+
+#Technical Debt:  This sort of thing should be encrypted...
 jwt:
   issuer: 'https://api.sixcrm.com'
   development_bypass: 'deathstalker'
@@ -13,6 +18,9 @@ jwt:
 
 dynamodb:
   endpoint: ''
+
+cloudsearch:
+  domainname: 'sixcrm'
 
 #Technical Debt:  Let's eliminate this.
 lambda:
@@ -47,6 +55,7 @@ shipping_providers:
     password: '392VM80MW850'
 
 #Technical Debt: This all needs to be configured elsewhere?
+#Technical Debt:  Username and Password combinations need to be encrypted...
 redshift:
   user: 'admin'
   database: 'dev'
@@ -158,20 +167,3 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
-
-aws:
-  region: 'us-east-1'
-  account: '821071795213'
-
-s3:
-  redshift:
-    node: 'sixcrm-staging-redshift'
-    child:
-      node1:'sixcrm-kinesis-activity'
-      node2:'sixcrm-kinesis-events'
-      node3:'sixcrm-kinesis-merchant-processor'
-      node4:'sixcrm-kinesis-transactions'
-      node5:'sixcrm-manual-upload'
-      node6:'sixcrm-output'
-      node7:'sixcrm-random-generator'
-      node8:'sixcrm-resources'

@@ -1,74 +1,18 @@
-"use strict"
+'use strict'
 require('../../routes.js');
-const AWS = require("aws-sdk");
-const _ = require('underscore');
+
 const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const CloudsearchDeployment = global.routes.include('deployment', 'utilities/cloudsearch-deployment.js');
 
-//Technical Debt:  This should use a lib here instead of making raw AWS calls
-let cs = new AWS.CloudSearch({
-    region: 'us-east-1',
-    apiVersion: '2013-01-01'
+let stage = process.argv[2] || 'development';
+
+process.env.stage = stage;
+
+let cloudsearchDeployment = new CloudsearchDeployment(stage);
+
+return cloudsearchDeployment.destroy().then((result) => {
+  du.highlight(result);
+}).catch(error => {
+  du.error(error);
+  du.warning(error.message);
 });
-let environment = process.argv[2];
-let domain_name = 'sixcrm-'+environment;
-
-du.highlight('Executing CloudSearch Deletion: '+domain_name);
-
-getDomainNames()
-.then(deleteDomain)
-.then(du.highlight('Complete'))
-.catch((error) => {
-    eu.throwError(error);
-});
-
-function deleteDomain(domain_array){
-
-    du.debug(domain_array);
-    du.debug('Delete Domain');
-
-    return new Promise((resolve, reject) => {
-
-        if(_.contains(domain_array, domain_name)){
-
-            let params = {
-                DomainName: domain_name
-            };
-
-            cs.deleteDomain(params, (error, data) => {
-
-                if(error){ return reject(error); }
-
-                return resolve(data);
-
-            });
-
-        }else{
-
-            du.debug('Domain name doesn\'t exist in this region.');
-
-            return resolve(true);
-
-        }
-
-    });
-
-}
-
-function getDomainNames(){
-
-    du.debug('Get Domain Names');
-
-    return new Promise((resolve, reject) => {
-
-        cs.listDomainNames((error, data) => {
-
-            if(error){ return reject(error); }
-
-            return resolve(Object.keys(data.DomainNames || {}));
-
-        });
-
-    });
-
-}

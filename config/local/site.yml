@@ -14,6 +14,9 @@ jwt:
 dynamodb:
   endpoint: 'http://localhost:8001'
 
+cloudsearch:
+  domainname: 'sixcrm'
+  
 lambda:
   endpoint: 'http://localhost:3000'
   function_names:

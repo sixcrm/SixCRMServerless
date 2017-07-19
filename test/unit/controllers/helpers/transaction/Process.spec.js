@@ -283,6 +283,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       creditcard.properties = creditcard_properties;
 
+      //Technical Debt:  This is bad.
       process.env.stage = 'development';
 
       let ph = new processHelperController();

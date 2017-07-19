@@ -10,7 +10,7 @@ process.env.stage = stage;
 
 let cloudsearchDeployment = new CloudsearchDeployment(stage);
 
-return cloudsearchDeployment.deploy().then((result) => {
+return cloudsearchDeployment.purge().then((result) => {
   du.highlight(result);
 }).catch(error => {
   du.error(error);
