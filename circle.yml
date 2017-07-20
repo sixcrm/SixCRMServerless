@@ -99,7 +99,7 @@ deployment:
       - node ./deployment/redshift/deploy_cluster.js $CIRCLE_BRANCH
 
       #here...
-      - node ./deployment/redshift/deploy_redshift.js $CIRCLE_BRANCH
+      - node ./deployment/redshift/deploy_redshift_tables.js $CIRCLE_BRANCH
 
       #Kinesis
       # node ./deployment/kinesis/deploy_kinesis.js $CIRCLE_BRANCH
