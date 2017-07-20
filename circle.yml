@@ -44,14 +44,21 @@ deployment:
   staging:
     branch: staging
     commands:
+
+      #OK
       - serverless deploy --stage $CIRCLE_BRANCH
+
+      #OK
       - node ./deployment/sqs/deploy_queues.js $CIRCLE_BRANCH
 
-      #CloudSearch
-      #Technical Debt:  This needs to be configured for multi-environment purges
-      #- node ./deployment/cloudsearch/purge_index.js $CIRCLE_BRANCH
-      - node ./deployment/cloudsearch/deploy.js sixcrm-$CIRCLE_BRANCH
+      #OK
+      - node ./deployment/cloudsearch/deploy.js $CIRCLE_BRANCH
+      #- node ./deployment/cloudsearch/purge.js $CIRCLE_BRANCH
 
+      #Redshift
+      #Create cluster if does not exist.
+      - node ./deployment/redshift/create_cluster.js $CIRCLE_BRANCH
+      
       #DynamoDB
       #- node ./deployment/dynamodb/purge_tables.js $CIRCLE_BRANCH
       - node ./deployment/dynamodb/deploy_tables.js $CIRCLE_BRANCH
