@@ -5,7 +5,7 @@
 TABLE_VERSION 2
 */
 
-DROP TABLE d_event_type;
+DROP TABLE IF EXISTS d_event_type;
 
 DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_event_type';
 

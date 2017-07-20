@@ -9,25 +9,26 @@ const objectutilities = global.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.routes.include('lib', 'math-utilities.js');
 
-module.exports = class RedshiftDeployment{
 
-    constructor(stage) {
+module.exports = class RedshiftDeployment {
 
-        this.stage = configurationutilities.resolveStage(stage);
+  constructor(stage) {
 
-        process.env.stage = this.stage;
+    this.stage = configurationutilities.resolveStage(stage);
 
-        this.site_config = configurationutilities.getSiteConfig(this.stage);
+    process.env.stage = this.stage;
 
-        this.redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
+    this.site_config = configurationutilities.getSiteConfig(this.stage);
 
-        this.redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
+    this.redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
 
-    }
+    this.redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
 
-    deployTables(){
+  }
 
-      return this.getTableFilenames()
+  deployTables() {
+
+    return this.getTableFilenames()
       .then((filenames) => this.collectQueries(filenames))
       .then((query) => this.execute(query))
       .then((result) => {
@@ -38,192 +39,196 @@ module.exports = class RedshiftDeployment{
 
       });
 
-    }
+  }
 
-    execute(query) {
+  execute(query) {
 
-      du.debug('Execute');
+    du.debug('Execute');
 
-      return this.redshiftqueryutilities.query(query);
+    return this.redshiftqueryutilities.query(query.join(';'));
 
-    }
+  }
 
-    getTableFilenames(){
+  getTableFilenames() {
 
-      du.debug('Get Redshift Table Names');
+    du.debug('Get Redshift Table Names');
 
-      return fileutilities.getDirectoryFiles(global.routes.path('model', 'redshift')).then((files) => {
+    return fileutilities.getDirectoryFiles(global.routes.path('model', 'redshift')).then((files) => {
 
-        files = files.filter(file => file.match(/\.sql$/));
+      files = files.filter(file => file.match(/\.sql$/));
 
-        //  Technical Debt:  (Aldo) Why does this matter?
-        //  A.Zelen It's here because we need the model to be deployed in certain order (1,2 go first)
+      //  Technical Debt:  (Aldo) Why does this matter?
+      //  A.Zelen It's here because we need the model to be deployed in certain order (1,2 go first)
 
-        files.sort();
+      files.sort();
 
-        return files;
+      return files;
 
+    });
+
+  }
+
+  collectQueries(table_filenames) {
+
+    let path_to_model = global.routes.path('model', 'redshift');
+
+    this.redshiftqueryutilities.instantiateRedshift();
+
+    // Technical Debt:  This is clumsy...
+    // A.Zelen Need sugestion
+
+    let query_promises = arrayutilities.map(table_filenames, (filename) => {
+      return this.collectQueryFromPath(path_to_model+'/'+filename, filename)
+    });
+
+    return this.redshiftqueryutilities.openConnection().then(() => {
+        return Promise.all(query_promises).then((query_promises) => {
+            this.redshiftqueryutilities.closeConnection();
+            return query_promises;
+        });
       });
 
-    }
+  }
 
-    collectQueries(table_filenames) {
+  collectQueryFromPath(path, filename) {
 
-      let path_to_model = global.routes.path('model', 'redshift');
+    let version_promises = [
+      this.getTableVersion(filename),
+      this.getVersionNumberFromFile(path)
+    ];
 
-      this.redshiftqueryutilities.instantiateRedshift();
+    return Promise.all(version_promises).then((version_promises) => {
 
-      // Technical Debt:  This is clumsy...
-      // A.Zelen Need sugestion
+      let database_version = version_promises[0];
+      let file_version = version_promises[1];
+      let query = '';
 
-      let query_promises = arrayutilities.map(table_filenames, (filename) => {
-        this.collectQueryFromPath(path_to_model+'/'+filename, filename)
-      });
+      du.debug('Filename: ' + filename, 'Database Version Number: ' + database_version, 'File Version Number ' + file_version);
 
-      return Promise.all(query_promises);
+      // Technical Debt:  Why do we care if the file starts with a digit?
+      // A.Zelen If the table starts with a digit then it will always execute
+      if (database_version < file_version || filename.match(/^[0-9]/)) {
 
-    }
+        let content = fileutilities.getFileContentsSync(path);
 
-    collectQueryFromPath(path, filename) {
+        // what's this?
+        // A.Zelen Construction of a table deploy query, tables with not changed versions are skiped
 
-      let version_promises = [
-        this.getTableVersion(filename),
-        this.getVersionNumberFromFile(path)
-      ];
+        query = ''+content+';';
 
-      let query ='';
+      }
 
-      return Promise.all(version_promises).then((version_promises) => {
+      return query;
+    }).catch(e => {
+      du.error(e);
+    });
+  }
 
-        let database_version = version_promises[0];
-        let file_version = version_promises[0];
+  getVersionNumberFromFile(path) {
 
-        du.info('Filename: '+ filename, 'Database Version Number: '+database_version, 'File Version Number '+file_version);
+    du.highlight('Get Version Number From File');
 
-        // Technical Debt:  Why do we care if the file starts with a digit?
-        // A.Zelen If the table starts with a digit then it will always execute
+    let file_contents = fileutilities.getFileContentsSync(path);
 
-        if (database_version < file_version || filename.match(/^[0-9]/)) {
+    let file_contents_array = file_contents.split('\n');
 
-          let content = fileutilities.getFileContentsSync(path);
+    let version_number = arrayutilities.filter(file_contents_array, (line) => {
+      return line.match(/TABLE_VERSION/);
+    });
 
-          // what's this?
-          // A.Zelen Construction of a table deploy query, tables with not changed versions are skiped
+    return mathutilities.toNumber(version_number.toString().replace(/[^0-9]/g, ''));
 
-          query = `${content};`;
+  }
 
-        }
+  getTableVersion(filename) {
 
-        return query;
+    du.highlight('Get Table Version ' + filename);
 
-      });
+    let table_name = filename.replace('.sql', '');
 
-    }
-
-    getVersionNumberFromFile(path) {
-
-      du.highlight('Get Version Number From File');
-
-      let file_contents = fileutilities.getFileContentsSync(path);
-
-      let file_contents_array = file_contents.split('\n');
-
-      let version_number = arrayutilities.filter(file_contents_array, (line) => {
-        return line.match(/TABLE_VERSION/) ? line.match(/TABLE_VERSION/).toString().replace(/[^0-9]/g,'') : '';
-      });
-
-      return mathutilities.toNumber(version_number);
-
-    }
-
-    getTableVersion(filename) {
-
-      du.highlight('Get Table Version');
-
-      let table_name = filename.replace('.sql', '');
-
-      let version_query = '\
+    let version_query = '\
         SELECT \
           version \
         FROM  \
           sys_sixcrm.sys_table_version \
         WHERE \
-          table_name = "'+table_name+'"';
+          table_name = \'' + table_name + '\'';
 
-      return this.redshiftqueryutilities.queryRaw(version_query).then(result => {
 
-          if (result && result.length > 0) {
-              return result[0].version;
-          }
+    return this.redshiftqueryutilities.queryRaw(version_query).then(result => {
 
-          return 0;
+      du.highlight('Got response table_name ', table_name)
+      if (result && result.length > 0) {
+        return result[0].version;
+      }
+      return 0;
+    });
 
-      });
+  }
 
-    }
 
-    deleteClusterAndWait() {
+  deleteClusterAndWait() {
 
-        return this.redshiftutilities.deleteCluster().then(() => {
-            return this.redshiftutilities.waitForCluster('clusterDeleted');
+    return this.redshiftutilities.deleteCluster().then(() => {
+      return this.redshiftutilities.waitForCluster('clusterDeleted');
+    });
+
+  }
+
+  createClusterAndWait() {
+
+    return this.redshiftutilities.createCluster().then(() => {
+      return this.redshiftutilities.waitForCluster('clusterAvailable');
+    });
+
+  }
+
+  destroyCluster() {
+
+    return this.redshiftutilities.clusterExists().then(exists => {
+
+      if (!exists) {
+
+        return Promise.resolve('Cluster does not exist, aborting.');
+
+      } else {
+
+        du.output('Cluster exists, destroying.');
+
+        return this.deleteClusterAndWait().then(() => {
+
+          return 'Cluster destroyed.';
+
         });
 
-    }
+      }
 
-    createClusterAndWait() {
+    });
 
-        return this.redshiftutilities.createCluster().then(() => {
-            return this.redshiftutilities.waitForCluster('clusterAvailable');
+  }
+
+  deployCluster() {
+
+    return this.redshiftutilities.clusterExists().then(exists => {
+
+      if (exists) {
+
+        return Promise.resolve('Cluster exists, aborting.');
+
+      } else {
+
+        du.output('Cluster does not exist, creating.');
+
+        return this.createClusterAndWait().then(() => {
+
+          return 'Cluster created.';
+
         });
 
-    }
+      }
 
-    destroyCluster(){
+    });
 
-      return this.redshiftutilities.clusterExists().then(exists => {
-
-          if (!exists) {
-
-              return Promise.resolve('Cluster does not exist, aborting.');
-
-          } else {
-
-              du.output('Cluster exists, destroying.');
-
-              return this.deleteClusterAndWait().then(() => {
-
-                  return 'Cluster destroyed.';
-
-              });
-
-          }
-
-      });
-
-    }
-
-    deployCluster(){
-
-      return this.redshiftutilities.clusterExists().then(exists => {
-
-          if (exists) {
-
-              return Promise.resolve('Cluster exists, aborting.');
-
-          } else {
-
-              du.output('Cluster does not exist, creating.');
-
-              return this.createClusterAndWait().then(() => {
-
-                  return 'Cluster created.';
-
-              });
-
-          }
-
-      });
-
-    }
+  }
 
 }

@@ -82,39 +82,42 @@ describe('lib/model-validator-utilities', () => {
 
     describe('entities', () => {
 
-        fs.readdirSync(global.routes.path('model', 'entities'))
-            // .filter((filename) => filename.indexOf('accesskey.json') > -1) // uncomment this for testing a single entity definition
-            .filter((filename) => filename.indexOf('.json') > -1)
-            .forEach((file) => {
-                let entity = file.substring(0, file.indexOf('.json'));
+        function validateSchemasOnPath(path) {
+            fs.readdirSync(path)
+                .filter((file_name) => file_name.indexOf('.json') > -1)
+                .forEach((file_name) => {
+                    let schema = path + '/' + file_name;
+                    let model_name = schema.replace(global.routes.path('model'), '');
 
-                xit('validates valid ' + entity, () => {
+                    it('validates valid ' + model_name, () => {
 
-                    let schema = global.routes.path('model', 'entities/' + file);
+                        return modelgenerator.random(model_name).then((valid_model) => {
+                            du.debug('Model:', valid_model);
+                            du.debug('Schema:', schema);
+                            return expect(mvu.validateModel(valid_model, schema)).to.be.true;
+                        });
 
-                    return modelgenerator.randomEntity(entity).then((valid_model) => {
-                        du.debug('Model:', valid_model);
+                    });
+
+                    it('validates invalid ' + model_name, () => {
+                        let invalid_model = {};
+
+                        du.debug('Model:', invalid_model);
                         du.debug('Schema:', schema);
-                        return expect(mvu.validateModel(valid_model, schema)).to.be.true;
+
+                        try {
+                            mvu.validateModel(invalid_model, schema);
+                        } catch (e) {
+                            expect(e.message).to.equal('[500] One or more validation errors occurred.');
+                        }
                     });
 
                 });
-
-                it('validates invalid ' + entity, () => {
-                    let invalid_model = {};
-                    let schema = global.routes.path('model', 'entities/' + file);
-
-                    du.debug('Model:', invalid_model);
-                    du.debug('Schema:', schema);
-
-                    try {
-                        mvu.validateModel(invalid_model, schema);
-                    } catch (e) {
-                        expect(e.message).to.equal('[500] One or more validation errors occurred.');
-                    }
-                });
-
-            });
+        }
+        validateSchemasOnPath(global.routes.path('model', 'entities'));
+        validateSchemasOnPath(global.routes.path('model', 'actions'));
+        validateSchemasOnPath(global.routes.path('model', 'jwt'));
+        validateSchemasOnPath(global.routes.path('model', 'transaction'));
 
     });
 

@@ -5,7 +5,7 @@
 TABLE_VERSION 1
 */
 
-DROP TABLE d_bin;
+DROP TABLE IF EXISTS d_bin;
 
 DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_bin';
 

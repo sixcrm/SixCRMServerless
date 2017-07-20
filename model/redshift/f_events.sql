@@ -5,7 +5,7 @@
 TABLE_VERSION 1
 */
 
-DROP TABLE f_events;
+DROP TABLE IF EXISTS f_events;
 
 DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_events';
 

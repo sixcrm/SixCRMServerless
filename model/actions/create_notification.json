@@ -3,11 +3,10 @@
   "type": "object",
   "properties": {
     "user":{
-      "type":"string"
+      "type": "string",
+      "format": "email"
     },
-    "account":{
-      "type":"string"
-    },
+    "account": {"$ref": "../definitions/sixcrmidentifier.json"},
     "type":{
       "type":"string"
     },

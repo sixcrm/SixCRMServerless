@@ -1,7 +1,20 @@
-select
-  affiliate,
-  sum(amount)
-from dev.public.f_transactions
-where 1
-  AND datetime BETWEEN TIMESTAMP '01.01.2017' AND TIMESTAMP '07.01.2017'
-group by affiliate;
+SELECT version
+FROM sys_sixcrm.sys_table_version
+WHERE table_name = "f_transactions";
+
+
+
+CREATE TABLE IF NOT EXISTS sys_sixcrm.sys_table_version
+(
+  table_name varchar(100),
+  version integer,
+  datetime timestamp
+);
+
+
+SELECT *
+FROM sys_sixcrm.sys_table_version
+where table_name ='f_transactions'
+
+create schema if not exists sys_sixcrm;
+create schema if not exists backup;
