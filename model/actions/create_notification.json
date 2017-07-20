@@ -6,7 +6,9 @@
       "type": "string",
       "format": "email"
     },
-    "account": {"$ref": "../definitions/sixcrmidentifier.json"},
+    "account": {
+      "type":"string"
+    },
     "type":{
       "type":"string"
     },
