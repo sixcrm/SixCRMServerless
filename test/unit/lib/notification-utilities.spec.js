@@ -37,10 +37,12 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.account;
 
-            return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
+            try {
+                return NotificationUtilities.validateCreateNotificationObject(notification_object);
+            } catch(error) {
                 // then
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
-            });
+            }
         });
 
         it('should not allow object without a type', () => {
@@ -50,10 +52,12 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.type;
 
-            return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
+            try {
+                return NotificationUtilities.validateCreateNotificationObject(notification_object);
+            } catch(error) {
                 // then
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
-            });
+            }
         });
 
         it('should not allow object without an action', () => {
@@ -63,10 +67,12 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.action;
 
-            return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
+            try {
+                return NotificationUtilities.validateCreateNotificationObject(notification_object);
+            } catch(error) {
                 // then
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
-            });
+            }
         });
 
         it('should not allow object without a body', () => {
@@ -76,10 +82,12 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.body;
 
-            return NotificationUtilities.validateCreateNotificationObject(notification_object).catch((error) => {
+            try {
+                return NotificationUtilities.validateCreateNotificationObject(notification_object);
+            } catch(error) {
                 // then
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
-            });
+            }
         });
 
         it('should allow valid object', () => {
@@ -112,10 +120,12 @@ describe('lib/notification-utilities', () => {
             // when
             delete notification_object.account;
 
-            return NotificationUtilities.createNotificationsForAccount(notification_object).catch((error) => {
+            try {
+                return NotificationUtilities.createNotificationsForAccount(notification_object);
+            } catch (error) {
                 // then
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
-            });
+            }
         });
 
         it('should create notifications when the object is valid', (done) => {
