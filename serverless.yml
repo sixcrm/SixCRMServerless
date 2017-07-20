@@ -97,10 +97,6 @@ functions:
     environment:
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
-      elasticache_endpoint: ${file(./config/${opt:stage}/site.yml):elasticache.endpoint}
-      elasticache_port: ${file(./config/${opt:stage}/site.yml):elasticache.port}
-      elasticache_retry_time: ${file(./config/${opt:stage}/site.yml):elasticache.retry_time}
-      elasticache_max_attempts: ${file(./config/${opt:stage}/site.yml):elasticache.max_attempts}
       logging: ${file(./config/${opt:stage}/site.yml):logging.loglevel}
 
 
@@ -453,4 +449,4 @@ resources:
                - sns:*
              Resource: "*"
         Roles:
-          - Ref: IamRoleLambdaExecution 
+          - Ref: IamRoleLambdaExecution

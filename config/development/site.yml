@@ -89,6 +89,7 @@ elasticache:
   retry_time: 1800000
   endpoint: '34.204.230.178'
   port: 6379
+  default_expiration: 300
 
 logging:
   loglevel: 0

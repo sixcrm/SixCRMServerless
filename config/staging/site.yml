@@ -88,12 +88,13 @@ cache:
   usecache: 1
   cachebuster: 'somerandomthing1'
 
-#Technical Debt:  This needs to be deployed elsewhere
 elasticache:
   max_attempts: 3
   retry_time: 1800000
+  #Technical Debt:  This is development's IP Address...
   endpoint: '34.204.230.178'
   port: 6379
+  default_expiration: 300
 
 logging:
   loglevel: 0

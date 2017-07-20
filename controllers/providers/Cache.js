@@ -15,7 +15,7 @@ module.exports = class cacheController {
             this.key_prefix = prefix;
         }
 
-        this.redisutilities = new redisutilities();
+        this.redisutilities = new redisutilities(process.env.stage);
 
     }
 

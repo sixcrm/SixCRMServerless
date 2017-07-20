@@ -16,7 +16,7 @@ dynamodb:
 
 cloudsearch:
   domainname: 'sixcrm'
-  
+
 lambda:
   endpoint: 'http://localhost:3000'
   function_names:
@@ -77,6 +77,7 @@ elasticache:
   retry_time: 1800000
   endpoint: 'localhost'
   port: 6379
+  default_expiration: 300
 
 logging:
   loglevel: 2
