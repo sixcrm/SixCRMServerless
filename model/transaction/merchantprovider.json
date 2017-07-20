@@ -47,7 +47,7 @@
 		},
 		"processor":{
 			"type":"object",
-			"fields":{
+			"properties":{
 				"name":{
 					"type":"string",
 					"enum":["NMA","Humbolt","GMA","Group ISO"]
@@ -60,7 +60,7 @@
 		},
 		"processing":{
 			"type":"object",
-			"fields":{
+			"properties":{
 				"monthly_cap": {"$ref": "#/definitions/CURRENCY"},
 				"discount_rate":{"$ref": "#/definitions/Percentage"},
 				"transaction_fee":{"$ref": "#/definitions/CURRENCY"},
@@ -68,7 +68,7 @@
 				"maximum_chargeback_ratio":{"$ref": "#/definitions/Percentage"},
 				"transaction_counts":{
 					"type":"object",
-					"fields":{
+					"properties":{
 						"daily":{
 							"type":"integer",
 							"minimum":0,
@@ -91,7 +91,7 @@
 		},
 		"gateway": {
 			"type":"object",
-			"fields":{
+			"properties":{
 				"name":{
 					"type":"string",
 					"enum":["NMI"]
@@ -129,7 +129,7 @@
 		},
 		"customer_service":{
 			"type":"object",
-			"fields":{
+			"properties":{
 				"email":{
 					"type":"string",
 					"format":"email"
