@@ -18,6 +18,8 @@ class ModelGenerator {
 
         du.debug('Generating random ' + name);
 
+        name = name.replace('.json', ''); // Extension is optional
+
         let schema = global.routes.include('model', name+'.json');
 
         du.debug('Schema is', schema);
@@ -40,7 +42,7 @@ class ModelGenerator {
 
             }
 
-            if (name === 'entities/merchantprovider') {
+            if (name === 'entities/merchantprovider' || name === 'transaction/merchantprovider') {
                 generated_object.gateway.endpoint = 'http://test.com';
             }
 
