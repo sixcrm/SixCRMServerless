@@ -140,6 +140,7 @@ class S3Deployment{
     }
 
     //Technical Debt:  So, folders aren't actually things in S3?
+    // A.Zelen yes there are put "objects" not actual entities
     folderExists(parameters) {
        /* Test if Bucket exists */
 
