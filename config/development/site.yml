@@ -94,6 +94,7 @@ elasticache:
 logging:
   loglevel: 0
 
+#Taking this out of site.yml config
 kinesis:
   firehose:
     streams:

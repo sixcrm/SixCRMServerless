@@ -16,8 +16,6 @@ module.exports = class RedshiftDeployment {
 
     this.stage = configurationutilities.resolveStage(stage);
 
-    process.env.stage = this.stage;
-
     this.site_config = configurationutilities.getSiteConfig(this.stage);
 
     this.redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');

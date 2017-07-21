@@ -7,10 +7,18 @@ const configurationutilities = global.routes.include('lib', 'configuration-utili
 
 class KinesisDeployment {
 
-    constructor(stage) {
+    constructor(stage,config_path) {
 
       this.stage = configurationutilities.resolveStage(stage);
+
+      // JSON of all the streams config
+      // Technical debt, need to move HOST info out of JSON
+
+      this.streams_config = configurationutilities.getEntityConfig(config_path);
+
       this.site_config = configurationutilities.getSiteConfig(this.stage);
+
+      this.firehosetutilities = global.routes.include('lib', 'firehose-utilities.js');
 
       this.kinesis = new AWS.Firehose({
           region: this.site_config.aws.region,
@@ -20,6 +28,8 @@ class KinesisDeployment {
     }
 
     destroyStreams(){
+
+      // Get a list of streams from JSON and execute destruction
 
       let stream_list = this.getStreamList();
 
@@ -70,6 +80,8 @@ class KinesisDeployment {
     }
 
     deployStreams(){
+
+      // Get a list of streams from JSON and execute creation
 
       let stream_list = this.getStreamList();
 
