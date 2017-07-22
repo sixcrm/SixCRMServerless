@@ -1,0 +1,30 @@
+[
+  {
+    "Description": "SixCRM Elasticache Security Group",
+    "GroupName": "SixCRM-Elasticache",
+    "Ingress":{
+      "IpPermissions": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ]
+        }
+      ]
+    },
+    "Egress":{
+      "IpPermissions": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
