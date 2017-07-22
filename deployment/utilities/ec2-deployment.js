@@ -32,6 +32,10 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
         create_egress_rules: {
           required:['GroupId'],
           optional:['GroupName','CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
+        },
+        delete: {
+          required:['GroupName'],
+          optional:['GroupId', 'DryRun']
         }
       }
     }
@@ -113,7 +117,35 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
   destroySecurityGroups(){
 
-    du.debug('Destroy');
+    du.debug('Destroy Security Groups');
+
+    let security_groups = this.getConfigurationJSON('security_groups');
+
+    let security_group_promises = security_groups.map(security_group => this.destroySecurityGroup(security_group));
+
+    return Promise.all(security_group_promises).then(() => {
+
+      return 'Complete';
+
+    });
+
+  }
+
+  destroySecurityGroup(security_group_definition){
+
+    du.debug('Destroy Security Group');
+
+    let parameters = this.createDestroyParameterGroup(security_group_definition);
+
+    return this.ec2utilities.destroySecurityGroup(parameters);
+
+  }
+
+  createDestroyParameterGroup(security_group_definition){
+
+    du.debug('Create Destroy Parameter Group');
+
+    return this.createParameterGroup('security_group', 'delete', security_group_definition);
 
   }
 
