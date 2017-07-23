@@ -1,8 +1,8 @@
 'use strict';
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-var LambdaResponse = global.routes.include('lib', 'lambda-response.js');
-var shipProductController = global.routes.include('controllers', 'workers/shipProduct.js');
+var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+var shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.shipproduct = (event, context, callback) => {

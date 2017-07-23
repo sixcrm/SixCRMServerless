@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 const _    = require("underscore");
 var util   = require('util');
 var AWS    = require('aws-sdk');
-var timestamp = global.routes.include('lib','timestamp.js');
+var timestamp = global.SixCRM.routes.include('lib','timestamp.js');
 
 /*
 

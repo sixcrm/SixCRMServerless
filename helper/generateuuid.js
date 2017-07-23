@@ -2,9 +2,9 @@
 const uuidV4 = require('uuid/v4');
 const _ = require('underscore');
 
-require('../routes.js');
+require('../SixCRM.js');
 
-const du = global.routes.include('lib','debug-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 process.env.SIX_VERBOSE = 2;
 

@@ -1,11 +1,11 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.routes.include('lib', 'array-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class campaignController extends entityController {
 
@@ -13,11 +13,11 @@ class campaignController extends entityController {
 
         super('campaign');
 
-        this.productController = global.routes.include('controllers', 'entities/Product.js');
-        this.loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
-        this.productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-        this.affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
-        this.emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+        this.loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+        this.productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+        this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+        this.emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 
     }
 
@@ -36,7 +36,7 @@ class campaignController extends entityController {
       let ac = this.affiliateController;
 
       if(!_.isFunction(ac.get)){
-        ac = global.routes.include('controllers', 'entities/Affiliate.js');
+        ac = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
       }
 
       let list_promises = list.map((list_item) => {
@@ -96,7 +96,7 @@ class campaignController extends entityController {
       let psc = this.productScheduleController;
 
       if(!_.isFunction(psc.listProductSchedulesByProduct)){
-        psc = global.routes.include('controllers', 'entities/ProductSchedule.js');
+        psc = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
       }
 
       return psc.listProductSchedulesByProduct({product: args.product, pagination: args.pagination}).then((product_schedules) => {
@@ -247,7 +247,7 @@ class campaignController extends entityController {
           let psc = this.productScheduleController;
 
           if(!_.isFunction(psc.get)){
-            psc = global.routes.include('controllers', 'entities/ProductSchedule.js');
+            psc = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
           }
 
           return campaign.productschedules.map(id => psc.get(id));
@@ -269,7 +269,7 @@ class campaignController extends entityController {
       let psc = this.productScheduleController;
 
       if(!_.isFunction(psc.getProductScheduleHydrated)){
-        psc = global.routes.include('controllers', 'entities/ProductSchedule.js');
+        psc = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
       }
 
       return Promise.all(campaign.productschedules.map(id => psc.getProductScheduleHydrated(id)));

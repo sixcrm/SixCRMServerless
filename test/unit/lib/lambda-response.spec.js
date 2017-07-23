@@ -1,4 +1,4 @@
-let LambdaResponse = global.routes.include('lib', 'lambda-response.js');
+let LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
 let chai = require('chai');
 let expect = chai.expect;
 

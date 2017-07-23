@@ -1,7 +1,7 @@
 'use strict';
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-var workerController = global.routes.include('controllers', 'workers/worker.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 class createRebillsController extends workerController {
 

@@ -1,8 +1,8 @@
 'use strict'
-require('../../routes.js');
+require('../../SixCRM.js');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const CloudsearchDeployment = global.routes.include('deployment', 'utilities/cloudsearch-deployment.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const CloudsearchDeployment = global.SixCRM.routes.include('deployment', 'utilities/cloudsearch-deployment.js');
 
 let stage = process.argv[2] || 'development';
 

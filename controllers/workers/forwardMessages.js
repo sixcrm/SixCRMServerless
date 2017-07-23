@@ -1,11 +1,11 @@
 'use strict';
 var _ = require("underscore");
-var sqs = global.routes.include('lib', 'sqs-utilities.js');
-var lambda = global.routes.include('lib', 'lambda-utilities.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+var sqs = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+var lambda = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var workerController = global.routes.include('controllers', 'workers/worker.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 /*
 *

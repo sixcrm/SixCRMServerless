@@ -5,7 +5,7 @@ const GraphQLString = require('graphql').GraphQLString;
 
 let merchantProviderType = require('./merchantProviderType');
 
-const loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'merchantproviderconfiguration',

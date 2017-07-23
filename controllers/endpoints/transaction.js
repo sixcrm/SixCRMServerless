@@ -2,15 +2,15 @@
 const _ = require("underscore");
 const luhn = require("luhn");
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const timestamp = global.routes.include('lib', 'timestamp.js');
-const kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities');
-const trackerutilities = global.routes.include('lib', 'tracker-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
+const trackerutilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
 
-const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
-const authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
+const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
+const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/authenticated.js');
 
 module.exports = class transactionEndpointController extends authenticatedController {
 
@@ -24,7 +24,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
 
-        this.affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+        this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
     }
 
@@ -347,7 +347,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         du.debug('Set User Email Helper Controller');
 
-        let userEmailHelperController = global.routes.include('controllers', 'helpers/user/Email.js');
+        let userEmailHelperController = global.SixCRM.routes.include('controllers', 'helpers/user/Email.js');
 
         this.userEmailHelperController = new userEmailHelperController();
 

@@ -1,8 +1,8 @@
 'use strict'
 
-require('../routes.js');
+require('../SixCRM.js');
 
-const du = global.routes.include('lib','debug-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 process.env.SIX_VERBOSE = 2;
 var rebill_object = {

@@ -1,8 +1,8 @@
 'use strict';
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
-const pickRebillController = global.routes.include('controllers', 'workers/pickRebill.js');
+const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+const pickRebillController = global.SixCRM.routes.include('controllers', 'workers/pickRebill.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.pickrebill = (event, context, callback) => {

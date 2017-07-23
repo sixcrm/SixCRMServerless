@@ -3,8 +3,8 @@ const _ = require('underscore');
 const request = require('request');
 const querystring = require('querystring');
 
-const du = global.routes.include('lib', 'debug-utilities');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 class NMIController {
 

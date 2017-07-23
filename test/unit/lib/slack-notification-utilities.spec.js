@@ -1,4 +1,4 @@
-let SlackNotificationUtilities = global.routes.include('lib', 'slack-notification-utilities.js');
+let SlackNotificationUtilities = global.SixCRM.routes.include('lib', 'slack-notification-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
@@ -40,7 +40,7 @@ describe('lib/slack-notification-utilities', () => {
             let notification_object = Object.assign({}, valid_notification_object);
             let webhook = 'http://test.com/webhook';
 
-            mockery.registerMock(global.routes.path('lib', 'slack-utilities'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'slack-utilities'), {
                 sendMessageToWebhook: (message) => {
                     expect(message).not.to.equal(message, 'Slack utilities should not have been called.');
                 }
@@ -63,13 +63,13 @@ describe('lib/slack-notification-utilities', () => {
             // given
             let webhook = 'http://test.com/webhook';
 
-            mockery.registerMock(global.routes.path('lib', 'slack-utilities'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'slack-utilities'), {
                 sendMessageToWebhook: (message) => {
                     expect(message).to.be.defined;
                     done();
                 }
             });
-            let SlackNotificationUtilities = global.routes.include('lib', 'slack-notification-utilities.js');
+            let SlackNotificationUtilities = global.SixCRM.routes.include('lib', 'slack-notification-utilities.js');
 
             SlackNotificationUtilities.sendNotificationViaSlack(valid_notification_object, webhook)
                 .catch((error) => {

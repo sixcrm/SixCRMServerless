@@ -13,7 +13,7 @@ describe('notificationController', function () {
             TestUtils.setEnvironmentVariables();
 
             // we need to initialize controller _after_ the variables has been set, that's why it's not on top of the file
-            notificationController = global.routes.include('controllers', 'entities/Notification.js');
+            notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
             done();
         });
 

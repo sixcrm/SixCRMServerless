@@ -1,11 +1,11 @@
 'use strict'
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const mvu = global.routes.include('lib', 'model-validator-utilities.js');
-const arrayutilities = global.routes.include('lib', 'array-utilities.js');
-const mathutilities = global.routes.include('lib', 'math-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
 
@@ -17,17 +17,17 @@ module.exports = class Process{
 
         this.optional_parameters = ['merchantprovider'];
 
-        this.productScheduleController = global.routes.include('entities','ProductSchedule.js');
+        this.productScheduleController = global.SixCRM.routes.include('entities','ProductSchedule.js');
 
-        this.loadBalancerController = global.routes.include('entities','LoadBalancer.js');
+        this.loadBalancerController = global.SixCRM.routes.include('entities','LoadBalancer.js');
 
-        this.customerController = global.routes.include('entities','Customer.js');
+        this.customerController = global.SixCRM.routes.include('entities','Customer.js');
 
-        this.creditCardController = global.routes.include('entities','CreditCard.js');
+        this.creditCardController = global.SixCRM.routes.include('entities','CreditCard.js');
 
-        this.analyticsController = global.routes.include('analytics', 'Analytics.js');
+        this.analyticsController = global.SixCRM.routes.include('analytics', 'Analytics.js');
 
-        //this.creditCardHelper = global.routes.include('helpers', 'creditcard/CreditCard.js');
+        //this.creditCardHelper = global.SixCRM.routes.include('helpers', 'creditcard/CreditCard.js');
 
     }
 
@@ -225,7 +225,7 @@ module.exports = class Process{
 
       this.required_parameters.forEach((required_parameter) => {
 
-        mvu.validateModel(this[required_parameter], global.routes.path('model','transaction/'+required_parameter+'.json'));
+        mvu.validateModel(this[required_parameter], global.SixCRM.routes.path('model','transaction/'+required_parameter+'.json'));
 
       });
 
@@ -260,7 +260,7 @@ module.exports = class Process{
 
         this.customer.creditcards.forEach((credit_card) => {
 
-          mvu.validateModel(credit_card, global.routes.path('model','transaction/creditcard.json'));
+          mvu.validateModel(credit_card, global.SixCRM.routes.path('model','transaction/creditcard.json'));
 
           if(_.has(credit_card, 'default') && credit_card.default == true){
 
@@ -348,11 +348,11 @@ module.exports = class Process{
 
       if(process_stage == 'pre'){
 
-        mvu.validateModel(this, global.routes.path('model','transaction/process_class_pre.json'));
+        mvu.validateModel(this, global.SixCRM.routes.path('model','transaction/process_class_pre.json'));
 
       }else if(process_stage == 'post'){
 
-        mvu.validateModel(this, global.routes.path('model','transaction/process_class_post.json'));
+        mvu.validateModel(this, global.SixCRM.routes.path('model','transaction/process_class_post.json'));
 
       }
 
@@ -699,7 +699,7 @@ module.exports = class Process{
 
           try{
 
-            validation = mvu.validateModel(merchant_provider, global.routes.path('model','transaction/merchantprovider.json'));
+            validation = mvu.validateModel(merchant_provider, global.SixCRM.routes.path('model','transaction/merchantprovider.json'));
 
           }catch(e){
 
@@ -867,7 +867,7 @@ module.exports = class Process{
 
      	if(this.selected_merchantprovider.gateway.name == "NMI"){
 
-        var NMIController = global.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
+        var NMIController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
 
         var _nmi = new NMIController({
           username: this.selected_merchantprovider.gateway.username,

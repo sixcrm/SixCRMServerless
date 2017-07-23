@@ -3,7 +3,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
 
-const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
+const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
 let accountType = require('../account/accountType');
 let roleType = require('../role/roleType');

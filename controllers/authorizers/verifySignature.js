@@ -1,13 +1,13 @@
 'use strict'
 const _ = require("underscore");
 
-var timestamp = global.routes.include('lib', 'timestamp.js');
-var signature = global.routes.include('lib', 'signature.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+var signature = global.SixCRM.routes.include('lib', 'signature.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const userController = global.routes.include('controllers', 'entities/User.js');
-const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
+const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
 class verifySignatureController {
 

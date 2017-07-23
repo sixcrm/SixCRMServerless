@@ -3,15 +3,15 @@ const uuidV4 = require('uuid/v4');
 const _ = require('underscore');
 const fs = require('fs');
 
-require('../routes.js');
+require('../SixCRM.js');
 
-const du = global.routes.include('lib','debug-utilities.js');
-const random = global.routes.include('lib','random.js');
-const timestamp = global.routes.include('lib','timestamp.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const random = global.SixCRM.routes.include('lib','random.js');
+const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
 
 setEnvironmentVariables();
 
-let entities = global.routes.files('seeds');
+let entities = global.SixCRM.routes.files('seeds');
 
 entities = entities.map(function(filename){
     return filename.substring(0, filename.indexOf("s.json"));
@@ -84,7 +84,7 @@ function createEntity(entity_type){
 
 function getIDFromSeed(seed_type){
 
-    let seeds = global.routes.include('seeds', seed_type+'s.json');
+    let seeds = global.SixCRM.routes.include('seeds', seed_type+'s.json');
 
     let seeds_array = (_.has(seeds, 'Seeds'))?seeds.Seeds:seeds;
 

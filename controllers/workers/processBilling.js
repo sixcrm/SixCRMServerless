@@ -1,17 +1,17 @@
 'use strict';
 var _ = require("underscore");
 
-var timestamp = global.routes.include('lib', 'timestamp.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var sessionController = global.routes.include('controllers', 'entities/Session.js');
-var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-var productController = global.routes.include('controllers', 'entities/Product.js');
-var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
-var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
-var workerController = global.routes.include('controllers', 'workers/worker.js');
+var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+var productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+var loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 //Technical Debt:  This controller makes a lot of redundant database queries...  Needs a refactor.
 class processBillingController extends workerController {

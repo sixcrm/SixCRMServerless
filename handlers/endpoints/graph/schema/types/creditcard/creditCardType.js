@@ -5,7 +5,7 @@ const GraphQLString = require('graphql').GraphQLString;
 
 let addressType = require('../address/addressType')
 
-const creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
+const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'CreditCard',

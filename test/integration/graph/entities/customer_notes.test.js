@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 
 chai.use(require('chai-json-schema'));
@@ -15,27 +15,27 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Customer Notes';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getCustomerNotes')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getCustomerNotes')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getCustomerNote')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getCustomerNote')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createCustomerNote')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createCustomerNote')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateCustomerNote')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateCustomerNote')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteCustomerNote')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteCustomerNote')
 },
 {
     name: "index-secondaryindex",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getCustomerNotesByCustomer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getCustomerNotesByCustomer')
 }
 ];
 

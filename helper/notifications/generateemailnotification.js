@@ -2,7 +2,7 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-require('../../routes.js');
+require('../../SixCRM.js');
 
 const site_config = yaml.safeLoad(fs.readFileSync(__dirname+`/../../config/${process.env.stage}/site.yml`, 'utf8'));
 
@@ -20,10 +20,10 @@ if (process.env.stage === 'local') {
     process.env.notifications_read_table = 'local' + process.env.notifications_read_table;
 }
 
-const EmailNotificationUtilities = global.routes.include('lib','email-notification-utilities');
-const PermissionUtilities = global.routes.include('lib','permission-utilities');
-const du = global.routes.include('lib','debug-utilities.js');
-const timestamp = global.routes.include('lib','timestamp.js');
+const EmailNotificationUtilities = global.SixCRM.routes.include('lib','email-notification-utilities');
+const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
 
 PermissionUtilities.disableACLs();
 

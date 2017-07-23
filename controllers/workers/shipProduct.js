@@ -1,13 +1,13 @@
 'use strict';
 var _ =  require('underscore');
 
-const eu = global.routes.include('lib', 'error-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-var shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
-var fulfillmentTriggerController = global.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js');
-var workerController = global.routes.include('controllers', 'workers/worker.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+var shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+var fulfillmentTriggerController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 class shipProductController extends workerController {
 

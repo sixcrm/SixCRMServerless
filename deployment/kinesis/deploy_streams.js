@@ -1,7 +1,7 @@
 'use strict';
-require('../../routes.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const KinesisDeployment = global.routes.include('deployment', 'utilities/kinesis-deployment.js');
+require('../../SixCRM.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const KinesisDeployment = global.SixCRM.routes.include('deployment', 'utilities/kinesis-deployment.js');
 
 let stage = process.argv[2] || 'development';
 let config_path ='kinesis/config'

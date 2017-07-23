@@ -2,16 +2,16 @@
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
-var timestamp = global.routes.include('lib', 'timestamp.js');
-var du = global.routes.include('lib', 'debug-utilities.js');
-var eu = global.routes.include('lib', 'error-utilities.js');
+var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var customerController = global.routes.include('controllers', 'entities/Customer.js');
-var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class sessionController extends entityController {
 
@@ -29,7 +29,7 @@ class sessionController extends entityController {
             'cid'
         ];
 
-        this.affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+        this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
     }
 
@@ -66,7 +66,7 @@ class sessionController extends entityController {
         if(!_.has(session, "customer")){ return null; }
 
         //Technincal Debt:  This is necessary?
-        var customerController = global.routes.include('controllers', 'entities/Customer.js');
+        var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
         return customerController.get(session.customer);
 
@@ -114,7 +114,7 @@ class sessionController extends entityController {
           //there are some scoping problems
             if(!_.has(this, 'affiliateController') || !_.isFunction(this.affiliateController, 'get')){
 
-                const affiliateController = global.routes.include('controllers', 'entities/Affiliate.js');
+                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
                 return affiliateController.get(session[affiliate_field]);
 

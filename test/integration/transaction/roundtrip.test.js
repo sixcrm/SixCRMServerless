@@ -6,10 +6,10 @@ var assert = require('chai').assert
 var fs = require('fs');
 var yaml = require('js-yaml');
 
-const du = global.routes.include('lib','debug-utilities.js');
-const random = global.routes.include('lib','random.js');
-const signatureutilities = global.routes.include('lib','signature.js');
-const tu = global.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const random = global.SixCRM.routes.include('lib','random.js');
+const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 
 try {
     var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));

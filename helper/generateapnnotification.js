@@ -1,7 +1,7 @@
 'use strict'
-require('../routes.js');
-const apnutilities = global.routes.include('lib','apn-utilities');
-const du = global.routes.include('lib','debug-utilities.js');
+require('../SixCRM.js');
+const apnutilities = global.SixCRM.routes.include('lib','apn-utilities');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 let message = process.argv[2];
 let user = process.argv[3];

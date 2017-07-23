@@ -3,8 +3,8 @@ const chai = require('chai');
 const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -20,7 +20,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Transactions By Facet';
-let test_query = global.routes.path('handlers','endpoints/graph/queries/analytics/getTransactionsByFacet');
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getTransactionsByFacet');
 
 //set the test user
 let test_user = {

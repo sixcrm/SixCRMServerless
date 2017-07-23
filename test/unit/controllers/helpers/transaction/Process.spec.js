@@ -5,13 +5,13 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 let expect = chai.expect;
-let du = global.routes.include('lib', 'debug-utilities.js');
-let mvu = global.routes.include('lib', 'model-validator-utilities.js');
-let timestamp = global.routes.include('lib', 'timestamp.js');
-let mathutilities = global.routes.include('lib', 'math-utilities.js');
-let arrayutilities = global.routes.include('lib', 'array-utilities.js');
+let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+let mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-const processHelperController = global.routes.include('helpers', 'transaction/Process.js');
+const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
 
 function getValidMerchantProviderSummaries(){
   return [
@@ -317,13 +317,13 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let product_schedule = {};
 
-      mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
         getLoadBalancer: (product_schedule) => {
           return Promise.resolve(loadbalancer);
         }
       });
 
-      mockery.registerMock(global.routes.path('entities', 'LoadBalancer.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'LoadBalancer.js'), {
         getMerchantProviders: (loadbalancer) => {
           return Promise.resolve(merchantproviders);
         },
@@ -331,7 +331,7 @@ describe('helpers/transaction/Process.spec.js', () => {
         enableACLs: () => {}
       });
 
-      mockery.registerMock(global.routes.path('analytics', 'Analytics.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), {
         getMerchantProviderSummaries: (parameters) => {
           return Promise.resolve({merchantproviders: merchantprovider_summaries});
         },
@@ -660,7 +660,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       let customer = getValidCustomer();
       let productschedule = getValidProductSchedule();
 
-      mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index, callback) => {
             callback(null, [customer]);
         }
@@ -690,13 +690,13 @@ describe('helpers/transaction/Process.spec.js', () => {
       let productschedule = getValidProductSchedule();
       let customer = getValidCustomer();
 
-      mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index, callback) => {
             callback(null, [productschedule]);
         }
       });
 
-      mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
         get: (product_schedule_id) => {
           return Promise.resolve(productschedule);
         },
@@ -844,7 +844,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let credit_card = getValidCreditCard();
 
-      mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
           queryRecords: (table, parameters, index, callback) => {
               callback(null, [credit_card]);
           }
@@ -864,7 +864,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
         ph.customer.creditcards.forEach((credit_card) => {
 
-          let validated = mvu.validateModel(credit_card, global.routes.path('model','entities/creditcard.json'));
+          let validated = mvu.validateModel(credit_card, global.SixCRM.routes.path('model','entities/creditcard.json'));
 
           expect(validated).to.equal(true);
 
@@ -984,7 +984,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let cc_properties= getValidCreditCardProperties();
 
-      mockery.registerMock(global.routes.path('analytics', 'Analytics.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), {
           getBINList: (parameters) => {
               return Promise.resolve({bins:[cc_properties], pagination: {}});
           }
@@ -1007,7 +1007,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let lb_1 = getValidLoadBalancer();
 
-      mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
           getLoadBalancer: (product_schedule) => {
               return Promise.resolve(lb_1);
           }
@@ -1081,7 +1081,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let merchantproviders = getValidMerchantProviders();
 
-      mockery.registerMock(global.routes.path('entities', 'LoadBalancer.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'LoadBalancer.js'), {
         getMerchantProviders:(loadbalancer) => {
             ph.merchantproviders = merchantproviders;
             return Promise.resolve(merchantproviders);
@@ -1169,7 +1169,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
 
-      mockery.registerMock(global.routes.path('controllers', 'analytics/Analytics.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/Analytics.js'), {
         getMerchantProviderSummaries: (parameters) => {
           return Promise.resolve({merchantproviders: merchantprovider_summaries});
         },
@@ -1672,7 +1672,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let cc_properties= getValidCreditCardProperties();
 
-      mockery.registerMock(global.routes.path('analytics', 'Analytics.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), {
         getBINList: (parameters) => {
           return Promise.resolve({bins:[cc_properties], pagination: {}});
         },
@@ -1683,7 +1683,7 @@ describe('helpers/transaction/Process.spec.js', () => {
         enableACLs: () => {}
       });
 
-      mockery.registerMock(global.routes.path('entities', 'CreditCard.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
         get:(creditcard_id) => {
           let creditcard = arrayutilities.find(creditcards, (a_creditcard) => {
             if(a_creditcard.id == creditcard_id){ return true; }
@@ -1697,13 +1697,13 @@ describe('helpers/transaction/Process.spec.js', () => {
         getBINNumber: (creditcard_number) => { return creditcard_number.slice(0, 6); }
       });
 
-      mockery.registerMock(global.routes.path('entities', 'ProductSchedule.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
         getLoadBalancer: (product_schedule) => {
           return Promise.resolve(loadbalancer);
         }
       });
 
-      mockery.registerMock(global.routes.path('entities', 'LoadBalancer.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'LoadBalancer.js'), {
         getMerchantProviders: (loadbalancer) => {
           return Promise.resolve(merchantproviders);
         },
@@ -1734,7 +1734,7 @@ describe('helpers/transaction/Process.spec.js', () => {
         }
       }
 
-      mockery.registerMock(global.routes.path('controllers', 'vendors/merchantproviders/NMI.js'), mock_nmi_class);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/NMI.js'), mock_nmi_class);
 
       let ph = new processHelperController();
 

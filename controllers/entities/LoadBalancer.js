@@ -1,16 +1,16 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class loadBalancerController extends entityController {
 
     constructor(){
         super('loadbalancer');
 
-        this.merchantProviderController = global.routes.include('controllers', 'entities/MerchantProvider.js');
+        this.merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
     }
 

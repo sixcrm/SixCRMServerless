@@ -1,12 +1,12 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const mvu = global.routes.include('lib', 'model-validator-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-const notificationReadController = global.routes.include('controllers', 'entities/NotificationRead');
-const entityController = global.routes.include('controllers', 'entities/Entity.js');
+const notificationReadController = global.SixCRM.routes.include('controllers', 'entities/NotificationRead');
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class notificationController extends entityController {
 
@@ -54,7 +54,7 @@ class notificationController extends entityController {
     isValidNotification(notification_object) {
 
         return Promise.resolve(
-            mvu.validateModel(notification_object, global.routes.path('model', 'entities/notification.json')));
+            mvu.validateModel(notification_object, global.SixCRM.routes.path('model', 'entities/notification.json')));
     }
 }
 

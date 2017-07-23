@@ -1,11 +1,11 @@
 'use strict';
 var _ = require("underscore");
 
-const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
-const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
+const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-var workerController = global.routes.include('controllers', 'workers/worker.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 class indexEntitiesController extends workerController {
 

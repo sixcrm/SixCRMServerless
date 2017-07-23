@@ -1,9 +1,9 @@
 'use strict';
-let du = global.routes.include('lib', 'debug-utilities.js');
-let timestamp = global.routes.include('lib', 'timestamp');
+let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+let timestamp = global.SixCRM.routes.include('lib', 'timestamp');
 
-let paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
-const activityToEnglishController = global.routes.include('controllers','analytics/ActivityToEnglishUtilities');
+let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
+const activityToEnglishController = global.SixCRM.routes.include('controllers','analytics/ActivityToEnglishUtilities');
 
 module.exports = function(results, parameters){
 

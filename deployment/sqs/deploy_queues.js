@@ -1,20 +1,17 @@
 'use strict';
-require('../../routes.js');
+require('../../SixCRM.js');
 const _ = require('underscore');
 const fs = require('fs');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const sqsutilities = global.routes.include('lib', 'sqs-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
+//Technical Debt:  This should be configured.
 const max_receive_count = 5;
-
-const stage = process.argv[2];
 
 du.highlight(`Executing SQS Deployment`);
 
-return setEnvironment(stage)
-.then(() => getQueueDefinitions())
+return getQueueDefinitions()
 .then((queue_definitions) => createDeadletterQueues(queue_definitions))
 .then((queue_definitions) => createQueues(queue_definitions))
 .then(() => {
@@ -25,47 +22,15 @@ return setEnvironment(stage)
     eu.throwError('server', error);
 });
 
-function setEnvironment(stage){
-
-  let config = configurationutilities.getSiteConfig(stage);
-
-  if(_.has(config, 'aws') && _.has(config.aws, 'region')){
-
-    process.env.aws_region = config.aws.region;
-
-  }else{
-
-    if(_.has(process.env, 'AWS_REGION')){
-      process.env.aws_region = process.env.AWS_REGION;
-    }
-
-  }
-
-  if(_.has(config, 'aws') && _.has(config.aws, 'account')){
-
-    process.env.aws_account = config.aws.account;
-
-  }else{
-
-    if(_.has(process.env, 'AWS_ACCOUNT')){
-      process.env.aws_account = process.env.AWS_ACCOUNT;
-    }
-
-  }
-
-  return Promise.resolve(true);
-
-}
-
 function getQueueDefinitions(){
 
-  const files = fs.readdirSync(global.routes.path('deployment', 'sqs/queues'));
+  const files = fs.readdirSync(global.SixCRM.routes.path('deployment', 'sqs/queues'));
 
   const queue_objects = files.map((file) => {
 
     du.debug('Queue Definition File: '+file);
 
-    return global.routes.include('deployment', 'sqs/queues/'+file);
+    return global.SixCRM.routes.include('deployment', 'sqs/queues/'+file);
 
   });
 
@@ -89,8 +54,6 @@ function createDeadletterQueues(queue_definitions) {
     return Promise.all(create_promises).then(create_promises => {
 
       du.deep('Create results:', create_promises);
-
-      du.info(queue_definitions);
 
       return queue_definitions;
 

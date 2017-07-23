@@ -3,9 +3,9 @@
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
-let EntityController = global.routes.include('controllers','entities/Entity');
+let EntityController = global.SixCRM.routes.include('controllers','entities/Entity');
 let PermissionTestGenerators = require('../../unit/lib/permission-test-generators');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 
 describe('controllers/Entity.js', () => {
@@ -113,7 +113,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, []);
                 },
@@ -122,13 +122,13 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: (entity) => {
                     return new Promise((resolve) => resolve(true));
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('accesskey');
 
             // when
@@ -153,7 +153,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity]);
                 },
@@ -162,19 +162,19 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: (entity) => {
                     return new Promise((resolve) => resolve(true));
                 }
             });
 
-            mockery.registerMock(global.routes.path('lib', 'kinesis-firehose-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
                 putRecord: (entity) => {
                     return new Promise((resolve) => resolve(entity));
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 
             // when
@@ -193,13 +193,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(eu.getError('server','Reading failed.'), null);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 
             // when
@@ -234,13 +234,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(eu.getError('server','Reading failed.'), null);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 
             // when
@@ -281,13 +281,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(eu.getError('server', 'Reading failed.'), null);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 
             // when
@@ -305,7 +305,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity]);
                 },
@@ -314,7 +314,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 
             // when
@@ -332,13 +332,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, []);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 
             // when
@@ -357,13 +357,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity, anEntity]);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 
             // when
@@ -382,7 +382,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity]);
                 },
@@ -391,13 +391,13 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
                 removeFromSearchIndex: (entity) => {
                     return new Promise((resolve) => resolve(true));
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 
             // when
@@ -437,13 +437,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity]);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('entity');
 
             // when
@@ -461,13 +461,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(eu.getError('server','Reading failed.'), null);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js')
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('entity');
 
             // when
@@ -485,13 +485,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, [anEntity, anEntity]);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -509,13 +509,13 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index, callback) => {
                     callback(null, []);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -533,7 +533,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -557,7 +557,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -571,7 +571,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, {
                         LastEvaluatedKey: {
@@ -581,7 +581,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             return entityController.list({limit: 10}).catch((error) => {
@@ -594,13 +594,13 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, 'result');
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -614,13 +614,13 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(eu.getError('server','Scanning failed.'), null);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -634,7 +634,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, {
                         Count: 0,
@@ -643,7 +643,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -665,7 +665,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 scanRecordsFull: (table, parameters, callback) => {
                     callback(null, {
                         Count: 10,
@@ -674,7 +674,7 @@ describe('controllers/Entity.js', () => {
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -707,7 +707,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithDenied('read', 'entity');
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -721,13 +721,13 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecordsFull: (table, parameters, index, callback) => {
                     callback(null, { Items: 'non array' });
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -741,13 +741,13 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecordsFull: (table, parameters, index, callback) => {
                     callback(eu.getError('server','Query failed.'), null);
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -761,13 +761,13 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecordsFull: (table, parameters, index, callback) => {
                     callback(null, { Items: [] });
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when
@@ -781,13 +781,13 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecordsFull: (table, parameters, index, callback) => {
                     callback(null, { Items: [{},{}] });
                 }
             });
 
-            const EC = global.routes.include('controllers','entities/Entity.js');
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
             let entityController = new EC('entity');
 
             // when

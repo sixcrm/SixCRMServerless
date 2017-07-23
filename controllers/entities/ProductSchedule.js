@@ -1,18 +1,18 @@
 'use strict';
 const _ = require('underscore');
 
-var du = global.routes.include('lib', 'debug-utilities.js');
+var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class productScheduleController extends entityController {
 
     constructor(){
 
         super('productschedule');
-        this.productController = global.routes.include('controllers', 'entities/Product.js');
-        this.campaignController = global.routes.include('controllers', 'entities/Campaign.js');
-        this.loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
+        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+        this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+        this.loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
 
     }
 

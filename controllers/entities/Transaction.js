@@ -1,13 +1,13 @@
 'use strict';
 const _ = require('underscore');
-var random = global.routes.include('lib', 'random.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+var random = global.SixCRM.routes.include('lib', 'random.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var productController = global.routes.include('controllers', 'entities/Product.js');
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
-var shippingReceiptController = global.routes.include('controllers', 'entities/ShippingReceipt.js');
-const merchantProviderController = global.routes.include('controllers','entities/MerchantProvider.js');
+var productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+var shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+const merchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
 
 class transactionController extends entityController {
 
@@ -19,7 +19,7 @@ class transactionController extends entityController {
     getParentRebill(transaction){
 
         if(_.has(transaction, 'rebill')){
-            var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+            var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
             return rebillController.get(transaction.rebill);
         }else{
@@ -109,7 +109,7 @@ class transactionController extends entityController {
 
         du.debug('Put Transaction');
 
-        const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+        const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
         return rebillController.get(params.rebill).then((rebill) => {
 

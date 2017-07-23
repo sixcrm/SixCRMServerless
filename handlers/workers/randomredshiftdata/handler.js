@@ -1,8 +1,8 @@
 'use strict';
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
-const randomRedshiftDataGenerator = global.routes.include('controllers', 'workers/randomRedshiftDataGenerator.js');
+const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+const randomRedshiftDataGenerator = global.SixCRM.routes.include('controllers', 'workers/randomRedshiftDataGenerator.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.randomredshiftdata = (event, context, callback) => {

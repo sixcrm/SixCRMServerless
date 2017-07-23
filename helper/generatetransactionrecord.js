@@ -1,11 +1,11 @@
 'use strict'
 const uuidV4 = require('uuid/v4');
 
-require('../routes.js');
+require('../SixCRM.js');
 
-const du = global.routes.include('lib','debug-utilities.js');
-const random = global.routes.include('lib','random.js');
-const timestamp = global.routes.include('lib','timestamp.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const random = global.SixCRM.routes.include('lib','random.js');
+const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
 
 setEnvironmentVariables();
 

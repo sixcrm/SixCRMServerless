@@ -1,14 +1,14 @@
 'use strict'
 const _ = require('underscore');
 
-require('../routes.js');
+require('../SixCRM.js');
 
-const timestamp = global.routes.include('lib','timestamp.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 setEnvironmentVariables();
 
-const dataGenerator = global.routes.include('controllers','workers/randomRedshiftDataGenerator');
+const dataGenerator = global.SixCRM.routes.include('controllers','workers/randomRedshiftDataGenerator');
 
 dataGenerator.set('start_datetime', '2017-05-18T18:00:44.500Z');
 dataGenerator.set('end_datetime', '2017-05-18T18:30:44.500Z');

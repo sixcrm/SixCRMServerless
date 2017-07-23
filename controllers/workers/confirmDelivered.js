@@ -1,10 +1,10 @@
 'use strict';
 var _ = require("underscore");
 
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-var shippingStatusController = global.routes.include('controllers', 'vendors/shippingproviders/ShippingStatus.js');
-var workerController = global.routes.include('controllers', 'workers/worker.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+var shippingStatusController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/ShippingStatus.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 class confirmDeliveredController extends workerController {
 

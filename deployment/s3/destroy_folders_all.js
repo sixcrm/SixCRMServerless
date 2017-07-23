@@ -1,10 +1,10 @@
 'use strict';
-require('../../routes.js');
+require('../../SixCRM.js');
 
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const stringUtilities = global.routes.include('deployment', 'utilities/string-utilities.js');
-const S3Deployment = global.routes.include('deployment', 'utilities/s3-deployment.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const stringUtilities = global.SixCRM.routes.include('deployment', 'utilities/string-utilities.js');
+const S3Deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-deployment.js');
 
 let environment = process.argv[2] || 'development';
 

@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 
 chai.use(require('chai-json-schema'));
@@ -15,23 +15,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Trackers';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getTrackers')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getTrackers')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getTracker')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getTracker')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createTracker')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createTracker')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateTracker')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateTracker')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteTracker')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteTracker')
 }];
 
 let this_request = request(endpoint);

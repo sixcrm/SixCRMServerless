@@ -1,5 +1,5 @@
-let PermissionUtilities = global.routes.include('lib', 'permission-utilities.js');
-let du = global.routes.include('lib', 'debug-utilities.js');
+let PermissionUtilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let PermissionTestGenerators = require('./permission-test-generators');
 let chai = require('chai');
 let expect = chai.expect;

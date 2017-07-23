@@ -23,7 +23,7 @@ module.exports.graphObj = new GraphQLObjectType({
       	  type: new GraphQLList(scheduleType.graphObj),
             description:'The schedules associated with the product schedule',
       	  resolve: (productschedule) => {
-            var productScheduleController = global.routes.include('controllers','entities/ProductSchedule');
+            var productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule');
 
             return productScheduleController.getSchedule(productschedule);
           }
@@ -32,7 +32,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: loadBalancerType.graphObj,
             description: 'The load balancer associated with the product schedule.',
             resolve: (productschedule) => {
-                var productScheduleController = global.routes.include('controllers','entities/ProductSchedule');
+                var productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule');
 
                 return productScheduleController.getLoadBalancer(productschedule);
             }

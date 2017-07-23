@@ -1,8 +1,8 @@
 'use strict';
-var timestamp = global.routes.include('lib', 'timestamp.js');
+var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var workerController = global.routes.include('controllers', 'workers/worker.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 class pickRebillController extends workerController {
 

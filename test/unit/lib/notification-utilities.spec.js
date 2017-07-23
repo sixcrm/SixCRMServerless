@@ -1,4 +1,4 @@
-let NotificationUtilities = global.routes.include('lib', 'notification-utilities.js');
+let NotificationUtilities = global.SixCRM.routes.include('lib', 'notification-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
@@ -111,7 +111,7 @@ describe('lib/notification-utilities', () => {
             // given
             let notification_object = Object.assign({}, valid_object);
 
-            mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
                     expect(notification_object).not.to.equal(notification_object, '[500] Notification utilities should not have been called.');
                 }
@@ -130,21 +130,21 @@ describe('lib/notification-utilities', () => {
 
         it('should create notifications when the object is valid', (done) => {
             // given
-            mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
                     expect(notification_object).to.be.defined;
                     expect(notification_object.user).to.equal('user@example.com');
                     done();
                 }
             });
-            mockery.registerMock(global.routes.path('controllers', 'entities/UserACL.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
                 queryBySecondaryIndex: () => {
                     return Promise.resolve([{
                         user: 'user@example.com'
                     }]);
                 }
             });
-            let NotificationUtilities = global.routes.include('lib', 'notification-utilities.js');
+            let NotificationUtilities = global.SixCRM.routes.include('lib', 'notification-utilities.js');
 
             NotificationUtilities.createNotificationsForAccount(valid_object).catch((error) => {
                 done(error);
@@ -167,7 +167,7 @@ describe('lib/notification-utilities', () => {
             // given
             let notification_object = Object.assign({}, valid_object);
 
-            mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
                     expect(notification_object).not.to.equal(notification_object, '[500] Notification utilities should not have been called.');
                 }
@@ -184,7 +184,7 @@ describe('lib/notification-utilities', () => {
 
         it('should create notification when the object is valid', (done) => {
             // given
-            mockery.registerMock(global.routes.path('controllers', 'entities/Notification.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
                 create: (notification_object) => {
                     expect(notification_object).to.be.defined;
                     expect(notification_object.id).to.be.defined;
@@ -196,7 +196,7 @@ describe('lib/notification-utilities', () => {
                     done();
                 }
             });
-            let NotificationUtilities = global.routes.include('lib', 'notification-utilities.js');
+            let NotificationUtilities = global.SixCRM.routes.include('lib', 'notification-utilities.js');
 
             NotificationUtilities.createNotificationForAccountAndUser(valid_object);
         });

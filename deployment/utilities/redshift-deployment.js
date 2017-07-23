@@ -2,40 +2,34 @@
 
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const fileutilities = global.routes.include('lib', 'file-utilities.js');
-const objectutilities = global.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.routes.include('lib', 'array-utilities.js');
-const mathutilities = global.routes.include('lib', 'math-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
+class RedshiftDeployment {
 
-module.exports = class RedshiftDeployment {
+  constructor() {
 
-  constructor(stage) {
+    this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 
-    this.stage = configurationutilities.resolveStage(stage);
-
-    this.site_config = configurationutilities.getSiteConfig(this.stage);
-
-    this.redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
-
-    this.redshiftutilities = global.routes.include('lib', 'redshift-utilities.js');
+    this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
   }
 
   deployTables() {
 
     return this.getTableFilenames()
-      .then((filenames) => this.collectQueries(filenames))
-      .then((query) => this.execute(query))
-      .then((result) => {
+    .then((filenames) => this.collectQueries(filenames))
+    .then((query) => this.execute(query))
+    .then((result) => {
 
-        du.info(result);
+      du.info(result);
 
-        return 'Complete';
+      return 'Complete';
 
-      });
+    });
 
   }
 
@@ -51,7 +45,7 @@ module.exports = class RedshiftDeployment {
 
     du.debug('Get Redshift Table Names');
 
-    return fileutilities.getDirectoryFiles(global.routes.path('model', 'redshift')).then((files) => {
+    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'redshift')).then((files) => {
 
       files = files.filter(file => file.match(/\.sql$/));
 
@@ -68,7 +62,7 @@ module.exports = class RedshiftDeployment {
 
   collectQueries(table_filenames) {
 
-    let path_to_model = global.routes.path('model', 'redshift');
+    let path_to_model = global.SixCRM.routes.path('model', 'redshift');
 
     this.redshiftqueryutilities.instantiateRedshift();
 
@@ -230,3 +224,5 @@ module.exports = class RedshiftDeployment {
   }
 
 }
+
+module.exports = new RedshiftDeployment();

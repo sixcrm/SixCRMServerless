@@ -3,17 +3,17 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 //Technical Debt:  We shouldn't need the AWS utility classes here...
-const dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
-const sqsutilities = global.routes.include('lib', 'sqs-utilities.js');
-const timestamp = global.routes.include('lib', 'timestamp.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
+const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-var productController = global.routes.include('controllers', 'entities/Product.js');
-var sessionController = global.routes.include('controllers', 'entities/Session.js');
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+var productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 const oneDayInSeconds = 86400;
 
@@ -57,7 +57,7 @@ class rebillController extends entityController {
         if(!_.has(rebill, 'parentsession')){ return null; }
 
 		//why is this necessary?
-        var sessionController = global.routes.include('controllers', 'entities/Session.js');
+        var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
         return sessionController.get(rebill.parentsession);
 

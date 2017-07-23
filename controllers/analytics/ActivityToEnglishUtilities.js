@@ -1,8 +1,8 @@
 'use strict';
 const _ = require('underscore');
-const du = global.routes.include('lib', 'debug-utilities');
-const mvu = global.routes.include('lib', 'model-validator-utilities');
-const EntityController = global.routes.include('controllers', 'entities/Entity.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities');
+const EntityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class ActivityToEnglishUtilities {
 
@@ -53,7 +53,7 @@ module.exports = class ActivityToEnglishUtilities {
 
         try{
 
-            mvu.validateModel(this.activity_row, global.routes.path('model', 'redshift/activity.json'));
+            mvu.validateModel(this.activity_row, global.SixCRM.routes.path('model', 'redshift/activity.json'));
 
         }catch(e){
 

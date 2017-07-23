@@ -4,8 +4,8 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
-const transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-const merchantProviderControler = global.routes.include('controllers', 'entities/MerchantProvider.js');
+const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+const merchantProviderControler = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
 let transactionInterface = require('./transactionInterface');
 let transactionProductType = require('../transactionproduct/transactionProductType');

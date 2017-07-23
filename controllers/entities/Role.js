@@ -1,6 +1,6 @@
 'use strict';
 const _ = require('underscore');
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class roleController extends entityController {
 

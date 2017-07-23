@@ -5,7 +5,7 @@ let expect = chai.expect;
 let anyItem = { property: 'value' };
 let anyTableName = 'tableName';
 
-const eu = global.routes.include('lib', 'error-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 describe('lib/dynamodb-utilities', () => {
     describe('dynamodb-utilities', () => {

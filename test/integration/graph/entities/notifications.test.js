@@ -3,8 +3,8 @@ const chai = require('chai');
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -14,23 +14,23 @@ const entity = 'Notifications';
 const tests = [
     {
         name: "index",
-        query: global.routes.path('handlers','endpoints/graph/queries/index/getNotifications')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getNotifications')
     },
     {
         name: "view",
-        query: global.routes.path('handlers','endpoints/graph/queries/view/getNotification')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getNotification')
     },
     {
         name: "create",
-        query: global.routes.path('handlers','endpoints/graph/queries/create/createNotification')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createNotification')
     },
     {
         name: "update",
-        query: global.routes.path('handlers','endpoints/graph/queries/update/updateNotification')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateNotification')
     },
     {
         name: "delete",
-        query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteNotification')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteNotification')
     }
 ];
 
@@ -78,7 +78,7 @@ describe('Graph ' + entity + ' Test', function () {
         let test_user = global.test_users[0];
         let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
 
-        let query = tu.getQuery(global.routes.path('handlers','endpoints/graph/queries/uncategorized/sendTestNotification'));
+        let query = tu.getQuery(global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/sendTestNotification'));
 
         this_request.post('graph/' + account)
             .set('Authorization', test_jwt)

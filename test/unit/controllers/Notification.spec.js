@@ -28,7 +28,7 @@ describe('controllers/Notification.js', () => {
             global.disableactionchecks = true;
             PermissionTestGenerators.givenAnyUser();
 
-            mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 countRecords: (table, parameters, index, callback) => {
                     callback(null, 2);
                 },
@@ -49,18 +49,18 @@ describe('controllers/Notification.js', () => {
                     callback();
                 }
             });
-            mockery.registerMock(global.routes.path('lib', 'indexing-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: () => {
                     return Promise.resolve(true);
                 }
             });
-            mockery.registerMock(global.routes.path('lib', 'kinesis-firehose-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
                 putRecord: () => {
                     return Promise.resolve();
                 }
             });
 
-            let notificationController = global.routes.include('controllers','entities/Notification');
+            let notificationController = global.SixCRM.routes.include('controllers','entities/Notification');
 
             // when
             return notificationController.numberOfUnseenNotifications().then((count) => {

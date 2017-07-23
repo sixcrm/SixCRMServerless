@@ -1,4 +1,4 @@
-let EmailNotificationUtilities = global.routes.include('lib', 'email-notification-utilities.js');
+let EmailNotificationUtilities = global.SixCRM.routes.include('lib', 'email-notification-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
@@ -40,7 +40,7 @@ describe('lib/notification-utilities', () => {
             let notification_object = Object.assign({}, valid_notification_object);
             let email_address = 'user@test.com';
 
-            mockery.registerMock(global.routes.path('lib', 'ses-utilities'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'ses-utilities'), {
                 sendEmail: (message) => {
                     expect(message).not.to.equal(message, 'SES utilities should not have been called.');
                 }
@@ -63,13 +63,13 @@ describe('lib/notification-utilities', () => {
             // given
             let email_address = 'user@test.com';
 
-            mockery.registerMock(global.routes.path('lib', 'ses-utilities'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'ses-utilities'), {
                 sendEmail: (message) => {
                     expect(message).to.be.defined;
                     done();
                 }
             });
-            let EmailNotificationUtilities = global.routes.include('lib', 'email-notification-utilities.js');
+            let EmailNotificationUtilities = global.SixCRM.routes.include('lib', 'email-notification-utilities.js');
 
             EmailNotificationUtilities.sendNotificationViaEmail(valid_notification_object, email_address)
                 .catch((error) => {

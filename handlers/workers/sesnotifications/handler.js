@@ -2,9 +2,9 @@
 var aws = require('aws-sdk');
 const _ = require('underscore');
 
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 
 //Technical Debt:  Configure the Table Name here...

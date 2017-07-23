@@ -1,11 +1,11 @@
 'use strict'
 const _ = require('underscore');
 
-require('../routes.js');
+require('../SixCRM.js');
 
-var timestamp = global.routes.include('lib', 'timestamp.js');
-const du = global.routes.include('lib','debug-utilities.js');
-const signatureutilities = global.routes.include('lib', 'signature.js');
+var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
 
 process.env.SIX_VERBOSE = 2;
 

@@ -1,9 +1,9 @@
 var fs = require('fs');
 var path = require('path');
-var createLead = global.routes.include('controllers', 'endpoints/createLead.js');
+var createLead = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 var chai = require('chai');
 var expect = chai.expect;
-var du = global.routes.include('lib', 'debug-utilities.js');
+var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 chai.use(require('../../chaiAssertionHelper'));
 

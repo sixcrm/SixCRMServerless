@@ -1,6 +1,6 @@
 'use strict';
-let du = global.routes.include('lib', 'debug-utilities');
-var publicController = global.routes.include('controllers', 'endpoints/public.js');
+let du = global.SixCRM.routes.include('lib', 'debug-utilities');
+var publicController = global.SixCRM.routes.include('controllers', 'endpoints/public.js');
 
 class publicHTMLController extends publicController{
 

@@ -14,7 +14,7 @@ require('../../../bootstrap.test');
 describe('workers/archive', function () {
     describe('archive', function (done) {
         it('will be ARCHIVED', function() {
-            var archive = global.routes.include('controllers', 'workers/archive.js');
+            var archive = global.SixCRM.routes.include('controllers', 'workers/archive.js');
             var rebill = require('./fixtures/validRebill');
             var actual = archive.archive(rebill);
 

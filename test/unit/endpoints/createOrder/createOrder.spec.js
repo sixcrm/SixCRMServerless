@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var createOrder = global.routes.include('controllers', 'endpoints/createOrder.js');
+var createOrder = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 var chai = require('chai');
 var expect = chai.expect;
 

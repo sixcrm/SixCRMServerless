@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Product Schedules';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getProductSchedules')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getProductSchedules')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getProductSchedule')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getProductSchedule')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createProductSchedule')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createProductSchedule')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateProductSchedule')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateProductSchedule')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteProductSchedule')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteProductSchedule')
 }];
 
 let this_request = request(endpoint);

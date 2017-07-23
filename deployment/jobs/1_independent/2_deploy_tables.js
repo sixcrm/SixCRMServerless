@@ -1,7 +1,7 @@
 'use strict';
-require('../../../routes.js');
-const DeploymentJob = global.routes.include('deployment', 'jobs/deployment-job.js');
-const dynamodeploymentutilities = global.routes.include('deployment', 'utilities/dynamo-deploy-tables');
+require('../../../SixCRM.js');
+const DeploymentJob = global.SixCRM.routes.include('deployment', 'jobs/deployment-job.js');
+const dynamodeploymentutilities = global.SixCRM.routes.include('deployment', 'utilities/dynamo-deploy-tables');
 
 class DeployDynamoTablesJob extends DeploymentJob {
 

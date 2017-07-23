@@ -6,7 +6,7 @@ const GraphQLString = require('graphql').GraphQLString;
 let customerType = require('../customer/customerType');
 let userType = require('../user/userType');
 
-const customerNoteController = global.routes.include('controllers', 'entities/CustomerNote.js');
+const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'CustomerNote',

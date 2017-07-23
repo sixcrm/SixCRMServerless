@@ -1,5 +1,5 @@
 'use strict';
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
 /**
  * Follow these steps to configure the webhook in Slack:

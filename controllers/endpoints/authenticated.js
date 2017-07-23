@@ -1,11 +1,11 @@
 'use strict';
 const _ = require("underscore");
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const permissionutilities = global.routes.include('lib', 'permission-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
-const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/endpoint.js');
 
 module.exports = class AuthenticatedController extends endpointController {
 
@@ -19,7 +19,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
         }
 
-        this.userController = global.routes.include('controllers', 'entities/User.js');
+        this.userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
     }
 

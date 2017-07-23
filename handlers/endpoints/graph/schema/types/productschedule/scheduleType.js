@@ -31,7 +31,7 @@ module.exports.graphObj = new GraphQLObjectType({
 	        type: productType.graphObj,
             description:'The product associated with the schedule',
 	        resolve: (schedule) => {
-            var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
+            var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
             return productScheduleController.getProduct(schedule)
         }

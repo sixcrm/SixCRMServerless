@@ -6,17 +6,16 @@ const fs = require('fs');
 const exec = require('child-process-promise').exec;
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const dynamodbutilities = global.routes.include('lib', 'dynamodb-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const parserutilities = global.routes.include('lib', 'parser-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const dynamodbutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 
 class DynamoDeployTables {
 
     constructor(){
 
-      this.migration_directory = global.routes.path('tabledefinitions');
+      this.migration_directory = global.SixCRM.routes.path('tabledefinitions');
 
       this.deploy_table_command = 'serverless dynamodb execute -s {{stage}} -n {{table_name}}  -r {{region}}';
 
@@ -27,8 +26,8 @@ class DynamoDeployTables {
     buildDeploymentCommand(table_name){
 
       let parameters = {
-        region:this.region,
-        stage:this.stage,
+        region:global.SixCRM.configuration.site_config.aws.region,
+        stage:process.env.stage,
         table_name: table_name
       };
 
@@ -77,40 +76,12 @@ class DynamoDeployTables {
 
     }
 
-    setStage(stage){
-
-      this.stage = configurationutilities.resolveStage(stage);
-
-    }
-
-    setRegion(region){
-
-      if(_.isUndefined(region)){
-
-        let configuration = configurationutilities.getSiteConfig(this.stage);
-
-        if(_.has(configuration, 'aws') && _.has(configuration.aws, 'region')){
-
-          region = configuration.aws.region;
-
-        }
-
-      }
-
-      this.region = region;
-
-    }
-
-    deployAll(stage) {
-
-      this.setStage(stage);
-
-      this.setRegion();
+    deployAll() {
 
       let tables = this.getMigrationFileNames();
 
       return Promise.map(tables, (table) => {
-          return this.deployTable(table, this.stage, this.region);
+          return this.deployTable(table);
       }, {concurrency: 1})
       .then((vals) => {
           du.debug(vals);
@@ -162,6 +133,7 @@ class DynamoDeployTables {
 
     }
 
+    //Technical Debt:  Use File Utilities
     getMigrationFileNames(){
 
       du.debug('Get DynamoDB Migration FileNames');
@@ -174,6 +146,7 @@ class DynamoDeployTables {
 
     }
 
+    //Technical Debt: Use File Utilities
     getTableNames(){
 
       du.debug('Get DynamoDB Table Names');
@@ -188,7 +161,7 @@ class DynamoDeployTables {
 
     getTableName(table_definition_filename) {
 
-        let obj = global.routes.include('tabledefinitions', table_definition_filename);
+        let obj = global.SixCRM.routes.include('tabledefinitions', table_definition_filename);
 
         let name = (obj.Table || {}).TableName || '';
 
@@ -204,7 +177,7 @@ class DynamoDeployTables {
     getWaitTime() {
 
       //Technical Debt:  Use Timestamp
-        return (Math.random() * 100 % 5 + 2) * 1000;
+      return (Math.random() * 100 % 5 + 2) * 1000;
 
     }
 

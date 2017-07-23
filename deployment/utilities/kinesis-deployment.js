@@ -1,29 +1,39 @@
 'use strict';
+//Technical Debt:  Use a Kinesis Utilities class for AWS Calls
 const AWS = require("aws-sdk");
 
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
 
+//Busted
 class KinesisDeployment {
 
-    constructor(stage,config_path) {
-
-      this.stage = configurationutilities.resolveStage(stage);
+    constructor() {
 
       // JSON of all the streams config
       // Technical debt, need to move HOST info out of JSON
 
-      this.streams_config = configurationutilities.getEntityConfig(config_path);
-
-      this.site_config = configurationutilities.getSiteConfig(this.stage);
-
-      this.firehosetutilities = global.routes.include('lib', 'firehose-utilities.js');
+      this.firehosetutilities = global.SixCRM.routes.include('lib', 'firehose-utilities.js');
 
       this.kinesis = new AWS.Firehose({
-          region: this.site_config.aws.region,
+          region: global.SixCRM.configuration.site_config.aws.region,
           apiVersion: '2015-08-04',
       });
+
+    }
+
+    getEntityConfig(config_path){
+
+      du.debug('Get Config of Entity');
+
+      let config = global.SixCRM.routes.include('deployment', config_path+'/config.json');
+
+      if (!config) {
+        eu.throwError('server', 'Configuration.getEntityConfig was unable to identify file '+global.SixCRM.routes.path('deployment', config_path+'/config.json'));
+      }
+
+      return config;
 
     }
 
@@ -36,7 +46,7 @@ class KinesisDeployment {
       let destroy_promises = stream_list.map(stream =>  {
 
         let stream_parameters = {
-          DeliveryStreamName: this.site_config.kinesis.firehose.streams[stream].DeliveryStreamName
+          DeliveryStreamName: global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream].DeliveryStreamName
         };
 
         du.output('Attempting to destroy "'+stream_parameters.DeliveryStreamName+'"');
@@ -75,7 +85,8 @@ class KinesisDeployment {
 
     getStreamList(){
 
-      return Object.keys(this.site_config.kinesis.firehose.streams).filter(name => name.match(/\_stream$/));
+      //Technical Debt:  Use Object Utilities
+      return Object.keys(global.SixCRM.configuration.site_config.kinesis.firehose.streams).filter(name => name.match(/\_stream$/));
 
     }
 
@@ -85,15 +96,17 @@ class KinesisDeployment {
 
       let stream_list = this.getStreamList();
 
+      //Technical Debt:  Use Array Utilities
       let deployment_promises = stream_list.map((stream) => {
 
-        du.output('Attempting to create "'+this.site_config.kinesis.firehose.streams[stream].DeliveryStreamName+'"');
+        du.output('Attempting to create "'+global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream].DeliveryStreamName+'"');
 
         let stream_parameters = {};
 
-        Object.keys(this.site_config.kinesis.firehose.streams[stream]).forEach((key) => {
+        //Technical Debt:  Use Object Utilities
+        Object.keys(global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream]).forEach((key) => {
 
-            stream_parameters[key] = this.site_config.kinesis.firehose.streams[stream][key];
+            stream_parameters[key] = global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key];
 
         });
 
@@ -242,4 +255,4 @@ class KinesisDeployment {
 
 }
 
-module.exports = KinesisDeployment;
+module.exports = new KinesisDeployment();

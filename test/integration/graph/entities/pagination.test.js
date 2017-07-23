@@ -5,8 +5,8 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const _ = require('underscore');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -45,7 +45,7 @@ entities.forEach((entity) => {
       it(entity.camel+' Page 1 JSON results', function (done) {
 
           var limit = 1;
-          let query_path = global.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel);
+          let query_path = global.SixCRM.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel);
           var raw_query = tu.getQuery(query_path);
           var query = raw_query.split('{argumentation}');
           var query_arguments = 'pagination:{limit:"'+limit+'"}';
@@ -54,7 +54,7 @@ entities.forEach((entity) => {
 
           var this_request = request(endpoint);
 
-          var account = tu.getAccount(global.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel));
+          var account = tu.getAccount(global.SixCRM.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel));
 
           du.debug('Query: ', query, 'Account: '+account, 'JWT: '+testing_jwt);
 

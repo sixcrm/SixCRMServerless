@@ -1,13 +1,10 @@
 'use strict';
-require('../routes.js');
+require('../SixCRM.js');
 const fs = require('fs');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-let environment = configurationutilities.resolveStage(process.argv[2]);
-
-du.highlight('Deploying environment \'' + environment + '\'.');
+du.highlight('Deploying stage \'' + process.env.stage + '\'.');
 
 getJobGroups().forEach((group) => {
     du.highlight('Executing group \'' + group + '\'.');
@@ -15,10 +12,10 @@ getJobGroups().forEach((group) => {
     let job_promises = [];
 
     getJobs(group).forEach((job_file_name) => {
-        let jobModule = global.routes.include('deployment', 'jobs/' + group + '/' + job_file_name);
+        let jobModule = global.SixCRM.routes.include('deployment', 'jobs/' + group + '/' + job_file_name);
         let job = new jobModule();
 
-        job_promises.push(job.execute(environment));
+        job_promises.push(job.execute());
     });
 
     // Execute synchronously.
@@ -28,14 +25,14 @@ getJobGroups().forEach((group) => {
 du.highlight('Finished');
 
 function getJobGroups() {
-    let base_directory = global.routes.path('deployment', 'jobs');
+    let base_directory = global.SixCRM.routes.path('deployment', 'jobs');
 
     return fs.readdirSync(base_directory)
         .filter((file) => fs.statSync(base_directory + '/' + file).isDirectory());
 }
 
 function getJobs(group) {
-    let base_directory = global.routes.path('deployment', 'jobs/' + group);
+    let base_directory = global.SixCRM.routes.path('deployment', 'jobs/' + group);
 
     return fs.readdirSync(base_directory)
         .filter((file) => fs.statSync(base_directory + '/' + file).isFile());

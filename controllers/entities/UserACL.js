@@ -1,14 +1,14 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-var accountController = global.routes.include('controllers', 'entities/Account.js');
-var roleController = global.routes.include('controllers', 'entities/Role.js');
+var accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+var roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
 //Technical Debt: This is null when the UserACLController is included from the context of the UserController
-var userController = global.routes.include('controllers', 'entities/User.js');
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class userACLController extends entityController {
 
@@ -59,7 +59,7 @@ class userACLController extends entityController {
         }
 
 		//necessary because of embedded embeds (etc)
-        let userController = global.routes.include('controllers', 'entities/User.js');
+        let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
         return userController.get(useracl.user);
 

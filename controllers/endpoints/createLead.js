@@ -2,13 +2,13 @@
 const _ = require('underscore');
 const Validator = require('jsonschema').Validator;
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var customerController = global.routes.include('controllers', 'entities/Customer.js');
-var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
-var sessionController = global.routes.include('controllers', 'entities/Session.js');
-const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
+var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
 class createLeadController extends transactionEndpointController{
 
@@ -61,11 +61,11 @@ class createLeadController extends transactionEndpointController{
 
         du.debug('Validate Event Schema');
 
-        let lead_schema = global.routes.include('model', 'endpoints/lead');
-        let customer_schema = global.routes.include('model', 'endpoints/components/customer');
-        let address_schema = global.routes.include('model', 'endpoints/components/address');
-        let creditcard_schema = global.routes.include('model', 'endpoints/components/creditcard');
-        let affiliates_schema = global.routes.include('model', 'endpoints/components/affiliates');
+        let lead_schema = global.SixCRM.routes.include('model', 'endpoints/lead');
+        let customer_schema = global.SixCRM.routes.include('model', 'endpoints/components/customer');
+        let address_schema = global.SixCRM.routes.include('model', 'endpoints/components/address');
+        let creditcard_schema = global.SixCRM.routes.include('model', 'endpoints/components/creditcard');
+        let affiliates_schema = global.SixCRM.routes.include('model', 'endpoints/components/affiliates');
 
         let v = new Validator();
 

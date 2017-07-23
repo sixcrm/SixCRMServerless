@@ -5,7 +5,7 @@ const GraphQLString = require('graphql').GraphQLString;
 
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
 
-const productController = global.routes.include('controllers', 'entities/Product.js');
+const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Product',

@@ -36,7 +36,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: SMTPProviderType.graphObj,
             description: 'The SMTP Provider for the email template.',
             resolve: (emailtemplate) => {
-                let emailTemplateController = global.routes.include('controllers', 'entities/EmailTemplate.js');
+                let emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 
                 emailTemplateController.getSMTPProvider(emailtemplate)
             }

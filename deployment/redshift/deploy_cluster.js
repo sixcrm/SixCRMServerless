@@ -1,11 +1,8 @@
 'use strict';
-require('../../routes.js');
+require('../../SixCRM.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const redshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const RedshiftDeployment = global.routes.include('deployment', 'utilities/redshift-deployment.js');
-
-let stage = process.argv[2] || 'development';
-let redshiftDeployment = new RedshiftDeployment(stage);
 return redshiftDeployment.deployCluster().then((result) => {
   du.highlight(result);
 }).catch(error => {

@@ -1,9 +1,9 @@
 'use strict';
 var _ = require('underscore');
 var request = require('request');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var shippingProviderController = global.routes.include('controllers', 'vendors/shippingproviders/ShippingProvider');
+var shippingProviderController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/ShippingProvider');
 var parseString = require('xml2js').parseString;
 
 class USPSController extends shippingProviderController {

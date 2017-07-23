@@ -1,10 +1,10 @@
 'use strict';
 var _ = require('underscore');
 
-const eu = global.routes.include('lib', 'error-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var HashtagController = global.routes.include('controllers', 'vendors/fulfillmentproviders/Hashtag.js');
-var fulfillmentProviderController = global.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+var HashtagController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/Hashtag.js');
+var fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
 
 class fulfillmentTriggerController {
 

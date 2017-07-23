@@ -1,5 +1,5 @@
 'use strict';
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class accountController extends entityController {
 

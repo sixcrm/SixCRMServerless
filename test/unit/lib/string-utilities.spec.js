@@ -1,4 +1,4 @@
-let stringutilities = global.routes.include('lib', 'string-utilities.js');
+let stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 

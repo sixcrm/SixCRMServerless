@@ -1,10 +1,10 @@
 'use strict';
 const _ = require('underscore');
 
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-var policy_response = global.routes.include('lib', 'policy_response.js');
-var verifyTransactionJWTController = global.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
+var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
+var verifyTransactionJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
 
 module.exports.verifyjwt = (event, context, callback) => {
 

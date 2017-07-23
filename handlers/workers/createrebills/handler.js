@@ -1,9 +1,9 @@
 'use strict';
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-var LambdaResponse = global.routes.include('lib', 'lambda-response.js');
+var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
 
-var createRebillsController = global.routes.include('controllers', 'workers/createRebills.js');
+var createRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.createrebills = (event, context, callback) => {

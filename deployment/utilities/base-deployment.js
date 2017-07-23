@@ -1,10 +1,10 @@
 'use strict';
 require('require-yaml');
-require('../../routes.js');
+require('../../SixCRM.js');
 const _ = require('underscore');
 const AWS = require("aws-sdk");
 
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class BaseDeployment {
 
@@ -14,7 +14,7 @@ module.exports = class BaseDeployment {
   }
 
   getAwsConfig() {
-    let config = global.routes.include('config', `${this.stage}/site.yml`).aws;
+    let config = global.SixCRM.routes.include('config', `${this.stage}/site.yml`).aws;
 
     if (!config) {
       throw 'Unable to find aws config file.';

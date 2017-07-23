@@ -1,9 +1,9 @@
 'use strict'
 const _ = require("underscore");
 
-const jwtutilities = global.routes.include('lib', 'jwt-utilities');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 class verifyTransactionJWTController {
 

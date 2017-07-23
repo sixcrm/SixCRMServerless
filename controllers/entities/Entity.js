@@ -1,10 +1,10 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const entityUtilitiesController = global.routes.include('controllers','entities/EntityUtilities');
+const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
@@ -23,7 +23,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting', 'usersigningstring'];
 
-        this.dynamoutilities = global.routes.include('lib', 'dynamodb-utilities.js');
+        this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
 
     }
 
@@ -271,7 +271,7 @@ module.exports = class entityController extends entityUtilitiesController {
       return new Promise((resolve, reject) => {
 
           return this.can('read', true)
-          .then(() =>  this.validate(parameters, global.routes.path('model','general/search_parameters.json')))
+          .then(() =>  this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
           .then(() => {
 
               let query_parameters = {
@@ -320,7 +320,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return new Promise((resolve, reject) => {
 
           return this.can('read', true)
-          .then(() =>  this.validate(parameters, global.routes.path('model','general/search_parameters.json')))
+          .then(() =>  this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
           .then(() => {
 
             let query_parameters = {

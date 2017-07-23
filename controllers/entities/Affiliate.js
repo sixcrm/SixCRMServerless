@@ -1,10 +1,10 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities');
-const eu = global.routes.include('lib', 'error-utilities');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class affiliateController extends entityController {
 
@@ -12,8 +12,8 @@ class affiliateController extends entityController {
 
         super('affiliate');
 
-        this.trackerController = global.routes.include('controllers', 'entities/Tracker.js');
-        this.sessionController = global.routes.include('controllers', 'entities/Session.js');
+        this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+        this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
     }
 

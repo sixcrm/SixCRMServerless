@@ -3,8 +3,8 @@ const chai = require('chai');
 const expect = require('chai').expect;
 const fs = require('fs');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 const minute = 60 * 1000;
 
@@ -14,18 +14,18 @@ let endpoint = global.integration_test_config.endpoint;
 let customerGraph = {
     create: {
         name: "create",
-        query: global.routes.path('handlers','/endpoints/graph/queries/create/createCustomer')
+        query: global.SixCRM.routes.path('handlers','/endpoints/graph/queries/create/createCustomer')
     },
     delete: {
         name: "delete",
-        query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteCustomer')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteCustomer')
     }
 };
 
 let searchGraph = {
     search: {
         name: "search",
-        query: global.routes.path('handlers','endpoints/graph/queries/uncategorized/getSearchResultsForCustomerId')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/getSearchResultsForCustomerId')
     }
 };
 

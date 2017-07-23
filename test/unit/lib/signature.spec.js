@@ -1,4 +1,4 @@
-let Signature = global.routes.include('lib', 'signature.js')
+let Signature = global.SixCRM.routes.include('lib', 'signature.js')
 let chai = require('chai');
 let expect = chai.expect;
 

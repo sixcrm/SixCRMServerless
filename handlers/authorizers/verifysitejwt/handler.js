@@ -1,10 +1,10 @@
 'use strict';
 const validator = require('validator');
 
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-var policy_response = global.routes.include('lib', 'policy_response.js');
-var verifySiteJWTController = global.routes.include('controllers', 'authorizers/verifySiteJWT.js');
+var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
+var verifySiteJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
 
 module.exports.verifyjwt = (event, context, callback) => {
 

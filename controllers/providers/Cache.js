@@ -2,10 +2,10 @@
 const _ = require('underscore');
 const crypto = require('crypto');
 
-const timestamp = global.routes.include('lib', 'timestamp.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const redisutilities = global.routes.include('lib', 'redis-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
 
 module.exports = class cacheController {
 

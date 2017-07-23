@@ -2,19 +2,19 @@
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const mungeutilities = global.routes.include('lib', 'munge-utilities.js');
-const inviteutilities = global.routes.include('lib', 'invite-utilities.js');
+const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
+const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js');
 
-const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
-const accountController = global.routes.include('controllers', 'entities/Account.js');
-const userSettingController = global.routes.include('controllers', 'entities/UserSetting.js');
-const roleController = global.routes.include('controllers', 'entities/Role.js');
-const accessKeyController = global.routes.include('controllers', 'entities/AccessKey.js');
-const userACLController = global.routes.include('controllers', 'entities/UserACL.js');
-const entityController = global.routes.include('controllers', 'entities/Entity.js');
+const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
+const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting.js');
+const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class userController extends entityController {
 
@@ -392,7 +392,7 @@ class userController extends entityController {
             du.debug('User: ', user.id);
 
 			      //Technical Debt:  This is required.  Must be extended by the UserACL controller itself?
-            var userACLController = global.routes.include('controllers', 'entities/UserACL.js');
+            var userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
             userACLController.queryBySecondaryIndex('user', user.id, 'user-index')
               .then((response) => this.getResult(response, 'useracls'))

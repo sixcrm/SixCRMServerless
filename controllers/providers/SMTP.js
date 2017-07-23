@@ -1,11 +1,11 @@
 'use strict'
 const _ = require('underscore');
 
-const smtputilities = global.routes.include('lib', 'smtp-utilities.js');
-const mvu = global.routes.include('lib', 'model-validator-utilities.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.routes.include('lib','array-utilities.js');
+const smtputilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 
 module.exports = class SMTPProvider {
 
@@ -76,7 +76,7 @@ module.exports = class SMTPProvider {
 
         du.debug('Validate Options');
 
-        mvu.validateModel(options_object, global.routes.path('model', 'general/smtp_options.json'));
+        mvu.validateModel(options_object, global.SixCRM.routes.path('model', 'general/smtp_options.json'));
 
     }
 

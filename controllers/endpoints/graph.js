@@ -2,11 +2,11 @@
 const _ = require("underscore");
 const graphql =  require('graphql').graphql;
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-let authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
-const resolveController = global.routes.include('providers', 'Resolve.js');
+let authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/authenticated.js');
+const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
 
 module.exports = class graphController extends authenticatedController {
 
@@ -14,7 +14,7 @@ module.exports = class graphController extends authenticatedController {
 
         super();
 
-        this.sixSchema = global.routes.include('handlers', 'endpoints/graph/schema');
+        this.sixSchema = global.SixCRM.routes.include('handlers', 'endpoints/graph/schema');
 
         this.resolveController = new resolveController();
 

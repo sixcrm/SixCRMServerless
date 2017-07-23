@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Shipping Receipts';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getShippingReceipts')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getShippingReceipts')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getShippingReceipt')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getShippingReceipt')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createShippingReceipt')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createShippingReceipt')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateShippingReceipt')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateShippingReceipt')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteShippingReceipt')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteShippingReceipt')
 }];
 
 let this_request = request(endpoint);

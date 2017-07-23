@@ -1,7 +1,7 @@
 'use strict'
-require('../routes.js');
-const encode = global.routes.include('lib', 'encode');
-const du = global.routes.include('lib','debug-utilities.js');
+require('../SixCRM.js');
+const encode = global.SixCRM.routes.include('lib', 'encode');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 process.env.SIX_VERBOSE = 2;
 let object = {

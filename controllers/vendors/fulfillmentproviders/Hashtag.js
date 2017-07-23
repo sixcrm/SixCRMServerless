@@ -1,5 +1,5 @@
 'use strict';
-var fulfillmentProviderController = global.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider');
+var fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider');
 
 class HashtagController extends fulfillmentProviderController {
 

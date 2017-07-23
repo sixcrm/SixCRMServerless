@@ -5,7 +5,7 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 let permissionsType = require('./permissionsType');
 
-const roleController = global.routes.include('controllers', 'entities/Role.js');
+const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Role',

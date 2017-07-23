@@ -1,7 +1,7 @@
 'use strict'
-require('../../routes.js');
-const dynamo_deployment_utilities = global.routes.include('deployment', 'utilities/dynamo-deploy-seeds.js');
+require('../../SixCRM.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const dynamo_deployment_utilities = global.SixCRM.routes.include('deployment', 'utilities/dynamo-deploy-seeds.js');
 
-let stage = process.argv[2] || 'development';
-
-dynamo_deployment_utilities.deployAllSeeds(stage);
+du.highlight('Deploying DynamoDB Table Seeds');
+dynamo_deployment_utilities.deployAllSeeds();

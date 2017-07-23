@@ -1,5 +1,5 @@
-let mvu = global.routes.include('lib', 'model-validator-utilities.js');
-let du = global.routes.include('lib', 'debug-utilities.js');
+let mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let modelgenerator = require('../../model-generator.js');
 let chai = require('chai');
 let fs = require('fs');
@@ -87,7 +87,7 @@ describe('lib/model-validator-utilities', () => {
                 .filter((file_name) => file_name.indexOf('.json') > -1)
                 .forEach((file_name) => {
                     let schema = path + '/' + file_name;
-                    let model_name = schema.replace(global.routes.path('model'), '');
+                    let model_name = schema.replace(global.SixCRM.routes.path('model'), '');
 
                     xit('validates valid ' + model_name, () => {
 
@@ -114,10 +114,10 @@ describe('lib/model-validator-utilities', () => {
 
                 });
         }
-        validateSchemasOnPath(global.routes.path('model', 'entities'));
-        validateSchemasOnPath(global.routes.path('model', 'actions'));
-        validateSchemasOnPath(global.routes.path('model', 'jwt'));
-        validateSchemasOnPath(global.routes.path('model', 'transaction'));
+        validateSchemasOnPath(global.SixCRM.routes.path('model', 'entities'));
+        validateSchemasOnPath(global.SixCRM.routes.path('model', 'actions'));
+        validateSchemasOnPath(global.SixCRM.routes.path('model', 'jwt'));
+        validateSchemasOnPath(global.SixCRM.routes.path('model', 'transaction'));
 
     });
 

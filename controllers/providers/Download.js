@@ -3,12 +3,12 @@ const _ = require('underscore');
 const j2csv = require('json2csv');
 var XLSX = require('xlsx');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const randomutilities = global.routes.include('lib', 'random.js');
-const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
-const objectutilities = global.routes.include('lib', 'object-utilities.js');
+const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 class DownloadController {
 

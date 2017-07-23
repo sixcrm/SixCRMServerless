@@ -2,18 +2,18 @@
 const _ = require('underscore');
 const Validator = require('jsonschema').Validator;
 
-const du = global.routes.include('lib','debug-utilities');
-const eu = global.routes.include('lib','error-utilities');
-const permissionUtils = global.routes.include('lib','permission-utilities');
-const emailNotificationUtils = global.routes.include('lib','email-notification-utilities');
-const smsNotificationUtils = global.routes.include('lib','sms-notification-utilities');
-const slackNotificationUtils = global.routes.include('lib','slack-notification-utilities');
-const timestamp = global.routes.include('lib','timestamp');
+const du = global.SixCRM.routes.include('lib','debug-utilities');
+const eu = global.SixCRM.routes.include('lib','error-utilities');
+const permissionUtils = global.SixCRM.routes.include('lib','permission-utilities');
+const emailNotificationUtils = global.SixCRM.routes.include('lib','email-notification-utilities');
+const smsNotificationUtils = global.SixCRM.routes.include('lib','sms-notification-utilities');
+const slackNotificationUtils = global.SixCRM.routes.include('lib','slack-notification-utilities');
+const timestamp = global.SixCRM.routes.include('lib','timestamp');
 
-const notificationController = global.routes.include('controllers', 'entities/Notification');
-const notificationSettingController = global.routes.include('controllers', 'entities/NotificationSetting');
-const userSettingController = global.routes.include('controllers', 'entities/UserSetting');
-const userAclController = global.routes.include('controllers', 'entities/UserACL');
+const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
+const userAclController = global.SixCRM.routes.include('controllers', 'entities/UserACL');
 
 class NotificationProvider {
 
@@ -253,7 +253,7 @@ class NotificationProvider {
         let schema;
 
         try{
-            schema = global.routes.include('model','actions/create_notification.json');
+            schema = global.SixCRM.routes.include('model','actions/create_notification.json');
         } catch(e){
             return Promise.reject(eu.getError('server','Unable to load validation schemas.'));
         }

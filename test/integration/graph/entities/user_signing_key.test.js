@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -15,23 +15,23 @@ var entity = 'User signing string';
 var tests = [
     {
         name: "index",
-        query: global.routes.path('handlers','endpoints/graph/queries/index/getUserSigningStrings')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getUserSigningStrings')
     },
     {
         name: "create",
-        query: global.routes.path('handlers','endpoints/graph/queries/create/createUserSigningString')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createUserSigningString')
     },
     {
         name: "view",
-        query: global.routes.path('handlers','endpoints/graph/queries/view/getUserSigningString')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getUserSigningString')
     },
     {
         name: "update",
-        query: global.routes.path('handlers','endpoints/graph/queries/update/updateUserSigningString')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateUserSigningString')
     },
     {
         name: "delete",
-        query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteUserSigningString')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteUserSigningString')
     }];
 
 let this_request = request(endpoint);

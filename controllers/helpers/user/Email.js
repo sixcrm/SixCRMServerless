@@ -1,19 +1,19 @@
 'use strict'
 const  _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.routes.include('lib', 'object-utilities.js');
-const parserutilities = global.routes.include('lib', 'parser-utilities.js');
-const SMTPProvider = global.routes.include('controllers', 'providers/SMTP.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/SMTP.js');
 
 module.exports = class userEmailHelperController {
 
     constructor(){
 
-        this.campaignController = global.routes.include('entities','Campaign.js');
-        this.emailTemplateController = global.routes.include('entities','EmailTemplate.js');
-        this.customerController = global.routes.include('entities','Customer.js');
+        this.campaignController = global.SixCRM.routes.include('entities','Campaign.js');
+        this.emailTemplateController = global.SixCRM.routes.include('entities','EmailTemplate.js');
+        this.customerController = global.SixCRM.routes.include('entities','Customer.js');
 
     }
 

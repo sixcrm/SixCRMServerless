@@ -1,11 +1,11 @@
 'use strict';
 const _ = require('underscore');
-const du = global.routes.include('lib', 'debug-utilities');
-const eu = global.routes.include('lib', 'error-utilities');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 
-const mathutilities = global.routes.include('lib', 'math-utilities');
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
-const NMIController = global.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
+const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const NMIController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
 
 class merchantProviderController extends entityController {
 

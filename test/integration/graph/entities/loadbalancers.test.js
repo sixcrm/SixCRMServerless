@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Load Balancers';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getLoadBalancers')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getLoadBalancers')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getLoadBalancer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getLoadBalancer')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createLoadBalancer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createLoadBalancer')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateLoadBalancer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateLoadBalancer')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteLoadBalancer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteLoadBalancer')
 }];
 
 let this_request = request(endpoint);

@@ -1,22 +1,18 @@
 "use strict"
-require('../../routes.js');
+require('../../SixCRM.js');
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const sqsutilities = global.routes.include('lib', 'sqs-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-
-let environment = process.argv[2];
-
-let serverless_config = configurationutilities.getServerlessConfig();
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
 du.highlight('Executing SQS Purge');
 
 let purge_promises = [];
 
-du.debug('Serverless Config: ', serverless_config);
+let serverless_config = global.SixCRM.configuration.serverless_config;
 
 // Technical Debt: Deprecated.
+
 for(const resource in serverless_config.resources.Resources) {
 
     let resource_definition = serverless_config.resources.Resources[resource];
@@ -25,7 +21,7 @@ for(const resource in serverless_config.resources.Resources) {
 
         if(_.has(resource_definition, 'Properties') && _.has(resource_definition.Properties, 'QueueName')){
 
-            let queue_name = buildQueueName(resource_definition.Properties.QueueName);
+            let queue_name = resource_definition.Properties.QueueName;
 
             du.highlight('Purging Queue: '+queue_name);
 
@@ -69,13 +65,5 @@ function purgeQueue(queue_shortname){
         });
 
     });
-
-}
-
-function buildQueueName(proto_queue_name){
-
-    du.debug('Build Queue Name');
-
-    return proto_queue_name.replace('${opt:stage}', environment);
 
 }

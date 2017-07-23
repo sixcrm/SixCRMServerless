@@ -7,11 +7,21 @@ var fs = require('fs');
 
 class Routes{
 
-    constructor(){
+    constructor(root_path){
 
-        this.root = path.resolve(__dirname);
+      this.setRootPath(root_path);
 
-        this.loadRoutes('/config/routes.yml');
+      this.loadRoutes('/config/routes.yml');
+
+    }
+
+    setRootPath(root_path){
+
+      if(_.isUndefined(root_path)){
+        root_path = __dirname;
+      }
+
+      this.root = path.resolve(root_path);
 
     }
 

@@ -2,11 +2,11 @@
 const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var sessionController = global.routes.include('controllers', 'entities/Session.js');
-const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
+var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
 class confirmOrderController extends transactionEndpointController{
 
@@ -56,7 +56,7 @@ class confirmOrderController extends transactionEndpointController{
 
         du.debug('Validate Event Schema');
 
-        let confirm_order_schema = global.routes.include('model', 'endpoints/confirmorder');
+        let confirm_order_schema = global.SixCRM.routes.include('model', 'endpoints/confirmorder');
 
         let v = new Validator();
 

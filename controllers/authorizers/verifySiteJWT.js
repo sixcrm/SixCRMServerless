@@ -1,11 +1,11 @@
 'use strict'
 const _ = require("underscore");
-const du = global.routes.include('lib', 'debug-utilities.js');
-const jwtutilities = global.routes.include('lib', 'jwt-utilities.js');
-const timestamp = global.routes.include('lib', 'timestamp.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
-const userSigningStringContoller = global.routes.include('controllers', 'entities/UserSigningString.js');
-const userController = global.routes.include('controllers', 'entities/User.js');
+const userSigningStringContoller = global.SixCRM.routes.include('controllers', 'entities/UserSigningString.js');
+const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
 class verifySiteJWTController {
 

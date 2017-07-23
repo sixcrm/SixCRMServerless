@@ -1,24 +1,17 @@
 'use strict';
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const objectutilities = global.routes.include('lib', 'object-utilities.js');
-const EC2Utilities = global.routes.include('lib', 'ec2-utilities.js');
-const AWSDeploymentUtilities = global.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
+const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
-  constructor(stage) {
+  constructor() {
 
-    super(stage);
+    super();
 
-    this.stage = configurationutilities.resolveStage(stage);
-
-    process.env.stage = this.stage;
-
-    this.site_config = configurationutilities.getSiteConfig(this.stage);
-
-    this.ec2utilities = new EC2Utilities(this.stage);
+    this.ec2utilities = new EC2Utilities();
 
     this.parameter_groups = {
       security_group: {
@@ -154,7 +147,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
     du.debug('Get Configuration JSON');
 
     //Technical Debt:  This needs to be expanded to support multiple definitions...
-    return global.routes.include('deployment', 'ec2/configuration/'+filename+'.json');
+    return global.SixCRM.routes.include('deployment', 'ec2/configuration/'+filename+'.json');
 
   }
 

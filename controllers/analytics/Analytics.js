@@ -1,12 +1,12 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.routes.include('lib', 'array-utilities.js');
-const paginationutilities = global.routes.include('lib', 'pagination-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 
-const AnalyticsUtilities = global.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
+const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 
 class AnalyticsController extends AnalyticsUtilities{
 
@@ -52,7 +52,7 @@ class AnalyticsController extends AnalyticsUtilities{
           'phone'
         ];
 
-        this.permissionutilities = global.routes.include('lib', 'permission-utilities.js');
+        this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
 
     }

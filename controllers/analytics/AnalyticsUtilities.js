@@ -3,13 +3,13 @@ const _ = require('underscore');
 const fs = require('fs');
 const Validator = require('jsonschema').Validator;
 
-const timestamp = global.routes.include('lib', 'timestamp.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const parserutilities = global.routes.include('lib', 'parser-utilities');
-const arrayutilities = global.routes.include('lib', 'array-utilities');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 
-const cacheController = global.routes.include('controllers', 'providers/Cache.js');
+const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 //Technical Debt:  Create SQL Query Builder class and abstract the query building methods there.
 
@@ -27,7 +27,7 @@ module.exports = class AnalyticsUtilities {
           {name:"year", seconds: 30412800}
         ];
 
-        this.redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
+        this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 
         this.cacheController = new cacheController();
 

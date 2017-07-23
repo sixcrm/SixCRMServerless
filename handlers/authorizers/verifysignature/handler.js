@@ -2,10 +2,10 @@
 
 const _ = require("underscore");
 
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-var policy_response = global.routes.include('lib', 'policy_response.js');
-var verifySignatureController = global.routes.include('controllers', 'authorizers/verifySignature.js');
+var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
+var verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
 
 /*
 * Note:  The Authority User referenced in this script is the Six user that has placed the signature on a eCommerce website.  Thus, this method returns the user on whose authority the endpoint is being operated.

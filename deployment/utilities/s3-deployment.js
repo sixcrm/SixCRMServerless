@@ -1,20 +1,18 @@
 'use strict';
 const _ = require('underscore');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const fileutilities = global.routes.include('lib', 'file-utilities.js');
-const parserutilities = global.routes.include('lib', 'parser-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-class S3Deployment{
+class S3Deployment extends AWSDeploymentUtilities{
 
-    constructor(stage) {
+    constructor() {
 
-      this.stage = configurationutilities.resolveStage(stage);
+      super();
 
-      this.site_config = configurationutilities.getSiteConfig(this.stage);
-
-      this.s3utilities = global.routes.include('lib', 's3-utilities.js');
+      this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
       this.bucket_name_template = 'sixcrm-{{stage}}-{{bucket_name}}';
 
@@ -24,7 +22,7 @@ class S3Deployment{
 
       du.debug('Create Buckets');
 
-      let bucket_group_files = fileutilities.getDirectoryFilesSync(global.routes.path('deployment','s3/buckets'));
+      let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','s3/buckets'));
 
       if(!_.isArray(bucket_group_files)){
         eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.');
@@ -34,7 +32,7 @@ class S3Deployment{
 
       bucket_group_files.forEach((bucket_group_file) => {
 
-        let bucket_group_file_contents = global.routes.include('deployment', 's3/buckets/'+bucket_group_file);
+        let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/'+bucket_group_file);
 
         if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
 
@@ -54,7 +52,7 @@ class S3Deployment{
 
       du.debug('Destroy Buckets');
 
-      let bucket_group_files = fileutilities.getDirectoryFilesSync(global.routes.path('deployment','s3/buckets'));
+      let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','s3/buckets'));
 
       if(!_.isArray(bucket_group_files)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.'); }
 
@@ -62,7 +60,7 @@ class S3Deployment{
 
       bucket_group_files.forEach((bucket_group_file) => {
 
-        let bucket_group_file_contents = global.routes.include('deployment', 's3/buckets/'+bucket_group_file);
+        let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/'+bucket_group_file);
 
         if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
 
@@ -305,7 +303,7 @@ class S3Deployment{
     }
 
     getConfig() {
-        let config = global.routes.include('config', `${this.stage}/site.yml`).s3.redshift;
+        let config = global.SixCRM.routes.include('config', `${this.stage}/site.yml`).s3.redshift;
 
         if (!config) {
             throw 'Unable to find config file.';

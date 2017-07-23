@@ -1,26 +1,18 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const objectutilities = global.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.routes.include('lib', 'array-utilities.js');
-const RedisUtilities = global.routes.include('lib', 'redis-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 module.exports = class ElasticacheDeployment {
 
   constructor(stage) {
 
-    this.stage = configurationutilities.resolveStage(stage);
+    this.elasticacheutilities = global.SixCRM.routes.include('lib', 'elasticache-utilities.js');
 
-    process.env.stage = this.stage;
-
-    this.site_config = configurationutilities.getSiteConfig(this.stage);
-
-    this.elasticacheutilities = global.routes.include('lib', 'elasticache-utilities.js');
-
-    this.redisutilities = new RedisUtilities(this.stage);
+    this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
 
     this.parameterFilters = {
       'create':{
@@ -107,7 +99,7 @@ module.exports = class ElasticacheDeployment {
     du.debug('Get Parameters JSON');
 
     //Technical Debt:  This needs to be expanded to support multiple definitions...
-    return global.routes.include('deployment', 'elasticache/clusters/'+filename+'.json');
+    return global.SixCRM.routes.include('deployment', 'elasticache/clusters/'+filename+'.json');
 
   }
 

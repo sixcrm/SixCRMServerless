@@ -35,7 +35,7 @@ describe('Pick Rebill', function () {
 
 
     it('should not move anything to bill queue when bill table is empty', function () {
-        mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
             scanRecords: (table, parameters, callback) => {
                 callback(null, []);
             }
@@ -54,7 +54,7 @@ describe('Pick Rebill', function () {
         // let rebill = { id: uuidV4(), created_at: TimestampUtils.getISO8601(), updated_at: TimestampUtils.getISO8601() };
         let rebill = randomRebill;
 
-        mockery.registerMock(global.routes.path('lib', 'dynamodb-utilities.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
             scanRecords: (table, parameters, callback) => {
                 callback(null, [rebill]);
             },
@@ -79,7 +79,7 @@ describe('Pick Rebill', function () {
 
     function pickrebill() {
         process.env.bill_queue_url = 'http://localhost:9324/queue/bill';
-        return global.routes.include('controllers', 'workers/pickRebill');
+        return global.SixCRM.routes.include('controllers', 'workers/pickRebill');
     }
 });
 

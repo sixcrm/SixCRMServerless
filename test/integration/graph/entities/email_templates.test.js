@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 
 chai.use(require('chai-json-schema'));
@@ -15,23 +15,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'EmailTemplates';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getEmailTemplates')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getEmailTemplates')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getEmailTemplate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getEmailTemplate')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createEmailTemplate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createEmailTemplate')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateEmailTemplate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateEmailTemplate')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteEmailTemplate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteEmailTemplate')
 }];
 
 let this_request = request(endpoint);

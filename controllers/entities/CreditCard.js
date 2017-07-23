@@ -1,8 +1,8 @@
 'use strict';
 const _ = require('underscore');
-const entityController = global.routes.include('controllers', 'entities/Entity.js');
-const du = global.routes.include('lib', 'debug-utilities');
-const eu = global.routes.include('lib', 'error-utilities');
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 
 class creditCardController extends entityController {
 

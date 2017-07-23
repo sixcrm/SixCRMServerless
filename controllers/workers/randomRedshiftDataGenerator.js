@@ -2,14 +2,14 @@
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const mathutilities = global.routes.include('lib', 'math-utilities.js');
-const randomutilities = global.routes.include('lib', 'random.js');
-const timestamp = global.routes.include('lib', 'timestamp.js');
-const s3utilities = global.routes.include('lib', 's3-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
-const workerController = global.routes.include('controllers', 'workers/worker.js');
+const workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 //Fix Product Schedule.
 //Test!
@@ -40,7 +40,7 @@ class RandomRedshiftData extends workerController {
             activity: 'f_activity'
         };
 
-        this.redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
+        this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 
     }
 
@@ -226,7 +226,7 @@ class RandomRedshiftData extends workerController {
 
         du.debug('Acquire Configuration Object');
 
-        return this.configuration_object = global.routes.include('config', process.env.stage+'/random-redshift-data-configuration.json');
+        return this.configuration_object = global.SixCRM.routes.include('config', process.env.stage+'/random-redshift-data-configuration.json');
 
     }
 

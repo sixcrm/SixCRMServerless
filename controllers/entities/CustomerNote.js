@@ -1,11 +1,11 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
-var userController = global.routes.include('controllers', 'entities/User.js');
-var customerController = global.routes.include('controllers', 'entities/Customer.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+var userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
 class customerNoteController extends entityController {
 

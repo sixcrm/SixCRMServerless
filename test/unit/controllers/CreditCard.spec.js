@@ -12,7 +12,7 @@ describe('controllers/CreditCard.js', () => {
             name: 'N',
             address: 'A'
         };
-        let creditCardController = global.routes.include('controllers','entities/CreditCard');
+        let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
 
         // when
         let creditCardObject = creditCardController.createCreditCardObject(creditCardData);

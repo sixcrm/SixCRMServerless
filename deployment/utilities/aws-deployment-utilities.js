@@ -1,23 +1,13 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const objectutilities = global.routes.include('lib', 'object-utilities.js');
-//const arrayutilities = global.routes.include('lib', 'array-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class AWSDeploymentUtilities {
 
-  constructor(stage) {
-
-    this.stage = configurationutilities.resolveStage(stage);
-
-    process.env.stage = this.stage;
-
-    this.site_config = configurationutilities.getSiteConfig(this.stage);
-
-  }
+  constructor(){}
 
   createParameterGroup(action, subaction, object){
 

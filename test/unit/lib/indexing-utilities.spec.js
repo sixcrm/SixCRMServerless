@@ -1,8 +1,8 @@
-let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
+let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 
 describe('lib/indexing-utilities', () => {
@@ -153,12 +153,12 @@ describe('lib/indexing-utilities', () => {
                 entity_type: 'customer' // indexable type
             };
 
-            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
                 }
             });
-            let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
+            let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).then((response) => {
@@ -173,12 +173,12 @@ describe('lib/indexing-utilities', () => {
                 entity_type: 'customer'
             };
 
-            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(eu.getError('server','Sending message failed.'), null);
                 }
             });
-            let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
+            let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
@@ -195,12 +195,12 @@ describe('lib/indexing-utilities', () => {
                 entity_type: 'customer'
             };
 
-            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
                 }
             });
-            let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
+            let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.removeFromSearchIndex(entity).then((response) => {
@@ -218,12 +218,12 @@ describe('lib/indexing-utilities', () => {
                 entity_type: 'customer'
             };
 
-            mockery.registerMock(global.routes.path('lib', 'sqs-utilities.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
                 sendMessage: (parameters, callback) => {
                     callback(null, {});
                 }
             });
-            let IndexingUtilities = global.routes.include('lib', 'indexing-utilities.js');
+            let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.addToSearchIndex(entity).then((response) => {

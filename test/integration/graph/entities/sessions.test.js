@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Sessions';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getSessions')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getSessions')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getSession')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getSession')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createSession')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createSession')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateSession')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateSession')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteSession')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteSession')
 }];
 
 let this_request = request(endpoint);

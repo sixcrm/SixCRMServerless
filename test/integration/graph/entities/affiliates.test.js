@@ -4,8 +4,8 @@ const assert = require('chai').assert
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const tu = global.routes.include('lib','test-utilities.js');
-const du = global.routes.include('lib','debug-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 
 chai.use(require('chai-json-schema'));
@@ -15,23 +15,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Affiliates';
 var tests = [{
     name: "index",
-    query: global.routes.path('handlers','endpoints/graph/queries/index/getAffiliates')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getAffiliates')
 },
 {
     name: "view",
-    query: global.routes.path('handlers','endpoints/graph/queries/view/getAffiliate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getAffiliate')
 },
 {
     name: "create",
-    query: global.routes.path('handlers','endpoints/graph/queries/create/createAffiliate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createAffiliate')
 },
 {
     name: "update",
-    query: global.routes.path('handlers','endpoints/graph/queries/update/updateAffiliate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateAffiliate')
 },
 {
     name: "delete",
-    query: global.routes.path('handlers','endpoints/graph/queries/delete/deleteAffiliate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteAffiliate')
 }];
 
 let this_request = request(endpoint);

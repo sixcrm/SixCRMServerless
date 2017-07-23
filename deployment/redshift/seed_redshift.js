@@ -1,12 +1,11 @@
 'use strict';
-require('../../routes.js');
+require('../../SixCRM.js');
 
 const fs = require('fs');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-let environment = process.argv[2] || 'development';
-let redshiftqueryutilities;
+let redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 
 du.highlight('Seeding Redshift tables with static data');
 
@@ -19,22 +18,19 @@ setupEnvironmentVariables()
     .then(() => {du.highlight('Complete')});
 
 function setupEnvironmentVariables() {
-    process.env.stage = environment;
+
     process.env.search_indexing_queue = 'search_indexing';
-
-    process.env.dynamo_endpoint = getConfig().dynamodb.endpoint;
-
-    process.env.redshift_user = getConfig().redshift.user;
-    process.env.redshift_password = getConfig().redshift.password;
-    process.env.redshift_host = getConfig().redshift.host;
-    process.env.redshift_database = getConfig().redshift.database;
-    process.env.redshift_port = getConfig().redshift.port;
-    process.env.redshift_pool_max = getConfig().redshift.user;
-    process.env.redshift_idle_timeout = getConfig().redshift.idleTimeoutMillis;
-
-    redshiftqueryutilities = global.routes.include('lib', 'redshift-query-utilities.js');
+    process.env.dynamo_endpoint = global.SixCRM.configuration.site_config.dynamodb.endpoint;
+    process.env.redshift_user = global.SixCRM.configuration.site_config.redshift.user;
+    process.env.redshift_password = global.SixCRM.configuration.site_config.redshift.password;
+    process.env.redshift_host = global.SixCRM.configuration.site_config.redshift.host;
+    process.env.redshift_database = global.SixCRM.configuration.site_config.redshift.database;
+    process.env.redshift_port = global.SixCRM.configuration.site_config.redshift.port;
+    process.env.redshift_pool_max = global.SixCRM.configuration.site_config.redshift.user;
+    process.env.redshift_idle_timeout = global.SixCRM.configuration.site_config.redshift.idleTimeoutMillis;
 
     return Promise.resolve();
+
 }
 
 function collectQueryFromPath(path, env) {
@@ -47,7 +43,7 @@ function collectQueryFromPath(path, env) {
 
 function collectQueries(files, env) {
 
-    let directory = global.routes.path('model', 'redshift/seeds');
+    let directory = global.SixCRM.routes.path('model', 'redshift/seeds');
 
     files.forEach((file) => {
         collectQueryFromPath(`${directory}/${file}`);
@@ -75,14 +71,14 @@ function getSeedNames(){
 
     du.debug('Get Redshift Seed Names');
 
-    let directory = global.routes.path('model', 'redshift/seeds');
+    let directory = global.SixCRM.routes.path('model', 'redshift/seeds');
     let files = fs.readdirSync(directory).filter(file => file.match(/\.sql$/));
 
     return Promise.resolve(files);
 }
 
 function getConfig() {
-    let config = global.routes.include('config', `${process.env.stage}/site.yml`);
+    let config = global.SixCRM.routes.include('config', `${process.env.stage}/site.yml`);
 
     if (!config) {
         throw 'Unable to find config file.';

@@ -1,4 +1,4 @@
-let Random = global.routes.include('lib', 'random.js');
+let Random = global.SixCRM.routes.include('lib', 'random.js');
 let chai = require('chai');
 let expect = chai.expect;
 

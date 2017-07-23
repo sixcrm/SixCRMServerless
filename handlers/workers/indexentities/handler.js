@@ -1,8 +1,8 @@
 'use strict';
-require('../../../routes.js');
-const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
-const indexEntitiesController = global.routes.include('controllers', 'workers/indexEntities.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
+require('../../../SixCRM.js');
+const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+const indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.indexentities = (event, context, callback) => {

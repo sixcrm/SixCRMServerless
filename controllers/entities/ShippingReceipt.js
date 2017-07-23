@@ -1,7 +1,7 @@
 'use strict';
-var timestamp = global.routes.include('lib', 'timestamp.js');
+var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class ShippingReceiptController extends entityController {
 

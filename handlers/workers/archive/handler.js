@@ -1,8 +1,8 @@
 'use strict';
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-var LambdaResponse = global.routes.include('lib', 'lambda-response.js');
-var archiveController = global.routes.include('controllers', 'workers/archive.js');
+var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+var archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
 
 /* eslint-disable promise/always-return */
 module.exports.archive = (event, context, callback) => {

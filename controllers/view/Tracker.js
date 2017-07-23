@@ -1,11 +1,11 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const trackerController = global.routes.include('controllers', 'entities/Tracker.js');
-const LambdaResponse = global.routes.include('lib', 'lambda-response.js');
+const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
 
 class trackerViewController{
 

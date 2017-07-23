@@ -1,9 +1,9 @@
 'use strict'
-require('../routes.js');
+require('../SixCRM.js');
 const _ = require('underscore');
 
-const random = global.routes.include('lib', 'random');
-const du = global.routes.include('lib','debug-utilities.js');
+const random = global.SixCRM.routes.include('lib', 'random');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 process.env.SIX_VERBOSE = 2;
 

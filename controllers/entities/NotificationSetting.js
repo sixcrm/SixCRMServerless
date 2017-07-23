@@ -1,9 +1,9 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const entityController = global.routes.include('controllers', 'entities/Entity.js');
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class notificationSettingController extends entityController {
 

@@ -1,8 +1,8 @@
 'use strict';
-require('../../../routes.js');
+require('../../../SixCRM.js');
 
-var LambdaResponse = global.routes.include('lib', 'lambda-response.js');
-var confirmOrderController = global.routes.include('controllers', 'endpoints/confirmOrder.js');
+var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+var confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 
 module.exports.confirmorder = (event, context, callback) => {
 

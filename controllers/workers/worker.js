@@ -1,11 +1,11 @@
 'use strict';
 const Validator = require('jsonschema').Validator;
 const _ = require('underscore');
-const du = global.routes.include('lib','debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const rebillController = global.routes.include('controllers','entities/Rebill.js');
-const sessionController = global.routes.include('controllers','entities/Session.js');
+const rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+const sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
 
 module.exports = class workerController {
 
@@ -116,7 +116,7 @@ module.exports = class workerController {
 
             try{
 
-                var rebill_schema = global.routes.include('model','entities/rebill.json');
+                var rebill_schema = global.SixCRM.routes.include('model','entities/rebill.json');
 
             } catch(e){
 
@@ -157,7 +157,7 @@ module.exports = class workerController {
 
             try{
 
-                var session_schema = global.routes.include('model','entities/session.json');
+                var session_schema = global.SixCRM.routes.include('model','entities/session.json');
 
             } catch(e){
 

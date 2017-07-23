@@ -1,4 +1,4 @@
-let Timestamp = global.routes.include('lib', 'timestamp.js');
+let Timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 let chai = require('chai');
 let expect = chai.expect;
 

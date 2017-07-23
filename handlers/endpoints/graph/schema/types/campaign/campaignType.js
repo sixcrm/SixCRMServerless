@@ -33,7 +33,7 @@ module.exports.graphObj = new GraphQLObjectType({
           type: new GraphQLList(productScheduleType.graphObj),
           description: 'The configured product schedules associated with the campaign',
           resolve: (campaign) => {
-              var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+              var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
               return campaignController.getProductSchedules(campaign);
           }
@@ -42,7 +42,7 @@ module.exports.graphObj = new GraphQLObjectType({
           type: new GraphQLList(emailTemplateType.graphObj),
           descsription: 'Email templates configured and associated with the campaign',
           resolve: (campaign) => {
-              var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+              var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
               return campaignController.getEmailTemplates(campaign);
           }
@@ -51,7 +51,7 @@ module.exports.graphObj = new GraphQLObjectType({
         type: new GraphQLList(affiliateAllowDenyType.graphObj),
         description: 'The affiliate allow list on this campaign.',
         resolve: (campaign) => {
-          var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+          var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
           return campaignController.getAffiliateAllowDenyList(campaign.affiliate_allow);
         }
@@ -60,7 +60,7 @@ module.exports.graphObj = new GraphQLObjectType({
         type: new GraphQLList(affiliateAllowDenyType.graphObj),
         description: 'The affiliate deny list on this campaign.',
         resolve: (campaign) => {
-          var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
+          var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
           return campaignController.getAffiliateAllowDenyList(campaign.affiliate_deny);
         }

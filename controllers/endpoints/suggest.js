@@ -1,9 +1,9 @@
 'use strict';
 const _ = require("underscore");
-const du = global.routes.include('lib', 'debug-utilities.js');
-const cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
-var authenticatedController = global.routes.include('controllers', 'endpoints/authenticated.js');
+var authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/authenticated.js');
 
 class suggestController extends authenticatedController {
 

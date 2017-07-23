@@ -41,7 +41,7 @@ describe('createRebills', function () {
     function createRebills() {
         process.env.rebill_queue_url = 'http://localhost:9324/queue/rebill';
         process.env.search_indexing_queue_url = 'http://localhost:9324/queue/searchindex';
-        return global.routes.include('controllers', 'workers/createRebills');
+        return global.SixCRM.routes.include('controllers', 'workers/createRebills');
     }
 });
 

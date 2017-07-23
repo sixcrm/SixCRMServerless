@@ -1,4 +1,4 @@
-let PolicyResponse = global.routes.include('lib', 'policy_response.js');
+let PolicyResponse = global.SixCRM.routes.include('lib', 'policy_response.js');
 let chai = require('chai');
 let expect = chai.expect;
 

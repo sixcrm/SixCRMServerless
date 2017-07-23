@@ -2,11 +2,11 @@
 const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
-const jwtutilities  = global.routes.include('lib', 'jwt-utilities');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
 class acquireTokenController extends transactionEndpointController {
 
@@ -23,7 +23,7 @@ class acquireTokenController extends transactionEndpointController {
             ]
         });
 
-        this.campaignController = global.routes.include('controllers', 'entities/Campaign');
+        this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign');
 
     }
 
@@ -46,8 +46,8 @@ class acquireTokenController extends transactionEndpointController {
         du.debug('Validate Event Schema');
 
         let v = new Validator();
-        let schema = global.routes.include('model', 'endpoints/token');
-        let affiliates_schema = global.routes.include('model', 'endpoints/components/affiliates');
+        let schema = global.SixCRM.routes.include('model', 'endpoints/token');
+        let affiliates_schema = global.SixCRM.routes.include('model', 'endpoints/components/affiliates');
 
         v.addSchema(affiliates_schema, '/affiliates');
         return v.validate(parameters, schema);

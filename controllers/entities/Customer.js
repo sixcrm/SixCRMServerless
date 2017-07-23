@@ -1,11 +1,11 @@
 'use strict';
 const _ = require('underscore');
 
-const du =  global.routes.include('lib', 'debug-utilities.js');
-const eu =  global.routes.include('lib', 'error-utilities.js');
-const arrayutilities =  global.routes.include('lib', 'array-utilities.js');
+const du =  global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu =  global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities =  global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-const entityController = global.routes.include('controllers', 'entities/Entity.js');
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class customerController extends entityController {
 
@@ -13,10 +13,10 @@ class customerController extends entityController {
 
         super('customer');
 
-        this.creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
-        this.sessionController = global.routes.include('controllers', 'entities/Session.js');
-        this.rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-        this.transactionController = global.routes.include('controllers', 'entities/Transaction.js');
+        this.creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+        this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+        this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+        this.transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 
     }
 
@@ -230,7 +230,7 @@ class customerController extends entityController {
         //Technical Debt:  Observe the inelegance of the below solution!
         if(!_.contains(_.functions(this.sessionController), 'getSessionByCustomerID')){
 
-            this.sessionController = global.routes.include('controllers', 'entities/Session.js');
+            this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
             return this.sessionController.getSessionByCustomerID(customer_id);
 
@@ -337,7 +337,7 @@ class customerController extends entityController {
         // For some reason graph is unable to call 'listSessionsByCustomerID' unless we do this. Why?
         if(!_.contains(_.functions(this.sessionController), 'listSessionsByCustomerID')){
 
-            this.sessionController = global.routes.include('controllers', 'entities/Session.js');
+            this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
             return this.sessionController.listSessionsByCustomerID(customer_id, pagination);
 

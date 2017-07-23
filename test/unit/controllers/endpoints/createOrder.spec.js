@@ -1,5 +1,5 @@
 const mockery = require('mockery');
-const PermissionTestGenerators = global.routes.include('test','unit/lib/permission-test-generators');
+const PermissionTestGenerators = global.SixCRM.routes.include('test','unit/lib/permission-test-generators');
 
 let chai = require('chai');
 let expect = chai.expect;
@@ -22,7 +22,7 @@ describe('controllers/endpoints/createOrder.js', () => {
     });
 
     it('acquires body', () => {
-        let endpointController = global.routes.include('controllers','endpoints/createOrder');
+        let endpointController = global.SixCRM.routes.include('controllers','endpoints/createOrder');
         let anEvent = {
             body: 'abc'
         };
@@ -44,25 +44,25 @@ describe('controllers/endpoints/createOrder.js', () => {
             name: ''
         };
 
-        mockery.registerMock(global.routes.path('controllers','entities/Session.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Session.js'), {
             get: () => {
                 return Promise.resolve({});
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers','entities/Campaign.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Campaign.js'), {
             getHydratedCampaign: () => {
                 return Promise.resolve({});
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers','entities/ProductSchedule.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers','entities/CreditCard.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers','entities/CreditCard.js'), {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
@@ -72,7 +72,7 @@ describe('controllers/endpoints/createOrder.js', () => {
         });
 
 
-        let endpointController = global.routes.include('controllers','endpoints/createOrder.js');
+        let endpointController = global.SixCRM.routes.include('controllers','endpoints/createOrder.js');
 
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available session.');
@@ -91,7 +91,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             name: ''
         };
 
-        mockery.registerMock(global.routes.path('controllers', 'entities/Session.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), {
             get: () => {
                 return Promise.resolve({
                     id: 1
@@ -99,19 +99,19 @@ describe('controllers/endpoints/createOrder.js', () => {
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers', 'entities/Campaign.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Campaign.js'), {
             getHydratedCampaign: () => {
                 return Promise.resolve({});
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers', 'entities/ProductSchedule.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers', 'entities/CreditCard.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
@@ -121,7 +121,7 @@ describe('controllers/endpoints/createOrder.js', () => {
         });
 
 
-        let endpointController = global.routes.include('controllers','endpoints/createOrder');
+        let endpointController = global.SixCRM.routes.include('controllers','endpoints/createOrder');
 
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available campaign.');
@@ -140,7 +140,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             name: ''
         };
 
-        mockery.registerMock(global.routes.path('controllers', 'entities/CreditCard.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), {
             get: () => {
                 return Promise.resolve({
                     id: 1
@@ -148,7 +148,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers', 'entities/Campaign.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Campaign.js'), {
             getHydratedCampaign: () => {
                 return Promise.resolve({
                     id: 1
@@ -156,13 +156,13 @@ describe('controllers/endpoints/createOrder.js', () => {
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers', 'entities/ProductSchedule.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             }
         });
 
-        mockery.registerMock(global.routes.path('controllers', 'entities/CreditCard.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
@@ -172,7 +172,7 @@ describe('controllers/endpoints/createOrder.js', () => {
         });
 
 
-        let endpointController = global.routes.include('controllers', 'endpoints/createOrder.js');
+        let endpointController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available creditcard.');

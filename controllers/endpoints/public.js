@@ -1,9 +1,9 @@
 'use strict';
 let _ = require('underscore');
-let encodeutilities = global.routes.include('lib', 'encode.js');
-let du = global.routes.include('lib', 'debug-utilities');
-let eu = global.routes.include('lib', 'error-utilities');
-const endpointController = global.routes.include('controllers', 'endpoints/endpoint.js');
+let encodeutilities = global.SixCRM.routes.include('lib', 'encode.js');
+let du = global.SixCRM.routes.include('lib', 'debug-utilities');
+let eu = global.SixCRM.routes.include('lib', 'error-utilities');
+const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/endpoint.js');
 
 module.exports = class PublicController extends endpointController {
 
@@ -71,7 +71,7 @@ module.exports = class PublicController extends endpointController {
 
         try{
 
-            this.view_controller = global.routes.include('controllers','view/'+this.path_object.class);
+            this.view_controller = global.SixCRM.routes.include('controllers','view/'+this.path_object.class);
 
         }catch(error){
 

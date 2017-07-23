@@ -1,5 +1,5 @@
 'use strict';
-const entityController = global.routes.include('controllers', 'entities/Entity.js');
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class userSigningStringController extends entityController {
 

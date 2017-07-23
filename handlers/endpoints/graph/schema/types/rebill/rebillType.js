@@ -8,7 +8,7 @@ let transactionType = require('../transaction/transactionType');
 let productScheduleType = require('../productschedule/productScheduleType');
 let sessionType = require('../session/sessionType');
 
-const rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Rebill',

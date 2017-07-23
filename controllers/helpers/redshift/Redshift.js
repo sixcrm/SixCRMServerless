@@ -1,13 +1,13 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class redshiftHelperController {
 
     constructor(){
 
-        this.kinesisfirehoseutilities = global.routes.include('lib', 'kinesis-firehose-utilities.js');
+        this.kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities.js');
 
     }
 

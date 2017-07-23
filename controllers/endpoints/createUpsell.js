@@ -2,21 +2,21 @@
 const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const notificationProvider = global.routes.include('controllers', 'providers/notification/notification-provider');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 
-var sessionController = global.routes.include('controllers', 'entities/Session.js');
-var customerController = global.routes.include('controllers', 'entities/Customer.js');
-var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
-var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
-//var loadBalancerController = global.routes.include('controllers', 'entities/LoadBalancer.js');
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
+var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+//var loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
-const processHelperController = global.routes.include('helpers', 'transaction/Process.js');
+const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
 
 /*
 * Push the pingback to the transaction
@@ -75,7 +75,7 @@ class createUpsellController extends transactionEndpointController{
 
     validateEventSchema(event){
 
-        let upsell_schema = global.routes.include('model', 'endpoints/upsell');
+        let upsell_schema = global.SixCRM.routes.include('model', 'endpoints/upsell');
         var v = new Validator();
 
         return v.validate(event, upsell_schema);

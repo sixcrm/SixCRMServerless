@@ -1,20 +1,15 @@
 'use strict';
 const _ = require('underscore');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const configurationutilities = global.routes.include('lib', 'configuration-utilities.js');
-const fileutilities = global.routes.include('lib', 'file-utilities.js');
-const arrayutilities = global.routes.include('lib', 'array-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 module.exports = class CloudsearchDeployment{
 
     constructor(stage) {
 
-      this.stage = configurationutilities.resolveStage(stage);
-
-      this.site_config = configurationutilities.getSiteConfig(this.stage);
-
-      this.cloudsearchutilities = global.routes.include('lib', 'cloudsearch-utilities.js');
+      this.cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
       this.setDomainName();
 
@@ -22,9 +17,9 @@ module.exports = class CloudsearchDeployment{
 
     setDomainName(){
 
-      if(_.has(this.site_config, 'cloudsearch') && _.has(this.site_config.cloudsearch, 'domainname')){
+      if(_.has(this.site_config, 'cloudsearch') && _.has(global.SixCRM.configuration.site_config.cloudsearch, 'domainname')){
 
-        this.domainname = this.site_config.cloudsearch.domainname;
+        this.domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
 
       }else{
 
@@ -171,11 +166,11 @@ module.exports = class CloudsearchDeployment{
 
       du.debug('Get Index Objects');
 
-      let files = fileutilities.getDirectoryFilesSync(global.routes.path('deployment','cloudsearch/indexes'));
+      let files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','cloudsearch/indexes'));
 
       let index_objects = files.map((file) => {
 
-        let index_object = global.routes.include('deployment','cloudsearch/indexes/'+file);
+        let index_object = global.SixCRM.routes.include('deployment','cloudsearch/indexes/'+file);
 
         index_object.DomainName = this.domainname;
 

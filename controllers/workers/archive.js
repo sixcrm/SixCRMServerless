@@ -1,11 +1,11 @@
 'use strict';
 var _ = require("underscore");
 
-const eu = global.routes.include('lib', 'error-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
-var workerController = global.routes.include('controllers', 'workers/worker.js');
+var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 class archiveController extends workerController {
 

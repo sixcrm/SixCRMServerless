@@ -3,12 +3,12 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const _ = require('underscore');
 
-require('../routes.js');
+require('../SixCRM.js');
 
-const du = global.routes.include('lib','debug-utilities.js');
-const jwtutilities = global.routes.include('lib', 'jwt-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 
-let site_config = yaml.safeLoad(fs.readFileSync(global.routes.path('config', 'development/site.yml'), 'utf8'));
+let site_config = yaml.safeLoad(fs.readFileSync(global.SixCRM.routes.path('config', 'development/site.yml'), 'utf8'));
 
 process.env.SIX_VERBOSE = 2;
 process.env.site_jwt_expiration = site_config.jwt.site.expiration;

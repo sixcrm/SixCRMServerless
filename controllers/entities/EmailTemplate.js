@@ -1,8 +1,8 @@
 'use strict';
 const _ = require('underscore');
-const du = global.routes.include('lib', 'debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-var entityController = global.routes.include('controllers', 'entities/Entity.js');
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class emailTemplateController extends entityController {
 
@@ -10,7 +10,7 @@ class emailTemplateController extends entityController {
 
         super('emailtemplate');
 
-        this.SMTPProviderController = global.routes.include('controllers', 'entities/SMTPProvider.js');
+        this.SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
 
     }
 

@@ -2,8 +2,8 @@
 
 const jsf = require('json-schema-faker');
 const uuidV4 = require('uuid/v4');
-const eu = global.routes.include('lib', 'error-utilities.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 
 class ModelGenerator {
@@ -20,13 +20,13 @@ class ModelGenerator {
 
         name = name.replace('.json', ''); // Extension is optional
 
-        let schema = global.routes.include('model', name+'.json');
+        let schema = global.SixCRM.routes.include('model', name+'.json');
 
         du.debug('Schema is', schema);
 
         let working_directory =  process.cwd();
 
-        process.chdir(global.routes.path('model') + name.substring(0, name.lastIndexOf('/')));
+        process.chdir(global.SixCRM.routes.path('model') + name.substring(0, name.lastIndexOf('/')));
 
         return jsf.resolve(schema).then((generated_object) => {
             process.chdir(working_directory);
@@ -76,7 +76,7 @@ class ModelGenerator {
 
         // Technical Debt: This method might be better suited in another class.
 
-        let seeds = global.routes.include('seeds', name+'s.json');
+        let seeds = global.SixCRM.routes.include('seeds', name+'s.json');
 
         if (seeds.length > 0) {
 

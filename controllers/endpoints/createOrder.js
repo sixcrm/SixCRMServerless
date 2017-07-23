@@ -2,20 +2,20 @@
 const _ = require("underscore");
 const Validator = require('jsonschema').Validator;
 
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var sessionController = global.routes.include('controllers', 'entities/Session.js');
-var customerController = global.routes.include('controllers', 'entities/Customer.js');
-var productScheduleController = global.routes.include('controllers', 'entities/ProductSchedule.js');
-var campaignController = global.routes.include('controllers', 'entities/Campaign.js');
-var transactionController = global.routes.include('controllers', 'entities/Transaction.js');
-var creditCardController = global.routes.include('controllers', 'entities/CreditCard.js');
-var rebillController = global.routes.include('controllers', 'entities/Rebill.js');
+var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-const processHelperController = global.routes.include('helpers', 'transaction/Process.js');
+const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
 
-const transactionEndpointController = global.routes.include('controllers', 'endpoints/transaction.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
 class createOrderController extends transactionEndpointController{
 
@@ -77,9 +77,9 @@ class createOrderController extends transactionEndpointController{
 
         du.debug('Validate Input');
 
-        let order_schema = global.routes.include('model', 'endpoints/order');
-        let address_schema = global.routes.include('model', 'endpoints/components/address');
-        let creditcard_schema = global.routes.include('model', 'endpoints/components/creditcard');
+        let order_schema = global.SixCRM.routes.include('model', 'endpoints/order');
+        let address_schema = global.SixCRM.routes.include('model', 'endpoints/components/address');
+        let creditcard_schema = global.SixCRM.routes.include('model', 'endpoints/components/creditcard');
 
         var v = new Validator();
 

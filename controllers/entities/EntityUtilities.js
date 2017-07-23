@@ -3,13 +3,13 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 const validator = require('validator');
 
-const timestamp = global.routes.include('lib', 'timestamp.js');
-const du = global.routes.include('lib', 'debug-utilities.js');
-const eu = global.routes.include('lib', 'error-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const mvu = global.routes.include('lib', 'model-validator-utilities.js');
-const indexingutilities = global.routes.include('lib', 'indexing-utilities.js');
-const cacheController = global.routes.include('controllers', 'providers/Cache.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
+const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
@@ -21,7 +21,7 @@ module.exports = class entityUtilitiesController{
 
     constructor(){
 
-        this.permissionutilities = global.routes.include('lib', 'permission-utilities.js');
+        this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
     }
 
@@ -97,7 +97,7 @@ module.exports = class entityUtilitiesController{
         du.debug('Validate');
 
         if(_.isUndefined(path_to_model)){
-            path_to_model = global.routes.path('model', 'entities/'+this.descriptive_name+'.json');
+            path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
         }
 
         let valid = mvu.validateModel(object, path_to_model);
@@ -816,7 +816,7 @@ module.exports = class entityUtilitiesController{
 
     createRedshiftActivityRecord(actor, action, acted_upon, associated_with){
 
-        let activityHelper = global.routes.include('helpers', 'redshift/Activity.js');
+        let activityHelper = global.SixCRM.routes.include('helpers', 'redshift/Activity.js');
 
         return activityHelper.createActivity(actor, action, acted_upon, associated_with);
 

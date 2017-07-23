@@ -1,8 +1,8 @@
 'use strict'
-require('../routes.js');
+require('../SixCRM.js');
 
-const du = global.routes.include('lib','debug-utilities.js');
-const mungeutilities = global.routes.include('lib','munge-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const mungeutilities = global.SixCRM.routes.include('lib','munge-utilities.js');
 
 let email = process.argv[2];
 
