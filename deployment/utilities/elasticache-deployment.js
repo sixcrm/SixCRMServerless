@@ -8,7 +8,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 module.exports = class ElasticacheDeployment {
 
-  constructor(stage) {
+  constructor() {
 
     this.elasticacheutilities = global.SixCRM.routes.include('lib', 'elasticache-utilities.js');
 
@@ -26,6 +26,10 @@ module.exports = class ElasticacheDeployment {
       'destroy':{
         'required':['CacheClusterId'],
         'optional':['FinalSnapshotIdentifier']
+      },
+      'describe':{
+        'required':[],
+        'optional':['CacheClusterId','Marker','MaxRecords','ShowCacheClustersNotInReplicationGroups','ShowCacheNodeInfo']
       }
     }
   }
@@ -34,19 +38,67 @@ module.exports = class ElasticacheDeployment {
 
     du.debug('Deploy');
 
-    let parameters = this.createParametersObject('create');
+    return this.clusterExists('sixcrm').then((results) => {
 
-    return this.createCacheCluster(parameters).then(() => {
+      if(results == false){
 
-      let wait_status = 'cacheClusterAvailable';
+        let parameters = this.createParametersObject('create');
 
-      parameters = this.createParametersObject('wait', wait_status);
+        return this.createCacheCluster(parameters).then(() => {
 
-      return this.waitForCluster(parameters, wait_status).then(() => {
+          let wait_status = 'cacheClusterAvailable';
+
+          parameters = this.createParametersObject('wait', wait_status);
+
+          return this.waitForCluster(parameters, wait_status).then(() => {
+
+            return 'Complete';
+
+          });
+
+        });
+
+      }else{
 
         return 'Complete';
 
-      });
+      }
+
+    });
+
+  }
+
+  clusterExists(cluster_id){
+
+    du.debug('Cluster Exists');
+
+    let parameters = this.createParametersObject('describe');
+
+    return this.describeClusters(parameters).then((results) => {
+
+      if(_.has(results, 'CacheClusters') &&   arrayutilities.isArray(results.CacheClusters) && results.CacheClusters.length > 0){
+
+        let found = arrayutilities.find(results.CacheClusters, (cluster) => {
+
+          if(_.has(cluster, 'CacheClusterId') && cluster.CacheClusterId == cluster_id){ return true; }
+
+          return false;
+
+        });
+
+        if(objectutilities.isObject(found)){
+
+          du.highlight('Cluster exists');
+
+          return found;
+
+        }
+
+      }
+
+      du.highlight('Unable to identify cluster');
+
+      return false;
 
     });
 
@@ -56,19 +108,31 @@ module.exports = class ElasticacheDeployment {
 
     du.debug('Destroy');
 
-    let parameters = this.createParametersObject('destroy');
+    return this.clusterExists('sixcrm').then((results) => {
 
-    return this.destroyCacheCluster(parameters).then(() => {
-
-      let wait_status = 'cacheClusterDeleted';
-
-      parameters = this.createParametersObject('wait', wait_status);
-
-      return this.waitForCluster(parameters, wait_status).then(() => {
+      if(results == false){
 
         return 'Complete';
 
-      });
+      }else{
+
+        let parameters = this.createParametersObject('destroy');
+
+        return this.destroyCacheCluster(parameters).then(() => {
+
+          let wait_status = 'cacheClusterDeleted';
+
+          parameters = this.createParametersObject('wait', wait_status);
+
+          return this.waitForCluster(parameters, wait_status).then(() => {
+
+            return 'Complete';
+
+          });
+
+        });
+
+      }
 
     });
 
@@ -123,7 +187,17 @@ module.exports = class ElasticacheDeployment {
 
   }
 
+  describeClusters(parameters){
+
+    du.debug('Describe Clusters');
+
+    return this.elasticacheutilities.describeClusters(parameters);
+
+  }
+
   createCacheCluster(parameters){
+
+    du.debug('Create Cache Cluster');
 
     return this.elasticacheutilities.createCluster(parameters);
 
@@ -131,11 +205,15 @@ module.exports = class ElasticacheDeployment {
 
   destroyCacheCluster(parameters){
 
+    du.debug('Destroy Cache Cluster');
+
     return this.elasticacheutilities.destroyCluster(parameters);
 
   }
 
   waitForCluster(parameters, status){
+
+    du.debug('Wait For Cluster');
 
     return this.elasticacheutilities.waitFor(parameters, status);
 

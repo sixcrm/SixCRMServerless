@@ -7,7 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 module.exports = class CloudsearchDeployment{
 
-    constructor(stage) {
+    constructor() {
 
       this.cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
@@ -17,16 +17,17 @@ module.exports = class CloudsearchDeployment{
 
     setDomainName(){
 
-      if(_.has(this.site_config, 'cloudsearch') && _.has(global.SixCRM.configuration.site_config.cloudsearch, 'domainname')){
+      let site_config = global.SixCRM.configuration.site_config;
 
-        this.domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
+      if(_.has(site_config, 'cloudsearch') && _.has(site_config.cloudsearch, 'domainname')){
+
+        this.domainname = site_config.cloudsearch.domainname;
 
       }else{
 
         eu.throwError('server', 'Unable to identify configured domainname.');
 
       }
-
 
     }
 
@@ -148,27 +149,39 @@ module.exports = class CloudsearchDeployment{
 
       du.debug('Create Cloudsearch Indexes');
 
-      let index_objects = this.getIndexObjects();
+      let index_objects = this.getIndexConfigurations();
 
       let index_promises = index_objects.map((index_object) => { return () => this.createCloudsearchIndex(index_object); });
 
-      //Technical Debt: Add this to array-utilities
+      return arrayutilities.reduce(
+        index_promises,
+        (current, next) => {
+          if(_.isUndefined(current)){
+            return next;
+          }
+          return current.then(next);
+        },
+        Promise.resolve()
+      );
+
+      /*
       return index_promises.reduce(function(current, next) {
           if(_.isUndefined(current)){
             return next;
           }
           return current.then(next);
       }, Promise.resolve());
+      */
 
     }
 
-    getIndexObjects(){
+    getIndexComfigurations(){
 
       du.debug('Get Index Objects');
 
       let files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','cloudsearch/indexes'));
 
-      let index_objects = files.map((file) => {
+      let index_objects = arrayutilities.map(files, (file) => {
 
         let index_object = global.SixCRM.routes.include('deployment','cloudsearch/indexes/'+file);
 

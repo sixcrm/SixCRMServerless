@@ -2,6 +2,7 @@
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
@@ -40,7 +41,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
     let security_groups = this.getConfigurationJSON('security_groups');
 
-    let security_group_promises = security_groups.map(security_group => this.deploySecurityGroup(security_group));
+    let security_group_promises = arrayutilities.map(security_groups, (security_group) => this.deploySecurityGroup(security_group));
 
     return Promise.all(security_group_promises).then(() => {
 
@@ -114,7 +115,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
     let security_groups = this.getConfigurationJSON('security_groups');
 
-    let security_group_promises = security_groups.map(security_group => this.destroySecurityGroup(security_group));
+    let security_group_promises = arrayutilities.map(security_groups, (security_group) => this.destroySecurityGroup(security_group));
 
     return Promise.all(security_group_promises).then(() => {
 

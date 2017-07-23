@@ -34,7 +34,7 @@ class S3Deployment extends AWSDeploymentUtilities{
 
         let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/'+bucket_group_file);
 
-        if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
+        if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
 
         bucket_promises.push(this.createBucketFromGroupFileDefinition(bucket_group_file_contents));
 
@@ -302,15 +302,6 @@ class S3Deployment extends AWSDeploymentUtilities{
         return this.waitForFolder(parameters, 'objectNotExists');
     }
 
-    getConfig() {
-        let config = global.SixCRM.routes.include('config', `${this.stage}/site.yml`).s3.redshift;
-
-        if (!config) {
-            throw 'Unable to find config file.';
-        }
-        return config;
-    }
-
     listObjects(parameters) {
 
       var param = {
@@ -332,7 +323,7 @@ class S3Deployment extends AWSDeploymentUtilities{
 
     createEnvironmentSpecificBucketName(bucket_name){
 
-      return parserutilities.parse(this.bucket_name_template, {stage: this.stage, bucket_name: bucket_name});
+      return parserutilities.parse(this.bucket_name_template, {stage: process.env.stage, bucket_name: bucket_name});
 
     }
 
