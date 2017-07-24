@@ -55,11 +55,7 @@ module.exports = class Configuration {
 
     du.debug('Get Serverless Config');
 
-    if (this.stage === 'local') {
-
-        return global.SixCRM.routes.include('root', 'serverless.yml');
-
-    }
+    return global.SixCRM.routes.include('root', 'serverless-config.yml');
 
   }
 
