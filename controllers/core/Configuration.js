@@ -165,7 +165,11 @@ module.exports = class Configuration {
 
     du.debug('Get Account Identifier From Lambda Context');
 
-    return context.invokedFunctionArn.match(/\d{3,}/)[0];
+    if (_.isUndefined(context)) {
+      return this.getAccountIdentifierFromEnvironment();
+    } else {
+      return context.invokedFunctionArn.match(/\d{3,}/)[0];
+    }
 
   }
 
