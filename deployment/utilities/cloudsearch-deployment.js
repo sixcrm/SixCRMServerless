@@ -5,7 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-module.exports = class CloudsearchDeployment{
+class CloudsearchDeployment{
 
     constructor() {
 
@@ -33,10 +33,11 @@ module.exports = class CloudsearchDeployment{
 
     deploy(){
 
-      return this.createCloudsearchDomain()
-      .then(() => this.createCloudsearchIndexes())
-      .then(() => this.indexCloudsearchDocuments())
-      .then(() => { return 'Complete'; });
+      return this.createCloudsearchDomain().then(() => {
+        return this.createCloudsearchIndexes()
+        .then(() => this.indexCloudsearchDocuments())
+        .then(() => { return 'Complete'; });
+      });
 
     }
 
@@ -49,10 +50,17 @@ module.exports = class CloudsearchDeployment{
 
     purge(){
 
-      return this.getCloudsearchPurgeDocument()
-      .then((purge_document) => this.purgeCloudsearchDocuments(purge_document))
-      .then(() => { return 'Complete'; });
-
+      return this.cloudsearchDomainExists().then((result) => {
+        if(_.isObject(result)){
+          return this.getCloudsearchPurgeDocument()
+          .then((purge_document) => this.purgeCloudsearchDocuments(purge_document))
+          .then(() => {
+            return 'Complete';
+          });
+        }else{
+          return 'Complete';
+        }
+      });
     }
 
     getCloudsearchPurgeDocument(){
@@ -141,7 +149,26 @@ module.exports = class CloudsearchDeployment{
 
       du.debug('Create Cloudsearch Domain');
 
-      return this.cloudsearchutilities.createDomain(this.domainname).then(() => this.cloudsearchutilities.waitFor(this.domainname, 'ready'));
+      return this.cloudsearchDomainExists().then((result) => {
+
+        if(result == false){
+          return this.cloudsearchutilities.createDomain().then(() => this.cloudsearchutilities.waitFor('ready'));
+        }else{
+
+          if(_.has(result, 'Processing')){
+
+
+            if(result.Processing == true){
+              du.highlight('Domain is processing...');
+              return this.cloudsearchutilities.waitFor('ready');
+            }else{
+              return result;
+            }
+
+          }
+        }
+
+      });
 
     }
 
@@ -175,7 +202,7 @@ module.exports = class CloudsearchDeployment{
 
     }
 
-    getIndexComfigurations(){
+    getIndexConfigurations(){
 
       du.debug('Get Index Objects');
 
@@ -203,20 +230,70 @@ module.exports = class CloudsearchDeployment{
 
     }
 
-    indexCloudsearchDocuments() {
+    indexCloudsearchDocuments(domainname) {
 
       du.debug('Index Cloudsearch Documents');
 
-      return this.cloudsearchutilities.indexDocuments(this.domainname);
+      return this.cloudsearchutilities.indexDocuments(domainname);
 
     }
 
-    deleteCloudsearchDomain(){
+    deleteCloudsearchDomain(domainname){
 
-      du.debug('Delete Domain');
+      du.debug('Delete Cloudsearch Domain');
 
-      return this.cloudsearchutilities.deleteDomain(this.domainname);
+      return this.cloudsearchDomainExists(domainname).then((result) => {
+
+        if(_.isObject(result)){
+
+          return this.cloudsearchutilities.deleteDomain(domainname).then(() => {
+            return this.cloudsearchutilities.waitFor('deleted');
+          });
+
+        }
+
+      });
+
+    }
+
+    cloudsearchDomainExists(domainname){
+
+      du.debug('Cloudsearch Domain Exists');
+
+      if(_.isUndefined(domainname)){
+        domainname = this.domainname;
+      }
+
+      return this.cloudsearchutilities.describeDomains([domainname]).then((results) => {
+
+        if(_.has(results, 'DomainStatusList') && _.isArray(results.DomainStatusList) && results.DomainStatusList.length > 0){
+
+            let found = arrayutilities.find(results.DomainStatusList, (domain) => {
+
+              if(domain.DomainName == domainname){
+                return true;
+              }
+              return false;
+
+            });
+
+            if(_.isObject(found)){
+
+              du.highlight('Domain exists');
+              return found;
+
+            }
+
+        }
+
+        du.highlight('Domain not found');
+        return false;
+
+
+      });
 
     }
 
 }
+
+module.exports = new CloudsearchDeployment();
