@@ -1,0 +1,452 @@
+service: sixtransaction
+package:
+  exclude:
+    - .git/**
+    - node_modules/dynamodb-localhost/**
+    - node_modules/serverless/**
+    - node_modules/serverless-offline/**
+    - node_modules/serverless-dynamodb-local/**
+    - node_modules/mocha/**
+    - node_modules/chai/**
+    - node_modules/chai-json-schema/**
+    - node_modules/supertest/**
+
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  timeout: 60
+  stage: ${opt:stage, 'development'}
+  region: ${file(./config/${opt:stage}/site.yml):aws.region}
+  profile: six
+  environment:
+    stage: ${opt:stage, self:provider.stage}
+    aws_region: ${opt:region, self:provider.region}
+    aws_account: ${file(./config/${opt:stage}/site.yml):aws.account}
+    dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
+    search_indexing_queue: 'search_indexing'
+    rebill_queue: 'rebill'
+    bill_queue: 'bill'
+    hold_queue: 'hold'
+    bill_failed_queue: 'bill_failed'
+    redshift_random_data_staging_bucket: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.staging_bucket}
+    redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
+    kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
+    kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
+    kinesis_firehose_activity_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.activity}
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-prune-plugin
+
+custom:
+  dynamodb:
+    start:
+      port: 8001
+      inMemory: true
+      migration: true
+    migration:
+      dir: ./dynamolocal/tabledefinitions
+    seed:
+      dir: ./dynamolocal/seeds
+
+site_config: ${file(./config/${opt:stage}/site.yml)}
+
+functions:
+
+########################
+# Authorizers qualify requests passing through API Gateway
+########################
+
+  verifysignature:
+    handler: handlers/authorizers/verifysignature/handler.verifysignature
+
+  verifytransactionjwt:
+    handler: handlers/authorizers/verifytransactionjwt/handler.verifyjwt
+    environment:
+      transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
+      transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
+      development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
+
+
+  verifysitejwt:
+    handler: handlers/authorizers/verifysitejwt/handler.verifyjwt
+    environment:
+      site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
+      site_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.site.expiration}
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
+      development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
+
+########################
+# Backend Graph Endpoint renders entity data to the website
+########################
+
+  graph:
+    handler: handlers/endpoints/graph/handler.graph
+    events:
+      - http:
+          path: graph/{account}
+          method: post
+          cors: true
+          authorizer:
+            name: verifysitejwt
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+    environment:
+      usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
+      cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
+      logging: ${file(./config/${opt:stage}/site.yml):logging.loglevel}
+
+
+########################
+# State Machine Lambdas
+########################
+
+# Movement Managers
+
+  billtohold:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_billtohold}
+      origin_queue: 'bill'
+      destination: 'hold'
+      failure_queue: 'bill_failed'
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billtohold}
+
+  recovertohold:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: cron(0 1 ? * FRI *)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertohold}
+      origin_queue: 'recover'
+      destination_queue: 'hold'
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
+
+  holdtopending:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtopending}
+      origin_queue: 'hold'
+      destination_queue: 'pending'
+      failure_queue: 'pending_failed'
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
+
+
+  pendingfailedtopending:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(6 hours)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingfailedtopending}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
+      origin_queue: 'pending_failed'
+      destination_queue: 'pending'
+
+
+  pendingtoshipped:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingtoshipped}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
+      origin_queue: 'pending'
+      destination_queue: 'shipped'
+
+
+  shippedtodelivered:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_shippedtodelivered}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
+      origin_queue: 'shipped'
+      destination_queue: 'delivered'
+
+
+# Archive Methods (Exit Points)
+
+  deliveredtoarchive:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_deliveredtoarchive}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
+      origin_queue: 'delivered'
+      archivefilter: 'ALL'
+
+  holdtoarchive:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtoarchive}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtoarchive}
+      origin_queue: 'hold'
+      archivefilter: 'NOSHIP'
+
+  rebilltoarchive:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_createrebillstoarchive}
+      origin_queue: 'rebill'
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.createrebillstoarchive}
+      archivefilter: 'ALL'
+
+  recovertoarchive:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(6 hours)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertoarchive}
+      origin_queue: 'recover'
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertoarchive}
+      archivefilter: 'TWOATTEMPTS'
+
+  indextoarchive:
+    handler: handlers/workers/forwardmessages/handler.forwardmessages
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_indextoarchive}
+      origin_queue: 'search_indexing'
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
+      archivefilter: 'ALL'
+
+# Workers
+
+  randomredshiftdata:
+    handler: handlers/workers/randomredshiftdata/handler.randomredshiftdata
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          enabled: true
+
+
+  sesnotifications:
+    handler: handlers/workers/sesnotifications/handler.sesnotifications
+    events:
+      - sns:
+          topicName: SESNotifications
+          displayName: SES Notifications
+
+  slackalarm:
+    handler: handlers/workers/slackalarm/exports.handler
+    events:
+      - sns:
+          topicName: SlackAlarm
+          displayName: Slack Alarm
+    environment:
+      slackChannel: '#lambdas'
+      kmsEncryptedHookUrl: AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ==
+
+  indexentities:
+    handler: handlers/workers/indexentities/handler.indexentities
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+
+  createrebills:
+    handler: handlers/workers/createrebills/handler.createrebills
+    events:
+      - schedule:
+          rate: rate(2 hours)
+          enabled: true
+
+  pickrebill:
+    handler: handlers/workers/pickrebill/handler.pickrebill
+    events:
+      - schedule:
+          rate: rate(2 hours)
+          enabled: true
+
+  processbilling:
+    handler: handlers/workers/processbilling/handler.processbilling
+
+  shipproduct:
+    handler: handlers/workers/shipproduct/handler.shipproduct
+
+  confirmshipped:
+    handler: handlers/workers/confirmshipped/handler.confirmshipped
+
+  confirmdelivered:
+    handler: handlers/workers/confirmdelivered/handler.confirmdelivered
+    environment:
+      usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
+      usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
+
+  archivedelivered:
+    handler: handlers/workers/archive/handler.archive
+    environment:
+      archivefilter: 'ALL'
+
+  archivehold:
+    handler: handlers/workers/archive/handler.archive
+    environment:
+      archivefilter: 'NOSHIP'
+
+  archiverecover:
+    handler: handlers/workers/archive/handler.archive
+    environment:
+      archivefilter: 'TWOATTEMPTS'
+
+########################
+# Transaction Endpoints  (initial customer entrypoint)
+########################
+
+  acquiretoken:
+    handler: handlers/endpoints/acquiretoken/handler.acquiretoken
+    events:
+      - http:
+         path: token/acquire/{account}
+         method: post
+         cors: true
+         authorizer:
+            name: verifysignature
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+    environment:
+      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
+      transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
+      transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
+
+
+
+  createlead:
+    handler: handlers/endpoints/createlead/handler.createlead
+    events:
+      - http:
+         path: lead/create/{account}
+         method: post
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+  createorder:
+    handler: handlers/endpoints/createorder/handler.createorder
+    events:
+      - http:
+         path: order/create/{account}
+         method: post
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+  createupsell:
+    handler: handlers/endpoints/createupsell/handler.createupsell
+    events:
+      - http:
+         path: upsell/create/{account}
+         method: post
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+  confirmorder:
+    handler: handlers/endpoints/confirmorder/handler.confirmorder
+    events:
+      - http:
+         path: order/confirm/{account}
+         method: get
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+  publichtml:
+    handler: handlers/endpoints/publichtml/handler.publichtml
+    events:
+      - http:
+         path: publichtml/{encoded}
+         method: get
+         cors: true
+
+
+########################
+# Resource definitions for required system resources
+########################
+
+resources:
+  Resources:
+    DynamoDBIamPolicy:
+      Type: AWS::IAM::Policy
+      Properties:
+        PolicyName: lambda-dynamodb
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+           - Effect: Allow
+             Action:
+               - dynamodb:*
+             Resource: arn:aws:dynamodb:*:*:table/*
+           - Effect: Allow
+             Action:
+               - sqs:*
+             Resource: arn:aws:sqs:*:*:*
+           - Effect: Allow
+             Action:
+               - lambda:*
+             Resource: arn:aws:lambda:us-east-1:*:*:*
+           - Effect: Allow
+             Action:
+               - ses:*
+             Resource: arn:aws:ses:us-east-1:*:identity/*
+           - Effect: Allow
+             Action:
+               - cloudsearch:*
+             Resource: 	arn:aws:cloudsearch:us-east-1:*:*
+           - Effect: Allow
+             Action:
+               - s3:*
+             Resource: "*"
+           - Effect: Allow
+             Action:
+               - firehose:*
+             Resource: "*"
+           - Effect: Allow
+             Action:
+               - sns:*
+             Resource: "*"
+        Roles:
+          - Ref: IamRoleLambdaExecution

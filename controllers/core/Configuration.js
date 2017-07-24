@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -55,7 +55,7 @@ module.exports = class Configuration {
 
     du.debug('Get Serverless Config');
 
-    return global.SixCRM.routes.include('root', 'serverless.yml');
+    return global.SixCRM.routes.include('root', 'serverless-config.yml');
 
   }
 
@@ -165,7 +165,11 @@ module.exports = class Configuration {
 
     du.debug('Get Account Identifier From Lambda Context');
 
-    return context.invokedFunctionArn.match(/\d{3,}/)[0];
+    if (_.isUndefined(context)) {
+      return this.getAccountIdentifierFromEnvironment();
+    } else {
+      return context.invokedFunctionArn.match(/\d{3,}/)[0];
+    }
 
   }
 
