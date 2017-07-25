@@ -105,8 +105,8 @@ deployment:
       - node ./deployment/elasticache/purge.js
 
       #DynamoDB
-      - node ./deployment/dynamodb/deploy_tables.js
       - node ./deployment/dynamodb/purge_tables.js
+      - node ./deployment/dynamodb/deploy_tables.js
 
       #Redshift
       - node ./deployment/redshift/deploy_cluster.js
