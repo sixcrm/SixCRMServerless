@@ -19,6 +19,10 @@ jwt:
 dynamodb:
   endpoint: ''
 
+sqs:
+  deadletter_postfix: '_deadletter'
+  max_receive_count: 5
+
 cloudsearch:
   domainname: 'sixcrm'
 

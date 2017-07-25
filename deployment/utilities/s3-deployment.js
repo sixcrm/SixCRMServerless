@@ -329,4 +329,4 @@ class S3Deployment extends AWSDeploymentUtilities{
 
 }
 
-module.exports = S3Deployment;
+module.exports = new S3Deployment();

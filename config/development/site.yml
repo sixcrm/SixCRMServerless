@@ -18,9 +18,15 @@ jwt:
 dynamodb:
   endpoint: ''
 
+sqs:
+  deadletter_postfix: '_deadletter'
+  max_receive_count: 5
+
+#Technical Debt:  Can't we configure this?
 cloudsearch:
   domainname: 'sixcrm'
 
+#Technical Debt:  Eliminate Configurations....
 lambda:
   endpoint: ''
   function_names:

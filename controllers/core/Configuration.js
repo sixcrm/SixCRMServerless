@@ -155,6 +155,8 @@ module.exports = class Configuration {
 
     if(_.has(process.env, 'AWS_ACCOUNT')){
       return process.env.AWS_ACCOUNT;
+    }else if(_.has(process.env, 'aws_account')){
+      return process.env.aws_account;
     }
 
     return null;
@@ -165,11 +167,11 @@ module.exports = class Configuration {
 
     du.debug('Get Account Identifier From Lambda Context');
 
-    if (_.isUndefined(context)) {
-      return this.getAccountIdentifierFromEnvironment();
-    } else {
+    if (!_.isUndefined(context) && _.has(context, 'invokedFunctionArn')) {
       return context.invokedFunctionArn.match(/\d{3,}/)[0];
     }
+
+    return null;
 
   }
 

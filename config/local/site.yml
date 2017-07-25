@@ -14,6 +14,10 @@ jwt:
 dynamodb:
   endpoint: 'http://localhost:8001'
 
+sqs:
+  deadletter_postfix: '_deadletter'
+  max_receive_count: 5
+
 cloudsearch:
   domainname: 'sixcrm'
 
