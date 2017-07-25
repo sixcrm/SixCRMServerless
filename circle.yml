@@ -87,12 +87,15 @@ deployment:
       - find node_modules
 
       #Serverless (Lambdas, API Gateway, Roles)
-      - serverless deploy --stage $CIRCLE_BRANCH
+      - serverless deploy --verbose --stage $CIRCLE_BRANCH
 
       # More debug
       #- serverless deploy --stage $CIRCLE_BRANCH --noDeploy
       - ls -a1
       - unzip -l .serverless/sixtransaction.zip
+      - unzip -l .serverless/sixtransaction.zip > serverless-package.log
+      - cp serverless-package.log $CIRCLE_ARTIFACTS
+      - cp .serverless/sixtransaction.zip $CIRCLE_ARTIFACTS
 
       #EC2
       #- node ./deployment/ec2/destroy_security_groups.js
