@@ -10,6 +10,10 @@ package:
     - node_modules/chai/**
     - node_modules/chai-json-schema/**
     - node_modules/supertest/**
+    - node_modules/eslint/**
+    - coverage/**
+    - dynamolocal/**
+    - deployment/**
 
 # frameworkVersion: "=X.X.X"
 
