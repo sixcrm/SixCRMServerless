@@ -81,6 +81,8 @@ deployment:
     branch: development
     commands:
 
+      - npm ls
+
       #Serverless (Lambdas, API Gateway, Roles)
       - serverless deploy --stage $CIRCLE_BRANCH
 
