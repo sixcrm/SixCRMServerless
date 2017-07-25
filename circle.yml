@@ -26,6 +26,7 @@ machine:
 dependencies:
   pre:
     - openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
+    - rm node_modules -r
   post:
     - echo "$AWS_ACCOUNT $AWS_REGION $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
     - serverless dynamodb install --stage $CIRCLE_BRANCH
