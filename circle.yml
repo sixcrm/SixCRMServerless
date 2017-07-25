@@ -90,7 +90,9 @@ deployment:
       - serverless deploy --stage $CIRCLE_BRANCH
 
       # More debug
-      - ls -1
+      #- serverless deploy --stage $CIRCLE_BRANCH --noDeploy
+      - ls -a1
+      - unzip -l .serverless/sixtransaction.zip
 
       #EC2
       #- node ./deployment/ec2/destroy_security_groups.js
