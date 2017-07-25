@@ -5,7 +5,6 @@ const crypto = require('crypto');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
 
 module.exports = class cacheController {
 
@@ -15,7 +14,7 @@ module.exports = class cacheController {
             this.key_prefix = prefix;
         }
 
-        this.redisutilities = new redisutilities(process.env.stage);
+        this.redisutilities =  global.SixCRM.routes.include('lib', 'redis-utilities.js');
 
     }
 
