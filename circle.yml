@@ -90,41 +90,41 @@ deployment:
       - serverless deploy --stage $CIRCLE_BRANCH
 
       #EC2
-      - node ./deployment/ec2/destroy_security_groups.js
-      - node ./deployment/ec2/deploy_security_groups.js
+      #- node ./deployment/ec2/destroy_security_groups.js
+      #- node ./deployment/ec2/deploy_security_groups.js
 
       #S3
-      - node ./deployment/s3/destroy_buckets.js
-      - node ./deployment/s3/deploy_buckets.js
+      #- node ./deployment/s3/destroy_buckets.js
+      #- node ./deployment/s3/deploy_buckets.js
 
       #SQS
-      - node ./deployment/sqs/deploy_queues.js
-      - node ./deployment/sqs/purge_queues.js
+      #- node ./deployment/sqs/deploy_queues.js
+      #- node ./deployment/sqs/purge_queues.js
 
       #CloudSearch
-      - node ./deployment/cloudsearch/deploy.js
-      - node ./deployment/cloudsearch/purge.js
+      #- node ./deployment/cloudsearch/deploy.js
+      #- node ./deployment/cloudsearch/purge.js
 
       #ElastiCache
-      - node ./deployment/elasticache/deploy.js
-      - node ./deployment/elasticache/purge.js
+      #- node ./deployment/elasticache/deploy.js
+      #- node ./deployment/elasticache/purge.js
 
       #DynamoDB
-      - node ./deployment/dynamodb/purge_tables.js
+      #- node ./deployment/dynamodb/purge_tables.js
       - node ./deployment/dynamodb/deploy_tables.js
 
       #Redshift
-      - node ./deployment/redshift/deploy_cluster.js
+      #- node ./deployment/redshift/deploy_cluster.js
 
       #here...
-      - node ./deployment/redshift/deploy_redshift_tables.js
+      #- node ./deployment/redshift/deploy_redshift_tables.js
 
       #Kinesis
       # node ./deployment/kinesis/deploy_kinesis.js $CIRCLE_BRANCH
 
 
       #Note:  This must be last.
-      - node ./deployment/dynamodb/deploy_seeds.js $CIRCLE_BRANCH
+      #- node ./deployment/dynamodb/deploy_seeds.js $CIRCLE_BRANCH
 
 
       # Technical Debt:  Add Elasticache and NAT Instance (where necessary)
