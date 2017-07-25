@@ -81,7 +81,10 @@ deployment:
     branch: development
     commands:
 
+      # Debug stuff
       - npm ls
+      - ls node_modules -1
+      - find node_modules
 
       #Serverless (Lambdas, API Gateway, Roles)
       - serverless deploy --stage $CIRCLE_BRANCH
