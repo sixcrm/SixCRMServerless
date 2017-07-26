@@ -1,6 +1,6 @@
 service: sixtransaction
 package:
-  excludeDevDependencies: false
+  excludeDevDependencies: true
   exclude:
     - .git/**
     - coverage/**
