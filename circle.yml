@@ -14,7 +14,7 @@ machine:
   timezone:
     America/Los_Angeles
   node:
-    version: 7.6.0
+    version: 6.11.1
   environment:
     SIX_VERBOSE: '2'
 
@@ -89,7 +89,6 @@ deployment:
 
       # Remove devDependencies before packaging and deployment.
       - npm prune --prod
-      - npm ls
       - ls node_modules -1
 
       #Serverless (Lambdas, API Gateway, Roles)
