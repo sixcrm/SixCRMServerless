@@ -1,16 +1,8 @@
 service: sixtransaction
 package:
+  excludeDevDependencies: true
   exclude:
     - .git/**
-    - node_modules/dynamodb-localhost/**
-    - node_modules/serverless/**
-    - node_modules/serverless-offline/**
-    - node_modules/serverless-dynamodb-local/**
-    - node_modules/mocha/**
-    - node_modules/chai/**
-    - node_modules/chai-json-schema/**
-    - node_modules/supertest/**
-    - node_modules/eslint/**
     - coverage/**
     - dynamolocal/**
     - deployment/**
