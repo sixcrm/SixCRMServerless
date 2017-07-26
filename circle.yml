@@ -14,7 +14,7 @@ machine:
   timezone:
     America/Los_Angeles
   node:
-    version: 6.11.1
+    version: 7.6.0
   environment:
     SIX_VERBOSE: '2'
 
@@ -30,11 +30,16 @@ dependencies:
     - echo "$AWS_ACCOUNT $AWS_REGION $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
     - serverless dynamodb install --stage $CIRCLE_BRANCH
 
+    # Collect debug info
+    - npm ls
+    - ls node_modules -1
+    - df -h
+    - serverless --version
+
 test:
   override:
-    #- npm run lint
-    #- npm run test-unit
-
+    - npm run lint
+    - npm run test-unit
 
 deployment:
   production:
@@ -81,67 +86,52 @@ deployment:
     branch: development
     commands:
 
-      # Collect debug info
-      - npm ls
-      - ls node_modules -1
-      - find node_modules
-      - df -h
-      - serverless --version
-      - npm ls --dev=true --parseable=true --silent
-
       #Serverless (Lambdas, API Gateway, Roles)
-      - serverless deploy --verbose --stage $CIRCLE_BRANCH
-
-      # Collect debug info
-      - ls -a1
-      - unzip -l .serverless/sixtransaction.zip
-      - unzip -l .serverless/sixtransaction.zip > serverless-package.log
-      - cp serverless-package.log $CIRCLE_ARTIFACTS
-      - cp .serverless/sixtransaction.zip $CIRCLE_ARTIFACTS
+      - serverless deploy --stage $CIRCLE_BRANCH
 
       #EC2
-      #- node ./deployment/ec2/destroy_security_groups.js
-      #- node ./deployment/ec2/deploy_security_groups.js
+      - node ./deployment/ec2/destroy_security_groups.js
+      - node ./deployment/ec2/deploy_security_groups.js
 
       #S3
-      #- node ./deployment/s3/destroy_buckets.js
-      #- node ./deployment/s3/deploy_buckets.js
+      - node ./deployment/s3/destroy_buckets.js
+      - node ./deployment/s3/deploy_buckets.js
 
       #SQS
-      #- node ./deployment/sqs/deploy_queues.js
-      #- node ./deployment/sqs/purge_queues.js
+      - node ./deployment/sqs/deploy_queues.js
+      - node ./deployment/sqs/purge_queues.js
 
       #CloudSearch
-      #- node ./deployment/cloudsearch/deploy.js
-      #- node ./deployment/cloudsearch/purge.js
+      - node ./deployment/cloudsearch/deploy.js
+      - node ./deployment/cloudsearch/purge.js
 
       #ElastiCache
-      #- node ./deployment/elasticache/deploy.js
-      #- node ./deployment/elasticache/purge.js
+      - node ./deployment/elasticache/deploy.js
+      - node ./deployment/elasticache/purge.js
 
       #DynamoDB
-      #- node ./deployment/dynamodb/purge_tables.js
+      - node ./deployment/dynamodb/purge_tables.js
       - node ./deployment/dynamodb/deploy_tables.js
 
       #Redshift
-      #- node ./deployment/redshift/deploy_cluster.js
+      - node ./deployment/redshift/deploy_cluster.js
 
       #here...
-      #- node ./deployment/redshift/deploy_redshift_tables.js
+      - node ./deployment/redshift/deploy_redshift_tables.js
 
       #Kinesis
       # node ./deployment/kinesis/deploy_kinesis.js $CIRCLE_BRANCH
 
 
       #Note:  This must be last.
-      #- node ./deployment/dynamodb/deploy_seeds.js $CIRCLE_BRANCH
+      - node ./deployment/dynamodb/deploy_seeds.js $CIRCLE_BRANCH
 
 
       # Technical Debt:  Add Elasticache and NAT Instance (where necessary)
       # Technical Debt:  Use Route53 for resource mappings
       # Technical Debt: API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
 
-      #- export SIX_VERBOSE=0 && npm run test-integration
+      - export SIX_VERBOSE=0 && npm run test-integration
 
       # Merge to upper environment
-      #- ./deployment/utilities/merge_branches.sh development staging
+      - ./deployment/utilities/merge_branches.sh development staging
