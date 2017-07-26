@@ -1,31 +1,11 @@
 service: sixtransaction
 package:
-  excludeDevDependencies: false
+  excludeDevDependencies: false # we remove dev dependencies before packaging via `npm prune --prod`
   exclude:
     - .git/**
     - coverage/**
     - dynamolocal/**
     - deployment/**
-    - node_modules/aws-sdk/**
-    - node_modules/chai/**
-    - node_modules/chai-as-promised/**
-    - node_modules/chai-json-schema/**
-    - node_modules/child-process-promise/**
-    - node_modules/eslint/**
-    - node_modules/eslint-plugin-json/**
-    - node_modules/eslint-plugin-promise/**
-    - node_modules/istanbul/**
-    - node_modules/json-schema-faker/**
-    - node_modules/mocha/**
-    - node_modules/mockery/**
-    - node_modules/pre-commit/**
-    - node_modules/serverless/**
-    - node_modules/serverless-dynamodb-local/**
-    - node_modules/serverless-mocha-plugin/**
-    - node_modules/serverless-prune-plugin/**
-    - node_modules/supertest/**
-    - node_modules/yaml-lint/**
-
 
 # frameworkVersion: "=X.X.X"
 
