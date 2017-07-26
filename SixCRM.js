@@ -9,12 +9,19 @@ class SixCRM {
 
   }
 
+  instantiate(){
+
+    let Configuration = this.routes.include('core', 'Configuration.js');
+    let LocalCache = this.routes.include('core', 'LocalCache.js');
+
+    this.configuration = new Configuration();
+    this.localcache = new LocalCache();
+
+    this.configuration.setEnvironmentConfigurationFile();
+
+  }
+
 }
 
 global.SixCRM = new SixCRM();
-
-let Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
-let LocalCache = global.SixCRM.routes.include('core', 'LocalCache.js');
-
-global.SixCRM.configuration = new Configuration();
-global.SixCRM.localcache = new LocalCache();
+global.SixCRM.instantiate();

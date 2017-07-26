@@ -63,7 +63,55 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
     }
 
+    purgeTables() {
+
+      du.debug('Purge Tables');
+
+      return this.getTableDefinitionFilenames().then((table_definition_filenames) => {
+
+        let table_deployment_promises = arrayutilities.map(table_definition_filenames, (table_definition_filename) => {
+          return () => this.purgeTable(table_definition_filename);
+        });
+
+        return arrayutilities.serial(
+          table_deployment_promises
+        ).then(() => {
+          return 'Complete';
+        });
+
+      });
+
+    }
+
+    purgeTable(table_definition_filename){
+
+      du.debug('Purge Table');
+
+      let table_definition = global.SixCRM.routes.include('tabledefinitions', table_definition_filename);
+
+      return this.tableExists(table_definition.Table.TableName).then((result) => {
+
+        if(objectutilities.isObject(result)){
+
+          //du.highlight(table_definition.Table.TableName+' table exists, purging');
+
+          du.warning('Complete this feature...');
+
+        }else{
+
+          //du.highlight(table_definition.Table.TableName+' table doesn\'t exist, skipping');
+
+        }
+
+        return true;
+
+      });
+
+    }
+
     deployTables() {
+
+      du.debug('Deploy Tables');
 
       return this.getTableDefinitionFilenames().then((table_definition_filenames) => {
 
@@ -182,7 +230,6 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       du.debug('Get Entity Name');
 
-      du.info(table_name);
       return table_name.replace(/s$/, '');
 
     }

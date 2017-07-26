@@ -32,6 +32,8 @@ class S3Deployment extends AWSDeploymentUtilities{
 
       bucket_group_files.forEach((bucket_group_file) => {
 
+        du.info(bucket_group_file);
+
         let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/'+bucket_group_file);
 
         if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
@@ -91,6 +93,8 @@ class S3Deployment extends AWSDeploymentUtilities{
     }
 
     createBucketFromGroupFileDefinition(group_file_definition){
+
+      du.debug('Create Bucket From Group File Definition');
 
       let group_file_definition_promises = group_file_definition.map((sub_definition) => {
 

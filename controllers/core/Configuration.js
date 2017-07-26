@@ -1,15 +1,26 @@
 'use strict';
 const _ = require('underscore');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-//const RedisUtilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
-//const S3Utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
 
-//Technical Debt:  Add encryption
-module.exports = class Configuration {
+module.exports = class Configuration extends ConfigurationUtilities {
 
   constructor(stage){
+
+    super(stage);
+
+    this.setConfigurationInformation();
+
+    this.handleStage(stage);
+
+    this.setConfigurationFiles();
+
+  }
+
+  setConfigurationInformation(){
 
     this.stages = {
       '068070110666':'development',
@@ -17,37 +28,45 @@ module.exports = class Configuration {
       'abc':'production'
     }
 
+    this.config_bucket_template = 'sixcrm-{{stage}}-configuration-master';
+
+    this.s3_environment_configuration_file_key = 'config.json';
+
+  }
+
+  handleStage(stage){
+
+    du.debug('Handle Stage');
+
     this.stage = this.resolveStage(stage);
 
     this.setEnvironmentVariable('stage', this.stage);
-
-    this.setConfigurationFiles();
-
-    //this.redisutilities = new RedisUtilities();
-
-    //this.s3utilities = new S3Utilities();
-
-    this.config_bucket_template = 'sixcrm-{{stage}}-configuration-master';
-
-    this.s3_file_key = 'config.json';
 
   }
 
   setConfigurationFiles(){
 
+    du.debug('Set Configuration Files');
+
     this.serverless_config = this.getServerlessConfig();
 
     this.site_config = this.getSiteConfig();
 
-    //this.environment_config = this.getEnvironmentConfig();
+    this.evaluateStatus();
 
   }
 
-  setEnvironmentVariable(key, value){
+  setEnvironmentConfigurationFile(){
 
-    du.debug('Set Environment Variable');
+    du.debug('Set Environment Configuration Files');
 
-    process.env[key] = value;
+    return this.getEnvironmentConfig(null, false).then((result) => {
+
+      this.environment_config = result;
+
+      this.evaluateStatus();
+
+    });
 
   }
 
@@ -75,190 +94,63 @@ module.exports = class Configuration {
 
   }
 
-  resolveStage(stage){
-
-    du.debug('Resolve Stage');
-
-    if(_.isUndefined(stage)){
-
-      if(_.has(process.env, 'stage')){
-
-        stage = process.env.stage;
-
-        if(!_.contains(['local','development','staging','production'], stage)){
-
-          eu.throwError('Configuration.resolveStage unable to validate stage name: '+stage);
-
-        }
-
-      }else{
-
-        stage = this.determineStageFromAccountIdentifier();
-
-      }
-
-    }
-
-    if(_.isNull(stage) || _.isUndefined(stage)){
-
-      eu.throwError('server', 'Configuration.resolveStage unable to determine stage.');
-
-    }
-
-    du.critical('Stage: '+stage);
-
-    return stage;
-
-  }
-
-  determineStageFromAccountIdentifier(){
-
-    du.debug('Determine Stage From Account Identifier');
-
-    let account_identifier = this.getAccountIdentifier();
-
-    let stage = null
-
-    if(!_.isNull(account_identifier)){
-
-      if(_.has(this.stages, account_identifier)){
-        return this.stages[account_identifier];
-      }
-
-      eu.throwError('server', 'Unrecognized account identifier: '+account_identifier);
-
-    }
-
-    return null;
-
-  }
-
-  getAccountIdentifier(){
-
-    du.debug('Get Account Identifier');
-
-    let account_identifier = this.getAccountIdentifierFromEnvironment();
-
-    if(_.isNull(account_identifier)){
-
-      account_identifier = this.getAccountIdentifierFromLambdaContext();
-
-    }
-
-    return account_identifier;
-
-  }
-
-  getAccountIdentifierFromEnvironment(){
-
-    du.debug('Get Account Identifier From Environment');
-
-    if(_.has(process.env, 'AWS_ACCOUNT')){
-      return process.env.AWS_ACCOUNT;
-    }else if(_.has(process.env, 'aws_account')){
-      return process.env.aws_account;
-    }
-
-    return null;
-
-  }
-
-  getAccountIdentifierFromLambdaContext(){
-
-    du.debug('Get Account Identifier From Lambda Context');
-
-    if (!_.isUndefined(context) && _.has(context, 'invokedFunctionArn')) {
-      return context.invokedFunctionArn.match(/\d{3,}/)[0];
-    }
-
-    return null;
-
-  }
-
   setEnvironmentConfig(key, value){
 
     du.debug('Set Environment Config');
 
-    return this.setS3EnvironmentConfig(key, value).then((result) => {
-
-      return this.propagateToRedisCache(key, value);
-
-      //Technical Debt: set in local
-
-    })
+    return this.propagateCache('all', key, value);
 
   }
 
-  setS3EnvironmentConfig(key, value){
-
-    du.debug('Set S3 Environment Config');
-
-    return this.getS3EnvironmentConfiguration().then((result) => {
-
-      if(_.isNull(result)){ result = {}; }
-
-      result[key] = value;
-
-      let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
-
-      let body =  JSON.stringify(result);
-
-      return this.s3utilities.putObject({Bucket:bucket, Key: this.s3_file_key, Body: body});
-
-    })
-
+  getEnvironmentFields(array){
+    //use promise all
   }
 
-  getEnvironmentConfig(field){
+  getEnvironmentConfig(field, use_cache){
 
     du.debug('Get Environment Config');
 
     return new Promise((resolve) => {
 
-      if(_.isUndefined(field)){
-        field = 'all';
-      }
+      use_cache = this.setUseCache(use_cache);
 
-      //Technical Debt:  Implement local storage!
-      return this.getConfiguration('redis', field).then((result) => {
+      field = this.setField(field);
 
-        if(!_.isNull(result)){
+      if(use_cache){
 
-          return resolve(result);
+        return this.getConfiguration('local', field, use_cache).then((result) => {
 
-        }else{
+          if(!_.isNull(result)){ return resolve(result); }
 
-          return this.getConfiguration('s3', field).then((result) => {
+          return this.getConfiguration('redis', field, use_cache).then((result) => {
 
-            if(!_.isNull(result)){
+            if(!_.isNull(result)){ return resolve(result); }
 
-              this.propagateToRedisCache(field, result);
+            return this.getConfiguration('s3', field, use_cache).then((result) => {
 
               return resolve(result);
 
-            }
-
-            return resolve(null);
+            });
 
           });
 
-        }
+        });
 
-      });
+      }else{
+
+        return this.getConfiguration('s3', field, use_cache).then((result) => {
+
+          return resolve(result);
+
+        });
+
+      }
 
     });
 
   }
 
-  propagateToRedisCache(key, value){
-
-    du.debug('Propagate To Redis Cache');
-
-    return this.redisutilities.set(key, value);
-
-  }
-
-  getConfiguration(source, field){
+  getConfiguration(source, field, use_cache){
 
     du.debug('Get Configuration');
 
@@ -274,7 +166,7 @@ module.exports = class Configuration {
 
       }else if(source == 'local'){
 
-        eu.throwError('server', 'Local storage not yet implemented');
+        return this.getLocalEnvironmentConfiguration(field).then((result) => resolve(result));
 
       }else{
 
@@ -286,24 +178,45 @@ module.exports = class Configuration {
 
   }
 
+  getLocalEnvironmentConfiguration(field){
+
+    du.debug('Get Local Environment Configuration');
+
+    let result = null;
+
+    if(_.has(global.SixCRM, 'localcache')){
+
+      let key = this.buildLocalCacheKey(field);
+
+      result = global.SixCRM.localcache.get(key);
+
+    }
+
+    return Promise.resolve(result);
+
+  }
+
   getRedisEnvironmentConfiguration(field){
 
     du.debug('Get Redis Environment Configuration');
 
+    du.warning('Redis disabled');
+
+    return Promise.resolve(null);
+
+    /*
     let redis_key = this.buildRedisKey(field);
 
-    //Technical Debt: do we really need the second part of this promise?
-    return this.redisutilities.get(field).then((result) => Promise.resolve(result));
+    if(!_.has(this, 'redisutilities')){
+      this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+    }
 
-  }
+    return this.redisutilities.get(redis_key).then((result) => {
 
-  buildRedisKey(field){
+      du.warning(result); process.exit();
 
-    du.debug('Get Redis Key');
-
-    let prefix = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
-
-    return prefix+'-'+field;
+    });
+    */
 
   }
 
@@ -313,11 +226,21 @@ module.exports = class Configuration {
 
     let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
 
-    return this.s3utilities.getObject({Bucket: bucket, Key: this.s3_file_key}).then((result) => {
+    if(!_.has(this, 's3utilities') || !_.isFunction(this.s3utilities.getObject)){
+
+      this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+
+    }
+
+    return this.s3utilities.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
+
+      if(!_.has(result, 'Body')){
+        eu.throwError('server', 'Result response is assumed to have Body property');
+      }
 
       try{
 
-        result = JSON.parse(result);
+        result = JSON.parse(result.Body.toString('utf-8'));
 
       }catch(error){
 
@@ -325,17 +248,127 @@ module.exports = class Configuration {
 
       }
 
+      let return_value = null;
+
       if(field == 'all'){
 
-        return result;
+        return_value = field;
 
       }else if(_.has(result, field)){
 
-        return result[field];
+        return_value = result[field];
 
       }
 
-      return null;
+      this.propagateCache('redis', field, return_value);
+
+      return return_value;
+
+    });
+
+  }
+
+  propagateCache(source, key, value){
+
+    if(_.isUndefined(source) || _.isNull(source)){
+      source = 'all';
+    }
+
+    if(!_.isString(source)){
+      eu.throwError('server', 'Source is assumed to be a string');
+    }
+
+    if(!_.contains(['all', 'redis', 'localcache', 's3'], source)){
+      eu.throwError('server', 'Unrecognized source destination');
+    }
+
+    if(source == 'all' || source == 's3'){
+
+      return this.propagateToS3Cache(key, value);
+
+    }else if(source == 'redis'){
+
+      return this.propagateToRedisCache(key, value);
+
+    }else{
+
+      return this.propagateToLocalCache(key, value);
+
+    }
+
+  }
+
+  propagateToLocalCache(key, value){
+
+    du.debug('Propagate To Local Cache');
+
+    return Promise.resolve().then(() => {
+
+      let localcache_key = this.buildLocalCacheKey(key);
+
+      let result = global.SixCRM.localcache.set(localcache_key, value);
+
+      if(result){
+
+        return result;
+
+      }
+
+      eu.throwError('server', 'Unable to propagate to local cache');
+
+    });
+
+  }
+
+  propagateToRedisCache(key, value){
+
+    du.debug('Propagate To Redis Cache');
+
+    return Promise.resolve().then(() => {
+
+      du.warning('Redis disabled');
+
+      return this.propagateCache('localcache', key, value);
+
+    });
+
+  }
+
+  propagateToS3Cache(key, value){
+
+    du.debug('Propagate To S3 Cache');
+
+    return this.getS3EnvironmentConfiguration('all').then((result) => {
+
+      if(_.isNull(result)){ result = {}; }
+
+      if(_.isNull(value) && !_.has(result, key)){
+
+        return this.propagateCache('redis', key, value);
+
+      }else{
+
+        if(_.isNull(value)){
+
+          delete result[key];
+
+        }else{
+
+          result[key] = value;
+
+        }
+
+        let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
+
+        let body =  JSON.stringify(result);
+
+        return this.s3utilities.putObject({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}).then((result) => {
+
+          return this.propagateCache('redis', key, value);
+
+        });
+
+      }
 
     });
 
