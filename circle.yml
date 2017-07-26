@@ -85,6 +85,7 @@ deployment:
       - npm ls
       - ls node_modules -1
       - find node_modules
+      - df -h
 
       #Serverless (Lambdas, API Gateway, Roles)
       - serverless deploy --verbose --stage $CIRCLE_BRANCH
