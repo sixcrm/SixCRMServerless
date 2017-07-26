@@ -1,4 +1,11 @@
 service: sixtransaction
+package:
+  excludeDevDependencies: false
+  exclude:
+    - .git/**
+    - coverage/**
+    - dynamolocal/**
+    - deployment/**
 
 # frameworkVersion: "=X.X.X"
 
