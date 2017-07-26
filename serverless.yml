@@ -1,6 +1,6 @@
 service: sixtransaction
 package:
-  excludeDevDependencies: false # we remove dev dependencies before packaging via `npm prune --prod`
+  excludeDevDependencies: true
   exclude:
     - .git/**
     - coverage/**

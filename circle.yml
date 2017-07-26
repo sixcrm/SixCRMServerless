@@ -87,10 +87,6 @@ deployment:
       - find node_modules
       - df -h
 
-      # Remove devDependencies before packaging and deployment.
-      - npm prune --prod
-      - ls node_modules -1
-
       #Serverless (Lambdas, API Gateway, Roles)
       - serverless deploy --verbose --stage $CIRCLE_BRANCH
 
