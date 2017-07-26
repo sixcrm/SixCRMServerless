@@ -32,8 +32,8 @@ dependencies:
 
 test:
   override:
-    - npm run lint
-    - npm run test-unit
+    #- npm run lint
+    #- npm run test-unit
 
 
 deployment:
@@ -140,7 +140,7 @@ deployment:
       # Technical Debt:  Use Route53 for resource mappings
       # Technical Debt: API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
 
-      - export SIX_VERBOSE=0 && npm run test-integration
+      #- export SIX_VERBOSE=0 && npm run test-integration
 
       # Merge to upper environment
-      - ./deployment/utilities/merge_branches.sh development staging
+      #- ./deployment/utilities/merge_branches.sh development staging
