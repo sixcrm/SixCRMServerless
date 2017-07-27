@@ -314,7 +314,6 @@ class S3Deployment extends AWSDeploymentUtilities{
 
       return new Promise((resolve, reject) => { this.s3.listObjects(param, (error, data) => {
               if (error) {
-                  du.error(error.message);
                   return reject(error);
               } else {
                   //console.log(data.Contents)
