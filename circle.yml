@@ -90,8 +90,8 @@ deployment:
       - serverless deploy --stage $CIRCLE_BRANCH
 
       #EC2
-      - node ./deployment/ec2/destroy_security_groups.js
-      - node ./deployment/ec2/deploy_security_groups.js
+      #- node ./deployment/ec2/destroy_security_groups.js
+      #- node ./deployment/ec2/deploy_security_groups.js
 
       #S3
       - node ./deployment/s3/destroy_buckets.js
