@@ -8,7 +8,7 @@ const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
-  constructor(stage){
+  constructor(stage) {
 
     super(stage);
 
@@ -20,12 +20,12 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  setConfigurationInformation(){
+  setConfigurationInformation() {
 
     this.stages = {
-      '068070110666':'development',
-      '821071795213':'staging',
-      'abc':'production'
+      '068070110666': 'development',
+      '821071795213': 'staging',
+      'abc': 'production'
     }
 
     this.config_bucket_template = 'sixcrm-{{stage}}-configuration-master';
@@ -34,7 +34,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  handleStage(stage){
+  handleStage(stage) {
 
     du.debug('Handle Stage');
 
@@ -44,7 +44,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  setConfigurationFiles(){
+  setConfigurationFiles() {
 
     du.debug('Set Configuration Files');
 
@@ -56,7 +56,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  setEnvironmentConfigurationFile(){
+  setEnvironmentConfigurationFile() {
 
     du.debug('Set Environment Configuration Files');
 
@@ -70,7 +70,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getServerlessConfig(){
+  getServerlessConfig() {
 
     du.debug('Get Serverless Config');
 
@@ -78,15 +78,15 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getSiteConfig(){
+  getSiteConfig() {
 
     du.debug('Get Site Config');
 
-    let config = global.SixCRM.routes.include('config', this.stage+'/site.yml');
+    let config = global.SixCRM.routes.include('config', this.stage + '/site.yml');
 
     if (!config) {
 
-      eu.throwError('server', 'Configuration.getSiteConfig was unable to identify file '+global.SixCRM.routes.path('config', this.stage+'/site.yml'));
+      eu.throwError('server', 'Configuration.getSiteConfig was unable to identify file ' + global.SixCRM.routes.path('config', this.stage + '/site.yml'));
 
     }
 
@@ -94,7 +94,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  setEnvironmentConfig(key, value){
+  setEnvironmentConfig(key, value) {
 
     du.debug('Set Environment Config');
 
@@ -102,11 +102,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getEnvironmentFields(array){
+  getEnvironmentFields(array) {
     //use promise all
   }
 
-  getEnvironmentConfig(field, use_cache){
+  getEnvironmentConfig(field, use_cache) {
 
     du.debug('Get Environment Config');
 
@@ -116,15 +116,19 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       field = this.setField(field);
 
-      if(use_cache){
+      if (use_cache) {
 
         return this.getConfiguration('local', field, use_cache).then((result) => {
 
-          if(!_.isNull(result)){ return resolve(result); }
+          if (!_.isNull(result)) {
+            return resolve(result);
+          }
 
           return this.getConfiguration('redis', field, use_cache).then((result) => {
 
-            if(!_.isNull(result)){ return resolve(result); }
+            if (!_.isNull(result)) {
+              return resolve(result);
+            }
 
             return this.getConfiguration('s3', field, use_cache).then((result) => {
 
@@ -136,7 +140,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         });
 
-      }else{
+      } else {
 
         return this.getConfiguration('s3', field, use_cache).then((result) => {
 
@@ -150,27 +154,27 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getConfiguration(source, field, use_cache){
+  getConfiguration(source, field, use_cache) {
 
     du.debug('Get Configuration');
 
     return new Promise((resolve) => {
 
-      if(source == 'redis'){
+      if (source == 'redis') {
 
         return this.getRedisEnvironmentConfiguration(field).then((result) => resolve(result));
 
-      }else if(source == 's3'){
+      } else if (source == 's3') {
 
         return this.getS3EnvironmentConfiguration(field).then((result) => resolve(result));
 
-      }else if(source == 'local'){
+      } else if (source == 'local') {
 
         return this.getLocalEnvironmentConfiguration(field).then((result) => resolve(result));
 
-      }else{
+      } else {
 
-        eu.throwError('server', 'Configuration.getConfiguration did not recognize the source provided: "'+source+'"');
+        eu.throwError('server', 'Configuration.getConfiguration did not recognize the source provided: "' + source + '"');
 
       }
 
@@ -178,13 +182,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getLocalEnvironmentConfiguration(field){
+  getLocalEnvironmentConfiguration(field) {
 
     du.debug('Get Local Environment Configuration');
 
     let result = null;
 
-    if(_.has(global.SixCRM, 'localcache')){
+    if (_.has(global.SixCRM, 'localcache')) {
 
       let key = this.buildLocalCacheKey(field);
 
@@ -196,7 +200,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getRedisEnvironmentConfiguration(field){
+  getRedisEnvironmentConfiguration(field) {
 
     du.debug('Get Redis Environment Configuration');
 
@@ -220,77 +224,94 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getS3EnvironmentConfiguration(field){
+  getS3EnvironmentConfiguration(field) {
 
     du.debug('Get S3 Environment Configuration');
 
-    let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
+    let bucket = parserutilities.parse(this.config_bucket_template, {
+      stage: this.stage
+    });
 
-    if(!_.has(this, 's3utilities') || !_.isFunction(this.s3utilities.getObject)){
+    if (!_.has(this, 's3utilities') || !_.isFunction(this.s3utilities.getObject)) {
 
       this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
     }
 
-    return this.s3utilities.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
+    let parameters = {
+      Bucket: bucket,
+      Key: this.s3_environment_configuration_file_key
+    };
 
-      if(!_.has(result, 'Body')){
-        eu.throwError('server', 'Result response is assumed to have Body property');
+    return this.s3utilities.objectExists(parameters).then((result) => {
+      if (result) {
+        return bucket
+      } else {
+        parameters.Body = '{}'
+        return this.s3utilities.putObject(parameters);
       }
 
-      try{
+    }).then((bucket) => {
+      return this.s3utilities.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
 
-        result = JSON.parse(result.Body.toString('utf-8'));
+        if (!_.has(result, 'Body')) {
+          eu.throwError('server', 'Result response is assumed to have Body property');
+        }
 
-      }catch(error){
+        try {
 
-        eu.throwError('server', error);
+          result = JSON.parse(result.Body.toString('utf-8'));
 
-      }
+        } catch (error) {
 
-      let return_value = null;
+          eu.throwError('server', error);
 
-      if(field == 'all'){
+        }
 
-        return_value = field;
+        let return_value = null;
 
-      }else if(_.has(result, field)){
+        if (field == 'all') {
 
-        return_value = result[field];
+          return_value = field;
 
-      }
+        } else if (_.has(result, field)) {
 
-      this.propagateCache('redis', field, return_value);
+          return_value = result[field];
 
-      return return_value;
+        }
 
+        this.propagateCache('redis', field, return_value);
+
+        return return_value;
+
+      });
     });
 
   }
 
-  propagateCache(source, key, value){
+  propagateCache(source, key, value) {
 
-    if(_.isUndefined(source) || _.isNull(source)){
+    if (_.isUndefined(source) || _.isNull(source)) {
       source = 'all';
     }
 
-    if(!_.isString(source)){
+    if (!_.isString(source)) {
       eu.throwError('server', 'Source is assumed to be a string');
     }
 
-    if(!_.contains(['all', 'redis', 'localcache', 's3'], source)){
+    if (!_.contains(['all', 'redis', 'localcache', 's3'], source)) {
       eu.throwError('server', 'Unrecognized source destination');
     }
 
-    if(source == 'all' || source == 's3'){
+    if (source == 'all' || source == 's3') {
 
       return this.propagateToS3Cache(key, value);
 
-    }else if(source == 'redis'){
+    } else if (source == 'redis') {
 
       return this.propagateToRedisCache(key, value);
 
-    }else{
+    } else {
 
       return this.propagateToLocalCache(key, value);
 
@@ -298,7 +319,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  propagateToLocalCache(key, value){
+  propagateToLocalCache(key, value) {
 
     du.debug('Propagate To Local Cache');
 
@@ -308,7 +329,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       let result = global.SixCRM.localcache.set(localcache_key, value);
 
-      if(result){
+      if (result) {
 
         return result;
 
@@ -320,7 +341,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  propagateToRedisCache(key, value){
+  propagateToRedisCache(key, value) {
 
     du.debug('Propagate To Redis Cache');
 
@@ -334,35 +355,43 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  propagateToS3Cache(key, value){
+  propagateToS3Cache(key, value) {
 
     du.debug('Propagate To S3 Cache');
 
     return this.getS3EnvironmentConfiguration('all').then((result) => {
 
-      if(_.isNull(result)){ result = {}; }
+      if (_.isNull(result)) {
+        result = {};
+      }
 
-      if(_.isNull(value) && !_.has(result, key)){
+      if (_.isNull(value) && !_.has(result, key)) {
 
         return this.propagateCache('redis', key, value);
 
-      }else{
+      } else {
 
-        if(_.isNull(value)){
+        if (_.isNull(value)) {
 
           delete result[key];
 
-        }else{
+        } else {
 
           result[key] = value;
 
         }
 
-        let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
+        let bucket = parserutilities.parse(this.config_bucket_template, {
+          stage: this.stage
+        });
 
-        let body =  JSON.stringify(result);
+        let body = JSON.stringify(result);
 
-        return this.s3utilities.putObject({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}).then((result) => {
+        return this.s3utilities.putObject({
+          Bucket: bucket,
+          Key: this.s3_environment_configuration_file_key,
+          Body: body
+        }).then((result) => {
 
           return this.propagateCache('redis', key, value);
 
