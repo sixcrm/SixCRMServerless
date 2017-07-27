@@ -90,6 +90,8 @@ module.exports = class ConfigurationUtilities {
       eu.throwError('server', 'Unrecognized status');
     }
 
+    du.highlight('Configuration status: '+status);
+
     this.status = status;
 
   }
@@ -238,6 +240,20 @@ module.exports = class ConfigurationUtilities {
     }
 
     return use_cache;
+
+  }
+
+  setWaitFor(wait_for){
+
+    if(_.isUndefined(wait_for)){
+      wait_for = 'ready';
+    }
+
+    if(!_.isNull(wait_for) && !_.contains(this.stati, wait_for)){
+      eu.throwError('server', 'Configuration.waitFor assumes a null or string valued argument that matches stati definitions.');
+    }
+
+    return wait_for;
 
   }
 

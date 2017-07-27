@@ -95,7 +95,7 @@ cache:
 elasticache:
   max_attempts: 3
   retry_time: 1800000
-  #Technical Debt:  This is development's IP Address...
+  endpoint: '52.44.119.23'
   port: 6379
   default_expiration: 300
 

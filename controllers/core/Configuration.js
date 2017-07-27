@@ -60,7 +60,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     du.debug('Set Environment Configuration Files');
 
-    return this.getEnvironmentConfig(null, false).then((result) => {
+    return this.getEnvironmentConfig(null, false, null).then((result) => {
 
       this.environment_config = result;
 
@@ -106,7 +106,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
     //use promise all
   }
 
-  getEnvironmentConfig(field, use_cache){
+  getEnvironmentConfig(field, use_cache, wait_for){
 
     du.debug('Get Environment Config');
 
@@ -116,19 +116,37 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       field = this.setField(field);
 
+      wait_for = this.setWaitFor(wait_for);
+
+      if(wait_for){
+
+        return this.waitForStatus(wait_for).then(() => {
+          return this.getEnvironmentConfig(field, use_cache, null).then((result) => {
+              return resolve(result);
+          });
+        });
+
+      }
+
       if(use_cache){
 
-        return this.getConfiguration('local', field, use_cache).then((result) => {
+        return this.getConfiguration('native', field, use_cache).then((result) => {
 
           if(!_.isNull(result)){ return resolve(result); }
 
-          return this.getConfiguration('redis', field, use_cache).then((result) => {
+          return this.getConfiguration('localcache', field, use_cache).then((result) => {
 
             if(!_.isNull(result)){ return resolve(result); }
 
-            return this.getConfiguration('s3', field, use_cache).then((result) => {
+            return this.getConfiguration('redis', field, use_cache).then((result) => {
 
-              return resolve(result);
+              if(!_.isNull(result)){ return resolve(result); }
+
+              return this.getConfiguration('s3', field, use_cache).then((result) => {
+
+                return resolve(result);
+
+              });
 
             });
 
@@ -164,7 +182,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         return this.getS3EnvironmentConfiguration(field).then((result) => resolve(result));
 
-      }else if(source == 'local'){
+      }else if(source == 'native'){
+
+        return this.getNativeEnvironmentConfiguration(field).then((result) => resolve(result));
+
+      }else if(source == 'localcache'){
 
         return this.getLocalEnvironmentConfiguration(field).then((result) => resolve(result));
 
@@ -178,6 +200,33 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
+  getNativeEnvironmentConfiguration(field){
+
+    du.debug('Get Native Environment Configuration');
+
+    let result = null;
+
+    if(field == 'all'){
+
+      if(_.has(this, 'environment_config')){
+
+        result = this.environment_config;
+
+      }
+
+    }else if(_.has(this, 'environment_config') && _.has(this.environment_config, field)){
+
+      result = this.environment_config[field];
+
+      du.highlight('Native Result: '+result);
+
+    }
+
+    return Promise.resolve(result);
+
+  }
+
+
   getLocalEnvironmentConfiguration(field){
 
     du.debug('Get Local Environment Configuration');
@@ -190,7 +239,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       result = global.SixCRM.localcache.get(key);
 
+      du.highlight('Local Cache Result: '+result);
+
     }
+
+    this.propagateCache('native', field, result);
 
     return Promise.resolve(result);
 
@@ -200,11 +253,6 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     du.debug('Get Redis Environment Configuration');
 
-    du.warning('Redis disabled');
-
-    return Promise.resolve(null);
-
-    /*
     let redis_key = this.buildRedisKey(field);
 
     if(!_.has(this, 'redisutilities')){
@@ -213,10 +261,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     return this.redisutilities.get(redis_key).then((result) => {
 
-      du.warning(result); process.exit();
+      this.propagateCache('localcache', field, result);
+
+      du.highlight('Redis Cache Result: '+result);
+
+      return result;
 
     });
-    */
 
   }
 
@@ -252,7 +303,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       if(field == 'all'){
 
-        return_value = field;
+        return_value = result;
 
       }else if(_.has(result, field)){
 
@@ -270,15 +321,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   propagateCache(source, key, value){
 
-    if(_.isUndefined(source) || _.isNull(source)){
-      source = 'all';
-    }
+    du.debug('Propagate Cache');
 
     if(!_.isString(source)){
       eu.throwError('server', 'Source is assumed to be a string');
     }
 
-    if(!_.contains(['all', 'redis', 'localcache', 's3'], source)){
+    if(!_.contains(['all', 'redis', 'localcache', 'native', 's3'], source)){
       eu.throwError('server', 'Unrecognized source destination');
     }
 
@@ -290,11 +339,60 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       return this.propagateToRedisCache(key, value);
 
-    }else{
+    }else if(source == 'localcache'){
 
       return this.propagateToLocalCache(key, value);
 
+    }else{
+
+      return this.propagateToNativeCache(key, value);
+
     }
+
+  }
+
+  propagateToNativeCache(key, value){
+
+    du.debug('Propagate To Native Cache');
+
+    return Promise.resolve().then(() => {
+
+      if(key == 'all'){
+
+        if(!_.isNull(value)){
+
+          this.environment_config = value;
+
+        }else{
+
+          du.warning('Deleting Environment Config');
+
+          delete this.environment_config;
+
+        }
+
+
+      }else{
+
+        if(!_.has(this, 'environment_config')){
+          this.environment_config = {};
+        }
+
+        if(!_.isNull(value)){
+
+          this.environment_config[key] = value;
+
+        }else{
+
+          delete this.environment_config;
+
+        }
+
+      }
+
+      return true;
+
+    });
 
   }
 
@@ -309,9 +407,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
       let result = global.SixCRM.localcache.set(localcache_key, value);
 
       if(result){
-
-        return result;
-
+        return this.propagateCache('native', key, value);
       }
 
       eu.throwError('server', 'Unable to propagate to local cache');
@@ -326,9 +422,17 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     return Promise.resolve().then(() => {
 
-      du.warning('Redis disabled');
+      let redis_key = this.buildRedisKey(key);
 
-      return this.propagateCache('localcache', key, value);
+      if(!_.has(this, 'redisutilities')){
+        this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+      }
+
+      return this.redisutilities.set(redis_key, value).then((result) => {
+
+        return this.propagateCache('localcache', key, value);
+
+      });
 
     });
 

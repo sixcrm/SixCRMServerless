@@ -12,9 +12,14 @@ As a consquence of having integrated both DynamoDB (no VPC endpoints currently,)
 ```
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 6379 -j DNAT --to 172.31.21.15:6379
+service iptables save
 ```
 
-Where `172.31.21.15` is the ip address associated with the ElastiCache endpoint.
+Where `172.31.21.15` is the ip address associated with the ElastiCache endpoint.  The IP address of the Elasticache Cluster can be gathered by using the following:
+
+```
+host {ElastiCache Primary Endpoint}
+```
 
 *Note: This technique does not work with the Elasticache Cluster Mode. Six does not currently support Redis Clusters.*
 
