@@ -39,7 +39,7 @@ let this_request = request(global.integration_test_config.endpoint);
 
 describe('Get '+test_name+' Test', function() {
 
-    let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
+    let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
     it('Should return return a 200 HTTP response code', function (done) {
         var query = tu.getQuery(test_query);

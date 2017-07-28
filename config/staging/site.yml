@@ -60,14 +60,17 @@ shipping_providers:
 
 #Technical Debt: This all needs to be configured elsewhere?
 #Technical Debt:  Username and Password combinations need to be encrypted...
+
 redshift:
   user: 'admin'
+  #Technical Debt:  This is inappropriate
   database: 'dev'
   password: 'Jagodica9'
-  host: 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com'
+  #Technical Debt:  This needs to be in Environment Config
+  host: 'sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com'
   port: 5439
   max: 10
-  idleTimeoutMillis: 30000
+  idle_timeout: 30000
   cluster:
     cluster_identifier: 'sixcrm'
     node_type: 'dc1.large'
@@ -109,15 +112,15 @@ kinesis:
       transaction_stream:
         DeliveryStreamName: 'six-staging-transactions'
         RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:
             DataTableName: 'f_transactions'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          RoleARN: 'arn:aws:iam::821071795213:role/firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
-            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            RoleARN: 'arn:aws:iam::821071795213:role/firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1
@@ -131,15 +134,15 @@ kinesis:
       event_stream:
         DeliveryStreamName: 'six-staging-events'
         RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:
             DataTableName: 'f_events'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          RoleARN: 'arn:aws:iam::821071795213:role/firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
-            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            RoleARN: 'arn:aws:iam::821071795213:role/firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1
@@ -153,15 +156,15 @@ kinesis:
       activity_stream:
         DeliveryStreamName: 'six-staging-activity'
         RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:
             DataTableName: 'f_events'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+          RoleARN: 'arn:aws:iam::821071795213:role/firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
-            RoleARN: 'arn:aws:iam::068070110666:role/firehose_delivery_role'
+            RoleARN: 'arn:aws:iam::821071795213:role/firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1

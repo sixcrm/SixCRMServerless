@@ -154,8 +154,8 @@ describe('lib/indexing-utilities', () => {
             };
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-                sendMessage: (parameters, callback) => {
-                    callback(null, {});
+                sendMessage: (parameters) => {
+                    return Promise.resolve({});
                 }
             });
             let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
@@ -174,10 +174,11 @@ describe('lib/indexing-utilities', () => {
             };
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-                sendMessage: (parameters, callback) => {
-                    callback(eu.getError('server','Sending message failed.'), null);
+                sendMessage: (parameters) => {
+                  eu.throwError('server','Sending message failed.');
                 }
             });
+
             let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 
             // then
@@ -196,8 +197,8 @@ describe('lib/indexing-utilities', () => {
             };
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-                sendMessage: (parameters, callback) => {
-                    callback(null, {});
+                sendMessage: (parameters) => {
+                    return Promise.resolve({});
                 }
             });
             let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
@@ -219,10 +220,11 @@ describe('lib/indexing-utilities', () => {
             };
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-                sendMessage: (parameters, callback) => {
-                    callback(null, {});
+                sendMessage: (parameters) => {
+                    return Promise.resolve(true);
                 }
             });
+
             let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 
             // then

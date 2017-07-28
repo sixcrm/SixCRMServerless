@@ -5,9 +5,7 @@ const AWS = require("aws-sdk");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-
-//Busted
-class KinesisDeployment {
+module.exports = class KinesisDeployment {
 
     constructor() {
 
@@ -254,5 +252,3 @@ class KinesisDeployment {
     }
 
 }
-
-module.exports = new KinesisDeployment();

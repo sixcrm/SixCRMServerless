@@ -12,7 +12,7 @@ const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 
 try {
-    var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));
+    var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+process.env.stage+'.yml', 'utf8'));
 } catch (e) {
     du.warning(e);
 }

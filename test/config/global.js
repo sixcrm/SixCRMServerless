@@ -3,16 +3,7 @@ require('../../SixCRM.js');
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-global.environment = 'development';
-
-if(typeof process.env.TEST_ENVIRONMENT !== 'undefined'){
-
-    global.environment = process.env.TEST_ENVIRONMENT;
-
-}
-
-global.site_config = yaml.safeLoad(fs.readFileSync('./config/'+global.environment+'/site.yml', 'utf8'));
-global.integration_test_config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+global.environment+'.yml', 'utf8'));
+global.integration_test_config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+process.env.stage+'.yml', 'utf8'));
 
 let test_users = [
     {

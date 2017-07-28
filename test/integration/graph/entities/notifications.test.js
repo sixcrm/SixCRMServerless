@@ -44,7 +44,7 @@ describe('Graph ' + entity + ' Test', function () {
 
             describe(`Test the graph ${entity} endpoint using "${test_user.name}" credentials on the account "${test_account.name}"`, function () {
 
-                let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
+                let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
                 tests.forEach((test) => {
 
@@ -76,7 +76,7 @@ describe('Graph ' + entity + ' Test', function () {
     it(`Test notification endpoint should return success`, function (done) {
         let account = global.test_accounts[0];
         let test_user = global.test_users[0];
-        let test_jwt = tu.createTestAuth0JWT(test_user.email, global.site_config.jwt.site.secret_key);
+        let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
         let query = tu.getQuery(global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/sendTestNotification'));
 

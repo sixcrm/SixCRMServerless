@@ -62,6 +62,8 @@ class RedshiftDeployment {
 
   collectQueries(table_filenames) {
 
+    du.debug('Collect Queries');
+
     let path_to_model = global.SixCRM.routes.path('model', 'redshift');
 
     this.redshiftqueryutilities.instantiateRedshift();

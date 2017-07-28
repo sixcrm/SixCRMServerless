@@ -187,17 +187,11 @@ class rebillController extends entityController {
 
             }
 
-            return sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: queue_shortname}, (error) =>{
+            return sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: queue_shortname}).then(() => {
 
-                if(_.isError(error)){ reject(error);}
-
-                this.markRebillProcessing(rebill).then((rebill) => {
+                return this.markRebillProcessing(rebill).then((rebill) => {
 
                     return resolve(rebill);
-
-                }).catch((error) => {
-
-                    return reject(error);
 
                 });
 
@@ -266,21 +260,15 @@ class rebillController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: process.env.bill_queue}, (error) =>{
+          sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: process.env.bill_queue}).then(() => {
 
-                if(_.isError(error)){ return reject(error);}
+            this.markRebillProcessing(rebill).then((rebill) => {
 
-                this.markRebillProcessing(rebill).then((rebill) => {
-
-                    return resolve(rebill);
-
-                }).catch((error) => {
-
-                    return reject(error);
-
-                });
+              return resolve(rebill);
 
             });
+
+          });
 
         });
 
