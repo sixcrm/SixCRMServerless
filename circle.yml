@@ -94,7 +94,7 @@ deployment:
       #- node ./deployment/ec2/deploy_security_groups.js
 
       #S3
-      - node ./deployment/s3/destroy_buckets.js
+      #- node ./deployment/s3/destroy_buckets.js
       - node ./deployment/s3/deploy_buckets.js
 
       #SQS
