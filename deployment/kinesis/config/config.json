@@ -1,16 +1,16 @@
 [{
     "stream" : "transactions",
-    "DeliveryStreamName": "six-development-transactions",
+    "DeliveryStreamName": "transactions",
     "RedshiftDestinationConfiguration": {
-      "ClusterJDBCURL": "jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev", 
+      "ClusterJDBCURL": "",
       "CopyCommand": {
         "DataTableName": "f_transactions",
         "CopyOptions": "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
       },
-      "Password": "Jagodica9",
+      "Password": "",
       "RoleARN": "firehose_delivery_role",
       "S3Configuration": {
-        "BucketARN": "arn:aws:s3:::sixcrm-development-redshift",
+        "BucketARN": "arn:aws:s3:::redshift",
         "RoleARN": "firehose_delivery_role",
         "BufferingHints": {
           "IntervalInSeconds": 60,
@@ -28,17 +28,17 @@
   },
   {
     "stream" : "sessions",
-    "DeliveryStreamName": "six-development-sessions",
+    "DeliveryStreamName": "sessions",
     "RedshiftDestinationConfiguration": {
-      "ClusterJDBCURL": "jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev",
+      "ClusterJDBCURL": "",
       "CopyCommand": {
         "DataTableName": "f_sessions",
         "CopyOptions": "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
       },
-      "Password": "Jagodica9",
+      "Password": "",
       "RoleARN": "firehose_delivery_role",
       "S3Configuration": {
-        "BucketARN": "arn:aws:s3:::sixcrm-development-redshift",
+        "BucketARN": "arn:aws:s3:::",
         "RoleARN": "firehose_delivery_role",
         "BufferingHints": {
           "IntervalInSeconds": 60,
@@ -56,17 +56,17 @@
   },
   {
     "stream" : "events",
-    "DeliveryStreamName": "six-development-events",
+    "DeliveryStreamName": "events",
     "RedshiftDestinationConfiguration": {
-      "ClusterJDBCURL": "jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev",
+      "ClusterJDBCURL": "",
       "CopyCommand": {
         "DataTableName": "f_events",
         "CopyOptions": "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
       },
-      "Password": "Jagodica9",
+      "Password": "",
       "RoleARN": "firehose_delivery_role",
       "S3Configuration": {
-        "BucketARN": "arn:aws:s3:::sixcrm-development-redshift",
+        "BucketARN": "arn:aws:s3:::",
         "RoleARN": "firehose_delivery_role",
         "BufferingHints": {
           "IntervalInSeconds": 60,
@@ -83,9 +83,9 @@
     }
   },
   { "stream" : "activity",
-    "DeliveryStreamName": "six-development-activity",
+    "DeliveryStreamName": "activity",
     "RedshiftDestinationConfiguration": {
-      "ClusterJDBCURL": "jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev",
+      "ClusterJDBCURL": "",
       "CopyCommand": {
         "DataTableName": "f_activity",
         "CopyOptions": "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
@@ -93,7 +93,7 @@
       "Password": "Jagodica9",
       "RoleARN": "firehose_delivery_role",
       "S3Configuration": {
-        "BucketARN": "arn:aws:s3:::sixcrm-development-redshift",
+        "BucketARN": "arn:aws:s3:::",
         "RoleARN": "firehose_delivery_role",
         "BufferingHints": {
           "IntervalInSeconds": 60,

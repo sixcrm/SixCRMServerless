@@ -4,13 +4,15 @@ const AWS = require("aws-sdk");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-module.exports = class KinesisDeployment {
+module.exports = class KinesisDeployment extends AWSDeploymentUtilities{
 
     constructor() {
 
       // JSON of all the streams config
       // Technical debt, need to move HOST info out of JSON
+      super();
 
       this.firehosetutilities = global.SixCRM.routes.include('lib', 'firehose-utilities.js');
 

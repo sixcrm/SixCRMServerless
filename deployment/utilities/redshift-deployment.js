@@ -7,10 +7,13 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-class RedshiftDeployment {
+class RedshiftDeployment extends AWSDeploymentUtilities{
 
   constructor() {
+
+    super();
 
     this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 
