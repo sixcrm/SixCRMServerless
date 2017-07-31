@@ -283,37 +283,61 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     }
 
-    return this.s3utilities.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
+    return this.s3utilities.objectExists({Bucket: bucket, Key: this.s3_environment_configuration_file_key}).then((exists) => {
 
-      if(!_.has(result, 'Body')){
-        eu.throwError('server', 'Result response is assumed to have Body property');
+      if(exists){
+
+          return this.s3utilities.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
+
+            if(!_.has(result, 'Body')){
+              eu.throwError('server', 'Result response is assumed to have Body property');
+            }
+
+            try{
+
+              result = JSON.parse(result.Body.toString('utf-8'));
+
+            }catch(error){
+
+              eu.throwError('server', error);
+
+            }
+
+            let return_value = null;
+
+            if(field == 'all'){
+
+              return_value = result;
+
+            }else if(_.has(result, field)){
+
+              return_value = result[field];
+
+            }
+
+            this.propagateCache('redis', field, return_value);
+
+            return return_value;
+
+          });
+
+      }else{
+
+        let parameters = {
+          Bucket: bucket,
+          Key: this.s3_environment_configuration_file_key,
+          Body: '{}'
+        };
+
+        return this.s3utilities.putObject(parameters).then((result) => {
+
+          du.warning(result);
+
+          return this.getS3EnvironmentConfiguration(field);
+
+        });
+
       }
-
-      try{
-
-        result = JSON.parse(result.Body.toString('utf-8'));
-
-      }catch(error){
-
-        eu.throwError('server', error);
-
-      }
-
-      let return_value = null;
-
-      if(field == 'all'){
-
-        return_value = result;
-
-      }else if(_.has(result, field)){
-
-        return_value = result[field];
-
-      }
-
-      this.propagateCache('redis', field, return_value);
-
-      return return_value;
 
     });
 
