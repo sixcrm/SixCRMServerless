@@ -67,7 +67,7 @@ redshift:
   max: 10
   idle_timeout: 30000
   cluster:
-    cluster_identifier: 'sixcrm-development'
+    cluster_identifier: 'sixcrm-development-test-27'
     node_type: 'dc1.large'
     automated_snapshot_retention_period: 3
     cluster_type: 'single-node'
