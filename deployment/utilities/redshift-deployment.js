@@ -226,10 +226,14 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
   createClusterAndWait() {
 
     return this.redshiftutilities.createCluster().then(() => {
-      return this.redshiftutilities.waitForCluster('clusterAvailable');
+      return this.redshiftutilities.waitForCluster('clusterAvailable').then((data) => {
+        return this.redshiftutilities.writeHostConfiguration(data);
+      })
     });
 
   }
+
+
 
   destroyCluster() {
 
