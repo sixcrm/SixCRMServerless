@@ -19,7 +19,6 @@ The following deployment process worked in the staging environment:
 ```sh
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 6379 -j DNAT --to {elasticache_ip_address}:6379
-
 service iptables save
 ```
 *Note:* Recreating the cluster may also re-create the IP address associated with the cluster.  If that is the case, you will need to clear the IP Tables rules and repeat the manual commands above with the new IP address.

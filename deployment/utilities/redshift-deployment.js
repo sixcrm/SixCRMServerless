@@ -19,9 +19,14 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
+    this.no_versioning = ['create_schema.sql', 'sys_table_versions.sql'];
+
   }
 
   deployTablesDirectory(directory) {
+
+    du.debug('Deploy Tables Directory');
+    du.info('Directory: '+directory);
 
     return this.getTableFilenames(directory)
       .then((filenames) => this.collectQueries(filenames, directory))
@@ -47,6 +52,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
       du.highlight('Deploy tables ' + directory);
 
       return () => this.deployTablesDirectory(directory);
+
     });
 
     return arrayutilities.serial(
@@ -145,31 +151,44 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   collectQueryFromPath(path, filename) {
 
-    let version_promises = [
-      this.getTableVersion(filename),
-      this.getVersionNumberFromFile(path)
-    ];
+    du.debug('Collect Query From Path');
 
-    return Promise.all(version_promises).then((version_promise) => {
+    //Technical Debt:  Aldo, Ljubomir:  This is the problem.
+    //  This code tries to check version table on all queries, including the query which creates the schema and version control table
+    //  When the schema and version control tables don't exist, this fails, hence all fail
+    //  Please clean this up, kinda messy.
+    if(!_.contains(this.no_versioning, filename)){
 
-      let database_version = version_promise[0];
-      let file_version = version_promise[1];
-      let query = '';
+      let version_promises = [
+        this.getTableVersion(filename),
+        this.getVersionNumberFromFile(path)
+      ];
 
-      du.debug('Filename: ' + filename, 'Database Version Number: ' + database_version, 'File Version Number ' + file_version);
+      return Promise.all(version_promises).then((version_promise) => {
 
-      if (database_version < file_version || !path.match('tables')) {
+        let database_version = version_promise[0];
+        let file_version = version_promise[1];
+        let query = '';
 
-        let content = fileutilities.getFileContentsSync(path);
+        du.debug('Filename: ' + filename, 'Database Version Number: ' + database_version, 'File Version Number ' + file_version);
 
-        query = '' + content + ';';
+        if (database_version < file_version || !path.match('tables')) {
 
-      }
+          let content = fileutilities.getFileContentsSync(path);
 
-      return query;
-    }).catch(error => {
-      du.error(error);
-    });
+          query = '' + content + ';';
+
+        }
+
+        return query;
+
+      });
+
+    }else{
+
+      return fileutilities.getFileContentsSync(path);
+
+    }
 
   }
 
