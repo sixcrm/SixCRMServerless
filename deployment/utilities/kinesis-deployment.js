@@ -5,6 +5,7 @@ const AWS = require("aws-sdk");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
@@ -97,79 +98,88 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
     let stream_list = this.getStreamList();
 
-    //Technical Debt:  Use Array Utilities
-
-    let deployment_promises = global.SixCRM.configuration.getEnvironmentConfig('redshift.host').then((host)  => {
-
-      stream_list.map((stream) => {
+    let deployment_promises = arrayutilities.map(stream_list, (stream) => {
 
         du.output('Attempting to create "' + global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream].DeliveryStreamName + '"');
 
-        let stream_parameters = {};
+        return global.SixCRM.configuration.getEnvironmentConfig('redshift.host').then((host) => {
 
-        objectutilities.getKeys(global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream]).forEach((key) => {
+          let stream_parameters = this.streamParameters(stream, host);
 
-          if (key == 'RedshiftDestinationConfiguration') {
+          this.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
 
-            // Need to get general security solution
+            if (exists) {
 
-            stream_parameters[key] = global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key];
-            stream_parameters[key].ClusterJDBCURL = 'jdbc:redshift://' + host + ':' + global.SixCRM.configuration.site_config.redshift.port +
-              '/' + global.SixCRM.configuration.site_config.redshift.database;
+              du.warning('Stream exists.');
 
-            stream_parameters[key].RoleARN ='arn:aws:iam::' + global.SixCRM.configuration.site_config.aws.account
-              + ':role/'+global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key].RoleARN ;
-            stream_parameters[key].S3Configuration.RoleARN ='arn:aws:iam::' + global.SixCRM.configuration.site_config.aws.account
-                + ':role/'+global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key].S3Configuration.RoleARN ;
+              return Promise.resolve();
 
-          } else {
-            stream_parameters[key] = global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key];
-          }
+            } else {
 
-        });
+              du.output('Stream does not exist, creating.');
 
-        return this.streamExists(stream_parameters.DeliveryStreamName).then(exists => {
+              return this.createStreamAndWait(stream_parameters).then(response => {
 
-          if (exists) {
+                du.output('AWS Response: ' + response);
 
-            du.warning('Stream exists.');
+                return true;
 
-            return Promise.resolve();
+              });
 
-          } else {
+            }
 
-            du.output('Stream does not exist, creating.');
+          }).then(() => {
 
-            return this.createStreamAndWait(stream_parameters).then(response => {
+            du.highlight('Stream created.');
 
-              du.output('AWS Response: ' + response);
+          }).catch(error => {
 
-              return true;
+            du.error(error);
 
-            });
+          });
 
-          }
+        })
+      });
 
-        }).then(() => {
-
-          du.highlight('Stream created.');
-
-        }).catch(error => {
-
-          du.error(error);
-
-        });
-
-      })
+    return arrayutilities.serial(
+      deployment_promises
+    ).then(() => {
+      return 'Complete';
     });
 
-    return Promise.all(deployment_promises).then(() => {
-
-      return 'Process Complete.';
-
-    });
 
   }
+
+  streamParameters(stream, host) {
+
+    // Tehnical debt, need to change this when conif.json comes into play
+    let stream_parameters = {};
+
+    objectutilities.getKeys(global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream]).forEach((key) => {
+
+      if (key == 'RedshiftDestinationConfiguration') {
+
+        // Need to get general security solution
+
+        stream_parameters[key] = global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key];
+        stream_parameters[key].ClusterJDBCURL = 'jdbc:redshift://' + host + ':' + global.SixCRM.configuration.site_config.redshift.port +
+          '/' + global.SixCRM.configuration.site_config.redshift.database;
+
+        stream_parameters[key].RoleARN = 'arn:aws:iam::' + global.SixCRM.configuration.site_config.aws.account +
+          ':role/' + global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key].RoleARN;
+        stream_parameters[key].S3Configuration.RoleARN = 'arn:aws:iam::' + global.SixCRM.configuration.site_config.aws.account +
+          ':role/' + global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key].S3Configuration.RoleARN;
+
+      } else {
+        stream_parameters[key] = global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream][key];
+      }
+
+    });
+
+    return stream_parameters;
+
+  }
+
 
   streamExists(stream_identifier) {
     /* Test if stream exists */
