@@ -45,7 +45,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
     let stream_list = this.getStreamList();
 
-    let destroy_promises = stream_list.map(stream => {
+    let destroy_promises = arrayutilities.map(stream_list, (stream) => {
 
       let stream_parameters = {
         DeliveryStreamName: global.SixCRM.configuration.site_config.kinesis.firehose.streams[stream].DeliveryStreamName
@@ -77,18 +77,18 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
     });
 
-    return Promise.all(destroy_promises).then(() => {
-
-      return 'Process Complete.'
-
+    return arrayutilities.serial(
+      destroy_promises
+    ).then(() => {
+      return 'Complete';
     });
+
 
   }
 
   getStreamList() {
 
-    //Technical Debt:  Use Object Utilities
-    return Object.keys(global.SixCRM.configuration.site_config.kinesis.firehose.streams).filter(name => name.match(/\_stream$/));
+    return objectutilities.getKeys(global.SixCRM.configuration.site_config.kinesis.firehose.streams).filter(name => name.match(/\_stream$/));
 
   }
 
