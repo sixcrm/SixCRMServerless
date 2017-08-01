@@ -3,13 +3,13 @@
 The following deployment process worked in the staging environment:
 
 1. Run `/deployment/s3/deploy.js`
-2. ___Manual Step___: Add a `config.json` file to the `sixcrm-{stage}-configuration-master` bucket
+2. ___Manual Step (Done)___: Add a `config.json` file to the `sixcrm-{stage}-configuration-master` bucket
   - To-do: Automate the creation of the config.json file.
   - Currently the configuration file must be a JSON object (AKA `{}`)
 3.  Run `/deployment/ec2/deploy_security_groups.js`
-  - To-do: Make sure new Elasticache Security Group is available
+  - To-do (Done): Make sure new Elasticache Security Group is available
 4.  Run `/deployment/elasticache/deploy.js`
-  - To-do: Associate with the new Elasticache Security Group from (3)
+  - To-do (Done): Associate with the new Elasticache Security Group from (3)
 5.  ___Manual Step___ Step___:  Create the NAT Instance (Automate)
   - Instantiate NAT instance from EC2 Launch Console (search for AMI's in the Community section against the term `amzn-ami-vpc-nat`)
 6.  ___Manual Step___: Create a EIP
@@ -19,8 +19,11 @@ The following deployment process worked in the staging environment:
 ```sh
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 6379 -j DNAT --to {elasticache_ip_address}:6379
+
 service iptables save
 ```
+*Note:* Recreating the cluster may also re-create the IP address associated with the cluster.  If that is the case, you will need to clear the IP Tables rules and repeat the manual commands above with the new IP address.
+
 10. Test the Elasticache Cluster and the NAT Instance
 ```sh
 $ redis-cli -h {nat_eip} -p 6379

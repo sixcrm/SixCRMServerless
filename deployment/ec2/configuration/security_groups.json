@@ -38,5 +38,35 @@
         }
       ]
     }
+  },
+  {
+    "Description": "SixCRM Elasticache Security Group",
+    "GroupName": "SixCRM-Elasticache",
+    "Ingress":{
+      "IpPermissions": [
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 6379,
+          "ToPort": 6379,
+          "UserIdGroupPairs":[
+            {
+                "GroupName":"SixCRM-Elasticache-NAT"
+            }
+          ]
+        }
+      ]
+    },
+    "Egress":{
+      "IpPermissions": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ]
+        }
+      ]
+    }
   }
 ]

@@ -1,5 +1,5 @@
 'use strict';
-
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -59,14 +59,30 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
     let egress_parameter_group = this.createEgressParameterGroup(security_group_definition);
 
     return this.ec2utilities.assureSecurityGroup(this.createParameterGroup('security_group', 'create', security_group_definition))
-    .then(() => this.ec2utilities.addSecurityGroupIngressRules(ingress_parameter_group))
+    .then(() => {
+      if(!_.isNull(ingress_parameter_group)){
+        return this.ec2utilities.addSecurityGroupIngressRules(ingress_parameter_group);
+      }else{
+        return Promise.resolve(null);
+      }
+    })
     .then((aws_response) => {
-      du.highlight('Successfully added ingress rules');
+      if(!_.isNull(aws_response)){
+        du.highlight('Successfully added ingress rules');
+      }
       return aws_response;
     })
-    .then(() => this.ec2utilities.addSecurityGroupEgressRules(egress_parameter_group))
+    .then(() => {
+      if(!_.isNull(egress_parameter_group)){
+        return this.ec2utilities.addSecurityGroupEgressRules(egress_parameter_group);
+      }else{
+        return Promise.resolve(null);
+      }
+    })
     .then((aws_response) => {
-      du.highlight('Successfully added egress rules');
+      if(!_.isNull(aws_response)){
+        du.highlight('Successfully added egress rules');
+      }
       du.highlight('Security group deployed')
       return aws_response;
     });
@@ -77,17 +93,24 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
     du.debug('Create Ingress Parameter Group');
 
-    let ingress = security_group_definition.Ingress;
+    if(_.has(security_group_definition, 'Ingress')){
 
-    let copy = objectutilities.clone(security_group_definition);
+      let ingress = security_group_definition.Ingress;
 
-    delete copy.Egress;
+      let copy = objectutilities.clone(security_group_definition);
 
-    delete copy.Ingress;
+      delete copy.Egress;
 
-    copy = objectutilities.merge(copy, ingress);
+      delete copy.Ingress;
 
-    return this.createParameterGroup('security_group', 'create_ingress_rules', copy);
+      copy = objectutilities.merge(copy, ingress);
+
+      return this.createParameterGroup('security_group', 'create_ingress_rules', copy);
+
+    }
+
+    return null;
+
 
   }
 
@@ -95,17 +118,25 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
     du.debug('Create Egress Parameter Group');
 
-    let egress = security_group_definition.Egress;
+    if(_.has(security_group_definition, 'Egress')){
 
-    let copy = objectutilities.clone(security_group_definition);
+      let egress = security_group_definition.Egress;
 
-    delete copy.Egress;
+      let copy = objectutilities.clone(security_group_definition);
 
-    delete copy.Ingress;
+      delete copy.Egress;
 
-    copy = objectutilities.merge(copy, egress);
+      delete copy.Ingress;
 
-    return this.createParameterGroup('security_group', 'create_egress_rules', copy);
+      copy = objectutilities.merge(copy, egress);
+
+      return this.createParameterGroup('security_group', 'create_egress_rules', copy);
+
+    }else{
+
+      return null;
+
+    }
 
   }
 

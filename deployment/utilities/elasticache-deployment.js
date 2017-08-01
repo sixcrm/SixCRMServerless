@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
 
 module.exports = class ElasticacheDeployment {
 
@@ -14,10 +15,12 @@ module.exports = class ElasticacheDeployment {
 
     this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
 
+    this.ec2utilities = new EC2Utilities();
+
     this.parameterFilters = {
       'create':{
         'required':['CacheClusterId', 'CacheClusterId','PreferredAvailabilityZones','AZMode','NumCacheNodes','CacheNodeType','Engine','EngineVersion','PreferredMaintenanceWindow','Port','SnapshotRetentionLimit','SnapshotWindow','SnapshotName'],
-        'optional':['MaxRecords','Marker','ShowcaseCacheNodeInfo','ShowCacheClustersNotInReplicationGroups']
+        'optional':['MaxRecords','Marker','ShowcaseCacheNodeInfo','ShowCacheClustersNotInReplicationGroups','SecurityGroupIds','CacheSecurityGroupNames']
       },
       'wait':{
         'required':['CacheClusterId'],
@@ -44,15 +47,19 @@ module.exports = class ElasticacheDeployment {
 
         let parameters = this.createParametersObject('create');
 
-        return this.createCacheCluster(parameters).then(() => {
+        return this.appendEphemperalProperties(parameters).then((parameters) => {
 
-          let wait_status = 'cacheClusterAvailable';
+          return this.createCacheCluster(parameters).then(() => {
 
-          parameters = this.createParametersObject('wait', wait_status);
+            let wait_status = 'cacheClusterAvailable';
 
-          return this.waitForCluster(parameters, wait_status).then(() => {
+            parameters = this.createParametersObject('wait', wait_status);
 
-            return 'Complete';
+            return this.waitForCluster(parameters, wait_status).then(() => {
+
+              return 'Complete';
+
+            });
 
           });
 
@@ -63,6 +70,26 @@ module.exports = class ElasticacheDeployment {
         return 'Complete';
 
       }
+
+    });
+
+  }
+
+  appendEphemperalProperties(parameters){
+
+    du.debug('Append Ephemeral Properties');
+
+    let security_group_identifier = 'SixCRM-Elasticache';
+
+    return this.ec2utilities.securityGroupExists(security_group_identifier).then((result) => {
+
+      if(_.isNull(result) || result == false || !_.has(result, 'GroupId')){
+        eu.throwError('server', 'Missing ephemeral property: Elasticache SecurityGroup ID.  Please check EC2 configuration.');
+      }
+
+      parameters['SecurityGroupIds'] = [result.GroupId];
+
+      return parameters;
 
     });
 

@@ -11,12 +11,15 @@ return global.SixCRM.configuration.waitForStatus('ready').then(() => {
 });
 */
 
-return global.SixCRM.configuration.getEnvironmentConfig('elasticache_endpoint', false).then((result) => {
+return global.SixCRM.configuration.getEnvironmentConfig('elasticache_securitygroup_id', false).then((result) => {
   console.log(result);
   console.log(global.SixCRM.configuration.environment_config);
-  return global.SixCRM.configuration.getEnvironmentConfig('elasticache_endpoint').then((result) => {
+
+  /*
+  return global.SixCRM.configuration.setEnvironmentConfig('elasticache_securitygroup_id', 'sg-13634b62').then((result) => {
     console.log(result);
   });
+  */
 });
 
 

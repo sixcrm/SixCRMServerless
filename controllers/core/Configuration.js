@@ -267,6 +267,8 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       return result;
 
+    }).catch((error) => {
+      du.error(error)
     });
 
   }
