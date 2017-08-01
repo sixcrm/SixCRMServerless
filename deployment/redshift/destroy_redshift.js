@@ -23,13 +23,12 @@ function setupEnvironmentVariables() {
     process.env.dynamo_endpoint = global.SixCRM.configuration.site_config.dynamodb.endpoint;
     process.env.redshift_user = global.SixCRM.configuration.site_config.redshift.user;
     process.env.redshift_password = global.SixCRM.configuration.site_config.redshift.password;
-    process.env.redshift_host = global.SixCRM.configuration.site_config.redshift.host;
     process.env.redshift_database = global.SixCRM.configuration.site_config.redshift.database;
     process.env.redshift_port = global.SixCRM.configuration.site_config.redshift.port;
     process.env.redshift_pool_max = global.SixCRM.configuration.site_config.redshift.user;
     process.env.redshift_idle_timeout = global.SixCRM.configuration.site_config.redshift.idleTimeoutMillis;
 
-    return Promise.resolve();
+    return global.SixCRM.configuration.getEnvironmentConfig('redshift.host').then((value) => { process.env.redshift_host = value });
 
 }
 

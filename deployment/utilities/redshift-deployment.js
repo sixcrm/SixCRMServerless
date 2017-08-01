@@ -126,19 +126,20 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     let path_to_model = global.SixCRM.routes.path('model', 'redshift/' + directory + '/');
 
-    this.redshiftqueryutilities.instantiateRedshift();
+    return this.redshiftqueryutilities.instantiateRedshift().then(() => {
 
-    let query_promises = arrayutilities.map(table_filenames, (filename) => {
-      return this.collectQueryFromPath(path_to_model + filename, filename)
+        let query_promises = arrayutilities.map(table_filenames, (filename) => {
+            return this.collectQueryFromPath(path_to_model + filename, filename)
+        });
+
+        return this.redshiftqueryutilities.openConnection().then(() => {
+            return Promise.all(query_promises).then((query_promises) => {
+                this.redshiftqueryutilities.closeConnection();
+                return query_promises;
+            });
+        });
+
     });
-
-    return this.redshiftqueryutilities.openConnection().then(() => {
-      return Promise.all(query_promises).then((query_promises) => {
-        this.redshiftqueryutilities.closeConnection();
-        return query_promises;
-      });
-    });
-
   }
 
   collectPurgeQueries(table_filenames) {
@@ -246,7 +247,9 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     return this.redshiftutilities.createCluster().then(() => {
       return this.redshiftutilities.waitForCluster('clusterAvailable').then((data) => {
-        return this.redshiftutilities.writeHostConfiguration(data);
+        return this.redshiftutilities.writeHostConfiguration(data).then(() => {
+          return data;
+        });
       })
     });
 
