@@ -4,7 +4,6 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
@@ -43,19 +42,19 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Deploy Redshift tables');
 
-    let non_versioned_table_directories = ['schemas', 'system', 'tables'];
+    let non_versioned_table_directories = ['schemas', 'system'];
     let versioned_table_directories = ['tables'];
     let directory_deployment_promises = [];
 
     non_versioned_table_directories.forEach((directory) => {
 
-      directory_deployment_promises.push(this.deployTablesDirectory(directory));
+      directory_deployment_promises.push(() => this.deployTablesDirectory(directory));
 
     });
 
     versioned_table_directories.forEach((directory) => {
 
-      directory_deployment_promises.push(this.deployTablesDirectory(directory, true));
+      directory_deployment_promises.push(() => this.deployTablesDirectory(directory, true));
 
     });
 
@@ -134,12 +133,12 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
             return this.collectQueryFromPath(path_to_model, filename, versioned)
         });
 
-        return this.redshiftqueryutilities.openConnection().then(() => {
-            return Promise.all(query_promises).then((query_promises) => {
-                this.redshiftqueryutilities.closeConnection();
-                return query_promises;
+        return this.redshiftqueryutilities.openConnection()
+            .then(() => Promise.all(query_promises))
+            .then((query_responses) => {
+              this.redshiftqueryutilities.closeConnection();
+              return query_responses;
             });
-        });
 
     });
   }
@@ -158,37 +157,42 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Collect Query From Path');
 
-    let fileContents = fileutilities.getFileContentsSync(path);
+    let file_contents = fileutilities.getFileContentsSync(path);
+    let query = file_contents + ';';
 
     if (!versioned) {
 
-        return fileContents;
+        return Promise.resolve(query);
 
     }
 
-    let version_promises = [
-        this.getTableVersion(filename),
-        this.getVersionNumberFromFile(path)
-    ];
+    return this.determineTableVersions(filename, path).then((versions) => {
 
-    return Promise.all(version_promises).then((version_promise) => {
+        let version_in_database = versions[0];
+        let local_version = versions[1];
 
-        let database_version = version_promise[0];
-        let file_version = version_promise[1];
-        let query = '';
+        du.debug(
+            'Filename: ' + filename,
+            'Database Version Number: ' + version_in_database,
+            'File Version Number ' + local_version);
 
-        du.debug('Filename: ' + filename, 'Database Version Number: ' + database_version, 'File Version Number ' + file_version);
+        if (version_in_database < local_version) {
 
-        if (database_version < file_version || !path.match('tables')) {
-
-            query = fileContents + ';';
+            return Promise.resolve(query);
 
         }
 
-        return query;
+        return Promise.resolve('');
 
     });
 
+  }
+
+  determineTableVersions(filename, path) {
+    return Promise.all([
+        this.getRemoteTableVersion(filename),
+        this.getVersionNumberFromFile(path)
+    ]);
   }
 
   getVersionNumberFromFile(path) {
@@ -207,7 +211,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   }
 
-  getTableVersion(filename) {
+  getRemoteTableVersion(filename) {
 
     du.debug('Get Table Version ' + filename);
 
@@ -224,7 +228,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     return this.redshiftqueryutilities.queryRaw(version_query).then(result => {
 
-      du.debug('Got response table_name ', table_name)
+      du.debug('Got response table_name ', table_name);
       if (result && result.length > 0) {
         return result[0].version;
       }
