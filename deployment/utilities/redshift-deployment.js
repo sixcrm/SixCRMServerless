@@ -19,17 +19,15 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
-    this.no_versioning = ['create_schema.sql', 'sys_table_versions.sql'];
-
   }
 
-  deployTablesDirectory(directory) {
+  deployTablesDirectory(directory, versioned) {
 
     du.debug('Deploy Tables Directory');
     du.info('Directory: '+directory);
 
     return this.getTableFilenames(directory)
-      .then((filenames) => this.collectQueries(filenames, directory))
+      .then((filenames) => this.collectQueries(filenames, directory, versioned))
       .then((query) => this.execute(query))
       .then((result) => {
 
@@ -45,19 +43,23 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Deploy Redshift tables');
 
-    let directory_list = ['schemas', 'system', 'tables']
+    let non_versioned_table_directories = ['schemas', 'system', 'tables'];
+    let versioned_table_directories = ['tables'];
+    let directory_deployment_promises = [];
 
-    let directory_deployment_promises = arrayutilities.map(directory_list, (directory) => {
+    non_versioned_table_directories.forEach((directory) => {
 
-      du.highlight('Deploy tables ' + directory);
-
-      return () => this.deployTablesDirectory(directory);
+      directory_deployment_promises.push(this.deployTablesDirectory(directory));
 
     });
 
-    return arrayutilities.serial(
-      directory_deployment_promises
-    ).then(() => {
+    versioned_table_directories.forEach((directory) => {
+
+      directory_deployment_promises.push(this.deployTablesDirectory(directory, true));
+
+    });
+
+    return arrayutilities.serial(directory_deployment_promises).then(() => {
       return 'Complete';
     });
 
@@ -68,7 +70,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Purge tables');
 
-    let directory_list = ['tables']
+    let directory_list = ['tables'];
 
     let directory_purge_promises = arrayutilities.map(directory_list, (directory) => {
 
@@ -120,7 +122,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   }
 
-  collectQueries(table_filenames, directory) {
+  collectQueries(table_filenames, directory, versioned) {
 
     du.debug('Collect Queries');
 
@@ -129,7 +131,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
     return this.redshiftqueryutilities.instantiateRedshift().then(() => {
 
         let query_promises = arrayutilities.map(table_filenames, (filename) => {
-            return this.collectQueryFromPath(path_to_model + filename, filename)
+            return this.collectQueryFromPath(path_to_model, filename, versioned)
         });
 
         return this.redshiftqueryutilities.openConnection().then(() => {
@@ -150,22 +152,26 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   }
 
-  collectQueryFromPath(path, filename) {
+  collectQueryFromPath(directory, filename, versioned) {
+
+    let path = directory + filename;
 
     du.debug('Collect Query From Path');
 
-    //Technical Debt:  Aldo, Ljubomir:  This is the problem.
-    //  This code tries to check version table on all queries, including the query which creates the schema and version control table
-    //  When the schema and version control tables don't exist, this fails, hence all fail
-    //  Please clean this up, kinda messy.
-    if(!_.contains(this.no_versioning, filename)){
+    let fileContents = fileutilities.getFileContentsSync(path);
 
-      let version_promises = [
+    if (!versioned) {
+
+        return fileContents;
+
+    }
+
+    let version_promises = [
         this.getTableVersion(filename),
         this.getVersionNumberFromFile(path)
-      ];
+    ];
 
-      return Promise.all(version_promises).then((version_promise) => {
+    return Promise.all(version_promises).then((version_promise) => {
 
         let database_version = version_promise[0];
         let file_version = version_promise[1];
@@ -175,21 +181,13 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
         if (database_version < file_version || !path.match('tables')) {
 
-          let content = fileutilities.getFileContentsSync(path);
-
-          query = '' + content + ';';
+            query = fileContents + ';';
 
         }
 
         return query;
 
-      });
-
-    }else{
-
-      return fileutilities.getFileContentsSync(path);
-
-    }
+    });
 
   }
 
