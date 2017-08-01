@@ -104,11 +104,11 @@ logging:
 kinesis:
   firehose:
     streams:
-      transactions: 'six-development-transactions'
+      transactions: 'six-development-transactions-t'
       transaction_stream:
         DeliveryStreamName: 'six-development-transactions'
         RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          ClusterJDBCURL: ''
           CopyCommand:
             DataTableName: 'f_transactions'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
@@ -130,7 +130,7 @@ kinesis:
       sessions_stream:
         DeliveryStreamName: 'six-development-sessions'
         RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          ClusterJDBCURL: ''
           CopyCommand:
             DataTableName: 'f_sessions'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
@@ -152,7 +152,7 @@ kinesis:
       event_stream:
         DeliveryStreamName: 'six-development-events'
         RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          ClusterJDBCURL: ''
           CopyCommand:
             DataTableName: 'f_events'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
@@ -174,7 +174,7 @@ kinesis:
       activity_stream:
         DeliveryStreamName: 'six-development-activity'
         RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com:5439/dev'
+          ClusterJDBCURL: ''
           CopyCommand:
             DataTableName: 'f_events'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
