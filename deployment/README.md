@@ -36,10 +36,10 @@ OK
 11. Run `deployment/sqs/deploy.js`
 12. Run `deployment/dynamodb/deploy_tables.js`
 13. Run `deployment/redshift/deploy_cluster.js`
-14. ___Manual Step___:  Add Redshift port to default VPC security group
-  - To-Do:  We should create a specific Security Group in step (3) and associate it to the Redshift cluster.
+14. ___Manual Step (Done)___:  Add Redshift port to default VPC security group
+  - To-Do:  We should create a specific Security Group in step (3) and associate it to the Redshift cluster .
   - To-Do:  A.Z : Writing of hostname to config bucket.
-15. ___Broken___: Run `deployment/redshift/deploy_tables.js`
+15. ___Broken (Fixed, Needs additional refactor)___: Run `deployment/redshift/deploy_tables.js`
 16. ___Manual Step___: Update all the Redshift Cluster references in the `config/{stage}/site.yml` file with the appropriate path information.  References should be structured as `'jdbc:redshift://{cluster_name}.{some_string}.{aws_region}.redshift.amazonaws.com:5439/{database_name}'`
 17.  ___Manual Step___:  Create Kinesis IAM Role
   - Name: `firehose_delivery_role`
@@ -70,6 +70,7 @@ OK
 18. Run `deployment/kinesis/deploy_streams.js`
 19. Run `deploymen/cloudsearch/deploy.js`
 20. Run `serverless deploy --stage {stage}`
+ - Note:  This may need to occur earlier in the deployment due to the need for the roles at deployment time.
 21. Run `deployment/dynamodb/deploy_seeds.js`
 22. Test deployment
   - Run `npm run test-integration`
