@@ -1,0 +1,214 @@
+'use strict';
+const _ = require('underscore');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+
+class IAMDeployment extends AWSDeploymentUtilities{
+
+    constructor() {
+
+      super();
+
+      this.iamutilities =  global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+      this.parameter_groups = {
+        role: {
+          create: {
+            required:['AssumeRolePolicyDocument','RoleName'],
+            optional:['Description', 'Path']
+          },
+          exists: {
+            required:['RoleName']
+          },
+          delete: {
+            required:['RoleName']
+          }
+        }
+      }
+
+    }
+
+    deployRoles(){
+
+      du.debug('Deploy Roles');
+
+      return this.getRoleDefinitionFilenames().then((role_file_names) => {
+
+        let deploy_role_file_promises = arrayutilities.map(role_file_names, (role_file_name) => {
+
+          let role_definitions = this.acquireRoleFile(role_file_name);
+
+          let deploy_role_promises = arrayutilities.map(role_definitions, (role_definition) => {
+            return this.deployRole(role_definition);
+          });
+
+          return Promise.all(deploy_role_promises);
+
+        });
+
+        return Promise.all(deploy_role_file_promises).then(() => {
+          return 'Complete';
+        });
+
+      });
+
+    }
+
+    getRoleDefinitionFilenames(){
+
+      du.debug('Get Role Definition Filenames');
+
+      return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'iam/roles')).then((filenames) => { return filenames; });
+
+    }
+
+    acquireRoleFile(filename){
+
+      du.debug('Acquire Role File');
+
+      return global.SixCRM.routes.include('deployment', 'iam/roles/'+filename);
+
+    }
+
+    deployRole(role_definition){
+
+      du.debug('Deploy Roles');
+
+      return this.roleExists(role_definition).then((role) => {
+
+        du.highlight(role);
+        if(role == false){
+          return this.createRole(role_definition);
+        }else{
+          return this.updateRole(role_definition);
+        }
+      });
+
+    }
+
+    roleExists(role_definition){
+
+      du.debug('Role Exists');
+
+      let exists_parameters = this.transformDefinition('role', 'exists', role_definition);
+
+      return this.iamutilities.roleExists(exists_parameters);
+
+    }
+
+    updateRole(role_definition){
+
+      du.debug('Update Role');
+
+      return this.removePoliciesAndPermissions(role_definition).then(this.addPoliciesAndPermissions(role_definition));
+
+    }
+
+    createRole(role_definition){
+
+      du.debug('Create Role');
+
+      let create_parameters = this.transformDefinition('role', 'create', role_definition);
+
+      if(!_.isString(create_parameters, 'AssumeRolePolicyDocument') && _.isObject(create_parameters.AssumeRolePolicyDocument)){
+        create_parameters.AssumeRolePolicyDocument =  JSON.stringify(create_parameters.AssumeRolePolicyDocument);
+      }
+
+      create_parameters.AssumeRolePolicyDocument = parserutilities.parse(create_parameters.AssumeRolePolicyDocument, {aws_account_id: global.SixCRM.configuration.site_config.aws.account});
+
+      return this.iamutilities.createRole(create_parameters).then(this.addPoliciesAndPermissions(role_definition));
+
+    }
+
+    //Technical Debt:  Do we need this?
+    removePoliciesAndPermissions(role_definition){
+
+      du.debug('Remove Policies And Permissions');
+
+      return Promise.resolve(true);
+
+    }
+
+    //Technical Debt:  Do we need this?
+    addPoliciesAndPermissions(role_definition){
+
+      du.debug('Add Policies And Permissions');
+
+      return Promise.resolve(true);
+
+    }
+
+    transformDefinition(type, action, role_definition){
+
+      du.debug('Tranform Definition');
+
+      return this.createParameterGroup(type, action, role_definition);
+
+    }
+
+    destroyRoles(){
+
+      du.debug('Destroy Roles');
+
+      return this.getRoleDefinitionFilenames().then((role_file_names) => {
+
+        let deploy_role_file_promises = arrayutilities.map(role_file_names, (role_file_name) => {
+
+          let role_definitions = this.acquireRoleFile(role_file_name);
+
+          let deploy_role_promises = arrayutilities.map(role_definitions, (role_definition) => {
+            return this.destroyRole(role_definition);
+          });
+
+          return Promise.all(deploy_role_promises);
+
+        });
+
+        return Promise.all(deploy_role_file_promises).then(() => {
+          return 'Complete';
+        });
+
+      });
+
+    }
+
+    //complete
+    destroyRole(role_definition){
+
+      du.debug('Destroy Role');
+
+      return this.roleExists(role_definition).then((role) => {
+
+        if(role == false){
+          du.highlight('Role doesn\'t exist, continuing');
+          return true;
+        }else{
+          return this.deleteRole(role_definition).then((result) => {
+            du.highlight('Role deleted');
+            return result;
+          });
+        }
+
+      });
+
+    }
+
+    deleteRole(role_definition){
+
+      du.debug('Delete Role');
+
+      let delete_parameters = this.transformDefinition('role', 'delete', role_definition);
+
+      return this.iamutilities.deleteRole(delete_parameters);
+
+    }
+
+}
+
+module.exports = new IAMDeployment();

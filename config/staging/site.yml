@@ -79,6 +79,8 @@ redshift:
     publicly_accessible: true
     skip_final_cluster_snapshot: true
     final_cluster_snapshot_identifier: ''
+    security_group_names:
+      - SixCRM-Redshift
   randomdata:
     staging_bucket: 'sixcrm-staging-redshift/sixcrm-random-generator'
     interval: 15768000 #this is provided in seconds
