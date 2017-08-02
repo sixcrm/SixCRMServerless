@@ -28,6 +28,10 @@ class IAMDeployment extends AWSDeploymentUtilities{
           },
           delete: {
             required:['RoleName']
+          },
+          list_attached:{
+            required:['RoleName'],
+            optional:['Marker', 'MaxItems','PathPrefix']
           }
         }
       }
@@ -82,7 +86,6 @@ class IAMDeployment extends AWSDeploymentUtilities{
 
       return this.roleExists(role_definition).then((role) => {
 
-        du.highlight(role);
         if(role == false){
           return this.createRole(role_definition);
         }else{
@@ -122,23 +125,75 @@ class IAMDeployment extends AWSDeploymentUtilities{
 
       create_parameters.AssumeRolePolicyDocument = parserutilities.parse(create_parameters.AssumeRolePolicyDocument, {aws_account_id: global.SixCRM.configuration.site_config.aws.account});
 
-      return this.iamutilities.createRole(create_parameters).then(this.addPoliciesAndPermissions(role_definition));
+      return this.iamutilities.createRole(create_parameters).then((result) => {
+
+        return timestamp.delay(3000)().then(() => this.addPoliciesAndPermissions(role_definition));
+
+      });
 
     }
 
-    //Technical Debt:  Do we need this?
     removePoliciesAndPermissions(role_definition){
 
       du.debug('Remove Policies And Permissions');
 
-      return Promise.resolve(true);
+      let list_attached_role_policies_parameters = this.transformDefinition('role', 'list_attached', role_definition);
+
+      return this.iamutilities.listAttachedRolePolicies(list_attached_role_policies_parameters).then((role_policies) => {
+
+        if(_.has(role_policies, 'AttachedPolicies')){
+
+          let remove_role_policy_promises = arrayutilities.map(role_policies.AttachedPolicies, (attached_policy) => {
+
+            let detach_parameters = {RoleName: role_definition.RoleName, PolicyArn: attached_policy.PolicyArn};
+
+            //du.warning(detach_parameters);  process.exit();
+
+            return this.iamutilities.detachRolePolicy(detach_parameters);
+
+          });
+
+          return Promise.all(remove_role_policy_promises).then(() => {
+
+            du.highlight('Role policies removed.');
+            return true;
+
+          });
+
+        }
+
+        du.highlight('Role doesn\'t have attached policies');
+        return false;
+
+      });
 
     }
 
-    //Technical Debt:  Do we need this?
     addPoliciesAndPermissions(role_definition){
 
       du.debug('Add Policies And Permissions');
+
+      if(_.has(role_definition, 'ManagedPolicies')){
+
+        let role_name = role_definition.RoleName;
+
+        let policy_promises = arrayutilities.map(role_definition.ManagedPolicies, (policy_arn) => {
+
+          return this.iamutilities.attachRolePolicy({
+            RoleName: role_name,
+            PolicyArn: policy_arn
+          });
+
+        });
+
+        return Promise.all(policy_promises).then(() => {
+          du.highlight('Managed policies associated.');
+          return true;
+        });
+
+      }
+
+      du.info('No managed policies');
 
       return Promise.resolve(true);
 
@@ -178,7 +233,6 @@ class IAMDeployment extends AWSDeploymentUtilities{
 
     }
 
-    //complete
     destroyRole(role_definition){
 
       du.debug('Destroy Role');
@@ -189,7 +243,9 @@ class IAMDeployment extends AWSDeploymentUtilities{
           du.highlight('Role doesn\'t exist, continuing');
           return true;
         }else{
-          return this.deleteRole(role_definition).then((result) => {
+          return this.removePoliciesAndPermissions(role_definition)
+          .then(() => this.deleteRole(role_definition))
+          .then((result) => {
             du.highlight('Role deleted');
             return result;
           });
