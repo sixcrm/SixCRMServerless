@@ -82,9 +82,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     du.debug('Get Site Config');
 
-    let config = global.SixCRM.routes.include('config', this.stage+'/site.yml');
+    let config;
 
-    if (!config) {
+    try {
+
+      config = global.SixCRM.routes.include('config', this.stage + '/site.yml');
+
+    } catch (error) {
 
       eu.throwError('server', 'Configuration.getSiteConfig was unable to identify file '+global.SixCRM.routes.path('config', this.stage+'/site.yml'));
 
