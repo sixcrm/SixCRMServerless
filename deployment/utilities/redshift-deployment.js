@@ -67,24 +67,24 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   purgeTables(){
 
-    du.debug('Purge tables');
+     du.debug('Purge tables');
 
-    let directory_list = ['tables'];
+     let directory_list = ['tables'];
 
-    let directory_purge_promises = arrayutilities.map(directory_list, (directory) => {
+     let directory_purge_promises = arrayutilities.map(directory_list, (directory) => {
 
-      du.highlight('Deploy tables ' + directory);
+       du.highlight('Deploy tables ' + directory);
 
-      return () => this.purgeTableDirectory(directory);
-    });
+       return () => this.purgeTableDirectory(directory);
+     });
 
-    return arrayutilities.serial(
-      directory_purge_promises
-    ).then(() => {
-      return 'Complete';
-    });
+     return arrayutilities.serial(
+       directory_purge_promises
+     ).then(() => {
+       return 'Complete';
+     });
 
-  }
+   }
 
   purgeTableDirectory(directory){
     return this.getTableFilenames(directory)
@@ -101,15 +101,15 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   execute(query) {
 
-    du.debug('Execute');
+    du.debug('Execute ');
 
-    return this.redshiftqueryutilities.query(query.join(';'));
+    return this.redshiftqueryutilities.query(query);
 
   }
 
   getTableFilenames(directory) {
 
-    du.debug('Get Redshift Table Names');
+    du.highlight('Get Redshift Table Names');
 
     return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'redshift/' + directory)).then((files) => {
 
@@ -145,7 +145,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   collectPurgeQueries(table_filenames) {
 
-    du.debug('Generate Truncate Table Queries');
+    du.highlight('Generate Truncate Table Queries');
 
     return arrayutilities.map(table_filenames, table_name => '\TRUNCATE TABLE ' + table_name.replace('.sql', '') + ';').join('');
 
@@ -256,8 +256,6 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
     });
 
   }
-
-
 
   destroyCluster() {
 
