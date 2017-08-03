@@ -19,77 +19,109 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
+    this.non_versioned_table_direcotries = ['schemas', 'system'];
+
+    this.versioned_table_directories = ['tables'];
+
   }
 
   deployTables() {
 
     du.debug('Deploy Redshift tables');
 
-    return this.deployTablesDirectory('schemas',false)
-      .then(() => this.deployTablesDirectory('system',false))
-      .then(() => this.deployTablesDirectory('tables'))
-      .then(() => {
-        return 'Complete';
-      });
-
-  }
-
-  deployTablesDirectory(directory, versioned) {
-
-    du.debug('Deploy Tables Directory');
-    du.highlight('Directory: ' + directory);
-
-    return this.getTableFilenames(directory)
-      .then((filenames) => this.collectQueries(filenames, directory, versioned))
-      .then((query) => this.execute(query))
-      .then((result) => {
-
-        return result;
-
-      });
-
-  }
-
-  purgeTables() {
-
-    du.debug('Purge tables');
-
-    let directory_list = ['tables'];
-
-    let directory_purge_promises = arrayutilities.map(directory_list, (directory) => {
-
-      du.highlight('Deploy tables ' + directory);
-
-      return () => this.purgeTableDirectory(directory);
-    });
-
-    return arrayutilities.serial(
-      directory_purge_promises
-    ).then(() => {
+    //Note:  Aldo, please see structure herein
+    return this.deployNonVersionedTables()
+    .then(() => this.deployVersionedTables())
+    .then(() => {
       return 'Complete';
     });
 
   }
 
-  purgeTableDirectory(directory) {
+  deployNonVersionedTables(){
+
+    du.debug('Deploy Non-Versioned Tables');
+
+    let deployment_promises = arrayutilities.map(this.non_versioned_table_directories, (directory) => {
+
+      return this.deployTablesDirectory(directory, false);
+
+    });
+
+    return Promise.all(deployment_promises);
+
+  }
+
+  deployVersionedTables(){
+
+    du.debug('Deploy Versioned Tables');
+
+    let deployment_promises = arrayutilities.map(this.versioned_table_directories, (directory) => {
+
+      return this.deployTablesDirectory(directory);
+
+    });
+
+    return Promise.all(deployment_promises);
+
+  }
+
+
+  deployTablesDirectory(directory, versioned) {
+
+    du.debug('Deploy Tables Directory');
+    du.info('Directory: '+directory);
+
     return this.getTableFilenames(directory)
-      .then((filenames) => this.collectPurgeQueries(filenames))
-      .then((query) => this.execute(query))
-      .then((result) => {
+    .then((filenames) => this.collectQueries(filenames, directory, versioned))
+    .then((query) => this.execute(query))
+    .then((result) => {
 
-        du.info(result);
+      return result;
 
-        return 'Complete';
+    });
 
-      }).catch((error) => du.eror(error)
-      );
+  }
+
+  purgeTables(){
+
+     du.debug('Purge tables');
+
+     let directory_list = ['tables'];
+
+     let directory_purge_promises = arrayutilities.map(directory_list, (directory) => {
+
+       du.highlight('Deploy tables ' + directory);
+
+       return () => this.purgeTableDirectory(directory);
+     });
+
+     return arrayutilities.serial(
+       directory_purge_promises
+     ).then(() => {
+       return 'Complete';
+     });
+
+   }
+
+  purgeTableDirectory(directory){
+    return this.getTableFilenames(directory)
+    .then((filenames) => this.collectPurgeQueries(filenames))
+    .then((query) => this.execute(query))
+    .then((result) => {
+
+      du.info(result);
+
+      return 'Complete';
+
+    });
   }
 
   execute(query) {
 
-    du.debug('Execute');
+    du.debug('Execute '+query);
 
-    return this.redshiftqueryutilities.query(query[0]); // Why ?????
+    return this.redshiftqueryutilities.query(query);
 
   }
 
@@ -115,18 +147,16 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     return this.redshiftqueryutilities.instantiateRedshift().then(() => {
 
-      let query_promises = arrayutilities.map(table_filenames, (filename) => {
-        return this.collectQueryFromPath(path_to_model, filename, versioned)
-      });
-
-
-      return this.redshiftqueryutilities.openConnection().then(() => {
-
-        return Promise.all(query_promises).then((query_responses) => {
-          this.redshiftqueryutilities.closeConnection();
-          return query_responses;
+        let query_promises = arrayutilities.map(table_filenames, (filename) => {
+            return this.collectQueryFromPath(path_to_model, filename, versioned)
         });
-      });
+
+        return this.redshiftqueryutilities.openConnection()
+            .then(() => Promise.all(query_promises))
+            .then((query_responses) => {
+              this.redshiftqueryutilities.closeConnection();
+              return query_responses;
+            });
 
     });
   }
@@ -143,36 +173,32 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Collect Query From Path');
 
-    if (_.isUndefined(versioned)) {
-      versioned = true;
-    }
+    if(_.isUndefined(versioned)){ versioned = true; }
 
 
     let path = directory + filename;
     let file_contents = fileutilities.getFileContentsSync(path);
     let query = file_contents + ';';
 
-    if (!versioned) {
-      return Promise.resolve(query);
-    }
+    if (!versioned) { return Promise.resolve(query); }
 
     return this.determineTableVersions(filename, path).then((versions) => {
 
-      let version_in_database = versions[0];
-      let local_version = versions[1];
+        let version_in_database = versions[0];
+        let local_version = versions[1];
 
-      du.debug(
-        'Filename: ' + filename,
-        'Database Version Number: ' + version_in_database,
-        'File Version Number ' + local_version);
+        du.debug(
+            'Filename: ' + filename,
+            'Database Version Number: ' + version_in_database,
+            'File Version Number ' + local_version);
 
-      if (version_in_database < local_version) {
+        if (version_in_database < local_version) {
 
-        return Promise.resolve(query);
+            return Promise.resolve(query);
 
-      }
+        }
 
-      return Promise.resolve('');
+        return Promise.resolve('');
 
     });
 
@@ -233,7 +259,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
     let parameters_delete = this.createParametersObject('destroy');
 
     return this.redshiftutilities.deleteCluster(parameters_delete).then(() => {
-      return this.redshiftutilities.waitForCluster('clusterDeleted', parameters_wait);
+      return this.redshiftutilities.waitForCluster('clusterDeleted',parameters_wait);
     });
 
   }
@@ -243,7 +269,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
     let parameters_wait = this.createParametersObject('wait');
     let parameters_create = this.createParametersObject('create');
 
-    du.debug('Create cluster ' + parameters_create);
+    du.debug('Create cluster '+parameters_create);
 
     return this.redshiftutilities.createCluster(parameters_create).then(() => {
       return this.redshiftutilities.waitForCluster('clusterAvailable').then((data) => {
@@ -309,24 +335,24 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   }
 
-  createParametersObject(group_name) {
+  createParametersObject(group_name){
 
     let response_object = {};
 
     let configuration_groups = {
       'describe': ['ClusterIdentifier'],
       'wait': ['ClusterIdentifier'],
-      'create': ['ClusterIdentifier', 'NodeType', 'MasterUsername', 'MasterUserPassword', 'ClusterType', 'DBName', 'AutomatedSnapshotRetentionPeriod', 'PubliclyAccessible', 'Port'],
+      'create': ['ClusterIdentifier', 'NodeType', 'MasterUsername','MasterUserPassword','ClusterType','DBName','AutomatedSnapshotRetentionPeriod','PubliclyAccessible', 'Port'],
       'destroy': ['ClusterIdentifier', 'FinalClusterSnapshotIdentifier', 'SkipFinalClusterSnapshot']
     };
 
     let translation_object = {
       ClusterIdentifier: ['cluster_identifier'],
-      NodeType: ['node_type'],
+      NodeType:['node_type'],
       MasterUsername: ['user'],
       DBName: ['database'],
       MasterUserPassword: ['password'],
-      ClusterType: ['cluster_type'],
+      ClusterType:['cluster_type'],
       AutomatedSnapshotRetentionPeriod: ['automated_snapshot_retention_period'],
       PubliclyAccessible: ['publicly_accessible'],
       SkipFinalClusterSnapshot: ['skip_final_cluster_snapshot'],
@@ -337,7 +363,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
     configuration_groups[group_name].forEach((key) => {
 
       //This shouldn't be here...
-      let discovered_data = objectutilities.recurseByDepth(this.configFile, function(p_key) {
+      let discovered_data = objectutilities.recurseByDepth(this.configFile, function(p_key){
 
         return (_.contains(translation_object[key], p_key));
 
