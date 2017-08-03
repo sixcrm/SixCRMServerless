@@ -18,23 +18,9 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
-  }
+    this.non_versioned_table_direcotries = ['schemas', 'system'];
 
-  deployTablesDirectory(directory, versioned) {
-
-    du.debug('Deploy Tables Directory');
-    du.info('Directory: '+directory);
-
-    return this.getTableFilenames(directory)
-      .then((filenames) => this.collectQueries(filenames, directory, versioned))
-      .then((query) => this.execute(query))
-      .then((result) => {
-
-        du.info(result);
-
-        return 'Complete';
-
-      });
+    this.versioned_table_directories = ['tables'];
 
   }
 
@@ -42,26 +28,57 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Deploy Redshift tables');
 
-    let non_versioned_table_directories = ['schemas', 'system'];
-    let versioned_table_directories = ['tables'];
-    let directory_deployment_promises = [];
-
-    non_versioned_table_directories.forEach((directory) => {
-
-      directory_deployment_promises.push(() => this.deployTablesDirectory(directory));
-
-    });
-
-    versioned_table_directories.forEach((directory) => {
-
-      directory_deployment_promises.push(() => this.deployTablesDirectory(directory, true));
-
-    });
-
-    return arrayutilities.serial(directory_deployment_promises).then(() => {
+    //Note:  Aldo, please see structure herein
+    return this.deployNonVersionedTables()
+    .then(() => this.deployVersionedTables())
+    .then(() => {
       return 'Complete';
     });
 
+  }
+
+  deployNonVersionedTables(){
+
+    du.debug('Deploy Non-Versioned Tables');
+
+    let deployment_promises = arrayutilities.map(this.non_versioned_table_directories, (directory) => {
+
+      return this.deployTablesDirectory(directory, false);
+
+    });
+
+    return Promise.all(deployment_promises);
+
+  }
+
+  deployVersionedTables(){
+
+    du.debug('Deploy Versioned Tables');
+
+    let deployment_promises = arrayutilities.map(this.versioned_table_directories, (directory) => {
+
+      return this.deployTablesDirectory(directory);
+
+    });
+
+    return Promise.all(deployment_promises);
+
+  }
+
+
+  deployTablesDirectory(directory, versioned) {
+
+    du.debug('Deploy Tables Directory');
+    du.info('Directory: '+directory);
+
+    return this.getTableFilenames(directory)
+    .then((filenames) => this.collectQueries(filenames, directory, versioned))
+    .then((query) => this.execute(query))
+    .then((result) => {
+
+      return result;
+
+    });
 
   }
 
@@ -88,15 +105,15 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   purgeTableDirectory(directory){
     return this.getTableFilenames(directory)
-      .then((filenames) => this.collectPurgeQueries(filenames))
-      .then((query) => this.execute(query))
-      .then((result) => {
+    .then((filenames) => this.collectPurgeQueries(filenames))
+    .then((query) => this.execute(query))
+    .then((result) => {
 
-        du.info(result);
+      du.info(result);
 
-        return 'Complete';
+      return 'Complete';
 
-      });
+    });
   }
 
   execute(query) {
@@ -153,18 +170,16 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   collectQueryFromPath(directory, filename, versioned) {
 
-    let path = directory + filename;
-
     du.debug('Collect Query From Path');
 
+    if(_.isUndefined(versioned)){ versioned = true; }
+
+
+    let path = directory + filename;
     let file_contents = fileutilities.getFileContentsSync(path);
     let query = file_contents + ';';
 
-    if (!versioned) {
-
-        return Promise.resolve(query);
-
-    }
+    if (!versioned) { return Promise.resolve(query); }
 
     return this.determineTableVersions(filename, path).then((versions) => {
 
@@ -190,8 +205,8 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   determineTableVersions(filename, path) {
     return Promise.all([
-        this.getRemoteTableVersion(filename),
-        this.getVersionNumberFromFile(path)
+      this.getRemoteTableVersion(filename),
+      this.getVersionNumberFromFile(path)
     ]);
   }
 
