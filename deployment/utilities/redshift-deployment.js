@@ -6,6 +6,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 class RedshiftDeployment extends AWSDeploymentUtilities {
@@ -18,16 +19,22 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
+    this.configFile = this.loadLocalConfig();
+
+  }
+
+  loadLocalConfig() {
+    return JSON.parse(fileutilities.getFileContentsSync(global.SixCRM.routes.path('deployment', 'redshift/config/master.json')))
   }
 
   deployTablesDirectory(directory, versioned) {
 
     du.debug('Deploy Tables Directory');
-    du.info('Directory: '+directory);
+    du.highlight('Directory: '+directory);
 
     return this.getTableFilenames(directory)
       .then((filenames) => this.collectQueries(filenames, directory, versioned))
-      .then((query) => this.execute(query))
+      .then((query) => {this.execute(query)})
       .then((result) => {
 
         du.info(result);
@@ -40,13 +47,20 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   deployTables() {
 
-    du.debug('Deploy Redshift tables');
+    du.highlight('Deploy Redshift tables');
 
-    let non_versioned_table_directories = ['schemas', 'system'];
-    let versioned_table_directories = ['tables'];
-    let directory_deployment_promises = [];
+    return this.deployTablesDirectory('schemas').then( () => {
+      return this.deployTablesDirectory('system').then( () => {
+        return this.deployTablesDirectory('tables').then( () => {
+        })
+      })
+    }).then(() => {
+      return 'Complete';
+    }).catch((error) => {
+      return error;
+    });
 
-    non_versioned_table_directories.forEach((directory) => {
+    /*non_versioned_table_directories.forEach((directory) => {
 
       directory_deployment_promises.push(() => this.deployTablesDirectory(directory));
 
@@ -58,9 +72,10 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     });
 
+    console.log(directory_deployment_promises)
     return arrayutilities.serial(directory_deployment_promises).then(() => {
       return 'Complete';
-    });
+    });*/
 
 
   }
@@ -101,7 +116,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   execute(query) {
 
-    du.debug('Execute ');
+    du.debug('Execute '+query);
 
     return this.redshiftqueryutilities.query(query);
 
@@ -239,19 +254,27 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   deleteClusterAndWait() {
 
-    return this.redshiftutilities.deleteCluster().then(() => {
-      return this.redshiftutilities.waitForCluster('clusterDeleted');
+    let parameters_wait = this.createParametersObject('wait');
+    let parameters_delete = this.createParametersObject('destroy');
+
+    return this.redshiftutilities.deleteCluster(parameters_delete).then(() => {
+      return this.redshiftutilities.waitForCluster('clusterDeleted',parameters_wait);
     });
 
   }
 
   createClusterAndWait() {
 
-    return this.redshiftutilities.createCluster().then(() => {
+    let parameters_wait = this.createParametersObject('wait');
+    let parameters_create = this.createParametersObject('create');
+
+    du.debug('Create cluster '+parameters_create);
+
+    return this.redshiftutilities.createCluster(parameters_create).then(() => {
       return this.redshiftutilities.waitForCluster('clusterAvailable').then((data) => {
-        return this.redshiftutilities.writeHostConfiguration(data).then(() => {
+        /*return this.redshiftutilities.writeHostConfiguration(data,parameters_wait).then(() => {
           return data;
-        });
+        });*/
       })
     });
 
@@ -259,7 +282,9 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   destroyCluster() {
 
-    return this.redshiftutilities.clusterExists().then(exists => {
+    let parameters = this.createParametersObject('describe');
+
+    return this.redshiftutilities.clusterExists(parameters).then(exists => {
 
       if (!exists) {
 
@@ -283,7 +308,11 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   deployCluster() {
 
-    return this.redshiftutilities.clusterExists().then(exists => {
+    let parameters = this.createParametersObject('describe');
+
+    du.debug(parameters);
+
+    return this.redshiftutilities.clusterExists(parameters).then(exists => {
 
       if (exists) {
 
@@ -302,6 +331,48 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
       }
 
     });
+
+  }
+
+  createParametersObject(group_name){
+
+    let response_object = {};
+
+    let configuration_groups = {
+      'describe': ['ClusterIdentifier'],
+      'wait': ['ClusterIdentifier'],
+      'create': ['ClusterIdentifier', 'NodeType', 'MasterUsername','MasterUserPassword','ClusterType','DBName','AutomatedSnapshotRetentionPeriod','PubliclyAccessible', 'Port'],
+      'destroy': ['ClusterIdentifier', 'FinalClusterSnapshotIdentifier', 'SkipFinalClusterSnapshot']
+    };
+
+    let translation_object = {
+      ClusterIdentifier: ['cluster_identifier'],
+      NodeType:['node_type'],
+      MasterUsername: ['user'],
+      DBName: ['database'],
+      MasterUserPassword: ['password'],
+      ClusterType:['cluster_type'],
+      AutomatedSnapshotRetentionPeriod: ['automated_snapshot_retention_period'],
+      PubliclyAccessible: ['publicly_accessible'],
+      SkipFinalClusterSnapshot: ['skip_final_cluster_snapshot'],
+      FinalClusterSnapshotIdentifier: ['final_cluster_snapshot_identifier'],
+      Port: ['port']
+    };
+
+    configuration_groups[group_name].forEach((key) => {
+
+      //This shouldn't be here...
+      let discovered_data = objectutilities.recurseByDepth(this.configFile, function(p_key){
+
+        return (_.contains(translation_object[key], p_key));
+
+      });
+
+      response_object[key] = discovered_data;
+
+    });
+
+    return response_object;
 
   }
 
