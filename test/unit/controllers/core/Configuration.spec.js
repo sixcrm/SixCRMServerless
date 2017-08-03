@@ -68,6 +68,47 @@ describe('controllers/core/Configuration.js', () => {
         expect(configuration.determineStageFromAccountIdentifier()).to.equal('development');
     });
 
+    it('determines account identifier - fallback to lambda', () => {
+        delete process.env.AWS_ACCOUNT;
+        // eslint-disable-next-line no-global-assign
+        context = { invokedFunctionArn: DEVELOPMENT_ACCOUNT };
+        let configuration = new Configuration();
+
+        expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
+    });
+
+    it('determines account identifier from lambda context', () => {
+        // eslint-disable-next-line no-global-assign
+        context = { invokedFunctionArn: DEVELOPMENT_ACCOUNT };
+        let configuration = new Configuration();
+
+        expect(configuration.getAccountIdentifierFromLambdaContext()).to.equal(DEVELOPMENT_ACCOUNT);
+    });
+
+    it('determines status', () => {
+        let configuration = new Configuration();
+
+        expect(configuration.getStatus()).to.equal('loading');
+
+        configuration.setStatus('ready');
+
+        expect(configuration.getStatus()).to.equal('ready');
+    });
+
+    it('disallows setting incorrect status', () => {
+        let configuration = new Configuration();
+
+        expect(configuration.getStatus()).to.equal('loading');
+
+        try {
+            configuration.setStatus('incorrect_status');
+        } catch (error) {
+            expect(error.message).to.equal('[500] Unrecognized status');
+        }
+
+        expect(configuration.getStatus()).to.equal('loading');
+    });
+
     it('sets environment config', (done) => {
         let configuration = new Configuration('local');
 
