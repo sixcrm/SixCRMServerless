@@ -125,6 +125,7 @@ describe('lib/array-utilities', () => {
         expect(arrayutilities.merge([1, 2], [3, 4])).to.deep.equal([1, 2, 3, 4]);
         expect(arrayutilities.merge([1, 2], [])).to.deep.equal([1, 2]);
         expect(arrayutilities.merge([], [3, 4])).to.deep.equal([3, 4]);
+        expect(arrayutilities.merge([1, 2], 3)).to.deep.equal([1, 2, 3]);
 
         try {
             arrayutilities.merge(null, [3, 4]);
@@ -133,12 +134,6 @@ describe('lib/array-utilities', () => {
             expect(error.message).to.equal('[500] ArrayUtilities.merge array argument 1 is not a array.');
         }
 
-        try {
-            arrayutilities.merge([1, 2], null);
-            expect.fail();
-        } catch (error) {
-            expect(error.message).to.equal('[500] ArrayUtilities.merge array argument 2 is not a array.');
-        }
     });
 
     it('filter', () => {
