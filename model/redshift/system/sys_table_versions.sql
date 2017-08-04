@@ -10,3 +10,5 @@ CREATE TABLE IF NOT EXISTS sys_sixcrm.sys_table_version
   version integer,
   datetime timestamp
 );
+
+GRANT INSERT,SELECT,DELETE ON sys_sixcrm.sys_table_version TO PUBLIC;

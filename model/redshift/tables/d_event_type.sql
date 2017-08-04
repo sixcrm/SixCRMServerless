@@ -2,7 +2,7 @@
 05.05.2017 A.Zelen Results dimensional table
 05.07.2017 A.Zelen Logic from idempotent versioning
 
-TABLE_VERSION 2
+TABLE_VERSION 1
 */
 
 DROP TABLE IF EXISTS d_event_type;
@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS d_event_type;
 DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_event_type';
 
 INSERT INTO sys_sixcrm.sys_table_version
-   SELECT 'd_event_type',2,getdate();
+   SELECT 'd_event_type',1,getdate();
 
 
 CREATE TABLE IF NOT EXISTS d_event_type
