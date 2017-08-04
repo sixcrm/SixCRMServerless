@@ -105,6 +105,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
     return this.getTableFilenames(directory)
       .then((filenames) => this.generateQueries(filenames,'DROP'))
       .then((query) => this.execute(query))
+      .then(() => this.purgeTableDirectory('system'))
       .then((result) => {
 
         du.info(result);
