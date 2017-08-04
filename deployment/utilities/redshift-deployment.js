@@ -33,18 +33,18 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Deploy Redshift tables');
 
-    return this.deployTablesDirectory('schemas', false)
-      .then(() => this.deployTablesDirectory('system', false))
-      .then(() => this.deployTablesDirectory('tables'))
+    return this.executeSQLDirectory('schemas', false)
+      .then(() => this.executeSQLDirectory('system', false))
+      .then(() => this.executeSQLDirectory('tables'))
       .then(() => {
         return 'Complete';
       });
 
   }
 
-  deployTablesDirectory(directory, versioned) {
+  executeSQLDirectory(directory, versioned) {
 
-    du.debug('Deploy Tables Directory');
+    du.debug('Execute SQL Directory');
     du.highlight('Directory: ' + directory);
 
     return this.getTableFilenames(directory)
@@ -55,6 +55,21 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
         return result;
 
       });
+
+  }
+
+  destroyTables(){
+
+    du.debug('Drop tables');
+
+    let directory_drop_promises = arrayutilities.map(this.purge_directory_list, (directory) => {
+
+      du.highlight('Drop tables ' + directory);
+
+      return this.dropTableDirectory(directory);
+    });
+
+    return Promise.all(directory_drop_promises);
 
   }
 
@@ -75,7 +90,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
   purgeTableDirectory(directory) {
     return this.getTableFilenames(directory)
-      .then((filenames) => this.collectPurgeQueries(filenames))
+      .then((filenames) => this.generateQueries(filenames,'TRUNCATE'))
       .then((query) => this.execute(query))
       .then((result) => {
 
@@ -84,6 +99,30 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
         return 'Complete';
 
       }).catch((error) => du.error(error));
+  }
+
+  dropTableDirectory(directory) {
+    return this.getTableFilenames(directory)
+      .then((filenames) => this.generateQueries(filenames,'DROP'))
+      .then((query) => this.execute(query))
+      .then((result) => {
+
+        du.info(result);
+
+        return 'Complete';
+
+      }).catch((error) => du.error(error));
+  }
+
+  seedTables() {
+
+    du.debug('Seed Redshift tables');
+
+    return this.executeSQLDirectory('seeds',false)
+      .then(() => {
+        return 'Complete';
+      });
+
   }
 
   execute(query) {
@@ -132,11 +171,11 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
     });
   }
 
-  collectPurgeQueries(table_filenames) {
+  generateQueries(table_filenames,command) {
 
-    du.highlight('Generate Truncate Table Queries');
+    du.highlight('Table Queries');
 
-    return arrayutilities.map(table_filenames, table_name => '\TRUNCATE TABLE ' + table_name.replace('.sql', '') + ';');
+    return arrayutilities.map(table_filenames, table_name => command+' TABLE ' + table_name.replace('.sql', '') + ';');
 
   }
 
