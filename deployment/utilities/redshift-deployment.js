@@ -18,7 +18,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
-    this.non_versioned_table_direcotries = ['schemas', 'system'];
+    this.non_versioned_table_directories = ['schemas', 'system'];
 
     this.versioned_table_directories = ['tables'];
 
