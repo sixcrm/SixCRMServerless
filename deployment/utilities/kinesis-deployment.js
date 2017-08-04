@@ -18,6 +18,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
     this.firehosetutilities = global.SixCRM.routes.include('lib', 'firehose-utilities.js');
 
+    //Note:  This does not belong here.
     this.kinesis = new AWS.Firehose({
       region: global.SixCRM.configuration.site_config.aws.region,
       apiVersion: '2015-08-04',
