@@ -1,12 +1,13 @@
-[{
+{
   "user": "admin",
-  "database": "dev",
+  "database": "analytics",
   "password": "Jagodica9",
+  "host": "",
   "port": 5439,
   "max": 10,
   "idle_timeout": 30000,
   "cluster": {
-    "cluster_identifier": "sixcrm-development",
+    "cluster_identifier": "sixcrm-development-test",
     "node_type": "dc1.large",
     "automated_snapshot_retention_period": 3,
     "cluster_type": "single-node",
@@ -14,4 +15,4 @@
     "skip_final_cluster_snapshot": true,
     "final_cluster_snapshot_identifier": ""
   }
-}]
+}
