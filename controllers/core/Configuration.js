@@ -25,7 +25,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
     this.stages = {
       '068070110666':'development',
       '821071795213':'staging',
-      'abc':'production'
+      '181111172466':'production'
     }
 
     this.config_bucket_template = 'sixcrm-{{stage}}-configuration-master';

@@ -41,7 +41,7 @@ class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Deploy Non-Versioned Tables');
 
-    let deployment_promises = arrayutilities.map(this.non_versioned_table_directories, (directory) => {
+    let deployment_promises = arrayutilities.map(this.non_versioned_table_direcotries, (directory) => {
 
       return this.deployTablesDirectory(directory, false);
 

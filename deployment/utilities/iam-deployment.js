@@ -9,7 +9,7 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-class IAMDeployment extends AWSDeploymentUtilities{
+class IAMDeployment extends AWSDeploymentUtilities {
 
     constructor() {
 

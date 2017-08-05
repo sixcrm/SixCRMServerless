@@ -113,10 +113,10 @@ kinesis:
             DataTableName: 'f_transactions'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'firehose_delivery_role'
+          RoleARN: 'sixcrm_kinesis_firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
-            RoleARN: 'firehose_delivery_role'
+            RoleARN: 'sixcrm_kinesis_firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1
@@ -135,10 +135,10 @@ kinesis:
             DataTableName: 'f_sessions'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'firehose_delivery_role'
+          RoleARN: 'sixcrm_kinesis_firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
-            RoleARN: 'firehose_delivery_role'
+            RoleARN: 'sixcrm_kinesis_firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1
@@ -157,10 +157,10 @@ kinesis:
             DataTableName: 'f_events'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'firehose_delivery_role'
+          RoleARN: 'sixcrm_kinesis_firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
-            RoleARN: 'firehose_delivery_role'
+            RoleARN: 'sixcrm_kinesis_firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1
@@ -179,10 +179,10 @@ kinesis:
             DataTableName: 'f_events'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'firehose_delivery_role'
+          RoleARN: 'sixcrm_kinesis_firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-development-redshift'
-            RoleARN: 'firehose_delivery_role'
+            RoleARN: 'sixcrm_kinesis_firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1

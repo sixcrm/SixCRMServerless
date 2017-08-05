@@ -1,3 +1,8 @@
+aws:
+  region: 'us-east-1'
+  account: '181111172466'
+
+#Technical Debt:  This sort of thing should be encrypted...
 jwt:
   issuer: 'https://api.sixcrm.com'
   development_bypass: 'deathstalker'
@@ -14,20 +19,28 @@ jwt:
 dynamodb:
   endpoint: ''
 
+sqs:
+  deadletter_postfix: '_deadletter'
+  max_receive_count: 5
+
+cloudsearch:
+  domainname: 'sixcrm'
+
+#Technical Debt:  Let's eliminate this.
 lambda:
   endpoint: ''
   function_names:
     deliveredtoarchive: 'sixtransaction-production-archivedelivered'
     shippedtodelivered: 'sixtransaction-production-confirmdelivery'
     pendingtoshipped: 'sixtransaction-production-confirmshipped'
-    pendingfailedtopending: 'sixtransaction-development-shipproduct'
+    pendingfailedtopending: 'sixtransaction-production-shipproduct'
     holdtopending: 'sixtransaction-production-shipproduct'
-    holdtoarchive: 'sixtransaction-development-archivehold'
+    holdtoarchive: 'sixtransaction-production-archivehold'
     billtohold: 'sixtransaction-production-processbilling'
-    recovertohold: 'sixtransaction-development-processbilling'
-    createrebillstoarchive: 'sixtransaction-development-createrebills'
-    recovertoarchive: 'sixtransaction-development-archiverecover'
-    indextoarchive: 'sixtransaction-development-indexentities'
+    recovertohold: 'sixtransaction-production-processbilling'
+    createrebillstoarchive: 'sixtransaction-production-createrebills'
+    recovertoarchive: 'sixtransaction-production-archiverecover'
+    indextoarchive: 'sixtransaction-production-indexentities'
     forwardmessage_deliveredtoarchive: 'sixtransaction-production-deliveredtoarchive'
     forwardmessage_shippedtodelivered: 'sixtransaction-production-shippedtodelivered'
     forwardmessage_pendingtoshipped: 'sixtransaction-production-pendingtoshipped'
@@ -45,17 +58,32 @@ shipping_providers:
     user_id: '005SIXCR2114'
     password: '392VM80MW850'
 
+#Technical Debt: This all needs to be configured elsewhere?
+#Technical Debt:  Username and Password combinations need to be encrypted...
+
 redshift:
   user: 'admin'
+  #Technical Debt:  This is inappropriate
   database: 'dev'
   password: 'Jagodica9'
-  host: 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com'
+  #Technical Debt:  This needs to be in Environment Config
+  host: 'sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com'
   port: 5439
   max: 10
-  idleTimeoutMillis: 30000
+  idle_timeout: 30000
+  cluster:
+    cluster_identifier: 'sixcrm'
+    node_type: 'dc1.large'
+    automated_snapshot_retention_period: 3
+    cluster_type: 'single-node'
+    publicly_accessible: true
+    skip_final_cluster_snapshot: true
+    final_cluster_snapshot_identifier: ''
+    security_group_names:
+      - SixCRM-Redshift
   randomdata:
-    staging_bucket: 'sixcrm-redshift/sixcrm-random-generator'
-    interval: 18000
+    staging_bucket: 'sixcrm-production-redshift/sixcrm-random-generator'
+    interval: 15768000 #this is provided in seconds
 
 notifications:
   apn:
@@ -70,14 +98,81 @@ cache:
   cachebuster: 'somerandomthing1'
 
 elasticache:
-  max_attempts: 5
+  max_attempts: 3
   retry_time: 1800000
-  endpoint: 'sixcrm-dev.mmka6q.clustercfg.use1.cache.amazonaws.com'
+  endpoint: '34.231.222.227'
   port: 6379
+  default_expiration: 300
+
+logging:
+  loglevel: 0
 
 kinesis:
   firehose:
     streams:
       transactions: 'six-production-transactions'
+      transaction_stream:
+        DeliveryStreamName: 'six-production-transactions'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_transactions'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-production-redshift'
+            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-transactions/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
       events: 'six-production-events'
+      event_stream:
+        DeliveryStreamName: 'six-production-events'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_events'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-production-redshift'
+            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-events/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
       activity: 'six-production-activity'
+      activity_stream:
+        DeliveryStreamName: 'six-production-activity'
+        RedshiftDestinationConfiguration:
+          ClusterJDBCURL: 'jdbc:redshift://sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com:5439/dev'
+          CopyCommand:
+            DataTableName: 'f_events'
+            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
+          Password: 'Jagodica9'
+          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+          S3Configuration:
+            BucketARN: 'arn:aws:s3:::sixcrm-production-redshift'
+            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+            BufferingHints:
+              IntervalInSeconds: 60
+              SizeInMBs: 1
+            CompressionFormat: 'UNCOMPRESSED'
+            Prefix: 'sixcrm-kinesis-activity/'
+          Username: 'admin'
+          RetryOptions:
+            DurationInSeconds: 1
+          S3BackupMode: 'Disabled'
