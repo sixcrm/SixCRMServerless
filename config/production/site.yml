@@ -63,27 +63,16 @@ shipping_providers:
 
 redshift:
   user: 'admin'
-  #Technical Debt:  This is inappropriate
-  database: 'dev'
+  database: 'analytics'
   password: 'Jagodica9'
   #Technical Debt:  This needs to be in Environment Config
   host: 'sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com'
   port: 5439
   max: 10
   idle_timeout: 30000
-  cluster:
-    cluster_identifier: 'sixcrm'
-    node_type: 'dc1.large'
-    automated_snapshot_retention_period: 3
-    cluster_type: 'single-node'
-    publicly_accessible: true
-    skip_final_cluster_snapshot: true
-    final_cluster_snapshot_identifier: ''
-    security_group_names:
-      - SixCRM-Redshift
   randomdata:
     staging_bucket: 'sixcrm-production-redshift/sixcrm-random-generator'
-    interval: 15768000 #this is provided in seconds
+    interval: 15768000
 
 notifications:
   apn:

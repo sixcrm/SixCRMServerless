@@ -2,9 +2,9 @@
 require('../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const redshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
+const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-schema-deployment.js');
 
-return redshiftDeployment.purgeTables().then((result) => {
+return redshiftSchemaDeployment.seed().then((result) => {
   du.highlight(result);
 }).catch(error => {
   du.error(error);

@@ -32,8 +32,6 @@ OK
 11. Run `deployment/sqs/deploy.js`
 12. Run `deployment/dynamodb/deploy_tables.js`
 13. Run `deployment/redshift/deploy_cluster.js`
- - To-Do: Need to remove references to the stage in the config file (validate - seems cluster is appropriately named...)
- - To-Do: Provide appropriate cluster name, username, password
 15. ___Manual Step___: Update all the Redshift Cluster references in the `config/{stage}/site.yml` file with the appropriate path information.  References should be structured as `'jdbc:redshift://{cluster_name}.{some_string}.{aws_region}.redshift.amazonaws.com:5439/{database_name}'`
 16. Run `deployment/redshift/deploy_tables.js`
 

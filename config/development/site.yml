@@ -66,14 +66,6 @@ redshift:
   port: 5439
   max: 10
   idle_timeout: 30000
-  cluster:
-    cluster_identifier: 'sixcrm-development'
-    node_type: 'dc1.large'
-    automated_snapshot_retention_period: 3
-    cluster_type: 'single-node'
-    publicly_accessible: true
-    skip_final_cluster_snapshot: true
-    final_cluster_snapshot_identifier: ''
   randomdata:
     staging_bucket: 'sixcrm-development-redshift/sixcrm-random-generator'
     interval: 15768000 #this is provided in seconds
