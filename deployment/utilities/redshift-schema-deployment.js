@@ -15,6 +15,10 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     super();
 
+    this.non_versioned_table_direcotries = ['schemas', 'system'];
+
+    this.versioned_table_directories = ['tables'];
+
   }
 
   deployTables() {
@@ -36,11 +40,11 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     let deployment_promises = arrayutilities.map(this.non_versioned_table_direcotries, (directory) => {
 
-      return this.deployDirectorySQL(directory, false);
+      return () => this.deployDirectorySQL(directory, false);
 
     });
 
-    return Promise.all(deployment_promises);
+    return arrayutilities.serial(deployment_promises).then(() => { return true; });
 
   }
 
@@ -99,13 +103,17 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Get Queries');
 
+    let queries = [];
+
     let query_promises = arrayutilities.map(query_filepaths, (filepath) => {
-      return () => this.getQueryFromPath(filepath, versioned);
+      return () => this.getQueryFromPath(filepath, versioned).then((query) => {
+        queries.push(query);
+      });
     });
 
-    return arrayutilities.serial(query_promises, (query_promises) => {
-      return query_promises;
-    });
+    return arrayutilities.serial(query_promises).then(() => {
+      return queries;
+    })
 
   }
 
@@ -115,36 +123,34 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     if(_.isUndefined(versioned)){ versioned = true; }
 
-    return fileutilities.getFileContents(filepath).then((file_contents) => {
-
-      let query = file_contents + ';';
+    return fileutilities.getFileContents(filepath).then((query) => {
 
       if (!versioned) {
 
-        du.highlight('Non-versioned query: ', query);
+        du.highlight('Non-versioned query: ');
+        du.info(query);
 
         return Promise.resolve(query);
+
       }
 
       return this.determineTableVersion(filepath).then((versions) => {
 
-          let version_in_database = versions[0];
-          let local_version = versions[1];
+        let version_in_database = versions[0];
+        let local_version = versions[1];
 
-          du.debug(
-              'filepath: ' + filepath,
-              'Database Version Number: ' + version_in_database,
-              'File Version Number ' + local_version);
+        du.debug(
+            'filepath: ' + filepath,
+            'Database Version Number: ' + version_in_database,
+            'File Version Number ' + local_version);
 
-              process.exit();
+        if (version_in_database < local_version) {
 
-          if (version_in_database < local_version) {
+            return Promise.resolve(query);
 
-              return Promise.resolve(query);
+        }
 
-          }
-
-          return Promise.resolve('');
+        return Promise.resolve('');
 
       });
 
@@ -156,22 +162,154 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Execute Queries');
 
-    return Promise.resolve(true);
+    let query_promises = arrayutilities.map(queries, (query) => {
+
+      return () => this.execute(query);
+
+    })
+
+    return arrayutilities.serial(query_promises).then(() => {
+
+      return true;
+
+    });
 
   }
 
+  destroy(){
 
-  purgeTables(){
+    du.debug('Destroy');
 
-     du.debug('Purge tables');
+    return this.getDestroyQuery()
+    .then((destroy_query) => this.execute(destroy_query))
+    .then(() => {
 
-     let directory_list = ['tables'];
+      return 'Complete';
 
-     let directory_purge_promises = arrayutilities.map(directory_list, (directory) => {
+    });
 
-       du.highlight('Deploy tables ' + directory);
+  }
+
+  seed(){
+
+    du.debug('Seed');
+
+    return this.getSeedQueries()
+    .then((seed_queries) => {
+      arrayutilities.isArray(seed_queries, true);
+      if(seed_queries.length > 0){
+        return this.executeQueries(seed_queries);
+      }
+      return Promise.resolve(true);
+    })
+    .then((result) => {
+      return 'Complete';
+    });
+
+  }
+
+  getSeedQueries(){
+
+    du.debug('Get Seed Queries');
+
+    return this.getDirectorySQLFilepaths('seeds').then((filepaths) => {
+
+      let query_promises = arrayutilities.map((filepaths), (filepath) => {
+
+        return this.getQueryFromPath(filepath, false);
+
+      });
+
+      return Promise.all(query_promises);
+
+    });
+
+  }
+
+  getDestroyQuery(){
+
+    du.debug('Get Destroy Query');
+
+    let table_drop_queries_promise = this.getTableDropQueries();
+
+    let schema_drop_queries_promise = this.getSchemaDropQueries();
+
+    return Promise.all([
+      table_drop_queries_promise,
+      schema_drop_queries_promise
+    ]).then((resolved_promises) => {
+
+      let table_drop_queries = resolved_promises[0];
+      let schema_drop_queries = resolved_promises[1];
+
+      arrayutilities.isArray(table_drop_queries, true);
+      arrayutilities.isArray(schema_drop_queries, true);
+
+      let merged_queries_array = []
+
+      if(table_drop_queries.length > 0){
+        merged_queries_array = arrayutilities.merge(merged_queries_array, table_drop_queries);
+      }
+
+      if(schema_drop_queries.length > 0){
+        merged_queries_array = arrayutilities.merge(merged_queries_array, schema_drop_queries);
+      }
+
+      if(merged_queries_array.length > 0){
+        return arrayutilities.compress(merged_queries_array, ' ', '');
+      }
+
+
+      return null;
+
+    });
+
+  }
+
+  getTableDropQueries(){
+
+    du.debug('Get Table Drop Queries');
+
+    return this.getTableFilenames('tables').then((table_filenames) => {
+
+      return arrayutilities.map(table_filenames, (table_filename) => {
+
+        let table_name = this.getTableNameFromFilename(table_filename);
+
+        return 'DROP TABLE IF EXISTS '+table_name+';';
+
+      });
+
+    });
+
+  }
+
+  getSchemaDropQueries(){
+
+    du.debug('Get Schema Drop Queries');
+
+    return this.getTableFilenames('schemas').then((schema_filenames) => {
+
+      return arrayutilities.map(schema_filenames, (schema_filename) => {
+
+        let schema_name = this.getTableNameFromFilename(schema_filename);
+
+        return 'DROP SCHEMA IF EXISTS '+schema_name+' CASCADE;';
+
+      });
+
+    });
+
+  }
+
+  purge(){
+
+     du.debug('Purge');
+
+     let directory_purge_promises = arrayutilities.map(this.versioned_table_directories, (directory) => {
 
        return () => this.purgeTableDirectory(directory);
+
      });
 
      return arrayutilities.serial(
@@ -183,21 +321,60 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
    }
 
   purgeTableDirectory(directory){
+
+    du.debug('Purge Table Directory');
+
     return this.getTableFilenames(directory)
     .then((filenames) => this.getPurgeQueries(filenames))
-    .then((query) => this.execute(query))
+    .then((queries) => this.executePurgeQueries(queries))
     .then((result) => {
-
-      du.info(result);
 
       return 'Complete';
 
     });
+
+  }
+
+  executePurgeQueries(queries){
+
+    du.debug('Execute Purge Queries');
+
+    if(!_.isArray(queries)){
+      eu.throwError('server', 'Not an array: '+queries);
+    }
+
+    if(queries.length < 1){
+
+      du.highlight('No purge queries to execute');
+      return Promise.resolve(false);
+
+    }
+
+    let purge_query = arrayutilities.compress(queries, ' ', '');
+
+    return this.execute(purge_query);
+
+  }
+
+  getTableFilenames(directory){
+
+    du.debug('Get Table Filenames');
+
+    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'redshift/' + directory)).then((files) => {
+
+      files = files.filter(file => file.match(/\.sql$/));
+
+      return files;
+
+    });
+
   }
 
   execute(query) {
 
-    du.debug('Execute ');
+    du.debug('Execute');
+
+    du.info('Executing: '+query);
 
     return this.redshiftqueryutilities.query(query);
 
@@ -207,7 +384,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.highlight('Get Purge Queries');
 
-    return arrayutilities.map(table_filenames, table_name => '\TRUNCATE TABLE ' + table_name.replace('.sql', '') + ';').join('');
+    return arrayutilities.map(table_filenames, (table_filename) => {
+
+      let table_name = this.getTableNameFromFilename(table_filename);
+
+      return 'TRUNCATE TABLE '+table_name+';';
+
+    });
 
   }
 
@@ -223,9 +406,6 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     ];
 
     return Promise.all(version_promises).then(version_promises => {
-
-      du.info(version_promises);
-      process.exit();
 
       return version_promises;
 
@@ -265,7 +445,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Get Remote Table Version');
 
-    let table_name = filename.replace('.sql', '');
+    let table_name = this.getTableNameFromFilename(filename);
 
     let version_query = '\
         SELECT \
@@ -275,14 +455,14 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
         WHERE \
           table_name = \'' + table_name + '\'';
 
-    //Fix this!
-    return this.redshiftqueryutilities.queryRaw(version_query).then(result => {
+    return this.execute(version_query).then((result) => {
 
-      du.debug('Got response table_name ', table_name);
       if (result && result.length > 0) {
         return result[0].version;
       }
+
       return 0;
+
     });
 
   }

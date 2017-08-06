@@ -1,0 +1,6 @@
+/*
+03.07.2017 A.Zelen Create redshift schema
+29.07.2017 A.Zelen Moved to own directory
+*/
+
+create schema if not exists sys_sixcrm;

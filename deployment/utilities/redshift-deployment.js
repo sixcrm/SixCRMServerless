@@ -1,4 +1,5 @@
 'use strict';
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
@@ -13,10 +14,6 @@ module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
 
     this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
-    this.non_versioned_table_direcotries = ['schemas', 'system'];
-
-    this.versioned_table_directories = ['tables'];
-
     this.setConfigurationFile();
 
   }
@@ -30,6 +27,14 @@ module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
     }else{
       this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/default.json');
     }
+
+  }
+
+  getTableNameFromFilename(filename){
+
+    du.debug('Get Table Name From Filename');
+
+    return filename.replace('.sql', '');
 
   }
 

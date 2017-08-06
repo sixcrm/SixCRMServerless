@@ -3,5 +3,4 @@
 29.07.2017 A.Zelen Moved to own directory
 */
 
-create schema if not exists sys_sixcrm;
 create schema if not exists backup;
