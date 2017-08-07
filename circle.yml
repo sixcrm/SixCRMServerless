@@ -117,7 +117,7 @@ deployment:
       - node ./deployment/redshift/deploy_cluster.js
 
       #here...
-      - node ./deployment/redshift/deploy_redshift_tables.js
+      - node ./deployment/redshift/deploy_tables.js
 
       #Kinesis
       # node ./deployment/kinesis/deploy_kinesis.js $CIRCLE_BRANCH
