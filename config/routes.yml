@@ -10,6 +10,6 @@ model: /model/
 config: /config/
 deployment: /deployment/
 providers: /controllers/providers/
-tabledefinitions: /dynamolocal/tabledefinitions/
-seeds: /dynamolocal/seeds/
+tabledefinitions: /model/dynamodb/tables/
+seeds: /model/dynamodb/seeds/
 analytics: /controllers/analytics/

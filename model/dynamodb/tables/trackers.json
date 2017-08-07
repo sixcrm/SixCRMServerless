@@ -1,0 +1,36 @@
+{
+    "Table": {
+        "TableName": "trackers",
+        "KeySchema": [{
+            "AttributeName": "id",
+            "KeyType": "HASH"
+        }],
+        "AttributeDefinitions": [{
+            "AttributeName": "id",
+            "AttributeType": "S"
+        },{
+  				"AttributeName": "affiliate",
+  				"AttributeType": "S"
+  			}],
+        "GlobalSecondaryIndexes": [{
+          "IndexName": "affiliate-index",
+          "KeySchema": [
+           {
+              "AttributeName": "affiliate",
+              "KeyType": "HASH"
+           }
+          ],
+          "Projection": {
+           "ProjectionType": "ALL"
+          },
+          "ProvisionedThroughput": {
+           "ReadCapacityUnits": 1,
+           "WriteCapacityUnits": 1
+          }
+        }],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1,
+            "WriteCapacityUnits": 1
+        }
+    }
+}

@@ -33,7 +33,7 @@ d2 = datetime.strptime('4/21/2017 10:00 AM', '%m/%d/%Y %I:%M %p')
 
 # Technical debt very hardcoded
 
-os.chdir('/home/aldo/Projects/toptal/SixCrm/sixcrmserverless/dynamolocal/tabledefinitions')
+os.chdir('/home/aldo/Projects/toptal/SixCrm/sixcrmserverless/model/dynamodb/tables')
 
 dict_data = {}
 

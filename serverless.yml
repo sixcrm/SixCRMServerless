@@ -4,7 +4,8 @@ package:
   exclude:
     - .git/**
     - coverage/**
-    - dynamolocal/**
+    - model/dynamodb/**
+    - model/redshift/seeds/**
     - deployment/**
 
 # frameworkVersion: "=X.X.X"
@@ -43,9 +44,9 @@ custom:
       inMemory: true
       migration: true
     migration:
-      dir: ./dynamolocal/tabledefinitions
+      dir: ./model/dynamodb/tables
     seed:
-      dir: ./dynamolocal/seeds
+      dir: ./model/dynamodb/seeds
 
 site_config: ${file(./config/${opt:stage}/site.yml)}
 
