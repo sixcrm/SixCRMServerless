@@ -70,10 +70,13 @@ module.exports = class entityController extends entityUtilitiesController {
     list(pagination, query_parameters){
 
         du.debug('List');
+        du.debug('List Start');
 
         return new Promise((resolve, reject) => {
 
             return this.can('read').then((permission) => {
+
+                du.debug('List - Can Read');
 
                 if(permission != true){ return resolve(null); }
 
@@ -84,11 +87,17 @@ module.exports = class entityController extends entityUtilitiesController {
                 query_parameters = this.appendPagination(query_parameters, pagination);
                 query_parameters = this.appendAccountFilter(query_parameters);
 
+                du.debug('List - Before Scan Records');
+
                 return Promise.resolve(this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+
+                    du.debug('List - After Scan Records');
 
                     if(_.isError(error)){ return reject(error); }
 
                     return this.buildResponse(data, (error, response) => {
+
+                        du.debug('List End');
 
                         if(error){ return reject(error); }
                         return resolve(response);
