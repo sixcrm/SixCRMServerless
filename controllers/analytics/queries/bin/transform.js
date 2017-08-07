@@ -39,7 +39,7 @@ module.exports = function(results, parameters){
 
         du.info(return_array);
 
-        parameters['count'] = results.length;
+        parameters['count'] = return_array.length;
 
         let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
 
