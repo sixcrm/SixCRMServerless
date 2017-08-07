@@ -202,9 +202,18 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       }
       return Promise.resolve(true);
     })
+    .then(() => this.seedBINDatabase())
     .then((result) => {
       return 'Complete';
     });
+
+  }
+
+  seedBINDatabase(){
+
+    du.debug('Seed BIN Database');
+
+    return Promise.resolve(true);
 
   }
 
