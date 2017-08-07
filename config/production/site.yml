@@ -108,10 +108,10 @@ kinesis:
             DataTableName: 'f_transactions'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+          RoleARN: 'arn:aws:iam::181111172466:role/sixcrm_kinesis_firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-production-redshift'
-            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+            RoleARN: 'arn:aws:iam::181111172466:role/sixcrm_kinesis_firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1
@@ -130,10 +130,10 @@ kinesis:
             DataTableName: 'f_events'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+          RoleARN: 'arn:aws:iam::181111172466:role/sixcrm_kinesis_firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-production-redshift'
-            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+            RoleARN: 'arn:aws:iam::181111172466:role/sixcrm_kinesis_firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1
@@ -152,10 +152,10 @@ kinesis:
             DataTableName: 'f_events'
             CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
           Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+          RoleARN: 'arn:aws:iam::181111172466:role/sixcrm_kinesis_firehose_delivery_role'
           S3Configuration:
             BucketARN: 'arn:aws:s3:::sixcrm-production-redshift'
-            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
+            RoleARN: 'arn:aws:iam::181111172466:role/sixcrm_kinesis_firehose_delivery_role'
             BufferingHints:
               IntervalInSeconds: 60
               SizeInMBs: 1
