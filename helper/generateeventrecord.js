@@ -37,7 +37,6 @@ function createRandomKinesisEventRecord(){
 function setEnvironmentVariables(){
 
     process.env.SIX_VERBOSE = 2;
-    process.env.kinesis_firehose_events_stream = 'sixcrm-firehose-events';
     process.env.aws_region = 'us-east-1';
 
 }

@@ -13,8 +13,6 @@ jwt:
   transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
     expiration: 3600
-  #Technical Debt:  The site key may be deprecated...
-  site_key: 'anwdadawdjaklwdlakd'
 
 dynamodb:
   endpoint: ''
@@ -30,28 +28,27 @@ cloudsearch:
 lambda:
   endpoint: ''
   function_names:
-    deliveredtoarchive: 'sixtransaction-staging-archivedelivered'
-    shippedtodelivered: 'sixtransaction-staging-confirmdelivery'
-    pendingtoshipped: 'sixtransaction-staging-confirmshipped'
-    pendingfailedtopending: 'sixtransaction-staging-shipproduct'
-    holdtopending: 'sixtransaction-staging-shipproduct'
-    holdtoarchive: 'sixtransaction-staging-archivehold'
-    billtohold: 'sixtransaction-staging-processbilling'
-    recovertohold: 'sixtransaction-staging-processbilling'
-    createrebillstoarchive: 'sixtransaction-staging-createrebills'
-    recovertoarchive: 'sixtransaction-staging-archiverecover'
-    indextoarchive: 'sixtransaction-staging-indexentities'
-    forwardmessage_deliveredtoarchive: 'sixtransaction-staging-deliveredtoarchive'
-    forwardmessage_shippedtodelivered: 'sixtransaction-staging-shippedtodelivered'
-    forwardmessage_pendingtoshipped: 'sixtransaction-staging-pendingtoshipped'
-    forwardmessage_pendingfailedtopending: 'sixtransaction-staging-pendingfailedtopending'
-    forwardmessage_holdtopending: 'sixtransaction-staging-holdtopending'
-    forwardmessage_holdtoarchive: 'sixtransaction-staging-holdtoarchive'
-    forwardmessage_billtohold: 'sixtransaction-staging-billtohold'
-    forwardmessage_recovertohold: 'sixtransaction-staging-recovertohold'
-    forwardmessage_createrebillstoarchive: 'sixtransaction-staging-rebilltoarchive'
-    forwardmessage_recovertoarchive: 'sixtransaction-staging-recovertoarchive'
-    forwardmessage_indextoarchive: 'sixtransaction-staging-indextoarchive'
+    deliveredtoarchive: 'archivedelivered'
+    shippedtodelivered: 'confirmdelivery'
+    pendingtoshipped: 'confirmshipped'
+    pendingfailedtopending: 'shipproduct'
+    holdtopending: 'shipproduct'
+    holdtoarchive: 'archivehold'
+    billtohold: 'processbilling'
+    recovertohold: 'processbilling'
+    createrebillstoarchive: 'createrebills'
+    recovertoarchive: 'archiverecover'
+    indextoarchive: 'indexentities'
+    forwardmessage_deliveredtoarchive: 'deliveredtoarchive'
+    forwardmessage_shippedtodelivered: 'shippedtodelivered'
+    forwardmessage_pendingtoshipped: 'pendingtoshipped'
+    forwardmessage_pendingfailedtopending: 'pendingfailedtopending'
+    forwardmessage_holdtopending: 'holdtopending'
+    forwardmessage_holdtoarchive: 'holdtoarchive'
+    forwardmessage_billtohold: 'billtohold'
+    forwardmessage_recovertohold: 'recovertohold'
+    forwardmessage_createrebillstoarchive: 'rebilltoarchive'
+    forwardmessage_indextoarchive: 'indextoarchive'
 
 shipping_providers:
   usps:
@@ -63,15 +60,11 @@ shipping_providers:
 
 redshift:
   user: 'admin'
-  #Technical Debt:  This is inappropriate
-  database: 'dev'
+  database: 'analytics'
   password: 'Jagodica9'
   port: 5439
   max: 10
   idle_timeout: 30000
-  randomdata:
-    staging_bucket: 'sixcrm-staging-redshift/sixcrm-random-generator'
-    interval: 15768000 #this is provided in seconds
 
 notifications:
   apn:
@@ -95,72 +88,6 @@ elasticache:
 logging:
   loglevel: 0
 
-kinesis:
-  firehose:
-    streams:
-      transactions: 'six-staging-transactions'
-      transaction_stream:
-        DeliveryStreamName: 'six-staging-transactions'
-        RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com:5439/dev'
-          CopyCommand:
-            DataTableName: 'f_transactions'
-            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
-          Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
-          S3Configuration:
-            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
-            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
-            BufferingHints:
-              IntervalInSeconds: 60
-              SizeInMBs: 1
-            CompressionFormat: 'UNCOMPRESSED'
-            Prefix: 'sixcrm-kinesis-transactions/'
-          Username: 'admin'
-          RetryOptions:
-            DurationInSeconds: 1
-          S3BackupMode: 'Disabled'
-      events: 'six-staging-events'
-      event_stream:
-        DeliveryStreamName: 'six-staging-events'
-        RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com:5439/dev'
-          CopyCommand:
-            DataTableName: 'f_events'
-            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
-          Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
-          S3Configuration:
-            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
-            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
-            BufferingHints:
-              IntervalInSeconds: 60
-              SizeInMBs: 1
-            CompressionFormat: 'UNCOMPRESSED'
-            Prefix: 'sixcrm-kinesis-events/'
-          Username: 'admin'
-          RetryOptions:
-            DurationInSeconds: 1
-          S3BackupMode: 'Disabled'
-      activity: 'six-staging-activity'
-      activity_stream:
-        DeliveryStreamName: 'six-staging-activity'
-        RedshiftDestinationConfiguration:
-          ClusterJDBCURL: 'jdbc:redshift://sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com:5439/dev'
-          CopyCommand:
-            DataTableName: 'f_events'
-            CopyOptions: "json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
-          Password: 'Jagodica9'
-          RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
-          S3Configuration:
-            BucketARN: 'arn:aws:s3:::sixcrm-staging-redshift'
-            RoleARN: 'arn:aws:iam::821071795213:role/sixcrm_kinesis_firehose_delivery_role'
-            BufferingHints:
-              IntervalInSeconds: 60
-              SizeInMBs: 1
-            CompressionFormat: 'UNCOMPRESSED'
-            Prefix: 'sixcrm-kinesis-activity/'
-          Username: 'admin'
-          RetryOptions:
-            DurationInSeconds: 1
-          S3BackupMode: 'Disabled'
+slack:
+  channel: '#lambdas'
+  kms_encrypted_hook_url: 'AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ=='

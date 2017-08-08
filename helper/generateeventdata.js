@@ -22,18 +22,20 @@ return dataGenerator.execute().then(() => {
 });
 
 function setEnvironmentVariables(){
+
     //Technical Debt:  This should be using the Serverless Utilities class
     process.env.SIX_VERBOSE = 2;
     process.env.stage = 'local';
     process.env.dynamo_endpoint = 'localhost';
     process.env.redshift_user = 'admin';
     process.env.redshift_password = 'Jagodica9';
-    process.env.redshift_host = 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com';
-    process.env.redshift_database = 'dev';
+    process.env.redshift_database = 'analytics';
     process.env.redshift_port = 5439;
     process.env.redshift_pool_max = 10;
     process.env.redshift_idle_timeout = 30000;
-    process.env.redshift_random_data_staging_bucket = 'sixcrm-'+process.env.stage+'-redshift/sixcrm-random-generator';
-    process.env.redshift_random_data_interval = 18000;
+    process.env.redshift_random_data_interval = 300;
+
+    //Technical Debt: Nope.
+    process.env.redshift_host = 'sixcrm-test.ch9ptr45aofu.us-east-1.redshift.amazonaws.com';
 
 }

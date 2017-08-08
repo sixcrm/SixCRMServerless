@@ -1,7 +1,7 @@
 # Deployment Notes:
 
 The following deployment process worked in the staging environment:
-
+0. Manual Step: Import certificate
 0. Run `/deployment/s3/deploy.js` (Note: Configuration Utilities tries to read from configuration bucket here, that we are creating...)
 1. Run `/deployment/iam/deploy_roles.js`
 3.  Run `/deployment/ec2/deploy_security_groups.js`
@@ -35,9 +35,10 @@ OK
 15. ___Manual Step___: Update all the Redshift Cluster references in the `config/{stage}/site.yml` file with the appropriate path information.  References should be structured as `'jdbc:redshift://{cluster_name}.{some_string}.{aws_region}.redshift.amazonaws.com:5439/{database_name}'`
 16. Run `deployment/redshift/deploy_tables.js`
 18. Run `deployment/kinesis/deploy_streams.js`
-19. Run `deployment/cloudsearch/deploy.js` (here)
+19. Run `deployment/cloudsearch/deploy.js`
 20. Run `serverless deploy --stage {stage}`
  - Note:  This may need to occur earlier in the deployment due to the need for the roles at deployment time.
+21. Add custom domain name in API Gateway
 21. Run `deployment/dynamodb/deploy_seeds.js`
 22. Test deployment
   - Run `npm run test-integration`

@@ -1,4 +1,4 @@
-service: sixtransaction
+service: sixcrm
 package:
   excludeDevDependencies: true
   exclude:
@@ -27,11 +27,7 @@ provider:
     bill_queue: 'bill'
     hold_queue: 'hold'
     bill_failed_queue: 'bill_failed'
-    redshift_random_data_staging_bucket: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.staging_bucket}
     redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
-    kinesis_firehose_events_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.events}
-    kinesis_firehose_transactions_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.transactions}
-    kinesis_firehose_activity_stream: ${file(./config/${opt:stage}/site.yml):kinesis.firehose.streams.activity}
 
 plugins:
   - serverless-dynamodb-local
@@ -111,7 +107,7 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_billtohold}
+      name: '${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_billtohold}'
       origin_queue: 'bill'
       destination: 'hold'
       failure_queue: 'bill_failed'
@@ -261,6 +257,7 @@ functions:
           topicName: SESNotifications
           displayName: SES Notifications
 
+  #Technical Debt:  This seems broken
   slackalarm:
     handler: handlers/workers/slackalarm/exports.handler
     events:
@@ -268,8 +265,8 @@ functions:
           topicName: SlackAlarm
           displayName: Slack Alarm
     environment:
-      slackChannel: '#lambdas'
-      kmsEncryptedHookUrl: AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ==
+      slackChannel: ${file(./config/${opt:stage}/site.yml):slack.channel}
+      kmsEncryptedHookUrl: ${file(./config/${opt:stage}/site.yml):slack.kms_encrypted_hook_url}
 
   indexentities:
     handler: handlers/workers/indexentities/handler.indexentities
