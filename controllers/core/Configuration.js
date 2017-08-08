@@ -70,6 +70,8 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
+  //Technical Debt:  This should read from the actual serverless.yml file.
+  //Note that it will need to parse the references included therein...
   getServerlessConfig(){
 
     du.debug('Get Serverless Config');

@@ -1,8 +1,11 @@
 'use strict';
-
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
@@ -16,6 +19,112 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
   }
 
   destroyStreams() {
+
+    du.debug('Destroy Streams');
+
+    return this.getStreamConfigurations().then((stream_configurations) => {
+
+      let stream_create_promises = arrayutilities.map(stream_configurations, (stream_configuration) => {
+
+        return () => {
+
+          if(!_.has(stream_configuration, 'DeliveryStreamName')){
+            eu.throwError('server', 'destroyStreams assumes stream_configuration object with property "DeliveryStreamName"');
+          }
+
+          let stream_name = stream_configuration.DeliveryStreamName;
+
+          return this.kinesisfirehosetutilities.streamExists(stream_name).then(exists => {
+
+            if (!exists) {
+
+              du.output('Stream does not exist ('+stream_name+'), skipping');
+
+              return false;
+
+            } else {
+
+              du.output('Stream exists, destroying.');
+
+              let parameters = objectutilities.additiveFilter(['DeliveryStreamName'], stream_configuration);
+
+              return this.deleteStreamAndWait(parameters).then(response => {
+
+                du.highlight('Stream "'+stream_name+'" destroyed.');
+
+                return true;
+
+              });
+
+            }
+
+          });
+
+        }
+
+      });
+
+      return arrayutilities.serial(stream_create_promises).then(() => {
+        return 'Complete';
+      });
+
+    });
+
+  }
+
+  deployStreams() {
+
+    du.debug('Deploy Streams');
+
+    return this.getStreamConfigurations().then((stream_configurations) => {
+
+      let stream_create_promises = arrayutilities.map(stream_configurations, (stream_configuration) => {
+
+        return () => {
+
+          if(!_.has(stream_configuration, 'DeliveryStreamName')){
+            eu.throwError('server', 'deployStreams assumes stream_configuration object with property "DeliveryStreamName"');
+          }
+
+          let stream_name = stream_configuration.DeliveryStreamName;
+
+          return this.kinesisfirehosetutilities.streamExists(stream_name).then(exists => {
+
+            if (exists) {
+
+              du.output('Stream exists ('+stream_name+'), skipping');
+
+              return false;
+
+            } else {
+
+              du.output('Stream does not exist ('+stream_name+'), creating.');
+
+              return this.parseStreamConfiguration(stream_configuration).then((stream_configuration) => {
+
+                return this.createStreamAndWait(stream_configuration).then(response => {
+
+                  du.highlight('Stream "'+stream_name+'" created.');
+
+                  return true;
+
+                });
+
+              });
+
+            }
+
+          });
+
+        }
+
+      });
+
+      return arrayutilities.serial(stream_create_promises).then(() => {
+        return 'Complete';
+      });
+
+    });
 
   }
 
@@ -31,67 +140,57 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
   }
 
-  deployStreams() {
+  parseStreamConfiguration(stream_configuration){
 
-    du.debug('Deploy Streams');
+    du.debug('Parse Stream Configuration');
 
-    return this.getStreamConfigurations().then((stream_configurations) => {
+    return global.SixCRM.configuration.getEnvironmentConfig('redshift.host').then((redshift_host) => {
 
-      return global.SixCRM.configuration.getEnvironmentConfig('redshift.host').then((host) => {
+      let configuration_tokens = {
+        redshift_host: redshift_host,
+        redshift_port: global.SixCRM.configuration.site_config.redshift.port,
+        redshift_database: global.SixCRM.configuration.site_config.redshift.database,
+        redshift_username: global.SixCRM.configuration.site_config.redshift.user,
+        redshift_password: global.SixCRM.configuration.site_config.redshift.password,
+        aws_account_id: global.SixCRM.configuration.site_config.aws.account,
+        stage: process.env.stage
+      };
 
-        let stream_create_promises = arrayutilities.map(stream_configurations, (stream_configuration) => {
+      stream_configuration = JSON.stringify(stream_configuration);
 
-          return () => {
+      stream_configuration = parserutilities.parse(stream_configuration, configuration_tokens);
 
-            return this.kinesisfirehosetutilities.streamExists(stream_configuration.DeliveryStreamName).then(exists => {
-
-              if (exists) {
-
-                du.output('Stream exists, skipping');
-
-                return false;
-
-              } else {
-
-                du.output('Stream does not exist, creating.');
-
-                return this.createStreamAndWait(stream_configuration).then(response => {
-
-                  du.highlight('Stream created.');
-
-                  return true;
-
-                });
-
-              }
-
-            });
-
-          }
-
-        });
-
-        return arrayutilities.serial(stream_create_promises).then(() => {
-          return 'Complete';
-        });
-
-      });
+      return JSON.parse(stream_configuration);
 
     });
 
   }
 
   createStreamAndWait(parameters) {
+
+    if(!_.has(parameters, 'DeliveryStreamName')){
+      eu.throwError('server', 'createStreamAndWait assumes a parameters object with property "DeliveryStreamName"');
+    }
+
     return this.kinesisfirehosetutilities.createStream(parameters).then(() => {
-      return this.kinesisfirehosetutilities.waitForStreamToExist(parameters.DeliveryStreamName);
+      return this.waitForStreamToExist(parameters.DeliveryStreamName);
     });
   }
 
   deleteStreamAndWait(parameters) {
+
+    du.debug('Delete Stream And Wait');
+
+    if(!_.has(parameters, 'DeliveryStreamName')){
+      eu.throwError('server', 'deleteStreamAndWait assumes a parameters object with property "DeliveryStreamName"');
+    }
+
     return this.kinesisfirehosetutilities.deleteStream(parameters).then(() => {
-      return this.kinesisfirehosetutilities.waitForStreamNotExist(parameters.DeliveryStreamName);
+      return this.waitForStreamNotExist(parameters.DeliveryStreamName);
     });
   }
+
+  //Technical Debt:  These don't appear to work...
 
   waitForStreamToExist(stream_identifier) {
     return this.kinesisfirehosetutilities.waitForStream(stream_identifier, 'ACTIVE');

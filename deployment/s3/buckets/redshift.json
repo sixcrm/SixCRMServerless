@@ -9,6 +9,9 @@
     "Bucket": "kinesis-events"
   },
   {
+    "Bucket": "kinesis-sessions"
+  },
+  {
     "Bucket": "kinesis-merchant-processor"
   },
   {

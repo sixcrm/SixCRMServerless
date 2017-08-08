@@ -1,4 +1,4 @@
-endpoint: 'https://api.sixcrm.com/'
+endpoint: 'https://development-api.sixcrm.com/'
 account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
 access_keys:
   customerservice_user:

@@ -96,12 +96,13 @@ elasticache:
 logging:
   loglevel: 0
 
+#Technical Debt:  What of this is necessary?
 kinesis:
   firehose:
     streams:
-      transactions: 'six-production-transactions'
+      transactions: 'sixcrm-production-kinesis-transactions'
       transaction_stream:
-        DeliveryStreamName: 'six-production-transactions'
+        DeliveryStreamName: 'sixcrm-production-kinesis-transactions'
         RedshiftDestinationConfiguration:
           ClusterJDBCURL: 'jdbc:redshift://sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:
@@ -121,9 +122,9 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
-      events: 'six-production-events'
+      events: 'sixcrm-production-kinesis-events'
       event_stream:
-        DeliveryStreamName: 'six-production-events'
+        DeliveryStreamName: 'sixcrm-production-kinesis-events'
         RedshiftDestinationConfiguration:
           ClusterJDBCURL: 'jdbc:redshift://sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:
@@ -143,9 +144,9 @@ kinesis:
           RetryOptions:
             DurationInSeconds: 1
           S3BackupMode: 'Disabled'
-      activity: 'six-production-activity'
+      activity: 'sixcrm-production-kinesis-activity'
       activity_stream:
-        DeliveryStreamName: 'six-production-activity'
+        DeliveryStreamName: 'sixcrm-production-kinesis-activity'
         RedshiftDestinationConfiguration:
           ClusterJDBCURL: 'jdbc:redshift://sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com:5439/dev'
           CopyCommand:

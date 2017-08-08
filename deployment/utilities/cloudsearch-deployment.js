@@ -152,11 +152,12 @@ class CloudsearchDeployment{
       return this.cloudsearchDomainExists().then((result) => {
 
         if(result == false){
+
           return this.cloudsearchutilities.createDomain().then(() => this.cloudsearchutilities.waitFor('ready'));
+
         }else{
 
           if(_.has(result, 'Processing')){
-
 
             if(result.Processing == true){
               du.highlight('Domain is processing...');

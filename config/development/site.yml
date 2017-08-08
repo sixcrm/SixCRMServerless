@@ -3,7 +3,7 @@ aws:
   account: '068070110666'
 
 jwt:
-  issuer: 'https://api.sixcrm.com'
+  issuer: 'https://development-api.sixcrm.com'
   development_bypass: 'deathstalker'
   site: #This is the key for all graph requests (AKA Six users)
     secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
@@ -67,6 +67,7 @@ redshift:
   max: 10
   idle_timeout: 30000
   randomdata:
+    #Technical Debt:  This wont work in environments other than development
     staging_bucket: 'sixcrm-development-redshift/sixcrm-random-generator'
     interval: 15768000 #this is provided in seconds
 
@@ -77,7 +78,6 @@ notifications:
     token_team_id: ''
     production: false
 
-#Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
 cache:
   usecache: 1
   cachebuster: 'somerandomthing1'
@@ -92,6 +92,7 @@ elasticache:
 logging:
   loglevel: 0
 
+#Technical Debt:  Remove
 #Taking this out of site.yml config
 kinesis:
   firehose:

@@ -48,6 +48,7 @@ custom:
     seed:
       dir: ./model/dynamodb/seeds
 
+#is this necessary here?
 site_config: ${file(./config/${opt:stage}/site.yml)}
 
 functions:
@@ -340,8 +341,6 @@ functions:
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
-
-
 
   createlead:
     handler: handlers/endpoints/createlead/handler.createlead
