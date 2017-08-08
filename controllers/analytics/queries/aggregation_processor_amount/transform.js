@@ -8,6 +8,8 @@ module.exports = function(results, parameters){
 
     du.debug('Transformation Function');
 
+    du.info(results);
+
     return new Promise((resolve, reject) => {
 
         let return_object = [];
@@ -53,7 +55,7 @@ module.exports = function(results, parameters){
 
         });
 
-        du.info("Observation Count: "+return_object.length);
+        //du.info("Observation Count: "+return_object.length);
 
         return resolve({
             transactions:return_object

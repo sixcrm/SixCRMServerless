@@ -62,7 +62,6 @@ redshift:
   user: 'admin'
   database: 'dev'
   password: 'Jagodica9'
-  host: 'sixcrm-development.ch9ptr45aofu.us-east-1.redshift.amazonaws.com'
   port: 5439
   max: 10
   idle_timeout: 30000
@@ -80,7 +79,7 @@ notifications:
 
 cache:
   usecache: 1
-  cachebuster: 'somerandomthing1'
+  cachebuster: 'somerandomthing12'
 
 elasticache:
   max_attempts: 3

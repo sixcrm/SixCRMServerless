@@ -41,13 +41,13 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
     let security_groups = this.getConfigurationJSON('security_groups');
 
-    let security_group_promises = arrayutilities.map(security_groups, (security_group) => this.deploySecurityGroup(security_group));
+    let security_group_promises = arrayutilities.map(security_groups, (security_group) => {
 
-    return Promise.all(security_group_promises).then(() => {
-
-      return 'Complete';
+      return () => this.deploySecurityGroup(security_group);
 
     });
+
+    return arrayutilities.serial(security_group_promises).then(() => { return 'Complete'; });
 
   }
 

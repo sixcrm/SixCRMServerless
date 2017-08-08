@@ -66,8 +66,6 @@ redshift:
   #Technical Debt:  This is inappropriate
   database: 'dev'
   password: 'Jagodica9'
-  #Technical Debt:  This needs to be in Environment Config
-  host: 'sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com'
   port: 5439
   max: 10
   idle_timeout: 30000

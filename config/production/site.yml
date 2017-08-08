@@ -65,8 +65,6 @@ redshift:
   user: 'admin'
   database: 'analytics'
   password: 'Jagodica9'
-  #Technical Debt:  This needs to be in Environment Config
-  host: 'sixcrm.cs30a0jxxkqk.us-east-1.redshift.amazonaws.com'
   port: 5439
   max: 10
   idle_timeout: 30000

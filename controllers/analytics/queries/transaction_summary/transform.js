@@ -4,6 +4,9 @@ let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 module.exports = function(results, parameters){
 
     du.debug('Transformation Function');
+
+    du.info(results);
+
     return new Promise((resolve, reject) => {
 
         let return_object = {
