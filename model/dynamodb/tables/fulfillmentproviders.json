@@ -10,7 +10,7 @@
             "AttributeType": "S"
         }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1,
+            "ReadCapacityUnits": 8,
             "WriteCapacityUnits": 1
         }
     }

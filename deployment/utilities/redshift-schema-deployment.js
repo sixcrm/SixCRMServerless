@@ -164,7 +164,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     let query_promises = arrayutilities.map(queries, (query) => {
 
-      return () => this.execute(query);
+      if(!_.isNull(query) && query !== '' && query !== false){
+
+          return () => this.execute(query);
+
+      }
+
+      return () => { return Promise.resolve(null); };
 
     })
 
@@ -382,8 +388,6 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
   execute(query) {
 
     du.debug('Execute');
-
-    du.info('Executing: '+query);
 
     return this.redshiftqueryutilities.query(query);
 

@@ -4,13 +4,13 @@
         "KeySchema": [{
             "AttributeName": "id",
             "KeyType": "HASH"
-        }], 
+        }],
         "AttributeDefinitions": [{
-            "AttributeName": "id", 
+            "AttributeName": "id",
             "AttributeType": "S"
         }],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1, 
+            "ReadCapacityUnits": 4, 
             "WriteCapacityUnits": 1
         }
     }

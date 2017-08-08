@@ -32,7 +32,7 @@
 				"ProjectionType": "ALL"
 			 },
 			 "ProvisionedThroughput": {
-				"ReadCapacityUnits": 1,
+				"ReadCapacityUnits": 6,
 				"WriteCapacityUnits": 1
 			 }
 		  },
