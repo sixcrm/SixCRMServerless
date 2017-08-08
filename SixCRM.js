@@ -1,5 +1,6 @@
 'use strict'
 require('./routes.js');
+const _ = require('underscore');
 
 class SixCRM {
 
@@ -23,5 +24,7 @@ class SixCRM {
 
 }
 
-global.SixCRM = new SixCRM();
-global.SixCRM.instantiate();
+if(!_.has(global, 'SixCRM')){
+  global.SixCRM = new SixCRM();
+  global.SixCRM.instantiate();
+}
