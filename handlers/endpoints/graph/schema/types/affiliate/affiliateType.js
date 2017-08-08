@@ -9,7 +9,7 @@ module.exports.graphObj = new GraphQLObjectType({
     fields: () => ({
         id: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'The id of the product.',
+            description: 'The id of the affiliate.',
         },
         affiliate_id: {
             type: new GraphQLNonNull(GraphQLString),
