@@ -8,15 +8,15 @@
 			"id":"someIDValue"
 		},
 		"processing":{
-			"monthly_cap": 5000000.00,
+			"monthly_cap": 50000.00,
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
 			"maximum_chargeback_ratio":0.17,
 			"transaction_counts":{
-				"daily":300000,
-				"monthly":300000,
-				"weekly":300000
+				"daily":3000,
+				"monthly":3000,
+				"weekly":3000
 			}
 		},
 		"enabled":true,
@@ -46,15 +46,15 @@
 			"id":"someIDValue"
 		},
 		"processing":{
-			"monthly_cap": 5000000.00,
+			"monthly_cap": 50000.00,
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
 			"maximum_chargeback_ratio":0.17,
 			"transaction_counts":{
-				"daily":300000,
-				"monthly":300000,
-				"weekly":300000
+				"daily":3000,
+				"monthly":3000,
+				"weekly":3000
 			}
 		},
 		"enabled":true,
