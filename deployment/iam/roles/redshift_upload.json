@@ -1,0 +1,23 @@
+[{
+  "AssumeRolePolicyDocument":{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "redshift.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole",
+        "Condition": {
+          "StringEquals": {
+            "sts:ExternalId": "{{aws_account_id}}"
+          }
+        }
+      }
+    ]
+  },
+  "RoleName":"sixcrm_redshift_upload_role",
+  "Description": "The role used by Redshift to load and unload data to S3 bucket",
+  "ManagedPolicies":["arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"]
+}]
