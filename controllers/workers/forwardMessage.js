@@ -102,22 +102,30 @@ class forwardMessageController extends workerController {
                     // If there are 10 messages (maximum), invoke the lambda again so it picks the rest of the messages.
                     if (messages.length === 10) {
                         lambda.invokeFunction({
-                            function_name: process.env.name,
-                            payload: JSON.stringify({}),
-                            invocation_type: 'Event'}); // 'Event' type will make the lambda execute asynchronously.
+                          function_name: lambda.buildLambdaName(process.env.name),
+                          payload: JSON.stringify({}),
+                          invocation_type: 'Event'
+                        }); // 'Event' type will make the lambda execute asynchronously.
                     }
 
                     messages.forEach(function(message) {
 
-                        du.debug('Handling Message:', message);
+                      du.debug('Handling Message:', message);
 
-						//Technical Debt: in the case of a local context, I want this to invoke a local function...
-                        lambda.invokeFunction({function_name: process.env.workerfunction, payload: JSON.stringify(message)}, (error, workerdata) => {
-                            if(_.isError(error)){
-                                reject(error);
-                                return;
-                            }
-                            if(workerdata.StatusCode !== 200){ reject(eu.getError('server','Non-200 Status Code returned from Lambda invokation.')); }
+						          //Technical Debt: in the case of a local context, I want this to invoke a local function...
+                      let invoke_parameters = {
+                        function_name: lambda.buildLambdaName(process.env.workerfunction),
+                        payload: JSON.stringify(message)
+                      };
+
+                      lambda.invokeFunction(invoke_parameters, (error, workerdata) => {
+
+                        if(_.isError(error)){
+                          reject(error);
+                          return;
+                        }
+
+                        if(workerdata.StatusCode !== 200){ reject(eu.getError('server','Non-200 Status Code returned from Lambda invokation.')); }
 
                             controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
 

@@ -49,6 +49,7 @@ lambda:
     forwardmessage_recovertohold: 'recovertohold'
     forwardmessage_createrebillstoarchive: 'rebilltoarchive'
     forwardmessage_indextoarchive: 'indextoarchive'
+    forwardmessage_recovertoarchive: 'recovertoarchive'
 
 shipping_providers:
   usps:

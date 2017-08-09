@@ -156,8 +156,8 @@ functions:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
-          rate: rate(1 minute)
-          enabled: true
+        rate: rate(1 minute)
+        enabled: true
     environment:
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingtoshipped}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
@@ -169,8 +169,8 @@ functions:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
-          rate: rate(1 minute)
-          enabled: true
+        rate: rate(1 minute)
+        enabled: true
     environment:
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_shippedtodelivered}
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
@@ -254,19 +254,19 @@ functions:
     handler: handlers/workers/sesnotifications/handler.sesnotifications
     events:
       - sns:
-          topicName: SESNotifications
-          displayName: SES Notifications
+        topicName: SESNotifications
+        displayName: SES Notifications
 
   #Technical Debt:  This seems broken
-  slackalarm:
-    handler: handlers/workers/slackalarm/exports.handler
-    events:
-      - sns:
-          topicName: SlackAlarm
-          displayName: Slack Alarm
-    environment:
-      slackChannel: ${file(./config/${opt:stage}/site.yml):slack.channel}
-      kmsEncryptedHookUrl: ${file(./config/${opt:stage}/site.yml):slack.kms_encrypted_hook_url}
+  #slackalarm:
+  #  handler: handlers/workers/slackalarm/exports.handler
+  #  events:
+  #    - sns:
+  #        topicName: SlackAlarm
+  #        displayName: Slack Alarm
+  #  environment:
+  #    slackChannel: ${file(./config/${opt:stage}/site.yml):slack.channel}
+  #    kmsEncryptedHookUrl: ${file(./config/${opt:stage}/site.yml):slack.kms_encrypted_hook_url}
 
   indexentities:
     handler: handlers/workers/indexentities/handler.indexentities
