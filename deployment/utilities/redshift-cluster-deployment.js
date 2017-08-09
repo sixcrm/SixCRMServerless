@@ -6,6 +6,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 
 class RedshiftClusterDeployment extends RedshiftDeployment {
@@ -123,26 +124,24 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
     let configuration_groups = {
       'describe': ['ClusterIdentifier'],
       'wait': ['ClusterIdentifier'],
-      'create': ['ClusterIdentifier', 'NodeType', 'MasterUsername', 'MasterUserPassword', 'ClusterType', 'DBName', 'AutomatedSnapshotRetentionPeriod', 'PubliclyAccessible', 'Port'],
+      'create': ['ClusterIdentifier', 'NodeType', 'MasterUsername', 'MasterUserPassword', 'ClusterType', 'DBName', 'AutomatedSnapshotRetentionPeriod', 'PubliclyAccessible', 'Port', 'IamRoles'],
       'destroy': ['ClusterIdentifier', 'FinalClusterSnapshotIdentifier', 'SkipFinalClusterSnapshot']
     };
 
     let translation_object = {
       ClusterIdentifier: ['cluster_identifier'],
       NodeType: ['node_type'],
-      //MasterUsername: ['user'],
       DBName: ['database'],
-      //MasterUserPassword: ['password'],
       ClusterType: ['cluster_type'],
       AutomatedSnapshotRetentionPeriod: ['automated_snapshot_retention_period'],
       PubliclyAccessible: ['publicly_accessible'],
       SkipFinalClusterSnapshot: ['skip_final_cluster_snapshot'],
       FinalClusterSnapshotIdentifier: ['final_cluster_snapshot_identifier'],
-      Port: ['port']
+      Port: ['port'],
+      IamRoles:['iam_roles']
     };
 
     configuration_groups[group_name].forEach((key) => {
-
 
       let discovered_data = objectutilities.recurseByDepth(this.configuration_file, function(p_key) {
 
@@ -155,6 +154,22 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
     });
 
     if(_.contains(['create'], group_name)){
+
+      if(_.has(response_object, 'IamRoles')){
+
+        if(arrayutilities.isArray(response_object.IamRoles) && response_object.IamRoles.length > 0){
+
+          let account_id = global.SixCRM.configuration.getAccountIdentifier();
+
+          response_object.IamRoles = arrayutilities.map(response_object.IamRoles, (role_arn_template) => {
+
+            return parserutilities.parse(role_arn_template, {aws_account_id: account_id});
+
+          });
+
+        }
+
+      }
 
       response_object['MasterUsername'] = global.SixCRM.configuration.site_config.redshift.user;
       response_object['MasterUserPassword'] = global.SixCRM.configuration.site_config.redshift.password;

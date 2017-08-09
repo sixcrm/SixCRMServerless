@@ -9,6 +9,7 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 
@@ -222,8 +223,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Seed BIN Database');
 
-    return this.uploadBINDatabaseToS3()
-        .then(() => { this.copyBINDatabaseToRedshift() });
+    return this.uploadBINDatabaseToS3().then(() => { this.copyBINDatabaseToRedshift() });
 
   }
 
@@ -263,12 +263,21 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Copy BIN Database');
 
+    let parse_parameters = {
+      stage: process.env.stage,
+      aws_account_id: global.SixCRM.configuration.getAccountIdentifier()
+    };
+
     let query_copy = `
       TRUNCATE TABLE d_bin;
       COPY d_bin
-      FROM 's3://sixcrm-${global.SixCRM.configuration.stage}-redshift/d_bin.csv'
-      credentials 'aws_iam_role=arn:aws:iam::${global.SixCRM.configuration.getAccountIdentifier()}:role/sixcrm_redshift_upload_role'
+      FROM 's3://sixcrm-{{stage}}-redshift/d_bin.csv'
+      credentials 'aws_iam_role=arn:aws:iam::{{aws_account_id}}:role/sixcrm_redshift_copy_role'
       DELIMITER ',';`;
+
+    query_copy = parserutilities.parse(query_copy, parse_parameters);
+
+    du.info(query_copy);
 
     return redshiftqueryutilities.query(query_copy);
 
