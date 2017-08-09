@@ -1,12 +1,15 @@
 'use strict';
 
 const _ = require('underscore');
+const fs = require('fs');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+const redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 
 class RedshiftSchemaDeployment extends RedshiftDeployment {
@@ -219,7 +222,55 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Seed BIN Database');
 
-    return Promise.resolve(true);
+    return this.uploadBINDatabaseToS3()
+        .then(() => { this.copyBINDatabaseToRedshift() });
+
+  }
+
+  uploadBINDatabaseToS3() {
+
+    du.debug('Upload BIN Database');
+
+    let database_filename = 'd_bin.csv';
+    let parameters = {
+      Bucket: 'sixcrm-' + global.SixCRM.configuration.stage + '-redshift',
+      Key: database_filename
+    };
+
+    return s3utilities.objectExists(parameters).then((exists) => {
+
+      if (exists) {
+
+        du.debug('BIN database already exists on S3, skipping.');
+
+        return Promise.resolve();
+
+      } else {
+
+        du.debug('Uploading BIN Database to S3 bucket.');
+
+        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seeds/' + database_filename));
+
+        return s3utilities.putObject(parameters);
+
+      }
+
+    })
+
+  }
+
+  copyBINDatabaseToRedshift() {
+
+    du.debug('Copy BIN Database');
+
+    let query_copy = `
+      TRUNCATE TABLE d_bin;
+      COPY d_bin
+      FROM 's3://sixcrm-${global.SixCRM.configuration.stage}-redshift/d_bin.csv'
+      credentials 'aws_iam_role=arn:aws:iam::${global.SixCRM.configuration.getAccountIdentifier()}:role/sixcrm_redshift_upload_role'
+      DELIMITER ',';`;
+
+    return redshiftqueryutilities.query(query_copy);
 
   }
 
