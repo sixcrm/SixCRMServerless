@@ -212,6 +212,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       return Promise.resolve(true);
     })
     .then(() => this.seedBINDatabase())
+    .then(() => this.seedDateDatabase())
     .then((result) => {
       return 'Complete';
     });
@@ -267,7 +268,63 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       TRUNCATE TABLE d_bin;
       COPY d_bin
       FROM 's3://sixcrm-${global.SixCRM.configuration.stage}-redshift/d_bin.csv'
-      credentials 'aws_iam_role=arn:aws:iam::${global.SixCRM.configuration.getAccountIdentifier()}:role/sixcrm_redshift_upload_role'
+      credentials 'aws_iam_role=arn:aws:iam::${global.SixCRM.configuration.getAccountIdentifier()}:role/sixcrm_kinesis_firehose_delivery_role'
+      DELIMITER ',';`;
+
+    return redshiftqueryutilities.query(query_copy);
+
+  }
+
+  seedDateDatabase(){
+
+    du.debug('Seed Date Database');
+
+    return this.uploadDateDatabaseToS3()
+        .then(() => { this.copyDateDatabaseToRedshift() });
+
+  }
+
+  uploadDateDatabaseToS3() {
+
+    du.debug('Upload Date Database');
+
+    let database_filename = 'd_datetime.csv';
+    let parameters = {
+      Bucket: 'sixcrm-' + global.SixCRM.configuration.stage + '-redshift',
+      Key: database_filename
+    };
+
+    return s3utilities.objectExists(parameters).then((exists) => {
+
+      if (exists) {
+
+        du.debug('Date database already exists on S3, skipping.');
+
+        return Promise.resolve();
+
+      } else {
+
+        du.debug('Uploading Date Database to S3 bucket.');
+
+        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seeds/' + database_filename));
+
+        return s3utilities.putObject(parameters);
+
+      }
+
+    })
+
+  }
+
+  copyDateDatabaseToRedshift() {
+
+    du.debug('Copy Date Database');
+
+    let query_copy = `
+      TRUNCATE TABLE d_datetime;
+      COPY d_datetime
+      FROM 's3://sixcrm-${global.SixCRM.configuration.stage}-redshift/d_datetime.csv'
+      credentials 'aws_iam_role=arn:aws:iam::${global.SixCRM.configuration.getAccountIdentifier()}:role/sixcrm_kinesis_firehose_delivery_role'
       DELIMITER ',';`;
 
     return redshiftqueryutilities.query(query_copy);
