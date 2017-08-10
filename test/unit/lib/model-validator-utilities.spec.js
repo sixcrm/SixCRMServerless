@@ -89,7 +89,7 @@ describe('lib/model-validator-utilities', () => {
                     let schema = path + '/' + file_name;
                     let model_name = schema.replace(global.SixCRM.routes.path('model'), '');
 
-                    xit('validates valid ' + model_name, () => {
+                    it('validates valid ' + model_name, () => {
 
                         return modelgenerator.random(model_name).then((valid_model) => {
                             du.debug('Model:', valid_model);
