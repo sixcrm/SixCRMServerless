@@ -11,7 +11,7 @@
       }
     ]
   },
-  "RoleName":"sixcrm_redshift_upload_role",
-  "Description": "The role used by Redshift to load data to S3 bucket",
+  "RoleName":"sixcrm_redshift_copy_role",
+  "Description": "The role used by Redshift to copy data from S3 buckets",
   "ManagedPolicies":["arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"]
 }]

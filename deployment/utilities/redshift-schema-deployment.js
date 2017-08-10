@@ -9,6 +9,7 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 
@@ -223,8 +224,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Seed BIN Database');
 
-    return this.uploadBINDatabaseToS3()
-        .then(() => { this.copyBINDatabaseToRedshift() });
+    return this.uploadBINDatabaseToS3().then(() => { this.copyBINDatabaseToRedshift() });
 
   }
 
@@ -264,68 +264,21 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Copy BIN Database');
 
+    let parse_parameters = {
+      stage: process.env.stage,
+      aws_account_id: global.SixCRM.configuration.getAccountIdentifier()
+    };
+
     let query_copy = `
       TRUNCATE TABLE d_bin;
       COPY d_bin
-      FROM 's3://sixcrm-${global.SixCRM.configuration.stage}-redshift/d_bin.csv'
-      credentials 'aws_iam_role=arn:aws:iam::${global.SixCRM.configuration.getAccountIdentifier()}:role/sixcrm_kinesis_firehose_delivery_role'
+      FROM 's3://sixcrm-{{stage}}-redshift/d_bin.csv'
+      credentials 'aws_iam_role=arn:aws:iam::{{aws_account_id}}:role/sixcrm_redshift_copy_role'
       DELIMITER ',';`;
 
-    return redshiftqueryutilities.query(query_copy);
+    query_copy = parserutilities.parse(query_copy, parse_parameters);
 
-  }
-
-  seedDateDatabase(){
-
-    du.debug('Seed Date Database');
-
-    return this.uploadDateDatabaseToS3()
-        .then(() => { this.copyDateDatabaseToRedshift() });
-
-  }
-
-  uploadDateDatabaseToS3() {
-
-    du.debug('Upload Date Database');
-
-    let database_filename = 'd_datetime.csv';
-    let parameters = {
-      Bucket: 'sixcrm-' + global.SixCRM.configuration.stage + '-redshift',
-      Key: database_filename
-    };
-
-    return s3utilities.objectExists(parameters).then((exists) => {
-
-      if (exists) {
-
-        du.debug('Date database already exists on S3, skipping.');
-
-        return Promise.resolve();
-
-      } else {
-
-        du.debug('Uploading Date Database to S3 bucket.');
-
-        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seeds/' + database_filename));
-
-        return s3utilities.putObject(parameters);
-
-      }
-
-    })
-
-  }
-
-  copyDateDatabaseToRedshift() {
-
-    du.debug('Copy Date Database');
-
-    let query_copy = `
-      TRUNCATE TABLE d_datetime;
-      COPY d_datetime
-      FROM 's3://sixcrm-${global.SixCRM.configuration.stage}-redshift/d_datetime.csv'
-      credentials 'aws_iam_role=arn:aws:iam::${global.SixCRM.configuration.getAccountIdentifier()}:role/sixcrm_kinesis_firehose_delivery_role'
-      DELIMITER ',';`;
+    du.info(query_copy);
 
     return redshiftqueryutilities.query(query_copy);
 
