@@ -104,7 +104,7 @@ describe('controllers/Entity.js', () => {
             });
         });
 
-        xit('returns entity when saving succeeds', () => {
+        it('returns entity when saving succeeds', () => {
             // given
             let anEntity = {
                 secret_key:"secret-key",
@@ -125,6 +125,12 @@ describe('controllers/Entity.js', () => {
             mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: (entity) => {
                     return new Promise((resolve) => resolve(true));
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
                 }
             });
 
@@ -224,7 +230,7 @@ describe('controllers/Entity.js', () => {
             });
         });
 
-        xit('throws error when reading from database fails', () => {
+        it('throws error when reading from database fails', () => {
             // given
             let anEntity = {
                 id:"82478014-c96f-49ef-b31c-5408e99df66f",

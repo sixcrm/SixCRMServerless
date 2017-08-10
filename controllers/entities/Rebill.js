@@ -145,6 +145,8 @@ class rebillController extends entityController {
 	//the product schedule needs to be a part of the rebill, not the product
     createRebill(session, product_schedule, day_in_cycle){
 
+        du.debug('Create Rebill', product_schedule);
+
         if(!_.isNumber(day_in_cycle)){
 
             day_in_cycle = this.calculateDayInCycle(session.created);

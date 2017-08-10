@@ -59,7 +59,7 @@ describe('lib/sms-notification-utilities', () => {
             }
         });
 
-        xit('should attempt to send a message when the object is valid', (done) => {
+        it('should attempt to send a message when the object is valid', (done) => {
             // given
             let sms_number = '+381630000000';
 
