@@ -49,7 +49,7 @@ class PermissionTestGenerators {
         let user = {
             acl: [{
                 account: {
-                    id: '1'
+                    id: 'd26c1887-7ad4-4a44-be0b-e80dbce22774'
                 },
                 role: {
                     permissions: {

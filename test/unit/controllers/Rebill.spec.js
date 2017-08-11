@@ -1,5 +1,6 @@
 const PermissionTestGenerators = require('../lib/permission-test-generators');
-const TimestampUtils = require('../../../lib/timestamp');
+const modelgenerator = require('../../model-generator.js');
+const timestamp = require('../../../lib/timestamp');
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
@@ -55,7 +56,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = rebillController.calculateRebill(aDayInCycle, aProductSchedule);
 
             // then
-            expect(rebill.bill_at).to.equal(TimestampUtils.toISO8601((aProductSchedule.schedule[0].period * oneDayInSeconds) + nowInSeconds()));
+            expect(rebill.bill_at).to.equal(timestamp.toISO8601((aProductSchedule.schedule[0].period * oneDayInSeconds) + nowInSeconds()));
             expect(rebill.product).to.be.equal(aProductSchedule.schedule[0].product_id);
             expect(rebill.amount).to.be.equal(aProductSchedule.schedule[0].price);
         });
@@ -78,7 +79,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = rebillController.calculateRebill(aDayInCycle, aProductSchedule);
 
             // then
-            expect(rebill.bill_at).to.equal(TimestampUtils.toISO8601((aProductSchedule.schedule[0].period * oneDayInSeconds) + nowInSeconds()));
+            expect(rebill.bill_at).to.equal(timestamp.toISO8601((aProductSchedule.schedule[0].period * oneDayInSeconds) + nowInSeconds()));
             expect(rebill.product).to.be.equal(aProductSchedule.schedule[0].product_id);
             expect(rebill.amount).to.be.equal(aProductSchedule.schedule[0].price);
         });
@@ -116,7 +117,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = rebillController.calculateRebill(aDayInCycle, aProductSchedule);
 
             // then
-            expect(rebill.bill_at).to.equal(TimestampUtils.toISO8601((aProductSchedule.schedule[2].period * oneDayInSeconds) + nowInSeconds()));
+            expect(rebill.bill_at).to.equal(timestamp.toISO8601((aProductSchedule.schedule[2].period * oneDayInSeconds) + nowInSeconds()));
             expect(rebill.product).to.be.equal(aProductSchedule.schedule[2].product_id);
             expect(rebill.amount).to.be.equal(aProductSchedule.schedule[2].price);
         });
@@ -167,7 +168,7 @@ describe('controllers/Rebill.js', () => {
     });
 
     describe('create rebill', () => {
-        xit('fails when user is not set', () => {
+        it('fails when user is not set', () => {
             // given
             global.user = null;
             let aSession = givenAnySession();
@@ -182,7 +183,7 @@ describe('controllers/Rebill.js', () => {
             });
         });
 
-        xit('fails when user does not have permissions', () => {
+        it('fails when user does not have permissions', () => {
             // given
             PermissionTestGenerators.givenUserWithNoPermissions();
 
@@ -211,11 +212,11 @@ describe('controllers/Rebill.js', () => {
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).catch((error) => {
                 // then
-                expect(error.message).to.equal('Invalid Permissions: user can not create on rebill');
+                expect(error.message).to.equal('[403] Invalid Permissions: user can not create on rebill');
             });
         });
 
-        xit('creates a rebill with a date in the future', () => {
+        it('creates a rebill with a date in the future', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('create','rebill');
             let aSession = givenAnySession();
@@ -237,13 +238,18 @@ describe('controllers/Rebill.js', () => {
                     });
                 }
             });
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
 
             let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
             // when
             return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).then((rebill) => {
                 expect(rebill.id).to.have.lengthOf(36);
-                expect(rebill.bill_at).to.equal(TimestampUtils.toISO8601(nowInSeconds() + aProductSchedule.schedule[0].period * oneDayInSeconds));
+                expect(rebill.bill_at).to.equal(timestamp.toISO8601(nowInSeconds() + aProductSchedule.schedule[0].period * oneDayInSeconds));
             });
         });
     });
@@ -252,7 +258,7 @@ describe('controllers/Rebill.js', () => {
         it('returns an object with correct parameters', () => {
             // given
             let parameters = {
-                bill_at: TimestampUtils.getISO8601(),
+                bill_at: timestamp.getISO8601(),
                 parentsession: '1',
                 product_schedules: [],
                 amount: 100
@@ -298,51 +304,71 @@ describe('controllers/Rebill.js', () => {
             mockery.deregisterAll();
         });
 
-        xit('should add a rebill to bill queue', () => {
-            // given
-            let aRebill = { id: '4b67d096-7404-42b2-94f8-78e6304c6527', created_at: TimestampUtils.getISO8601(), updated_at: TimestampUtils.getISO8601() };
+        it('should add a rebill to bill queue', () => {
 
             process.env.bill_queue_url = 'tesbill';
             process.env.bill_failed_queue_url = 'testfailbill';
             process.env.hold_queue_url = 'testhold';
             process.env.search_indexing_queue_url = 'url';
 
-            // mock sqs utilities that always succeed
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-                sendMessage: (parameters, callback) => {
-                    callback(null, {});
-                    expect(parameters.queue_url).to.equal(process.env.bill_queue_url); // expect queue url to be correct
-                }
+            // given
+            return modelgenerator.randomEntityWithId('rebill').then((aRebill) => {
+
+                // mock sqs utilities that always succeed
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+                    sendMessage: (parameters) => {
+                        return Promise.resolve();
+                    }
+
+                });
+
+                // mock permission utilities that always allow the action
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'permission-utilities.js'), {
+                    validatePermissions: (action, entity) => {
+                        return new Promise((resolve) => resolve(true));
+                    }
+
+                });
+
+                // mock dynamodb utilities that return a single rebill and save always succeeds
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                    queryRecords: (table, parameters, index, callback) => {
+                        callback(null, [aRebill]);
+                    },
+                    saveRecord: (table, entity, callback) => {
+                        callback(null, entity);
+                    }
+                });
+
+                mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
+                    putObject: () => {
+                        return Promise.resolve();
+                    }
+                });
+
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+                    addToSearchIndex: () => {
+                        return Promise.resolve();
+                    }
+                });
+
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
+                    putRecord: () => {
+                        return Promise.resolve();
+                    }
+                });
+
+                let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+                // when
+                return rebillController.addRebillToQueue(aRebill, 'bill').then(() => {
+                    // then
+                    expect(aRebill.processing).to.be.equal('true');
+                    expect(aRebill.entity_type).to.be.equal('rebill');
+                });
 
             });
 
-            // mock permission utilities that always allow the action
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'permission-utilities.js'), {
-                validatePermissions: (action, entity) => {
-                    return new Promise((resolve) => resolve(true));
-                }
-
-            });
-
-            // mock dynamodb utilities that return a single rebill and save always succeeds
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, [aRebill]);
-                },
-                saveRecord: (table, entity, callback) => {
-                    callback(null, entity);
-                }
-            });
-
-            let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-
-            // when
-
-            return rebillController.addRebillToQueue(aRebill, 'bill').then(() => {
-                // then
-                expect(aRebill.processing).to.be.equal('true');
-                expect(aRebill.entity_type).to.be.equal('rebill');
-            });
         });
     });
 
@@ -353,37 +379,54 @@ describe('controllers/Rebill.js', () => {
 
         xit('should resolve', () => {
             // given
-            let rebill_datetime = TimestampUtils.getISO8601();
-            let aRebill = { id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7', created_at: rebill_datetime, updated_at: rebill_datetime};
+            return modelgenerator.randomEntityWithId('rebill').then((aRebill) => {
 
-            PermissionTestGenerators.givenUserWithAllowed('update', 'rebill');
-            process.env.search_indexing_queue_url = 'url';
+                PermissionTestGenerators.givenUserWithAllowed('update', 'rebill');
+                process.env.search_indexing_queue_url = 'url';
 
-            // mock sqs utilities that always succeed
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-                sendMessage: (parameters, callback) => {
-                    callback(null, {});
-                }
+                // mock sqs utilities that always succeed
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+                    sendMessage: () => {
+                        return Promise.resolve();
+                    }
+                });
 
-            });
+                // mock dynamodb utilities that return a single rebill and save always succeeds
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                    queryRecords: (table, parameters, index, callback) => {
+                        callback(null, [aRebill]);
+                    },
+                    saveRecord: (table, entity, callback) => {
+                        callback(null, entity);
+                    }
+                });
 
-            // mock dynamodb utilities that return a single rebill and save always succeeds
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, [aRebill]);
-                },
-                saveRecord: (table, entity, callback) => {
-                    callback(null, entity);
-                }
-            });
+                mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
+                    putObject: () => {
+                        return Promise.resolve();
+                    }
+                });
 
-            let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+                    addToSearchIndex: () => {
+                        return Promise.resolve();
+                    }
+                });
 
-            // when
-            return rebillController.sendMessageAndMarkRebill(aRebill).then(() => {
-                // then
-                expect(aRebill.processing).to.be.equal('true');
-                expect(aRebill.entity_type).to.be.equal('rebill');
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
+                    putRecord: () => {
+                        return Promise.resolve();
+                    }
+                });
+
+                let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+                // when
+                return rebillController.sendMessageAndMarkRebill(aRebill).then(() => {
+                    // then
+                    expect(aRebill.processing).to.be.equal('true');
+                    expect(aRebill.entity_type).to.be.equal('rebill');
+                });
             });
         });
 
@@ -393,8 +436,8 @@ describe('controllers/Rebill.js', () => {
 
             // mock sqs utilities that always fails
             mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-                sendMessage: (parameters, callback) => {
-                    callback(eu.getError('server','Sending message failed.'), null);
+                sendMessage: () => {
+                    return Promise.resolve();
                 }
 
             });
@@ -450,6 +493,7 @@ describe('controllers/Rebill.js', () => {
         return {
             schedule: [
                 {
+                    id: 'f9b855fd-4698-46e8-ae51-53648b8f9963',
                     start: 1,
                     end: 30,
                     period: 1,

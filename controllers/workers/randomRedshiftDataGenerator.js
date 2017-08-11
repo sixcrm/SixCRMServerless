@@ -216,7 +216,7 @@ class RandomRedshiftData extends workerController {
         this.acquireConfigurationObject();
 
         this.random_data_interval = process.env.redshift_random_data_interval;
-        this.s3_bucket = 'sixcrm-'+process.env.stage+'-redshift/sixcrm-random-generator';
+        this.s3_bucket = 'sixcrm-'+process.env.stage+'-random-generator';
 
         return Promise.resolve(true);
 
