@@ -32,35 +32,35 @@ module.exports = class cacheController {
 
             return this.getCache(cache_key).then((cached_result) => {
 
-                if(!_.isNull(cached_result)){
+              if(!_.isNull(cached_result)){
 
-                    du.warning('Redis Hit: '+ cache_key);
+                du.warning('Redis Hit: '+ cache_key);
 
-                    cached_result = this.parseResult(cached_result);
+                cached_result = this.parseResult(cached_result);
 
-                    du.deep('Cached Result', cached_result);
+                du.deep('Cached Result', cached_result);
 
-                    return Promise.resolve(cached_result);
+                return Promise.resolve(cached_result);
 
-                }else{
+              }else{
 
-                    du.warning('Redis Miss: '+ cache_key);
+                du.warning('Redis Miss: '+ cache_key);
 
-                    return data_promise().then((results) => {
+                return data_promise().then((results) => {
 
-                        du.deep('Data Promise Result:', results);
+                  du.deep('Data Promise Result:', results);
 
-                        return this.setCache(cache_key, JSON.stringify(results), expiration).then((reply) => {
+                  return this.setCache(cache_key, JSON.stringify(results), expiration).then((reply) => {
 
-                            du.warning('Redis Set for key "'+cache_key+'": '+reply);
+                    du.warning('Redis Set for key "'+cache_key+'": '+reply);
 
-                            return Promise.resolve(results);
+                    return Promise.resolve(results);
 
-                        });
+                  });
 
-                    });
+                });
 
-                }
+              }
 
             });
 
