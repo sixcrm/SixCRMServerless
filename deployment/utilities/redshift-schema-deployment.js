@@ -228,6 +228,14 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  seedDateDatabase(){
+
+    du.debug('Seed Date Database');
+
+    return this.uploadDateDatabaseToS3().then(() => { this.copyDateDatabaseToRedshift() });
+
+  }
+
   uploadBINDatabaseToS3() {
 
     du.debug('Upload BIN Database');
@@ -260,6 +268,38 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  uploadDateDatabaseToS3() {
+
+    du.debug('Upload Date Database');
+
+    let database_filename = 'd_datetime.csv';
+    let parameters = {
+      Bucket: 'sixcrm-' + global.SixCRM.configuration.stage + '-redshift',
+      Key: database_filename
+    };
+
+    return s3utilities.objectExists(parameters).then((exists) => {
+
+      if (exists) {
+
+        du.debug('Datetime database already exists on S3, skipping.');
+
+        return Promise.resolve();
+
+      } else {
+
+        du.debug('Uploading Date Database to S3 bucket.');
+
+        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seeds/' + database_filename));
+
+        return s3utilities.putObject(parameters);
+
+      }
+
+    })
+
+  }
+
   copyBINDatabaseToRedshift() {
 
     du.debug('Copy BIN Database');
@@ -273,6 +313,30 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       TRUNCATE TABLE d_bin;
       COPY d_bin
       FROM 's3://sixcrm-{{stage}}-redshift/d_bin.csv'
+      credentials 'aws_iam_role=arn:aws:iam::{{aws_account_id}}:role/sixcrm_redshift_copy_role'
+      DELIMITER ',';`;
+
+    query_copy = parserutilities.parse(query_copy, parse_parameters);
+
+    du.info(query_copy);
+
+    return redshiftqueryutilities.query(query_copy);
+
+  }
+
+  copyDateDatabaseToRedshift() {
+
+    du.debug('Copy Date Database');
+
+    let parse_parameters = {
+      stage: process.env.stage,
+      aws_account_id: global.SixCRM.configuration.getAccountIdentifier()
+    };
+
+    let query_copy = `
+      TRUNCATE TABLE d_datetime;
+      COPY d_datetime
+      FROM 's3://sixcrm-{{stage}}-redshift/d_datetime.csv'
       credentials 'aws_iam_role=arn:aws:iam::{{aws_account_id}}:role/sixcrm_redshift_copy_role'
       DELIMITER ',';`;
 
