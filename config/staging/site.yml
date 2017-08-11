@@ -66,6 +66,8 @@ redshift:
   port: 5439
   max: 10
   idle_timeout: 30000
+  randomdata:
+    interval: 300
 
 notifications:
   apn:
