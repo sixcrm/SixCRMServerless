@@ -24,7 +24,7 @@ sqs:
 cloudsearch:
   domainname: 'sixcrm'
 
-#Technical Debt:  Let's eliminate this.
+#Technical Debt:  These are not distinct to the environment... Let's eliminate this.
 lambda:
   endpoint: ''
   function_names:

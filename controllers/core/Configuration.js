@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
 
 module.exports = class Configuration extends ConfigurationUtilities {
@@ -65,6 +66,8 @@ module.exports = class Configuration extends ConfigurationUtilities {
       this.environment_config = result;
 
       this.evaluateStatus();
+
+      return;
 
     });
 
@@ -185,7 +188,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       }else if(source == 's3'){
 
-        return this.getS3EnvironmentConfiguration(field).then((result) => resolve(result));
+        return this.getS3EnvironmentConfiguration(field).then((result) => {
+
+          return resolve(result)
+
+        });
 
       }else if(source == 'native'){
 
@@ -273,7 +280,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
       return result;
 
     }).catch((error) => {
-      du.error(error)
+
+      this.propagateCache('localcache', field, null);
+
+      return null;
+
     });
 
   }
@@ -330,17 +341,21 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       }else{
 
-        let parameters = {
-          Bucket: bucket,
-          Key: this.s3_environment_configuration_file_key,
-          Body: '{}'
-        };
+        return this.s3utilities.assureBucket(bucket).then(() => {
 
-        return this.s3utilities.putObject(parameters).then((result) => {
+          let parameters = {
+            Bucket: bucket,
+            Key: this.s3_environment_configuration_file_key,
+            Body: '{}'
+          };
 
-          du.warning(result);
+          return this.s3utilities.putObject(parameters).then((result) => {
 
-          return this.getS3EnvironmentConfiguration(field);
+            //du.warning(result);
+
+            return this.getS3EnvironmentConfiguration(field);
+
+          });
 
         });
 
@@ -451,6 +466,18 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     du.debug('Propagate To Redis Cache');
 
+    if(_.isUndefined(key)){
+      eu.throwError('server', 'Key must be set');
+    }
+
+    if(_.isUndefined(value)){
+      eu.throwError('server', 'Value must be set');
+    }
+
+    if(!_.isString(value) && !objectutilities.isObject(value)){
+      return Promise.resolve(false);
+    }
+
     return Promise.resolve().then(() => {
 
       let redis_key = this.buildRedisKey(key);
@@ -459,7 +486,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
         this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
       }
 
+      //return this.propagateCache('localcache', key, value);
+
       return this.redisutilities.set(redis_key, value).then((result) => {
+
+        return this.propagateCache('localcache', key, value);
+
+      }).catch((error) => {
 
         return this.propagateCache('localcache', key, value);
 
