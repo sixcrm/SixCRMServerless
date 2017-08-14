@@ -2,7 +2,7 @@
 21.04.2017 A.Zelen Initial table definition
 03.07.2017 A.Zelen Logic from idempotent versioning
 
-TABLE_VERSION 2
+TABLE_VERSION 3
 */
 
 DROP TABLE IF EXISTS f_transactions;
@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS f_transactions;
 DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_transactions';
 
 INSERT INTO sys_sixcrm.sys_table_version
-     SELECT 'f_transactions',2,getdate();
+     SELECT 'f_transactions',3,getdate();
 
 
 CREATE TABLE IF NOT EXISTS f_transactions
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS f_transactions
   amount              DECIMAL(8, 2) NOT NULL encode raw,
   processor_result    VARCHAR(16)   NOT NULL encode ZSTD,
   account             VARCHAR(128)   NOT NULL encode Runlength,
-  transaction_type    VARCHAR(6)    NOT NULL encode Text255,
-  transaction_subtype VARCHAR(6)    NOT NULL encode Text255,
+  transaction_type    VARCHAR(10)    NOT NULL encode Text255,
+  transaction_subtype VARCHAR(10)    NOT NULL encode Text255,
   product_schedule    VARCHAR(36) encode ZSTD,
   subaffiliate_1      VARCHAR(128) encode ZSTD,
   subaffiliate_2      VARCHAR(128) encode ZSTD,
