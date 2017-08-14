@@ -1,5 +1,6 @@
 'use strict';
 const _ = require('underscore');
+const uuidV4 = require('uuid/v4');
 
 require('../../../SixCRM.js');
 
@@ -61,9 +62,10 @@ module.exports = new class activityHelper extends redshiftHelperController {
             let associated_with = promises[2];
 
             let account = this.getActivityAccount(acted_upon);
-            let now = timestamp.getISO8601()
+            let now = timestamp.getISO8601();
 
             let activity = {
+                id: uuidV4(),
                 actor: actor.id,
                 actor_type: actor.type,
                 action: action,
