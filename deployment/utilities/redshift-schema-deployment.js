@@ -212,7 +212,17 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       }
       return Promise.resolve(true);
     })
-    .then(() => this.seedBINDatabase())
+    .then((result) => {
+      return 'Complete';
+    });
+
+  }
+
+  seed_referential(){
+
+    du.debug('Seed Referential data');
+
+    return this.seedBINDatabase()
     .then(() => this.seedDateDatabase())
     .then((result) => {
       return 'Complete';
@@ -224,7 +234,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Seed BIN Database');
 
-    return this.uploadBINDatabaseToS3().then(() => { this.copyBINDatabaseToRedshift() });
+    return this.uploadBINDatabaseToS3().then(() => { return this.copyBINDatabaseToRedshift() });
 
   }
 
@@ -232,7 +242,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Seed Date Database');
 
-    return this.uploadDateDatabaseToS3().then(() => { this.copyDateDatabaseToRedshift() });
+    return this.uploadDateDatabaseToS3().then(() => { return this.copyDateDatabaseToRedshift() });
 
   }
 
@@ -258,7 +268,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
         du.debug('Uploading BIN Database to S3 bucket.');
 
-        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seeds/' + database_filename));
+        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seed_referential/' + database_filename));
 
         return s3utilities.putObject(parameters);
 
@@ -290,7 +300,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
         du.debug('Uploading Date Database to S3 bucket.');
 
-        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seeds/' + database_filename));
+        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seed_referential/' + database_filename));
 
         return s3utilities.putObject(parameters);
 
@@ -320,7 +330,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.info(query_copy);
 
-    return redshiftqueryutilities.query(query_copy);
+    return this.execute(query_copy);
 
   }
 
@@ -344,7 +354,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.info(query_copy);
 
-    return redshiftqueryutilities.query(query_copy);
+    return this.execute(query_copy);
 
   }
 
