@@ -53,7 +53,7 @@ module.exports = class ActivityToEnglishUtilities {
 
         try{
 
-            mvu.validateModel(this.activity_row, global.SixCRM.routes.path('model', 'redshift/activity.json'));
+            mvu.validateModel(this.activity_row, global.SixCRM.routes.path('model', 'endpoints/graph/responses/analytics/activity/activity.json'));
 
         }catch(e){
 
