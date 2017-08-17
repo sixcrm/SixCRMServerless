@@ -164,25 +164,19 @@ class forwardMessageController extends workerController {
                                                     reject(error);
                                                 }
 
-                                                sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle}, (error, data) => {
-
-                                                    if(_.isError(error)){ reject(error) }
-
-                                                    resolve(controller_instance.messages.success);
-
-                                                });
+                                                return sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle})
+                                                    .then(() => {
+                                                        return resolve(controller_instance.messages.success);
+                                                    });
 
                                             });
 
                                         }else{
 
-                                            sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle}, (error, data) => {
-
-                                                if(_.isError(error)){ reject(error); }
-
-                                                resolve(controller_instance.messages.success);
-
-                                            });
+                                            return sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle})
+                                                .then(() => {
+                                                    return resolve(controller_instance.messages.success);
+                                                });
 
                                         }
 
@@ -196,13 +190,10 @@ class forwardMessageController extends workerController {
 
                                                     if(_.isError(error)){ reject(error); }
 
-                                                    sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle}, (error, data) => {
-
-                                                        if(_.isError(error)){ reject(error) }
-
-                                                        resolve(controller_instance.messages.failforward);
-
-                                                    });
+                                                    sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle})
+                                                        .then(() => {
+                                                            return resolve(controller_instance.failforward);
+                                                        });
 
                                                 });
 
