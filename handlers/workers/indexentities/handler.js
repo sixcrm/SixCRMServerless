@@ -33,6 +33,8 @@ module.exports.indexentities = (event, context, callback) => {
 
     }).catch((error) => {
 
+        du.warning('Index Entitites Catch Error', error);
+
         return new LambdaResponse().issueError(error.message, 500, event, error, callback);
 
     });
