@@ -806,21 +806,20 @@ describe('controllers/Entity.js', () => {
     });
 
     describe('isEmail', () => {
-        let entityController;
-
-        before(() => {
-            entityController = new EntityController('entity');
-        });
 
         it('should allow valid mail', () => {
+
             let validEmails = [];
 
             validEmails.push('test@example.com');
             validEmails.push('test@example.co.uk');
 
             for (let email of validEmails) {
-                expect(entityController.isEmail(email)).to.equal(true, `'${email}' should be considered a valid email but is not.`)
+
+              expect(entityController.isEmail(email)).to.equal(true, `'${email}' should be considered a valid email but is not.`)
+
             }
+
         });
 
         it('should disallow invalid mail', () => {

@@ -11,7 +11,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   constructor(stage){
 
-    super(stage);
+    super();
 
     this.setConfigurationInformation();
 

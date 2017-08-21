@@ -8,7 +8,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class ConfigurationUtilities {
 
-  constructor(stage){
+  constructor(){
 
     this.stati = ['loading', 'ready'];
 
