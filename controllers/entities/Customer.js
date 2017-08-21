@@ -307,8 +307,13 @@ class customerController extends entityController {
                     let transactions = [];
                     let pagination = {};
 
+                    transaction_responses = transaction_responses || [];
+
                     transaction_responses.forEach((transaction_response) => {
-                        transaction_response.transactions.forEach((transaction) => {
+
+                        let transactions_from_response = transaction_response.transactions || [];
+
+                        transactions_from_response.forEach((transaction) => {
                             transactions.push(transaction);
                         });
                     });
@@ -367,8 +372,13 @@ class customerController extends entityController {
                 let rebills = [];
                 let pagination = {};
 
+                rebill_lists = rebill_lists || [];
+
                 rebill_lists.forEach((rebill_list) => {
-                    rebill_list.rebills.forEach((rebill) => {
+
+                    let rebills_from_list = rebill_list.rebills || [];
+
+                    rebills_from_list.forEach((rebill) => {
                         rebills.push(rebill);
                     });
                 });
