@@ -252,12 +252,12 @@ functions:
           enabled: true
 
 
-  sesnotifications:
-    handler: handlers/workers/sesnotifications/handler.sesnotifications
-    events:
-      - sns:
-          topicName: SESNotifications
-          displayName: SES Notifications
+  #sesnotifications:
+  #  handler: handlers/workers/sesnotifications/handler.sesnotifications
+  #  events:
+  #    - sns:
+  #        topicName: SESNotifications
+  #        displayName: SES Notifications
 
   #Technical Debt:  This seems broken
   #slackalarm:
