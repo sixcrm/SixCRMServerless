@@ -276,7 +276,8 @@ class customerController extends entityController {
 
         return this.getCustomerSessions(customer).then((sessions) => {
 
-            du.info(sessions);
+            du.debug('Get Customer Sessions');
+            du.debug(sessions);
 
             let rebill_promises = sessions.map((session) => this.rebillController.getRebillsBySessionID(session.id));
 
@@ -284,8 +285,13 @@ class customerController extends entityController {
 
                 let rebill_ids = [];
 
+                rebill_lists = rebill_lists || [];
+
                 rebill_lists.forEach((rebill_list) => {
-                    rebill_list.forEach((rebill) => {
+
+                    let list = rebill_list || [];
+
+                    list.forEach((rebill) => {
                         rebill_ids.push(rebill.id);
                     });
                 });
