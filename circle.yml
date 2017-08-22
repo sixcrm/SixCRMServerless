@@ -80,6 +80,8 @@ deployment:
       #Redshift
       - node ./deployment/redshift/deploy_cluster.js
       - node ./deployment/redshift/deploy_tables.js
+      - node ./deployment/redshift/seed_referential.js
+      - node ./deployment/redshift/seed_tables.js
 
       #Kinesis
       # node ./deployment/kinesis/deploy_kinesis.js $CIRCLE_BRANCH
@@ -130,6 +132,9 @@ deployment:
 
       #Redshift
       - node ./deployment/redshift/deploy_cluster.js
+      - node ./deployment/redshift/deploy_tables.js
+      - node ./deployment/redshift/seed_referential.js
+      - node ./deployment/redshift/seed_tables.js
 
       #here...
       - node ./deployment/redshift/deploy_tables.js
