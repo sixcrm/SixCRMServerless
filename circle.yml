@@ -79,8 +79,6 @@ deployment:
 
       #Redshift
       - node ./deployment/redshift/deploy_cluster.js
-
-      #here...
       - node ./deployment/redshift/deploy_tables.js
 
       #Kinesis
