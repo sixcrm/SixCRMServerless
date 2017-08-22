@@ -50,32 +50,49 @@ deployment:
     branch: staging
     commands:
 
-      #OK
+      #Serverless (Lambdas, API Gateway, Roles)
       - serverless deploy --stage $CIRCLE_BRANCH
 
-      #OK
-      - node ./deployment/sqs/deploy_queues.js $CIRCLE_BRANCH
+      #EC2
+      #- node ./deployment/ec2/destroy_security_groups.js
+      #- node ./deployment/ec2/deploy_security_groups.js
 
-      #OK
-      - node ./deployment/cloudsearch/deploy.js $CIRCLE_BRANCH
-      #- node ./deployment/cloudsearch/purge.js $CIRCLE_BRANCH
+      #S3
+      #- node ./deployment/s3/destroy_buckets.js
+      - node ./deployment/s3/deploy_buckets.js
 
-      #Redshift
-      #Create cluster if does not exist.
-      - node ./deployment/redshift/create_cluster.js $CIRCLE_BRANCH
+      #SQS
+      - node ./deployment/sqs/deploy_queues.js
+      #- node ./deployment/sqs/purge_queues.js
+
+      #CloudSearch
+      - node ./deployment/cloudsearch/deploy.js
+      #- node ./deployment/cloudsearch/purge.js
+
+      #ElastiCache
+      - node ./deployment/elasticache/deploy.js
+      #- node ./deployment/elasticache/purge.js
 
       #DynamoDB
-      #- node ./deployment/dynamodb/purge_tables.js $CIRCLE_BRANCH
-      - node ./deployment/dynamodb/deploy_tables.js $CIRCLE_BRANCH
-      - node ./deployment/dynamodb/deploy_seeds.js $CIRCLE_BRANCH
+      #- node ./deployment/dynamodb/purge_tables.js
+      - node ./deployment/dynamodb/deploy_tables.js
 
       #Redshift
-      #Create cluster if does not exist.
-      - node ./deployment/redshift/create_cluster.js $CIRCLE_BRANCH
-      #Create tables.
-      #- node ./deployment/redshift/deploy_redshift.js $CIRCLE_BRANCH
+      - node ./deployment/redshift/deploy_cluster.js
+
+      #here...
+      - node ./deployment/redshift/deploy_tables.js
+
+      #Kinesis
+      # node ./deployment/kinesis/deploy_kinesis.js $CIRCLE_BRANCH
+
+
+      #Note:  This must be last.
+      - node ./deployment/dynamodb/deploy_seeds.js $CIRCLE_BRANCH
+
 
       # Technical Debt:  Add Elasticache and NAT Instance (where necessary)
+      # Technical Debt:  Use Route53 for resource mappings
       # Technical Debt: API Gateway Custom Domain needs to be mapped to new domain when creating and "hard updating"
 
       - export SIX_VERBOSE=0 && npm run test-integration
