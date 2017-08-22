@@ -9,7 +9,7 @@ let addressInputType = require('../address/addressInputType')
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'CustomerInputType',
     fields: () => ({
-        id:					{ type: new GraphQLNonNull(GraphQLString) },
+        id:					{ type: GraphQLString },
         firstname:			{ type: new GraphQLNonNull(GraphQLString) },
         lastname:			{ type: new GraphQLNonNull(GraphQLString) },
         email:				{ type: new GraphQLNonNull(GraphQLString) },
