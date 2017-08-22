@@ -153,7 +153,9 @@ class CloudsearchDeployment{
 
         if(result == false){
 
-          return this.cloudsearchutilities.createDomain().then(() => this.cloudsearchutilities.waitFor('ready'));
+          return this.cloudsearchutilities.createDomain()
+            .then(() => this.cloudsearchutilities.waitFor('ready'))
+            .then(() => this.cloudsearchutilities.saveDomainConfiguration())
 
         }else{
 
