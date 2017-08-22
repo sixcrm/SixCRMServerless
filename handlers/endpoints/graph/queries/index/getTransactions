@@ -2,8 +2,8 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query {
-		transactionlist {
+	{
+		transactionlist (pagination:{limit: \"10\"}){
 			transactions {
 				id,
 				alias,
@@ -122,6 +122,6 @@
 				end_cursor,
 				has_next_page
 			}
-		},
+		}
 	}"
 }

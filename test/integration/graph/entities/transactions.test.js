@@ -53,6 +53,9 @@ describe('Graph '+entity+' Test', function() {
               it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
                   var query = tu.getQuery(test.query);
 
+                  du.warning(query);
+                  du.info(endpoint+'graph/'+account);
+                  du.info(test_jwt);
                   this_request.post('graph/'+account)
 							.set('Authorization', test_jwt)
 							.send(query)
