@@ -35,7 +35,8 @@
 			customer_service {
 				email,
 				url,
-				description
+				description,
+				phone
 			},
 			created_at,
 			updated_at

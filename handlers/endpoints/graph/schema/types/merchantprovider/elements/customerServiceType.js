@@ -17,6 +17,10 @@ module.exports.graphObj = new GraphQLObjectType({
         description:{
             type: GraphQLString,
             description: 'The merchant provider\'s customer service description'
+        },
+        phone:{
+            type: GraphQLString,
+            description: 'The merchant provider\'s customer service phone number'
         }
     }),
     interfaces: []

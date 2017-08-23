@@ -36,7 +36,8 @@
 				customer_service:{
 					email:\"customerservice.isnt.great@dot.com\",
 					url:\"http://dot.com/whatever/forwardslash\",
-					description:\"Dot com dot com\"
+					description:\"Dot com dot com\",
+					phone:\"1234567890\",
 				}
 			}
 		) {
@@ -71,7 +72,8 @@
 			customer_service {
 				email,
 				url,
-				description
+				description,
+				phone
 			},
 			created_at,
 			updated_at

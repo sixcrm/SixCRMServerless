@@ -18,10 +18,6 @@
 		"password": {
 			"type":"string"
 		},
-		"endpoint": {
-			"type":"string",
-			"format":"uri"
-		},
 		"provider":{
 			"type":"string"
 		},

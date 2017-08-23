@@ -29,6 +29,30 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The provider password.',
         },
+        company: {
+            type: GraphQLString,
+            description: 'Company.',
+        },
+        threepl_key: {
+            type: GraphQLString,
+            description: 'ThreePLKey.',
+        },
+        facility_id: {
+            type: GraphQLString,
+            description: 'FacilityID.',
+        },
+        threepl_id: {
+            type: GraphQLString,
+            description: 'ThreePLID.',
+        },
+        customer_id: {
+            type: GraphQLString,
+            description: 'CustomerID.',
+        },
+        return_address: {
+            type: GraphQLString,
+            description: 'Return Address.',
+        },
         endpoint: {
 	  type: new GraphQLNonNull(GraphQLString),
             description:'The provider endpoint.'
