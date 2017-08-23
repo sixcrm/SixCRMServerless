@@ -36,7 +36,8 @@
 				customer_service:{
 					email:\"customerservice@dot.com\",
 					url:\"http://dot.com/whatever\",
-					description:\"Dot com\"
+					description:\"Dot com\",
+					phone:\"0000000000\",
 				}
 			}
 		) {
@@ -71,7 +72,8 @@
 			customer_service {
 				email,
 				url,
-				description
+				description,
+				phone
 			},
 			created_at,
 			updated_at
