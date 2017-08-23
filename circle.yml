@@ -134,7 +134,7 @@ deployment:
       #Redshift
       - node ./deployment/redshift/deploy_cluster.js
       - node ./deployment/redshift/deploy_tables.js
-      - echo "Pausing to allow queries to complete..."; && sleep 3m;
+      - echo "Pausing to allow queries to complete..." && sleep 180
       - node ./deployment/redshift/seed_referential.js
       - node ./deployment/redshift/seed_tables.js
 
