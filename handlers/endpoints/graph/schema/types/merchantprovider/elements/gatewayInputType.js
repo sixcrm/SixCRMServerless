@@ -19,7 +19,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
             description: 'The name of the merchant provider gateway password.',
         },
         endpoint: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: GraphQLString,
             description: 'The name of the merchant provider gateway endpoint.',
         },
         additional:{
