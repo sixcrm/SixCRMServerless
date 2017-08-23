@@ -10,6 +10,12 @@
 			password,
 			endpoint,
 			provider,
+			company,
+            threepl_key,
+            facility_id,
+            threepl_id,
+            customer_id,
+            return_address,
 			created_at,
 			updated_at
 		} 

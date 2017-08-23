@@ -3,13 +3,19 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation { 
-		updatefulfillmentprovider ( fulfillmentprovider: { id: \"2cd22324-4619-4f98-8319-f6f3cabc62d8\", name: \"test2\", username: \"test\", password: \"test\", endpoint: \"test\", provider: \"HASHTAG\"}) { 
+		updatefulfillmentprovider ( fulfillmentprovider: { id: \"2cd22324-4619-4f98-8319-f6f3cabc62d8\", name: \"test2\", username: \"test\", password: \"test\", endpoint: \"test\", provider: \"HASHTAG\", customer_id:\"9001\"}) {
 			id, 
 			name,
 			provider,
 			username,
 			password,
 			endpoint,
+			company,
+            threepl_key,
+            facility_id,
+            threepl_id,
+            customer_id,
+            return_address,
 			created_at,
 			updated_at
 		} 

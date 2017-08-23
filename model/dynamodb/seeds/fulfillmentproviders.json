@@ -5,6 +5,12 @@
         "provider":"HASHTAG",
         "username":"demo",
         "password":"password",
+        "company":"A Company",
+        "threepl_key":"{2b8d696e-9ee1-4a7d-8655-2e7979dfc7f3}",
+        "facility_id":"42",
+        "threepl_id":"123",
+        "customer_id":"9000",
+        "return_address":"A return address. USA",
         "endpoint":"http://whatever.com",
         "created_at":"2017-04-06T18:40:41.405Z",
         "updated_at":"2017-04-06T18:41:12.521Z"

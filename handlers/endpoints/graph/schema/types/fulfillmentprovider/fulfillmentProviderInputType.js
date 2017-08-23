@@ -11,6 +11,12 @@ module.exports.graphObj = new GraphQLInputObjectType({
         username:			{ type: new GraphQLNonNull(GraphQLString) },
         password:			{ type: new GraphQLNonNull(GraphQLString) },
         endpoint:			{ type: new GraphQLNonNull(GraphQLString) },
-        provider:			{ type: new GraphQLNonNull(GraphQLString) }
+        provider:			{ type: new GraphQLNonNull(GraphQLString) },
+        company:            { type: GraphQLString },
+        threepl_key:        { type: GraphQLString },
+        facility_id:        { type: GraphQLString },
+        threepl_id:         { type: GraphQLString },
+        customer_id:        { type: GraphQLString },
+        return_address:     { type: GraphQLString }
     })
 });
