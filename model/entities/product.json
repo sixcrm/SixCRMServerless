@@ -22,12 +22,6 @@
 		"ship":{
 			"type":"boolean"
 		},
-		"shipping_delay":{
-			"type": "integer",
-			"minimum": 0,
-			"exclusiveMinimum": false
-		},
-		"fulfillment_provider":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
