@@ -46,7 +46,70 @@ deployment:
   production:
     branch: production
     commands:
-      - ./deployment/environment/deploy_production.sh
+
+      #Serverless (Lambdas, API Gateway, Roles)
+      - serverless deploy --stage $CIRCLE_BRANCH
+
+      ###########
+      #EC2
+      #- node ./deployment/ec2/destroy_security_groups.js
+      - node ./deployment/ec2/deploy_security_groups.js
+      ###########
+
+      ###########
+      #S3
+      #- node ./deployment/s3/destroy_buckets.js
+      - node ./deployment/s3/deploy_buckets.js
+      ###########
+
+      ###########
+      #SQS
+      - node ./deployment/sqs/deploy_queues.js
+      #- node ./deployment/sqs/purge_queues.js
+      ###########
+
+      ###########
+      #CloudSearch
+      - node ./deployment/cloudsearch/deploy.js
+      #- node ./deployment/cloudsearch/purge.js
+      ###########
+
+      ###########
+      #ElastiCache
+      - node ./deployment/elasticache/deploy.js
+      #- node ./deployment/elasticache/purge.js
+      ###########
+
+      ###########
+      #DynamoDB
+      #- node ./deployment/dynamodb/purge_tables.js
+      - node ./deployment/dynamodb/deploy_tables.js
+      ###########
+
+      ##########
+      #Redshift
+      - node ./deployment/redshift/deploy_cluster.js
+      - node ./deployment/redshift/deploy_tables.js
+
+      #Technical Debt:  Eliminate this.
+      - echo "Pausing to allow queries to complete..." && sleep 180
+
+      - node ./deployment/redshift/seed_referential.js
+      - node ./deployment/redshift/seed_tables.js
+      ###########
+
+      ###########
+      #Kinesis
+      - node ./deployment/kinesis/deploy_streams.js
+      ###########
+
+      ###########
+      #Dynamo Seeds
+      - node ./deployment/dynamodb/deploy_seeds.js
+      ###########
+
+      - export SIX_VERBOSE=0 && npm run test-integration
+
   staging:
     branch: staging
     commands:
@@ -69,7 +132,7 @@ deployment:
       ###########
       #SQS
       - node ./deployment/sqs/deploy_queues.js
-      - node ./deployment/sqs/purge_queues.js
+      #- node ./deployment/sqs/purge_queues.js
       ###########
 
       ###########

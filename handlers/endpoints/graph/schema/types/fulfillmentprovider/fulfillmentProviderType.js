@@ -54,7 +54,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'Return Address.',
         },
         endpoint: {
-	  type: new GraphQLNonNull(GraphQLString),
+	        type: GraphQLString,
             description:'The provider endpoint.'
         },
         created_at: {
