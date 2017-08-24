@@ -32,7 +32,7 @@ provider:
     redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
 
 plugins:
-  - serverless-dynamodb-local
+  - serverless-dynamodb-local 
   - serverless-prune-plugin
 
 custom:
