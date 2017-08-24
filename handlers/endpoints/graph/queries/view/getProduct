@@ -9,6 +9,7 @@
 			sku,
 			ship,
 			shipping_delay,
+			default_price,
 			fulfillment_provider {
 				id,
 				name,

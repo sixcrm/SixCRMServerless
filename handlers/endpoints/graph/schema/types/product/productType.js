@@ -1,6 +1,7 @@
 'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLString = require('graphql').GraphQLString;
 
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
@@ -30,6 +31,10 @@ module.exports.graphObj = new GraphQLObjectType({
         shipping_delay: {
             type: GraphQLString,
             description: 'The number of seconds to delay shipping after a transaction.',
+        },
+        default_price: {
+            type: GraphQLFloat,
+            description: 'A default price for product.',
         },
         fulfillment_provider: {
             type: fulfillmentProviderType.graphObj,
