@@ -17,6 +17,10 @@ class ProductController extends entityController {
 
       du.debug('Get Fulfillment Provider');
 
+      if (!product.fulfillment_provider) {
+          return Promise.resolve(null); //fulfillment_provider is optional
+      }
+
       return this.fulfillmentProviderController.get(product.fulfillment_provider);
 
     }
