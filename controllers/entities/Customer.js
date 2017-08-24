@@ -254,6 +254,10 @@ class customerController extends entityController {
 
         return this.getCustomerSessions(customer).then((sessions) => {
 
+            if (!sessions) {
+                return [];
+            }
+
             let rebill_promises = sessions.map((session) => this.rebillController.getRebillsBySessionID(session.id));
 
             return Promise.all(rebill_promises);
@@ -278,6 +282,10 @@ class customerController extends entityController {
 
             du.debug('Get Customer Sessions');
             du.debug(sessions);
+
+            if (!sessions) {
+                return this.createEndOfPaginationResponse('transactions', []);
+            }
 
             let rebill_promises = sessions.map((session) => this.rebillController.getRebillsBySessionID(session.id));
 
@@ -305,7 +313,6 @@ class customerController extends entityController {
                 return Promise.all(transaction_promises).then(transaction_responses => {
 
                     let transactions = [];
-                    let pagination = {};
 
                     transaction_responses = transaction_responses || [];
 
@@ -318,14 +325,7 @@ class customerController extends entityController {
                         });
                     });
 
-                    pagination.count = transactions.length;
-                    pagination.end_cursor = '';
-                    pagination.has_next_page = false;
-
-                    return {
-                        transactions: transactions,
-                        pagination: pagination
-                    }
+                    return this.createEndOfPaginationResponse('transactions', transaction_responses);
 
                 });
 
@@ -365,12 +365,15 @@ class customerController extends entityController {
     listCustomerRebills(customer, pagination) {
         return this.getCustomerSessions(customer).then((sessions) => {
 
+            if (!sessions) {
+                return this.createEndOfPaginationResponse('rebills', []);
+            }
+
             let rebill_promises = sessions.map((session) => this.rebillController.listRebillsBySessionID(session.id));
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
 
                 let rebills = [];
-                let pagination = {};
 
                 rebill_lists = rebill_lists || [];
 
@@ -383,17 +386,25 @@ class customerController extends entityController {
                     });
                 });
 
-                pagination.count = rebills.length;
-                pagination.end_cursor = '';
-                pagination.has_next_page = false;
-
-                return {
-                    rebills: rebills,
-                    pagination: pagination
-                }
+                return this.createEndOfPaginationResponse('rebills', rebills);
             });
 
         });
+    }
+
+    createEndOfPaginationResponse(items_name, items) {
+        let pagination = {};
+
+        pagination.count = items.length;
+        pagination.end_cursor = '';
+        pagination.has_next_page = false;
+
+        let response = {};
+
+        response[items_name] = items;
+        response['pagination'] = pagination;
+
+        return Promise.resolve(response);
     }
 }
 
