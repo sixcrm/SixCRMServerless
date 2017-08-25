@@ -407,7 +407,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             expect(response)
-                .to.equal('[{"id":1,"fields":{"foo":"bar","name":"Alice","suggestion_field_1":"Alice","id":1},"type":"add"}]');
+                .to.equal('[{"id":1,"fields":{"foo":"bar","name":"Alice","suggestion_field_1":"Alice"},"type":"add"}]');
         });
 
         it('succeeds for objects', () => {
@@ -429,7 +429,7 @@ describe('lib/indexing-utilities', () => {
 
             // then
             expect(response)
-                .to.equal('[{"id":1,"fields":{"foo":"{\\"obj\\":\\"val\\"}","name":"Alice","suggestion_field_1":"Alice","id":1},"type":"add"}]');
+                .to.equal('[{"id":1,"fields":{"foo":"{\\"obj\\":\\"val\\"}","name":"Alice","suggestion_field_1":"Alice"},"type":"add"}]');
         });
 
         it('succeeds for multiple entities', () => {
@@ -459,8 +459,8 @@ describe('lib/indexing-utilities', () => {
             // then
             expect(response)
                 .to.equal('[' +
-                '{"id":1,"fields":{"foo":"bar","firstname":"Gilford","lastname":"Twatson","suggestion_field_1":"Gilford Twatson","id":1},"type":"add"},' +
-                '{"id":2,"fields":{"foo":"baz","name":"Bob","suggestion_field_1":"Bob","id":2},"type":"delete"}' +
+                '{"id":1,"fields":{"foo":"bar","firstname":"Gilford","lastname":"Twatson","suggestion_field_1":"Gilford Twatson"},"type":"add"},' +
+                '{"id":2,"fields":{"foo":"baz","name":"Bob","suggestion_field_1":"Bob"},"type":"delete"}' +
                 ']');
         });
     });
