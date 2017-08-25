@@ -1,0 +1,12 @@
+{
+	"title": "Checkout",
+	"type": "object",
+	"properties": {
+		"campaign":{"$ref": "../definitions/uuidv4.json"},
+		"affiliates":{"$ref": "components/affiliates"},
+		"product_schedules":{"$ref": "components/product_schedules"},
+		"customer":{"$ref": "components/customer"},
+		"creditcard":{"$ref": "components/creditcard"}
+	},
+	"required":["campaign", "product_schedules", "customer", "creditcard"]
+}

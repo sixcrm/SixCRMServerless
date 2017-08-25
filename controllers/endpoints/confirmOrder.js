@@ -1,9 +1,10 @@
 'use strict';
 const _ = require("underscore");
-const Validator = require('jsonschema').Validator;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+
 
 var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
@@ -45,7 +46,7 @@ class confirmOrderController extends transactionEndpointController{
 
         return this.preprocessing(event)
 			.then((event) => this.acquireQuerystring(event))
-			.then((event) => this.validateInput(this.queryString, this.validateEventSchema))
+			.then(() => this.validateInput(this.queryString, this.validateEventSchema))
 			.then(this.confirmOrder)
       .then((result_object) => this.pushToRedshift(result_object))
 			.then((results) => this.handleNotifications(results));
@@ -56,11 +57,7 @@ class confirmOrderController extends transactionEndpointController{
 
         du.debug('Validate Event Schema');
 
-        let confirm_order_schema = global.SixCRM.routes.include('model', 'endpoints/confirmorder');
-
-        let v = new Validator();
-
-        return v.validate(querystring, confirm_order_schema);
+        return modelvalidationutilities.validateModel(querystring,  global.SixCRM.routes.path('model', 'endpoints/confirmorder.json'));
 
     }
 

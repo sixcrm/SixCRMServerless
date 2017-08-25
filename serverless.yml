@@ -32,7 +32,7 @@ provider:
     redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
 
 plugins:
-  - serverless-dynamodb-local 
+  - serverless-dynamodb-local
   - serverless-prune-plugin
 
 custom:
@@ -397,6 +397,17 @@ functions:
          method: get
          cors: true
 
+  checkout:
+    handler: handlers/endpoints/checkout/handler.checkout
+    events:
+      - http:
+         path: checkout/{account}
+         method: post
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
 
 ########################
 # Resource definitions for required system resources
