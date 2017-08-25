@@ -270,6 +270,8 @@ class customerController extends entityController {
     // we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
     listTransactionsByCustomer(customer, pagination){
 
+        du.debug('List Transactions By Customer');
+
         let customer_id = customer;
 
         if(_.has(customer, 'id')){
@@ -290,6 +292,8 @@ class customerController extends entityController {
             let rebill_promises = sessions.map((session) => this.rebillController.getRebillsBySessionID(session.id));
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
+
+                du.debug('Rebill lists are', rebill_lists);
 
                 let rebill_ids = [];
 
@@ -316,12 +320,20 @@ class customerController extends entityController {
 
                     transaction_responses = transaction_responses || [];
 
+                    du.debug('Transactions responses are', transaction_responses);
+
                     transaction_responses.forEach((transaction_response) => {
 
                         let transactions_from_response = transaction_response.transactions || [];
 
+                        du.debug('Transactions are', transactions_from_response);
+
                         transactions_from_response.forEach((transaction) => {
-                            transactions.push(transaction);
+                            if (transaction && _.has(transaction, 'id')) {
+                                transactions.push(transaction);
+                            } else {
+                                du.warning('Invalid transaction', transaction);
+                            }
                         });
                     });
 
