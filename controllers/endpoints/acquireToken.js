@@ -5,6 +5,7 @@ const Validator = require('jsonschema').Validator;
 const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
@@ -43,14 +44,9 @@ class acquireTokenController extends transactionEndpointController {
 
     validateEventSchema(parameters){
 
-        du.debug('Validate Event Schema');
+      du.debug('Validate Event Schema');
 
-        let v = new Validator();
-        let schema = global.SixCRM.routes.include('model', 'endpoints/token');
-        let affiliates_schema = global.SixCRM.routes.include('model', 'endpoints/components/affiliates');
-
-        v.addSchema(affiliates_schema, '/affiliates');
-        return v.validate(parameters, schema);
+      return modelvalidationutilities.validateModel(parameters,  global.SixCRM.routes.path('model', 'endpoints/token.json'));
 
     }
 
