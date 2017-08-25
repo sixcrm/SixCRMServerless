@@ -1,6 +1,5 @@
 'use strict';
 const _ = require("underscore");
-const Validator = require('jsonschema').Validator;
 
 const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
