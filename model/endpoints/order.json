@@ -1,23 +1,12 @@
 {
 	"title": "Order",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {
-			"type": "string",
-			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
-		}
-	},
 	"properties": {
 		"session":{
-			"type":{"$ref": "#/definitions/UUIDv4"}
+			"type":{"$ref": "../definitions/uuidv4.json"}
 		},
-		"product_schedules":{
-			"type": "array",
-      "minItems": 1,
-      "items": {"$ref": "#/definitions/UUIDv4"},
-      "uniqueItems": true
-		},
-		"creditcard":{"$ref": "/creditcard"}
+		"product_schedules":{"$ref": "components/product_schedules"},
+		"creditcard":{"$ref": "components/creditcard"}
 	},
 	"required":["creditcard", "session", "product_schedules"]
 }

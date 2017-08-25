@@ -5,6 +5,7 @@ const Validator = require('jsonschema').Validator;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
+const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
@@ -75,10 +76,9 @@ class createUpsellController extends transactionEndpointController{
 
     validateEventSchema(event){
 
-        let upsell_schema = global.SixCRM.routes.include('model', 'endpoints/upsell');
-        var v = new Validator();
+        du.debug('Validate Event Schema');
 
-        return v.validate(event, upsell_schema);
+        return modelvalidationutilities.validateModel(event,  global.SixCRM.routes.path('model', 'endpoints/upsell.json'));
 
     }
 

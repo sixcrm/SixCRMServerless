@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/affiliates",
+	"id":"/components/affiliates",
 	"title": "Affiliates",
 	"type": "object",
 	"properties": {
