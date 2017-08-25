@@ -13,6 +13,6 @@ module.exports.graphObj = new GraphQLInputObjectType({
         ship:					{ type: new GraphQLNonNull(GraphQLString) },
         shipping_delay: 		{ type: GraphQLString },
         fulfillment_provider: 	{ type: GraphQLString },
-        default_price:       	{ type: GraphQLFloat },
+        default_price:       	{ type: GraphQLFloat }
     })
 });
