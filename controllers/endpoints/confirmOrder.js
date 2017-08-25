@@ -1,6 +1,5 @@
 'use strict';
 const _ = require("underscore");
-const Validator = require('jsonschema').Validator;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -47,7 +46,7 @@ class confirmOrderController extends transactionEndpointController{
 
         return this.preprocessing(event)
 			.then((event) => this.acquireQuerystring(event))
-			.then((event) => this.validateInput(this.queryString, this.validateEventSchema))
+			.then(() => this.validateInput(this.queryString, this.validateEventSchema))
 			.then(this.confirmOrder)
       .then((result_object) => this.pushToRedshift(result_object))
 			.then((results) => this.handleNotifications(results));
