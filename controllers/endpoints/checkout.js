@@ -39,6 +39,11 @@ class checkoutController extends transactionEndpointController{
         }
 
         event['queryStringParameters'] = 'session='+lead_response.id;
+
+        if(_.isString(event.body)){
+          event.body = JSON.parse(event.body);
+        }
+
         event.body['session'] = lead_response.id;
 
       })
