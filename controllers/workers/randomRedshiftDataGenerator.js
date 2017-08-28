@@ -498,7 +498,7 @@ class RandomRedshiftData extends workerController {
             queries.push(
                 `COPY ${table_name}
                 FROM 's3://${this.s3_bucket}/${s3_filename}'
-                credentials 'aws_iam_role=arn:aws:iam::${{aws_account_id}}:role/sixcrm_redshift_copy_role'
+                credentials 'aws_iam_role=arn:aws:iam::${aws_account_id}:role/sixcrm_redshift_copy_role'
                 json 'auto'
                 timeformat 'YYYY-MM-DDTHH:MI:SS'`);
 
