@@ -337,7 +337,7 @@ class customerController extends entityController {
                         });
                     });
 
-                    return this.createEndOfPaginationResponse('transactions', transaction_responses);
+                    return this.createEndOfPaginationResponse('transactions', transactions);
 
                 });
 
@@ -405,6 +405,9 @@ class customerController extends entityController {
     }
 
     createEndOfPaginationResponse(items_name, items) {
+
+        du.debug('Create End Of Pagination Response', items_name, items);
+
         let pagination = {};
 
         pagination.count = items.length;
@@ -415,6 +418,8 @@ class customerController extends entityController {
 
         response[items_name] = items;
         response['pagination'] = pagination;
+
+        du.debug('Returning', response);
 
         return Promise.resolve(response);
     }
