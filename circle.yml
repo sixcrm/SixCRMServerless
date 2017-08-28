@@ -92,7 +92,7 @@ deployment:
       - node ./deployment/redshift/deploy_tables.js
 
       #Technical Debt:  Eliminate this.
-      - echo "Pausing to allow queries to complete..." && sleep 180
+      - echo "Pausing to allow queries to complete..." && sleep 240
 
       - node ./deployment/redshift/seed_referential.js
       - node ./deployment/redshift/seed_tables.js
