@@ -2,6 +2,15 @@ aws:
   region: 'us-east-1'
   account: '821071795213'
 
+ses:
+  hostname: email-smtp.us-east-1.amazonaws.com
+  port: 465
+  username: 'ses-smtp-user.20170828-134737'
+  smtp_username: 'AKIAJBWKAMDAKGAY54KA'
+  smtp_password: 'AhBhoxx0EgAKvlqh3pLTl8W51I/af2HfkvS6OryDJuoj'
+  default_sender_email: 'staging-info@sixcrm.com'
+  default_sender_name: 'Staging SixCRM'
+
 #Technical Debt:  This sort of thing should be encrypted...
 jwt:
   issuer: 'https://staging-api.sixcrm.com'

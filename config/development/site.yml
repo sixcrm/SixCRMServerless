@@ -2,6 +2,15 @@ aws:
   region: 'us-east-1'
   account: '068070110666'
 
+ses:
+  hostname: email-smtp.us-east-1.amazonaws.com
+  port: 465
+  username: 'ses-smtp-user.20170828-134442'
+  smtp_username: 'AKIAJEYLHSMCFIJYFMXQ'
+  smtp_password: 'AhiiqjfmaJ9M2fD3zhzbjt17Da6xkOpYD2b1bkiovvrm'
+  default_sender_email: 'development-info@sixcrm.com'
+  default_sender_name: 'Development SixCRM'
+
 jwt:
   issuer: 'https://development-api.sixcrm.com'
   development_bypass: 'deathstalker'
