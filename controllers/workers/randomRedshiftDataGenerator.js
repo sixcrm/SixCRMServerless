@@ -493,8 +493,14 @@ class RandomRedshiftData extends workerController {
             var s3_filename = this.getS3FileName(k);
             var table_name = this.getRedshiftTableName(k)
 
-            //Technical Debt:  Make this use a role
-            queries.push(`COPY ${table_name} FROM 's3://${this.s3_bucket}/${s3_filename}' credentials 'aws_access_key_id=AKIAIP6FAI6MVLVAPRWQ;aws_secret_access_key=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' json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'`);
+            let aws_account_id = global.SixCRM.configuration.getAccountIdentifier();
+
+            queries.push(
+                `COPY ${table_name}
+                FROM 's3://${this.s3_bucket}/${s3_filename}'
+                credentials 'aws_iam_role=arn:aws:iam::${aws_account_id}:role/sixcrm_redshift_copy_role'
+                json 'auto'
+                timeformat 'YYYY-MM-DDTHH:MI:SS'`);
 
         }
 
