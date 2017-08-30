@@ -16,13 +16,17 @@ class emailTemplateController extends entityController {
 
     getSMTPProvider(emailtemplate){
 
-        du.debug('Get SMTP Provider');
+        du.debug('Get SMTP Provider', emailtemplate);
 
         if(_.has(emailtemplate, 'smtp_provider')){
+
+            du.debug('Get SMTP Provider - returning from controller.');
 
             return this.SMTPProviderController.get(emailtemplate.smtp_provider);
 
         }else{
+
+            du.debug('Get SMTP Provider - returning null.');
 
             return Promise.resolve(null);
 
