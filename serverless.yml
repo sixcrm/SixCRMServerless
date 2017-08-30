@@ -257,7 +257,7 @@ functions:
     events:
       - sns:
         topicName: SESNotifications
-        displayName: 'SES Notifications'
+        displayName: SES Notifications
 
   #Technical Debt:  This seems broken
   #slackalarm:
