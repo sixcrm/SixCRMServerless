@@ -38,7 +38,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (emailtemplate) => {
                 let emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 
-                emailTemplateController.getSMTPProvider(emailtemplate)
+                return emailTemplateController.getSMTPProvider(emailtemplate);
             }
         },
         created_at: {
