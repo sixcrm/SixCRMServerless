@@ -724,6 +724,32 @@ class userController extends entityController {
 
     }
 
+    getFullName(user){
+
+      du.debug('Get Full Name');
+
+      let full_name = null;
+
+      if(_.has(user, 'first_name')){
+
+        full_name = user.first_name;
+
+      }
+
+      if(_.has(user, 'last_name')){
+
+        if(_.isString(full_name)){
+          full_name += ' '+user.last_name;
+        }else{
+          full_name = user.last_name;
+        }
+
+      }
+
+      return full_name;
+
+    }
+
 }
 
 module.exports = new userController();

@@ -24,9 +24,9 @@ class SystemMailer{
 
       du.debug('Send Email');
 
-      this.validateParameters(parameters);
-
       parameters = this.assureOptionalParameters(parameters);
+
+      this.validateParameters(parameters);
 
       return this.send(parameters);
 

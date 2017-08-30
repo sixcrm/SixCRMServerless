@@ -14,6 +14,7 @@ const notificationController = global.SixCRM.routes.include('controllers', 'enti
 const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const userAclController = global.SixCRM.routes.include('controllers', 'entities/UserACL');
+const userController = global.SixCRM.routes.include('controllers', 'entities/User');
 
 class NotificationProvider {
 
@@ -189,7 +190,7 @@ class NotificationProvider {
                         let email_address = this.settingsDataFor('email', user_settings);
 
                         if (email_address) {
-                            notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
+                            notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address, userController.getFullName(user)));
                         }
                     }
 
