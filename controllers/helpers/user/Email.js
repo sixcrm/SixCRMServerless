@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+//Technical Debt:  Deprecated:  Use SystemMailer
 const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/SMTP.js');
 
 module.exports = class userEmailHelperController {
@@ -67,6 +68,7 @@ module.exports = class userEmailHelperController {
 
                 email_template_promises = email_templates.map((email_template) => {
 
+                  //Technical Debt:  Deprecated. Use SystemMailer
                     return this.emailTemplateController.getSMTPProvider(email_template).then((smtp_provider) => {
 
                         let parsed_body = parserutilities.parse(email_template.body, data);

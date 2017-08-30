@@ -64,6 +64,7 @@ describe('lib/notification-utilities', () => {
             let email_address = 'user@test.com';
             let recepient_name = 'Big Feller'
 
+            //Technical Debt:  This should probably mock the SystemMailer
             mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
                 send: (message) => {
                   expect(message).to.be.defined;
