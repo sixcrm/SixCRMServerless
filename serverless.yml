@@ -256,8 +256,8 @@ functions:
     handler: handlers/workers/sesnotifications/handler.sesnotifications
     events:
       - sns:
-        topicName: SESNotifications
-        displayName: SES Notifications
+          topicName: SESNotifications
+          displayName: SES Notifications
 
   #Technical Debt:  This seems broken
   #slackalarm:
