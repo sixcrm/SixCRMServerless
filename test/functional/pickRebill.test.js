@@ -51,7 +51,6 @@ describe('Pick Rebill', function () {
 
     it('should move eligible messages to bill queue', function () {
         // given
-        // let rebill = { id: uuidV4(), created_at: TimestampUtils.getISO8601(), updated_at: TimestampUtils.getISO8601() };
         let rebill = randomRebill;
 
         mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
@@ -78,7 +77,7 @@ describe('Pick Rebill', function () {
     });
 
     function pickrebill() {
-        process.env.bill_queue_url = 'http://localhost:9324/queue/bill';
+        process.env.bill_queue = 'bill';
         return global.SixCRM.routes.include('controllers', 'workers/pickRebill');
     }
 });

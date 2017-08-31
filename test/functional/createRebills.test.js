@@ -31,7 +31,7 @@ describe('createRebills', function () {
         return ModelGenerator.randomEntity('session').then((session) => {
 
             return fn.execute(session).catch((error) => {
-                expect(error.message).to.be.equal('One or more validation errors occurred.');
+                expect(error.message).to.be.equal('[500] One or more validation errors occurred.');
             });
 
         });
@@ -39,8 +39,8 @@ describe('createRebills', function () {
     });
 
     function createRebills() {
-        process.env.rebill_queue_url = 'http://localhost:9324/queue/rebill';
-        process.env.search_indexing_queue_url = 'http://localhost:9324/queue/searchindex';
+        process.env.rebill_queue = 'rebill';
+        process.env.search_indexing_queue = 'search_indexing';
         return global.SixCRM.routes.include('controllers', 'workers/createRebills');
     }
 });
