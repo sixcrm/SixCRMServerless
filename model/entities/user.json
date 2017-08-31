@@ -44,5 +44,5 @@
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":["id", "name", "first_name", "last_name", "active", "alias", "created_at", "updated_at"]
+	"required":["id", "name", "active", "alias", "created_at", "updated_at"]
 }
