@@ -91,6 +91,8 @@ class forwardMessageController extends workerController {
 
     forwardMessage(){
 
+        du.debug('Forward Message');
+
         var controller_instance = this;
 
         return new Promise((resolve, reject) => {

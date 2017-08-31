@@ -49,40 +49,40 @@ class TestUtils {
         process.env.stage = 'local';
         process.env.AWS_PROFILE = 'six';
 
-        process.env.access_keys_table = 'localaccess_keys';
-        process.env.sessions_table = 'localsessions';
-        process.env.transactions_table = 'localtransactions';
-        process.env.rebills_table = 'localrebills';
-        process.env.customers_table = 'localcustomers';
-        process.env.products_table = 'localproducts';
-        process.env.credit_cards_table = 'localcredit_cards';
-        process.env.users_table = 'localusers';
-        process.env.user_acls_table = 'localuseracls';
-        process.env.user_settings_table = 'localuser_settings';
-        process.env.user_signing_strings_table = 'localuser_signing_strings';
-        process.env.loadbalancers_table = 'localloadbalancers';
-        process.env.product_schedules_table = 'localproduct_schedules';
-        process.env.affiliates_table = 'localaffiliates';
-        process.env.campaigns_table = 'localcampaigns';
-        process.env.merchant_providers_table = 'localmerchant_providers';
-        process.env.fulfillment_providers_table = 'localfulfillment_providers';
-        process.env.notifications_table = 'localnotifications';
-        process.env.notifications_read_table = 'localnotifications_read';
-        process.env.emails_table = 'localemails';
-        process.env.smtp_providers_table = 'localsmtp_providers';
-        process.env.shipping_receipts_table = 'localshipping_receipts';
-        process.env.customer_notes_table = 'localcustomer_notes';
-
-        process.env.bill_queue_url = 'http://localhost:9324/queue/bill';
-        process.env.recover_queue_url = 'http://localhost:9324/queue/recover';
-        process.env.hold_queue_url = 'http://localhost:9324/queue/hold';
-        process.env.pending_queue_url = 'http://localhost:9324/queue/pending';
-        process.env.pending_failed_queue_url = 'http://localhost:9324/queue/pending-failed';
-        process.env.shipped_queue_url = 'http://localhost:9324/queue/shipped';
-        process.env.delivered_queue_url = 'http://localhost:9324/queue/delivered';
-        process.env.rebill_queue_url = 'http://localhost:9324/queue/rebill';
-        process.env.rebill_failed_queue_url = 'http://localhost:9324/queue/rebill-failure';
-        process.env.search_indexing_queue_url = 'http://localhost:9324/queue/searchindex';
+        // process.env.access_keys_table = 'localaccess_keys';
+        // process.env.sessions_table = 'localsessions';
+        // process.env.transactions_table = 'localtransactions';
+        // process.env.rebills_table = 'localrebills';
+        // process.env.customers_table = 'localcustomers';
+        // process.env.products_table = 'localproducts';
+        // process.env.credit_cards_table = 'localcredit_cards';
+        // process.env.users_table = 'localusers';
+        // process.env.user_acls_table = 'localuseracls';
+        // process.env.user_settings_table = 'localuser_settings';
+        // process.env.user_signing_strings_table = 'localuser_signing_strings';
+        // process.env.loadbalancers_table = 'localloadbalancers';
+        // process.env.product_schedules_table = 'localproduct_schedules';
+        // process.env.affiliates_table = 'localaffiliates';
+        // process.env.campaigns_table = 'localcampaigns';
+        // process.env.merchant_providers_table = 'localmerchant_providers';
+        // process.env.fulfillment_providers_table = 'localfulfillment_providers';
+        // process.env.notifications_table = 'localnotifications';
+        // process.env.notifications_read_table = 'localnotifications_read';
+        // process.env.emails_table = 'localemails';
+        // process.env.smtp_providers_table = 'localsmtp_providers';
+        // process.env.shipping_receipts_table = 'localshipping_receipts';
+        // process.env.customer_notes_table = 'localcustomer_notes';
+        //
+        // process.env.bill_queue_url = 'http://localhost:9324/queue/bill';
+        // process.env.recover_queue_url = 'http://localhost:9324/queue/recover';
+        // process.env.hold_queue_url = 'http://localhost:9324/queue/hold';
+        // process.env.pending_queue_url = 'http://localhost:9324/queue/pending';
+        // process.env.pending_failed_queue_url = 'http://localhost:9324/queue/pending-failed';
+        // process.env.shipped_queue_url = 'http://localhost:9324/queue/shipped';
+        // process.env.delivered_queue_url = 'http://localhost:9324/queue/delivered';
+        // process.env.rebill_queue_url = 'http://localhost:9324/queue/rebill';
+        // process.env.rebill_failed_queue_url = 'http://localhost:9324/queue/rebill-failure';
+        // process.env.search_indexing_queue_url = 'http://localhost:9324/queue/searchindex';
     }
 }
 
