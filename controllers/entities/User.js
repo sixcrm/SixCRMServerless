@@ -513,6 +513,15 @@ class userController extends entityController {
 
     }
 
+    createUserWithAlias(user_input) {
+
+        du.debug('Create User With Alias');
+
+        let user = this.appendAlias(user_input);
+
+        return this.create(user);
+    }
+
     isPartiallyHydratedUser(user){ // eslint-disable-line no-unused-vars
 
         return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
