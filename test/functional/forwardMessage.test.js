@@ -30,6 +30,7 @@ describe('Functional test for message workers', function () {
         });
 
         it('should say "success" when there is a message, and delete it', function () {
+            this.timeout(1000);
             return givenAnyMessageInRebillQueue().then(() => {
                 return forwardingFunction.execute().then((response) => {
                     expect(response).to.equal(forwardingFunction.messages.success);
@@ -115,6 +116,7 @@ describe('Functional test for message workers', function () {
         });
 
         it('should say "success" when there is a message, and delete it', function () {
+            this.timeout(1000);
             return givenAnyMessageInDeliveredQueue().then(() => {
                 return forwardingFunction.execute().then((response) => {
                     expect(response).to.equal(forwardingFunction.messages.success);
