@@ -151,7 +151,7 @@ describe('Functional test for message workers', function () {
     }
 
     function billToHold() {
-        process.env.failure_queue_url = 'http://localhost:9324/queue/recover';
+        process.env.failure_queue = 'recover';
         return configureForwardingFunction(
             'bill',
             'hold',
@@ -164,7 +164,7 @@ describe('Functional test for message workers', function () {
             null,
             'createrebills');
 
-        delete process.env.destination_queue_url;
+        delete process.env.destination_queue;
         return func;
     }
 
@@ -182,7 +182,7 @@ describe('Functional test for message workers', function () {
             null,
             'archive');
 
-        delete process.env.destination_queue_url;
+        delete process.env.destination_queue;
         return func;
     }
 
