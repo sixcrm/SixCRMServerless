@@ -2,6 +2,11 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
+
+const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+
+let userACLType = require('../useracl/userACLType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Account',
@@ -18,6 +23,11 @@ module.exports.graphObj = new GraphQLObjectType({
         active: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The active status of the account.',
+        },
+        acl:{
+            type: new GraphQLList(userACLType.graphObj),
+            description: 'The user\'s ACL objects.',
+            resolve: (account) => accountController.getACL(account)
         },
         created_at: {
   	        type: new GraphQLNonNull(GraphQLString),
