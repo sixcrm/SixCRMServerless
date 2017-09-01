@@ -7,15 +7,6 @@
 			id,
 			name,
 			active,
-			acl {
-			    id,
-			    account {
-			        id, name
-			    },
-			    role {
-			        id, name
-			    }
-			},
 			created_at,
 			updated_at
 		} 
