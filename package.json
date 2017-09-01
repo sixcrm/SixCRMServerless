@@ -26,6 +26,7 @@
     "request": "^2.79.0",
     "require-yaml": "0.0.1",
     "striptags": "^3.0.1",
+    "sync-request": "^4.1.0",
     "underscore": "^1.8.3",
     "uuid": "^3.0.1",
     "validator": "^6.2.0",

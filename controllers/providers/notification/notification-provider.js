@@ -1,9 +1,10 @@
 'use strict';
 const _ = require('underscore');
-const Validator = require('jsonschema').Validator;
 
 const du = global.SixCRM.routes.include('lib','debug-utilities');
 const eu = global.SixCRM.routes.include('lib','error-utilities');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 const permissionUtils = global.SixCRM.routes.include('lib','permission-utilities');
 const emailNotificationUtils = global.SixCRM.routes.include('lib','email-notification-utilities');
 const smsNotificationUtils = global.SixCRM.routes.include('lib','sms-notification-utilities');
@@ -190,7 +191,7 @@ class NotificationProvider {
                         let email_address = this.settingsDataFor('email', user_settings);
 
                         if (email_address) {
-                            notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address, userController.getFullName(user)));
+                            notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
                         }
                     }
 
@@ -249,46 +250,19 @@ class NotificationProvider {
      */
     validateCreateNotificationObject(create_notification_object, user_required) {
 
-        du.debug('Validate Input');
+        du.debug('Validate Create Notification Object');
 
-        let schema;
-
-        try{
-            schema = global.SixCRM.routes.include('model','actions/create_notification.json');
-        } catch(e){
-            return Promise.reject(eu.getError('server','Unable to load validation schemas.'));
+        if (user_required && !_.has(create_notification_object, 'user')) {
+            return eu.throwError('server','User is mandatory.');
         }
 
-        if (user_required && !create_notification_object.user) {
-            return Promise.reject(eu.getError('server','User is mandatory.'));
+        let params = objectutilities.clone(create_notification_object);
+
+        if(!_.has(params, 'body')){
+          params.body = '(No Body)';
         }
 
-        let validation;
-        let params = JSON.parse(JSON.stringify(create_notification_object || {}));
-
-        try{
-            let v = new Validator();
-
-            validation = v.validate(params, schema);
-        }catch(e){
-            return Promise.reject(eu.getError('server','Unable to instantiate validator.'));
-        }
-
-        if(validation['errors'].length > 0) {
-            let error = {
-                message: 'One or more validation errors occurred.',
-                issues: validation.errors.map(e => e.message)
-            };
-
-            du.error(error);
-
-            return Promise.reject(eu.getError(
-              'server',
-              'One or more validation errors occurred.',
-              {issues: validation.errors.map(e => e.message)}
-            ));
-
-        }
+        mvu.validateModel(params, global.SixCRM.routes.path('model','actions/create_notification.json'));
 
         return Promise.resolve(params);
 

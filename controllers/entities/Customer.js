@@ -46,7 +46,6 @@ class customerController extends entityController {
 
         return '';
 
-
     }
 
     getAddress(customer){
