@@ -369,6 +369,10 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     du.debug('Propagate Cache');
 
+    if (this.stage === 'local') {
+        return this.propagateToNativeCache(key, value);
+    }
+
     if(!_.isString(source)){
       eu.throwError('server', 'Source is assumed to be a string');
     }

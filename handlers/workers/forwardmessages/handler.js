@@ -14,7 +14,7 @@ module.exports.forwardmessages = (event, context, callback) => {
 
     }).catch((error) =>{
 
-        new LambdaResponse().issueError(error.message, 500, event, error, callback);
+        new LambdaResponse().issueError(error.message, event, callback);
 
     });
 

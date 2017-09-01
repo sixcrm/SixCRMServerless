@@ -15,7 +15,7 @@ module.exports.randomredshiftdata = (event, context, callback) => {
 
     }).catch((error) =>{
 
-        return new LambdaResponse().issueError(error.message, 500, event, error, callback);
+        return new LambdaResponse().issueError(error.message, event, callback);
 
     });
 

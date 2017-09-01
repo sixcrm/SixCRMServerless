@@ -126,7 +126,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (value, user) => {
                 const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
-                return userController.create(user.user);
+                return userController.createUserWithAlias(user.user);
             }
         },
         createuserstrict:{
