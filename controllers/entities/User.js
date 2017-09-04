@@ -794,8 +794,6 @@ class userController extends entityController {
 
           }else{
 
-            du.warning('here2');
-
             return null;
 
           }
