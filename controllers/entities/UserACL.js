@@ -49,20 +49,38 @@ class userACLController extends entityController {
 
         return super.create(acl, primary_key)
             .then((acl) =>
-                this.createNotification(acl)
+                this.createNotification(acl, 'created', 'You have been assigned to a new account.')
                 .then(() => acl)
                 .catch(() => acl));
     }
 
-    createNotification(acl) {
+    update(acl, primary_key) {
+
+        return super.update(acl, primary_key)
+            .then((acl) =>
+                this.createNotification(acl, 'updated', 'Your role on account has been updated.')
+                    .then(() => acl)
+                    .catch(() => acl));
+    }
+
+    delete(acl, primary_key) {
+
+        return super.delete(acl, primary_key)
+            .then(() =>
+                this.createNotification(acl, 'deleted', 'You have been removed from account.')
+                    .then(() => acl)
+                    .catch(() => acl));
+    }
+
+    createNotification(acl, action, text) {
 
         let notification = {
             account: acl.account,
             user: acl.user,
-            type: 'acl_created',
-            action: 'acl_created',
-            title: 'You have been added to new account.',
-            body: 'You have been added to new account.'
+            type: 'acl',
+            action: action,
+            title: text,
+            body: text
         };
 
         return notificationutilities.createNotificationForAccountAndUser(notification);
