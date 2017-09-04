@@ -328,7 +328,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, user){
                 const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
-                return userController.list(user.pagination);
+                return userController.getUsersByAccount(user.pagination);
             }
         },
         useracllist: {

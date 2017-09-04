@@ -5,6 +5,7 @@ const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
 const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js');
 
@@ -756,6 +757,44 @@ class userController extends entityController {
       }
 
       return full_name;
+
+    }
+
+    getUsersByAccount(pagination){
+
+      du.debug('Get Users By Account');
+
+      if(!_.has(global, 'account')){
+        eu.throwError('server', 'Global variable missing account property.');
+      }
+
+      if(global.account == '*'){
+
+        return this.list(pagination);
+
+      }else{
+
+        if(!this.isUUID(global.account)){
+          eu.throwError('server', 'Unexpected account ID type: '+global.account);
+        }
+
+        return userACLController.getACLByAccount(global.account).then(user_acl_objects => {
+
+            let user_ids = arrayutilities.map(user_acl_objects, (user_acl) => {
+              if(_.has(user_acl, 'user')){
+                return user_acl.user;
+              }
+            });
+
+            user_ids = arrayutilities.unique(user_ids);
+
+            let in_parameters = this.dynamoutilities.createINQueryParameters('id', user_ids);
+
+            return this.list(pagination, in_parameters);
+
+        });
+
+      }
 
     }
 
