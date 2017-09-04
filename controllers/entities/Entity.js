@@ -21,7 +21,22 @@ module.exports = class entityController extends entityUtilitiesController {
 
         this.setNames(name);
 
-        this.nonaccounts = ['user', 'userdevicetoken', 'role', 'accesskey', 'account', 'fulfillmentprovider','notificationsetting', 'usersetting', 'usersigningstring'];
+        //Technical Debt:  Need accountrole table?
+        //Technical Debt:  Need notification settings to be bound to the accounts that they refer to?
+        //Technical Debt:  Need accesskey to be specific to the account?
+        //Technical Debt:  User signing strings should be bound to a specific account?
+
+        this.nonaccounts = [
+          'user', //can have multiple accounts
+          'userdevicetoken', //userbound
+          'accesskey', //userbound
+          'notificationsetting', //userbound,
+          'usersetting', //userbound
+          'usersigningstring', //userbound
+
+          'role', //global, available across accounts
+          'account' //self-referntial, implicit
+        ];
 
         this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
 
