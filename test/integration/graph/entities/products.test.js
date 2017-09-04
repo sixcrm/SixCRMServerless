@@ -45,7 +45,7 @@ describe('Graph '+entity+' Test', function() {
 
           let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-          du.warning(test_jwt, test_account.id);
+          //du.warning(test_jwt, test_account.id);
 
           tests.forEach((test) => {
 
@@ -55,7 +55,7 @@ describe('Graph '+entity+' Test', function() {
               it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
                   var query = tu.getQuery(test.query);
 
-                  du.warning(query);
+                  //du.warning(query);
                   this_request.post('graph/'+account)
 							.set('Authorization', test_jwt)
 							.send(query)

@@ -325,10 +325,10 @@ module.exports.graphObj = new GraphQLObjectType({
             args: {
                 pagination: {type: paginationInputType.graphObj}
             },
-            resolve: function(root, user){
+            resolve: function(root, users){
                 const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
-                return userController.getUsersByAccount(user.pagination);
+                return userController.getUsersByAccount(users.pagination);
             }
         },
         useracllist: {
