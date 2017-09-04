@@ -9,6 +9,7 @@ var roleController = global.SixCRM.routes.include('controllers', 'entities/Role.
 //Technical Debt: This is null when the UserACLController is included from the context of the UserController
 var userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+var notificationutilities = global.SixCRM.routes.include('lib','notification-utilities.js');
 
 class userACLController extends entityController {
 
@@ -42,6 +43,47 @@ class userACLController extends entityController {
         du.debug('getACLByUser', user);
         return this.queryBySecondaryIndex('user', user, 'user-index').then((result) => this.getResult(result));
 
+    }
+
+    create(acl, primary_key) {
+
+        return super.create(acl, primary_key)
+            .then((acl) =>
+                this.createNotification(acl, 'created', 'You have been assigned to a new account.')
+                .then(() => acl)
+                .catch(() => acl));
+    }
+
+    update(acl, primary_key) {
+
+        return super.update(acl, primary_key)
+            .then((acl) =>
+                this.createNotification(acl, 'updated', 'Your role on account has been updated.')
+                    .then(() => acl)
+                    .catch(() => acl));
+    }
+
+    delete(acl, primary_key) {
+
+        return super.delete(acl, primary_key)
+            .then(() =>
+                this.createNotification(acl, 'deleted', 'You have been removed from account.')
+                    .then(() => acl)
+                    .catch(() => acl));
+    }
+
+    createNotification(acl, action, text) {
+
+        let notification = {
+            account: acl.account,
+            user: acl.user,
+            type: 'acl',
+            action: action,
+            title: text,
+            body: text
+        };
+
+        return notificationutilities.createNotificationForAccountAndUser(notification);
     }
 
     getACLByAccount(account){
