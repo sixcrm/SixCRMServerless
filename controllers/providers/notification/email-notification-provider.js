@@ -36,7 +36,7 @@ class EmailNotificationProvider {
           let email = {
               recepient_emails: [recepient_email_address],
               recepient_name: recepient_name,
-              subject: notification_object.body,
+              subject: notification_object.title,
               body: this.formatEmailBody(notification_object),
           };
 
@@ -46,7 +46,7 @@ class EmailNotificationProvider {
     }
 
     formatEmailBody(notification_object) {
-        return `You received a notification with title "${notification_object.title}". Thanks for using SixCRM!`;
+        return `You received a notification with body "${notification_object.body}". Thanks for using SixCRM!`;
     }
 }
 
