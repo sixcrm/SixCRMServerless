@@ -22,7 +22,7 @@ if (process.env.stage === 'local') {
     process.env.notification_settings_table = 'local' + process.env.notification_settings_table;
 }
 
-const SlackNotificationUtilities = global.SixCRM.routes.include('lib','slack-notification-utilities');
+const SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
@@ -79,7 +79,7 @@ let notification_object = {
     updated_at: timestamp.getISO8601()
 };
 
-SlackNotificationUtilities.sendNotificationViaSlack(notification_object, webhook);
+SlackNotificationProvider.sendNotificationViaSlack(notification_object, webhook);
 
 du.output('Attempted to send a notification', notification_object);
 

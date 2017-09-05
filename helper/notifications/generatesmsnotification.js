@@ -23,7 +23,7 @@ if (process.env.stage === 'local') {
     process.env.notification_settings_table = 'local' + process.env.notification_settings_table;
 }
 
-const SmsNotificationUtilities = global.SixCRM.routes.include('lib','sms-notification-utilities');
+const SmsNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/sms-notification-provider');
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
@@ -80,7 +80,7 @@ let notification_object = {
     updated_at: timestamp.getISO8601()
 };
 
-SmsNotificationUtilities.sendNotificationViaSms(notification_object, phone_number);
+SmsNotificationProvider.sendNotificationViaSms(notification_object, phone_number);
 
 du.output('Attempted to send a notification', notification_object);
 

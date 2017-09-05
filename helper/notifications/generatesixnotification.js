@@ -22,7 +22,7 @@ if (process.env.stage === 'local') {
     process.env.notification_settings_table = 'local' + process.env.notification_settings_table;
 }
 
-const NotificationUtilities = global.SixCRM.routes.include('lib','notification-utilities.js');
+const NotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/notification-provider.js');
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
@@ -65,9 +65,9 @@ let notification_object = {
 
 if (user) {
     notification_object['user'] = user;
-    NotificationUtilities.createNotificationForAccountAndUser(notification_object);
+    NotificationProvider.createNotificationForAccountAndUser(notification_object);
 } else {
-    NotificationUtilities.createNotificationsForAccount(notification_object);
+    NotificationProvider.createNotificationsForAccount(notification_object);
 }
 
 du.output('Attempted to insert a notification', notification_object);

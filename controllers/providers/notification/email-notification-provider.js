@@ -9,7 +9,7 @@ const systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer
 
 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-class EmailNotificationUtilities {
+class EmailNotificationProvider {
 
     /**
      * Send a notification via email.
@@ -46,8 +46,8 @@ class EmailNotificationUtilities {
     }
 
     formatEmailBody(notification_object) {
-        return `You received a notification with body "${notification_object.body}". Thanks for using SixCRM!`;
+        return `You received a notification with title "${notification_object.title}". Thanks for using SixCRM!`;
     }
 }
 
-module.exports = new EmailNotificationUtilities();
+module.exports = new EmailNotificationProvider();

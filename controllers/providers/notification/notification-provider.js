@@ -6,16 +6,15 @@ const eu = global.SixCRM.routes.include('lib','error-utilities');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 const permissionUtils = global.SixCRM.routes.include('lib','permission-utilities');
-const emailNotificationUtils = global.SixCRM.routes.include('lib','email-notification-utilities');
-const smsNotificationUtils = global.SixCRM.routes.include('lib','sms-notification-utilities');
-const slackNotificationUtils = global.SixCRM.routes.include('lib','slack-notification-utilities');
+const emailNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/email-notification-provider');
+const smsNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/sms-notification-provider');
+const slackNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
 const timestamp = global.SixCRM.routes.include('lib','timestamp');
 
 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const userAclController = global.SixCRM.routes.include('controllers', 'entities/UserACL');
-const userController = global.SixCRM.routes.include('controllers', 'entities/User');
 
 class NotificationProvider {
 
@@ -191,7 +190,7 @@ class NotificationProvider {
                         let email_address = this.settingsDataFor('email', user_settings);
 
                         if (email_address) {
-                            notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
+                            notificationSendOperations.push(emailNotificationProvider.sendNotificationViaEmail(notification, email_address));
                         }
                     }
 

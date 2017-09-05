@@ -1,9 +1,9 @@
-let EmailNotificationUtilities = global.SixCRM.routes.include('lib', 'email-notification-utilities.js');
+let SmsNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/sms-notification-provider.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('lib/notification-utilities', () => {
+describe('lib/sms-notification-provider', () => {
 
     before(() => {
         mockery.enable({
@@ -33,16 +33,16 @@ describe('lib/notification-utilities', () => {
         updated_at: '2017-04-06T18:40:41.405Z'
     };
 
-    describe('sendNotificationViaEmail', () => {
+    describe('sendNotificationViaSms', () => {
 
         it('should not send a message when the object is not valid', () => {
             // given
             let notification_object = Object.assign({}, valid_notification_object);
-            let email_address = 'user@test.com';
+            let sms_number = '+381630000000';
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'ses-utilities'), {
-                sendEmail: (message) => {
-                    expect(message).not.to.equal(message, 'SES utilities should not have been called.');
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities'), {
+                sendSMS: (message) => {
+                    expect(message).not.to.equal(message, 'SNS utilities should not have been called.');
                 }
             });
 
@@ -51,30 +51,28 @@ describe('lib/notification-utilities', () => {
             delete notification_object.user;
 
             try {
-                return EmailNotificationUtilities.sendNotificationViaEmail(notification_object, email_address);
-            } catch (error) {
+                return SmsNotificationProvider.sendNotificationViaSms(notification_object, sms_number);
+            } catch(error) {
                 // then
                 expect(error).not.to.be.null;
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
             }
         });
 
-        xit('should attempt to send a message when the object is valid', (done) => {
+        it('should attempt to send a message when the object is valid', (done) => {
             // given
-            let email_address = 'user@test.com';
-            let recepient_name = 'Big Feller'
+            let sms_number = '+381630000000';
 
-            //Technical Debt:  This should probably mock the SystemMailer
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-                send: (message) => {
-                  expect(message).to.be.defined;
-                  done();
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities'), {
+                sendSMS: (message) => {
+                    expect(message).to.be.defined;
+                    done();
                 }
             });
 
-            let EmailNotificationUtilities = global.SixCRM.routes.include('lib', 'email-notification-utilities.js');
+            let SmsNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/sms-notification-provider.js');
 
-            EmailNotificationUtilities.sendNotificationViaEmail(valid_notification_object, email_address, recepient_name)
+            SmsNotificationProvider.sendNotificationViaSms(valid_notification_object, sms_number)
                 .catch((error) => {
                     console.log(error.message);
                     done(error.message);
