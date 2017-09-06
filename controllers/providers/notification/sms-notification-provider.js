@@ -5,7 +5,7 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities');
 
 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-class SmsNotificationUtilities {
+class SmsNotificationProvider {
 
     /**
      * Send a notification via SMS.
@@ -26,7 +26,7 @@ class SmsNotificationUtilities {
     }
 
     formatSmsBody(notification_object) {
-        return stringutilities.abbreviate('SixCRM notification: "' + notification_object.body + '".', 140);
+        return stringutilities.abbreviate('SixCRM notification: "' + notification_object.title + '".', 140);
     }
 
     getInternationalPhoneNumber(phone_number) {
@@ -39,4 +39,4 @@ class SmsNotificationUtilities {
 
 }
 
-module.exports = new SmsNotificationUtilities();
+module.exports = new SmsNotificationProvider();

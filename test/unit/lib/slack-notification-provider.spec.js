@@ -1,9 +1,9 @@
-let SmsNotificationUtilities = global.SixCRM.routes.include('lib', 'sms-notification-utilities.js');
+let SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('lib/sms-notification-utilities', () => {
+describe('lib/slack-notification-provider', () => {
 
     before(() => {
         mockery.enable({
@@ -33,16 +33,16 @@ describe('lib/sms-notification-utilities', () => {
         updated_at: '2017-04-06T18:40:41.405Z'
     };
 
-    describe('sendNotificationViaSms', () => {
+    describe('sendNotificationViaSlack', () => {
 
         it('should not send a message when the object is not valid', () => {
             // given
             let notification_object = Object.assign({}, valid_notification_object);
-            let sms_number = '+381630000000';
+            let webhook = 'http://test.com/webhook';
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities'), {
-                sendSMS: (message) => {
-                    expect(message).not.to.equal(message, 'SNS utilities should not have been called.');
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'slack-utilities'), {
+                sendMessageToWebhook: (message) => {
+                    expect(message).not.to.equal(message, 'Slack utilities should not have been called.');
                 }
             });
 
@@ -51,7 +51,7 @@ describe('lib/sms-notification-utilities', () => {
             delete notification_object.user;
 
             try {
-                return SmsNotificationUtilities.sendNotificationViaSms(notification_object, sms_number);
+                return SlackNotificationProvider.sendNotificationViaSlack(notification_object, webhook);
             } catch(error) {
                 // then
                 expect(error).not.to.be.null;
@@ -61,18 +61,17 @@ describe('lib/sms-notification-utilities', () => {
 
         it('should attempt to send a message when the object is valid', (done) => {
             // given
-            let sms_number = '+381630000000';
+            let webhook = 'http://test.com/webhook';
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities'), {
-                sendSMS: (message) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'slack-utilities'), {
+                sendMessageToWebhook: (message) => {
                     expect(message).to.be.defined;
                     done();
                 }
             });
+            let SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
 
-            let SmsNotificationUtilities = global.SixCRM.routes.include('lib', 'sms-notification-utilities.js');
-
-            SmsNotificationUtilities.sendNotificationViaSms(valid_notification_object, sms_number)
+            SlackNotificationProvider.sendNotificationViaSlack(valid_notification_object, webhook)
                 .catch((error) => {
                     console.log(error.message);
                     done(error.message);

@@ -9,7 +9,6 @@ var roleController = global.SixCRM.routes.include('controllers', 'entities/Role.
 //Technical Debt: This is null when the UserACLController is included from the context of the UserController
 var userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-var notificationutilities = global.SixCRM.routes.include('lib','notification-utilities.js');
 
 class userACLController extends entityController {
 
@@ -83,7 +82,9 @@ class userACLController extends entityController {
             body: text
         };
 
-        return notificationutilities.createNotificationForAccountAndUser(notification);
+        let notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
+
+        return notificationProviderController.createNotificationForAccountAndUser(notification);
     }
 
     getACLByAccount(account){
