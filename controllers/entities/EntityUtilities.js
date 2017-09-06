@@ -534,7 +534,7 @@ module.exports = class entityUtilitiesController{
 
     assurePresence(thing, field, default_value){
 
-        du.debug('Assure Presence', thing, field, default_value);
+        du.debug('Assure Presence');
 
         if(_.isUndefined(default_value)){
 
@@ -547,8 +547,6 @@ module.exports = class entityUtilitiesController{
             thing[field] = default_value;
 
         }
-
-        du.debug('Assure Presence - Returning', thing);
 
         return thing;
 
@@ -580,7 +578,7 @@ module.exports = class entityUtilitiesController{
 
     appendExpressionAttributeValues(query_parameters, key, value){
 
-        du.debug('Append Expression Attribute Values', query_parameters, key, value);
+        du.debug('Append Expression Attribute Values');
 
         query_parameters = this.assurePresence(query_parameters, 'expression_attribute_values');
 
@@ -593,7 +591,7 @@ module.exports = class entityUtilitiesController{
 
     appendFilterExpression(query_parameters, filter_expression){
 
-        du.debug('Append Filter Expression', query_parameters, filter_expression);
+        du.debug('Append Filter Expression');
 
         if (_.has(query_parameters, 'filter_expression')){
 
@@ -624,8 +622,6 @@ module.exports = class entityUtilitiesController{
             query_parameters.filter_expression = filter_expression;
 
         }
-
-        du.debug('Append Filter Expression - Returning', query_parameters);
 
         return query_parameters;
 
