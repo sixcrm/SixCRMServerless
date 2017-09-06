@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		sessionlist {
+		sessionlist (pagination:{limit: \"10\"}){
 			sessions {
 				id,
 				created_at,

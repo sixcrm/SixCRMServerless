@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"5db7ed46-75b1-4ecd-b489-e61ef5d1107a\" }",
 	"body":"
 	query {
-		notificationlist {
+		notificationlist (pagination:{limit: \"10\"}){
 			notifications {
 		    id,
 		    type,

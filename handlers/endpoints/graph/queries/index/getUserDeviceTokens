@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		userdevicetokenlist {
+		userdevicetokenlist (pagination:{limit: \"10\"}){
 			userdevicetokens {
 				id,
 				user,

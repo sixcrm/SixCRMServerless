@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		trackerlist {
+		trackerlist (pagination:{limit: \"10\"}){
 			trackers {
 				id,
 				affiliates {

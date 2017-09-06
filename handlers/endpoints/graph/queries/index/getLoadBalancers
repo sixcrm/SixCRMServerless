@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		loadbalancerlist {
+		loadbalancerlist (pagination:{limit: \"10\"}){
 			loadbalancers {
 				id,
 				merchantproviderconfigurations {

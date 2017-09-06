@@ -2,8 +2,8 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
-		shippingreceiptlist {
+	query {
+		shippingreceiptlist (pagination:{limit: \"10\"}){
 			shippingreceipts {
 				id,
 				status,
@@ -19,4 +19,3 @@
 		},
 	}"
 }
-

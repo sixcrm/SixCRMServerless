@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		productschedulelist {
+		productschedulelist (pagination:{limit: \"10\"}){
 			productschedules {
 				id,
 				name,

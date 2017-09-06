@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		smtpproviderlist {
+		smtpproviderlist (pagination:{limit: \"10\"}){
 			smtpproviders{
 				id,
 				name,
