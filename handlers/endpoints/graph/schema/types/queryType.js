@@ -4,7 +4,6 @@ const _  = require('underscore');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLInt = require('graphql').GraphQLInt;
 
 //Technical Debt:  All of these types frequently have the same fields (id, account, active, created_at, updated_at).  This would be a excellent usage of fragments...
 
@@ -378,7 +377,7 @@ module.exports.graphObj = new GraphQLObjectType({
         },
         tokenlist: {
             type: tokenListType.graphObj,
-            resolve: function(root){
+            resolve: function(){
               const tokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
 
               return Promise.resolve({tokens: tokenHelperController.list()});
