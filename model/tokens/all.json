@@ -1,0 +1,21 @@
+{
+  "events": [
+    {
+      "name":"lead",
+      "properties":[
+        {
+          "name":"session",
+          "identifier":null,
+          "render": false,
+          "properties":[
+            {
+              "name":"Idenfifier",
+              "identifier":"id",
+              "render":true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -26,5 +26,5 @@
 		"created_at":{"$ref": "#/definitions/ISO8601"},
 		"updated_at":{"$ref": "#/definitions/ISO8601"}
 	},
-	"required":[ "name", "username", "password", "provider", "created_at", "updated_at"]
+	"required":[ "name", "username", "password", "provider", "created_at", "updated_at", "account"]
 }

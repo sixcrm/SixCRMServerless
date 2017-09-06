@@ -92,6 +92,8 @@ let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType
 let trackerType = require('./tracker/trackerType');
 let trackerListType = require('./tracker/trackerListType');
 
+let tokenListType = require('./token/tokenListType');
+
 let suggestInputType = require('./search/suggestInputType');
 let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
@@ -372,6 +374,14 @@ module.exports.graphObj = new GraphQLObjectType({
                 const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
                 return affiliateController.list(affiliate.pagination);
+            }
+        },
+        tokenlist: {
+            type: tokenListType.graphObj,
+            resolve: function(root){
+              const tokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
+
+              return Promise.resolve({tokens: tokenHelperController.list()});
             }
         },
         trackerlist: {
