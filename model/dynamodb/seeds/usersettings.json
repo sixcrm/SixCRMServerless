@@ -16,8 +16,7 @@
         },
         {
           "name": "sms",
-          "receive": true,
-          "data": "+381631025339"
+          "receive": false
         },
         {
           "name": "skype",
