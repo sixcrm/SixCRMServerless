@@ -5,6 +5,9 @@
 	{
 		tracker (id: \"8cf59d00-460b-42ad-b6be-d520975f27db\") {
 			id,
+			campaigns {
+				id
+			},
 			affiliates {
 				id,
 				affiliate_id,
