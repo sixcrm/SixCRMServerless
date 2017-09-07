@@ -32,10 +32,10 @@ dependencies:
     - serverless dynamodb install --stage $CIRCLE_BRANCH
 
     # Collect debug info
-    - npm ls
-    - ls node_modules -1
-    - df -h
-    - serverless --version
+    #- npm ls
+    #- ls node_modules -1
+    #- df -h
+    #- serverless --version
 
 test:
   override:
