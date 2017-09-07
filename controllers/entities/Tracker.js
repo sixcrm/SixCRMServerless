@@ -12,9 +12,9 @@ class trackerController extends entityController {
 
         super('tracker');
 
-        this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+        //this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
-        this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+        //this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
     }
 
@@ -24,7 +24,13 @@ class trackerController extends entityController {
 
         if(_.has(tracker, 'affiliates')){
 
-            return this.affiliateController.getList(tracker.affiliates);
+          if(!_.has(this, 'affiliateController') || !_.isFunction(this.affiliateController.getList)){
+
+            this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+
+          }
+
+          return this.affiliateController.getList(tracker.affiliates);
 
         }
 
@@ -38,7 +44,13 @@ class trackerController extends entityController {
 
         if(_.has(tracker, 'campaigns')){
 
-            return this.campaignController.getList(tracker.campaigns);
+          if(!_.has(this, 'campaignController') || !_.isFunction(this.campaignController.getList)){
+
+            this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+
+          }
+
+          return this.campaignController.getList(tracker.campaigns);
 
         }
 
