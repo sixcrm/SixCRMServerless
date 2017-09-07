@@ -1,0 +1,5 @@
+{
+	"title": "Transaction Products",
+	"type": "array",
+	"items":{"$ref": "../entities/product.json"}
+}

@@ -15,6 +15,10 @@
 			"type":"array",
 			"items":{"$ref": "#/definitions/UUIDv4"}
 		},
+		"campaigns":{
+			"type":"array",
+			"items":{"$ref": "#/definitions/UUIDv4"}
+		},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
 		"type":{
 			"type":"string",

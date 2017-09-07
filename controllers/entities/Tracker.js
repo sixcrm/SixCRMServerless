@@ -14,6 +14,8 @@ class trackerController extends entityController {
 
         this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
+        this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+
     }
 
     getAffiliates(tracker){
@@ -23,6 +25,20 @@ class trackerController extends entityController {
         if(_.has(tracker, 'affiliates')){
 
             return this.affiliateController.getList(tracker.affiliates);
+
+        }
+
+        return null;
+
+    }
+
+    getCampaigns(tracker){
+
+        du.debug('Get Campaigns');
+
+        if(_.has(tracker, 'campaigns')){
+
+            return this.campaignController.getList(tracker.campaigns);
 
         }
 

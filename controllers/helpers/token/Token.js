@@ -2,6 +2,7 @@
 require('../../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 
 class Token {
 
@@ -9,7 +10,12 @@ class Token {
 
     du.debug('List');
 
-    return global.SixCRM.routes.include('model', 'tokens/all.json');
+    let all_schema = global.SixCRM.routes.path('model', 'tokens/all.json');
+    let token_json = mvu.loadReferencesRecursive(global.SixCRM.routes.path('model', 'tokens/all.json'), (schema, uri) => {
+
+      //du.warning(schema);
+
+    });
 
   }
 
