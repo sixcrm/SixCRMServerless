@@ -542,7 +542,7 @@ module.exports = class entityUtilitiesController{
 
         }
 
-        if(!_.has(thing, field) || _.isNull(thing[field])){
+        if(!_.has(thing, field) || _.isNull(thing[field]) || _.isUndefined(thing[field])){
 
             thing[field] = default_value;
 
