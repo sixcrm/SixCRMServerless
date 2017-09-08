@@ -261,7 +261,7 @@ class sessionController extends entityController {
 
         if(!_.has(session, "product_schedules")){ return null; }
 
-        return session.product_schedules.map(schedule => this.executeAssociatedEntityFunction('productSchedulesController', 'get', schedule));
+        return session.product_schedules.map(schedule => this.executeAssociatedEntityFunction('productScheduleController', 'get', schedule));
 
     }
 
