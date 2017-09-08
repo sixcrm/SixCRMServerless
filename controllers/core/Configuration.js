@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
 
 module.exports = class Configuration extends ConfigurationUtilities {
@@ -106,7 +107,43 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     du.debug('Set Environment Config');
 
-    return this.propagateCache('all', key, value);
+    if(this.isValidConfiguration(key, value)){
+
+      return this.propagateCache('all', key, value);
+
+    }
+
+  }
+
+  isValidConfiguration(key, value){
+
+    du.debug('Is Valid Configuration');
+
+    let validation_object = {
+      'redshift.host': [
+        (argument) => { return _.isString(argument); },
+        (argument) => { return _.has(argument, 'length') && argument.length > 2; }
+      ],
+      'cloudsearch.domainendpoint': [
+        (argument) => { return _.isString(argument); },
+        (argument) => { return _.has(argument, 'length') && argument.length > 2; }
+      ]
+    };
+
+    let validates = true;
+
+    if(_.has(validation_object, key)){
+
+      arrayutilities.find(validation_object[key], (validation_function) => {
+        if(validation_function(value) == false){
+          validates = false;
+          return true;
+        }
+      });
+
+    }
+
+    return validates;
 
   }
 

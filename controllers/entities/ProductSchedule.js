@@ -10,7 +10,7 @@ class productScheduleController extends entityController {
     constructor(){
 
         super('productschedule');
-        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+
         this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
         this.loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
 
@@ -111,6 +111,10 @@ class productScheduleController extends entityController {
 
       du.debug('Get Product');
 
+      if(!_.has(this, 'productController') || !_.isFunction(this.productController.get)){
+        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+      }
+
       return this.productController.get(scheduled_product.product);
 
     }
@@ -140,6 +144,10 @@ class productScheduleController extends entityController {
     getProducts(product_schedule){
 
       du.debug('Get Products');
+
+      if(!_.has(this, 'productController') || !_.isFunction(this.productController.get)){
+        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+      }
 
       return Promise.all(product_schedule.schedule.map(ps => this.productController.get(ps.product_id)));
 
