@@ -6,7 +6,6 @@ var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
@@ -283,7 +282,11 @@ class sessionController extends entityController {
 
         if(!_.has(session, "product_schedules")){ return null; }
 
-        return session.product_schedules.map(schedule => productScheduleController.get(schedule));
+        if(!_.has(this, 'productScheduleController') || !_.isFunction(this.productScheduleController.get)){
+          this.productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+        }
+
+        return session.product_schedules.map(schedule => this.productScheduleController.get(schedule));
 
     }
 
