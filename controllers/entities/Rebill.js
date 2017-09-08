@@ -10,7 +10,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 var productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -38,8 +37,12 @@ class rebillController extends entityController {
 
         var promises = [];
 
+        if(!_.has(this, 'productScheduleController') || !_.isFunction(this.productScheduleController.get)){
+          this.productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+        }
+
         rebill.product_schedules.map((id) => {
-            promises.push(productScheduleController.get(id));
+            promises.push(this.productScheduleController.get(id));
         });
 
         return Promise.all(promises);

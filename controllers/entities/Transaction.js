@@ -4,7 +4,6 @@ var random = global.SixCRM.routes.include('lib', 'random.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 var shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
 const merchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
@@ -30,7 +29,11 @@ class transactionController extends entityController {
 
     getProduct(id){
 
-        return productController.get(id);
+      if(!_.has(this, 'productController') || !_.isFunction(this.productController.get)){
+        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+      }
+
+      return this.productController.get(id);
 
     }
 
@@ -60,7 +63,12 @@ class transactionController extends entityController {
         var promises = [];
 
         if(_.has(transaction_product, "product")){
-            var getProduct = productController.get(transaction_product.product);
+
+          if(!_.has(this, 'productController') || !_.isFunction(this.productController.get)){
+            this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+          }
+
+          var getProduct = this.productController.get(transaction_product.product);
 
             promises.push(getProduct);
         }else{
