@@ -109,8 +109,8 @@ deployment:
       ###########
 
       - export SIX_VERBOSE=0 && npm run test-transactions
-      - export SIX_VERBOSE=0 && npm run test-analytics
       - export SIX_VERBOSE=0 && npm run test-graph
+      - export SIX_VERBOSE=0 && npm run test-analytics
 
   staging:
     branch: staging
@@ -178,8 +178,8 @@ deployment:
       ###########
 
       - export SIX_VERBOSE=0 && npm run test-transactions
-      - export SIX_VERBOSE=0 && npm run test-analytics
       - export SIX_VERBOSE=0 && npm run test-graph
+      - export SIX_VERBOSE=0 && npm run test-analytics
 
       # Merge to upper environment
       - ./deployment/utilities/merge_branches.sh staging production
@@ -250,8 +250,8 @@ deployment:
       ###########
 
       - export SIX_VERBOSE=0 && npm run test-transactions
-      - export SIX_VERBOSE=0 && npm run test-analytics
       - export SIX_VERBOSE=0 && npm run test-graph
+      - export SIX_VERBOSE=0 && npm run test-analytics
 
 
       # Merge to upper environment
