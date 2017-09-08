@@ -25,8 +25,6 @@ class sessionController extends entityController {
             'cid'
         ];
 
-        this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
-
     }
 
     listSessionsByAffiliate(affiliate, pagination){
@@ -163,7 +161,7 @@ class sessionController extends entityController {
 
                         if(this.isUUID(session[affiliate_field])){
 
-                            affiliates.push(this.affiliateController.get(session[affiliate_field]));
+                          affiliates.push(this.executeAssociatedEntityFunction('affiliateController', 'get', session[affiliate_field]));
 
                         }else{
 
