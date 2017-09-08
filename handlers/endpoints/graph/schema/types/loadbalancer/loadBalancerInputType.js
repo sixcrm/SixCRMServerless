@@ -6,10 +6,11 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 let merchantProviderConfigurationInputType = require('../merchantprovider/merchantProviderConfigurationInputType');
 
+//Technical Debt:  Add name
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'LoadBalancerInputType',
     fields: () => ({
-        id:					{ type: new GraphQLNonNull(GraphQLString) },
+        id:	{ type: GraphQLString },
         merchantproviders:	{ type: new GraphQLList(merchantProviderConfigurationInputType.graphObj) }
     })
 });

@@ -10,7 +10,6 @@ var productScheduleController = global.SixCRM.routes.include('controllers', 'ent
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class sessionController extends entityController {
@@ -78,7 +77,11 @@ class sessionController extends entityController {
 
         if(!_.has(session, "campaign")){ return null; }
 
-        return campaignController.get(session.campaign);
+        if(!_.has(this, 'campaignController') || !_.isFunction(this.campaignController.get)){
+          this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+        }
+
+        return this.campaignController.get(session.campaign);
 
     }
 
@@ -101,7 +104,12 @@ class sessionController extends entityController {
         if(_.has(session, "id")){
             id = session.id;
         }
-        return campaignController.getHydratedCampaign(id);
+
+        if(!_.has(this, 'campaignController') || !_.isFunction(this.campaignController.get)){
+          this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+        }
+
+        return this.campaignController.getHydratedCampaign(id);
 
     }
 
