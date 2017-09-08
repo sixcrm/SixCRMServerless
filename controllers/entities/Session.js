@@ -6,9 +6,6 @@ var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
-var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class sessionController extends entityController {
