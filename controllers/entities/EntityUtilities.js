@@ -1,11 +1,11 @@
 'use strict';
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
-const validator = require('validator');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
@@ -94,47 +94,35 @@ module.exports = class entityUtilitiesController{
 
     validate(object, path_to_model){
 
-        du.debug('Validate');
+      du.debug('Validate');
 
-        if(_.isUndefined(path_to_model)){
-            path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
-        }
+      if(_.isUndefined(path_to_model)){
+          path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
+      }
 
-        let valid = mvu.validateModel(object, path_to_model);
+      let valid = mvu.validateModel(object, path_to_model);
 
-        if(_.isError(valid)){
-            return Promise.reject(valid);
-        }
+      if(_.isError(valid)){
+          return Promise.reject(valid);
+      }
 
-        return Promise.resolve(valid);
+      return Promise.resolve(valid);
 
     }
 
     isUUID(string, version){
 
-        du.debug('Is UUID');
+      du.debug('Is UUID');
 
-        if(_.isString(string)){
-
-            return validator.isUUID(string, version);
-
-        }
-
-        return false;
+      return stringutilities.isUUID(string, version);
 
     }
 
     isEmail(string){
 
-        du.debug('Is Email');
+      du.debug('Is Email');
 
-        if(_.isString(string)){
-
-            return validator.isEmail(string);
-
-        }
-
-        return false;
+      return stringutilities.isEmail(string);
 
     }
 
@@ -819,6 +807,28 @@ module.exports = class entityUtilitiesController{
         let activityHelper = global.SixCRM.routes.include('helpers', 'redshift/Activity.js');
 
         return activityHelper.createActivity(actor, action, acted_upon, associated_with);
+
+    }
+
+    executeAssociatedEntityFunction(controller_name, function_name, function_arguments){
+
+      du.debug('Execute Associated Entity Function');
+
+      if(!_.has(this, controller_name) || !_.isFunction(this[controller_name][function_name])){
+        let controller_file_name = this.translateControllerNameToFilename(controller_name);
+
+        this[controller_name] = global.SixCRM.routes.include('entities', controller_file_name);
+      }
+
+      return this[controller_name][function_name](function_arguments);
+
+    }
+
+    translateControllerNameToFilename(controller_name){
+
+      du.debug('Translate Controller Name To Filename');
+
+      return stringutilities.uppercaseFirst(controller_name).replace('Controller', '')+'.js';
 
     }
 

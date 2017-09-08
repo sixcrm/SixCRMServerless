@@ -14,6 +14,7 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 class sessionController extends entityController {
 
     constructor(){
+
         super('session');
 
         this.session_length = 3600;
@@ -59,56 +60,45 @@ class sessionController extends entityController {
 
     getCustomer(session){
 
-        du.debug('Get Customer');
+      du.debug('Get Customer');
 
-        if(!_.has(session, "customer")){ return null; }
+      if(!_.has(session, "customer")){ return null; }
 
-        //Technincal Debt:  This is necessary?
-        var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
-
-        return customerController.get(session.customer);
+      return this.executeAssociatedEntityFunction('customerController', 'get', session.customer);
 
     }
 
     getCampaign(session){
 
-        du.debug('Get Campaign');
+      du.debug('Get Campaign');
 
-        if(!_.has(session, "campaign")){ return null; }
+      if(!_.has(session, "campaign")){ return null; }
 
-        if(!_.has(this, 'campaignController') || !_.isFunction(this.campaignController.get)){
-          this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
-        }
-
-        return this.campaignController.get(session.campaign);
+      return this.executeAssociatedEntityFunction('campaignController', 'get', session.campaign);
 
     }
 
     getSessionCreditCard(session){
 
-        du.debug('Get Session Credit Card');
+      du.debug('Get Session Credit Card');
 
-        if(!_.has(session, 'customer')){ return null; }
+      if(!_.has(session, 'customer')){ return null; }
 
-        return customerController.getMostRecentCreditCard(session.customer);
+      return this.executeAssociatedEntityFunction('customerController', 'getMostRecentCreditCard', session.customer);
 
     }
 
     getCampaignHydrated(session){
 
-        du.debug('Get Campaign Hydrated');
+      du.debug('Get Campaign Hydrated');
 
-        var id = session;
+      var id = session;
 
-        if(_.has(session, "id")){
-            id = session.id;
-        }
+      if(_.has(session, "id")){
+          id = session.id;
+      }
 
-        if(!_.has(this, 'campaignController') || !_.isFunction(this.campaignController.get)){
-          this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
-        }
-
-        return this.campaignController.getHydratedCampaign(id);
+      return this.executeAssociatedEntityFunction('campaignController', 'getHydratedCampaign', id);
 
     }
 
@@ -118,22 +108,11 @@ class sessionController extends entityController {
 
         if(_.has(session, affiliate_field) && this.isUUID(session[affiliate_field])){
 
-          //there are some scoping problems
-            if(!_.has(this, 'affiliateController') || !_.isFunction(this.affiliateController, 'get')){
-
-                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
-
-                return affiliateController.get(session[affiliate_field]);
-
-            }else{
-
-                return this.affiliateController.get(session[affiliate_field]);
-
-            }
+          return this.executeAssociatedEntityFunction('affiliateController', 'get', session[affiliate_field]);
 
         }else{
 
-            return null;
+          return null;
 
         }
 
@@ -220,13 +199,13 @@ class sessionController extends entityController {
 
             var session_transactions = [];
 
-            return rebillController.getRebillsBySessionID(session.id).then((rebills) => {
+            return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id).then((rebills) => {
 
                 return Promise.all(rebills.map((rebill) => {
 
                     return new Promise((resolve, reject) => {
 
-                        return transactionController.getTransactionsByRebillID(rebill.id).then((transactions) => {
+                      return this.executeAssociatedEntityFunction('transactionController', 'getTransactionsByRebillID', rebill.id).then((transactions) => {
 
                             if(_.isNull(transactions)){
 
@@ -274,7 +253,7 @@ class sessionController extends entityController {
 
     getRebills(session){
 
-        return rebillController.getRebillsBySessionID(session.id);
+      return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id)
 
     }
 
@@ -282,15 +261,11 @@ class sessionController extends entityController {
 
         if(!_.has(session, "product_schedules")){ return null; }
 
-        if(!_.has(this, 'productScheduleController') || !_.isFunction(this.productScheduleController.get)){
-          this.productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-        }
-
-        return session.product_schedules.map(schedule => this.productScheduleController.get(schedule));
+        return session.product_schedules.map(schedule => this.executeAssociatedEntityFunction('productSchedulesController', 'get', schedule));
 
     }
 
-	//Technical Debt: This function is a mess...
+	   //Technical Debt: This function is a mess...
     getTransactionProducts(session){
 
         var controller_instance = this;
@@ -305,7 +280,7 @@ class sessionController extends entityController {
 
                     return new Promise((resolve, reject) => {
 
-                        return rebillController.getTransactions(rebill).then((transactions) => {
+                      return this.executeAssociatedEntityFunction('rebillController', 'getTransactions', rebill).then((transactions) => {
 
 							//note that at the time of a createorder, there are lots of rebills, only one of which has a transaction
                             if(_.isNull(transactions)){
@@ -318,11 +293,11 @@ class sessionController extends entityController {
 
                                     return new Promise((resolve) => {
 
-                                        return transactionController.getProducts(transaction).then((products) => {
+                                      return this.executeAssociatedEntityFunction('transactionController', 'getProducts', transaction).then((products) => {
 
-                                            return resolve(products);
+                                          return resolve(products);
 
-                                        });
+                                      });
 
                                     });
 
@@ -380,16 +355,14 @@ class sessionController extends entityController {
 
     }
 
-	//Technical Debt:  This needs to move to a prototype
+	//Technical Debt:  This needs to move to a prototype?
     hydrate(session){
-
-        var controller_instance = this;
 
         return new Promise((resolve) => {
 
             if(!_.has(session, "campaign")){ return null; }
 
-            controller_instance.getCampaignHydrated(session.campaign).then((campaign) => {
+            this.getCampaignHydrated(session.campaign).then((campaign) => {
 
                 session.campaign = campaign;
 
@@ -399,7 +372,7 @@ class sessionController extends entityController {
 
                 if(!_.has(session, "customer")){ return null; }
 
-                return controller_instance.getCustomer(session).then((customer) => {
+                return this.getCustomer(session).then((customer) => {
 
                     session.customer = customer;
 

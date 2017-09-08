@@ -850,13 +850,23 @@ describe('controllers/Entity.js', () => {
         });
 
         it('should allow valid UUID', () => {
-            let validUUIDs = [];
+            let validUUIDs = [
+              /*
+              //we don't support v1
+              {
+                uuid:'dbf6cbca-12fa-11e7-93ae-92361f002671',
+                version: 1
+              },
+              */
+              {
+                uuid:'2e9b9869-f0f6-4de9-b62e-ce511acd71de',
+                version: 4
+              }
+            ];
 
-            validUUIDs.push('dbf6cbca-12fa-11e7-93ae-92361f002671'); //v1
-            validUUIDs.push('2e9b9869-f0f6-4de9-b62e-ce511acd71de'); //v4
-
-            for (let uuid of validUUIDs) {
-                expect(entityController.isUUID(uuid)).to.equal(true, `'${uuid}' should be considered a valid UUID but is not.`)
+            for(let uuid of validUUIDs) {
+                console.log(uuid);
+                expect(entityController.isUUID(uuid.uuid, uuid.version)).to.equal(true, `'${uuid.uuid}' should be considered a valid UUID but is not.`)
             }
         });
 
