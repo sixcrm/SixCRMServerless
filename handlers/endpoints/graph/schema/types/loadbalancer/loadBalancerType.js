@@ -12,10 +12,14 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'loadbalancer',
     description: 'A loadbalancer.',
     fields: () => ({
-  	id: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The id of the loadbalancer.',
-  },
+  	    id: {
+          type: new GraphQLNonNull(GraphQLString),
+          description: 'The id of the loadbalancer.',
+        },
+        name: {
+            type: GraphQLString,
+            description: 'The name of the loadbalancer.',
+        },
         merchantproviderconfigurations: {
             type: new GraphQLList(merchantProviderConfigurationType.graphObj),
             description: 'The configured merchant providers associated with the load balancer',

@@ -11,6 +11,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'LoadBalancerInputType',
     fields: () => ({
         id:	{ type: GraphQLString },
+        name:	{ type: GraphQLString },
         merchantproviders:	{ type: new GraphQLList(merchantProviderConfigurationInputType.graphObj) }
     })
 });
