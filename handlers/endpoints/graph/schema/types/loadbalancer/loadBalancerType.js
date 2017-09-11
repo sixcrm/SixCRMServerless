@@ -13,7 +13,7 @@ module.exports.graphObj = new GraphQLObjectType({
     description: 'A loadbalancer.',
     fields: () => ({
   	    id: {
-          type: new GraphQLNonNull(GraphQLString),
+          type: GraphQLString,
           description: 'The id of the loadbalancer.',
         },
         name: {
