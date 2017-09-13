@@ -155,7 +155,7 @@ class productScheduleController extends entityController {
       if(arrayutilities.nonEmpty(product_schedule.schedule)){
 
         let promises = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
-          return this.executeAssociatedEntityFunction('productController', 'get', {id: productschedule.product_id});
+          return this.executeAssociatedEntityFunction('productController', 'get', {id: product_schedule.product_id});
         });
 
         return Promise.all(promises);

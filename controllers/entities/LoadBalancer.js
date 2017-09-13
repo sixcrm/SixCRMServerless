@@ -48,7 +48,7 @@ class loadBalancerController extends entityController {
         let promises = arrayutilities.map(loadbalancer.merchantproviders, (merchant_provider) => {
 
           //Technical Debt:  This is likely broken.
-          return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: merchantproviderconfiguration.merchantprovider});
+          return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: merchant_provider});
 
         });
 
