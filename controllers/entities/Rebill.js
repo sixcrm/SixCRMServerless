@@ -184,7 +184,7 @@ class rebillController extends entityController {
             amount: rebill_parameters.amount
         });
 
-        return this.create(rebill_object);
+        return this.create({entity: rebill_object});
 
     }
 
@@ -252,7 +252,7 @@ class rebillController extends entityController {
     }
 
 	//Technical Debt:  This shouldn't go here...
-    getRebillsAfterTimestamp(a_timestamp){
+    getRebillsAfterTimestamp(a_timestamp, cursor, limit){
 
         return new Promise((resolve, reject) => {
 
@@ -264,7 +264,7 @@ class rebillController extends entityController {
               query_parameters.ExclusiveStartKey = cursor;
             }
 
-            if(!_.isUndefined(limie)){
+            if(!_.isUndefined(limit)){
               query_parameters['limit'] = limit;
             }
 

@@ -1684,7 +1684,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
-        get:(creditcard_id) => {
+        get:({id: creditcard_id}) => {
           let creditcard = arrayutilities.find(creditcards, (a_creditcard) => {
             if(a_creditcard.id == creditcard_id){ return true; }
             return false;

@@ -180,7 +180,7 @@ module.exports = class Process{
         if(!_.isObject(this.customer) && _.isString(this.customer) && this.customerController.isUUID(this.customer)){
 
           this.customerController.disableACLs();
-          getCustomer = this.customerController.get(this.customer);
+          getCustomer = this.customerController.get({id: this.customer});
           this.customerController.enableACLs();
 
         }else{
@@ -196,7 +196,7 @@ module.exports = class Process{
         if(!_.isObject(this.productschedule) && _.isString(this.productschedule) && this.productScheduleController.isUUID(this.productschedule)){
 
           this.productScheduleController.disableACLs();
-          getProductSchedule = this.productScheduleController.get(this.productschedule);
+          getProductSchedule = this.productScheduleController.get({id: this.productschedule});
           this.productScheduleController.enableACLs();
 
         }else{
@@ -238,13 +238,15 @@ module.exports = class Process{
       du.debug('Hydrate Credit Cards');
 
       this.creditCardController.disableACLs();
-      let promises = this.customer.creditcards.map((creditcard) => this.creditCardController.get(creditcard));
+      let promises = this.customer.creditcards.map((creditcard) => this.creditCardController.get({id: creditcard}));
 
       this.creditCardController.enableACLs();
 
       return Promise.all(promises).then((promises) => {
 
         this.customer.creditcards = promises;
+
+        //du.info(this.customer.creditcards);
 
         return true;
 
@@ -291,6 +293,10 @@ module.exports = class Process{
     setBINNumber(){
 
       du.debug('Set BIN Number');
+
+      if(!_.has(this, 'selected_credit_card') || !_.has(this.selected_credit_card,'number')){
+        eu.throwError('server', 'Unable to identify selected credit card.');
+      }
 
       let binnumber = this.creditCardController.getBINNumber(this.selected_credit_card.number);
 

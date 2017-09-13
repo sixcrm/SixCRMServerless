@@ -43,8 +43,6 @@ class notificationController extends entityController {
       let field = 'user';
       let index_name = 'user-index';
 
-      du.debug('Counting number of unseen messages.');
-
       return this.executeAssociatedEntityFunction('notificationReadController', 'getLastSeenTime', {}).then((last_seen_time) => {
 
         du.debug('Since ' + last_seen_time);

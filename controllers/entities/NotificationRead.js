@@ -95,8 +95,6 @@ class notificationReadController extends entityController {
 
           let notificationReadObject = this.buildNotificationReadObject();
 
-          du.warning(notificationReadObject);  process.exit();
-
           return this.create({entity: notificationReadObject});
 
         } else {
