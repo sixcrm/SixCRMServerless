@@ -13,7 +13,7 @@ class notificationSettingController extends entityController {
 
     getDefaultProfile(){
 
-      return Promise.resolve(global.SixCRM.routes.include('model', 'general/default_notification_setting.json'));
+      return Promise.resolve(global.SixCRM.routes.include('model', 'general/default_notification_settings.json'));
 
     }
 
