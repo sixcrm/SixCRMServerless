@@ -6,6 +6,7 @@
 		loadbalancerlist (pagination:{limit: \"10\"}){
 			loadbalancers {
 				id,
+				name,
 				merchantproviderconfigurations {
 					merchantprovider {
 						id,

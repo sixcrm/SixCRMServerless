@@ -106,6 +106,25 @@ describe('lib/string-utilities', () => {
 
     });
 
+    describe('matchGroup', () => {
+      it('returns match if there is one', () => {
+        expect(stringutilities.matchGroup('abcdef', /abc(def)/g, 1)).to.deep.equal(['def']);
+      });
+
+      it('returns empty results when group number is out of scope', () => {
+          expect(stringutilities.matchGroup('abcdef', /abc(def)/g, 2)).to.deep.equal([]);
+          expect(stringutilities.matchGroup('abcdef', /abc(def)/g, -1)).to.deep.equal([]);
+      });
+
+      it('returns whole match when group number is 0', () => {
+          expect(stringutilities.matchGroup('abcdef', /abc(def)/g, 0)).to.deep.equal(['abcdef']);
+      });
+
+      it('assumes default group number to be 0', () => {
+          expect(stringutilities.matchGroup('abcdef', /abc(def)/g)).to.deep.equal(['abcdef']);
+      });
+    });
+
     describe('abbreviate', () => {
 
         it('returns same string if shorter than limit', () => {

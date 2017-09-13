@@ -1,5 +1,6 @@
 [{
 	"id":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+	"name": "Seed load balancer",
 	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 	"merchantproviders":[
 		{

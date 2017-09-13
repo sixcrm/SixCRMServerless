@@ -5,6 +5,7 @@
 	{
 		loadbalancer (id: \"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\") {
 			id,
+			name,
 			merchantproviderconfigurations {
 				merchantprovider {
 					id,
