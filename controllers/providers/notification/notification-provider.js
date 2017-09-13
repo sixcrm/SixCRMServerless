@@ -122,8 +122,8 @@ class NotificationProvider {
         du.debug('Save and send notification.');
 
         return Promise.all([
-            notificationSettingController.get(user), // notification settings
-            userSettingController.get(user), // user settings
+            notificationSettingController.get({id: user}), // notification settings
+            userSettingController.get({id: user}), // user settings
             notificationSettingController.getDefaultProfile(), // default user settings
         ]).then((settings) => {
 
@@ -176,7 +176,7 @@ class NotificationProvider {
 
             du.debug('About to create notification', createNotification);
 
-            return notificationController.create(createNotification).then((notification) => {
+            return notificationController.create({entity: createNotification}).then((notification) => {
 
                 du.debug('Saved notification', notification);
 

@@ -45,6 +45,7 @@ class userACLController extends entityController {
     create({entity, primary_key}) {
 
       return super.create({entity: entity, primary_key: primary_key}).then((acl) => {
+        du.debug(acl)
         return this.createNotification(acl, 'created', 'You have been assigned to a new account.').then(() => {
           return acl;
         }).catch(() => {
@@ -57,11 +58,11 @@ class userACLController extends entityController {
     //Technical Debt:  refactor
     update(acl, primary_key) {
 
-        return super.update({entity: acl, primary_key: primary_key})
-            .then((acl) =>
-                this.createNotification(acl, 'updated', 'Your role on account has been updated.')
-                    .then(() => acl)
-                    .catch(() => acl));
+      return super.update({entity: acl, primary_key: primary_key})
+          .then((acl) =>
+              this.createNotification(acl, 'updated', 'Your role on account has been updated.')
+                  .then(() => acl)
+                  .catch(() => acl));
     }
 
     delete(acl, primary_key) {
