@@ -10,7 +10,9 @@ class Token {
 
     du.debug('Token List');
 
-    return mbu.build('tokens/all.json');
+    let model = mbu.build('tokens/all.json');
+
+    return {tokens: model};
 
   }
 

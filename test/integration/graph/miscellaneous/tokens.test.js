@@ -11,7 +11,7 @@ chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
 
-let entity = 'User Invite';
+let entity = 'Tokens';
 let tests = [{
     name: "uncategorized",
     query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/getTokens')
