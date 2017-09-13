@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -10,11 +9,6 @@ const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js')
 const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js');
 
 const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
-const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
-const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting.js');
-const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
-const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
-const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class userController extends entityController {
@@ -63,6 +57,7 @@ class userController extends entityController {
 
     }
 
+    //Technical Debt:  What a mess.
     getUserStrict(user_string){
 
         return new Promise((resolve, reject) => {
@@ -75,7 +70,7 @@ class userController extends entityController {
 
                 this.disableACLs();
 
-                this.get(user_string).then((user) => {
+                this.get({id: user_string}).then((user) => {
 
                     this.enableACLs();
 
@@ -85,7 +80,7 @@ class userController extends entityController {
 
                         this.disableACLs();
 
-                        return this.getHydrated(user.id).then((user) => {
+                        return this.getHydrated({id: user.id}).then((user) => {
 
                             this.enableACLs();
 
@@ -129,15 +124,15 @@ class userController extends entityController {
 
     introspection(){
 
-        du.debug('Introspection');
+      du.debug('Introspection');
 
-        return new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
 
-            if(_.has(global, 'user')){
+        if(_.has(global, 'user')){
 
-                if(this.isEmail(global.user)){
+          if(this.isEmail(global.user)){
 
-                    this.createProfile(global.user).then((user) => {
+            this.createProfile(global.user).then((user) => {
 
 						//Technical Debt:  Let's make sure that it's a appropriate object before we set it as the global user here...
                         return this.isPartiallyHydratedUser(user).then((validated) => {
@@ -194,7 +189,7 @@ class userController extends entityController {
 
             this.disableACLs();
 
-            this.get(email).then((user) => {
+            this.get({id: email}).then((user) => {
 
                 if(_.has(user, 'id')){
 
@@ -202,7 +197,7 @@ class userController extends entityController {
 
                 }else{
 
-                    let account_id = uuidV4();
+                    let account_id = this.getUUID();
                     let proto_account = {
                         id: account_id,
                         name: email+'-pending-name',
@@ -248,13 +243,11 @@ class userController extends entityController {
 
                     let promises = [];
 
-                    promises.push(accountController.create(proto_account));
-                    promises.push(this.create(proto_user));
-
-					//Technical Debt:  This should be a lookup, not a hardcoded string
-                    promises.push(roleController.get('cae614de-ce8a-40b9-8137-3d3bdff78039'));
-
-                    promises.push(userSettingController.create(proto_user_setting));
+                    promises.push(this.executeAssociatedEntityFunction('accountController', 'create', {entity: proto_account}));
+                    promises.push(this.create({entity: proto_user}));
+					          //Technical Debt:  This should be a lookup, not a hardcoded string
+                    promises.push(this.executeAssociatedEntityFunction('roleController', 'get', {id: 'cae614de-ce8a-40b9-8137-3d3bdff78039'}));
+                    promises.push(this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: proto_user_setting}));
 
                     return Promise.all(promises).then((promises) => {
 
@@ -280,18 +273,14 @@ class userController extends entityController {
 
                         du.debug('ACL object to create:', acl_object);
 
-                        return userACLController.create(acl_object).then((acl) => {
-
+                        return this.executeAssociatedEntityFunction('userACLController', 'create', {entity: acl_object}).then((acl) => {
 
                             acl.account = account;
                             acl.role = role;
 
-                            du.debug(acl);
-
                             this.enableACLs();
 
                             user.acl = [acl];
-
 
                             return resolve(user);
 
@@ -303,7 +292,7 @@ class userController extends entityController {
                         });
 
                     }).catch((error) => {
-
+                      du.error(error);
                         return reject(error);
 
                     });
@@ -324,7 +313,7 @@ class userController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            this.get(id).then((user) => {
+            this.get({id: id}).then((user) => {
 
                 du.debug('Prehydrated User:', user);
 
@@ -378,11 +367,11 @@ class userController extends entityController {
 
     getACL(user){
 
-        if(_.has(user, 'acl') && _.isArray(user.acl)){
-            return user.acl;
-        }
+      if(_.has(user, 'acl') && _.isArray(user.acl)){
+          return user.acl;
+      }
 
-        return userACLController.getACLByUser(user.id);
+      return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', user.id);
 
     }
 
@@ -392,10 +381,8 @@ class userController extends entityController {
 
             du.debug('User: ', user.id);
 
-			      //Technical Debt:  This is required.  Must be extended by the UserACL controller itself?
-            var userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
-            userACLController.queryBySecondaryIndex('user', user.id, 'user-index')
+            this.executeAssociatedEntityFunction('userACLController','queryBySecondaryIndex', {field: 'user', index_value: user.id, index_name: 'user-index'})
               .then((response) => this.getResult(response, 'useracls'))
               .then((acls) => {
 
@@ -407,7 +394,9 @@ class userController extends entityController {
 
                   du.debug('ACLs: ', acls);
 
-                  let acl_promises = acls.map(acl => userACLController.getPartiallyHydratedACLObject(acl));
+                  let acl_promises = arrayutilities.map(acls, (acl) => {
+                    return this.executeAssociatedEntityFunction('userACLController','getPartiallyHydratedACLObject', acl);
+                  });
 
                   return Promise.all(acl_promises).then((acl_promises) => {
 
@@ -429,22 +418,27 @@ class userController extends entityController {
     getAccount(id){
 
         if(id == '*'){
-            return accountController.getMasterAccount();
+            return this.executeAssociatedEntityFunction('accountController', 'getMasterAccount', {});
         }else{
-            return accountController.get(id);
+            return this.executeAssociatedEntityFunction('accountController', 'get', {id: id});
         }
 
     }
 
     getAccessKey(id){
 
-        du.debug('Get Access Key');
-        return accessKeyController.get(id);
+      du.debug('Get Access Key');
+
+      return this.executeAssociatedEntityFunction('accessKeyController', 'get', {id: id});
 
     }
 
     getAccessKeyByKey(id){
-        return accessKeyController.getAccessKeyByKey(id);
+
+      du.debug('Get Access Key By Key');
+
+      return this.executeAssociatedEntityFunction('accessKeyController', 'getAccessKeyByKey', {id: id});
+
     }
 
     getAddress(user){
@@ -476,7 +470,7 @@ class userController extends entityController {
 
                     user = this.appendAlias(user);
 
-                    this.create(user).then((user) => {
+                    this.create({entity: user}).then((user) => {
 
                         this.enableACLs();
 
@@ -516,11 +510,12 @@ class userController extends entityController {
 
     createUserWithAlias(user_input) {
 
-        du.debug('Create User With Alias');
+      du.debug('Create User With Alias');
 
-        let user = this.appendAlias(user_input);
+      let user = this.appendAlias(user_input);
 
-        return this.create(user);
+      return this.create({entity: user});
+
     }
 
     isPartiallyHydratedUser(user){ // eslint-disable-line no-unused-vars
@@ -567,7 +562,7 @@ class userController extends entityController {
             du.debug('Assure User');
             du.highlight('User ID: ', user_id);
 
-            this.get(user_id).then((user) => {
+            this.get({id: user_id}).then((user) => {
 
                 if(_.has(user, 'id')){
 
@@ -589,7 +584,7 @@ class userController extends entityController {
 
                     du.highlight('New User', user_object);
 
-                    return this.create(user_object).then((user) => {
+                    return this.create({entity: user_object}).then((user) => {
 
                         if(_.has(user, 'id')){
 
@@ -635,7 +630,7 @@ class userController extends entityController {
                         user: user.id
                     }
 
-                    return userACLController.assure(user_acl_object).then((useracl) => {
+                    return this.executeAssociatedEntityFunction('userACLController', 'assure', user_acl_object).then((useracl) => {
 
                         du.highlight("Assured UserACL", useracl);
 
@@ -681,9 +676,9 @@ class userController extends entityController {
             var promises = [];
 			//refactored
 
-            promises.push(accountController.get(userinvite.account));
-            promises.push(roleController.get(userinvite.role));
-            promises.push(this.get(userinvite.email));
+            promises.push(this.executeAssociatedEntityFunction('accountController', 'get', {id: userinvite.account}));
+            promises.push(this.executeAssociatedEntityFunction('roleController', 'get', {id: userinvite.role}));
+            promises.push(this.get({id: userinvite.email}));
 
             return Promise.all(promises).then((promises) => {
 
@@ -760,10 +755,11 @@ class userController extends entityController {
 
     }
 
-    getUsersByAccount(pagination){
+    getUsersByAccount({pagination}){
 
       du.debug('Get Users By Account');
 
+      //Technical Debt:  Use Entity Methods
       if(!_.has(global, 'account')){
         eu.throwError('server', 'Global variable missing account property.');
       }
@@ -776,7 +772,7 @@ class userController extends entityController {
 
         if(!this.isUUID(global.account)){ eu.throwError('server', 'Unexpected account ID type: '+global.account); }
 
-        return userACLController.getACLByAccount(global.account).then(user_acl_objects => {
+        return this.executeAssociatedEntityFunction('accessKeyController', 'getACLByAccount', global.account).then(user_acl_objects => {
 
           if(arrayutilities.isArray(user_acl_objects) && user_acl_objects.length > 0){
 

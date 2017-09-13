@@ -14,7 +14,7 @@ module.exports.graphObj = new GraphQLObjectType({
       merchantprovider:{
         type: new GraphQLNonNull(merchantProviderType.graphObj),
         description: 'The merchant provider.',
-        resolve: merchantprovider => merchantProviderController.get(merchantprovider.merchantprovider)
+        resolve: merchantprovider => merchantProviderController.get({id: merchantprovider.merchantprovider})
       },
       summary:{
         type: new GraphQLNonNull(merchantProviderSummaryGroupType.graphObj),

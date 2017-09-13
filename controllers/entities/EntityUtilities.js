@@ -2,11 +2,11 @@
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
@@ -21,7 +21,8 @@ module.exports = class entityUtilitiesController{
 
     constructor(){
 
-        this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+      //Technical Debt:  Why is this here?
+      this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
     }
 
@@ -108,6 +109,11 @@ module.exports = class entityUtilitiesController{
 
       return Promise.resolve(valid);
 
+    }
+
+    getUUID(){
+      du.debug('Get UUID');
+      return uuidV4();
     }
 
     isUUID(string, version){
@@ -709,12 +715,13 @@ module.exports = class entityUtilitiesController{
 
         du.debug('Get ID');
 
+        //du.warning(object, primary_key);
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(_.isString(object)){
 
-
-        //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
+            //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
             return object;
 
             /*
@@ -747,6 +754,7 @@ module.exports = class entityUtilitiesController{
 
         }
 
+        //du.warning('here');
         eu.throwError('bad_request','Could not determine identifier.');
 
     }
@@ -816,6 +824,8 @@ module.exports = class entityUtilitiesController{
 
       if(!_.has(this, controller_name) || !_.isFunction(this[controller_name][function_name])){
         let controller_file_name = this.translateControllerNameToFilename(controller_name);
+
+        du.info(controller_file_name, function_name);
 
         this[controller_name] = global.SixCRM.routes.include('entities', controller_file_name);
       }

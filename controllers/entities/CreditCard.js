@@ -44,11 +44,9 @@ class creditCardController extends entityController {
 
         du.debug('Store Credit Card.');
 
-        var controller_instance = this;
-
         return new Promise((resolve, reject) => {
 
-            controller_instance.queryBySecondaryIndex('number', creditcard.number, 'number-index')
+            this.queryBySecondaryIndex({field:'number', index_value: creditcard.number, index_name: 'number-index'})
               .then((result) => this.getResult(result))
               .then((creditcards) => {
 
@@ -65,7 +63,7 @@ class creditCardController extends entityController {
 
                   creditcards.forEach(function(item){
 
-                      if(card_identified == false && controller_instance.isSameCreditCard(creditcard, item)){
+                      if(card_identified == false && this.isSameCreditCard(creditcard, item)){
 
                           card_identified = item;
 
@@ -79,7 +77,7 @@ class creditCardController extends entityController {
 
                   }else if(card_identified == false){
 
-                      return controller_instance.create(creditcard).then((data) => {
+                      return this.create(creditcard).then((data) => {
 
                           return resolve(data);
 

@@ -11,13 +11,7 @@ class campaignController extends entityController {
 
     constructor(){
 
-        super('campaign');
-
-        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-        this.loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
-        this.productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-        this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
-        this.emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+      super('campaign');
 
     }
 
@@ -25,37 +19,21 @@ class campaignController extends entityController {
 
       du.debug('Get Affiliate Allow Deny List');
 
-      if(!_.isArray(list)){
-        eu.throwError('server', 'campaignController.getAffiliateAllowDenyList assumes list argument is an array');
-      }
-
-      if(list.length < 1){
+      if(!arrayutilities.nonEmpty(list)){
         return null;
       }
 
-      let ac = this.affiliateController;
-
-      if(!_.isFunction(ac.get)){
-        ac = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
-      }
-
-      let list_promises = list.map((list_item) => {
-
-        du.warning(list_item);
-        if(this.isUUID(list_item)){
-          return ac.get(list_item);
-        }
+      let list_promises = arrayutilities.map(list, (list_item) => {
 
         if(list_item == '*'){
           return Promise.resolve({id:'*', name:'All'});
+        }else if(this.isUUID(list_item)){
+          return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: list_item});
         }
 
       });
 
-      return Promise.all(list_promises).then(list_promises => {
-        du.info(list_promises);
-        return list_promises;
-      });
+      return Promise.all(list_promises);
 
     }
 
@@ -80,30 +58,29 @@ class campaignController extends entityController {
         }
       };
 
-      this.sessionController.queryByParameters(query_parameters, args.pagination);
+      let pagination = args.pagination;
+
+      return this.executeAssociatedEntityFunction('sessionController', 'queryByParameters', {query_parameters: query_parameters, pagination: pagination});
 
     }
 
+    //Technical Debt:  This seems VERY general in terms of parameterization
     listCampaignsByProduct(args){
 
       du.debug('Get Campaigns');
 
+      //Technical Debt:  Clumsy.  Adjust parameterization
       if(!_.has(args, 'product')){
         eu.throwError('bad_request','listCampaignsByProduct requires a product argument.');
       }
 
-      //Technical Debt: Due to the way that controllers extend other controllers...
-      let psc = this.productScheduleController;
-
-      if(!_.isFunction(psc.listProductSchedulesByProduct)){
-        psc = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-      }
-
-      return psc.listProductSchedulesByProduct({product: args.product, pagination: args.pagination}).then((product_schedules) => {
+      return this.executeAssociatedEntityFunction('productScheduleController', 'listProductSchedulesByProduct', {product: args.product, pagination: args.pagination}).then((product_schedules) => {
 
         if(_.has(product_schedules, 'productschedules') && _.isArray(product_schedules.productschedules)){
 
-          let campaigns = product_schedules.productschedules.map((product_schedule) => this.listCampaignsByProductSchedule({productschedule: product_schedule, pagination: args.pagination}));
+          let campaigns = arrayutilities.map(product_schedules.productschedules, (product_schedule) => {
+            return this.listCampaignsByProductSchedule({productschedule: product_schedule, pagination: args.pagination})
+          });
 
           return Promise.all(campaigns).then((responses) => {
 
@@ -158,11 +135,11 @@ class campaignController extends entityController {
 
     }
 
-    listCampaignsByProductSchedule(args){
+    listCampaignsByProductSchedule({product_schedule, pagination}){
 
       du.debug('List Campaigns By Product Schedule');
 
-      let product_schedule_id = this.getID(args.productschedule);
+      let product_schedule_id = this.getID(product_schedule);
 
       let scan_parameters = {
         filter_expression: 'contains(#f1, :product_schedule_id)',
@@ -174,111 +151,115 @@ class campaignController extends entityController {
         }
       };
 
-      return this.scanByParameters(scan_parameters, args.pagination);
+      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
 
     }
 
     getEmailTemplatesByEventType(campaign, event_type){
 
-        du.debug('Get Email Templates By Event Type');
+      du.debug('Get Email Templates By Event Type');
 
       //Technical Debt:  Update this query to be a compound condition
-        return this.getEmailTemplates(campaign).then((email_templates) => {
+      return this.getEmailTemplates(campaign).then((email_templates) => {
 
-            let typed_email_templates = [];
+        let typed_email_templates = [];
 
-            email_templates.forEach((email_template) => {
+        email_templates.forEach((email_template) => {
 
-                if(_.has(email_template, 'type') && email_template.type == event_type){
+          if(_.has(email_template, 'type') && email_template.type == event_type){
 
-                    typed_email_templates.push(email_template);
+            typed_email_templates.push(email_template);
 
-                }
-
-            });
-
-            return typed_email_templates;
+          }
 
         });
+
+        return typed_email_templates;
+
+      });
 
     }
 
     getEmailTemplates(campaign){
 
-        du.debug('Get Email Templates');
+      du.debug('Get Email Templates');
 
-        if(_.has(campaign, "emailtemplates")){
+      if(_.has(campaign, "emailtemplates") && arrayutilities.nonEmpty(campaign.emailtemplates)){
 
-            let acquisitions = campaign.emailtemplates.map(id => this.emailTemplateController.get(id));
+        let emailtemplates = arrayutilities.map(campaign.emailtemplates, (id) => {
+          return this.executeAssociatedEntityFunction('emailTemplateController', 'get', {id: id});
+        });
 
-            return Promise.all(acquisitions).then((acquisitions) => {
+        return Promise.all(emailtemplates).then((emailtemplates) => {
 
-                return acquisitions;
+          return emailtemplates;
 
-            });
+        });
 
-        }else{
+      }else{
 
-            return Promise.resolve(null);
+        return Promise.resolve(null);
 
-        }
+      }
 
     }
 
     getProducts(campaign){
 
-        if(_.has(campaign, "products")){
+      du.debug('Get Products');
 
-            return campaign.products.map(id => this.productController.get(id));
+      if(_.has(campaign, "products") && arrayutilities.nonEmpty(campaign.products)){
 
-        }else{
+        return arrayutilities.map(campaign.products, (id) => {
+          return this.executeAssociatedEntityFunction('productController', 'get', {id: id});
+        });
 
-            return null;
+      }else{
 
-        }
+        return null;
+
+      }
 
     }
 
     getProductSchedules(campaign){
 
-        if(_.has(campaign, "productschedules")){
+      du.debug('Get Product Schedules');
 
-          //Technical Debt: Due to the way that controllers extend other controllers...
-          let psc = this.productScheduleController;
+      if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
 
-          if(!_.isFunction(psc.get)){
-            psc = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-          }
+        return arrayutilities.map(campaign.productschedules, (id) => {
+          return this.executeAssociatedEntityFunction('productScheduleController', 'get', {id: id});
+        });
 
-          return campaign.productschedules.map(id => psc.get(id));
+      }else{
 
-        }else{
+          return null;
 
-            return null;
-
-        }
+      }
 
     }
 
     getProductSchedulesHydrated(campaign){
 
-      du.highlight('Get Product Schedule Hydrated');
+      du.debug('Get Product Schedule Hydrated');
 
-      if(!_.has(campaign, "productschedules")){ return null; }
+      if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
 
-      let psc = this.productScheduleController;
+        return Promise.all(arrayutilities.map(campaign.productschedules, (id) => {
+          return this.executeAssociatedEntityFunction('productScheduleController', 'getProductScheduleHydrated', {id: id});
+        }));
 
-      if(!_.isFunction(psc.getProductScheduleHydrated)){
-        psc = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+      }else{
+        return null;
       }
-
-      return Promise.all(campaign.productschedules.map(id => psc.getProductScheduleHydrated(id)));
-
     }
 
     getAffiliate(campaign){
 
-        return this.affiliateController.get(campaign.affiliate);
+      du.debug('Get Affiliate');
+
+      return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: campaign.affiliate});
 
     }
 
@@ -296,7 +277,7 @@ class campaignController extends entityController {
 
     getHydratedCampaign(id) {
 
-      return this.get(id).then((campaign) => this.hydrate(campaign));
+      return this.get({id: id}).then((campaign) => this.hydrate(campaign));
 
     }
 

@@ -5,6 +5,7 @@ const uuidV4 = require('uuid/v4');
 var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+var arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -49,7 +50,7 @@ class sessionController extends entityController {
             }
         };
 
-        return this.scanByParameters(scan_parameters, pagination);
+        return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
 
     }
 
@@ -59,7 +60,7 @@ class sessionController extends entityController {
 
       if(!_.has(session, "customer")){ return null; }
 
-      return this.executeAssociatedEntityFunction('customerController', 'get', session.customer);
+      return this.executeAssociatedEntityFunction('customerController', 'get', {id: session.customer});
 
     }
 
@@ -69,7 +70,7 @@ class sessionController extends entityController {
 
       if(!_.has(session, "campaign")){ return null; }
 
-      return this.executeAssociatedEntityFunction('campaignController', 'get', session.campaign);
+      return this.executeAssociatedEntityFunction('campaignController', 'get', {id: session.campaign});
 
     }
 
@@ -79,7 +80,7 @@ class sessionController extends entityController {
 
       if(!_.has(session, 'customer')){ return null; }
 
-      return this.executeAssociatedEntityFunction('customerController', 'getMostRecentCreditCard', session.customer);
+      return this.executeAssociatedEntityFunction('customerController', 'getMostRecentCreditCard', {id: session.customer});
 
     }
 
@@ -93,7 +94,7 @@ class sessionController extends entityController {
           id = session.id;
       }
 
-      return this.executeAssociatedEntityFunction('campaignController', 'getHydratedCampaign', id);
+      return this.executeAssociatedEntityFunction('campaignController', 'getHydratedCampaign', {id: id});
 
     }
 
@@ -103,7 +104,7 @@ class sessionController extends entityController {
 
         if(_.has(session, affiliate_field) && this.isUUID(session[affiliate_field])){
 
-          return this.executeAssociatedEntityFunction('affiliateController', 'get', session[affiliate_field]);
+          return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: session[affiliate_field]});
 
         }else{
 
@@ -117,29 +118,25 @@ class sessionController extends entityController {
 
         du.debug('Get Affiliate IDs');
 
-        return this.get(session).then((session) => {
+        return this.get({id: session}).then((session) => {
 
-            let affiliate_ids = [];
+            return arrayutilities.map(this.affiliate_fields, (affiliate_field) => {
 
-            this.affiliate_fields.forEach((affiliate_field) => {
+              if(_.has(session, affiliate_field)){
 
-                if(_.has(session, affiliate_field)){
+                if(this.isUUID(session[affiliate_field])){
 
-                    if(this.isUUID(session[affiliate_field])){
+                  return session[affiliate_field];
 
-                        affiliate_ids.push(session[affiliate_field]);
+                }else{
 
-                    }else{
-
-                        du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
-
-                    }
+                  du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
 
                 }
 
-            });
+              }
 
-            return affiliate_ids;
+            });
 
         });
 
@@ -147,47 +144,50 @@ class sessionController extends entityController {
 
     getAffiliates(session){
 
-        du.debug('Get Affiliates');
+      du.debug('Get Affiliates');
 
-        return new Promise((resolve) => {
+      return new Promise((resolve) => {
 
-            return this.get(session).then((session) => {
+        return this.get({id: session}).then((session) => {
 
-                let affiliates = [];
+          let affiliates = arrayutilities.map(this.affiliate_fields, (affiliate_field) => {
 
-                this.affiliate_fields.forEach((affiliate_field) => {
+            if(_.has(session, affiliate_field)){
 
-                    if(_.has(session, affiliate_field)){
+              if(this.isUUID(session[affiliate_field])){
 
-                        if(this.isUUID(session[affiliate_field])){
+                return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: session[affiliate_field]});
 
-                          affiliates.push(this.executeAssociatedEntityFunction('affiliateController', 'get', session[affiliate_field]));
+              }else{
 
-                        }else{
+                du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
 
-                            du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
+              }
 
-                        }
+            }
 
-                    }
+          });
 
-                });
+          if(affiliates.length < 1){
 
-                if(affiliates.length < 1){ return resolve(affiliates); }
+            return resolve(affiliates);
 
-                return Promise.all(affiliates).then((affiliates) => {
+          }
 
-                    return resolve(affiliates);
+          return Promise.all(affiliates).then((affiliates) => {
 
-                });
+              return resolve(affiliates);
 
-            });
+          });
 
         });
+
+      });
 
     }
 
 	//used in Create Order
+  //Technical Debt:  Very Messy
     getTransactions(session){
 
         return new Promise((resolve, reject) => {
@@ -196,11 +196,13 @@ class sessionController extends entityController {
 
             return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id).then((rebills) => {
 
+              //du.warning(rebills); process.exit();
+
                 return Promise.all(rebills.map((rebill) => {
 
                     return new Promise((resolve, reject) => {
 
-                      return this.executeAssociatedEntityFunction('transactionController', 'getTransactionsByRebillID', rebill.id).then((transactions) => {
+                      return this.executeAssociatedEntityFunction('transactionController', 'getTransactionsByRebillID', {id: rebill.id}).then((transactions) => {
 
                             if(_.isNull(transactions)){
 
@@ -254,28 +256,38 @@ class sessionController extends entityController {
 
     getProductSchedules(session){
 
-        if(!_.has(session, "product_schedules")){ return null; }
+      du.debug('Get Product Schedules');
 
-        return session.product_schedules.map(schedule => this.executeAssociatedEntityFunction('productScheduleController', 'get', schedule));
+      if(arrayutilities.nonEmpty(session.product_schedule)){
+
+        return arrayutilities.map(session.product_schedule, (schedule) => {
+
+          return this.executeAssociatedEntityFunction('productScheduleController', 'get', {id: schedule});
+
+        });
+
+      }else{
+
+        return null;
+
+      }
 
     }
 
 	   //Technical Debt: This function is a mess...
     getTransactionProducts(session){
 
-        var controller_instance = this;
-
         return new Promise((resolve, reject) => {
 
             var session_products = [];
 
-            return controller_instance.getRebills(session).then((rebills) => {
+            return this.getRebills(session).then((rebills) => {
 
                 return Promise.all(rebills.map((rebill) => {
 
                     return new Promise((resolve, reject) => {
 
-                      return this.executeAssociatedEntityFunction('rebillController', 'getTransactions', rebill).then((transactions) => {
+                      return this.executeAssociatedEntityFunction('rebillController', 'getTransactions', {id: rebill}).then((transactions) => {
 
 							//note that at the time of a createorder, there are lots of rebills, only one of which has a transaction
                             if(_.isNull(transactions)){
@@ -288,7 +300,7 @@ class sessionController extends entityController {
 
                                     return new Promise((resolve) => {
 
-                                      return this.executeAssociatedEntityFunction('transactionController', 'getProducts', transaction).then((products) => {
+                                      return this.executeAssociatedEntityFunction('transactionController', 'getProducts', {id: transaction}).then((products) => {
 
                                           return resolve(products);
 
@@ -342,7 +354,7 @@ class sessionController extends entityController {
 
     getSessionHydrated(id){
 
-        return this.get(id).then((session) => {
+        return this.get({id: id}).then((session) => {
 
             return this.hydrate(session);
 
@@ -408,7 +420,7 @@ class sessionController extends entityController {
         }
 
         var session = {
-            id: uuidV4(),
+            id: this.getUUID(),
             customer: params.customer,
             campaign: params.campaign,
             completed: 'false'
@@ -424,13 +436,13 @@ class sessionController extends entityController {
 
     getSessionByCustomerID(customer_id){
 
-        return this.queryBySecondaryIndex('customer', customer_id, 'customer-index').then((result) => this.getResult(result));
+        return this.queryBySecondaryIndex({field: 'customer', index_value: customer_id, index_name: 'customer-index'}).then((result) => this.getResult(result));
 
     }
 
-    listSessionsByCustomerID(customer_id, pagination) {
+    listSessionsByCustomerID({id, pagination}) {
 
-        return this.listBySecondaryIndex('customer', customer_id, 'customer-index', pagination);
+        return this.listBySecondaryIndex({field: 'customer', index_value: id, index_name: 'customer-index', pagination: pagination});
 
     }
 
@@ -496,7 +508,7 @@ class sessionController extends entityController {
 
                     });
 
-                    return this.create(session).then((session) => {
+                    return this.create({entity: session}).then((session) => {
                         return resolve(session);
                     });
 
@@ -528,7 +540,7 @@ class sessionController extends entityController {
 
         session.product_schedules = session_product_schedules;
 
-        return this.update(session);
+        return this.update({entity: session});
 
     }
 
@@ -536,7 +548,7 @@ class sessionController extends entityController {
 
         session.completed = 'true';
 
-        return this.update(session);
+        return this.update({entity: session});
 
     }
 

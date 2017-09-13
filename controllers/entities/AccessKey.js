@@ -9,7 +9,7 @@ class accessKeyController extends entityController {
 
     getAccessKeyByKey(access_key){
 
-        return this.getBySecondaryIndex('access_key', access_key, 'access_key-index');
+        return this.getBySecondaryIndex({field: 'access_key', index_value: access_key, index_name: 'access_key-index'});
 
     }
 

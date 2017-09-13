@@ -2,6 +2,8 @@
 const _ = require('underscore');
 
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+var arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -9,10 +11,7 @@ class productScheduleController extends entityController {
 
     constructor(){
 
-        super('productschedule');
-
-        this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
-        this.loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+      super('productschedule');
 
     }
 
@@ -20,9 +19,10 @@ class productScheduleController extends entityController {
 
       du.debug('Get Campaigns');
 
+      //Technical Debt:  This looks redundant.
       let product_schedule_id = this.getID(args.productschedule);
 
-      return this.campaignController.listCampaignsByProductSchedule({productschedule: product_schedule_id}, args.pagination);
+      return this.executeAssociatedEntityFunction('campaignController', 'listCampaignsByProductSchedule', {product_schedule: product_schedule_id, pagination: args.pagination});
 
     }
 
@@ -30,6 +30,7 @@ class productScheduleController extends entityController {
     //Technical Debt:  Expensive!
     //Technical Debt:  Slow
     //Technical Debt:  Dynamo scan't query on map attributes of lists
+    //Technical Debt:  The input argumentation here is gross.
     listProductSchedulesByProduct(args){
 
         du.debug('List Product Schedules By Product');
@@ -38,7 +39,7 @@ class productScheduleController extends entityController {
 
         let scan_parameters = {};
 
-        return this.scanByParameters(scan_parameters, args.pagination).then((results) => {
+        return this.scanByParameters({parameters: scan_parameters, pagination: args.pagination}).then((results) => {
 
           let return_array = [];
 
@@ -78,11 +79,11 @@ class productScheduleController extends entityController {
 
     getLoadBalancer(product_schedule){
 
-        du.debug('Get Load Balancer');
+      du.debug('Get Load Balancer');
 
-        if(!_.has(product_schedule, 'loadbalancer')){ return Promise.resolve(null); }
+      if(!_.has(product_schedule, 'loadbalancer')){ return Promise.resolve(null); }
 
-        return this.loadBalancerController.get(product_schedule.loadbalancer);
+      return this.executeAssociatedEntityFunction('loadBalancerController', 'get', {id: product_schedule.loadbalancer});
 
     }
 
@@ -111,11 +112,7 @@ class productScheduleController extends entityController {
 
       du.debug('Get Product');
 
-      if(!_.has(this, 'productController') || !_.isFunction(this.productController.get)){
-        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-      }
-
-      return this.productController.get(scheduled_product.product);
+      return this.executeAssociatedEntityFunction('productController', 'get', {id: scheduled_product.product});
 
     }
 
@@ -123,7 +120,17 @@ class productScheduleController extends entityController {
 
       du.debug('Get Schedule');
 
-      return product_schedule.schedule.map(scheduled_product => this.getScheduledProduct(scheduled_product));
+      if(arrayutilities.nonEmpty(product_schedule.schedule)){
+
+        return arrayutilities.map(product_schedule.schedule, (scheduled_product) => {
+          return this.getScheduledProduct(scheduled_product);
+        });
+
+      }else{
+
+        return null;
+
+      }
 
     }
 
@@ -145,11 +152,19 @@ class productScheduleController extends entityController {
 
       du.debug('Get Products');
 
-      if(!_.has(this, 'productController') || !_.isFunction(this.productController.get)){
-        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-      }
+      if(arrayutilities.nonEmpty(product_schedule.schedule)){
 
-      return Promise.all(product_schedule.schedule.map(ps => this.productController.get(ps.product_id)));
+        let promises = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
+          return this.executeAssociatedEntityFunction('productController', 'get', {id: productschedule.product_id});
+        });
+
+        return Promise.all(promises);
+
+      }else{
+
+        return null;
+
+      }
 
     }
 
@@ -160,7 +175,7 @@ class productScheduleController extends entityController {
 
       return new Promise((resolve, reject) => {
 
-        return this.get(id).then((product_schedule) => {
+        return this.get({id: id}).then((product_schedule) => {
 
           return this.getProducts(product_schedule).then((products) => {
 
@@ -204,7 +219,7 @@ class productScheduleController extends entityController {
 
       product_schedules = product_schedules || [];
 
-    	return Promise.all(product_schedules.map(product_schedule => this.get(product_schedule)));
+    	return Promise.all(product_schedules.map(product_schedule => this.get({id: product_schedule})));
 
     }
 

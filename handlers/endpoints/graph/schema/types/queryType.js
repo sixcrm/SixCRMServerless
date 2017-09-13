@@ -127,6 +127,9 @@ let cacheInputType = require('./cache/cacheInputType');
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
+        /*
+        * Esoteric requests
+        */
     	   search:{
     	      type: searchResultsType.graphObj,
   	        description: 'Executes a search query.',
@@ -153,6 +156,15 @@ module.exports.graphObj = new GraphQLObjectType({
             return suggestController.suggest(suggest.suggest);
       	  }
       	},
+        tokenlist: {
+            type: tokenListType.graphObj,
+            resolve: function(){
+
+              const tokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
+
+              return tokenHelperController.list();
+            }
+        },
       	userintrospection:{
       	  type: userType.graphObj,
           description: 'Retrieves or creates a user.',
@@ -162,165 +174,6 @@ module.exports.graphObj = new GraphQLObjectType({
             return userController.introspection();
     	     }
       	},
-      	transaction: {
-          type: transactionType.graphObj,
-          args: {
-              id: {
-                  description: 'id of the transaction',
-                  type: new GraphQLNonNull(GraphQLString)
-              }
-          },
-          resolve: function(root, transaction){
-              const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-
-              return transactionController.get(transaction.id);
-          }
-      },
-        shippingreceipt: {
-            type: shippingReceiptType.graphObj,
-            args: {
-                id: {
-                    description: 'id of the shipping receipt',
-                    type: new GraphQLNonNull(GraphQLString)
-                }
-            },
-            resolve: function(root, shippingreceipt){
-                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
-
-                return shippingReceiptController.get(shippingreceipt.id);
-            }
-        },
-        rebill: {
-            type: rebillType.graphObj,
-            args: {
-                id: {
-                    description: 'id of the rebill',
-                    type: new GraphQLNonNull(GraphQLString)
-                }
-            },
-            resolve: function(root, rebill){
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-
-                return rebillController.get(rebill.id);
-            }
-        },
-        session: {
-            type: sessionType.graphObj,
-            args: {
-                id: {
-                    description: 'id of the session',
-                    type: GraphQLString
-                }
-            },
-            resolve: function(root, session){
-                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-
-                return sessionController.get(session.id);
-            }
-        },
-        customer: {
-            type: customerType.graphObj,
-            args: {
-                id: {
-                    description: 'id of the customer',
-                    type: new GraphQLNonNull(GraphQLString)
-                }
-            },
-            resolve: function(root, customer){
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
-
-                return customerController.get(customer.id);
-            }
-        },
-        customernote: {
-            type: customerNoteType.graphObj,
-            args: {
-                id: {
-                    description: 'id of the customer note',
-                    type: new GraphQLNonNull(GraphQLString)
-                }
-            },
-            resolve: function(root, customernote){
-                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
-
-                return customerNoteController.get(customernote.id);
-            }
-        },
-        product: {
-            type: productType.graphObj,
-            args: {
-                id: {
-                    description: 'id of the product',
-                    type: GraphQLString
-                }
-            },
-            resolve: function(root, product){
-                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-
-                return productController.get(product.id);
-            }
-        },
-        emailtemplate: {
-            type: emailTemplateType.graphObj,
-            args: {
-                id: {
-                    description: 'id of the email template',
-                    type: GraphQLString
-                }
-            },
-            resolve: function(root, emailtemplate){
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
-
-                return emailTemplateController.get(emailtemplate.id);
-            }
-        },
-        smtpprovider: {
-            type: SMTPProviderType.graphObj,
-            args: {
-                id: {
-                    description: 'id of the SMTP Provider',
-                    type: GraphQLString
-                }
-            },
-            resolve: function(root, smtpprovider){
-                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
-
-                return SMTPProviderController.get(smtpprovider.id);
-            }
-        },
-        emailtemplatelist: {
-            type: emailTemplateListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, emailtemplates){
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
-
-                return emailTemplateController.list(emailtemplates.pagination);
-            }
-        },
-        smtpproviderlist: {
-            type: SMTPProviderListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, smtpproviders){
-                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
-
-                return SMTPProviderController.list(smtpproviders.pagination);
-            }
-        },
-        productlist: {
-            type: productListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, products){
-                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-
-                return productController.list(products.pagination);
-            }
-        },
         userlist: {
             type: userListType.graphObj,
             args: {
@@ -329,69 +182,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, users){
                 const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
-                return userController.getUsersByAccount(users.pagination);
-            }
-        },
-        useracllist: {
-            type: userACLListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, useracl){
-                const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
-
-                return userACLController.list(useracl.pagination);
-            }
-        },
-        rebilllist: {
-            type: rebillListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, rebill){
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-
-      	       return rebillController.list(rebill.pagination);
-            }
-        },
-        shippingreceiptlist: {
-            type: shippingReceiptListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, shippingreceipt){
-                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
-
-                return shippingReceiptController.list(shippingreceipt.pagination); }
-        },
-        affiliatelist: {
-            type: affiliateListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, affiliate){
-                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
-
-                return affiliateController.list(affiliate.pagination);
-            }
-        },
-        tokenlist: {
-            type: tokenListType.graphObj,
-            resolve: function(){
-              const tokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
-
-              return Promise.resolve({tokens: tokenHelperController.list()});
-            }
-        },
-        trackerlist: {
-            type: trackerListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, tracker){
-                const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
-
-                return trackerController.list(tracker.pagination);
+                return userController.getUsersByAccount({pagination: users.pagination});
             }
         },
         trackerlistbyaffiliate: {
@@ -403,95 +194,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-                return trackerController.getByAffiliateID(args.affiliate, args.pagination);
-            }
-        },
-        creditcardlist: {
-            type: creditCardListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, creditcard){
-                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-
-                return creditCardController.list(creditcard.pagination);
-            }
-        },
-        merchantproviderlist: {
-            type: merchantProviderListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, merchantprovider){
-                const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
-
-      	       return merchantProviderController.list(merchantprovider.pagination);
-            }
-        },
-        fulfillmentproviderlist: {
-            type: fulfillmentProviderListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, fulfillmentprovider){
-                const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
-
-      	       return fulfillmentProviderController.list(fulfillmentprovider.pagination);
-            }
-        },
-        accesskeylist: {
-            type: accessKeyListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, accesskey){
-                const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
-
-      	       return accessKeyController.list(accesskey.pagination);
-            }
-        },
-        accountlist: {
-            type: accountListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, account){
-                const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
-
-                return accountController.list(account.pagination);
-            }
-        },
-        rolelist: {
-            type: roleListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, role){
-                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
-
-      	       return roleController.list(role.pagination);
-            }
-        },
-        customerlist: {
-            type: customerListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, customer){
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
-
-      	       return customerController.list(customer.pagination);
-            }
-        },
-        customernotelist: {
-            type: customerNoteListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, customernote){
-                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
-
-                return customerNoteController.list(customernote.pagination);
+                return trackerController.getByAffiliateID({affiliate: args.affiliate, pagination: args.pagination});
             }
         },
         customernotelistbycustomer: {
@@ -504,58 +207,163 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, customernote){
-                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+              const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
 
       	      return customerNoteController.listByCustomer(customernote.customer, customernote.pagination);
             }
         },
-
-        loadbalancerlist: {
-            type: loadBalancerListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, loadbalancer){
-                const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
-
-      	       return loadBalancerController.list(loadbalancer.pagination);
-            }
-        },
-        productschedulelist: {
+        productschedulelistbyproduct: {
             type: productScheduleListType.graphObj,
             args: {
+                product: {type: GraphQLString},
                 pagination: {type: paginationInputType.graphObj}
             },
-            resolve: function(root, productschedule){
+            resolve: function(root, args){
+              const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
-                const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-
-      	       return productScheduleController.list(productschedule.pagination);
+              return productScheduleController.listProductSchedulesByProduct(args);
             }
         },
-          productschedulelistbyproduct: {
-              type: productScheduleListType.graphObj,
-              args: {
-                  product: {type: GraphQLString},
-                  pagination: {type: paginationInputType.graphObj}
-              },
-              resolve: function(root, args){
-                const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-
-                return productScheduleController.listProductSchedulesByProduct(args);
-              }
-          },
-        transactionlist: {
+        transactionlistbycustomer: {
             type: transactionListType.graphObj,
             args: {
+                customer: {
+                    description: 'The customer identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, transaction){
-                const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+              const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
-      	       return transactionController.list(transaction.pagination);
+              return customerController.listTransactionsByCustomer(transaction.customer, transaction.pagination);
             }
         },
+        sessionlistbycustomer: {
+            type: sessionListType.graphObj,
+            args: {
+                customer: {
+                    description: 'The customer identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, session){
+                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+
+                return customerController.listCustomerSessions(session.customer, session.pagination);
+            }
+        },
+        sessionlistbyaffiliate: {
+            type: sessionListType.graphObj,
+            args: {
+                affiliate: {
+                    description: 'The affiliate identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+
+                return sessionController.listSessionsByAffiliate(args.affiliate, args.pagination);
+            }
+        },
+        rebilllistbycustomer: {
+            type: rebillListType.graphObj,
+            args: {
+                customer: {
+                    description: 'The customer identifier',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                pagination: {
+                    type: paginationInputType.graphObj
+                }
+            },
+            resolve: function(root, rebill){
+                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+
+                return customerController.listCustomerRebills(rebill.customer, rebill.pagination);
+            }
+        },
+        campaignlistbyproductschedule: {
+            type: campaignListType.graphObj,
+            args: {
+              productschedule: {type: new GraphQLNonNull(GraphQLString)},
+              pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+              const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+
+              return campaignController.listCampaignsByProductSchedule(args);
+            }
+        },
+        campaignlistbyproduct: {
+            type: campaignListType.graphObj,
+            args: {
+              product: {type: new GraphQLNonNull(GraphQLString)},
+              pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+              const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+
+              return campaignController.listCampaignsByProduct(args);
+            }
+        },
+        notificationcount: {
+  	       type: notificationCountType.graphObj,
+            resolve: function() {
+                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+
+                return notificationController.numberOfUnseenNotifications();
+            }
+        },
+        notificationtest: {
+            type: notificationTestType.graphObj,
+            resolve: function() {
+                const notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
+
+                return notificationProviderController.test();
+            }
+        },
+        notificationlist: {
+            type: notificationListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, notification) {
+                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+
+                return notificationController.listForCurrentUser(notification.pagination);
+            }
+        },
+        notificationsettingdefault: {
+            type: notificationSettingDefaultType.graphObj,
+            resolve: () => {
+                const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+
+                return notificationSettingController.getDefaultProfile();
+            }
+        },
+        userdevicetokensbyuserlist: {
+            type: userDeviceTokenListType.graphObj,
+            args: {
+                user: {
+                    description: 'A user_id.',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, user_device_token) {
+                const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
+
+                return userDeviceTokenController.getUserDeviceTokensByUser(user_device_token.user);
+            }
+        },
+
+        /*
+        * Analytics Endpoints
+        */
+
         listmerchantprovidersummaries: {
             type: listMerchantProviderSummariesType.graphObj,
             args: {
@@ -753,66 +561,344 @@ module.exports.graphObj = new GraphQLObjectType({
                 return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
             }
         },
-        transactionlistbycustomer: {
-            type: transactionListType.graphObj,
-            args: {
-                customer: {
-                    description: 'The customer identifier',
-                    type: new GraphQLNonNull(GraphQLString)
-                },
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, transaction){
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
-                return customerController.listTransactionsByCustomer(transaction.customer, transaction.pagination);
+        /*
+        * Normal list and get calls
+        */
+
+      	transaction: {
+          type: transactionType.graphObj,
+          args: {
+              id: {
+                  description: 'id of the transaction',
+                  type: new GraphQLNonNull(GraphQLString)
+              }
+          },
+          resolve: function(root, transaction){
+              const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+
+              return transactionController.get({id: transaction.id});
+          }
+        },
+        shippingreceipt: {
+            type: shippingReceiptType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the shipping receipt',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, shippingreceipt){
+                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+
+                return shippingReceiptController.get({id: shippingreceipt.id});
             }
         },
-        sessionlistbycustomer: {
-            type: sessionListType.graphObj,
+        rebill: {
+            type: rebillType.graphObj,
             args: {
-                customer: {
-                    description: 'The customer identifier',
+                id: {
+                    description: 'id of the rebill',
                     type: new GraphQLNonNull(GraphQLString)
-                },
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, session){
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
-
-                return customerController.listCustomerSessions(session.customer, session.pagination);
-            }
-        },
-        sessionlistbyaffiliate: {
-            type: sessionListType.graphObj,
-            args: {
-                affiliate: {
-                    description: 'The affiliate identifier',
-                    type: new GraphQLNonNull(GraphQLString)
-                },
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, args){
-                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-
-                return sessionController.listSessionsByAffiliate(args.affiliate, args.pagination);
-            }
-        },
-        rebilllistbycustomer: {
-            type: rebillListType.graphObj,
-            args: {
-                customer: {
-                    description: 'The customer identifier',
-                    type: new GraphQLNonNull(GraphQLString)
-                },
-                pagination: {
-                    type: paginationInputType.graphObj
                 }
             },
             resolve: function(root, rebill){
+                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+                return rebillController.get({id: rebill.id});
+            }
+        },
+        session: {
+            type: sessionType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the session',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, session){
+                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+
+                return sessionController.get({id: session});
+            }
+        },
+        customer: {
+            type: customerType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the customer',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, customer){
                 const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
-                return customerController.listCustomerRebills(rebill.customer, rebill.pagination);
+                return customerController.get({id:customer.id});
+            }
+        },
+        customernote: {
+            type: customerNoteType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the customer note',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, customernote){
+                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+
+                return customerNoteController.get({id:customernote.id});
+            }
+        },
+        product: {
+            type: productType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the product',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, product){
+                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+
+                return productController.get({id: product.id});
+            }
+        },
+        emailtemplate: {
+            type: emailTemplateType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the email template',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, emailtemplate){
+                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+
+                return emailTemplateController.get({id: emailtemplate.id});
+            }
+        },
+        smtpprovider: {
+            type: SMTPProviderType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the SMTP Provider',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, smtpprovider){
+                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+
+                return SMTPProviderController.get({id: smtpprovider.id});
+            }
+        },
+        emailtemplatelist: {
+            type: emailTemplateListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, emailtemplates){
+                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+
+                return emailTemplateController.list({pagination: emailtemplates.pagination});
+            }
+        },
+        smtpproviderlist: {
+            type: SMTPProviderListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, smtpproviders){
+                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+
+                return SMTPProviderController.list({pagination: smtpproviders.pagination});
+            }
+        },
+        productlist: {
+            type: productListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, products){
+                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+
+                return productController.list({pagination: products.pagination});
+            }
+        },
+        useracllist: {
+            type: userACLListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, useracl){
+                const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+
+                return userACLController.list({pagination: useracl.pagination});
+            }
+        },
+        rebilllist: {
+            type: rebillListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, rebill){
+                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+      	       return rebillController.list({pagination: rebill.pagination});
+            }
+        },
+        shippingreceiptlist: {
+            type: shippingReceiptListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, shippingreceipt){
+                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+
+                return shippingReceiptController.list({pagination: shippingreceipt.pagination}); }
+        },
+        affiliatelist: {
+            type: affiliateListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, affiliate){
+                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+
+                return affiliateController.list({pagination: affiliate.pagination});
+            }
+        },
+        trackerlist: {
+            type: trackerListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, tracker){
+                const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+
+                return trackerController.list({pagination: tracker.pagination});
+            }
+        },
+        creditcardlist: {
+            type: creditCardListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, creditcard){
+                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+
+                return creditCardController.list({pagination: creditcard.pagination});
+            }
+        },
+        merchantproviderlist: {
+            type: merchantProviderListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, merchantprovider){
+                const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+
+      	       return merchantProviderController.list({pagination: merchantprovider.pagination});
+            }
+        },
+        fulfillmentproviderlist: {
+            type: fulfillmentProviderListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, fulfillmentprovider){
+                const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+
+      	       return fulfillmentProviderController.list({pagination: fulfillmentprovider.pagination});
+            }
+        },
+        accesskeylist: {
+            type: accessKeyListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, accesskey){
+                const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+
+      	       return accessKeyController.list({pagination: accesskey.pagination});
+            }
+        },
+        accountlist: {
+            type: accountListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, account){
+                const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+
+                return accountController.list({pagination: account.pagination});
+            }
+        },
+        rolelist: {
+            type: roleListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, role){
+                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+
+      	       return roleController.list({pagination: role.pagination});
+            }
+        },
+        customerlist: {
+            type: customerListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, customer){
+                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+
+      	       return customerController.list({pagination: customer.pagination});
+            }
+        },
+        customernotelist: {
+            type: customerNoteListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, customernote){
+                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+
+                return customerNoteController.list({pagination: customernote.pagination});
+            }
+        },
+        loadbalancerlist: {
+            type: loadBalancerListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, loadbalancer){
+                const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+
+      	       return loadBalancerController.list({pagination: loadbalancer.pagination});
+            }
+        },
+        productschedulelist: {
+            type: productScheduleListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, productschedule){
+
+                const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+
+      	       return productScheduleController.list({pagination: productschedule.pagination});
+            }
+        },
+        transactionlist: {
+            type: transactionListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, transaction){
+                const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+
+      	       return transactionController.list({pagination: transaction.pagination});
             }
         },
         campaignlist: {
@@ -823,31 +909,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, campaign){
                 const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-                return campaignController.list(campaign.pagination);
-            }
-        },
-        campaignlistbyproductschedule: {
-            type: campaignListType.graphObj,
-            args: {
-              productschedule: {type: new GraphQLNonNull(GraphQLString)},
-              pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, args){
-              const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
-
-              return campaignController.listCampaignsByProductSchedule(args);
-            }
-        },
-        campaignlistbyproduct: {
-            type: campaignListType.graphObj,
-            args: {
-              product: {type: new GraphQLNonNull(GraphQLString)},
-              pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, args){
-              const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
-
-              return campaignController.listCampaignsByProduct(args);
+                return campaignController.list({pagination: campaign.pagination});
             }
         },
         sessionlist: {
@@ -858,7 +920,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, session){
                 const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
-                return sessionController.list(session.pagination);
+                return sessionController.list({pagination: session.pagination});
             }
         },
         productschedule: {
@@ -872,7 +934,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, productschedule){
                 const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
-            	return productScheduleController.get(productschedule.id);
+            	return productScheduleController.get({id: productschedule.id});
             }
         },
         merchantprovider: {
@@ -886,7 +948,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, merchantprovider){
                 const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
-      	       return merchantProviderController.get(merchantprovider.id);
+      	       return merchantProviderController.get({id: merchantprovider.id});
             }
         },
         fulfillmentprovider: {
@@ -900,7 +962,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, fulfillmentprovider){
                 const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 
-                return fulfillmentProviderController.get(fulfillmentprovider.id);
+                return fulfillmentProviderController.get({id: fulfillmentprovider.id});
             }
         },
         loadbalancer: {
@@ -914,7 +976,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, loadbalancer){
                 const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
 
-                return loadBalancerController.get(loadbalancer.id);
+                return loadBalancerController.get({id: loadbalancer.id});
             }
         },
         creditcard: {
@@ -928,7 +990,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, creditcard){
                 const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 
-                return creditCardController.get(creditcard.id);
+                return creditCardController.get({id: creditcard.id});
             }
         },
         campaign: {
@@ -942,7 +1004,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, campaign){
                 const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-                return campaignController.get(campaign.id);
+                return campaignController.get({id: campaign.id});
             }
         },
         affiliate: {
@@ -956,7 +1018,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, affiliate){
                 const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
-                return affiliateController.get(affiliate.id);
+                return affiliateController.get({id: affiliate.id});
             }
         },
         tracker: {
@@ -970,7 +1032,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, tracker){
                 const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-                return trackerController.get(tracker.id);
+                return trackerController.get({id: tracker.id});
             }
         },
         accesskey: {
@@ -984,7 +1046,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, accesskey){
                 const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
-                return accessKeyController.get(accesskey.id);
+                return accessKeyController.get({id: accesskey.id});
             }
         },
         account: {
@@ -998,7 +1060,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, account){
                 const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
 
-                return accountController.get(account.id);
+                return accountController.get({id: account.id});
             }
         },
         role: {
@@ -1012,7 +1074,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, role){
                 const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
-                return roleController.get(role.id);
+                return roleController.get({id: role.id});
             }
         },
         user: {
@@ -1028,7 +1090,7 @@ module.exports.graphObj = new GraphQLObjectType({
       	       if(_.has(user,"id")){
                  const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
-                 return userController.get(user.id);
+                 return userController.get({id: user.id});
              }else{
                  return null;
              }
@@ -1047,7 +1109,7 @@ module.exports.graphObj = new GraphQLObjectType({
             	if(_.has(useracl, 'id')){
                 const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
-                return userACLController.get(useracl.id);
+                return userACLController.get({id: useracl.id});
             }else{
                 return null;
             }
@@ -1066,14 +1128,15 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (root, usersetting) => {
+                //Technical Debt:  This logic belongs in a controller.
                 if (_.has(usersetting, 'user')) {
                     const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 
-                    return userSettingController.get(usersetting.user, 'user');
+                    return userSettingController.get({id: usersetting.user, primary_key: 'user'});
                 } else {
                     const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 
-                    return userSettingController.get(usersetting.id, 'id');
+                    return userSettingController.get({id: usersetting.id, primary_key: 'id'});
                 }
             }
         },
@@ -1085,7 +1148,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, user_setting) {
                 const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 
-                return userSettingController.list(user_setting.pagination);
+                return userSettingController.list({pagination: user_setting.pagination});
             }
         },
         usersigningstring: {
@@ -1099,7 +1162,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (root, user_signing_string) => {
                 const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
-                return userSigningStringController.get(user_signing_string.id);
+                return userSigningStringController.get({id: user_signing_string.id});
             }
         },
         usersigningstringlist: {
@@ -1110,7 +1173,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, user_signing_strings) {
                 const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
-                return userSigningStringController.list(user_signing_strings.pagination);
+                return userSigningStringController.list({pagination: user_signing_strings.pagination});
             }
         },
         notification: {
@@ -1126,37 +1189,10 @@ module.exports.graphObj = new GraphQLObjectType({
                 if (_.has(notification, 'id')) {
                     const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-                    return notificationController.get(notification.id);
+                    return notificationController.get({id: notification.id});
                 } else {
                     return null;
                 }
-            }
-        },
-        notificationcount: {
-  	       type: notificationCountType.graphObj,
-            resolve: function() {
-                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
-
-                return notificationController.numberOfUnseenNotifications();
-            }
-        },
-        notificationtest: {
-            type: notificationTestType.graphObj,
-            resolve: function() {
-                const notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
-
-                return notificationProviderController.test();
-            }
-        },
-        notificationlist: {
-            type: notificationListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, notification) {
-                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
-
-                return notificationController.listForCurrentUser(notification.pagination);
             }
         },
         notificationsetting: {
@@ -1172,14 +1208,15 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (root, notificationsetting) => {
+                //Technical Debt:  This logic belongs in a controller
                 if (_.has(notificationsetting, 'user')) {
                     const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 
-                    return notificationSettingController.get(notificationsetting.user, 'user');
+                    return notificationSettingController.get({id: notificationsetting.user, primary_key: 'user'});
                 } else {
                     const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 
-                    return notificationSettingController.get(notificationsetting.id, 'id');
+                    return notificationSettingController.get({id: notificationsetting.id, primary_key:'id'});
                 }
             }
         },
@@ -1191,15 +1228,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, notification_setting) {
                 const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 
-                return notificationSettingController.list(notification_setting.pagination);
-            }
-        },
-        notificationsettingdefault: {
-            type: notificationSettingDefaultType.graphObj,
-            resolve: () => {
-                const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
-
-                return notificationSettingController.getDefaultProfile();
+                return notificationSettingController.list({pagination: notification_setting.pagination});
             }
         },
         userdevicetokenlist: {
@@ -1210,21 +1239,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, user_device_token) {
                 const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 
-                return userDeviceTokenController.list(user_device_token.pagination);
-            }
-        },
-        userdevicetokensbyuserlist: {
-            type: userDeviceTokenListType.graphObj,
-            args: {
-                user: {
-                    description: 'A user_id.',
-                    type: new GraphQLNonNull(GraphQLString)
-                }
-            },
-            resolve: function(root, user_device_token) {
-                const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
-
-                return userDeviceTokenController.getUserDeviceTokensByUser(user_device_token.user);
+                return userDeviceTokenController.list({pagination: user_device_token.pagination});
             }
         },
         userdevicetoken: {
@@ -1240,11 +1255,11 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (root, user_device_token) => {
-                //Technical Debt:  What is this logic for?
+                //Technical Debt:  This logic belongs in a controller
                 if (_.has(user_device_token, 'id')) {
                     const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 
-                    return userDeviceTokenController.get(user_device_token.id);
+                    return userDeviceTokenController.get({id: user_device_token.id});
                 }else{
                     return null;
                 }

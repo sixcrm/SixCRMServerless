@@ -10,27 +10,25 @@ class emailTemplateController extends entityController {
 
         super('emailtemplate');
 
-        this.SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
-
     }
 
     getSMTPProvider(emailtemplate){
 
-        du.debug('Get SMTP Provider', emailtemplate);
+      du.debug('Get SMTP Provider', emailtemplate);
 
-        if(_.has(emailtemplate, 'smtp_provider')){
+      if(_.has(emailtemplate, 'smtp_provider')){
 
-            du.debug('Get SMTP Provider - returning from controller.');
+        du.debug('Get SMTP Provider - returning from controller.');
 
-            return this.SMTPProviderController.get(emailtemplate.smtp_provider);
+        return this.executeAssociatedEntityFunction('SMTPProviderController', 'get', {id: emailtemplate.smtp_provider});
 
-        }else{
+      }else{
 
-            du.debug('Get SMTP Provider - returning null.');
+        du.debug('Get SMTP Provider - returning null.');
 
-            return Promise.resolve(null);
+        return Promise.resolve(null);
 
-        }
+      }
 
     }
 

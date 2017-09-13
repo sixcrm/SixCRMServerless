@@ -4,18 +4,19 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities');
-var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const NMIController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
+
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class merchantProviderController extends entityController {
 
     constructor(){
-        super('merchantprovider');
+      super('merchantprovider');
     }
 
     issueRefund(transaction, refund){
 
-        return this.get(transaction.merchant_provider).then((merchant_provider) => {
+        return this.get({id: transaction.merchant_provider}).then((merchant_provider) => {
 
             return this.validate(merchant_provider).then(() => {
 

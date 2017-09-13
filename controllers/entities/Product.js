@@ -8,9 +8,9 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 class ProductController extends entityController {
 
     constructor(){
-        super('product');
-        this.productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-        this.fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+
+      super('product');
+
     }
 
     getFulfillmentProvider(product){
@@ -21,7 +21,7 @@ class ProductController extends entityController {
           return Promise.resolve(null); //fulfillment_provider is optional
       }
 
-      return this.fulfillmentProviderController.get(product.fulfillment_provider);
+      return this.executeAssociatedEntityFunction('fulfillmentProviderController', 'get', {id: product.fulfillment_provider});
 
     }
 
@@ -29,7 +29,7 @@ class ProductController extends entityController {
 
       du.debug('Get Products');
 
-      return this.getList(products_array);
+      return this.getList({list_array: products_array});
 
     }
 
@@ -41,7 +41,7 @@ class ProductController extends entityController {
         eu.throwError('bad_request','getProductSchedules requires a product argument.');
       }
 
-      return this.productScheduleController.listProductSchedulesByProduct({product: args.product, pagination: args.pagination});
+      return this.executeAssociatedEntityFunction('productScheduleController', 'listProductSchedulesByProduct', {product: args.product, pagination: args.pagination});
 
     }
 

@@ -3,6 +3,7 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
 
@@ -33,7 +34,6 @@ module.exports = class entityController extends entityUtilitiesController {
           'notificationsetting', //userbound,
           'usersetting', //userbound
           'usersigningstring', //userbound
-
           'role', //global, available across accounts
           'account' //self-referntial, implicit
         ];
@@ -42,7 +42,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    listBySecondaryIndex(field, index_value, index_name, pagination) {
+    listBySecondaryIndex({field, index_value, index_name, pagination}) {
 
         du.debug('List By Secondary Index');
 
@@ -82,10 +82,9 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    list(pagination, query_parameters){
+    list({pagination, query_parameters}){
 
         du.debug('List');
-        du.debug('List Start');
 
         return new Promise((resolve, reject) => {
 
@@ -128,11 +127,9 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //Technical Debt:  You can only paginate against the index...
-    queryBySecondaryIndex(field, index_value, index_name, pagination, reverse_order){
+    queryBySecondaryIndex({field, index_value, index_name, pagination, reverse_order}){
 
         du.debug('Query By Secondary Index');
-
-        du.debug('Query by secondary index', field, index_value, index_name, pagination);
 
         return new Promise((resolve, reject) => {
 
@@ -154,7 +151,7 @@ module.exports = class entityController extends entityUtilitiesController {
                     query_parameters['scan_index_forward'] = false;
                 }
 
-                du.debug('Query Parameters: ', query_parameters);
+                du.warning('Query Parameters: ', query_parameters);
 
                 return Promise.resolve(this.dynamoutilities.queryRecordsFull(this.table_name, query_parameters, index_name, (error, data) => {
 
@@ -179,22 +176,22 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    getList(list_array){
+    getList({list_array}){
 
-        if(!_.isArray(list_array)){
-            return Promise.reject(eu.getError('bad_request','List array must be of type array.'));
-        }
+      du.debug('Get List');
 
-        if(list_array.length < 1){
-            return Promise.resolve([]);
-        }
+      if(arrayutilities.nonEmpty(list_array)){
+        //Technical Debt:  Replace this with a IN clause
+        return Promise.all(arrayutilities.map(list_array, (list_item) => {
+          return this.get({id: list_item});
+        }));
+      }
 
-      //Technical Debt:  Replace this with a IN clause
-        return Promise.all(list_array.map(list_item => this.get(list_item)));
+      return null;
 
     }
 
-    getBySecondaryIndex(field, index_value, index_name, cursor, limit){
+    getBySecondaryIndex({field, index_value, index_name, cursor, limit}){
 
         du.debug('Get By Secondary Index');
 
@@ -286,7 +283,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    queryByParameters(parameters, pagination){
+    queryByParameters({parameters, pagination}){
 
       du.debug('Query By Parameters');
 
@@ -337,7 +334,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    scanByParameters(parameters, pagination){
+    scanByParameters({parameters, pagination}){
 
         du.debug('Scan By Parameters');
 
@@ -380,7 +377,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    get(id, primary_key){
+    get({id, primary_key}){
 
         du.debug('Get');
 
@@ -388,11 +385,12 @@ module.exports = class entityController extends entityUtilitiesController {
 
             if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
+            //Technical Debt:  Let's try to eliminate this...
             try{
-                du.info(id);
+                //du.info(id, arguments);
                 id = this.getID(id, primary_key);
             }catch(e){
-                du.warning(e);
+                du.error(e);
                 return reject(e);
             }
 
@@ -434,49 +432,50 @@ module.exports = class entityController extends entityUtilitiesController {
 
                 return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
-                    if(_.isError(error)){
+                  if(_.isError(error)){
 
-                        du.warning(error);
+                    eu.throwError('server', error);
 
-                        return reject(error);
+                    return reject(error);
 
-                    }
+                  }
 
-                    if(_.isObject(data) && _.isArray(data)){
+                  if(_.isObject(data) && _.isArray(data)){
 
-                        if(data.length == 1){
+                      if(data.length == 1){
 
-                            return resolve(data[0]);
+                          return resolve(data[0]);
 
-                        }else{
+                      }else{
 
-                            if(data.length > 1){
+                          if(data.length > 1){
 
-                                reject(eu.getError('bad_request','Multiple '+this.descriptive_name+'s returned where one should be returned.'));
+                              reject(eu.getError('bad_request','Multiple '+this.descriptive_name+'s returned where one should be returned.'));
 
-                            }else{
+                          }else{
 
-                                return resolve(null);
+                              return resolve(null);
 
-                            }
+                          }
 
-                        }
+                      }
 
-                    }
+                  }
 
                 }));
 
             })
             .catch((error) => {
-                du.warning(error);
-                return reject(error);
+
+                eu.throwError('server', error);
+
             });
 
         });
 
     }
 
-    countCreatedAfterBySecondaryIndex(date_time, field, index_name, cursor, limit) {
+    countCreatedAfterBySecondaryIndex({date_time, field, index_name, cursor, limit}) {
 
         du.debug('Count Created After Secondary Index');
 
@@ -551,25 +550,27 @@ module.exports = class entityController extends entityUtilitiesController {
 
     //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
     //Technical Debt:  Add Kinesis Activity
-    create(entity, primary_key){
+    create({entity, primary_key}){
 
-        du.debug('Create');
+      du.debug('Create');
 
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+      if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
-        return new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
 
-            return this.can('create', true).then(() => {
+        return this.can('create', true).then(() => {
 
-                entity = this.assignPrimaryKey(entity, primary_key);
+          entity = this.assignPrimaryKey(entity, primary_key);
+          entity = this.assignAccount(entity);
+          entity = this.setCreatedAt(entity);
 
-                entity = this.assignAccount(entity);
-
-                entity = this.setCreatedAt(entity);
-
-                return this.validate(entity)
-          .then(() => this.exists(entity, primary_key))
+          return this.validate(entity)
+          .then(() => {
+            //du.warning('here!');  process.exit();
+            return this.exists({entity: entity, primary_key: primary_key});
+          })
           .then((exists) => {
+
 
               if(exists !== false){ return reject(eu.getError('bad_request','A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
 
@@ -608,7 +609,7 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
-    update(entity, primary_key){
+    update({entity, primary_key}){
 
         du.debug('Update');
 
@@ -622,7 +623,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                 entity = this.assignAccount(entity);
 
-                return this.exists(entity, primary_key)
+                return this.exists({entity: entity, primary_key: primary_key})
                 .then((exists) => {
 
                     if(exists === false){ return reject(eu.getError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
@@ -666,7 +667,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    touch(entity){
+    touch({entity}){
 
         du.debug('Touch');
 
@@ -675,12 +676,12 @@ module.exports = class entityController extends entityUtilitiesController {
             return this.can('update', true).then(() => {
 
                 //Technical Debt: Add Kinesis Activity
-                return this.exists(entity).then((exists) => {
+                return this.exists({entity: entity}).then((exists) => {
 
                     if (!exists) {
-                        return resolve(this.create(entity));
+                        return resolve(this.create({entity: entity}));
                     } else {
-                        return resolve(this.update(entity));
+                        return resolve(this.update({entity: entity}));
                     }
                 });
 
@@ -691,7 +692,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    store(entity, primary_key){
+    store({entity, primary_key}){
 
         du.debug('Store');
 
@@ -699,21 +700,21 @@ module.exports = class entityController extends entityUtilitiesController {
 
         if(!_.has(entity, primary_key)){
 
-            return this.create(entity, primary_key);
+            return this.create({entity: entity, primary_key: primary_key});
 
         }else{
 
             entity = this.assignAccount(entity);
 
-            return this.exists(entity, primary_key).then((exists) => {
+            return this.exists({entity: entity, primary_key: primary_key}).then((exists) => {
 
                 if(exists === false){
 
-                    return this.create(entity, primary_key);
+                    return this.create({entity: entity, primary_key: primary_key});
 
                 }else{
 
-                    return this.update(entity, primary_key);
+                    return this.update({entity: entity, primary_key: primary_key});
 
                 }
 
@@ -725,7 +726,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 		//NOT ACL enabled
     //Technical Debt:  Add Kinesis Activity
-    delete(id, primary_key){
+    delete({id, primary_key}){
 
         du.debug('Delete');
 
@@ -806,7 +807,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    exists(entity, primary_key){
+    exists({entity, primary_key}){
 
         du.debug('Exists');
 

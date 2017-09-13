@@ -19,9 +19,7 @@ class accountController extends entityController {
 
     getACL(account){
 
-        const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
-
-        return userACLController.getACLByAccount(account.id);
+      return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {id: account.id});
 
     }
 

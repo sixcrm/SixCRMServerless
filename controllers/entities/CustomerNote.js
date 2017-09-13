@@ -4,8 +4,6 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-var userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
 class customerNoteController extends entityController {
 
@@ -15,19 +13,26 @@ class customerNoteController extends entityController {
 
     getCustomer(customer_note){
 
-        return customerController.get(customer_note.customer);
+      du.debug('Get Customer');
+
+      return this.executeAssociatedEntityFunction('customerController', 'get', {id: customer_note.customer});
 
     }
 
     getUser(customer_note){
 
-        return userController.get(customer_note.user);
+      du.debug('Get User');
+
+      return this.executeAssociatedEntityFunction('userController', 'get', {id: customer_note.user});
 
     }
 
     listByCustomer(customer, pagination){
 
-        return this.queryBySecondaryIndex('customer', customer, 'customer-index', pagination, true);
+      du.debug('List By Customer');
+
+      return this.queryBySecondaryIndex({field: 'customer', index_value: customer, index_name:'customer-index', pagination: pagination, reverse_order: true});
+
     }
 
 }

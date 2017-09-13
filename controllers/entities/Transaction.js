@@ -5,8 +5,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-var shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
-const merchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
 
 class transactionController extends entityController {
 
@@ -18,9 +16,9 @@ class transactionController extends entityController {
     getParentRebill(transaction){
 
         if(_.has(transaction, 'rebill')){
-            var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-            return rebillController.get(transaction.rebill);
+          return this.executeAssociatedEntityFunction('rebillController', 'get', {id: transaction.rebill});
+
         }else{
             return null;
         }
@@ -29,11 +27,7 @@ class transactionController extends entityController {
 
     getProduct(id){
 
-      if(!_.has(this, 'productController') || !_.isFunction(this.productController.get)){
-        this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-      }
-
-      return this.productController.get(id);
+      return this.executeAssociatedEntityFunction('productController', 'get', {id: id});
 
     }
 
@@ -56,6 +50,7 @@ class transactionController extends entityController {
 
     }
 
+    //Technical Debt: Refactor.
     getTransactionProduct(transaction_product){
 
         du.debug('Get Transaction Product');
@@ -64,19 +59,15 @@ class transactionController extends entityController {
 
         if(_.has(transaction_product, "product")){
 
-          if(!_.has(this, 'productController') || !_.isFunction(this.productController.get)){
-            this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-          }
+          promises.push(this.executeAssociatedEntityFunction('productController', 'get', {id: transaction_product.product}));
 
-          var getProduct = this.productController.get(transaction_product.product);
-
-            promises.push(getProduct);
         }else{
-            return null;
+          return null;
         }
 
         if(_.has(transaction_product, "shippingreceipt")){
-            var getShippingReceipt = shippingReceiptController.get(transaction_product.shippingreceipt);
+
+            var getShippingReceipt = this.executeAssociatedEntityFunction('shippingReceiptController', 'get', {id: transaction_product.shippingreceipt});
 
             promises.push(getShippingReceipt);
         }
@@ -95,6 +86,7 @@ class transactionController extends entityController {
 
     }
 
+    //Technical Debt:  Refactor
     getProducts(transaction){
 
         du.debug('Get Products');
@@ -109,7 +101,7 @@ class transactionController extends entityController {
 
     getTransactionsByRebillID(id){
 
-        return this.queryBySecondaryIndex('rebill', id, 'rebill-index').then((result) => this.getResult(result));
+        return this.queryBySecondaryIndex({field: 'rebill', index_value: id, index_name: 'rebill-index'}).then((result) => this.getResult(result));
 
     }
 
@@ -117,15 +109,13 @@ class transactionController extends entityController {
 
         du.debug('Put Transaction');
 
-        const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+        return this.executeAssociatedEntityFunction('rebillController', 'get', {id: params.rebill}).then((rebill) => {
 
-        return rebillController.get(params.rebill).then((rebill) => {
+          params.rebill = rebill;
 
-            params.rebill = rebill;
+          var transaction = this.createTransactionObject(params, processor_response);
 
-            var transaction = this.createTransactionObject(params, processor_response);
-
-            return this.create(transaction);
+          return this.create({entity: transaction});
 
         });
 
@@ -195,13 +185,13 @@ class transactionController extends entityController {
         let transaction = args.transaction;
         let refund = args.refund;
 
-        return this.get(transaction).then((transaction) => {
+        return this.get({id: transaction}).then((transaction) => {
 
             return this.validate(transaction).then(() => {
 
                 return this.validateRefund(refund, transaction).then(() => {
 
-                    return merchantProviderController.issueRefund(transaction, refund).then((processor_result) => {
+                    return this.executeAssociatedEntityFunction('merchantProviderController', 'issueRefund', {transaction: transaction, refund: refund}).then((processor_result) => {
 
                         let refund_transaction = {
                             rebill: transaction.rebill,
@@ -232,9 +222,7 @@ class transactionController extends entityController {
 
         }
 
-        du.highlight(entity);
-
-        return this.update(entity);
+        return this.update({entity: entity});
 
     }
 
@@ -248,9 +236,7 @@ class transactionController extends entityController {
 
         }
 
-        du.highlight(entity);
-
-        return this.create(entity);
+        return this.create({entity: entity});
 
     }
 

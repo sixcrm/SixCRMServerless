@@ -281,7 +281,7 @@ class NotificationProvider {
 
         permissionUtils.disableACLs();
 
-        return userAclController.queryBySecondaryIndex('account', account, 'account-index').then((userAcls) => {
+        return userAclController.queryBySecondaryIndex({field: 'account', index_value: account, index_name: 'account-index'}).then((userAcls) => {
             // re-enable ACLs only if there were enabled before this method
             if (aclsWereEnabled) {
                 permissionUtils.enableACLs();

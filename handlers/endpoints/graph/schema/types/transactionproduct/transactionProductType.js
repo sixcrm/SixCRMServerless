@@ -31,7 +31,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'A shipping receipt associated with the transaction product.',
             resolve: function(transactionproduct){
                 if(!_.has(transactionproduct, "shippingreceipt")){ return null; }
-                return shippingReceiptController.get(transactionproduct.shippingreceipt);
+                return shippingReceiptController.get({id: transactionproduct.shippingreceipt});
             }
         }
     }),
