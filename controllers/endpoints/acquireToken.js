@@ -53,7 +53,7 @@ class acquireTokenController extends transactionEndpointController {
 
         du.debug('Validate Campaign');
 
-        return this.campaignController.get(event.campaign).then((campaign) => {
+        return this.campaignController.get({id: event.campaign}).then((campaign) => {
 
             if(!_.has(campaign, 'id')){ eu.throwError('bad_request','Invalid Campaign ID: '+event.campaign); }
 

@@ -25,7 +25,7 @@ class userController extends entityController {
 
             this.disableACLs();
 
-            this.getBySecondaryIndex('alias', user_alias, 'alias-index').then((user) => {
+            this.getBySecondaryIndex({field:'alias', index_value: user_alias, index_name: 'alias-index'}).then((user) => {
 
                 if(_.has(user, 'id')){
 

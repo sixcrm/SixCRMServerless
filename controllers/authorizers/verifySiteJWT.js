@@ -5,7 +5,6 @@ const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const userSigningStringContoller = global.SixCRM.routes.include('controllers', 'entities/UserSigningString.js');
-const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
 class verifySiteJWTController {
 
@@ -130,7 +129,7 @@ class verifySiteJWTController {
         }).then((email) => {
 
             userSigningStringContoller.disableACLs();
-            return userSigningStringContoller.listBySecondaryIndex('user', email).then((results) => {
+            return userSigningStringContoller.listBySecondaryIndex({field: 'user', index_value: email}).then((results) => {
                 userSigningStringContoller.enableACLs();
 
                 if(_.has(results, 'usersigningstrings')){
@@ -198,7 +197,7 @@ class verifySiteJWTController {
             signing_string.used_at = timestamp.getISO8601();
 
             userSigningStringContoller.disableACLs();
-            userSigningStringContoller.update(signing_string);
+            userSigningStringContoller.update({entity: signing_string});
             userSigningStringContoller.enableACLs();
 
             return decoded_token;

@@ -18,7 +18,7 @@ class affiliateController extends entityController {
 
         du.debug('Assure Affiliate');
 
-        return this.get(value).then((result) => {
+        return this.get({id: value}).then((result) => {
 
             if(!_.isNull(result)){
                 return result;
@@ -30,7 +30,7 @@ class affiliateController extends entityController {
                     return result;
                 }
 
-                return this.create({affiliate_id: value}).then((result) => {
+                return this.create({entity:{affiliate_id: value}}).then((result) => {
 
                     if(!_.isNull(result)){
                         return result;
