@@ -20,6 +20,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     this.setConfigurationFiles();
 
+    this.mandatory_config_names = {
+      redshift_host: 'redshift.host',
+      cloudsearch_domainendpoint: 'cloudsearch.domainendpoint'
+    }
+
   }
 
   setConfigurationInformation(){
@@ -111,24 +116,67 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       return this.propagateCache('all', key, value);
 
+    } else {
+
+      return this.regenerateConfiguration(key);
+
     }
 
   }
+
+  regenerateConfiguration(key) {
+
+    let regeneration_functions = {};
+
+    regeneration_functions[this.mandatory_config_names.redshift_host] = () => this.regenerateRedshiftConfiguration();
+    regeneration_functions[this.mandatory_config_names.cloudsearch_domainendpoint] = () => this.regenerateCloudsearchConfiguration();
+
+    return regeneration_functions[key]();
+  }
+
+  regenerateRedshiftConfiguration() {
+      du.debug('Regenerate Redshift Configuration');
+
+      const redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
+
+      let parameters = {
+        ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+      };
+
+      return redshiftutilities.describeCluster(parameters).then((data) => {
+          if(!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')){
+
+              eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
+
+          }
+
+          return this.propagateCache('all', this.mandatory_config_names.redshift_host, data.Clusters[0].Endpoint.Address);
+      });
+  }
+
+    regenerateCloudsearchConfiguration() {
+        du.debug('Regenerate Cloudsearch Configuration');
+
+        const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+        return cloudsearchutilities.saveDomainConfiguration();
+    }
 
   isValidConfiguration(key, value){
 
     du.debug('Is Valid Configuration');
 
-    let validation_object = {
-      'redshift.host': [
+    let validation_object = {};
+
+    validation_object[this.mandatory_config_names.redshift_host] = [
         (argument) => { return _.isString(argument); },
         (argument) => { return _.has(argument, 'length') && argument.length > 2; }
-      ],
-      'cloudsearch.domainendpoint': [
-        (argument) => { return _.isString(argument); },
-        (argument) => { return _.has(argument, 'length') && argument.length > 2; }
-      ]
-    };
+      ];
+
+    validation_object[this.mandatory_config_names.cloudsearch_domainendpoint] = [
+      (argument) => { return _.isString(argument); },
+      (argument) => { return _.has(argument, 'length') && argument.length > 2; }
+    ];
 
     let validates = true;
 
