@@ -111,9 +111,71 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       return this.propagateCache('all', key, value);
 
+    } else {
+
+      return this.regenerateConfiguration(key).then((regenerated_value) => {
+
+        return this.propagateCache('all', key, regenerated_value);
+
+      });
+
     }
 
   }
+
+  regenerateConfiguration(key) {
+
+    let regeneration_functions = {
+      'redshift.host': () => this.regenerateRedshiftConfiguration(),
+      'cloudsearch.domainendpoint': () => {}
+    };
+
+    return regeneration_functions[key]();
+  }
+
+  regenerateRedshiftConfiguration() {
+      du.debug('Regenerate Redshift Configuration');
+
+      const redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
+
+      let parameters = {
+        ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+      };
+
+      return redshiftutilities.describeCluster(parameters).then((data) => {
+          if(!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')){
+
+              eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
+
+          }
+
+          du.debug('data.Clusters[0].Endpoint.Address', data.Clusters[0].Endpoint.Address);
+
+          return data.Clusters[0].Endpoint.Address;
+      });
+  }
+
+    regenerateCloudsearchConfiguration() {
+        du.debug('Regenerate Cloudsearch Configuration');
+
+        const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+        let parameters = {
+            ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+        };
+
+        return cloudsearchutilities.describeCluster(parameters).then((data) => {
+            if(!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')){
+
+                eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
+
+            }
+
+            du.debug('data.Clusters[0].Endpoint.Address', data.Clusters[0].Endpoint.Address);
+
+            return data.Clusters[0].Endpoint.Address;
+        });
+    }
 
   isValidConfiguration(key, value){
 
@@ -404,7 +466,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   propagateCache(source, key, value){
 
-    du.debug('Propagate Cache');
+    du.debug('Propagate Cache', key, value);
 
     if (this.stage === 'local') {
         return this.propagateToNativeCache(key, value);
