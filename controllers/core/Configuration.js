@@ -20,6 +20,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     this.setConfigurationFiles();
 
+    this.mandatory_config_names = {
+      redshift_host: 'redshift.host',
+      cloudsearch_domainendpoint: 'cloudsearch.domainendpoint'
+    }
+
   }
 
   setConfigurationInformation(){
@@ -113,11 +118,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     } else {
 
-      return this.regenerateConfiguration(key).then((regenerated_value) => {
-
-        return this.propagateCache('all', key, regenerated_value);
-
-      });
+      return this.regenerateConfiguration(key);
 
     }
 
@@ -125,10 +126,10 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   regenerateConfiguration(key) {
 
-    let regeneration_functions = {
-      'redshift.host': () => this.regenerateRedshiftConfiguration(),
-      'cloudsearch.domainendpoint': () => {}
-    };
+    let regeneration_functions = {};
+
+    regeneration_functions[this.mandatory_config_names.redshift_host] = () => this.regenerateRedshiftConfiguration();
+    regeneration_functions[this.mandatory_config_names.cloudsearch_domainendpoint] = () => this.regenerateCloudsearchConfiguration();
 
     return regeneration_functions[key]();
   }
@@ -149,9 +150,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
           }
 
-          du.debug('data.Clusters[0].Endpoint.Address', data.Clusters[0].Endpoint.Address);
-
-          return data.Clusters[0].Endpoint.Address;
+          return this.propagateCache('all', this.mandatory_config_names.redshift_host, data.Clusters[0].Endpoint.Address);
       });
   }
 
@@ -160,37 +159,24 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
-        let parameters = {
-            ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
-        };
-
-        return cloudsearchutilities.describeCluster(parameters).then((data) => {
-            if(!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')){
-
-                eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
-
-            }
-
-            du.debug('data.Clusters[0].Endpoint.Address', data.Clusters[0].Endpoint.Address);
-
-            return data.Clusters[0].Endpoint.Address;
-        });
+        return cloudsearchutilities.saveDomainConfiguration();
     }
 
   isValidConfiguration(key, value){
 
     du.debug('Is Valid Configuration');
 
-    let validation_object = {
-      'redshift.host': [
+    let validation_object = {};
+
+    validation_object[this.mandatory_config_names.redshift_host] = [
         (argument) => { return _.isString(argument); },
         (argument) => { return _.has(argument, 'length') && argument.length > 2; }
-      ],
-      'cloudsearch.domainendpoint': [
-        (argument) => { return _.isString(argument); },
-        (argument) => { return _.has(argument, 'length') && argument.length > 2; }
-      ]
-    };
+      ];
+
+    validation_object[this.mandatory_config_names.cloudsearch_domainendpoint] = [
+      (argument) => { return _.isString(argument); },
+      (argument) => { return _.has(argument, 'length') && argument.length > 2; }
+    ];
 
     let validates = true;
 
@@ -466,7 +452,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   propagateCache(source, key, value){
 
-    du.debug('Propagate Cache', key, value);
+    du.debug('Propagate Cache');
 
     if (this.stage === 'local') {
         return this.propagateToNativeCache(key, value);
