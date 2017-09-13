@@ -214,7 +214,7 @@ module.exports = class ActivityToEnglishUtilities {
 
         let ec = new EntityController(parameters.type);
 
-        return ec.get(parameters.id);
+        return ec.get({id: parameters.id});
 
     }
 
