@@ -759,6 +759,18 @@ module.exports = class entityUtilitiesController{
 
     }
 
+    getDescriptiveName(){
+
+      du.deep('Get Descriptive Name');
+
+      if(_.has(this, 'descriptive_name')){
+        return this.descriptive_name;
+      }
+
+      return null;
+
+    }
+
     setNames(name){
 
         du.deep('Set Names');

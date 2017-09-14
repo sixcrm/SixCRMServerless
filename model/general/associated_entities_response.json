@@ -1,0 +1,23 @@
+{
+  "title": "Associated Entities Response",
+	"type": "array",
+	"items":{
+    "title": "Associated Entity",
+  	"type": "object",
+    "properties":{
+      "name":{
+        "type": "string"
+      },
+      "entity":{
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": {"$ref": "../definitions/sixcrmidentifier.json"}
+          }
+        },
+        "required":["id"]
+      }
+    },
+    "required":["name", "entity"]
+  }
+}

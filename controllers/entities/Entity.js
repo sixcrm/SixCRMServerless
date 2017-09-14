@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
 
@@ -288,6 +289,8 @@ module.exports = class entityController extends entityUtilitiesController {
       du.debug('Query By Parameters');
 
       //du.debug('Query by secondary index', field, index_value, index_name, pagination);
+
+      du.warning(parameters);
 
       return new Promise((resolve, reject) => {
 
@@ -744,6 +747,8 @@ module.exports = class entityController extends entityUtilitiesController {
 
             return this.can('delete', true).then(() => {
 
+              this.checkAssociatedEntities({id: id});
+
                 let query_parameters = {
                     key_condition_expression: primary_key+' = :primary_keyv',
                     expression_attribute_values: {':primary_keyv': id}
@@ -850,6 +855,61 @@ module.exports = class entityController extends entityUtilitiesController {
             });
 
         }
+
+    }
+
+    checkAssociatedEntities({id}){
+
+      du.debug('Check Associated Entities');
+
+      du.warning('1');
+
+      if(_.isFunction(this.associatedEntitiesCheck)){
+
+        return this.associatedEntitiesCheck({id: id}).then(associated_entities => {
+
+          mvu.validateModel(associated_entities, global.SixCRM.routes.path('model','general/associated_entities_response.json'));
+
+          if(arrayutilities.nonEmpty(associated_entities)){
+
+            let entity_name = this.getDescriptiveName();
+
+            eu.throwError(
+              'forbidden',
+              'The '+entity_name+' entity that you are attempting to delete is currently associated with other entities.  Please delete the entity associations before deleting this '+entity_name+'.',
+              {associated_entites: JSON.stringify(associated_entities)}
+            );
+
+          }
+
+          return true;
+
+        });
+
+
+      }else{
+
+        du.warning(3);  process.exit();
+        return true;
+
+      }
+
+    }
+
+    createAssociatedEntitiesObject({name, object}){
+
+      du.debug('Create Associated Entities Object');
+
+      if(!_.has(object, 'id')){
+        eu.throwError('server', 'Create Associated Entities expects the object parameter to have field "id"');
+      }
+
+      return {
+        name: name,
+        entity: {
+          id: object.id
+        }
+      };
 
     }
 

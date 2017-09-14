@@ -15,6 +15,24 @@ class trackerController extends entityController {
 
     }
 
+    listByCampaignID({id, pagination}){
+
+      du.debug('Get By Campaign ID');
+
+      let scan_parameters = {
+        filter_expression: 'contains(#f1, :campaign_id)',
+        expression_attribute_names:{
+            '#f1': 'campaigns'
+        },
+        expression_attribute_values: {
+            ':campaign_id': id
+        }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters});
+
+    }
+
     getAffiliates(tracker){
 
         du.debug('Get Affiliates');

@@ -15,6 +15,42 @@ class campaignController extends entityController {
 
     }
 
+    associatedEntitiesCheck({id}){
+
+      du.debug('Associated Entities Check');
+
+      let return_array = [];
+
+      let data_acquisition_promises = [
+        this.executeAssociatedEntityFunction('sessionController', 'listByCampaignID', {id:id}),
+        this.executeAssociatedEntityFunction('trackerController', 'listByCampaignID', {id:id})
+      ];
+
+      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+
+        let sessions = data_acquisition_promises[0];
+        let trackers = data_acquisition_promises[1];
+
+        //du.warning(sessions, trackers); process.exit();
+
+        if(!_.isNull(sessions.sessions)){
+          arrayutilities.map(sessions.sessions, (session) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Session', object: session}));
+          });
+        }
+
+        if(!_.isNull(trackers.trackers)){
+          arrayutilities.map(trackers.trackers, (tracker) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Tracker', object:tracker}));
+          });
+        }
+
+        return return_array;
+
+      });
+
+    }
+
     getAffiliateAllowDenyList(list){
 
       du.debug('Get Affiliate Allow Deny List');

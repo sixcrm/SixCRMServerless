@@ -440,6 +440,24 @@ class sessionController extends entityController {
 
     }
 
+    listByCampaignID({id, pagination}) {
+
+      du.warning('List By Campaign ID');
+
+      let query_parameters = {
+        filter_expression: '#f1 = :campaign_id',
+        expression_attribute_values: {
+          ':campaign_id':id
+        },
+        expression_attribute_names: {
+          '#f1':'campaign'
+        }
+      };
+
+      return this.list({query_parameters: query_parameters, pagination: pagination});
+
+    }
+
     listSessionsByCustomerID({id, pagination}) {
 
         return this.listBySecondaryIndex({field: 'customer', index_value: id, index_name: 'customer-index', pagination: pagination});
