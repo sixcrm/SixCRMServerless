@@ -862,8 +862,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Check Associated Entities');
 
-      du.warning('1');
-
       if(_.isFunction(this.associatedEntitiesCheck)){
 
         return this.associatedEntitiesCheck({id: id}).then(associated_entities => {
@@ -889,7 +887,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
       }else{
 
-        du.warning(3);  process.exit();
         return true;
 
       }
