@@ -3,12 +3,8 @@
 	"id":"/role",
 	"title": "Role",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
 		"name":{
 			"type": "string"
 		},
@@ -32,8 +28,8 @@
 				}
 			}
 		},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["name", "active", "created_at", "updated_at"]
 }

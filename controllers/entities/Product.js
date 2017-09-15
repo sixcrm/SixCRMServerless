@@ -2,6 +2,7 @@
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -10,6 +11,40 @@ class ProductController extends entityController {
     constructor(){
 
       super('product');
+
+    }
+
+    associatedEntitiesCheck({id}){
+
+      du.debug('Associated Entities Check');
+
+      let return_array = [];
+
+      let data_acquisition_promises = [
+        this.executeAssociatedEntityFunction('productScheduleController', 'listProductSchedulesByProduct', {product: id}),
+        this.executeAssociatedEntityFunction('transactionController', 'listByProductID', {id:id})
+      ];
+
+      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+
+        let product_schedules = data_acquisition_promises[0];
+        let transactions = data_acquisition_promises[1];
+
+        if(_.has(product_schedules, 'productschedules') && arrayutilities.nonEmpty(product_schedules.productschedules)){
+          arrayutilities.map(product_schedules.productschedules, (product_schedule) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Product Schedule', object: product_schedule}));
+          });
+        }
+
+        if(_.has(transactions, 'transactions') && arrayutilities.nonEmpty(transactions.transactions)){
+          arrayutilities.map(transactions.transactions, (transaction) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Transaction', object:transaction}));
+          });
+        }
+
+        return return_array;
+
+      });
 
     }
 

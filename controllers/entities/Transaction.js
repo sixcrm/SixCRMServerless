@@ -12,6 +12,16 @@ class transactionController extends entityController {
         super('transaction');
     }
 
+    //Ljubomir:  Please finish
+    listByProductID({id, pagination}){
+
+      du.debug('List By Product ID');
+
+      //this should return a array of transactions that reference a given product_id
+      return null;
+
+    }
+
 	//Technical Debt:  Why is this missing rebills
     getParentRebill(transaction){
 

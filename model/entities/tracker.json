@@ -3,23 +3,17 @@
 	"id":"/SixCRMTrackerObject",
 	"title": "Tracker",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"OptionalUUIDv4":{"$ref": "../definitions/optionaluuidv4.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
 		"affiliates":{
 			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
+			"items":{"$ref": "../definitions/uuidv4.json"}
 		},
 		"campaigns":{
 			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
+			"items":{"$ref": "../definitions/uuidv4.json"}
 		},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"type":{
 			"type":"string",
 			"enum":["postback","html"]
@@ -37,8 +31,8 @@
 		"body":{
 			"type":"string"
 		},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["id", "account", "type", "name", "body", "created_at", "updated_at"]
 }

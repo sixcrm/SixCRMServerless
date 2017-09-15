@@ -3,13 +3,8 @@
 	"id":"/notification",
 	"title": "Notification",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
 		"user":{
 			"type":"string",
 			"format":"email"
@@ -17,7 +12,7 @@
 		"action":{
 			"type":"string"
 		},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"title": {
 			"type":"string"
 		},
@@ -27,9 +22,9 @@
 		"body": {
 			"type":"string"
 		},
-		"read_at":{"$ref": "#/definitions/ISO8601"},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"read_at":{"$ref": "../definitions/iso8601.json"},
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["account", "user", "action", "title", "type", "created_at", "updated_at"]
 }
