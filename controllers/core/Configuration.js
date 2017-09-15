@@ -237,7 +237,14 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
               return this.getConfiguration('s3', field, use_cache).then((result) => {
 
-                return resolve(result);
+                if (_.isNull(result)) {
+
+                  return this.regenerateConfiguration(field);
+
+                } else {
+
+                    return resolve(result);
+                }
 
               });
 
@@ -251,7 +258,14 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         return this.getConfiguration('s3', field, use_cache).then((result) => {
 
-          return resolve(result);
+            if (_.isNull(result)) {
+
+                return this.regenerateConfiguration(field);
+
+            } else {
+
+                return resolve(result);
+            }
 
         });
 

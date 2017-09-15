@@ -287,6 +287,8 @@ class rebillController extends entityController {
 
     sendMessageAndMarkRebill(rebill){
 
+        du.debug('Send Message And Mark Rebill');
+
         return new Promise((resolve, reject) => {
 
           sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: process.env.bill_queue}).then(() => {
@@ -296,6 +298,10 @@ class rebillController extends entityController {
               return resolve(rebill);
 
             });
+
+          }).catch(error => {
+
+              return reject(reject(eu.getError('server', 'Sending message failed - ' + error.message + '.')));
 
           });
 

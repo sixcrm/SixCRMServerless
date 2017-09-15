@@ -239,7 +239,7 @@ describe('controllers/Rebill.js', () => {
                 }
             });
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => {
+                 createActivity: () => {
                     return Promise.resolve();
                 }
             });
@@ -305,12 +305,7 @@ describe('controllers/Rebill.js', () => {
             mockery.deregisterAll();
         });
 
-        xit('should add a rebill to bill queue', () => {
-
-            process.env.bill_queue_url = 'tesbill';
-            process.env.bill_failed_queue_url = 'testfailbill';
-            process.env.hold_queue_url = 'testhold';
-            process.env.search_indexing_queue_url = 'url';
+        it('should add a rebill to bill queue', () => {
 
             // given
             return modelgenerator.randomEntityWithId('rebill').then((aRebill) => {
@@ -378,7 +373,7 @@ describe('controllers/Rebill.js', () => {
             mockery.deregisterAll();
         });
 
-        xit('should resolve', () => {
+        it('should modify rebill', () => {
             // given
             return modelgenerator.randomEntityWithId('rebill').then((aRebill) => {
 
@@ -404,7 +399,7 @@ describe('controllers/Rebill.js', () => {
 
                 mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
                     putObject: () => {
-                        return Promise.resolve();
+                        return Promise.resolve(aRebill);
                     }
                 });
 
@@ -420,6 +415,7 @@ describe('controllers/Rebill.js', () => {
                     }
                 });
 
+                // delete require.cache[require.resolve(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'))];
                 let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
                 // when
@@ -431,25 +427,26 @@ describe('controllers/Rebill.js', () => {
             });
         });
 
-        xit('should reject when sending message fails', () => {
+        it('should reject when sending message fails', () => {
             // given
-            let aRebill = {};
+            return modelgenerator.randomEntityWithId('rebill').then((aRebill) => {
 
-            // mock sqs utilities that always fails
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-                sendMessage: () => {
-                    return Promise.resolve();
-                }
+                // mock sqs utilities that always fails
+                mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+                    sendMessage: () => {
+                        return Promise.reject(new Error('Error message'));
+                    }
 
-            });
+                });
 
-            let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-            // when
-            return rebillController.sendMessageAndMarkRebill(aRebill).catch((error) => {
-                // then
-                expect(aRebill.processing).not.to.be.equal('true');
-                expect(error.message).to.be.equal('[500] Sending message failed.');
+                // when
+                return rebillController.sendMessageAndMarkRebill(aRebill).catch((error) => {
+                    // then
+                    expect(aRebill.processing).not.to.be.equal('true');
+                    expect(error.message).to.be.equal('[500] Sending message failed - Error message.');
+                });
             });
         });
     });

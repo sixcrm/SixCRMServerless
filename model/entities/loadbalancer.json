@@ -3,21 +3,16 @@
 	"id":"/loadbalancer",
 	"title": "Load Balancer",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"name":{ "type":"string" },
 		"merchantproviders":{
 			"type":"array",
 			"items":{
 				"type":"object",
 				"properties":{
-					"id":{"$ref": "#/definitions/UUIDv4"},
+					"id":{"$ref": "../definitions/uuidv4.json"},
 					"distribution":{
 						"type":"number"
 					},
@@ -25,8 +20,8 @@
 				}
 			}
 		},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["account", "created_at", "updated_at"]
 }

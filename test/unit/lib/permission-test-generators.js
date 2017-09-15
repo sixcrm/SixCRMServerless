@@ -57,7 +57,8 @@ class PermissionTestGenerators {
                         deny: []
                     }
                 }
-            }]
+            }],
+            id: 'some.user@example.com'
         };
 
         PermissionTestGenerators.setGlobalUser(user);

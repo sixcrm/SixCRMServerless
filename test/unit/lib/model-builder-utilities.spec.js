@@ -47,8 +47,8 @@ describe('lib/model-builder-utilities', () => {
             let hydrated_model = mbu.build(path_to_model_under_test);
 
             // then
-            expect(hydrated_model.definitions.SixAccountIdentifier.id).to.equal('/' + path_to_reference);
-            expect(hydrated_model.definitions.SixAccountIdentifier.anyOf[0].id).to.equal('/' + path_to_subreference);
+            expect(hydrated_model.properties.id.id).to.equal('/' + path_to_reference);
+            expect(hydrated_model.properties.id.anyOf[0].id).to.equal('/' + path_to_subreference);
         });
 
     });

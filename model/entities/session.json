@@ -3,28 +3,27 @@
 	"id":"/Session",
 	"title": "Session",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
-		"customer":{"$ref": "#/definitions/UUIDv4"},
-		"campaign":{"$ref": "#/definitions/UUIDv4"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"customer":{"$ref": "../definitions/uuidv4.json"},
+		"campaign":{"$ref": "../definitions/uuidv4.json"},
 		"product_schedules":{
 			"type": "array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
+			"items":{"$ref": "../definitions/uuidv4.json"}
 		},
-		"affiliate":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_1":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_2":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_3":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_4":{"$ref": "#/definitions/UUIDv4"},
-		"subaffiliate_5":{"$ref": "#/definitions/UUIDv4"},
-		"cid":{"$ref": "#/definitions/UUIDv4"},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"},
+		"affiliate":{
+			"anyOf":[
+				{"$ref": "../definitions/uuidv4.json"},
+				{"$ref": "./affiliate.json"}
+		]},
+		"subaffiliate_1":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_2":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_3":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_4":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_5":{"$ref": "../definitions/uuidv4.json"},
+		"cid":{"$ref": "../definitions/uuidv4.json"},
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"},
 		"completed":{
 			"type":"string"
 		}
