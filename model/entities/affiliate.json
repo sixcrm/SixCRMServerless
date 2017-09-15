@@ -3,22 +3,17 @@
 	"id":"/campaign",
 	"title": "campaign",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"name":{
 			"type": "string"
 		},
 		"affiliate_id":{
 			"type":"string"
 		},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["account", "affiliate_id", "created_at", "updated_at"]
 }

@@ -3,15 +3,9 @@
 	"id":"/emailtemplate",
 	"title": "Email Template",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"OptionalUUIDv4":{"$ref": "../definitions/optionaluuidv4.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"name": {
 			"type":"string",
 			"minLength":3
@@ -25,9 +19,9 @@
 		"type": {
 			"type":"string"
 		},
-		"smtp_provider":{"$ref": "#/definitions/UUIDv4"},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"smtp_provider":{"$ref": "../definitions/uuidv4.json"},
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["account", "name", "subject", "body", "type", "created_at", "updated_at"]
 }

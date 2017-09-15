@@ -3,15 +3,9 @@
 	"id":"/customer",
 	"title": "Customer",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"OptionalUUIDv4":{"$ref": "../definitions/optionaluuidv4.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"email":{
 			"type":"string",
 			"format":"email"
@@ -53,10 +47,10 @@
 		},
 		"creditcards":{
 			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
+			"items":{"$ref": "../definitions/uuidv4.json"}
 		},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["account", "firstname", "lastname", "address", "email", "created_at", "updated_at"]
 }

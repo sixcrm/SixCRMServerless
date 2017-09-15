@@ -3,14 +3,9 @@
 	"id":"/campaign",
 	"title": "Campaign",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
-	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"allow_prepaid":{
 			"type":"boolean"
 		},
@@ -23,17 +18,17 @@
 		},
 		"productschedules":{
 			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
+			"items":{"$ref": "../definitions/uuidv4.json"}
 		},
 		"emailtemplates":{
 			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"}
+			"items":{"$ref": "../definitions/uuidv4.json"}
 		},
 		"affiliate_allow":{
 			"type":"array",
 			"items":{
 				"anyOf":[
-					{"$ref": "#/definitions/UUIDv4"},
+					{"$ref": "../definitions/uuidv4.json"},
 					{"type": "string", "enum":["*"]}
 				]
 			}
@@ -42,13 +37,13 @@
 			"type":"array",
 			"items":{
 				"anyOf":[
-					{"$ref": "#/definitions/UUIDv4"},
+					{"$ref": "../definitions/uuidv4.json"},
 					{"type": "string", "enum":["*"]}
 				]
 			}
 		},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["account", "name", "show_prepaid", "allow_prepaid", "created_at", "updated_at"]
 }

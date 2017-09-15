@@ -4,10 +4,6 @@
 	"title": "Product Schedule",
 	"type": "object",
 	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"OptionalUUIDv4":{"$ref": "../definitions/optionaluuidv4.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"CURRENCY":{
 			"anyOf":[
 				{
@@ -21,18 +17,18 @@
 		}
 	},
 	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
 		"name":{
 			"type":"string",
 			"minLength":3
 		},
-		"loadbalancer":{"$ref": "#/definitions/UUIDv4"},
+		"loadbalancer":{"$ref": "../definitions/uuidv4.json"},
 		"schedule":{
 			"type":"array",
 			"items":{
 				"type":"object",
 				"properties":{
-					"product_id":{"$ref": "#/definitions/UUIDv4"},
+					"product_id":{"$ref": "../definitions/uuidv4.json"},
 					"price":{"$ref": "#/definitions/CURRENCY"},
 					"start":{
 						"type":"integer",
@@ -53,9 +49,9 @@
 				"required":["product_id", "price", "start", "period"]
 			}
 		},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["name", "schedule", "account", "created_at", "updated_at"]
 }
