@@ -3,19 +3,6 @@
 	"id":"/productschedule",
 	"title": "Product Schedule",
 	"type": "object",
-	"definitions": {
-		"CURRENCY":{
-			"anyOf":[
-				{
-					"type":"string",
-					"pattern":"^\\$[0-9]+\\.[0-9]{2}$"
-				},
-				{
-					"type": "number", "minimum":0.01
-				}
-			]
-		}
-	},
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"name":{
@@ -29,7 +16,7 @@
 				"type":"object",
 				"properties":{
 					"product_id":{"$ref": "../definitions/uuidv4.json"},
-					"price":{"$ref": "#/definitions/CURRENCY"},
+					"price":{"$ref": "../definitions/currency.json"},
 					"start":{
 						"type":"integer",
 						"minimum": 0,
