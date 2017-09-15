@@ -1,18 +1,15 @@
 'use strict';
 const _ = require("underscore");
-const Validator = require('jsonschema').Validator;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
+const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-//var loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
@@ -75,10 +72,9 @@ class createUpsellController extends transactionEndpointController{
 
     validateEventSchema(event){
 
-        let upsell_schema = global.SixCRM.routes.include('model', 'endpoints/upsell');
-        var v = new Validator();
+        du.debug('Validate Event Schema');
 
-        return v.validate(event, upsell_schema);
+        return modelvalidationutilities.validateModel(event,  global.SixCRM.routes.path('model', 'endpoints/upsell.json'));
 
     }
 
@@ -239,7 +235,7 @@ class createUpsellController extends transactionEndpointController{
 
         let product_schedule = info.schedulesToPurchase[0].id;
 
-        return this.pushEventToRedshift('order', info.session, product_schedule).then((result) => {
+        return this.pushEventToRedshift('order', info.session, product_schedule).then(() => {
 
             du.info(info);
 
@@ -253,7 +249,7 @@ class createUpsellController extends transactionEndpointController{
 
         du.debug('Push Transactions Record');
 
-        return this.pushTransactionToRedshift(info).then((result) => {
+        return this.pushTransactionToRedshift(info).then(() => {
 
             du.info(info);
 
@@ -272,7 +268,7 @@ class createUpsellController extends transactionEndpointController{
         promises.push(this.pushEventsRecord(info));
         promises.push(this.pushTransactionsRecord(info));
 
-        return Promise.all(promises).then((promises) => {
+        return Promise.all(promises).then(() => {
 
             return info;
 
@@ -303,16 +299,16 @@ class createUpsellController extends transactionEndpointController{
         promises.push(updateSession);
         promises.push(rebillUpdates);
 
-        return Promise.all(promises).then((promises) => {
+        return Promise.all(promises).then(() => {
 
-            var rebills_added_to_queue = promises[0];
-			//var next_rebills = promises[1];
-            var updated_session = promises[2];
-            var updateRebills = promises[3];
+          //var rebills_added_to_queue = promises[0];
+		      //var next_rebills = promises[1];
+          //var updated_session = promises[2];
+          //var updateRebills = promises[3];
 
-			//add some validation here...
+		      //add some validation here...
 
-            return info.transaction;
+          return info.transaction;
 
         });
 

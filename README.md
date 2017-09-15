@@ -55,12 +55,13 @@ If you get `Error: spawn java ENOENT`, you need to do `sls dynamodb install --st
 
 #### SQS
 
+Note: Make sure you have Java JDK 8.0+ installed in order to be able to run the local SQS server.
+
 To start a local SQS server, make sure the file `tools/elasticmq/runLocalSqs.sh` in the project root is executable (`chmod u+x tools/elasticmq/runLocalSqs.sh`)
 and run it (`tools/elasticmq/runLocalSqs.sh`). It will download and run the local ElasticMQ server which is compatible with SQS.
 You can use it as an Amazon SQS instance, including calling methods documented in the Amazon SQS API Reference: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/Welcome.html
-Our queues are defined in the `tools/elasticmq/sqs-local.conf` file and are created automatically when the ElasticMQ is run via `tools/elasticmq/runLocalSqs.sh` file.
-
-Note:  To execute these features, you will need the JDK version 8.0+ installed as well as having necessarily installed the Serverless dynamo package using `sls dynamodb install --stage local` after the `npm install` steps.
+After running the server you can execute the deploy script to create queues. You can do so by running `SIX_VERBOSE=2 AWS_PROFILE=six stage=local node deployment/sqs/deploy_queues.js`.
+Much like local DynamoDB, local SQS server keeps the queues in-memory, which means that after restarting it you need to create queues again. 
 
 #### Redis
 

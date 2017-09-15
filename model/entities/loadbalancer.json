@@ -11,6 +11,7 @@
 	"properties": {
 		"id":{"$ref": "#/definitions/UUIDv4"},
 		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+		"name":{ "type":"string" },
 		"merchantproviders":{
 			"type":"array",
 			"items":{

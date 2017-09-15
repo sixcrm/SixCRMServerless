@@ -4,7 +4,7 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 class fulfillmentProviderController extends entityController {
 
     constructor(){
-        super('fulfillmentprovider');
+      super('fulfillmentprovider');
     }
 
 }

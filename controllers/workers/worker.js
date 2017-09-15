@@ -3,6 +3,7 @@ const Validator = require('jsonschema').Validator;
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
 const sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
@@ -112,86 +113,15 @@ module.exports = class workerController {
 
     validateRebill(rebill){
 
-        return new Promise((resolve, reject) => {
-
-            try{
-
-                var rebill_schema = global.SixCRM.routes.include('model','entities/rebill.json');
-
-            } catch(e){
-
-                reject(eu.getError('server','Unable to load validation schemas. Error:' + e));
-
-            }
-
-            var validation;
-
-            try{
-                var v = new Validator();
-
-                validation = v.validate(rebill, rebill_schema);
-            }catch(e){
-                reject(e.message);
-            }
-
-            if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
-
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map((e) => { return e.message; })
-                };
-
-                reject(eu.getError('server',error.message));
-
-            }
-
-            resolve(rebill);
-
-        });
+        return Promise.resolve(
+            mvu.validateModel(rebill, global.SixCRM.routes.path('model', 'entities/rebill.json')));
 
     }
 
     validateSession(session){
 
-        return new Promise((resolve, reject) => {
-
-            try{
-
-                var session_schema = global.SixCRM.routes.include('model','entities/session.json');
-
-            } catch(e){
-
-                return reject(eu.getError('server','Unable to load validation schemas. Error:' + e));
-
-            }
-
-            var validation;
-
-            try{
-                var v = new Validator();
-
-                validation = v.validate(session, session_schema);
-            }catch(e){
-                return reject(e);
-            }
-
-            if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
-
-                var error = {
-                    message: 'One or more validation errors occurred.',
-                    issues: validation.errors.map((e) => { return e.message; })
-                };
-
-                du.warning(validation.errors);
-
-                return reject(error);
-
-            }
-
-            return resolve(session);
-
-        });
-
+        return Promise.resolve(
+            mvu.validateModel(session, global.SixCRM.routes.path('model', 'entities/session.json')));
     }
 
 }

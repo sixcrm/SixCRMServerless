@@ -5,17 +5,12 @@ const uuidV4 = require('uuid/v4');
 //Technical Debt:  We shouldn't need the AWS utility classes here...
 const dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
 const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-var productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-
-const oneDayInSeconds = 86400;
 
 class rebillController extends entityController {
 
@@ -23,51 +18,64 @@ class rebillController extends entityController {
         super('rebill');
     }
 
-	//Note: rebills don't get product associations, only product schedules
+	  //Note: rebills don't get product associations, only product schedules
     getProducts(rebill){
 
-        if(!_.has(rebill, 'products')){ return null; }
+      du.debug('Get Products');
 
-        return rebill.products.map(id => productController.get(id));
+      if(_.has(rebill, 'products') && arrayutilities.nonEmpty(rebill.products)){
+
+        return arrayutilities.map(rebill.products, (id) => {
+          return this.executeAssociatedEntityFunction('productController', 'get', {id: id});
+        });
+
+      }else{
+
+        return null;
+
+      }
 
     }
 
     getProductSchedules(rebill) {
 
-        if(!_.has(rebill, 'product_schedules')){ return null; }
+      du.debug('Get Product Schedules');
 
-        var promises = [];
+      if(_.has(rebill, 'product_schedules') && arrayutilities.nonEmpty(rebill.product_schedules)){
 
-        rebill.product_schedules.map((id) => {
-            promises.push(productScheduleController.get(id));
+        let promises = arrayutilities.map(rebill.product_schedules, (id) => {
+
+          return this.executeAssociatedEntityFunction('productScheduleController', 'get', {id: id});
+
         });
 
         return Promise.all(promises);
+
+      }
+
+      return null;
 
     }
 
     getTransactions(rebill){
 
-        return transactionController.getTransactionsByRebillID(rebill.id);
+      return this.executeAssociatedEntityFunction('transactionController', 'getTransactionsByRebillID', rebill.id);
 
     }
 
     getParentSession(rebill){
 
-        if(!_.has(rebill, 'parentsession')){ return null; }
+      if(!_.has(rebill, 'parentsession')){ return null; }
 
-		//why is this necessary?
-        var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-
-        return sessionController.get(rebill.parentsession);
+      return this.executeAssociatedEntityFunction('sessionController', 'get', {id: rebill.parentsession});
 
     }
 
     getParentSessionHydrated(rebill){
 
-        if(!_.has(rebill, 'parentsession')){ return null; }
+      if(!_.has(rebill, 'parentsession')){ return null; }
 
-        return sessionController.getSessionHydrated(rebill.parentsession);
+      return this.executeAssociatedEntityFunction('sessionController', 'getSessionHydrated', {id: rebill.parentsession});
 
     }
 
@@ -75,7 +83,7 @@ class rebillController extends entityController {
     buildRebillObject(parameters){
 
         let rebill_object = {
-            id: uuidV4(),
+            id: this.getUUID(),
             bill_at: parameters.bill_at,
             parentsession: parameters.parentsession,
             product_schedules: parameters.product_schedules,
@@ -92,7 +100,8 @@ class rebillController extends entityController {
 
     }
 
-	//validate this logic with product owner
+    //Technical Debt:  Clean this up.
+	  //validate this logic with product owner
     calculateRebill(day_in_cycle, product_schedule){
 
         du.info(day_in_cycle, product_schedule);
@@ -105,7 +114,7 @@ class rebillController extends entityController {
 
                 if(!_.has(scheduled_product, "end") || (parseInt(day_in_cycle) < parseInt(scheduled_product.end))){
 
-                    let bill_timestamp = timestamp.createTimestampSeconds() + (scheduled_product.period * oneDayInSeconds);
+                    let bill_timestamp = timestamp.createTimestampSeconds() + (scheduled_product.period * timestamp.getDayInSeconds());
 
                     let bill_at = timestamp.toISO8601(bill_timestamp);
 
@@ -134,10 +143,23 @@ class rebillController extends entityController {
 
     }
 
-	//this is a lambda entrypoint
     createRebills(session, product_schedules, day_in_cycle){
 
-        return Promise.all(product_schedules.map(schedule => this.createRebill(session, schedule, day_in_cycle)));
+      du.debug('Create Rebills');
+
+      if(arrayutilities.nonEmpty(product_schedules)){
+
+        let promises = arrayutilities.map(product_schedules, (schedule) => {
+          return this.createRebill(session, schedule, day_in_cycle);
+        });
+
+        return Promise.all(promises);
+
+      }else{
+
+        return null;
+
+      }
 
     }
 
@@ -162,7 +184,7 @@ class rebillController extends entityController {
             amount: rebill_parameters.amount
         });
 
-        return this.create(rebill_object);
+        return this.create({entity: rebill_object});
 
     }
 
@@ -205,13 +227,19 @@ class rebillController extends entityController {
 
     getRebillsBySessionID(id){
 
-        return this.queryBySecondaryIndex('parentsession', id, 'parentsession-index').then((result) => this.getResult(result));
+      du.debug('Get Rebills By Session ID');
+
+      return this.queryBySecondaryIndex({field: 'parentsession', index_value: id, index_name: 'parentsession-index'}).then((result) => {
+        return this.getResult(result);
+      });
 
     }
 
     listRebillsBySessionID(id, pagination){
 
-        return this.listBySecondaryIndex('parentsession', id, 'parentsession-index', pagination);
+      du.debug('List Rebills By Session ID');
+
+      return this.listBySecondaryIndex({field: 'parentsession', index_value: id, index_name:'parentsession-index', pagination: pagination});
 
     }
 
@@ -219,12 +247,12 @@ class rebillController extends entityController {
 
         rebill.processing = "true";
 
-        return this.update(rebill);
+        return this.update({entity: rebill});
 
     }
 
 	//Technical Debt:  This shouldn't go here...
-    getRebillsAfterTimestamp(a_timestamp){
+    getRebillsAfterTimestamp(a_timestamp, cursor, limit){
 
         return new Promise((resolve, reject) => {
 
@@ -232,16 +260,15 @@ class rebillController extends entityController {
 
             var query_parameters = {filter_expression: 'bill_at < :timestamp_iso8601v AND processing <> :processingv', expression_attribute_values: {':timestamp_iso8601v':timestamp_iso8601, ':processingv':'true'}};
 
-			/* eslint-disable no-undef */
-            if(typeof cursor  !== 'undefined'){
-                query_parameters.ExclusiveStartKey = cursor;
+            if(!_.isUndefined(cursor)){
+              query_parameters.ExclusiveStartKey = cursor;
             }
 
-            if(typeof limit  !== 'undefined'){
-                query_parameters['limit'] = limit;
+            if(!_.isUndefined(limit)){
+              query_parameters['limit'] = limit;
             }
-			/* eslint-enable */
 
+            //Technical Debt:  NO. scanByParameters?
             dynamoutilities.scanRecords(process.env.rebills_table, query_parameters, (error, data) => {
 
                 if(_.isError(error)){
@@ -260,6 +287,8 @@ class rebillController extends entityController {
 
     sendMessageAndMarkRebill(rebill){
 
+        du.debug('Send Message And Mark Rebill');
+
         return new Promise((resolve, reject) => {
 
           sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: process.env.bill_queue}).then(() => {
@@ -269,6 +298,10 @@ class rebillController extends entityController {
               return resolve(rebill);
 
             });
+
+          }).catch(error => {
+
+              return reject(reject(eu.getError('server', 'Sending message failed - ' + error.message + '.')));
 
           });
 
@@ -288,7 +321,7 @@ class rebillController extends entityController {
 
         rebill.transactions = rebill_transactions;
 
-        return this.update(rebill);
+        return this.update({entity: rebill});
 
     }
 

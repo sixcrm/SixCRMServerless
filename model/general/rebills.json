@@ -1,0 +1,5 @@
+{
+	"title": "Rebills",
+	"type": "array",
+	"items":{"$ref": "../entities/rebill.json"}
+}

@@ -21,11 +21,15 @@ class notificationController extends entityController {
      */
     listForCurrentUser(pagination) {
 
-        return notificationReadController.markNotificationsAsSeen().then(() => {
+      du.debug('List For Current User');
 
-            return this.queryBySecondaryIndex('user', global.user.id, 'user-index', pagination, true);
+      return this.executeAssociatedEntityFunction('notificationReadController', 'markNotificationsAsSeen', {}).then(() => {
 
-        }); // Update the time the user has listed notifications.
+        let user_id = global.user.id;
+
+        return this.queryBySecondaryIndex({field: 'user', index_value: user_id, index_name: 'user-index', pagination: pagination, reverse_order: true});
+
+      })
 
     }
 
@@ -33,16 +37,21 @@ class notificationController extends entityController {
      * Get the number of unseen notifications for current user.
      */
     numberOfUnseenNotifications() {
-        let field = 'user';
-        let index_name = 'user-index';
 
-        du.debug('Counting number of unseen messages.');
+      du.debug('Number of Unseen Notifications');
 
-        return notificationReadController.getLastSeenTime().then((last_seen_time) => {
-            du.debug('Since ' + last_seen_time);
+      let field = 'user';
+      let index_name = 'user-index';
 
-            return this.countCreatedAfterBySecondaryIndex(last_seen_time, field, index_name);
-        });
+      return this.executeAssociatedEntityFunction('notificationReadController', 'getLastSeenTime', {}).then((last_seen_time) => {
+
+        du.debug('Since ' + last_seen_time);
+
+        //Technical Debt:  This is a very specific function, should not be in entities.
+        return this.countCreatedAfterBySecondaryIndex({date_time: last_seen_time, field: field, index_name: index_name});
+
+      });
+
     }
 
     /**
@@ -51,11 +60,16 @@ class notificationController extends entityController {
      * @param notification_object
      * @returns {Promise}
      */
+
+    //Technical Debt:  Why is this necessarily a promise?
     isValidNotification(notification_object) {
 
-        return Promise.resolve(
-            mvu.validateModel(notification_object, global.SixCRM.routes.path('model', 'entities/notification.json')));
+      du.debug('Is Valid Notification');
+
+      return Promise.resolve(mvu.validateModel(notification_object, global.SixCRM.routes.path('model', 'entities/notification.json')));
+
     }
+
 }
 
 module.exports = new notificationController();

@@ -1,13 +1,14 @@
 'use strict';
 const _ = require('underscore');
-const Validator = require('jsonschema').Validator;
 
 const du = global.SixCRM.routes.include('lib','debug-utilities');
 const eu = global.SixCRM.routes.include('lib','error-utilities');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 const permissionUtils = global.SixCRM.routes.include('lib','permission-utilities');
-const emailNotificationUtils = global.SixCRM.routes.include('lib','email-notification-utilities');
-const smsNotificationUtils = global.SixCRM.routes.include('lib','sms-notification-utilities');
-const slackNotificationUtils = global.SixCRM.routes.include('lib','slack-notification-utilities');
+const emailNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/email-notification-provider');
+const smsNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/sms-notification-provider');
+const slackNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
 const timestamp = global.SixCRM.routes.include('lib','timestamp');
 
 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
@@ -121,8 +122,8 @@ class NotificationProvider {
         du.debug('Save and send notification.');
 
         return Promise.all([
-            notificationSettingController.get(user), // notification settings
-            userSettingController.get(user), // user settings
+            notificationSettingController.get({id: user}), // notification settings
+            userSettingController.get({id: user}), // user settings
             notificationSettingController.getDefaultProfile(), // default user settings
         ]).then((settings) => {
 
@@ -175,7 +176,7 @@ class NotificationProvider {
 
             du.debug('About to create notification', createNotification);
 
-            return notificationController.create(createNotification).then((notification) => {
+            return notificationController.create({entity: createNotification}).then((notification) => {
 
                 du.debug('Saved notification', notification);
 
@@ -189,7 +190,7 @@ class NotificationProvider {
                         let email_address = this.settingsDataFor('email', user_settings);
 
                         if (email_address) {
-                            notificationSendOperations.push(emailNotificationUtils.sendNotificationViaEmail(notification, email_address));
+                            notificationSendOperations.push(emailNotificationProvider.sendNotificationViaEmail(notification, email_address));
                         }
                     }
 
@@ -248,46 +249,19 @@ class NotificationProvider {
      */
     validateCreateNotificationObject(create_notification_object, user_required) {
 
-        du.debug('Validate Input');
+        du.debug('Validate Create Notification Object');
 
-        let schema;
-
-        try{
-            schema = global.SixCRM.routes.include('model','actions/create_notification.json');
-        } catch(e){
-            return Promise.reject(eu.getError('server','Unable to load validation schemas.'));
+        if (user_required && !_.has(create_notification_object, 'user')) {
+            return eu.throwError('server','User is mandatory.');
         }
 
-        if (user_required && !create_notification_object.user) {
-            return Promise.reject(eu.getError('server','User is mandatory.'));
+        let params = objectutilities.clone(create_notification_object);
+
+        if(!_.has(params, 'body')){
+          params.body = '(No Body)';
         }
 
-        let validation;
-        let params = JSON.parse(JSON.stringify(create_notification_object || {}));
-
-        try{
-            let v = new Validator();
-
-            validation = v.validate(params, schema);
-        }catch(e){
-            return Promise.reject(eu.getError('server','Unable to instantiate validator.'));
-        }
-
-        if(validation['errors'].length > 0) {
-            let error = {
-                message: 'One or more validation errors occurred.',
-                issues: validation.errors.map(e => e.message)
-            };
-
-            du.error(error);
-
-            return Promise.reject(eu.getError(
-              'server',
-              'One or more validation errors occurred.',
-              {issues: validation.errors.map(e => e.message)}
-            ));
-
-        }
+        mvu.validateModel(params, global.SixCRM.routes.path('model','actions/create_notification.json'));
 
         return Promise.resolve(params);
 
@@ -307,7 +281,7 @@ class NotificationProvider {
 
         permissionUtils.disableACLs();
 
-        return userAclController.queryBySecondaryIndex('account', account, 'account-index').then((userAcls) => {
+        return userAclController.queryBySecondaryIndex({field: 'account', index_value: account, index_name: 'account-index'}).then((userAcls) => {
             // re-enable ACLs only if there were enabled before this method
             if (aclsWereEnabled) {
                 permissionUtils.enableACLs();

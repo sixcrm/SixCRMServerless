@@ -1,9 +1,9 @@
 'use strict';
 const _ = require('underscore');
-const Validator = require('jsonschema').Validator;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
@@ -59,22 +59,9 @@ class createLeadController extends transactionEndpointController{
 
     validateEventSchema(event){
 
-        du.debug('Validate Event Schema');
+      du.debug('Validate Event Schema');
 
-        let lead_schema = global.SixCRM.routes.include('model', 'endpoints/lead');
-        let customer_schema = global.SixCRM.routes.include('model', 'endpoints/components/customer');
-        let address_schema = global.SixCRM.routes.include('model', 'endpoints/components/address');
-        let creditcard_schema = global.SixCRM.routes.include('model', 'endpoints/components/creditcard');
-        let affiliates_schema = global.SixCRM.routes.include('model', 'endpoints/components/affiliates');
-
-        let v = new Validator();
-
-        v.addSchema(address_schema, '/address');
-        v.addSchema(creditcard_schema, '/creditcard');
-        v.addSchema(affiliates_schema, '/affiliates');
-        v.addSchema(customer_schema, '/customer');
-
-        return v.validate(event, lead_schema);
+      return modelvalidationutilities.validateModel(event,  global.SixCRM.routes.path('model', 'endpoints/lead.json'));
 
     }
 

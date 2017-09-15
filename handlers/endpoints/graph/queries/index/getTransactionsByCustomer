@@ -11,15 +11,43 @@
 				created_at,
 				updated_at,
 				merchant_provider {
-                    id,
-                    name,
-                    username,
-                    password,
-                    endpoint,
-                    processor,
-                    created_at,
-                    updated_at
-                            },
+	        id,
+					name,
+					processor {
+						name,
+						id
+					},
+					processing {
+						monthly_cap,
+						discount_rate,
+						transaction_fee,
+						reserve_rate,
+						maximum_chargeback_ratio,
+						transaction_counts {
+							daily,
+							weekly,
+							monthly
+						}
+					},
+					enabled,
+					gateway {
+						name,
+						username,
+						password,
+						endpoint,
+						additional
+					},
+					allow_prepaid,
+					accepted_payment_methods,
+					customer_service {
+						email,
+						url,
+						description,
+						phone
+					},
+					created_at,
+					updated_at
+        },
 				rebill {
 					id,
 					bill_at,

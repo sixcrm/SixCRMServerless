@@ -109,37 +109,14 @@ describe('controllers/core/Configuration.js', () => {
         expect(configuration.getStatus()).to.equal('loading');
     });
 
-    it('sets environment config', (done) => {
+    it('sets environment config', () => {
         let configuration = new Configuration('local');
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-            objectExists: (parameters) => {
-                return Promise.resolve(true);
-            },
-            getObject: (parameters) => {
-                return Promise.resolve({
-                    Body: JSON.stringify({})
-                });
-            },
-            putObject: (parameters) => {
-                try {
-                    expect(parameters.Body).to.equal('{"test_key":"test_value"}');
-                    done();
-                } catch (error) {
-                    done(error);
-                }
-
-                return Promise.resolve();
-            },
+        return configuration.setEnvironmentConfig('test_key', 'test_value').then(() => {
+            return configuration.getConfiguration('native', 'test_key', true).then((value) => {
+                expect(value).to.equal('test_value');
+            })
         });
-
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
-            set: (parameters) => {
-                return Promise.resolve();
-            }
-        });
-
-        configuration.setEnvironmentConfig('test_key', 'test_value');
     });
 
     it('gets environment config when no value', () => {
@@ -229,19 +206,6 @@ describe('controllers/core/Configuration.js', () => {
 
         return configuration.getNativeEnvironmentConfiguration('all').then((result) => {
             return expect(result).to.equal(configuration.environment_config);
-        })
-    });
-
-    it('gets local environment config', () => {
-
-        let configuration = new Configuration();
-
-        configuration.setEnvironmentConfigurationFile();
-
-        configuration.environment_config = {test_key: 'test_value'};
-
-        return configuration.getLocalEnvironmentConfiguration('test_key').then((result) => {
-            return expect(result).to.equal('test_value');
         })
     });
 

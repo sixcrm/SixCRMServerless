@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		customerlist {
+		customerlist (pagination:{limit: \"10\"}) {
 			customers {
 				id,
 				email,

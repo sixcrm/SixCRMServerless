@@ -1,12 +1,12 @@
 'use strict';
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
-const validator = require('validator');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
@@ -21,7 +21,8 @@ module.exports = class entityUtilitiesController{
 
     constructor(){
 
-        this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+      //Technical Debt:  Why is this here?
+      this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
     }
 
@@ -94,47 +95,40 @@ module.exports = class entityUtilitiesController{
 
     validate(object, path_to_model){
 
-        du.debug('Validate');
+      du.debug('Validate');
 
-        if(_.isUndefined(path_to_model)){
-            path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
-        }
+      if(_.isUndefined(path_to_model)){
+          path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
+      }
 
-        let valid = mvu.validateModel(object, path_to_model);
+      let valid = mvu.validateModel(object, path_to_model);
 
-        if(_.isError(valid)){
-            return Promise.reject(valid);
-        }
+      if(_.isError(valid)){
+          return Promise.reject(valid);
+      }
 
-        return Promise.resolve(valid);
+      return Promise.resolve(valid);
 
+    }
+
+    getUUID(){
+      du.debug('Get UUID');
+      return uuidV4();
     }
 
     isUUID(string, version){
 
-        du.debug('Is UUID');
+      du.debug('Is UUID');
 
-        if(_.isString(string)){
-
-            return validator.isUUID(string, version);
-
-        }
-
-        return false;
+      return stringutilities.isUUID(string, version);
 
     }
 
     isEmail(string){
 
-        du.debug('Is Email');
+      du.debug('Is Email');
 
-        if(_.isString(string)){
-
-            return validator.isEmail(string);
-
-        }
-
-        return false;
+      return stringutilities.isEmail(string);
 
     }
 
@@ -542,7 +536,7 @@ module.exports = class entityUtilitiesController{
 
         }
 
-        if(!_.has(thing, field) || _.isNull(thing[field])){
+        if(!_.has(thing, field) || _.isNull(thing[field]) || _.isUndefined(thing[field])){
 
             thing[field] = default_value;
 
@@ -721,12 +715,13 @@ module.exports = class entityUtilitiesController{
 
         du.debug('Get ID');
 
+        //du.warning(object, primary_key);
+
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(_.isString(object)){
 
-
-        //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
+            //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
             return object;
 
             /*
@@ -759,7 +754,20 @@ module.exports = class entityUtilitiesController{
 
         }
 
+        //du.warning('here');
         eu.throwError('bad_request','Could not determine identifier.');
+
+    }
+
+    getDescriptiveName(){
+
+      du.deep('Get Descriptive Name');
+
+      if(_.has(this, 'descriptive_name')){
+        return this.descriptive_name;
+      }
+
+      return null;
 
     }
 
@@ -819,6 +827,30 @@ module.exports = class entityUtilitiesController{
         let activityHelper = global.SixCRM.routes.include('helpers', 'redshift/Activity.js');
 
         return activityHelper.createActivity(actor, action, acted_upon, associated_with);
+
+    }
+
+    executeAssociatedEntityFunction(controller_name, function_name, function_arguments){
+
+      du.debug('Execute Associated Entity Function');
+
+      if(!_.has(this, controller_name) || !_.isFunction(this[controller_name][function_name])){
+        let controller_file_name = this.translateControllerNameToFilename(controller_name);
+
+        du.info(controller_file_name, function_name);
+
+        this[controller_name] = global.SixCRM.routes.include('entities', controller_file_name);
+      }
+
+      return this[controller_name][function_name](function_arguments);
+
+    }
+
+    translateControllerNameToFilename(controller_name){
+
+      du.debug('Translate Controller Name To Filename');
+
+      return stringutilities.uppercaseFirst(controller_name).replace('Controller', '')+'.js';
 
     }
 

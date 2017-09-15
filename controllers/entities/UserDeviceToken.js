@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
@@ -18,7 +17,7 @@ class userDeviceTokenController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            return this.queryBySecondaryIndex('user', user, 'user-index')
+            return this.queryBySecondaryIndex({field:'user', index_value: user, index_name: 'user-index'})
               .then((results) => this.getResult(results))
               .then((user_device_tokens) => {
 

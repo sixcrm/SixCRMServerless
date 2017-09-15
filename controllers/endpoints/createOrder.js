@@ -1,9 +1,9 @@
 'use strict';
 const _ = require("underscore");
-const Validator = require('jsonschema').Validator;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
@@ -75,18 +75,9 @@ class createOrderController extends transactionEndpointController{
 
     validateEventSchema(event){
 
-        du.debug('Validate Input');
+        du.debug('Validate Event Schema');
 
-        let order_schema = global.SixCRM.routes.include('model', 'endpoints/order');
-        let address_schema = global.SixCRM.routes.include('model', 'endpoints/components/address');
-        let creditcard_schema = global.SixCRM.routes.include('model', 'endpoints/components/creditcard');
-
-        var v = new Validator();
-
-        v.addSchema(address_schema, '/address');
-        v.addSchema(creditcard_schema, '/creditcard');
-
-        return v.validate(event, order_schema);
+        return modelvalidationutilities.validateModel(event,  global.SixCRM.routes.path('model', 'endpoints/order.json'));
 
     }
 

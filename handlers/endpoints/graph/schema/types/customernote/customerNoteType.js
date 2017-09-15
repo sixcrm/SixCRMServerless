@@ -27,12 +27,16 @@ module.exports.graphObj = new GraphQLObjectType({
         customer: {
             type: new GraphQLNonNull(customerType.graphObj),
             description: 'The customer that the note pertains to.',
-            resolve: customernote => customerNoteController.getCustomer(customernote),
+            resolve: (customernote) => {
+              return customerNoteController.getCustomer(customernote);
+            }
         },
         user: {
             type: new GraphQLNonNull(userType.graphObj),
             description: 'The user that created the customer note.',
-            resolve: customernote => customerNoteController.getUser(customernote),
+            resolve: (customernote) => {
+              return customerNoteController.getUser(customernote);
+            }
         },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),

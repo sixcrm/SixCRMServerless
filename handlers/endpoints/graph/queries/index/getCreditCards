@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		creditcardlist {
+		creditcardlist (pagination:{limit: \"10\"}){
 			creditcards {
 				id,
 				number,

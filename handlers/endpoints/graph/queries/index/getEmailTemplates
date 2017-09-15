@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		emailtemplatelist {
+		emailtemplatelist (pagination:{limit: \"10\"}){
 			emailtemplates {
 				id,
 				name,

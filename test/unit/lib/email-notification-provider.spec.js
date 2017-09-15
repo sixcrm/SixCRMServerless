@@ -1,9 +1,9 @@
-let SlackNotificationUtilities = global.SixCRM.routes.include('lib', 'slack-notification-utilities.js');
+let EmailNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/email-notification-provider.js');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('lib/slack-notification-utilities', () => {
+describe('lib/notification-provider', () => {
 
     before(() => {
         mockery.enable({
@@ -33,16 +33,16 @@ describe('lib/slack-notification-utilities', () => {
         updated_at: '2017-04-06T18:40:41.405Z'
     };
 
-    describe('sendNotificationViaSlack', () => {
+    describe('sendNotificationViaEmail', () => {
 
         it('should not send a message when the object is not valid', () => {
             // given
             let notification_object = Object.assign({}, valid_notification_object);
-            let webhook = 'http://test.com/webhook';
+            let email_address = 'user@test.com';
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'slack-utilities'), {
-                sendMessageToWebhook: (message) => {
-                    expect(message).not.to.equal(message, 'Slack utilities should not have been called.');
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'ses-utilities'), {
+                sendEmail: (message) => {
+                    expect(message).not.to.equal(message, 'SES utilities should not have been called.');
                 }
             });
 
@@ -51,27 +51,30 @@ describe('lib/slack-notification-utilities', () => {
             delete notification_object.user;
 
             try {
-                return SlackNotificationUtilities.sendNotificationViaSlack(notification_object, webhook);
-            } catch(error) {
+                return EmailNotificationProvider.sendNotificationViaEmail(notification_object, email_address);
+            } catch (error) {
                 // then
                 expect(error).not.to.be.null;
                 return expect(error.message).to.equal('[500] One or more validation errors occurred.');
             }
         });
 
-        it('should attempt to send a message when the object is valid', (done) => {
+        xit('should attempt to send a message when the object is valid', (done) => {
             // given
-            let webhook = 'http://test.com/webhook';
+            let email_address = 'user@test.com';
+            let recepient_name = 'Big Feller'
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'slack-utilities'), {
-                sendMessageToWebhook: (message) => {
-                    expect(message).to.be.defined;
-                    done();
+            //Technical Debt:  This should probably mock the SystemMailer
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
+                send: (message) => {
+                  expect(message).to.be.defined;
+                  done();
                 }
             });
-            let SlackNotificationUtilities = global.SixCRM.routes.include('lib', 'slack-notification-utilities.js');
 
-            SlackNotificationUtilities.sendNotificationViaSlack(valid_notification_object, webhook)
+            let EmailNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/email-notification-provider.js');
+
+            EmailNotificationProvider.sendNotificationViaEmail(valid_notification_object, email_address, recepient_name)
                 .catch((error) => {
                     console.log(error.message);
                     done(error.message);

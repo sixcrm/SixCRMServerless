@@ -2,6 +2,15 @@ aws:
   region: 'us-east-1'
   account: '068070110666'
 
+ses:
+  hostname: email-smtp.us-east-1.amazonaws.com
+  port: 465
+  username: 'ses-smtp-user.20170828-134442'
+  smtp_username: 'AKIAJEYLHSMCFIJYFMXQ'
+  smtp_password: 'AhiiqjfmaJ9M2fD3zhzbjt17Da6xkOpYD2b1bkiovvrm'
+  default_sender_email: 'info@development.sixcrm.com'
+  default_sender_name: 'Development SixCRM'
+
 jwt:
   issuer: 'https://development-api.sixcrm.com'
   development_bypass: 'deathstalker'
@@ -86,5 +95,8 @@ logging:
   loglevel: 0
 
 slack:
-  channel: '#lambdas'
-  kms_encrypted_hook_url: 'AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ=='
+  channels:
+    - channel: '#lambdas'
+      kms_encrypted_hook_url: 'AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ=='
+    - channel: '#servererrors'
+      webhook_url: https://hooks.slack.com/services/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

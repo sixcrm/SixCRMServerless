@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		affiliatelist {
+		affiliatelist (pagination:{limit: \"10\"}){
 			affiliates {
 				id,
 				affiliate_id,

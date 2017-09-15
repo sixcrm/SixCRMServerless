@@ -1,25 +1,44 @@
-var fs = require('fs');
-var util = require('util');
-var path = require('path');
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
-var expect = chai.expect;
-var assert = chai.assert;
-chai.should();
-require('../../../bootstrap.test')
+const fs = require('fs');
+const chai = require("chai");
+const expect = chai.expect;
+const mockery = require('mockery');
 
-// disabled for now:
-// UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 10): TypeError: this.dynamodb.scan is not a function
-// Error: Timeout of 30000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves.
+require('../../../bootstrap.test');
 
-// describe('workers/pickRebill', function () {
-// 	describe('pickRebill', function (done) {
-// 		it('will be true (need to determine the correct response)', function() {
-// 			var pickRebill = require('../../../../controllers/workers/pickRebill');
-// 			var actual = pickRebill.pickRebill();
-//            //TODO: determine correct response:
-// 			return Promise.resolve(actual).should.eventually.equal(true)
-// 		})
-// 	});
-// });
+describe('controllers/workers/pickRebill', function () {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+	describe('pickRebill', function () {
+
+        afterEach(() => {
+            mockery.resetCache();
+        });
+
+        after(() => {
+            mockery.deregisterAll();
+        });
+
+	    it('returns true', function() {
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+                getRebillsAfterTimestamp: (time) => {
+                    return Promise.resolve([]);
+                },
+                sendMessageAndMarkRebill: (rebill) => {
+                    return Promise.resolve();
+                }
+            });
+
+			let pickRebill = global.SixCRM.routes.include('controllers', 'workers/pickRebill.js');
+
+			return pickRebill.pickRebill().then(response => expect(response).to.be.true);
+		})
+	});
+});

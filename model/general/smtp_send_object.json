@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id":"/smtp_connection_options",
-  "title": "SMTP Connection Options",
+  "id":"/smtp_send_object",
+  "title": "SMTP Send Object",
   "type": "object",
   "properties": {
     "sender_email": {

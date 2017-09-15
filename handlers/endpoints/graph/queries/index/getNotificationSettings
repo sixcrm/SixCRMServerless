@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		notificationsettinglist {
+		notificationsettinglist (pagination:{limit: \"10\"}){
 			notificationsettings {
 		    id,
 		   	settings,

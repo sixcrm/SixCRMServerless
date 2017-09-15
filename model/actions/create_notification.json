@@ -23,5 +23,5 @@
     }
 
   },
-  "required":["account", "type", "action", "title", "body"]
+  "required":["account", "type", "action", "title"]
 }

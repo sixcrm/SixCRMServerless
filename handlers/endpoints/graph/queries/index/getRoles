@@ -2,8 +2,8 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	query { 
-		rolelist {
+	query {
+		rolelist (pagination:{limit: \"10\"}){
 			roles {
 				id,
 				name,
@@ -19,4 +19,3 @@
 		},
 	}"
 }
-

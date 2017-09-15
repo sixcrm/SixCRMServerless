@@ -175,6 +175,12 @@ describe('lib/object-utilities', () => {
 
     });
 
+    it('should return true for array argument (three dimensional with array index notation)', () => {
+
+      expect(objectutilities.hasRecursive({test:[{another_key:{yet_another_key:'1'}}]},'test.0.another_key.yet_another_key'), true).to.equal(true);
+
+    });
+
   });
 
 });

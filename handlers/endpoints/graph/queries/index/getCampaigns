@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		campaignlist {
+		campaignlist (pagination:{limit: \"10\"}){
 			campaigns {
 				id,
 				name,

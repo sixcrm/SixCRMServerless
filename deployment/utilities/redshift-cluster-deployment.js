@@ -6,6 +6,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 
@@ -230,9 +231,33 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
 
   writeHostConfiguration(data){
 
+    du.debug('Write Host Configuration');
+
+    if(!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')){
+
+      eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
+
+    }
+
     let host = data['Clusters'][0]['Endpoint']['Address'];
 
-    return global.SixCRM.configuration.propagateCache('all', 'redshift.host', host);
+    if(!_.isNull(host)){
+
+      if(stringutilities.isMatch(host, /^[a-zA-Z0-9\.-:]*$/)){
+
+        return global.SixCRM.configuration.setEnvironmentConfig('redshift.host', host);
+
+      }else{
+
+        eu.throwError('server', 'Attempting to set redshift.host configuration globally when value does not match regular expression validation.');
+
+      }
+
+    }else{
+
+      eu.throwError('server', 'Attempting to set a null or redshift.host configuration globally.');
+
+    }
 
   }
 

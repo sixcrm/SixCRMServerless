@@ -1,0 +1,9 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/components/product_schedules",
+	"title": "Product Schedules",
+	"type": "array",
+	"minItems": 1,
+	"items": {"$ref": "../../definitions/uuidv4.json"},
+	"uniqueItems": true
+}

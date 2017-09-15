@@ -1,6 +1,7 @@
 const expect = require('chai').expect;
 const SqSTestUtils = require('./sqs-test-utils');
 const TestUtils = require('./test-utils');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 describe('Functional test for message workers', function () {
     let forwardingFunction;
@@ -29,6 +30,7 @@ describe('Functional test for message workers', function () {
         });
 
         it('should say "success" when there is a message, and delete it', function () {
+            this.timeout(1000);
             return givenAnyMessageInRebillQueue().then(() => {
                 return forwardingFunction.execute().then((response) => {
                     expect(response).to.equal(forwardingFunction.messages.success);
@@ -114,6 +116,7 @@ describe('Functional test for message workers', function () {
         });
 
         it('should say "success" when there is a message, and delete it', function () {
+            this.timeout(1000);
             return givenAnyMessageInDeliveredQueue().then(() => {
                 return forwardingFunction.execute().then((response) => {
                     expect(response).to.equal(forwardingFunction.messages.success);
@@ -148,42 +151,47 @@ describe('Functional test for message workers', function () {
     }
 
     function billToHold() {
-        process.env.failure_queue_url = 'http://localhost:9324/queue/recover';
+        process.env.failure_queue = 'recover';
         return configureForwardingFunction(
-            'http://localhost:9324/queue/bill',
-            'http://localhost:9324/queue/hold',
+            'bill',
+            'hold',
             'processbilling');
     }
 
     function rebillToArchive() {
         let func =  configureForwardingFunction(
-            'http://localhost:9324/queue/rebill',
+            'rebill',
             null,
             'createrebills');
-        delete process.env.destination_queue_url;
+
+        delete process.env.destination_queue;
         return func;
     }
 
     function shippedToDelivered() {
         return configureForwardingFunction(
-            'http://localhost:9324/queue/shipped',
-            'http://localhost:9324/queue/delivered',
+            'shipped',
+            'delivered',
             'confirmdelivered');
     }
 
     function deliveredToArchive() {
         process.env.archivefilter = 'ALL';
         let func =  configureForwardingFunction(
-            'http://localhost:9324/queue/delivered',
+            'delivered',
             null,
             'archive');
-        delete process.env.destination_queue_url;
+
+        delete process.env.destination_queue;
         return func;
     }
 
     function configureForwardingFunction(originQueue, destinationQueue, workerFunction) {
-        process.env.origin_queue_url = originQueue;
-        process.env.destination_queue_url = destinationQueue;
+
+        du.debug('Configure Forwarding Function', originQueue, destinationQueue, workerFunction);
+
+        process.env.origin_queue = originQueue;
+        process.env.destination_queue = destinationQueue;
         process.env.workerfunction = workerFunction;
 
         return require('../../controllers/workers/forwardMessage');

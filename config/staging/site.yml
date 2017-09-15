@@ -2,6 +2,15 @@ aws:
   region: 'us-east-1'
   account: '821071795213'
 
+ses:
+  hostname: email-smtp.us-east-1.amazonaws.com
+  port: 465
+  username: 'ses-smtp-user.20170828-134737'
+  smtp_username: 'AKIAJBWKAMDAKGAY54KA'
+  smtp_password: 'AhBhoxx0EgAKvlqh3pLTl8W51I/af2HfkvS6OryDJuoj'
+  default_sender_email: 'info@staging.sixcrm.com'
+  default_sender_name: 'Staging SixCRM'
+
 #Technical Debt:  This sort of thing should be encrypted...
 jwt:
   issuer: 'https://staging-api.sixcrm.com'
@@ -92,5 +101,8 @@ logging:
   loglevel: 0
 
 slack:
-  channel: '#lambdas'
-  kms_encrypted_hook_url: 'AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ=='
+  channels:
+    - channel: '#lambdas'
+      kms_encrypted_hook_url: 'AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ=='
+    - channel: '#servererrors'
+      webhook_url: https://hooks.slack.com/services/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

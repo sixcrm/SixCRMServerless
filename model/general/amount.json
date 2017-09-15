@@ -1,0 +1,4 @@
+{
+	"title": "Amount",
+	"type": {"$ref": "../definitions/currency.json"}
+}

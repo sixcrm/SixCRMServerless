@@ -5,6 +5,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 
 let affiliateType = require('../affiliate/affiliateType');
+let campaignType = require('../campaign/campaignType');
 
 const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
@@ -16,10 +17,17 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the tracker.',
         },
+        campaigns: {
+            type: new GraphQLList(campaignType.graphObj),
+            description: 'The associated campaign entities.',
+            resolve: tracker => trackerController.getCampaigns(tracker)
+        },
         affiliates: {
             type: new GraphQLList(affiliateType.graphObj),
             description: 'The associated affiliate entities.',
-            resolve: tracker => trackerController.getAffiliates(tracker)
+            resolve: (tracker) => {
+              return trackerController.getAffiliates(tracker);
+            }
         },
         type: {
             type: new GraphQLNonNull(GraphQLString),

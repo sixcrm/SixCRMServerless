@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		merchantproviderlist {
+		merchantproviderlist (pagination:{limit: \"10\"}){
 			merchantproviders {
 				id,
 				name,

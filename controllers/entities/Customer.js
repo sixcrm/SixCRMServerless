@@ -13,11 +13,6 @@ class customerController extends entityController {
 
         super('customer');
 
-        this.creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-        this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-        this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-        this.transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-
     }
 
     getFullName(customer){
@@ -45,7 +40,6 @@ class customerController extends entityController {
         }
 
         return '';
-
 
     }
 
@@ -133,11 +127,15 @@ class customerController extends entityController {
 
         if(_.has(customer, "creditcards")){
 
-            return customer.creditcards.map(id => this.creditCardController.get(id));
+          return arrayutilities.map(customer.creditcards, (id) => {
+
+            return this.executeAssociatedEntityFunction('creditCardController', 'get', {id: id});
+
+          });
 
         }else{
 
-            return null;
+          return null;
 
         }
 
@@ -219,26 +217,17 @@ class customerController extends entityController {
 
     getCustomerSessions(customer){
 
-        let customer_id = customer;
+      du.debug('Get Customer Sessions');
 
-        if(_.has(customer, 'id')){
+      let customer_id = customer;
 
-            customer_id = customer.id;
+      if(_.has(customer, 'id')){
 
-        }
+          customer_id = customer.id;
 
-        //Technical Debt:  Observe the inelegance of the below solution!
-        if(!_.contains(_.functions(this.sessionController), 'getSessionByCustomerID')){
+      }
 
-            this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-
-            return this.sessionController.getSessionByCustomerID(customer_id);
-
-        }else{
-
-            return this.sessionController.getSessionByCustomerID(customer_id);
-
-        }
+      return this.executeAssociatedEntityFunction('sessionController', 'getSessionByCustomerID', customer_id);
 
     }
 
@@ -252,13 +241,19 @@ class customerController extends entityController {
 
         }
 
+        du.warning(customer_id);
+
         return this.getCustomerSessions(customer).then((sessions) => {
+
+          du.warning(sessions);  process.exit();
 
             if (!sessions) {
                 return [];
             }
 
-            let rebill_promises = sessions.map((session) => this.rebillController.getRebillsBySessionID(session.id));
+            let rebill_promises = arrayutilities.map(sessions, (session) => {
+              return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id);
+            });
 
             return Promise.all(rebill_promises);
 
@@ -268,28 +263,32 @@ class customerController extends entityController {
 
     // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
     // we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
+    //Technical Debt:  Please refactor.
     listTransactionsByCustomer(customer, pagination){
+
+        du.debug('List Transactions By Customer');
 
         let customer_id = customer;
 
         if(_.has(customer, 'id')){
 
-            customer_id = customer.id;
+          customer_id = customer.id;
 
         }
 
         return this.getCustomerSessions(customer).then((sessions) => {
 
-            du.debug('Get Customer Sessions');
-            du.debug(sessions);
-
             if (!sessions) {
                 return this.createEndOfPaginationResponse('transactions', []);
             }
 
-            let rebill_promises = sessions.map((session) => this.rebillController.getRebillsBySessionID(session.id));
+            let rebill_promises = arrayutilities.map(sessions, (session) => {
+              return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id);
+            });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
+
+                du.debug('Rebill lists are', rebill_lists);
 
                 let rebill_ids = [];
 
@@ -297,35 +296,39 @@ class customerController extends entityController {
 
                 rebill_lists.forEach((rebill_list) => {
 
-                    let list = rebill_list || [];
+                  let list = rebill_list || [];
 
-                    list.forEach((rebill) => {
-                        rebill_ids.push(rebill.id);
-                    });
+                  list.forEach((rebill) => {
+                      rebill_ids.push(rebill.id);
+                  });
+
                 });
 
-                let transaction_promises = [];
-
-                rebill_ids.forEach((rebill) => {
-                    transaction_promises.push(this.transactionController.listBySecondaryIndex('rebill', rebill, 'rebill-index', pagination));
+                let transaction_promises = arrayutilities.map(rebill_ids, (rebill) => {
+                  return this.executeAssociatedEntityFunction('transactionController', 'listBySecondaryIndex', {field: 'rebill', index_value: rebill, index_name: 'rebill-index', pagination: pagination});
                 });
 
                 return Promise.all(transaction_promises).then(transaction_responses => {
 
-                    let transactions = [];
+                  let transactions = [];
 
-                    transaction_responses = transaction_responses || [];
+                  transaction_responses = transaction_responses || [];
 
-                    transaction_responses.forEach((transaction_response) => {
+                  transaction_responses.forEach((transaction_response) => {
 
-                        let transactions_from_response = transaction_response.transactions || [];
+                    let transactions_from_response = transaction_response.transactions || [];
 
-                        transactions_from_response.forEach((transaction) => {
-                            transactions.push(transaction);
-                        });
+                    transactions_from_response.forEach((transaction) => {
+                      if (transaction && _.has(transaction, 'id')) {
+                        transactions.push(transaction);
+                      } else {
+                        du.warning('Invalid transaction', transaction);
+                      }
                     });
 
-                    return this.createEndOfPaginationResponse('transactions', transaction_responses);
+                  });
+
+                  return this.createEndOfPaginationResponse('transactions', transactions);
 
                 });
 
@@ -336,40 +339,36 @@ class customerController extends entityController {
     }
 
     listCustomerSessions(customer, pagination) {
-        let customer_id = customer;
 
-        if(_.has(customer, 'id')){
+      du.debug('List Customer Sessions');
 
-            customer_id = customer.id;
+      let customer_id = customer;
 
-        }
+      if(_.has(customer, 'id')){
 
-        // Technical Debt:  Observe the inelegance of the below solution!
-        // For some reason graph is unable to call 'listSessionsByCustomerID' unless we do this. Why?
-        if(!_.contains(_.functions(this.sessionController), 'listSessionsByCustomerID')){
+          customer_id = customer.id;
 
-            this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+      }
 
-            return this.sessionController.listSessionsByCustomerID(customer_id, pagination);
-
-        }else{
-
-            return this.sessionController.listSessionsByCustomerID(customer_id, pagination);
-
-        }
+      return this.executeAssociatedEntityFunction('sessionController', 'listSessionsByCustomerID', {id: customer_id, pagination: pagination});
 
     }
 
     // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
     // we retrieve data in 2 steps (sessions first, then rebills for each session and combine the results).
     listCustomerRebills(customer, pagination) {
+
+      du.debug('List Customer Rebills');
+
         return this.getCustomerSessions(customer).then((sessions) => {
 
             if (!sessions) {
                 return this.createEndOfPaginationResponse('rebills', []);
             }
 
-            let rebill_promises = sessions.map((session) => this.rebillController.listRebillsBySessionID(session.id));
+            let rebill_promises = arrayutilities.map(sessions, (session) => {
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', session.id);
+            });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
 
@@ -387,12 +386,16 @@ class customerController extends entityController {
                 });
 
                 return this.createEndOfPaginationResponse('rebills', rebills);
+
             });
 
         });
     }
 
     createEndOfPaginationResponse(items_name, items) {
+
+        du.debug('Create End Of Pagination Response', items_name, items);
+
         let pagination = {};
 
         pagination.count = items.length;
@@ -403,6 +406,8 @@ class customerController extends entityController {
 
         response[items_name] = items;
         response['pagination'] = pagination;
+
+        du.debug('Returning', response);
 
         return Promise.resolve(response);
     }

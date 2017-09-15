@@ -38,6 +38,28 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
     }
 
+    deployUsers(){
+
+      du.debug('Deploy Users');
+
+      //Technical Debt:  Finish.
+      //Need SES SMTP Users deployed automagically
+
+      return 'Complete';
+
+    }
+
+    destroyUsers(){
+
+      du.debug('Deploy Users');
+
+      //Technical Debt:  Finish.
+      //Need SES SMTP Users destroyed automagically
+
+      return 'Complete';
+
+    }
+
     deployRoles(){
 
       du.debug('Deploy Roles');

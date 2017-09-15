@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		usersigningstringlist {
+		usersigningstringlist (pagination:{limit: \"10\"}){
 			usersigningstrings {
                 id,
                 user,

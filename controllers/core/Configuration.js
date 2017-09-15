@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
 
 module.exports = class Configuration extends ConfigurationUtilities {
@@ -18,6 +19,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
     this.handleStage(stage);
 
     this.setConfigurationFiles();
+
+    this.mandatory_config_names = {
+      redshift_host: 'redshift.host',
+      cloudsearch_domainendpoint: 'cloudsearch.domainendpoint'
+    }
 
   }
 
@@ -106,7 +112,86 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     du.debug('Set Environment Config');
 
-    return this.propagateCache('all', key, value);
+    if(this.isValidConfiguration(key, value)){
+
+      return this.propagateCache('all', key, value);
+
+    } else {
+
+      return this.regenerateConfiguration(key);
+
+    }
+
+  }
+
+  regenerateConfiguration(key) {
+
+    let regeneration_functions = {};
+
+    regeneration_functions[this.mandatory_config_names.redshift_host] = () => this.regenerateRedshiftConfiguration();
+    regeneration_functions[this.mandatory_config_names.cloudsearch_domainendpoint] = () => this.regenerateCloudsearchConfiguration();
+
+    return regeneration_functions[key]();
+  }
+
+  regenerateRedshiftConfiguration() {
+      du.debug('Regenerate Redshift Configuration');
+
+      const redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
+
+      let parameters = {
+        ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+      };
+
+      return redshiftutilities.describeCluster(parameters).then((data) => {
+          if(!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')){
+
+              eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
+
+          }
+
+          return this.propagateCache('all', this.mandatory_config_names.redshift_host, data.Clusters[0].Endpoint.Address);
+      });
+  }
+
+    regenerateCloudsearchConfiguration() {
+        du.debug('Regenerate Cloudsearch Configuration');
+
+        const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+        return cloudsearchutilities.saveDomainConfiguration();
+    }
+
+  isValidConfiguration(key, value){
+
+    du.debug('Is Valid Configuration');
+
+    let validation_object = {};
+
+    validation_object[this.mandatory_config_names.redshift_host] = [
+        (argument) => { return _.isString(argument); },
+        (argument) => { return _.has(argument, 'length') && argument.length > 2; }
+      ];
+
+    validation_object[this.mandatory_config_names.cloudsearch_domainendpoint] = [
+      (argument) => { return _.isString(argument); },
+      (argument) => { return _.has(argument, 'length') && argument.length > 2; }
+    ];
+
+    let validates = true;
+
+    if(_.has(validation_object, key)){
+
+      arrayutilities.find(validation_object[key], (validation_function) => {
+        if(validation_function(value) == false){
+          validates = false;
+          return true;
+        }
+      });
+
+    }
+
+    return validates;
 
   }
 
@@ -152,7 +237,14 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
               return this.getConfiguration('s3', field, use_cache).then((result) => {
 
-                return resolve(result);
+                if (_.isNull(result)) {
+
+                  return this.regenerateConfiguration(field);
+
+                } else {
+
+                    return resolve(result);
+                }
 
               });
 
@@ -166,7 +258,14 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         return this.getConfiguration('s3', field, use_cache).then((result) => {
 
-          return resolve(result);
+            if (_.isNull(result)) {
+
+                return this.regenerateConfiguration(field);
+
+            } else {
+
+                return resolve(result);
+            }
 
         });
 
@@ -368,6 +467,10 @@ module.exports = class Configuration extends ConfigurationUtilities {
   propagateCache(source, key, value){
 
     du.debug('Propagate Cache');
+
+    if (this.stage === 'local') {
+        return this.propagateToNativeCache(key, value);
+    }
 
     if(!_.isString(source)){
       eu.throwError('server', 'Source is assumed to be a string');

@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	query {
-		userlist {
+		userlist (pagination:{limit: \"10\"}){
 			users {
 				id,
 				auth0_id,

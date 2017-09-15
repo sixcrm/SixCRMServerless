@@ -8,11 +8,11 @@ let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Users',
-    description: 'Users for sale.',
+    description: 'Users',
     fields: () => ({
         users: {
             type: new GraphQLList(userType.graphObj),
-            description: 'The products',
+            description: 'The users',
         },
         pagination: {
             type: new GraphQLNonNull(paginationType.graphObj),

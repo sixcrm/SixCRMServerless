@@ -4,7 +4,7 @@ const slack = global.SixCRM.routes.include('lib', 'slack-utilities');
 
 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-class SlackNotificationUtilities {
+class SlackNotificationProvider {
 
     /**
      * Send a notification via Slack Webhook.
@@ -25,10 +25,10 @@ class SlackNotificationUtilities {
     }
 
     formatMessage(notification_object) {
-        return `SixCRM notification: "${notification_object.body}".`;
+        return `SixCRM notification: "${notification_object.title}".`;
     }
 
 
 }
 
-module.exports = new SlackNotificationUtilities();
+module.exports = new SlackNotificationProvider();

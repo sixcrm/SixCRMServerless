@@ -12,28 +12,25 @@ class affiliateController extends entityController {
 
         super('affiliate');
 
-        this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
-        this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-
     }
 
     assureAffiliate(value){
 
         du.debug('Assure Affiliate');
 
-        return this.get(value).then((result) => {
+        return this.get({id: value}).then((result) => {
 
             if(!_.isNull(result)){
                 return result;
             }
 
-            return this.getBySecondaryIndex('affiliate_id', value, 'affiliate_id-index').then((result) => {
+            return this.getBySecondaryIndex({field: 'affiliate_id', index_value: value, index_name: 'affiliate_id-index'}).then((result) => {
 
                 if(!_.isNull(result)){
                     return result;
                 }
 
-                return this.create({affiliate_id:value}).then((result) => {
+                return this.create({entity:{affiliate_id: value}}).then((result) => {
 
                     if(!_.isNull(result)){
                         return result;
@@ -52,21 +49,21 @@ class affiliateController extends entityController {
     //Technical Debt:  Incomplete
     getCampaigns(affiliate, pagination){
 
-        du.debug('Get Campaigns');
+      du.debug('Get Campaigns');
 
-        let affiliate_id = this.getID(affiliate);
+      let affiliate_id = this.getID(affiliate);
 
-        return this.sessionController.listSessionsByAffiliate(affiliate, pagination);
+      return this.executeAssociatedEntityFunction('sessionController', 'listSessionsByAffiliate', {id: affiliate, pagination: pagination});
 
     }
 
     getTrackers(affiliate){
 
-        du.debug('Get Trackers');
+      du.debug('Get Trackers');
 
-        let affiliate_id = this.getID(affiliate);
+      let affiliate_id = this.getID(affiliate);
 
-        return this.trackerController.listBySecondaryIndex('affiliate', affiliate_id, 'affiliate-index');
+      return this.executeAssociatedEntityFunction('trackerController', 'listBySecondaryIndex', {field:'affiliate', index_value: affiliate_id, index_name: 'affiliate-index'});
 
     }
 

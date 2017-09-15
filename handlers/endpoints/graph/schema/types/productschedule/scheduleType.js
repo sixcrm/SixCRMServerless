@@ -29,7 +29,7 @@ module.exports.graphObj = new GraphQLObjectType({
         },
         product: {
 	        type: productType.graphObj,
-            description:'The product associated with the schedule',
+          description:'The product associated with the schedule',
 	        resolve: (schedule) => {
             var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 

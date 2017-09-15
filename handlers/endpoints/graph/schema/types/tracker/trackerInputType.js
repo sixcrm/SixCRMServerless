@@ -9,6 +9,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     fields: () => ({
         id:			{ type: GraphQLString },
         affiliates:	{ type: new GraphQLList(GraphQLString) },
+        campaigns:	{ type: new GraphQLList(GraphQLString) },
         type:       { type: new GraphQLNonNull(GraphQLString) },
         event_type: { type: new GraphQLList(GraphQLString) },
         body:       { type: new GraphQLNonNull(GraphQLString) },
