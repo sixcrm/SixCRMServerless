@@ -61,9 +61,9 @@ class trackerController extends entityController {
 
     }
 
-    getByAffiliateID({affiliate, pagination}){
+    listByAffiliateID({affiliate, pagination}){
 
-      du.debug('Get By Affiliate ID');
+      du.debug('List By Affiliate ID');
 
       let affiliate_id = this.getID(affiliate);
 

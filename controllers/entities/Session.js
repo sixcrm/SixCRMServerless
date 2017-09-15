@@ -28,7 +28,7 @@ class sessionController extends entityController {
 
     }
 
-    listSessionsByAffiliate(affiliate, pagination){
+    listSessionsByAffiliate({affiliate, pagination}){
 
         du.debug('List Sessions By Affiliate');
 

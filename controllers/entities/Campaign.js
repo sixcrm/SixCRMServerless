@@ -15,6 +15,46 @@ class campaignController extends entityController {
 
     }
 
+    listByAffiliateAllow({affiliate, pagination}){
+
+      du.debug('List by Affiliate Allow');
+
+      let affiliate_id = this.getID(affiliate);
+
+      let scan_parameters = {
+        filter_expression: 'contains(#f1, :affiliate_id)',
+        expression_attribute_names:{
+            '#f1': 'affiliate_allow'
+        },
+        expression_attribute_values: {
+            ':affiliate_id': affiliate_id
+        }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters});
+
+    }
+
+    listByAffiliateDeny({affiliate, pagination}){
+
+      du.debug('List by Affiliate Deny');
+
+      let affiliate_id = this.getID(affiliate);
+
+      let scan_parameters = {
+        filter_expression: 'contains(#f1, :affiliate_id)',
+        expression_attribute_names:{
+            '#f1': 'affiliate_deny'
+        },
+        expression_attribute_values: {
+            ':affiliate_id': affiliate_id
+        }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters});
+
+    }
+
     associatedEntitiesCheck({id}){
 
       du.debug('Associated Entities Check');
