@@ -15,6 +15,11 @@ class customerController extends entityController {
 
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return [];
+    }
+
     getFullName(customer){
 
         du.debug('Get Full Name');

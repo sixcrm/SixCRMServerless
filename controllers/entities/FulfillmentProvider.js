@@ -7,6 +7,11 @@ class fulfillmentProviderController extends entityController {
       super('fulfillmentprovider');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return [];
+    }
+
 }
 
 module.exports = new fulfillmentProviderController();

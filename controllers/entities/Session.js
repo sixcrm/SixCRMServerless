@@ -28,6 +28,12 @@ class sessionController extends entityController {
 
     }
 
+    //Technical Debt: finish!
+    //Rebill
+    associatedEntitiesCheck({id}){
+      return [];
+    }
+
     listSessionsByAffiliate({affiliate, pagination}){
 
         du.debug('List Sessions By Affiliate');

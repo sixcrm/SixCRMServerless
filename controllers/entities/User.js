@@ -17,6 +17,11 @@ class userController extends entityController {
         super('user');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return [];
+    }
+
     getUserByAlias(user_alias){
 
         du.debug('Get User By Alias');

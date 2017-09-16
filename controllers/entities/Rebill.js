@@ -18,6 +18,11 @@ class rebillController extends entityController {
         super('rebill');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return [];
+    }
+
 	  //Note: rebills don't get product associations, only product schedules
     getProducts(rebill){
 

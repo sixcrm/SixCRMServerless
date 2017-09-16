@@ -10,6 +10,11 @@ class creditCardController extends entityController {
         super('creditcard');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return [];
+    }
+
     getAddress(creditcard){
         return Promise.resolve(creditcard.address);
     }

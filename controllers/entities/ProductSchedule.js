@@ -15,6 +15,12 @@ class productScheduleController extends entityController {
 
     }
 
+    //Technical Debt: finish!
+    //Rebill
+    associatedEntitiesCheck({id}){
+      return [];
+    }
+
     getCampaigns(args){
 
       du.debug('Get Campaigns');

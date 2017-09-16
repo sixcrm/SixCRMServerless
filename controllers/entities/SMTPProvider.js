@@ -9,6 +9,11 @@ class SMTPProviderController extends entityController {
 
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return [];
+    }
+
 }
 
 module.exports = new SMTPProviderController();

@@ -22,6 +22,10 @@ module.exports.graphObj = new GraphQLInputObjectType({
             type: GraphQLString,
             description: 'The name of the merchant provider gateway endpoint.',
         },
+        processor_id: {
+            type: GraphQLString,
+            description: 'The merchant provider processor_id.',
+        },
         additional:{
             type: GraphQLString,
             description: 'Additional properties associated with the merchant provider gateway.'

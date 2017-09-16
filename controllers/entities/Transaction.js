@@ -12,6 +12,29 @@ class transactionController extends entityController {
         super('transaction');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
+    listByMerchantProviderID({id, pagination}){
+
+      du.debug('List By Merchant Provider ID');
+
+      let scan_parameters = {
+          filter_expression: '#f1 = :merchant_provider_id',
+          expression_attribute_names:{
+              '#f1': 'merchant_provider',
+          },
+          expression_attribute_values: {
+              ':merchant_provider_id': id
+          }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
+
+    }
+
     //Ljubomir:  Please finish
     listByProductID({id, pagination}){
 
