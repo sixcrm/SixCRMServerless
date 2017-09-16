@@ -509,7 +509,7 @@ class userController extends entityController {
 
     getUserByAccessKeyId(access_key_id){
 
-        return this.getBySecondaryIndex('access_key_id', access_key_id, 'access_key_id-index');
+        return this.getBySecondaryIndex({field: 'access_key_id', index_value: access_key_id, index_name: 'access_key_id-index'});
 
     }
 
