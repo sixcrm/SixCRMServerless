@@ -5,10 +5,7 @@
 	"type": "object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
-		"user":{
-			"type":"string",
-			"format":"email"
-		},
+		"user":{"$ref": "../definitions/useridentifier.json"},
 		"action":{
 			"type":"string"
 		},

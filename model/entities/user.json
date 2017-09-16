@@ -4,10 +4,7 @@
 	"title": "User",
 	"type": "object",
 	"properties": {
-		"id":{
-			"type":"string",
-			"format":"email"
-		},
+		"id":{"$ref": "../definitions/useridentifier.json"},
 		"name":{
 			"type":"string",
 			"minLength":3
@@ -20,23 +17,12 @@
 			"type":"string",
 			"minLength":3
 		},
-		"auth0_id":{
-			"type":"string",
-			"minLength":3
-		},
+		"auth0_id":{"$ref": "../definitions/auth0identifier.json"},
 		"active":{
 			"type":"boolean"
 		},
-		"termsandconditions":{
-			"type":"string",
-			"minLength":2
-		},
-		"alias":{
-			"type":"string",
-			"minLength":40,
-			"maxLength":40,
-			"pattern":"[a-z0-9]*"
-		},
+		"termsandconditions":{"$ref": "../definitions/tocidentifier.json"},
+		"alias":{"$ref": "../definitions/useralias.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},

@@ -7,7 +7,7 @@
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"customer":{"$ref": "../definitions/uuidv4.json"},
-		"user":{"type":"string", "format":"email"},
+		"user":{"$ref": "../definitions/useridentifier.json"},
 		"body": {
 			"type":"string"
 		},

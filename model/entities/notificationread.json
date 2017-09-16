@@ -5,13 +5,10 @@
 	"type": "object",
 	"properties": {
 		"id": {"$ref": "../definitions/uuidv4.json"},
-		"user":{
-			"type":"string",
-			"format":"email"
-		},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"user": {"$ref": "../definitions/useridentifier.json"},
+		"account": {"$ref": "../definitions/sixcrmidentifier.json"},
+		"created_at": {"$ref": "../definitions/iso8601.json"},
+		"updated_at": {"$ref": "../definitions/iso8601.json"}
 	},
 	"required":["id", "account", "user", "created_at", "updated_at"]
 }

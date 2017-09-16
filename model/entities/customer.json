@@ -18,33 +18,8 @@
 			"type":"string",
 			"minLength": 1
 		},
-		"phone":{
-			"type":"string"
-		},
-		"address":{
-			"type":"object",
-			"properties": {
-				"line1":{
-					"type":"string"
-				},
-				"line2":{
-					"type":"string"
-				},
-				"city":{
-					"type":"string"
-				},
-				"state":{
-					"type":"string"
-				},
-				"zip":{
-					"type":"string"
-				},
-				"country":{
-					"type":"string"
-				}
-			},
-			"required":["line1","city","state","zip","country"]
-		},
+		"phone":{"$ref": "../definitions/phone.json"},
+		"address":{"$ref": "../definitions/address.json"},
 		"creditcards":{
 			"type":"array",
 			"items":{"$ref": "../definitions/uuidv4.json"}

@@ -15,9 +15,22 @@ class customerController extends entityController {
 
     }
 
-    //Technical Debt: finish!
-    associatedEntitiesCheck({id}){
-      return [];
+    listByCreditCardID({id, pagination}){
+
+      du.debug('List By Credit Card ID');
+
+      let scan_parameters = {
+          filter_expression: '#f1 = :credit_card_id',
+          expression_attribute_names:{
+              '#f1': 'creditcards',
+          },
+          expression_attribute_values: {
+              ':credit_card_id': id
+          }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
+
     }
 
     getFullName(customer){

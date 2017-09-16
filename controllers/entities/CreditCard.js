@@ -3,6 +3,7 @@ const _ = require('underscore');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 
 class creditCardController extends entityController {
 
@@ -10,9 +11,31 @@ class creditCardController extends entityController {
         super('creditcard');
     }
 
-    //Technical Debt: finish!
+
     associatedEntitiesCheck({id}){
-      return [];
+
+      du.debug('Associated Entities Check');
+
+      let return_array = [];
+
+      let data_acquisition_promises = [
+        this.executeAssociatedEntityFunction('customerController', 'listByCreditCardID', {id:id})
+      ];
+
+      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+
+        let customers = data_acquisition_promises[0];
+
+        if(_.has(customers, 'customers') && arrayutilities.nonEmpty(customers.customers)){
+          arrayutilities.map(customers.customers, (customer) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Customer', object: customer}));
+          });
+        }
+
+        return return_array;
+
+      });
+
     }
 
     getAddress(creditcard){

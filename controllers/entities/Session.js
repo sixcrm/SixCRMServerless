@@ -31,7 +31,7 @@ class sessionController extends entityController {
     //Technical Debt: finish!
     //Rebill
     associatedEntitiesCheck({id}){
-      return [];
+      return Promise.resolve([]);
     }
 
     listSessionsByAffiliate({affiliate, pagination}){

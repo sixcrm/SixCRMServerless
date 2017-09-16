@@ -17,21 +17,9 @@
 				"properties":{
 					"product_id":{"$ref": "../definitions/uuidv4.json"},
 					"price":{"$ref": "../definitions/currency.json"},
-					"start":{
-						"type":"integer",
-						"minimum": 0,
-						"exclusiveMinimum": false
-					},
-					"end":{
-						"type":"integer",
-						"minimum": 0,
-						"exclusiveMinimum": false
-					},
-					"period":{
-						"type":"integer",
-						"minimum": 0,
-						"exclusiveMinimum": false
-					}
+					"start":{"$ref": "../definitions/nonnegativeinteger.json"},
+					"end":{"$ref": "../definitions/nonnegativeinteger.json"},
+					"period":{"$ref": "../definitions/nonnegativeinteger.json"}
 				},
 				"required":["product_id", "price", "start", "period"]
 			}

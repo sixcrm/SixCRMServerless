@@ -7,10 +7,7 @@
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"rebill":{"$ref": "../definitions/uuidv4.json"},
-		"alias":{
-			"type":"string",
-			"pattern":"^T[0-9A-Z]{9}$"
-		},
+		"alias":{"$ref": "../definitions/transactionalias.json"},
 		"products":{
 			"type":"array",
 			"items":{

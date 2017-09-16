@@ -14,6 +14,12 @@ class loadBalancerController extends entityController {
 
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
+
     listByMerchantProviderID({id}){
 
       du.debug('List By Merchant Provider ID');
@@ -51,11 +57,6 @@ class loadBalancerController extends entityController {
 
       });
 
-    }
-
-    //Technical Debt: finish!
-    associatedEntitiesCheck({id}){
-      return [];
     }
 
     //Note:  Used in Graph schema

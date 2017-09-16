@@ -34,21 +34,9 @@
 				"transaction_counts":{
 					"type":"object",
 					"properties":{
-						"daily":{
-							"type":"integer",
-							"minimum":0,
-							"exclusiveMinimum":false
-						},
-						"weekly":{
-							"type":"integer",
-							"minimum":0,
-							"exclusiveMinimum":false
-						},
-						"monthly":{
-							"type":"integer",
-							"minimum":0,
-							"exclusiveMinimum":false
-						}
+						"daily":{"$ref": "../definitions/nonnegativeinteger.json"},
+						"weekly":{"$ref": "../definitions/nonnegativeinteger.json"},
+						"monthly":{"$ref": "../definitions/nonnegativeinteger.json"}
 					}
 				}
 			},

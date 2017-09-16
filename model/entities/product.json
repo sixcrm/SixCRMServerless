@@ -16,11 +16,7 @@
 		"ship":{
 			"type":"boolean"
 		},
-		"shipping_delay":{
-			"type": "integer",
-			"minimum": 0,
-			"exclusiveMinimum": false
-		},
+		"shipping_delay":{"$ref": "../definitions/nonnegativeinteger.json"},
 		"fulfillment_provider":{"$ref": "../definitions/uuidv4.json"},
 		"default_price":{"$ref": "../definitions/currency.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

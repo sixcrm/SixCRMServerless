@@ -35,7 +35,7 @@ class transactionController extends entityController {
 
     }
 
-    //Ljubomir:  Please finish
+    //Technical Debt:  This is pretty complicated.
     listByProductID({id, pagination}){
 
       du.debug('List By Product ID');

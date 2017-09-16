@@ -4,19 +4,10 @@
 	"title": "User Setting",
 	"type": "object",
 	"properties": {
-		"id":{
-			"type":"string",
-			"format":"email"
-		},
-		"work_phone":{
-			"type":"string"
-		},
-		"cell_phone":{
-			"type":"string"
-		},
-		"timezone":{
-			"type":"string"
-		},
+		"id":{"$ref": "../definitions/useridentifier.json"},
+		"work_phone":{"$ref": "../definitions/phone.json"},
+		"cell_phone":{"$ref": "../definitions/phone.json"},
+		"timezone":{"$ref": "../definitions/timezone.json"},
 		"notifications":{
 			"type":"array",
 			"items":{

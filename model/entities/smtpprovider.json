@@ -24,11 +24,7 @@
 			"type":"string",
 			"minLength":3
 		},
-		"port":{
-			"type":"integer",
-			"minimum": 0,
-			"exclusiveMinimum": false
-		},
+		"port":{"$ref": "../definitions/nonnegativeinteger.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
