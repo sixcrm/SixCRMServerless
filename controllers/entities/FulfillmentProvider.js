@@ -9,7 +9,7 @@ class fulfillmentProviderController extends entityController {
 
     //Technical Debt: finish!
     associatedEntitiesCheck({id}){
-      return [];
+      return Promise.resolve([]);
     }
 
 }

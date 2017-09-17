@@ -20,7 +20,7 @@ class rebillController extends entityController {
 
     //Technical Debt: finish!
     associatedEntitiesCheck({id}){
-      return [];
+      return Promise.resolve([]);
     }
 
 	  //Note: rebills don't get product associations, only product schedules
