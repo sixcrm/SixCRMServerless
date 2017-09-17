@@ -75,7 +75,7 @@ class customerController extends entityController {
 
             if(!_.has(customer, 'id')){
 
-                return this.get(customer).then((hydrated_customer) => {
+                return this.get({id: customer}).then((hydrated_customer) => {
 
                     return resolve(this.addCreditCard(hydrated_customer, creditcard));
 
@@ -181,7 +181,7 @@ class customerController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            this.get(customer_id).then((customer) => {
+            this.get({id: customer_id}).then((customer) => {
 
                 if(!_.has(customer, 'id')){ return resolve(null); }
 
@@ -229,7 +229,7 @@ class customerController extends entityController {
 
     getCustomerByEmail(email){
 
-        return this.getBySecondaryIndex('email', email, 'email-index');
+        return this.getBySecondaryIndex({field: 'email', index_value:email, index_name: 'email-index'});
 
     }
 

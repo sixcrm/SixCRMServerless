@@ -31,7 +31,7 @@ module.exports = class userEmailHelperController {
 
         if(_.isNull(customer)){ return Promise.reject(eu.getError('not_found','Unable to get recepient.')); }
 
-        return this.customerController.get(customer);
+        return this.customerController.get({id: customer});
 
     }
 
@@ -48,7 +48,7 @@ module.exports = class userEmailHelperController {
 
         if(_.isNull(campaign)){ return Promise.reject(eu.getError('not_found','Unable to get campaign.')); }
 
-        return this.campaignController.get(campaign);
+        return this.campaignController.get({id: campaign});
 
     }
 

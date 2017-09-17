@@ -88,7 +88,7 @@ class createOrderController extends transactionEndpointController{
 
         var promises = [];
 
-        var getSession = sessionController.get(event_body['session']);
+        var getSession = sessionController.get({id: event_body['session']});
 
         var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
 
@@ -195,7 +195,7 @@ class createOrderController extends transactionEndpointController{
 
         var promises = [];
 
-        var getCustomer = customerController.get(info.session.customer);
+        var getCustomer = customerController.get({id: info.session.customer});
         var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.schedulesToPurchase);
 
 		    // Note:  This creates the rebill for NOW such that we have a rebill to append the transaction to.

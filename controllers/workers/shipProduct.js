@@ -33,7 +33,7 @@ class shipProductController extends workerController {
 
             var promises = []
 
-            promises.push(transactionController.get(transaction.id));
+            promises.push(transactionController.get({id: transaction.id}));
             promises.push(shippingReceiptController.create(shippingReceiptController.createShippingReceiptObject({status:'pending'})));
 
             Promise.all(promises).then((promises) => {

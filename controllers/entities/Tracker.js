@@ -65,6 +65,8 @@ class trackerController extends entityController {
 
       du.debug('List By Affiliate ID');
 
+      du.info(affiliate);
+
       let affiliate_id = this.getID(affiliate);
 
       let scan_parameters = {

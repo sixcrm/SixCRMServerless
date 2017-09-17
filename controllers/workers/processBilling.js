@@ -94,7 +94,7 @@ class processBillingController extends workerController {
 
                         if(!_.has(transaction_product, "product")){ return reject(eu.getError('validation','Transaction product missing a product: '+transaction_product)); }
 
-                        promises.push(productController.get(transaction_product.product));
+                        promises.push(productController.get({id: transaction_product.product}));
 
                     });
 
@@ -182,7 +182,7 @@ class processBillingController extends workerController {
                 var amount = this.getProductSum(products);
 
 				//Technical Debt:  If they have multiple cards, how do I select a credit card?
-                var creditcard = creditCardController.get(session.customer.creditcards[0]).then((creditcard) => {
+                var creditcard = creditCardController.get({id: session.customer.creditcards[0]}).then((creditcard) => {
 
                     //Technical Debt: Deprecated!
                     loadBalancerController.process(session.campaign.loadbalancer, {customer: session.customer, creditcard: creditcard, amount: amount}).then((processor_response) => {
@@ -205,7 +205,7 @@ class processBillingController extends workerController {
 
             var amount = this.getProductSum(products);
 
-            sessionController.get(rebill.parentsession).then((session) => {
+            sessionController.get({id: rebill.parentsession}).then((session) => {
 
                 transactionController.putTransaction({session: session, rebill: rebill, amount: amount, products: products}, processor_result).then((transaction) => {
 
@@ -242,7 +242,7 @@ class processBillingController extends workerController {
 
         return new Promise((resolve, reject) => {
 
-            rebillController.get(rebill.id).then((rebill) => {
+            rebillController.get({id: rebill.id}).then((rebill) => {
 
                 let now = timestamp.createTimestampSeconds();
 

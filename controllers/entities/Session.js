@@ -125,7 +125,7 @@ class sessionController extends entityController {
 
         return this.get({id: session}).then((session) => {
 
-            return arrayutilities.map(this.affiliate_fields, (affiliate_field) => {
+            return arrayutilities.filter(this.affiliate_fields, (affiliate_field) => {
 
               if(_.has(session, affiliate_field)){
 
@@ -136,6 +136,8 @@ class sessionController extends entityController {
                 }else{
 
                   du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
+
+                  return false;
 
                 }
 

@@ -715,7 +715,7 @@ module.exports = class entityUtilitiesController{
 
         du.debug('Get ID');
 
-        //du.warning(object, primary_key);
+        du.warning(object, primary_key);
 
         if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 

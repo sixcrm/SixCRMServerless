@@ -116,7 +116,7 @@ class createLeadController extends transactionEndpointController{
 
             var promises = [];
 
-            var getCampaign = campaignController.get(event.campaign);
+            var getCampaign = campaignController.get({id: event.campaign});
             var getCustomer = customerController.getCustomerByEmail(event.customer.email);
 
             promises.push(getCampaign);

@@ -19,7 +19,7 @@ class userController extends entityController {
 
     //Technical Debt: finish!
     associatedEntitiesCheck({id}){
-      return [];
+      return Promise.resolve([]);
     }
 
     getUserByAlias(user_alias){
