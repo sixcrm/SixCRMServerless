@@ -256,7 +256,7 @@ class processBillingController extends workerController {
 
                 }
 
-                rebillController.update(rebill).then((rebill) => {
+                rebillController.update({entity: rebill}).then((rebill) => {
 
                     return resolve(true);
 

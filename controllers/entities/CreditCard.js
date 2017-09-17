@@ -105,7 +105,7 @@ class creditCardController extends entityController {
 
                   }else if(card_identified == false){
 
-                      return this.create(creditcard).then((data) => {
+                      return this.create({entity: creditcard}).then((data) => {
 
                           return resolve(data);
 

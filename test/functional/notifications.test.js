@@ -49,7 +49,7 @@ describe('notificationController', function () {
             return expect(response.count).to.equal(0);
         }).then(() => {
             // when we create a notification
-            return notificationController.create(aNotification);
+            return notificationController.create({entity: aNotification});
         }).then(() => {
             return notificationController.numberOfUnseenNotifications();
         }).then((response) => {
@@ -67,7 +67,7 @@ describe('notificationController', function () {
             return expect(response.count).to.equal(0);
         }).then(() => {
             // when we create a notification
-            return notificationController.create(aNotification);
+            return notificationController.create({entity: aNotification});
         }).then(() => {
             return notificationController.numberOfUnseenNotifications();
         }).then((response) => {

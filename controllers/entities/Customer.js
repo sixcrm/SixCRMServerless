@@ -102,7 +102,7 @@ class customerController extends entityController {
 
                         customer.creditcards.push(creditcard.id);
 
-                        return this.update(customer).then((customer) => {
+                        return this.update({entity: customer}).then((customer) => {
 
                             return resolve(customer);
 
@@ -125,7 +125,7 @@ class customerController extends entityController {
 
                 customer['creditcards'] = [creditcard.id];
 
-                return this.update(customer).then((customer) => {
+                return this.update({entity: customer}).then((customer) => {
 
                     return resolve(customer);
 

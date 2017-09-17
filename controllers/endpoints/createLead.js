@@ -76,7 +76,7 @@ class createLeadController extends transactionEndpointController{
 
                 if(!_.has(customer, 'id')){
 
-                    return customerController.create(event.customer).then((created_customer) => {
+                    return customerController.create({entity: event.customer}).then((created_customer) => {
 
                         if(_.has(created_customer, 'id')){
 

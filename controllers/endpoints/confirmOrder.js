@@ -67,7 +67,7 @@ class confirmOrderController extends transactionEndpointController{
 
         var promises = [];
 
-        return sessionController.get(querystring['session']).then((session) => {
+        return sessionController.get({id: querystring['session']}).then((session) => {
 
             if(_.isNull(session)){ eu.throwError('not_found','Unable to identify session.'); }
             if(session.completed == 'true'){ eu.throwError('bad_request','The specified session is already complete.'); }
