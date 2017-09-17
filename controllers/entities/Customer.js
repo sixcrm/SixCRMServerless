@@ -270,7 +270,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id);
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: session.id});
             });
 
             return Promise.all(rebill_promises);
@@ -301,7 +301,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id);
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: session.id});
             });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
@@ -385,7 +385,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', session.id);
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
             });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {

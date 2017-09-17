@@ -34,10 +34,8 @@ class confirmDeliveredController extends workerController {
 	//Technical Debt:  Confirm after the tracking number goes to "delivered"
 	//Technical Debt:  This should only execute AFTER the shipping receipt is three days old
     confirmDelivered(rebill) {
-        var promises = [];
-        var getTransactions = rebillController.getTransactions(rebill);
 
-        promises.push(getTransactions);
+        var promises = [rebillController.listTransactions(rebill)];
 
         var delivered = {
             message:this.messages.delivered

@@ -196,6 +196,7 @@ class createOrderController extends transactionEndpointController{
         var promises = [];
 
         var getCustomer = customerController.get({id: info.session.customer});
+        //Technical Debt:  Naming convention here could use some work
         var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.schedulesToPurchase);
 
 		    // Note:  This creates the rebill for NOW such that we have a rebill to append the transaction to.

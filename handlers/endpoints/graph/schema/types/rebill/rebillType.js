@@ -40,7 +40,7 @@ module.exports.graphObj = new GraphQLObjectType({
         transactions: {
 	  type: new GraphQLList(transactionType.graphObj),
             description: 'The transactions associated with the rebill',
-            resolve: rebill => rebillController.getTransactions(rebill),
+            resolve: rebill => rebillController.listTransactions(rebill),
         },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),

@@ -64,6 +64,7 @@ class transactionController extends entityController {
 
     }
 
+    //Technical Debt:  Refactor name
     getTransactionProducts(transaction){
 
         return transaction.products.map((transactionproduct) => {
@@ -124,7 +125,9 @@ class transactionController extends entityController {
 
         du.debug('Get Products');
 
+        du.info(transaction);
         if(!_.has(transaction, "products")){ return null; }
+
 
         du.debug('Transaction Products', transaction.products);
 
@@ -132,9 +135,14 @@ class transactionController extends entityController {
 
     }
 
-    getTransactionsByRebillID(id){
+    listTransactionsByRebillID({id}){
 
-        return this.queryBySecondaryIndex({field: 'rebill', index_value: id, index_name: 'rebill-index'}).then((result) => this.getResult(result));
+      du.debug('List Transactions By Rebill ID');
+
+      //Technical Debt: this is silly but necessary ATM
+      id = this.getID(id);
+
+      return this.queryBySecondaryIndex({field: 'rebill', index_value: id, index_name: 'rebill-index'}).then((result) => this.getResult(result));
 
     }
 

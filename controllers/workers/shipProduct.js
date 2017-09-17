@@ -208,10 +208,8 @@ class shipProductController extends workerController {
 	//Technical Debt:  Introduce fulfillment delay
 	//Technical Debt: Do not attempt to fulfillment provider a second time (aka shipping receipt already exists) -  Does this still plaugue us?
     shipProducts(rebill) {
-        var promises = [];
-        var getTransactions = rebillController.getTransactions(rebill);
 
-        promises.push(getTransactions);
+        var promises = [rebillController.listTransactions(rebill)];
 
         var noship = true;
 

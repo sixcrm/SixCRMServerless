@@ -93,6 +93,7 @@ class productScheduleController extends entityController {
 
     }
 
+    //Technical Debt:  THis is poorly named
     getTransactionProducts(day_in_schedule, schedules_to_purchase){
 
       du.debug('Get Transaction Products');

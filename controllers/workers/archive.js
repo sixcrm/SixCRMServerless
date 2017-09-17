@@ -41,7 +41,7 @@ class archiveController extends workerController {
 
         return new Promise((resolve, reject) => {
 
-            rebillController.getTransactions(rebill).then((transactions) => {
+            rebillController.listTransactions(rebill).then((transactions) => {
 
                 var transaction_products = [];
 

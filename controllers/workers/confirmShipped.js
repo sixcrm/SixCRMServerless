@@ -24,9 +24,9 @@ class confirmShippedController extends workerController {
     confirmShipped(rebill) {
 
         var promises = [];
-        var getTransactions = rebillController.getTransactions(rebill);
+        var transactions = rebillController.listTransactions(rebill);
 
-        promises.push(getTransactions);
+        promises.push(transactions);
 
         var shipped = true;
 
