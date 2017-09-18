@@ -1,0 +1,83 @@
+'use strict'
+const uuidV4 = require('uuid/v4');
+
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+
+const IntegrationTest = global.SixCRM.routes.include('test', 'integration/classes/IntegrationTest');
+
+module.exports = class CreditCardTest extends IntegrationTest {
+
+  constructor(){
+
+    super();
+
+    this.endpoint = global.integration_test_config.endpoint;
+    this.account = global.test_accounts[1];
+    this.user = global.test_users[0];
+    this.test_jwt = tu.createTestAuth0JWT(this.user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
+
+  }
+
+  executeCustomerBlockTest(){
+
+    du.output('Execute Customer Block Test');
+
+    let creditcard_id = uuidV4();
+    let customer_id = uuidV4();
+
+    du.info('Credit Card ID: '+creditcard_id);
+    du.info('Customer ID: '+customer_id);
+
+    return this.createCreditCard(creditcard_id)
+    .then(() => this.createCustomer(customer_id, creditcard_id))
+    .then(() => this.deleteCreditCard(creditcard_id, 403))
+    .then(response => {
+      return response;
+    })
+    .then(() => this.deleteCustomer(customer_id))
+    .then(() => this.deleteCreditCard(creditcard_id));
+
+  }
+
+  createCreditCard(creditcard_id){
+
+    du.output('Create Credit Card');
+
+    let creditcard_create_query = `mutation { createcreditcard (creditcard: { number: "3111111111111111", expiration: "1025", ccv: "999", name: "Rama2 Damunaste", address: { line1: "102 Skid Rw.", line2: "Suite 100", city: "Portland", state: "Oregon", zip: "97213", country: "USA" }, id: "`+creditcard_id+`" }) { id } }`;
+
+    return this.executeQuery(creditcard_create_query);
+
+  }
+
+  createCustomer(customer_id, creditcard_id){
+
+    du.output('Create Customer');
+
+    let customer_create_query = `mutation { createcustomer ( customer: {id: "`+customer_id+`", email: "test@test.com", firstname: "Test_b5803b28-c584-4bb3-8fac-3315b91686b3", lastname: "Test", phone: "1234567890", address: { line1: "123 Test St.", line2: "Apartment 3", city: "Portland", state: "Oregon", zip: "97213", country: "USA" }, creditcards:["`+creditcard_id+`"]} ) { id } }`;
+
+    return this.executeQuery(customer_create_query);
+
+  }
+
+  deleteCreditCard(id, code){
+
+    du.output('Delete Credit Card');
+
+    let creditcard_delete_query = 'mutation { deletecreditcard (id: "'+id+'") { id } }';
+
+    return this.executeQuery(creditcard_delete_query, code);
+
+  }
+
+  deleteCustomer(id, code){
+
+    du.output('Delete Customer');
+
+    let customer_delete_query = 'mutation { deletecustomer (id: "'+id+'") { id } }';
+
+    return this.executeQuery(customer_delete_query, code);
+
+  }
+
+}

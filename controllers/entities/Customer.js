@@ -17,10 +17,10 @@ class customerController extends entityController {
 
     listByCreditCardID({id, pagination}){
 
-      du.debug('List By Credit Card ID');
+      du.debug('List By Credit Card ID')
 
       let scan_parameters = {
-          filter_expression: '#f1 = :credit_card_id',
+          filter_expression: 'contains(#f1, :credit_card_id)',
           expression_attribute_names:{
               '#f1': 'creditcards',
           },
