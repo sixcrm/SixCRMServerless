@@ -58,7 +58,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
     du.output('Delete Customer');
 
-    let customer_delete_query = `mutation { deletecustomer (id: `+id+`) { id } }`;
+    let customer_delete_query = `mutation { deletecustomer ( id: "`+id+`" ) { id } }`;
 
     return this.executeQuery(customer_delete_query, code);
 
@@ -68,7 +68,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
     du.output('Delete Customer Note');
 
-    let customernote_delete_query = `mutation { deletecustomernote (id: `+id+`) { id } }`;
+    let customernote_delete_query = `mutation { deletecustomernote (id: "`+id+`" ) { id } }`;
 
     return this.executeQuery(customernote_delete_query, code);
 
