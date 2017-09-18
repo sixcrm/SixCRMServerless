@@ -3,10 +3,13 @@ package:
   excludeDevDependencies: true
   exclude:
     - .git/**
+    - bin/**
     - coverage/**
     - model/dynamodb/**
     - model/redshift/seeds/**
     - deployment/**
+    - test/**
+    - tools/**
   include:
     - serverless.yml
 
