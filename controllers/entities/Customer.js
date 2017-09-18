@@ -259,8 +259,6 @@ class customerController extends entityController {
 
         }
 
-        du.warning(customer_id);
-
         return this.getCustomerSessions(customer).then((sessions) => {
 
           du.warning(sessions);  process.exit();
@@ -270,7 +268,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: session.id});
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
             });
 
             return Promise.all(rebill_promises);
@@ -301,7 +299,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: session.id});
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
             });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {

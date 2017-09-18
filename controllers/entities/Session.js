@@ -243,6 +243,23 @@ class sessionController extends entityController {
 
     }
 
+    //Technical Debt:  This shouldn't be necessary.  Harmonize output from Entity.js...
+    listRebillsRaw(session){
+
+      du.debug('List Rebills Raw');
+
+      return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)}).then(rebills => {
+
+        if(_.has(rebills, 'rebills') && arrayutilities.nonEmpty(rebills.rebills)){
+          return rebills.rebills;
+        }
+
+        return null;
+
+      });
+
+    }
+
     listRebills(session){
 
       du.debug('List Rebills');

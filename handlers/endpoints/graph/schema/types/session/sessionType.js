@@ -36,7 +36,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLList(rebillType.graphObj),
             description: 'The rebills associated with the session',
             resolve: function(session){
-                return sessionController.listRebills(session);
+              return sessionController.listRebillsRaw(session);
             }
         },
         campaign: {
