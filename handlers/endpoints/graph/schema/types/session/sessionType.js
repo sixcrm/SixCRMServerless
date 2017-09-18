@@ -12,7 +12,6 @@ let productScheduleType = require('../productschedule/productScheduleType');
 let customerType = require('../customer/customerType');
 
 const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Session',
@@ -36,7 +35,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLList(rebillType.graphObj),
             description: 'The rebills associated with the session',
             resolve: function(session){
-                return sessionController.getRebills(session);
+              return sessionController.listRebillsRaw(session);
             }
         },
         campaign: {

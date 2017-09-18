@@ -25,7 +25,7 @@ describe('controllers/workers/pickRebill', function () {
             mockery.deregisterAll();
         });
 
-	    it('returns true', function() {
+	    it('returns true', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
                 getRebillsAfterTimestamp: (time) => {
@@ -39,6 +39,31 @@ describe('controllers/workers/pickRebill', function () {
 			let pickRebill = global.SixCRM.routes.include('controllers', 'workers/pickRebill.js');
 
 			return pickRebill.pickRebill().then(response => expect(response).to.be.true);
-		})
+		});
+
+        it('passes correct date to rebill controller', (done) => {
+
+            // given
+            const now = 1487768599196;
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'timestamp.js'), {
+                createTimestampSeconds: () => {
+                    return now
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+                getRebillsAfterTimestamp: (time) => {
+                    // then
+                    expect(time).to.equal(now);
+                    done();
+                }
+            });
+
+            let pickRebill = global.SixCRM.routes.include('controllers', 'workers/pickRebill.js');
+
+            // when
+            pickRebill.pickRebill();
+        });
 	});
 });

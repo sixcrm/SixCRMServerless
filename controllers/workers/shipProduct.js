@@ -33,8 +33,8 @@ class shipProductController extends workerController {
 
             var promises = []
 
-            promises.push(transactionController.get(transaction.id));
-            promises.push(shippingReceiptController.create(shippingReceiptController.createShippingReceiptObject({status:'pending'})));
+            promises.push(transactionController.get({id: transaction.id}));
+            promises.push(shippingReceiptController.create({entity: shippingReceiptController.createShippingReceiptObject({status:'pending'})}));
 
             Promise.all(promises).then((promises) => {
 
@@ -53,7 +53,7 @@ class shipProductController extends workerController {
 
                             raw_transaction.products[i].shippingreceipt = new_shipping_receipt.id;
 
-                            return transactionController.update(raw_transaction).then((updated_transaction) => {
+                            return transactionController.update({entity: raw_transaction}).then((updated_transaction) => {
 
                                 return updated_transaction
 
@@ -208,10 +208,8 @@ class shipProductController extends workerController {
 	//Technical Debt:  Introduce fulfillment delay
 	//Technical Debt: Do not attempt to fulfillment provider a second time (aka shipping receipt already exists) -  Does this still plaugue us?
     shipProducts(rebill) {
-        var promises = [];
-        var getTransactions = rebillController.getTransactions(rebill);
 
-        promises.push(getTransactions);
+        var promises = [rebillController.listTransactions(rebill)];
 
         var noship = true;
 

@@ -8,6 +8,11 @@ class roleController extends entityController {
         super('role');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
     getPermissions(role){
         if(_.has(role, 'permissions')){
             return role.permissions;

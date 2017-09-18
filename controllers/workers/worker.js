@@ -85,7 +85,7 @@ module.exports = class workerController {
         return this.parseInputEvent(event).then((id) => {
 
 			//let's add a hydration method here...
-            return rebillController.get(id).then((rebill) => {
+            return rebillController.get({id: id}).then((rebill) => {
 
                 return this.validateRebill(rebill);
 
@@ -101,7 +101,7 @@ module.exports = class workerController {
         return this.parseInputEvent(event).then((id) => {
 
 			//let's add a hydration method here...
-            return sessionController.get(id).then((session) => {
+            return sessionController.get({id: id}).then((session) => {
 
                 return this.validateSession(session);
 

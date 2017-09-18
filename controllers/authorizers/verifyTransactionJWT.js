@@ -39,35 +39,36 @@ class verifyTransactionJWTController {
 
     acquireToken(event){
 
-        du.debug('Acquire Token');
+      du.debug('Acquire Token');
 
-        if(_.has(event, 'authorizationToken')){
+      if(_.has(event, 'authorizationToken')){
 
-            return event.authorizationToken;
+          return event.authorizationToken;
 
-        }
+      }
 
-        return false;
+      return false;
 
     }
 
     verifyJWT(token){
 
-        du.debug('Verify JWT');
+      du.debug('Verify JWT');
 
-        if(this.developmentBypass(token)){
+      if(this.developmentBypass(token)){
 
-            return this.messages.bypass;
+          return this.messages.bypass;
 
-        }
+      }
 
-        let decoded_token = this.validateToken(token);
+      du.info(token);
+      let decoded_token = this.validateToken(token);
 
-        du.debug('Decoded Token: ', decoded_token);
+      du.debug('Decoded Token: ', decoded_token);
 
-        if(decoded_token == false){ return false; }
+      if(decoded_token == false){ return false; }
 
-        return decoded_token.user_alias; //Note: We know that this property exists because of the validation in the JWT Utilities class
+      return decoded_token.user_alias; //Note: We know that this property exists because of the validation in the JWT Utilities class
 
     }
 

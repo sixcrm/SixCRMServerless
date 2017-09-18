@@ -31,6 +31,7 @@
 					username:\"test2\",
 					password:\"test23123123\",
 					endpoint:\"https://nmi.com/someendpoint.php\",
+					processor_id:\"123\",
 					additional:\"{\\\"processor_id\\\":12354}\"
 				},
 				customer_service:{

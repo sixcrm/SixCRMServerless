@@ -12,7 +12,30 @@ class transactionController extends entityController {
         super('transaction');
     }
 
-    //Ljubomir:  Please finish
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
+    listByMerchantProviderID({id, pagination}){
+
+      du.debug('List By Merchant Provider ID');
+
+      let scan_parameters = {
+          filter_expression: '#f1 = :merchant_provider_id',
+          expression_attribute_names:{
+              '#f1': 'merchant_provider',
+          },
+          expression_attribute_values: {
+              ':merchant_provider_id': id
+          }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
+
+    }
+
+    //Technical Debt:  This is pretty complicated.
     listByProductID({id, pagination}){
 
       du.debug('List By Product ID');
@@ -41,6 +64,7 @@ class transactionController extends entityController {
 
     }
 
+    //Technical Debt:  Refactor name
     getTransactionProducts(transaction){
 
         return transaction.products.map((transactionproduct) => {
@@ -101,7 +125,9 @@ class transactionController extends entityController {
 
         du.debug('Get Products');
 
+        du.info(transaction);
         if(!_.has(transaction, "products")){ return null; }
+
 
         du.debug('Transaction Products', transaction.products);
 
@@ -109,9 +135,14 @@ class transactionController extends entityController {
 
     }
 
-    getTransactionsByRebillID(id){
+    listTransactionsByRebillID({id}){
 
-        return this.queryBySecondaryIndex({field: 'rebill', index_value: id, index_name: 'rebill-index'}).then((result) => this.getResult(result));
+      du.debug('List Transactions By Rebill ID');
+
+      //Technical Debt: this is silly but necessary ATM
+      id = this.getID(id);
+
+      return this.queryBySecondaryIndex({field: 'rebill', index_value: id, index_name: 'rebill-index'}).then((result) => this.getResult(result));
 
     }
 

@@ -17,6 +17,11 @@ class userController extends entityController {
         super('user');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
     getUserByAlias(user_alias){
 
         du.debug('Get User By Alias');
@@ -504,7 +509,7 @@ class userController extends entityController {
 
     getUserByAccessKeyId(access_key_id){
 
-        return this.getBySecondaryIndex('access_key_id', access_key_id, 'access_key_id-index');
+        return this.getBySecondaryIndex({field: 'access_key_id', index_value: access_key_id, index_name: 'access_key_id-index'});
 
     }
 
@@ -766,13 +771,13 @@ class userController extends entityController {
 
       if(global.account == '*'){
 
-        return this.list(pagination);
+        return this.list({pagination: pagination});
 
       }else{
 
         if(!this.isUUID(global.account)){ eu.throwError('server', 'Unexpected account ID type: '+global.account); }
 
-        return this.executeAssociatedEntityFunction('accessKeyController', 'getACLByAccount', global.account).then(user_acl_objects => {
+        return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', global.account).then(user_acl_objects => {
 
           if(arrayutilities.isArray(user_acl_objects) && user_acl_objects.length > 0){
 
@@ -786,7 +791,7 @@ class userController extends entityController {
 
             let in_parameters = this.dynamoutilities.createINQueryParameters('id', user_ids);
 
-            return this.list(pagination, in_parameters);
+            return this.list({pagination: pagination, query_parameters: in_parameters});
 
           }else{
 

@@ -18,26 +18,11 @@ class pickRebillController extends workerController {
 
     pickRebill(){
 
-        return new Promise((resolve) => {
+        let now = timestamp.createTimestampSeconds();
 
-            var now = timestamp.createTimestampSeconds();
-
-            return rebillController.getRebillsAfterTimestamp(now).then((rebills) => {
-                return Promise.all(rebills.map(rebill => rebillController.sendMessageAndMarkRebill(rebill))).then(() => {
-
-					          //Technical Debt: do something here?  Why do we need the following .then() ???
-                    return;
-
-                }).then(() => {
-
-                    return resolve(true);
-
-                });
-
-            });
-
-        });
-
+        return rebillController.getRebillsAfterTimestamp(now)
+            .then((rebills) => Promise.all(rebills.map(rebill => rebillController.sendMessageAndMarkRebill(rebill))))
+            .then(() => true);
     }
 
 }

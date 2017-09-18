@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/signingstring.json",
+  "title": "Signing String",
+  "type":"string"
+}

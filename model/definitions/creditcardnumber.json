@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/creditcardnumber.json",
+  "title": "CreditCardCCV",
+  "type":"string",
+  "minLength":12
+}

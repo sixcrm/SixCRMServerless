@@ -6,34 +6,8 @@
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
-		"address":{
-			"type":"object",
-			"properties": {
-				"line1":{
-					"type":"string"
-				},
-				"line2":{
-					"type":"string"
-				},
-				"city":{
-					"type":"string"
-				},
-				"state":{
-					"type":"string"
-				},
-				"zip":{
-					"type":"string"
-				},
-				"country":{
-					"type":"string"
-				}
-			},
-			"required":["line1","city","state","zip","country"]
-		},
-		"number":{
-			"type":"string",
-			"minLength":12
-		},
+		"address":{"$ref": "../definitions/address.json"},
+		"number":{"$ref": "../definitions/creditcardnumber.json"},
 		"ccv":{"$ref": "../definitions/creditcardccv.json"},
 		"expiration":{"$ref": "../definitions/creditcardexpirationdate.json"},
 		"name":{

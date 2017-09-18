@@ -33,13 +33,13 @@ class campaignController extends entityController {
 
         //du.warning(sessions, trackers); process.exit();
 
-        if(!_.isNull(sessions.sessions)){
+        if(_.has(sessions, 'sessions') && arrayutilities.nonEmpty(sessions.sessions)){
           arrayutilities.map(sessions.sessions, (session) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Session', object: session}));
           });
         }
 
-        if(!_.isNull(trackers.trackers)){
+        if(_.has(trackers, 'trackers') && arrayutilities.nonEmpty(trackers.trackers)){
           arrayutilities.map(trackers.trackers, (tracker) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Tracker', object:tracker}));
           });
@@ -358,6 +358,46 @@ class campaignController extends entityController {
         }
 
         return true;
+
+    }
+
+    listByAffiliateAllow({affiliate, pagination}){
+
+      du.debug('List by Affiliate Allow');
+
+      let affiliate_id = this.getID(affiliate);
+
+      let scan_parameters = {
+        filter_expression: 'contains(#f1, :affiliate_id)',
+        expression_attribute_names:{
+            '#f1': 'affiliate_allow'
+        },
+        expression_attribute_values: {
+            ':affiliate_id': affiliate_id
+        }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters});
+
+    }
+
+    listByAffiliateDeny({affiliate, pagination}){
+
+      du.debug('List by Affiliate Deny');
+
+      let affiliate_id = this.getID(affiliate);
+
+      let scan_parameters = {
+        filter_expression: 'contains(#f1, :affiliate_id)',
+        expression_attribute_names:{
+            '#f1': 'affiliate_deny'
+        },
+        expression_attribute_values: {
+            ':affiliate_id': affiliate_id
+        }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters});
 
     }
 

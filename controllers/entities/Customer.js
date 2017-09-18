@@ -15,6 +15,24 @@ class customerController extends entityController {
 
     }
 
+    listByCreditCardID({id, pagination}){
+
+      du.debug('List By Credit Card ID');
+
+      let scan_parameters = {
+          filter_expression: '#f1 = :credit_card_id',
+          expression_attribute_names:{
+              '#f1': 'creditcards',
+          },
+          expression_attribute_values: {
+              ':credit_card_id': id
+          }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
+
+    }
+
     getFullName(customer){
 
         du.debug('Get Full Name');
@@ -57,7 +75,7 @@ class customerController extends entityController {
 
             if(!_.has(customer, 'id')){
 
-                return this.get(customer).then((hydrated_customer) => {
+                return this.get({id: customer}).then((hydrated_customer) => {
 
                     return resolve(this.addCreditCard(hydrated_customer, creditcard));
 
@@ -84,7 +102,7 @@ class customerController extends entityController {
 
                         customer.creditcards.push(creditcard.id);
 
-                        return this.update(customer).then((customer) => {
+                        return this.update({entity: customer}).then((customer) => {
 
                             return resolve(customer);
 
@@ -107,7 +125,7 @@ class customerController extends entityController {
 
                 customer['creditcards'] = [creditcard.id];
 
-                return this.update(customer).then((customer) => {
+                return this.update({entity: customer}).then((customer) => {
 
                     return resolve(customer);
 
@@ -163,7 +181,7 @@ class customerController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            this.get(customer_id).then((customer) => {
+            this.get({id: customer_id}).then((customer) => {
 
                 if(!_.has(customer, 'id')){ return resolve(null); }
 
@@ -211,7 +229,7 @@ class customerController extends entityController {
 
     getCustomerByEmail(email){
 
-        return this.getBySecondaryIndex('email', email, 'email-index');
+        return this.getBySecondaryIndex({field: 'email', index_value:email, index_name: 'email-index'});
 
     }
 
@@ -241,8 +259,6 @@ class customerController extends entityController {
 
         }
 
-        du.warning(customer_id);
-
         return this.getCustomerSessions(customer).then((sessions) => {
 
           du.warning(sessions);  process.exit();
@@ -252,7 +268,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id);
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
             });
 
             return Promise.all(rebill_promises);
@@ -283,7 +299,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id);
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
             });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
@@ -367,7 +383,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', session.id);
+              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
             });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {

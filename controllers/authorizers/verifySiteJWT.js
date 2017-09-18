@@ -32,9 +32,13 @@ class verifySiteJWTController {
 
             if(_.has(event, 'authorizationToken')){
 
-                return resolve(event.authorizationToken);
+              du.info("Authorization Token Acquired");
+
+              return resolve(event.authorizationToken);
 
             }
+
+            du.warning("Failed to acquire Authorization Token");
 
             return reject(false);
 
@@ -54,9 +58,13 @@ class verifySiteJWTController {
 
         }else{
 
-            decoded = jwtutilities.verifyJWT(token);
+          //du.info(token);
+
+          decoded = jwtutilities.verifyJWT(token);
 
         }
+
+        du.info(decoded);
 
         return Promise.resolve(decoded);
 
@@ -78,7 +86,9 @@ class verifySiteJWTController {
 
                 if(decoded_token == false) {
 
-                    return resolve(this.decodeWithUserSigningStrings(token));
+                  du.info('Token not validated.  Attempting User Signing Strings');
+
+                  return resolve(this.decodeWithUserSigningStrings(token));
 
                 }
 
@@ -190,7 +200,13 @@ class verifySiteJWTController {
 
         return this.validateToken(token, signing_string.signing_string).then((decoded_token) => {
 
-            if(decoded_token === false || !_.isObject(decoded_token) || !_.has(decoded_token, 'email')){ return false; }
+            if(decoded_token === false || !_.isObject(decoded_token) || !_.has(decoded_token, 'email')){
+
+              du.warning('Unable to validate token.');
+
+              return false;
+
+            }
 
             du.info(`Successfully used key ${signing_string.name}.`);
 

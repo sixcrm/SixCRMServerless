@@ -28,6 +28,7 @@
 				username,
 				password,
 				endpoint,
+				processor_id,
 				additional
 			},
 			allow_prepaid,

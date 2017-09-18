@@ -7,6 +7,11 @@ class accountController extends entityController {
         super('account');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
     getMasterAccount(){
 
         return Promise.resolve({

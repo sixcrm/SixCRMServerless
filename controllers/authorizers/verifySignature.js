@@ -89,6 +89,8 @@ class verifySignatureController {
 
         }
 
+        du.info('Timestamp valid');
+
         return Promise.resolve(token_object);
 
     }
@@ -105,7 +107,9 @@ class verifySignatureController {
 
         }else{
 
-            return Promise.resolve(token_object);
+          du.info('Signature valid');
+
+          return Promise.resolve(token_object);
 
         }
 

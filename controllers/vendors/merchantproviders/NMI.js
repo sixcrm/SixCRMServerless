@@ -19,6 +19,9 @@ class NMIController {
             if(_.has(parameters, "endpoint")){
                 this.endpoint = parameters.endpoint;
             }
+            if(_.has(parameters, "processor_id")){
+                this.processor_id = parameters.processor_id;
+            }
         }
     }
 

@@ -14,6 +14,51 @@ class loadBalancerController extends entityController {
 
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
+
+    listByMerchantProviderID({id}){
+
+      du.debug('List By Merchant Provider ID');
+
+      return this.list({}).then(loadbalancers => {
+
+        let return_array = [];
+
+        if(_.has(loadbalancers, 'loadbalancers') && arrayutilities.nonEmpty(loadbalancers.loadbalancers)){
+
+          arrayutilities.map(loadbalancers.loadbalancers, (loadbalancer) => {
+
+            if(_.has(loadbalancer, 'merchantproviders') && arrayutilities.nonEmpty(loadbalancer.merchantproviders)){
+
+              arrayutilities.find(loadbalancer.merchantproviders, (merchant_provider_configuration) => {
+
+                if(_.has(merchant_provider_configuration, 'id') && merchant_provider_configuration.id == id){
+
+                  return_array.push(loadbalancer);
+                  return true;
+
+                }
+
+                return false;
+
+              });
+
+            }
+
+          });
+
+        }
+
+        return return_array;
+
+      });
+
+    }
+
     //Note:  Used in Graph schema
     getMerchantProviderConfigurations(loadbalancer){
 

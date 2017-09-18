@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/auth0identifier.json",
+  "title": "Auth0.com Identifier",
+  "type":"string",
+  "minLength":3
+}

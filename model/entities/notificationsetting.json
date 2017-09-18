@@ -3,7 +3,6 @@
   "id":"/notificationsetting",
   "title": "Notification Setting",
   "type": "object",
-  "properties": {
-  },
+  "properties": {},
   "required":[]
 }

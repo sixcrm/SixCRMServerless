@@ -5,9 +5,9 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-
-var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
+var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+
 
 class confirmOrderController extends transactionEndpointController{
 
@@ -67,33 +67,32 @@ class confirmOrderController extends transactionEndpointController{
 
         var promises = [];
 
-        return sessionController.get(querystring['session']).then((session) => {
+        return sessionController.get({id: querystring['session']}).then((session) => {
 
             if(_.isNull(session)){ eu.throwError('not_found','Unable to identify session.'); }
             if(session.completed == 'true'){ eu.throwError('bad_request','The specified session is already complete.'); }
 
             var getCustomer = sessionController.getCustomer(session);
-            var getTransactions = sessionController.getTransactions(session);
-            var getTransactionProducts = sessionController.getTransactionProducts(session);
+            var listTransactions = sessionController.listTransactions(session);
+            var listSessionProducts = sessionController.listProducts(session);
 
             promises.push(getCustomer);
-            promises.push(getTransactions);
-            promises.push(getTransactionProducts);
+            promises.push(listTransactions);
+            promises.push(listSessionProducts);
 
             return Promise.all(promises).then((promises) => {
 
-                var customer = promises[0];
-                var transactions = promises[1];
-                var transaction_products = promises[2];
+              var customer = promises[0];
+              var transactions = promises[1];
+              var session_transaction_products = promises[2];
 
-                return sessionController.closeSession(session).then(() => {
+              return sessionController.closeSession(session).then(() => {
 
-                    var results = {session: session, customer: customer, transactions: transactions, transaction_products: transaction_products};
+                var results = {session: session, customer: customer, transactions: transactions, transaction_products: session_transaction_products};
 
-                    return results;
+                return results;
 
-                });
-
+              });
 
             });
 

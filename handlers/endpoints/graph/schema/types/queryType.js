@@ -194,7 +194,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-                return trackerController.getByAffiliateID({affiliate: args.affiliate, pagination: args.pagination});
+                return trackerController.listByAffiliateID({affiliate: args.affiliate, pagination: args.pagination});
             }
         },
         customernotelistbycustomer: {
@@ -266,7 +266,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
-                return sessionController.listSessionsByAffiliate(args.affiliate, args.pagination);
+                return sessionController.listSessionsByAffiliate({affiliate: args.affiliate, pagination: args.pagination});
             }
         },
         rebilllistbycustomer: {

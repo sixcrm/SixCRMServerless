@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
 
 var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -28,7 +27,13 @@ class sessionController extends entityController {
 
     }
 
-    listSessionsByAffiliate(affiliate, pagination){
+    //Technical Debt: finish!
+    //Rebill
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
+    listSessionsByAffiliate({affiliate, pagination}){
 
         du.debug('List Sessions By Affiliate');
 
@@ -120,7 +125,7 @@ class sessionController extends entityController {
 
         return this.get({id: session}).then((session) => {
 
-            return arrayutilities.map(this.affiliate_fields, (affiliate_field) => {
+            return arrayutilities.filter(this.affiliate_fields, (affiliate_field) => {
 
               if(_.has(session, affiliate_field)){
 
@@ -131,6 +136,8 @@ class sessionController extends entityController {
                 }else{
 
                   du.warning('Unrecognized affiliate field type: '+session[affiliate_field]);
+
+                  return false;
 
                 }
 
@@ -186,71 +193,78 @@ class sessionController extends entityController {
 
     }
 
-	//used in Create Order
-  //Technical Debt:  Very Messy
-    getTransactions(session){
+    listTransactions(session){
 
-        return new Promise((resolve, reject) => {
+      du.debug('List Transactions');
 
-            var session_transactions = [];
+      return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session}).then((session_rebills) => {
 
-            return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id).then((rebills) => {
+        if(_.has(session_rebills, 'rebills') && arrayutilities.nonEmpty(session_rebills.rebills)){
 
-              //du.warning(rebills); process.exit();
+          let rebill_transactions = arrayutilities.map(session_rebills.rebills, (session_rebill) => {
 
-                return Promise.all(rebills.map((rebill) => {
+            return this.executeAssociatedEntityFunction('transactionController', 'listTransactionsByRebillID', {id: this.getID(session_rebill)});
 
-                    return new Promise((resolve, reject) => {
+          });
 
-                      return this.executeAssociatedEntityFunction('transactionController', 'getTransactionsByRebillID', {id: rebill.id}).then((transactions) => {
+          return Promise.all(rebill_transactions).then(session_rebill_transactions => {
 
-                            if(_.isNull(transactions)){
+            let return_array = [];
 
-                                return resolve(null);
+            if(arrayutilities.isArray(session_rebill_transactions) && arrayutilities.nonEmpty(session_rebill_transactions)){
 
-                            }else{
+              arrayutilities.map(session_rebill_transactions, (rebill_transactions) => {
 
-                                transactions.map((transaction) => {
+                if(arrayutilities.isArray(rebill_transactions) && arrayutilities.nonEmpty(rebill_transactions)){
 
-                                    session_transactions.push(transaction)
+                  return arrayutilities.map(rebill_transactions, transaction => {
 
-                                });
+                    return_array.push(transaction);
 
-                                return resolve(transactions);
+                  });
 
-                            }
+                }
 
-                        }).catch((error) => {
+              });
 
-                            return reject(error)
+            }
 
-                        });
+            return (arrayutilities.nonEmpty(return_array))?return_array:null;
 
-                    });
+          });
 
-                })).then(() => {
+        }else{
 
-                    return resolve(session_transactions);
+          return null;
 
-                }).catch((error) => {
+        }
 
-                    return reject(error);
-
-                });
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
+      });
 
     }
 
-    getRebills(session){
+    //Technical Debt:  This shouldn't be necessary.  Harmonize output from Entity.js...
+    listRebillsRaw(session){
 
-      return this.executeAssociatedEntityFunction('rebillController', 'getRebillsBySessionID', session.id)
+      du.debug('List Rebills Raw');
+
+      return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)}).then(rebills => {
+
+        if(_.has(rebills, 'rebills') && arrayutilities.nonEmpty(rebills.rebills)){
+          return rebills.rebills;
+        }
+
+        return null;
+
+      });
+
+    }
+
+    listRebills(session){
+
+      du.debug('List Rebills');
+
+      return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)})
 
     }
 
@@ -274,81 +288,44 @@ class sessionController extends entityController {
 
     }
 
-	   //Technical Debt: This function is a mess...
-    getTransactionProducts(session){
+    //Technical Debt:  This should be List Products
+    listProducts(session){
 
-        return new Promise((resolve, reject) => {
+      du.debug('List Products');
 
-            var session_products = [];
+      return this.listTransactions(session).then((session_rebill_transactions) => {
 
-            return this.getRebills(session).then((rebills) => {
+        if(arrayutilities.nonEmpty(session_rebill_transactions)){
 
-                return Promise.all(rebills.map((rebill) => {
+          let product_promises = arrayutilities.map(session_rebill_transactions, (session_rebill_transaction) => {
 
-                    return new Promise((resolve, reject) => {
+            return this.executeAssociatedEntityFunction('transactionController', 'getProducts', session_rebill_transaction);
 
-                      return this.executeAssociatedEntityFunction('rebillController', 'getTransactions', {id: rebill}).then((transactions) => {
+          });
 
-							//note that at the time of a createorder, there are lots of rebills, only one of which has a transaction
-                            if(_.isNull(transactions)){
+          return Promise.all(product_promises);
 
-                                return resolve([]);
+        }
 
-                            }else{
+      }).then((session_rebill_transaction_products) => {
 
-                                return Promise.all(transactions.map((transaction) => {
+        //du.highlight('Session Rebill Transaction Products', session_rebill_transaction_products);
 
-                                    return new Promise((resolve) => {
+        let return_array = [];
 
-                                      return this.executeAssociatedEntityFunction('transactionController', 'getProducts', {id: transaction}).then((products) => {
+        if(arrayutilities.nonEmpty(session_rebill_transaction_products)){
+          arrayutilities.map(session_rebill_transaction_products, (rebill_transaction_products) => {
+            if(arrayutilities.nonEmpty(rebill_transaction_products)){
+              arrayutilities.map(rebill_transaction_products, (rebill_transaction_product) => {
+                return_array.push(rebill_transaction_product);
+              });
+            }
+          });
+        }
 
-                                          return resolve(products);
+        return return_array;
 
-                                      });
-
-                                    });
-
-                                })).then((products) => {
-
-                                    return resolve(products);
-
-                                }).catch((error) => {
-
-                                    return reject(error);
-
-                                });
-
-                            }
-
-                        });
-
-                    });
-
-                })).then((products) => {
-
-                    products.forEach((c1) => {
-
-                        c1.forEach((c2) => {
-
-                            c2.forEach((product) => {
-
-                                session_products.push(product);
-
-                            });
-                        });
-                    });
-
-                    return resolve(session_products);
-
-                }).catch((error) => {
-                    return reject(error);
-                });
-
-            }).catch((error) => {
-                return reject(error);
-            });
-
-        });
+      });
 
     }
 

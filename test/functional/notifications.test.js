@@ -26,14 +26,14 @@ describe('notificationController', function () {
 
     it('should create a notification', function (done) {
 
-        notificationController.get(aNotification.id).then((response) => {
+        notificationController.get({id: aNotification.id}).then((response) => {
             // given we don't have a notification with such id
             return expect(response).to.be.null;
         }).then(() => {
             // when we create a notification
-            return notificationController.create(aNotification);
+            return notificationController.create({entity: aNotification});
         }).then(() => {
-            return notificationController.get(aNotification.id);
+            return notificationController.get({id: aNotification.id});
         }).then((notification) => {
             // we should be able to get it by id
             expect(notification).not.to.be.null;
@@ -49,7 +49,7 @@ describe('notificationController', function () {
             return expect(response.count).to.equal(0);
         }).then(() => {
             // when we create a notification
-            return notificationController.create(aNotification);
+            return notificationController.create({entity: aNotification});
         }).then(() => {
             return notificationController.numberOfUnseenNotifications();
         }).then((response) => {
@@ -67,7 +67,7 @@ describe('notificationController', function () {
             return expect(response.count).to.equal(0);
         }).then(() => {
             // when we create a notification
-            return notificationController.create(aNotification);
+            return notificationController.create({entity: aNotification});
         }).then(() => {
             return notificationController.numberOfUnseenNotifications();
         }).then((response) => {
@@ -92,4 +92,3 @@ describe('notificationController', function () {
     });
 
 });
-

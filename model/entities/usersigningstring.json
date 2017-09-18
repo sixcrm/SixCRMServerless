@@ -5,16 +5,11 @@
 	"type": "object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
-		"user":{
-			"type":"string",
-			"format":"email"
-		},
+		"user":{"$ref": "../definitions/useridentifier.json"},
 		"name":{
 			"type":"string"
 		},
-		"signing_string":{
-			"type":"string"
-		},
+		"signing_string":{"$ref": "../definitions/signingstring.json"},
 		"used_at":{
 			"anyOf":[
 				{"$ref": "../definitions/iso8601.json"},

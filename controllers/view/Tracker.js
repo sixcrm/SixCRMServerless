@@ -26,7 +26,7 @@ class trackerViewController{
         let tracker = argumentation_object.pathParameters.tracker;
 
         trackerController.disableACLs();
-        return trackerController.get(tracker).then((tracker) => {
+        return trackerController.get({id: tracker}).then((tracker) => {
             trackerController.enableACLs();
 
             if(trackerController.validate(tracker)){

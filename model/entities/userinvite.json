@@ -1,16 +1,14 @@
 {
 	"title": "UserInvite",
+	"id":"/userinvite",
 	"type": "object",
 	"properties": {
 		"email":{
-			"type":"string"
+			"type":"string",
+			"format":"email"
 		},
-		"account":{
-			"type":"string"
-		},
-		"role":{
-			"type":"string"
-		}
+		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"role":{"$ref": "../definitions/uuidv4.json"}
 	},
 	"required":["email", "account", "role"]
 }

@@ -15,6 +15,12 @@ class productScheduleController extends entityController {
 
     }
 
+    //Technical Debt: finish!
+    //Rebill
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
     getCampaigns(args){
 
       du.debug('Get Campaigns');
@@ -87,6 +93,7 @@ class productScheduleController extends entityController {
 
     }
 
+    //Technical Debt:  THis is poorly named
     getTransactionProducts(day_in_schedule, schedules_to_purchase){
 
       du.debug('Get Transaction Products');

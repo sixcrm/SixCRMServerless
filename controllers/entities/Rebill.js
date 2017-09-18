@@ -18,6 +18,11 @@ class rebillController extends entityController {
         super('rebill');
     }
 
+    //Technical Debt: finish!
+    associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+    }
+
 	  //Note: rebills don't get product associations, only product schedules
     getProducts(rebill){
 
@@ -57,9 +62,11 @@ class rebillController extends entityController {
 
     }
 
-    getTransactions(rebill){
+    listTransactions(rebill){
 
-      return this.executeAssociatedEntityFunction('transactionController', 'getTransactionsByRebillID', rebill.id);
+      du.debug('List Transactions');
+
+      return this.executeAssociatedEntityFunction('transactionController', 'listTransactionsByRebillID', {id: this.getID(rebill)});
 
     }
 
@@ -225,17 +232,15 @@ class rebillController extends entityController {
 
     }
 
-    getRebillsBySessionID(id){
+    listBySession({session}){
 
-      du.debug('Get Rebills By Session ID');
+      du.debug('List By Session');
 
-      return this.queryBySecondaryIndex({field: 'parentsession', index_value: id, index_name: 'parentsession-index'}).then((result) => {
-        return this.getResult(result);
-      });
+      return this.queryBySecondaryIndex({field: 'parentsession', index_value: this.getID(session), index_name: 'parentsession-index'});
 
     }
 
-    listRebillsBySessionID(id, pagination){
+    listRebillsBySessionID({id, pagination}){
 
       du.debug('List Rebills By Session ID');
 
