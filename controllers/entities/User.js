@@ -771,7 +771,7 @@ class userController extends entityController {
 
       if(global.account == '*'){
 
-        return this.list(pagination);
+        return this.list({pagination: pagination});
 
       }else{
 
@@ -791,7 +791,7 @@ class userController extends entityController {
 
             let in_parameters = this.dynamoutilities.createINQueryParameters('id', user_ids);
 
-            return this.list(pagination, in_parameters);
+            return this.list({pagination: pagination, query_parameters: in_parameters});
 
           }else{
 
