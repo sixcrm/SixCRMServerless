@@ -2,9 +2,9 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
+	mutation {
 		deleteaffiliate (id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\") { 
 			id
-		} 
+		}
 	}"
 }

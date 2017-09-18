@@ -737,76 +737,73 @@ module.exports = class entityController extends entityUtilitiesController {
 
         return new Promise((resolve, reject) => {
 
-            if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+          try{
+              id = this.getID(id, primary_key);
+          }catch(e){
+              return reject(e);
+          }
 
-            try{
-                id = this.getID(id, primary_key);
-            }catch(e){
-                return reject(e);
+          return this.can('delete', true)
+          .then(() => this.checkAssociatedEntities({id: id}))
+          .then(() => {
+
+            let query_parameters = {
+                key_condition_expression: primary_key+' = :primary_keyv',
+                expression_attribute_values: {':primary_keyv': id}
+            };
+
+            let delete_parameters = {};
+
+            delete_parameters[primary_key] = id;
+
+      //Technical Debt:  Refactor.
+      //Technical Debt:  What happens if this object that is being deleted is in non-accounts?
+            if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+
+              if(global.account == '*'){
+                //for now, do nothing
+
+              }else{
+
+                query_parameters.filter_expression = 'account = :accountv';
+                query_parameters.expression_attribute_values[':accountv'] = global.account;
+
+              }
+
             }
 
-            return this.can('delete', true).then(() => {
+        //Exists?
+            return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
-              this.checkAssociatedEntities({id: id});
+              if(_.isError(error)){ reject(error);}
 
-                let query_parameters = {
-                    key_condition_expression: primary_key+' = :primary_keyv',
-                    expression_attribute_values: {':primary_keyv': id}
-                };
+              if(!_.isObject(data) || !_.isArray(data) || data.length !== 1){ return reject(eu.getError('not_found','Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.')); }
 
-                let delete_parameters = {};
+              this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
 
-                delete_parameters[primary_key] = id;
+                if(_.isError(error)){ reject(error);}
 
-          //Technical Debt:  Refactor.
-          //Technical Debt:  What happens if this object that is being deleted is in non-accounts?
-                if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+                this.removeFromSearchIndex(id, this.descriptive_name).then((removed) => {
 
-                    if(global.account == '*'){
+                  du.debug('Removed: '+removed);
 
-							//for now, do nothing
+                  return resolve(delete_parameters);
 
-                    }else{
+                }).catch((error) => {
 
-                        query_parameters.filter_expression = 'account = :accountv';
-                        query_parameters.expression_attribute_values[':accountv'] = global.account;
+                  du.debug('Rejecting:', id);
 
-                    }
+                  return reject(error);
 
-                }
+                });
 
-          //Exists?
-                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+              });
 
-                    if(_.isError(error)){ reject(error);}
+            }));
 
-                    if(!_.isObject(data) || !_.isArray(data) || data.length !== 1){ return reject(eu.getError('not_found','Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.')); }
-
-                    this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
-
-                        if(_.isError(error)){ reject(error);}
-
-                        this.removeFromSearchIndex(id, this.descriptive_name).then((removed) => {
-
-                            du.debug('Removed: '+removed);
-
-                            return resolve(delete_parameters);
-
-                        }).catch((error) => {
-
-                            du.debug('Rejecting:', id);
-
-                            return reject(error);
-
-                        });
-
-                    });
-
-                }));
-
-            }).catch((error) => {
-                reject(error);
-            });
+          }).catch((error) => {
+              reject(error);
+          });
 
         });
 
