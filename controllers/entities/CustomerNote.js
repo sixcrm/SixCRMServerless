@@ -27,11 +27,11 @@ class customerNoteController extends entityController {
 
     }
 
-    listByCustomer(customer, pagination){
+    listByCustomer({customer, pagination}){
 
       du.debug('List By Customer');
 
-      return this.queryBySecondaryIndex({field: 'customer', index_value: customer, index_name:'customer-index', pagination: pagination, reverse_order: true});
+      return this.queryBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name:'customer-index', pagination: pagination, reverse_order: true});
 
     }
 

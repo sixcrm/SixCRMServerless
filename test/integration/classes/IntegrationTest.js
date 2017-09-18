@@ -2,6 +2,7 @@
 const request = require('supertest');
 const _ = require('underscore');
 
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib','error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
@@ -9,6 +10,11 @@ const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 module.exports = class IntegrationTest {
 
   constructor(){
+
+    this.endpoint = global.integration_test_config.endpoint;
+    this.account = global.test_accounts[1];
+    this.user = global.test_users[0];
+    this.test_jwt = tu.createTestAuth0JWT(this.user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
   }
 

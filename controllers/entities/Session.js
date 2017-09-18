@@ -437,7 +437,9 @@ class sessionController extends entityController {
 
     listSessionsByCustomerID({id, pagination}) {
 
-        return this.listBySecondaryIndex({field: 'customer', index_value: id, index_name: 'customer-index', pagination: pagination});
+      du.debug('List By Customer ID');
+
+      return this.listBySecondaryIndex({field: 'customer', index_value: id, index_name: 'customer-index', pagination: pagination});
 
     }
 

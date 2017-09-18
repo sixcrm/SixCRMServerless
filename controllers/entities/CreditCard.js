@@ -11,7 +11,6 @@ class creditCardController extends entityController {
         super('creditcard');
     }
 
-
     associatedEntitiesCheck({id}){
 
       du.debug('Associated Entities Check');
