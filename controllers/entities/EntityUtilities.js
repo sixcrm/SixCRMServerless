@@ -834,12 +834,16 @@ module.exports = class entityUtilitiesController{
 
       du.debug('Execute Associated Entity Function');
 
+      du.info(arguments);
+
       if(!_.has(this, controller_name) || !_.isFunction(this[controller_name][function_name])){
+
         let controller_file_name = this.translateControllerNameToFilename(controller_name);
 
         du.info(controller_file_name, function_name);
 
         this[controller_name] = global.SixCRM.routes.include('entities', controller_file_name);
+
       }
 
       return this[controller_name][function_name](function_arguments);

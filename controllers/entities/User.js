@@ -777,7 +777,7 @@ class userController extends entityController {
 
         if(!this.isUUID(global.account)){ eu.throwError('server', 'Unexpected account ID type: '+global.account); }
 
-        return this.executeAssociatedEntityFunction('accessKeyController', 'getACLByAccount', global.account).then(user_acl_objects => {
+        return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', global.account).then(user_acl_objects => {
 
           if(arrayutilities.isArray(user_acl_objects) && user_acl_objects.length > 0){
 
