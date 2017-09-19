@@ -18,6 +18,7 @@ class productScheduleController extends entityController {
     //Technical Debt: finish!
     //Rebill
     associatedEntitiesCheck({id}){
+      //campaign
       return Promise.resolve([]);
     }
 

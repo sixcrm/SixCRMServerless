@@ -1,0 +1,77 @@
+'use strict'
+const uuidV4 = require('uuid/v4');
+
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+
+const IntegrationTest = global.SixCRM.routes.include('test', 'integration/classes/IntegrationTest');
+
+module.exports = class FulfillmentProviderTest extends IntegrationTest {
+
+  constructor(){
+
+    super();
+
+  }
+
+  executeProductBlockTest(){
+
+    du.output('Execute Product Block Test');
+
+    let fulfillment_provider_id = uuidV4();
+    let product_id = uuidV4();
+
+    du.info('Fulfillment Provider ID: '+fulfillment_provider_id);
+    du.info('Product ID: '+product_id);
+
+    return this.createFulfillmentProvider(fulfillment_provider_id)
+    .then(() => this.createProduct(product_id, fulfillment_provider_id))
+    .then(() => this.deleteFulfillmentProvider(fulfillment_provider_id, 403))
+    .then(response => {
+      return response;
+    })
+    .then(() => this.deleteProduct(product_id))
+    .then(() => this.deleteFulfillmentProvider(fulfillment_provider_id));
+
+  }
+
+  createFulfillmentProvider(fulfillment_provider_id){
+
+    du.output('Create Fulfillment Provider');
+
+    let fulfillmentprovider_create_query = `mutation { createfulfillmentprovider ( fulfillmentprovider: { id: "`+fulfillment_provider_id+`", name: "test", username: "test", password: "test", endpoint: "test", provider: "HASHTAG"}) { id } }`;
+
+    return this.executeQuery(fulfillmentprovider_create_query);
+
+  }
+
+  createProduct(product_id, fulfillment_provider_id){
+
+    du.output('Create Product');
+
+    let product_create_query = `mutation { createproduct (product: { id: "`+product_id+`", name: "Testing Entity Indexing", sku: "abc1234", ship: "true", shipping_delay:"3600",  fulfillment_provider:"`+fulfillment_provider_id+`", default_price:4.99}) { id } }`;
+
+    return this.executeQuery(product_create_query);
+
+  }
+
+  deleteFulfillmentProvider(id, code){
+
+    du.output('Delete Fulfillment Provider');
+
+    let delete_query = `mutation { deletefulfillmentprovider (id: "`+id+`") { id } }`;
+
+    return this.executeQuery(delete_query, code);
+
+  }
+
+  deleteProduct(id, code){
+
+    du.output('Delete Product');
+
+    let delete_query = `mutation { deleteproduct (id: "`+id+`" ) { id } }`;
+
+    return this.executeQuery(delete_query, code);
+
+  }
+
+}

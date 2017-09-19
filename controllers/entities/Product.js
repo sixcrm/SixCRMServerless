@@ -48,6 +48,24 @@ class ProductController extends entityController {
 
     }
 
+    listByFulfillmentProvider({fulfillment_provider, pagination}){
+
+      du.debug('List By Fulfillment Provider');
+
+      let query_parameters = {
+        filter_expression: '#f1 = :fulfillmentprovider_id',
+        expression_attribute_values: {
+          ':fulfillmentprovider_id':this.getID(fulfillment_provider)
+        },
+        expression_attribute_names: {
+          '#f1':'fulfillment_provider'
+        }
+      };
+
+      return this.list({query_parameters: query_parameters, pagination: pagination});
+
+    }
+
     getFulfillmentProvider(product){
 
       du.debug('Get Fulfillment Provider');

@@ -2,9 +2,9 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
+	mutation {
 		deletefulfillmentprovider (id: \"2cd22324-4619-4f98-8319-f6f3cabc62d8\") { 
 			id
-		} 
+		}
 	}"
 }

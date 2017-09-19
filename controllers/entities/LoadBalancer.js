@@ -16,6 +16,7 @@ class loadBalancerController extends entityController {
 
     //Technical Debt: finish!
     associatedEntitiesCheck({id}){
+      //product schedule
       return Promise.resolve([]);
     }
 

@@ -13,6 +13,7 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 class merchantProviderController extends entityController {
 
     constructor(){
+      //load balancer, transactions
       super('merchantprovider');
     }
 
