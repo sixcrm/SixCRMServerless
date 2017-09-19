@@ -57,7 +57,7 @@ class archiveController extends workerController {
 
                         transaction_product_collection.forEach((a_transaction_product) => {
 
-                            if(a_transaction_product.product.ship == 'true'){
+                            if(this.isProductShip(a_transaction_product.product)){
 
                                 confirmed = false;
 
@@ -81,6 +81,10 @@ class archiveController extends workerController {
 
         });
 
+    }
+
+    isProductShip(product) {
+        return product.ship === 'true' || product.ship === true;
     }
 
     archive(rebill){
