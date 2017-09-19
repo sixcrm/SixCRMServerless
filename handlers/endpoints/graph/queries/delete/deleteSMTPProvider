@@ -2,9 +2,9 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
+	mutation {
 		deletesmtpprovider (id: \"8363bc50-a409-4503-93f8-1f50965ff87a\") { 
 			id
-		} 
+		}
 	}"
 }

@@ -21,3 +21,19 @@ describe('Customer (Customer Note) Delete Block Test', () => {
   });
 
 });
+
+describe('Customer (Session) Delete Block Test', () => {
+
+  it('Should not allow the delete', () => {
+
+    let customerTest = new CustomerTest();
+
+    return customerTest.executeSessionBlockTest().then(results => {
+
+      return expect(results.statusCode).to.equal(200);
+
+    });
+
+  });
+
+});

@@ -15,7 +15,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
   executeCustomerNoteBlockTest(){
 
-    du.output('Execute Customer Block Test');
+    du.output('Execute Customer Note Block Test');
 
     let customer_id = uuidV4();
     let customernote_id = uuidV4();
@@ -30,6 +30,27 @@ module.exports = class CustomerTest extends IntegrationTest {
       return response;
     })
     .then(() => this.deleteCustomerNote(customernote_id))
+    .then(() => this.deleteCustomer(customer_id));
+
+  }
+
+  executeSessionBlockTest(){
+
+    du.output('Execute Session Block Test');
+
+    let customer_id = uuidV4();
+    let session_id = uuidV4();
+
+    du.info('Customer ID: '+customer_id);
+    du.info('Session ID: '+session_id);
+
+    return this.createCustomer(customer_id)
+    .then(() => this.createSession(session_id, customer_id))
+    .then(() => this.deleteCustomer(customer_id, 403))
+    .then(response => {
+      return response;
+    })
+    .then(() => this.deleteSession(session_id))
     .then(() => this.deleteCustomer(customer_id));
 
   }
@@ -54,6 +75,16 @@ module.exports = class CustomerTest extends IntegrationTest {
 
   }
 
+  createSession(session_id, customer_id){
+
+    du.output('Create Session');
+
+    let session_create_query = `mutation { createsession ( session: { id: "`+session_id+`", customer: "`+customer_id+`", campaign:"70a6689a-5814-438b-b9fd-dd484d0812f9", product_schedules:["12529a17-ac32-4e46-b05b-83862843055d"], completed: "false" } ) { id } }`;
+
+    return this.executeQuery(session_create_query);
+
+  }
+
   deleteCustomer(id, code){
 
     du.output('Delete Customer');
@@ -71,6 +102,16 @@ module.exports = class CustomerTest extends IntegrationTest {
     let customernote_delete_query = `mutation { deletecustomernote (id: "`+id+`" ) { id } }`;
 
     return this.executeQuery(customernote_delete_query, code);
+
+  }
+
+  deleteSession(id, code){
+
+    du.output('Delete Session');
+
+    let session_delete_query = 'mutation { deletesession (id: "'+id+'") { id } }';
+
+    return this.executeQuery(session_delete_query, code);
 
   }
 

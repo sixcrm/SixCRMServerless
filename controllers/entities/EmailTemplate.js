@@ -12,6 +12,24 @@ class emailTemplateController extends entityController {
 
     }
 
+    listBySMTPProvider({smtpprovider: smtpprovider, pagination: pagination}){
+
+      du.debug('List By SMTP Provider');
+
+      let query_parameters = {
+        filter_expression: '#f1 = :smtpprovider_id',
+        expression_attribute_values: {
+          ':smtpprovider_id':this.getID(smtpprovider)
+        },
+        expression_attribute_names: {
+          '#f1':'smtp_provider'
+        }
+      };
+
+      return this.list({query_parameters: query_parameters, pagination: pagination});
+
+    }
+
     getSMTPProvider(emailtemplate){
 
       du.debug('Get SMTP Provider', emailtemplate);
