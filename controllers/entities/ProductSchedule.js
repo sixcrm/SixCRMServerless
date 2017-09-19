@@ -283,6 +283,24 @@ class productScheduleController extends entityController {
 
     }
 
+    listByLoadBalancer({loadbalancer, pagination}){
+
+      du.debug('List By Load Balancer');
+
+      let query_parameters = {
+        filter_expression: '#f1 = :loadbalancer_id',
+        expression_attribute_values: {
+          ':loadbalancer_id':this.getID(loadbalancer)
+        },
+        expression_attribute_names: {
+          '#f1':'loadbalancer'
+        }
+      };
+
+      return this.list({query_parameters: query_parameters, pagination: pagination});
+
+    }
+
 }
 
 module.exports = new productScheduleController();

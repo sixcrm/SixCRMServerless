@@ -14,10 +14,32 @@ class loadBalancerController extends entityController {
 
     }
 
-    //Technical Debt: finish!
     associatedEntitiesCheck({id}){
-      //product schedule
-      return Promise.resolve([]);
+
+      du.debug('Associated Entities Check');
+
+      let return_array = [];
+
+      let data_acquisition_promises = [
+        this.executeAssociatedEntityFunction('productScheduleController', 'listByLoadBalancer', {loadbalancer:id})
+      ];
+
+      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+
+        let productschedules = data_acquisition_promises[0];
+
+        //du.warning(data_acquisition_promises);  process.exit();
+
+        if(_.has(productschedules, 'productschedules') && arrayutilities.nonEmpty(productschedules.productschedules)){
+          arrayutilities.map(productschedules.productschedules, (productschedule) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Product Schedule', object: productschedule}));
+          });
+        }
+
+        return return_array;
+
+      });
+
     }
 
 

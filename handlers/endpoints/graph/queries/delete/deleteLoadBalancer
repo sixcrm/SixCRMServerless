@@ -2,9 +2,9 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
+	mutation {
 		deleteloadbalancer (id: \"b7d15779-88e5-485c-b372-6dc9c9c7c58c\") { 
 			id
-		} 
+		}
 	}"
 }
