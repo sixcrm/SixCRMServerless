@@ -1,5 +1,4 @@
 SELECT
-  date_trunc('{{period}}',datetime)  AS period,
   coalesce(SUM(
       CASE
         WHEN processor_result = 'success' AND transaction_type = 'new' THEN 1
@@ -71,5 +70,4 @@ SELECT
 FROM f_transactions
 WHERE 1
   {{filter}}
-  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-GROUP BY date_trunc('{{period}}',datetime);
+  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}';

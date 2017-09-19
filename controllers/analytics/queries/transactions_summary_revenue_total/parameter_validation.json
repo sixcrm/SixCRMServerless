@@ -15,10 +15,10 @@
 	"properties": {
 		"start": {"$ref": "#/definitions/ISO8601"},
 		"end": {"$ref": "#/definitions/ISO8601"},
-		"period": {
-      "type": "string",
-      "enum": ["day", "week", "month", "quarter", "year"]
-    },
+		"period":{
+			"type":"string",
+			"enum": ["minute", "hour","day","week","month","quarter","year"]
+		},
 		"account":{
 			"type": "array",
 			"minItems": 1,
@@ -125,5 +125,5 @@
 			}
 		}
 	},
-	"required":["start", "end", "account", "period"]
+	"required":["start", "end", "account"]
 }
