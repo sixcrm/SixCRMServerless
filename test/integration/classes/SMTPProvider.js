@@ -25,7 +25,7 @@ module.exports = class SMTPProviderTest extends IntegrationTest {
 
     return this.createSMTPProvider(smtpprovider_id)
     .then(() => this.createEmailTemplate(emailtemplate_id, smtpprovider_id))
-    //.then(() => this.deleteSMTPProvider(smtpprovider_id, 403))
+    .then(() => this.deleteSMTPProvider(smtpprovider_id, 403))
     .then(response => {
       return response;
     })

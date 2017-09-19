@@ -29,15 +29,11 @@ class SMTPProviderController extends entityController {
 
         let emailtemplates = data_acquisition_promises[0];
 
-        du.info(data_acquisition_promises);
-
         if(_.has(emailtemplates, 'emailtemplates') && arrayutilities.nonEmpty(emailtemplates.emailtemplates)){
           arrayutilities.map(emailtemplates.emailtemplates, (emailtemplate) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Email Template', object: emailtemplate}));
           });
         }
-
-        //du.warning(return_array);  process.exit();
 
         return return_array;
 
