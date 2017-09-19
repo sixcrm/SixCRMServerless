@@ -1,4 +1,5 @@
 {
 	"title": "Amount",
-	"type": {"$ref": "../definitions/currency.json"}
+	"type": {"$ref": "../definitions/currency.json"},
+	"description": "An amount"
 }

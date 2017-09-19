@@ -3,6 +3,7 @@
   "id":"/seachparameters",
   "title": "Search Parameters",
   "type": "object",
+  "description": "Search parameters",
   "properties": {
     "filter_expression":{
       "type":"string"

@@ -1,7 +1,8 @@
 {
 	"$schema": "http://json-schema.org/schema#",
 	"id":"/affiliate",
-	"title": "affiliate",
+	"title": "Affiliate",
+	"description": "An affiliate.",
 	"type": "object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},

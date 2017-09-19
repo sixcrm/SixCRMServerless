@@ -3,6 +3,7 @@
 	"id":"/account",
 	"title": "Account",
 	"type": "object",
+	"description": "An account",
 	"properties": {
 		"id":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"name":{

@@ -3,6 +3,7 @@
 	"id":"/product",
 	"title": "Product",
 	"type": "object",
+	"description": "A product",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"name":{

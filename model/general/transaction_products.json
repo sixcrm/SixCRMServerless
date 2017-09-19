@@ -1,5 +1,6 @@
 {
 	"title": "Transaction Products",
 	"type": "array",
+	"description": "List of products in a transaction",
 	"items":{"$ref": "../entities/product.json"}
 }

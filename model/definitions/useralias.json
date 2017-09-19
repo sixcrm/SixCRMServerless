@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/useralias.json",
   "title": "User Alias Identifier",
+  "description": "Alias of a user",
   "type":"string",
   "minLength":40,
   "pattern":"[a-z0-9]*"

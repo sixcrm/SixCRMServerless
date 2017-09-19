@@ -3,6 +3,7 @@
 	"id":"/creditcard",
 	"title": "Credit Card",
 	"type": "object",
+	"description": "A credit card object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
