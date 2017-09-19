@@ -25,7 +25,7 @@ module.exports = class SMTPProviderTest extends IntegrationTest {
 
     return this.createSMTPProvider(smtpprovider_id)
     .then(() => this.createEmailTemplate(emailtemplate_id, smtpprovider_id))
-    .then(() => this.deleteSMTPProvider(smtpprovider_id, 403))
+    //.then(() => this.deleteSMTPProvider(smtpprovider_id, 403))
     .then(response => {
       return response;
     })
@@ -58,7 +58,7 @@ module.exports = class SMTPProviderTest extends IntegrationTest {
 
     du.output('Delete SMTP Provider');
 
-    let delete_query = `mutation { deletesmtpprovider ( id: "`+id+`" ) { id } }`;
+    let delete_query = `mutation { deletesmtpprovider (id: "`+id+`") { id } }`;
 
     return this.executeQuery(delete_query, code);
 
