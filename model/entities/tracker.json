@@ -3,6 +3,7 @@
 	"id":"/SixCRMTrackerObject",
 	"title": "Tracker",
 	"type": "object",
+	"description": "A tracker",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"affiliates":{

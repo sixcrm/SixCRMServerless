@@ -3,6 +3,7 @@
 	"id":"/shippingreceipt",
 	"title": "Shipping Receipt",
 	"type": "object",
+	"description": "A shipping receipt",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

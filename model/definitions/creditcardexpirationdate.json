@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/creditcardexpirationdate.json",
   "title": "CreditCardExpirationDate",
+  "description": "Credit card expiration date",
   "type": "string",
   "pattern":"^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$"
 }

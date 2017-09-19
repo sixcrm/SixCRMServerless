@@ -3,6 +3,7 @@
 	"id":"/Session",
 	"title": "Session",
 	"type": "object",
+	"description": "A session",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"customer":{"$ref": "../definitions/uuidv4.json"},

@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/address.json",
   "title": "Address",
+  "description": "An address",
   "type":"object",
   "properties": {
     "line1":{

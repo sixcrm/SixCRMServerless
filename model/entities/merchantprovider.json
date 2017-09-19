@@ -3,6 +3,7 @@
 	"id":"/MerchantProvider",
 	"title": "Merchant Provider",
 	"type": "object",
+	"description": "A merchant provider",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
