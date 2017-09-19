@@ -3,6 +3,7 @@
 	"id":"/useracl",
 	"title": "User ACL",
 	"type": "object",
+	"description": "User's access control list",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

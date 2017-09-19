@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/transactionalias.json",
   "title": "TransactionAlias",
+  "description": "Alias of a transaction",
   "type":"string",
   "anyOf":[
     {"type":"string","pattern":"^T[0-9A-Z]{9}$"}

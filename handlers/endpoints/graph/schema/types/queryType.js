@@ -209,7 +209,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, customernote){
               const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
 
-      	      return customerNoteController.listByCustomer(customernote.customer, customernote.pagination);
+      	      return customerNoteController.listByCustomer({customer: customernote.customer, pagination: customernote.pagination});
             }
         },
         productschedulelistbyproduct: {

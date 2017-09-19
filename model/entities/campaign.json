@@ -3,6 +3,7 @@
 	"id":"/campaign",
 	"title": "Campaign",
 	"type": "object",
+	"description": "A single campaign",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

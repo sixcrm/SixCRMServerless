@@ -3,6 +3,7 @@
 	"id":"/smtpprovider",
 	"title": "SMTP Provider",
 	"type": "object",
+	"description": "An SMTP provider",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

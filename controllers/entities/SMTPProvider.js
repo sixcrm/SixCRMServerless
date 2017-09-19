@@ -1,4 +1,10 @@
 'use strict';
+const _ = require('underscore');
+
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib','error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
+
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class SMTPProviderController extends entityController {
@@ -9,9 +15,34 @@ class SMTPProviderController extends entityController {
 
     }
 
-    //Technical Debt: finish!
     associatedEntitiesCheck({id}){
-      return Promise.resolve([]);
+
+      du.debug('Associated Entities Check');
+
+      let return_array = [];
+
+      let data_acquisition_promises = [
+        this.executeAssociatedEntityFunction('emailTemplateController', 'listBySMTPProvider', {smtpprovider:id})
+      ];
+
+      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+
+        let emailtemplates = data_acquisition_promises[0];
+
+        du.info(data_acquisition_promises);
+
+        if(_.has(emailtemplates, 'emailtemplates') && arrayutilities.nonEmpty(emailtemplates.emailtemplates)){
+          arrayutilities.map(emailtemplates.emailtemplates, (emailtemplate) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Email Template', object: emailtemplate}));
+          });
+        }
+
+        //du.warning(return_array);  process.exit();
+
+        return return_array;
+
+      });
+
     }
 
 }

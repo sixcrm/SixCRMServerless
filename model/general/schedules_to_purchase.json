@@ -1,5 +1,6 @@
 {
 	"title": "Schedules To Purchase",
 	"type": "array",
+	"description": "A list of schedules",
 	"items":{"$ref": "../entities/productschedule.json"}
 }

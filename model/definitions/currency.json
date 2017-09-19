@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/currency.json",
   "title": "Currency",
+  "description": "Amount of money.",
   "anyOf":[
     {
       "type":"string",

@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/useridentifier.json",
   "title": "UserIdentifier",
+  "description": "A user identifier",
   "type":"string",
   "anyOf":[
     {"type":"string","format":"email"}

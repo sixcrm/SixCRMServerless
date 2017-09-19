@@ -3,6 +3,7 @@
 	"id":"/customer",
 	"title": "Customer",
 	"type": "object",
+	"description": "A customer",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

@@ -15,12 +15,46 @@ class customerController extends entityController {
 
     }
 
+    associatedEntitiesCheck({id}){
+
+      du.debug('Associated Entities Check');
+
+      let return_array = [];
+
+      let data_acquisition_promises = [
+        this.executeAssociatedEntityFunction('customerNoteController', 'listByCustomer', {customer:id}),
+        this.executeAssociatedEntityFunction('sessionController', 'listSessionsByCustomerID', {id:id})
+      ];
+
+      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+
+        let customernotes = data_acquisition_promises[0];
+        let sessions = data_acquisition_promises[1];
+
+        if(_.has(customernotes, 'customernotes') && arrayutilities.nonEmpty(customernotes.customernotes)){
+          arrayutilities.map(customernotes.customernotes, (customernote) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Customer Note', object: customernote}));
+          });
+        }
+
+        if(_.has(sessions, 'sessions') && arrayutilities.nonEmpty(sessions.sessions)){
+          arrayutilities.map(sessions.sessions, (session) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Session', object: session}));
+          });
+        }
+
+        return return_array;
+
+      });
+
+    }
+
     listByCreditCardID({id, pagination}){
 
-      du.debug('List By Credit Card ID');
+      du.debug('List By Credit Card ID')
 
       let scan_parameters = {
-          filter_expression: '#f1 = :credit_card_id',
+          filter_expression: 'contains(#f1, :credit_card_id)',
           expression_attribute_names:{
               '#f1': 'creditcards',
           },

@@ -3,6 +3,7 @@
 	"id":"/rebill",
 	"title": "Rebill",
 	"type": "object",
+	"description": "A rebill",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

@@ -3,6 +3,7 @@
 	"id":"/productschedule",
 	"title": "Product Schedule",
 	"type": "object",
+	"description": "A product schedule",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"name":{

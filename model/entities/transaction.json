@@ -3,6 +3,7 @@
 	"id":"/Transaction",
 	"title": "Transaction",
 	"type": "object",
+	"description": "A transaction",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

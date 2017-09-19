@@ -87,7 +87,7 @@ module.exports = class workerController {
 			//let's add a hydration method here...
             return rebillController.get({id: id}).then((rebill) => {
 
-                return this.validateRebill(rebill);
+                return this.validateRebill(rebill).then(() => rebill);
 
             });
 
@@ -103,7 +103,7 @@ module.exports = class workerController {
 			//let's add a hydration method here...
             return sessionController.get({id: id}).then((session) => {
 
-                return this.validateSession(session);
+                return this.validateSession(session).then(() => session);
 
             });
 

@@ -1,8 +1,9 @@
 {
 	"$schema": "http://json-schema.org/schema#",
 	"id":"/fulfillmentprovider",
-	"title": "fulfillment provider",
+	"title": "Fulfillment provider",
 	"type": "object",
+	"description": "A fulfillment provider",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},

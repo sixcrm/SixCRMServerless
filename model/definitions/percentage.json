@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/percentage.json",
   "title": "Percentage",
+  "description": "Floating-point number from 0 to 1",
   "type":"number",
   "minimum":0,
   "maximum":1,

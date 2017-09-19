@@ -22,6 +22,7 @@ class affiliateController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
+        //Technical Debt:  Affiliate allow is not being tested.
         this.executeAssociatedEntityFunction('campaignController', 'listByAffiliateAllow', {affiliate:id}),
         this.executeAssociatedEntityFunction('campaignController', 'listByAffiliateDeny', {affiliate:id}),
         this.executeAssociatedEntityFunction('sessionController', 'listSessionsByAffiliate', {affiliate:id}),

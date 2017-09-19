@@ -3,6 +3,7 @@
 	"id":"/user",
 	"title": "User",
 	"type": "object",
+	"description": "A user",
 	"properties": {
 		"id":{"$ref": "../definitions/useridentifier.json"},
 		"name":{

@@ -2,5 +2,6 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/timezone.json",
   "title": "Timezone",
+  "description": "A timezone",
   "type":"string"
 }
