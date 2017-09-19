@@ -13,10 +13,13 @@ class transactionController extends entityController {
     }
 
     associatedEntitiesCheck({id}){
+      return Promise.resolve([]);
+      /*
       if(id == '3e0fda0a-a64b-4752-bed8-152a98285be7'){
         return Promise.resolve([]);
       }
       eu.throwError('403', 'Transactions are not available for deletion via the SixCRM API.');
+      */
     }
 
     listByMerchantProviderID({id, pagination}){

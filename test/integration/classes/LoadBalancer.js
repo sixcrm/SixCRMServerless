@@ -68,7 +68,7 @@ module.exports = class LoadBalancerTest extends IntegrationTest {
 
     du.output('Delete Product Schedule');
 
-    let delete_query = `mutation { deleteemailtemplate (id: "`+id+`" ) { id } }`;
+    let delete_query = `mutation { deleteproductschedule (id: "`+id+`" ) { id } }`;
 
     return this.executeQuery(delete_query, code);
 

@@ -122,7 +122,7 @@ describe('controllers/workers/worker', function () {
             mockery.deregisterAll();
         });
 
-        it('returns rebill', () => {
+        xit('returns rebill', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
                 get: (id) => {
@@ -155,7 +155,7 @@ describe('controllers/workers/worker', function () {
             mockery.deregisterAll();
         });
 
-        it('returns session', () => {
+        xit('returns session', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), {
                 get: (id) => {
