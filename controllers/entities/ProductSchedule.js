@@ -15,11 +15,40 @@ class productScheduleController extends entityController {
 
     }
 
-    //Technical Debt: finish!
-    //Rebill
     associatedEntitiesCheck({id}){
-      //campaign
-      return Promise.resolve([]);
+
+      du.debug('Associated Entities Check');
+
+      let return_array = [];
+
+      let data_acquisition_promises = [
+        this.executeAssociatedEntityFunction('campaignController', 'listByAssociations', {id: id, field: 'productschedules'}),
+        this.executeAssociatedEntityFunction('rebillController', 'listByAssociations', {id: id, field: 'product_schedules'})
+      ];
+
+      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+
+        let campaigns = data_acquisition_promises[0];
+        let rebills = data_acquisition_promises[1];
+
+        if(_.has(campaigns, 'campaigns') && arrayutilities.nonEmpty(campaigns.campaigns)){
+          arrayutilities.map(campaigns.campaigns, (campaign) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Campaign', object: campaign}));
+          });
+        }
+
+        if(_.has(rebills, 'rebills') && arrayutilities.nonEmpty(rebills.rebills)){
+          arrayutilities.map(rebills.rebills, (rebill) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Rebill', object: rebill}));
+          });
+        }
+
+        //du.warning(return_array); process.exit();
+
+        return return_array;
+
+      });
+
     }
 
     getCampaigns(args){

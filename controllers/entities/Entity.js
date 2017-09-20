@@ -16,6 +16,45 @@ const entityUtilitiesController = global.SixCRM.routes.include('controllers','en
 
 module.exports = class entityController extends entityUtilitiesController {
 
+
+  //NEW
+    listByAssociations({id, field, pagination}){
+
+      du.debug('List By Association');
+
+      let scan_parameters = {
+        filter_expression: 'contains(#f1, :id)',
+        expression_attribute_names:{
+            '#f1': field
+        },
+        expression_attribute_values: {
+            ':id': id
+        }
+      };
+
+      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
+
+    }
+
+ //NEW
+    listByAssociation({id, field, pagination}){
+
+      du.debug('List By Associations');
+
+      let query_parameters = {
+        filter_expression: '#f1 = :id',
+        expression_attribute_values: {
+          ':id':id
+        },
+        expression_attribute_names: {
+          '#f1':field
+        }
+      };
+
+      return this.list({query_parameters: query_parameters, pagination: pagination});
+
+    }
+
     //Technical Debt:  The primary key definition should be set in the specific Entity class
     constructor(name){
 
