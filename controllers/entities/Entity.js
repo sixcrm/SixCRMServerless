@@ -746,21 +746,21 @@ module.exports = class entityController extends entityUtilitiesController {
 
         }else{
 
-            entity = this.assignAccount(entity);
+          entity = this.assignAccount(entity);
 
-            return this.exists({entity: entity, primary_key: primary_key}).then((exists) => {
+          return this.exists({entity: entity, primary_key: primary_key}).then((exists) => {
 
-                if(exists === false){
+            if(exists === false){
 
-                    return this.create({entity: entity, primary_key: primary_key});
+              return this.create({entity: entity, primary_key: primary_key});
 
-                }else{
+            }else{
 
-                    return this.update({entity: entity, primary_key: primary_key});
+              return this.update({entity: entity, primary_key: primary_key});
 
-                }
+            }
 
-            });
+          });
 
         }
 

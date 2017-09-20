@@ -31,38 +31,43 @@ class userACLController extends entityController {
 
     }
 
-    getACLByUser(user){
+    listByUser({user: user}){
+
+      du.debug('List By User');
+
+      return this.queryBySecondaryIndex({field: 'user', index_value: this.getID(user), index_name: 'user-index'});
+
+    }
+
+    //Technical Debt:  Deprecated
+    getACLByUser({user: user}){
 
       du.debug('getACLByUser');
 
-      return this.queryBySecondaryIndex({field: 'user', index_value: user, index_name: 'user-index'}).then((result) => {
-        return this.getResult(result);
+      return this.queryBySecondaryIndex({field: 'user', index_value: this.getID(user), index_name: 'user-index'});
+
+    }
+
+    create({entity, primary_key}) {
+
+      du.debug('UserACLController Create');
+
+      return super.create({entity: entity, primary_key: primary_key}).then((acl) => {
+        return this.createNotification(acl, 'created', 'You have been assigned to a new account.');
       });
 
     }
 
-    //Technical Debt:  This is pretty gross...
-    create({entity, primary_key}) {
+    update({entity, primary_key}) {
 
-      return super.create({entity: entity, primary_key: primary_key}).then((acl) => {
-        du.debug(acl)
-        return this.createNotification(acl, 'created', 'You have been assigned to a new account.').then(() => {
-          return acl;
-        }).catch(() => {
-          return acl;
-       });
-     });
+      du.debug('UserACLController Update');
 
-    }
+      return super.update({entity: entity, primary_key: primary_key}).then((acl) => {
 
-    //Technical Debt:  refactor
-    update(acl, primary_key) {
+        this.createNotification(acl, 'updated', 'Your role on account has been updated.');
 
-      return super.update({entity: acl, primary_key: primary_key})
-          .then((acl) =>
-              this.createNotification(acl, 'updated', 'Your role on account has been updated.')
-                  .then(() => acl)
-                  .catch(() => acl));
+      });
+
     }
 
     delete(acl, primary_key) {
@@ -147,7 +152,9 @@ class userACLController extends entityController {
 
       return new Promise((resolve, reject) => {
 
-          this.getACLByUser(useracl.user).then((acl) => {
+          this.getACLByUser({user: useracl.user}).then((useracls) => {
+
+              let acl = this.getResult(useracls);
 
               let identified_acl = false;
 

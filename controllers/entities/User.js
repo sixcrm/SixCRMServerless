@@ -18,8 +18,41 @@ class userController extends entityController {
     }
 
     //Technical Debt: finish!
+    //useracl
+    //usersigningstring
+    //usersetting
+    //userdevicetoken
+    //notificationread
+    //notification
+    //customernote
     associatedEntitiesCheck({id}){
-      return Promise.resolve([]);
+
+      du.debug('Associated Entities Check');
+
+      let return_array = [];
+
+      let data_acquisition_promises = [
+        this.executeAssociatedEntityFunction('userACLController', 'listByUser', {user: id})
+      ];
+
+      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+
+        let useracls = data_acquisition_promises[0];
+
+        //du.warning(data_acquisition_promises); process.exit();
+
+        if(_.has(useracls, 'useracls') && arrayutilities.nonEmpty(useracls.useracls)){
+          arrayutilities.map(useracls.useracls, (useracl) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Campaign', object: useracl}));
+          });
+        }
+
+        //du.warning(return_array); process.exit();
+
+        return return_array;
+
+      });
+
     }
 
     getUserByAlias(user_alias){
@@ -376,7 +409,9 @@ class userController extends entityController {
           return user.acl;
       }
 
-      return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', user.id);
+      return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', {user: user.id}).then(useracls => {
+        return this.getResult(useracls);
+      });
 
     }
 

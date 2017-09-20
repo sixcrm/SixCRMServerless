@@ -8,46 +8,7 @@
         "AttributeDefinitions": [{
             "AttributeName": "id",
             "AttributeType": "S"
-        },{
-  				"AttributeName": "affiliates",
-  				"AttributeType": "S"
-  			},
-        {
-          "AttributeName": "campaigns",
-          "AttributeType": "S"
         }],
-        "GlobalSecondaryIndexes": [{
-          "IndexName": "affiliate-index",
-          "KeySchema": [
-           {
-              "AttributeName": "affiliates",
-              "KeyType": "HASH"
-           }
-          ],
-          "Projection": {
-           "ProjectionType": "ALL"
-          },
-          "ProvisionedThroughput": {
-           "ReadCapacityUnits": 1,
-           "WriteCapacityUnits": 1
-          }
-        },
-      {
-        "IndexName": "campaign-index",
-        "KeySchema": [
-         {
-            "AttributeName": "campaigns",
-            "KeyType": "HASH"
-         }
-        ],
-        "Projection": {
-         "ProjectionType": "ALL"
-        },
-        "ProvisionedThroughput": {
-         "ReadCapacityUnits": 1,
-         "WriteCapacityUnits": 1
-        }
-      }],
         "ProvisionedThroughput": {
             "ReadCapacityUnits": 1,
             "WriteCapacityUnits": 1
