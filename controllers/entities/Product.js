@@ -48,6 +48,7 @@ class ProductController extends entityController {
 
     }
 
+    //Technical Debt:  Replace with EntityController.listByAssociation
     listByFulfillmentProvider({fulfillment_provider, pagination}){
 
       du.debug('List By Fulfillment Provider');

@@ -361,6 +361,7 @@ class campaignController extends entityController {
 
     }
 
+    //Technical Debt:  Replace with EntityController.listByAssociations
     listByAffiliateAllow({affiliate, pagination}){
 
       du.debug('List by Affiliate Allow');
@@ -381,6 +382,7 @@ class campaignController extends entityController {
 
     }
 
+    //Technical Debt:  Replace with EntityController.listByAssociations
     listByAffiliateDeny({affiliate, pagination}){
 
       du.debug('List by Affiliate Deny');

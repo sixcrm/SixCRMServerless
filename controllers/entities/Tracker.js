@@ -15,6 +15,7 @@ class trackerController extends entityController {
 
     }
 
+    //Technical Debt:  Replace with EntityController.listByAssociations
     listByCampaignID({id, pagination}){
 
       du.debug('Get By Campaign ID');
@@ -61,6 +62,7 @@ class trackerController extends entityController {
 
     }
 
+    //Technical Debt:  Replace with EntityController.listByAssociations
     listByAffiliateID({affiliate, pagination}){
 
       du.debug('List By Affiliate ID');
