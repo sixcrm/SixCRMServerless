@@ -11,7 +11,6 @@ SELECT
   null as cycle,
   null as recycle,
   null as gateway_response,
-  null as mid_Name,
   null as transaction_id_gateway
 FROM f_transactions ft
 WHERE 1

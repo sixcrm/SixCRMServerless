@@ -5,7 +5,7 @@
 	"type": "object",
 	"description": "A single campaign",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
+		"id":{"$ref": "../definitions/uuidv4.json", "description": "ID of campaign"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"allow_prepaid":{
 			"type":"boolean"

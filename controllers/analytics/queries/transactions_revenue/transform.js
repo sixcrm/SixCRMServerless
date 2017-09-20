@@ -28,7 +28,6 @@ module.exports = function(results, parameters){
                 cycle: result.cycle,
                 recycle: result.recycle,
                 gateway_response: result.gateway_response,
-                mid_name: result.mid_name,
                 transaction_id_gateway: result.transaction_id_gateway
 
             });

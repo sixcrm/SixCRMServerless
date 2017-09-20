@@ -5,8 +5,8 @@
 	"description": "An affiliate.",
 	"type": "object",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"id":{"$ref": "../definitions/uuidv4.json", "description": "ID of affiliate"},
+		"account":{"$ref": "../definitions/sixcrmidentifier.json", "description": "Account of owner"},
 		"name":{
 			"type": "string"
 		},
