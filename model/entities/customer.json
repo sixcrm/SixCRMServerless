@@ -5,7 +5,7 @@
 	"type": "object",
 	"description": "A customer",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
+		"id":{"$ref": "../definitions/uuidv4.json", "description": "ID of customer"},
 		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 		"email":{
 			"type":"string",
@@ -19,8 +19,8 @@
 			"type":"string",
 			"minLength": 1
 		},
-		"phone":{"$ref": "../definitions/phone.json"},
-		"address":{"$ref": "../definitions/address.json"},
+		"phone":{"$ref": "../definitions/phone.json", "description": "Customer phone number"},
+		"address":{"$ref": "../definitions/address.json", "description": "Customer address"},
 		"creditcards":{
 			"type":"array",
 			"items":{"$ref": "../definitions/uuidv4.json"}
