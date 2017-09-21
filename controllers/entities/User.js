@@ -18,7 +18,6 @@ class userController extends entityController {
     }
 
     //Technical Debt: finish!
-    //useracl
     //usersigningstring
     //usersetting
     //userdevicetoken
