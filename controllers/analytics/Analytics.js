@@ -260,6 +260,20 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    getTransactionReport(parameters){
+
+        du.debug('Get Transaction Report');
+
+        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
+
+        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
+
+        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
+
+        return this.getResults('transactions_summary_revenue', parameters, this.default_query_filters);
+
+    }
+
     getCampaignDelta(parameters){
 
         du.debug('Get Campaign Delta');

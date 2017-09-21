@@ -36,8 +36,7 @@ module.exports = function(results, parameters){
 
         let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
 
-        let return_object = {events:result_array, pagination: pagination_object};
-
+        let return_object = {periods:result_array, pagination: pagination_object};
 
         return resolve(return_object);
 

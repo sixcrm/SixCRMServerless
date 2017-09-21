@@ -1,0 +1,24 @@
+{
+	"requestContext":"{\"authorizer\":{\"user\":\"admin.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
+	"body":"
+	query {
+		transactionreport (analyticsfilter:{start:\"2017-08-01T17:23:43.043Z\", end:\"2017-09-02T17:23:43.043Z\"}, pagination:{order:\"asc\", limit:2, offset:20}) {
+			periods {
+				period,
+	      sale_count,
+	      sale_revenue,
+	      rebill_count,
+	      rebill_revenue,
+	      refund_expenses,
+	      refund_count,
+	      gross_revenue,
+	      declines_count,
+	      declines_revenue,
+	      chargeback_count,
+	      current_active_customer,
+	      count_alert_count
+			}
+		}
+	}"
+}
