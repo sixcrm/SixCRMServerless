@@ -1,7 +1,8 @@
 'use strict';
 let _ = require('underscore');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
+let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = function(results, parameters){
 
@@ -9,34 +10,41 @@ module.exports = function(results, parameters){
 
     return new Promise((resolve, reject) => {
 
-        let result_array = [];
-
         du.info(results);
 
-        results.forEach((result) => {
+        let return_array = [];
 
-            result_array.push({
-              session:result.session,
-      			  type: result.type,
-      			  datetime: result.datetime,
-      			  account: result.account,
-      			  campaign: result.campaign,
-      			  product_schedule: result.product_schedule,
-      			  affiliate: result.affiliate,
-      			  subaffiliate_1: result.subaffiliate_1,
-      			  subaffiliate_2: result.subaffiliate_2,
-      			  subaffiliate_3: result.subaffiliate_3,
-      			  subaffiliate_4: result.subaffiliate_4,
-      			  subaffiliate_5: result.subaffiliate_5
+        if(_.isArray(results) && results.length > 0){
+
+            results.forEach((result) => {
+
+              return_array.push({
+                affiliate: result.affiliate,
+                count_click: result.count_click,
+                count_partials: result.count_partials,
+                partials_percent: result.partials_percent,
+                decline_count: result.decline_count,
+                declines_percent: result.declines_percent,
+                count_sales: result.count_sales,
+                sales_percent: result.sales_percent,
+                count_upsell: result.count_upsell,
+                upsell_percent: result.upsell_percent,
+                sum_upsell: result.sum_upsell,
+                sum_amount: result.sum_amount,
+                all_sum_amount: result.all_sum_amount
+              });
+
             });
 
-        });
+        }
 
-        parameters['count'] = results.length;
+        du.info(return_array);
+
+        parameters['count'] = return_array.length;
 
         let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
 
-        let return_object = {events:result_array, pagination: pagination_object};
+        let return_object = {affiliates:return_array, pagination: pagination_object};
 
         return resolve(return_object);
 
