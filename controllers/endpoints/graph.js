@@ -67,20 +67,22 @@ module.exports = class graphController extends authenticatedController {
 
     acquireQuery(event){
 
-        du.debug('Acquire Query');
+      du.debug('Acquire Query');
 
-        this.query = this.sanitizeQuery(event.body);
+      this.query = this.sanitizeQuery(event.body);
 
-        return Promise.resolve(event);
+      return Promise.resolve(event);
 
     }
 
     //Technical Debt:  This is largely inadequate...
     sanitizeQuery(query){
 
-        du.debug('Sanitize Query');
+      du.debug('Sanitize Query');
 
-        return query.replace(/[\n\r\t]+/g, '');
+      du.info(query);
+
+      return query.replace(/[\n\r\t]+/g, '');
 
     }
 
