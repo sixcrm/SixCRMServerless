@@ -41,6 +41,51 @@ class SMTPProviderController extends entityController {
 
     }
 
+    validateSMTPProvider({email, smtpprovider}){
+
+      du.debug('Validate SMTP Provider');
+
+      return this.get({id: smtpprovider}).then(smtpprovider => {
+
+        if(_.isNull(smtpprovider)){
+          eu.throwError('notfound', 'The SMTP Provider specified was not found.');
+        }
+
+        const SMTPProviderProvider = global.SixCRM.routes.include('providers', 'SMTP.js');
+        let smtp = new SMTPProviderProvider(smtpprovider);
+
+        let send_object = {
+          sender_email: global.SixCRM.configuration.site_config.ses.default_sender_email,
+          sender_name: global.SixCRM.configuration.site_config.ses.default_sender_name,
+          subject:"Testing SMTP Provider",
+          body:  "This is a test of the SMTP provider ID :"+smtpprovider.id,
+          recepient_emails:[email]
+        };
+
+        let smtp_response = null;
+
+        return smtp.send(send_object).then(smtp_response => {
+
+          return {
+            send_properties: send_object,
+            smtp_response:smtp_response,
+            smtpprovider: smtpprovider
+          };
+
+        }).catch(error => {
+
+          return {
+            send_properties: send_object,
+            smtp_response: {errormessage: error.message, error: error},
+            smtpprovider: smtpprovider
+          };
+
+        });
+
+      });
+
+    }
+
 }
 
 module.exports = new SMTPProviderController();

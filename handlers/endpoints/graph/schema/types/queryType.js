@@ -109,7 +109,6 @@ let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
 let listBINsType =  require('./analytics/listBINsType');
 
-
 let listActivityType = require('./analytics/listActivityType');
 
 let eventsByFacetType =  require('./analytics/eventsByFacetType');

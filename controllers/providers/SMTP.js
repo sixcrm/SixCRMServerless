@@ -96,7 +96,11 @@ module.exports = class SMTPProvider {
 
         return this.connection.send(send_object).then((send_result) => {
 
-            return Promise.resolve(send_result);
+          return Promise.resolve(send_result);
+
+        }).catch(error => {
+
+          return Promise.reject(error);
 
         });
 

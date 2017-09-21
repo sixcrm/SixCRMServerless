@@ -86,6 +86,9 @@ let sessionType = require('./session/sessionType');
 
 let identifierInputType = require('./general/identifierInputType');
 
+let SMTPValidationInputType = require('./smtpvalidation/SMTPValidationInputType')
+let SMTPValidationType = require('./smtpvalidation/SMTPValidationType');
+
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
@@ -111,12 +114,24 @@ module.exports.graphObj = new GraphQLObjectType({
             type: userInviteType.graphObj,
             description: 'Invites a new user to the site.',
             args: {
-                userinvite: { type: userInviteInputType .graphObj}
+                userinvite: { type: userInviteInputType.graphObj}
             },
             resolve: (value, userinvite) => {
                 const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
                 return userController.invite(userinvite.userinvite);
+            }
+        },
+        smtpvalidation: {
+            type: SMTPValidationType.graphObj,
+            description:  'Validates a SMTP Provider configuration',
+            args: {
+              smtpvalidation: { type: SMTPValidationInputType.graphObj }
+            },
+            resolve: function(root, args){
+              const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+
+              return SMTPProviderController.validateSMTPProvider(args.smtpvalidation);
             }
         },
         //Note: Fix
