@@ -11,7 +11,7 @@ SELECT fe.affiliate,
        sum_upsell,
        sum_amount,
        sum(sum_amount) over () AS all_sum_amount,
-       fe.{{period}}
+       fe.{{period}} AS {{period}}
 FROM
   (SELECT affiliate,
           count(CASE
