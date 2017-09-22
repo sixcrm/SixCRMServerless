@@ -262,7 +262,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
     getTransactionReport(parameters){
 
-        du.debug('Get Transaction Report');
+        du.debug('Get Transaction Report Revenue Summary');
 
         let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
 
@@ -270,7 +270,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
-        return this.getResults('transactions_summary_revenue', parameters, this.default_query_filters);
+        return this.getResults('transactions_revenue_summary', parameters, this.default_query_filters);
 
     }
 
