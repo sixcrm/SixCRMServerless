@@ -9,9 +9,7 @@ SELECT
   ft.processor_result,
   ft.transaction_type,
   null as cycle,
-  null as recycle,
-  null as gateway_response,
-  null as transaction_id_gateway
+  null as recycle
 FROM f_transactions ft
 WHERE 1
   {{filter}}

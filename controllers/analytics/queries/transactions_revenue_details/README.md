@@ -1,4 +1,4 @@
-# Transactions paging tied to the summary transactions reports
+# Transactions paging query tied to the transactions summary (revenue) report
 
 ____
 

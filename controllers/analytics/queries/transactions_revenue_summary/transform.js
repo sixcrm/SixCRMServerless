@@ -26,8 +26,7 @@ module.exports = function(results, parameters){
               declines_count: result.declines_count,
               declines_revenue: result.declines_revenue,
               sale_revenue: result.sale_revenue,
-              sale_count: result.sale_count,
-              period: result.period,
+              sale_count: result.sale_count
             });
 
         });

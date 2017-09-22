@@ -1,4 +1,4 @@
-# Aggregation by transaction summary variables for revenue total result 
+# Aggregation by transaction summary tied to the transactions summary (revenue) report
 
 ____
 
