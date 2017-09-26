@@ -4,7 +4,7 @@
 
 * Part of the `Affiliate Report`
 
-Mockup of the report, tab **Affiliate details** :
+Mockup of the report, tab **Affiliate Total** :
 https://projects.invisionapp.com/share/W7DLUDFSH#/screens
 
 ____

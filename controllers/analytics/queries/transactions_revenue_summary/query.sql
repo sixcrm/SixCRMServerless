@@ -1,5 +1,5 @@
 SELECT
-  date_trunc('{{period}}',datetime)  AS period,
+  date_trunc('day',datetime)  AS period,
   coalesce(SUM(
       CASE
         WHEN processor_result = 'success' AND transaction_type = 'new' THEN 1
@@ -67,9 +67,9 @@ SELECT
       END
   ),0) AS chargeback_count,
   count(distinct case when transaction_type='new' then customer else null end) as current_active_customer,
-  0 count_alert_count
+  0 count_alert_count  
 FROM f_transactions
 WHERE 1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-GROUP BY date_trunc('{{period}}',datetime);
+GROUP BY date_trunc('day',datetime);

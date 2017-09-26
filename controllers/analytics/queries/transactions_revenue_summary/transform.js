@@ -18,17 +18,22 @@ module.exports = function(results, parameters){
         results.forEach((result) => {
 
             result_array.push({
-              gross_revenue:result.gross_revenue,
-              gross_count: result.gross_count,
-              chargeback_count: result.chargeback_count,
+              period: result.period,
+              sale_count: result.sale_count,
+              sale_revenue: result.sale_revenue,
+              rebill_count: result.rebill_count,
+              rebill_revenue: result.rebill_revenue,
               refund_expenses: result.refund_expenses,
               refund_count: result.refund_count,
+              gross_revenue: result.gross_revenue,
               declines_count: result.declines_count,
               declines_revenue: result.declines_revenue,
-              sale_revenue: result.sale_revenue,
-              sale_count: result.sale_count,
-              period: result.period,
+              chargeback_count: result.chargeback_count,
+              current_active_customer: result.current_active_customer,
+	            count_alert_count: result.count_alert_count
             });
+
+
 
         });
 

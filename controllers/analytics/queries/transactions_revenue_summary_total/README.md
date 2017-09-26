@@ -1,6 +1,33 @@
+<<<<<<< HEAD:controllers/analytics/queries/transactions_summary_revenue_total/README.md
 # Aggregation by transaction summary variables for revenue total result
 # This is used as a non-paginated aggregated total query at top level of the report.
+=======
+# Aggregation by transaction summary variables tied to the transactions Summary (revenue) report
+
+26.09.2017 A.Zelen
+
+* Part of the `Summary Report`
+
+Mockup of the report, tab **Summary details** total row :
+https://projects.invisionapp.com/share/29DIKG1A3#/screens/253636310_Summary_Report_Breakdown_UI_Stepper_Copy_5
+
+>>>>>>> 8a3491a9d964b6a88c99f52ef4432f26e02a5336:controllers/analytics/queries/transactions_revenue_summary_total/README.md
 ____
+
+## Required query output:
+
+* `Sales Count`
+* `Sales Revenue`
+* `Rebill Count`
+* `Rebill Revenue`
+* `Refund Count`
+* `Refund Expenses`
+* `Decline Count`
+* `Declined Revenue`
+* `Gross Revenue`
+* `Chargeback Count`
+* `Current Active Customer` - I suspect the definition
+* `Count	Alert Count` - Does **not exist** in RS
 
 ## Arguments:
 
