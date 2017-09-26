@@ -48,17 +48,13 @@
 			"properties":{
 				"name":{
 					"type":"string",
-					"enum":["NMI"]
+					"enum":["NMI","Innovio"]
 				},
 				"username":{
 					"type":"string"
 				},
 				"password":{
 					"type":"string"
-				},
-				"endpoint":{
-					"type":"string",
-					"format":"uri"
 				},
 				"processor_id":{
 					"type":"string"
@@ -67,7 +63,7 @@
 					"type":"string"
 				}
 			},
-			"required":["name","username","password","endpoint"]
+			"required":["name"]
 		},
 		"enabled":{
 			"type":"boolean"

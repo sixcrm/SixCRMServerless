@@ -237,8 +237,9 @@ class createOrderController extends transactionEndpointController{
 
       return ph.process({customer: info.customer, productschedule: productschedule, amount:info.amount}).then((result) => {
 
-        //validate response
-        if(!_.has(result, "message") || result.message !== 'Success' || !_.has(result, "results") || !_.has(result.results, 'response') || result.results.response !== '1'){
+        //Technical Debt: This is incomplete (and deprecated)
+        //Critical:  Resolve for Declines and Errors!
+        if(!_.has(result, "code") || result.code !== 'success' || !_.has(result, "result")){
 
           eu.throwError('server', 'The processor didn\'t approve the transaction: ' + result.message);
 

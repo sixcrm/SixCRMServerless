@@ -1,5 +1,5 @@
-# Aggregation by transaction summary variables for revenue total result 
-
+# Aggregation by transaction summary variables for revenue total result
+# This is used as a non-paginated aggregated total query at top level of the report.
 ____
 
 ## Arguments:

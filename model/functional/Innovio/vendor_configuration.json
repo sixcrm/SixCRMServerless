@@ -1,0 +1,13 @@
+{
+	"title": "Innovio Configuration",
+	"type": "object",
+	"properties": {
+		"api_version":{
+      "type":"string"
+    },
+		"response_format":{
+      "type":"string"
+    }
+	},
+	"required":["api_version", "response_format"]
+}

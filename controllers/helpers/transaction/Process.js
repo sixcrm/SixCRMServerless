@@ -841,47 +841,19 @@ module.exports = class Process{
 
     instantiateGateway(){
 
-      du.debug('Process Transaction');
+      du.debug('Instantiate Gateway');
 
       if(!_.has(this, 'selected_merchantprovider')){
         eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider property');
       }
 
-      du.warning(this.selected_merchantprovider);
-
-      if(!_.has(this.selected_merchantprovider, 'gateway')){
-        eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider.gateway property');
-      }
-
-      if(!_.has(this.selected_merchantprovider.gateway, 'username')){
-        eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider.gateway.username property');
-      }
-
-      if(!_.has(this.selected_merchantprovider.gateway, 'password')){
-        eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider.gateway.password property');
-      }
-
-      if(!_.has(this.selected_merchantprovider.gateway, 'name')){
-        eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider.gateway.name property');
-      }
-
-      if(!_.has(this.selected_merchantprovider.gateway, 'endpoint')){
-        eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider.gateway.endpoint property');
-      }
-
       let gateway = null;
 
-     	if(this.selected_merchantprovider.gateway.name == "NMI"){
+     	if(this.selected_merchantprovider.gateway.name){
 
-        var NMIController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
+        let GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+this.selected_merchantprovider.gateway.name+'/handler.js');
 
-        var _nmi = new NMIController({
-          username: this.selected_merchantprovider.gateway.username,
-          password: this.selected_merchantprovider.gateway.password,
-          endpoint: this.selected_merchantprovider.gateway.endpoint
-        });
-
-        gateway = _nmi;
+        gateway = new GatewayController(this.selected_merchantprovider.gateway);
 
       }else{
 

@@ -1,5 +1,5 @@
 # Aggregation by transaction summary variables for revenue aggregated by period
-
+# This is the top-level query for the Transaction Summary Report
 ____
 
 ## Arguments:

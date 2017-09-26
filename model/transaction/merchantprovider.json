@@ -83,23 +83,10 @@
 			"properties":{
 				"name":{
 					"type":"string",
-					"enum":["NMI"]
-				},
-				"username":{
-					"type":"string"
-				},
-				"password":{
-					"type":"string"
-				},
-				"endpoint":{
-					"type":"string",
-					"format":"uri"
-				},
-				"additional":{
-					"type":"string"
+					"enum":["NMI","Innovio"]
 				}
 			},
-			"required":["name","username","password","endpoint"]
+			"required":["name"]
 		},
 		"enabled":{
 			"type":"boolean"

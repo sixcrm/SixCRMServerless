@@ -13,3 +13,4 @@ providers: /controllers/providers/
 tabledefinitions: /model/dynamodb/tables/
 seeds: /model/dynamodb/seeds/
 analytics: /controllers/analytics/
+vendors: /controllers/vendors/

@@ -83,8 +83,6 @@ function getValidMerchantProviders(){
   			name:"NMI",
   			username:"demo",
   			password:"password",
-  			endpoint:"https://secure.networkmerchants.com/api/transact.php",
-  			additional:"{\"processor_id\":123}"
   		},
   		allow_prepaid:true,
   		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
@@ -120,9 +118,7 @@ function getValidMerchantProviders(){
   		gateway: {
   			name:"NMI",
   			username:"demo",
-  			password:"password",
-  			endpoint:"https://secure.networkmerchants.com/api/transact.php",
-  			additional:"{\"processor_id\":123}"
+  			password:"password"
   		},
   		allow_prepaid:true,
   		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
@@ -1717,8 +1713,9 @@ describe('helpers/transaction/Process.spec.js', () => {
         }
         process(parameters){
           return {
-            message: 'Success',
-            results:{
+            code:'success',
+            message: 'SUCCESS',
+            result:{
               response: '1',
               responsetext: 'SUCCESS',
               authcode: '123456',
@@ -1740,9 +1737,10 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       return ph.process(parameters).then((response) => {
 
-        expect(response.message).to.equal('Success');
+        expect(response.code).to.equal('success');
+        expect(response.message).to.equal('SUCCESS');
         expect(response.merchant_provider).to.equal(merchantproviders[1].id);
-        expect(response.results).to.include({
+        expect(response.result).to.include({
           response: '1',
           responsetext: 'SUCCESS',
           authcode: '123456',

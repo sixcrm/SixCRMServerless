@@ -1,4 +1,5 @@
 # Transactions paging tied to the summary transactions reports
+# This is the second-level query for the Transaction Summary Report
 
 ____
 

@@ -4,20 +4,18 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 
-
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities');
-const NMIController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/NMI.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class merchantProviderController extends entityController {
 
     constructor(){
-      //load balancer, transactions
+
       super('merchantprovider');
+
     }
 
-    //Technical Debt: finish!
     associatedEntitiesCheck({id}){
 
       du.debug('Associated Entities Check');
@@ -33,8 +31,6 @@ class merchantProviderController extends entityController {
 
         let loadbalancers = data_acquisition_promises[0];
         let transactions = data_acquisition_promises[1];
-
-        //du.warning(loadbalancers, transactions); process.exit();
 
         if(arrayutilities.nonEmpty(loadbalancers)){
           arrayutilities.map(loadbalancers, (loadbalancer) => {
@@ -54,24 +50,8 @@ class merchantProviderController extends entityController {
 
     }
 
-    issueRefund(transaction, refund){
-
-        return this.get({id: transaction.merchant_provider}).then((merchant_provider) => {
-
-            return this.validate(merchant_provider).then(() => {
-
-                let processor = this.createProcessorClass(merchant_provider);
-
-                let parameters = this.createRefundParameters(transaction, refund);
-
-                return processor.refund(parameters);
-
-            });
-
-        });
-
-    }
-
+    //Technical Debt:  This belongs in the vendor class
+    /*
     createRefundParameters(transaction, refund){
 
         du.debug('Create Refund Parameters');
@@ -102,26 +82,7 @@ class merchantProviderController extends entityController {
         return refund_parameters;
 
     }
-
-    createProcessorClass(merchant_provider){
-
-        du.debug('Create Processor Class');
-
-  	  if(merchant_provider.processor == 'NMI'){
-
-        let _nmi = new NMIController({
-            username: merchant_provider.username,
-            password: merchant_provider.password,
-            endpoint: merchant_provider.endpoint
-        });
-
-        return _nmi;
-
-    	}else{
-        eu.throwError('server','Unrecognized merchant provider: '+merchant_provider.processor);
-    }
-
-    }
+    */
 
 }
 
