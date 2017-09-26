@@ -1,5 +1,26 @@
-# Merchant report query
+# Aggregated merchant query for Merchant report
+
+26.09.2017 A.Zelen
+
+* Part of the `Merchant Report`
+
+Mockup of the report, tab **Merchant report** :
+https://projects.invisionapp.com/share/KCDO6OJFH#/screens
+
 ____
+
+## Required query output:
+
+* `Merchant name` -- Need to **hydrate**
+* `Mid ID`
+* `Sales Count`
+* `Sales Gross`
+* `Revenue	Net`
+* `Revenue	Refund`
+* `Count`
+* `Refunded Expenses`
+* `MTD Sales Count`
+* `MTD Gross Revenue`
 
 ## Arguments:
 

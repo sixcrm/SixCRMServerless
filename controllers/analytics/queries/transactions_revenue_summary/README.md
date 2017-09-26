@@ -1,6 +1,28 @@
-# Aggregation by transaction summary tied to the transactions summary (revenue) report
+# Transactions summary query tied to the transactions Summary (revenue) report
+
+26.09.2017 A.Zelen
+
+* Part of the `Summary Report`
+
+Mockup of the report, tab **Summary details** :
+https://projects.invisionapp.com/share/29DIKG1A3#/screens/253636310_Summary_Report_Breakdown_UI_Stepper_Copy_5
 
 ____
+
+## Required query output:
+
+* `Sales Count`
+* `Sales Revenue`
+* `Rebill Count`
+* `Rebill Revenue`
+* `Refund Count`
+* `Refund Expenses`
+* `Decline Count`
+* `Declined Revenue`
+* `Gross Revenue`
+* `Chargeback Count`
+* `Current Active Customer` - I suspect the definition
+* `Count	Alert Count` - Does **not exist** in RS
 
 ## Arguments:
 
