@@ -1,7 +1,6 @@
 'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLString = require('graphql').GraphQLString;
 const GraphQLFloat = require('graphql').GraphQLFloat;
 
 let processingTransactionCountType = require('./processingTransactionCountType');
