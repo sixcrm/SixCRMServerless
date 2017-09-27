@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
@@ -849,7 +850,8 @@ module.exports = class Process{
 
       let gateway = null;
 
-     	if(this.selected_merchantprovider.gateway.name){
+      //Technical Debt:  If all Merchant Providers have hit thier cap, this is not going to work.
+     	if(objectutilities.hasRecursive(this,'selected_merchantprovider.gateway.name')){
 
         let GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+this.selected_merchantprovider.gateway.name+'/handler.js');
 

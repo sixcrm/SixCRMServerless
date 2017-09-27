@@ -178,10 +178,10 @@ describe('Round Trip Test', function() {
 
     assert.isObject(processor_response);
     assert.property(processor_response, "message");
-    assert.equal(processor_response.message, "Success");
-    assert.property(processor_response, 'results');
-    assert.property(processor_response.results, 'response');
-    assert.equal(processor_response.results.response, '1');
+    assert.equal(processor_response.message, "SUCCESS");
+    assert.property(processor_response, 'result');
+    assert.property(processor_response.result, 'response');
+    assert.equal(processor_response.result.response, '1');
 
     var upsell_product_schedules = ['8d1e896f-c50d-4a6b-8c84-d5661c16a046'];
 
@@ -218,10 +218,10 @@ describe('Round Trip Test', function() {
 
     assert.isObject(processor_response);
     assert.property(processor_response, "message");
-    assert.equal(processor_response.message, "Success");
-    assert.property(processor_response, 'results');
-    assert.property(processor_response.results, 'response');
-    assert.equal(processor_response.results.response, '1');
+    assert.equal(processor_response.message, "SUCCESS");
+    assert.property(processor_response, 'result');
+    assert.property(processor_response.result, 'response');
+    assert.equal(processor_response.result.response, '1');
 
     du.output(appropriate_spacing+'Confirming Order');
     du.debug('Confirmation params: ', 'session_id='+session_id);
