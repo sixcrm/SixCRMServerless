@@ -1,14 +1,12 @@
 'use strict';
+let _ = require('underscore');
+
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
-let NMIType = require('../gateways/NMIType');
-let InnovioType = require('../gateways/InnovioType');
-
-//Technical Debt:  Additional may be a great place to introduce fragments (yes)
 module.exports.graphObj = new GraphQLInterfaceType({
-    name: 'merchantprovidergateway',
+    name: 'Gateway',
     description: 'A merchant provider gateway.',
     fields: () => ({
     	name: {
@@ -28,16 +26,22 @@ module.exports.graphObj = new GraphQLInterfaceType({
         description: 'The name of the merchant provider gateway password.',
       }
     }),
-    resolveType(gateway) {
-      return NMIType;
-      /*
-      if (gateway.type === 'NMI') {
-        return NMIType;
+    resolveType(gateway){
+      //Technical Debt:  Necessary because of circuitous includes...
+      let NMIType = require('./NMIType');
+      let InnovioType = require('./InnovioType');
+
+      let gatewaytypes = {
+        'NMI':NMIType,
+        'Innovio':InnovioType
+      };
+
+      if(_.has(gatewaytypes, gateway.type)){
+        return gatewaytypes[gateway.type].graphObj;
+      }else{
+        return null;
       }
-      if (gateway.type === 'Innovio') {
-        return InnovioType;
-      }
-      */
+
     },
     interfaces: []
 });

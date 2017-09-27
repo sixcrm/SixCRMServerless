@@ -23,16 +23,14 @@
 					}
 				},
 				processor:{
-					name:\"NMA\",
-					id:\"Some ID\"
+					name:\"NMA\"
 				},
 				gateway:{
-					name:\"NMI\",
+					name:\"Some Updated Name\",
+					type:\"NMI\",
 					username:\"test2\",
 					password:\"test23123123\",
-					endpoint:\"https://nmi.com/someendpoint.php\",
 					processor_id:\"123\",
-					additional:\"{\\\"processor_id\\\":12354}\"
 				},
 				customer_service:{
 					email:\"customerservice.isnt.great@dot.com\",
@@ -45,8 +43,7 @@
 			id,
 			name,
 			processor {
-				name,
-				id
+				name
 			},
 			processing {
 				monthly_cap,
@@ -62,11 +59,18 @@
 			},
 			enabled,
 			gateway {
-				name,
-				username,
-				password,
-				endpoint,
-				additional
+				... on NMI {
+					name,
+					username,
+					password,
+					processor_id
+				}
+				... on Innovio {
+					name,
+					username,
+					password,
+					product_id
+				}
 			},
 			allow_prepaid,
 			accepted_payment_methods,
