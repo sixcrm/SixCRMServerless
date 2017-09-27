@@ -4,8 +4,7 @@
 		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"name":"NMI Account 1",
 		"processor":{
-			"name":"NMA",
-			"id":"someIDValue"
+			"name":"NMA"
 		},
 		"processing":{
 			"monthly_cap": 1000000.00,
@@ -21,11 +20,11 @@
 		},
 		"enabled":true,
 		"gateway": {
+			"type":"NMI",
 			"name":"NMI",
 			"username":"demo",
 			"password":"password",
-			"endpoint":"https://secure.networkmerchants.com/api/transact.php",
-			"additional":"{\"processor_id\":123}"
+			"endpoint":"https://secure.networkmerchants.com/api/transact.php"
 		},
 		"allow_prepaid":true,
 		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
@@ -42,8 +41,7 @@
 		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"name":"NMI Account 2",
 		"processor":{
-			"name":"NMA",
-			"id":"someIDValue"
+			"name":"NMA"
 		},
 		"processing":{
 			"monthly_cap": 2000000.00,
@@ -59,11 +57,11 @@
 		},
 		"enabled":true,
 		"gateway": {
+			"type":"NMI",
 			"name":"NMI",
 			"username":"demo",
 			"password":"password",
-			"endpoint":"https://secure.networkmerchants.com/api/transact.php",
-			"additional":"{\"processor_id\":123}"
+			"endpoint":"https://secure.networkmerchants.com/api/transact.php"
 		},
 		"allow_prepaid":true,
 		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],

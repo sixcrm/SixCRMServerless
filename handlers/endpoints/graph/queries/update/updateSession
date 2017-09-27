@@ -232,8 +232,7 @@
 								id,
 								name,
 								processor {
-									name,
-									id
+									name
 								},
 								processing {
 									monthly_cap,
@@ -249,11 +248,18 @@
 								},
 								enabled,
 								gateway {
-									name,
-									username,
-									password,
-									endpoint,
-									additional
+									... on NMI {
+										name,
+										username,
+										password,
+										processor_id
+									}
+									... on Innovio {
+										name,
+										username,
+										password,
+										product_id
+									}
 								},
 								allow_prepaid,
 								accepted_payment_methods,
