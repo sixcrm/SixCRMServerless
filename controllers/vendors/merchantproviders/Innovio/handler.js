@@ -24,7 +24,7 @@ class InnovioController extends MerchantProvider {
 
       du.debug('Process');
 
-      const method_parameters = {request_action: 'CCAUTHORIZE'};
+      const method_parameters = {request_action: 'CCAUTHCAP'};
 
       return new Promise((resolve, reject) => {
 
