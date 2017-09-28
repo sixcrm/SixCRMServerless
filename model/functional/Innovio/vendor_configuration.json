@@ -7,7 +7,11 @@
     },
 		"response_format":{
       "type":"string"
-    }
+    },
+		"endpoint":{
+			"type":"string",
+			"format":"uri"
+		}
 	},
-	"required":["api_version", "response_format"]
+	"required":["api_version", "response_format", "endpoint"]
 }

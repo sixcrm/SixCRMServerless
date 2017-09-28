@@ -14,15 +14,9 @@
     "city":{
       "type":"string"
     },
-    "state":{
-      "type":"string"
-    },
-    "zip":{
-      "type":"string"
-    },
-    "country":{
-      "type":"string"
-    }
+    "state":{"$ref": "../definitions/statecode.json"},
+    "zip":{"$ref": "../definitions/zipcode.json"},
+    "country":{"$ref": "../definitions/countrycode.json"}
   },
   "required":["line1","city","state","zip","country"]
 }

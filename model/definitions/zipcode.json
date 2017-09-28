@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/zipcode.json",
+  "title": "ZIP Code",
+  "description": "A ZIP code",
+  "anyOf":[
+    {
+      "type":"string",
+      "format":"^[0-9]{5}$"
+    },
+    {
+      "type":"string",
+      "format":"^[0-9]{5}-[0-9]{4}$"
+    },
+    {
+      "type":"number",
+      "minimum":10000,
+      "maximum":99999
+    }
+  ]
+}

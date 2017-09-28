@@ -1,6 +1,58 @@
 {
 	"title": "NMI Merchant Provider Process Object",
 	"type": "object",
-	"properties": {},
-	"required":[]
+	"properties": {
+		"type":{
+			"type":"string",
+			"enum":["sale"]
+		},
+		"username":{
+			"type":"string"
+		},
+		"password":{
+			"type":"string"
+		},
+		"processor_id":{
+			"type":"string"
+		},
+		"endpoint":{
+			"type":"string",
+			"format":"uri"
+		},
+		"amount":{"$ref": "../../definitions/currency.json"},
+		"ccnumber":{"$ref": "../../definitions/creditcardnumber.json"},
+		"ccv":{"$ref": "../../definitions/creditcardccv.json"},
+		"ccexp":{"$ref": "../../definitions/creditcardexpirationdate.json"},
+		"firstname":{
+			"type":"string"
+		},
+		"lastname":{
+			"type":"string"
+		},
+		"address1":{
+			"type":"string"
+		},
+		"address2":{
+			"type":"string"
+		},
+		"city":{
+			"type":"string"
+		},
+		"state":{"$ref": "../../definitions/statecode.json"},
+		"zip":{"$ref": "../../definitions/zipcode.json"},
+		"country":{"$ref": "../../definitions/countrycode.json"},
+		"shipping_address1":{
+			"type":"string"
+		},
+		"shipping_address2":{
+			"type":"string"
+		},
+		"shipping_city":{
+			"type":"string"
+		},
+		"shipping_state":{"$ref": "../../definitions/statecode.json"},
+		"shipping_zip":{"$ref": "../../definitions/zipcode.json"},
+		"shipping_country":{"$ref": "../../definitions/countrycode.json"}
+	},
+	"required":["type", "username", "password", "endpoint", "amount", "ccnumber","ccv","ccexp","firstname","lastname","zip"]
 }

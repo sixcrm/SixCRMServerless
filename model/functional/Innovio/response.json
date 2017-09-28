@@ -1,6 +1,14 @@
 {
 	"title": "Innovio Merchant Provider Response Object",
 	"type": "object",
-	"properties": {},
-	"required":[]
+	"properties": {
+		"API_RESPONSE":{
+			"type":"number",
+			"enum":[100,101,150,152,500,501,502,503,505,506,507,510,511,512,515,516,518,522,525,530,536,555,560,565,570,580,600,601,603,605,610,615,620,621,622,623,624,625,630,640,650,660,680,685,690,692,695,697,698,699]
+		},
+		"TRANS_STATUS_NAME":{
+			"type":"string"
+		}
+	},
+	"required":["API_RESPONSE", "TRANS_STATUS_NAME"]
 }

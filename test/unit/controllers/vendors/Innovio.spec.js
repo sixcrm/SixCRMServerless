@@ -265,7 +265,6 @@ describe('vendors/merchantproviders/Innovio.js', () => {
       expect(response).to.have.property('message');
       expect(response).to.have.property('result');
 
-
     });
 
   });
