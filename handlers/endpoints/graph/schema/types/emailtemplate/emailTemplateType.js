@@ -23,7 +23,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The email subject.',
         },
         body: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: GraphQLString,
             description: 'The email template body.',
         },
         type: {
@@ -33,13 +33,13 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The email template type (see enumeration).',
         },
         smtp_provider: {
-            type: SMTPProviderType.graphObj,
-            description: 'The SMTP Provider for the email template.',
-            resolve: (emailtemplate) => {
-                let emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+          type: SMTPProviderType.graphObj,
+          description: 'The SMTP Provider for the email template.',
+          resolve: (emailtemplate) => {
+              let emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 
-                return emailTemplateController.getSMTPProvider(emailtemplate);
-            }
+              return emailTemplateController.getSMTPProvider(emailtemplate);
+          }
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),
