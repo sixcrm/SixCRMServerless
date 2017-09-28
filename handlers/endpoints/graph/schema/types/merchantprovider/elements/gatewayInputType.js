@@ -30,6 +30,10 @@ module.exports.graphObj = new GraphQLInputObjectType({
     processor_id: {
       type: GraphQLString,
       description: 'The merchant provider processor_id.',
+    },
+    product_id: {
+      type: GraphQLString,
+      description: 'The merchant provider product_id.',
     }
   })
 });
