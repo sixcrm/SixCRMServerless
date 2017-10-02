@@ -64,10 +64,10 @@ class createOrderController extends transactionEndpointController{
       		.then(this.getTransactionInfo)
       		.then(this.createOrder)
           .then((info) => {
-            //this.pushToRedshift(info);
-            //this.handleTracking(info);
-            //this.postOrderProcessing(info);
-            //this.handleNotifications(info);
+            this.pushToRedshift(info);
+            this.handleTracking(info);
+            this.postOrderProcessing(info);
+            this.handleNotifications(info);
             return info;
           });
 

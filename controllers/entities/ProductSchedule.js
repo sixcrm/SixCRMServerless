@@ -262,18 +262,6 @@ class productScheduleController extends entityController {
 
     }
 
-    /*
-    getProductSchedules(product_schedules){
-
-      du.debug('Get Product Schedules');
-
-      product_schedules = product_schedules || [];
-
-    	return Promise.all(product_schedules.map(product_schedule => this.get({id: product_schedule})));
-
-    }
-    */
-
     getProductForPurchase(day, schedule){
 
       du.debug('Get Product For Purchase');

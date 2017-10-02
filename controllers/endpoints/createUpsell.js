@@ -3,6 +3,7 @@ const _ = require("underscore");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
@@ -89,7 +90,7 @@ class createUpsellController extends transactionEndpointController{
         var promises = [];
 
         var getSession = sessionController.get({id: event_body['session']});
-        var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
+        var getProductSchedules = productScheduleController.getList({list_array: event_body['product_schedules']});
 
         du.debug('Product Schedules', event_body['product_schedules']);
         du.debug(getProductSchedules);
@@ -102,11 +103,8 @@ class createUpsellController extends transactionEndpointController{
             var info = {
                 session: promises[0],
                 campaign:  {},
-                productschedules_for_purchase: promises[1],
                 creditcard: {}
             };
-
-            du.debug('Info Object:', info);
 
             if(!_.isObject(info.session) || !_.has(info.session, 'id')){
                 eu.throwError('not_found', 'No available session.');
@@ -116,9 +114,11 @@ class createUpsellController extends transactionEndpointController{
                 eu.throwError('bad_request', 'The specified session is already complete.');
             }
 
-            if(!_.isArray(info.productschedules_for_purchase) || (info.productschedules_for_purchase.length < 1)){
+            if(!_.has(promises[1], 'productschedules') || !arrayutilities.nonEmpty(promises[1].productschedules)){
                 eu.throwError('not_found', 'No available schedules to purchase.');
             }
+
+            info.productschedules_for_purchase = promises[1].productschedules;
 
             sessionController.validateProductSchedules(info.productschedules_for_purchase, info.session);
 
