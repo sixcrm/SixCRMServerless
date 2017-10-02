@@ -28,8 +28,8 @@ function getValidParametersObject(){
   };
 }
 
-function getValidMethodParameters(){
-  return {request_action: 'CCAUTHORIZE'};
+function getValidMethodParametersObject(){
+  return {request_action: 'CCAUTHCAP'};
 }
 
 function getValidRequestParametersObject(){
@@ -146,7 +146,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
     let parameters_object = getValidParametersObject();
 
-    let method_parameters = getValidMethodParameters();
+    let method_parameters = getValidMethodParametersObject();
 
     parameters_object = innovio_controller.setMethodParameters({return_parameters: parameters_object, method_parameters: method_parameters});
 
@@ -158,7 +158,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
       site_id: '1',
       merchant_acct_id: 'absasdasd',
       li_prod_id_1: '1',
-      request_action: 'CCAUTHORIZE'
+      request_action: 'CCAUTHCAP'
     };
 
     objectutilities.map(required_properties, (key) => {
@@ -225,7 +225,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
     let parameters_object = getValidParametersObject();
 
+    let method_parameters = getValidMethodParametersObject();
+
     let request_parameters = getValidRequestParametersObject();
+
+    parameters_object = innovio_controller.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters_object});
 
     parameters_object = innovio_controller.setRequestParameters({request_parameters: request_parameters, return_parameters: parameters_object});
 
@@ -260,7 +264,6 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
       expect(response).to.have.property('message');
       expect(response).to.have.property('result');
-
 
     });
 

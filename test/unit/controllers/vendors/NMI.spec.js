@@ -22,7 +22,7 @@ function getValidParametersObject(){
   );
 }
 
-function getValidMethodParameters(){
+function getValidMethodParametersObject(){
   return {type: 'sale'};
 }
 
@@ -165,7 +165,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
     let parameters_object = getValidParametersObject();
 
-    let method_parameters = getValidMethodParameters();
+    let method_parameters = getValidMethodParametersObject();
 
     parameters_object = nmi_controller.setMethodParameters({return_parameters: parameters_object, method_parameters: method_parameters});
 
@@ -239,9 +239,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
     let parameters_object = getValidParametersObject();
 
+    let method_parameters = getValidMethodParametersObject();
+
     let request_parameters = getValidRequestParametersObject();
 
-    //du.info(request_parameters); process.exit();
+    parameters_object = nmi_controller.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters_object});
 
     parameters_object = nmi_controller.setRequestParameters({request_parameters: request_parameters, return_parameters: parameters_object});
 

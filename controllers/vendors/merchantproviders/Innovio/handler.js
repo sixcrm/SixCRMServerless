@@ -24,7 +24,7 @@ class InnovioController extends MerchantProvider {
 
       du.debug('Process');
 
-      const method_parameters = {request_action: 'CCAUTHORIZE'};
+      const method_parameters = {request_action: 'CCAUTHCAP'};
 
       return new Promise((resolve, reject) => {
 
@@ -36,15 +36,12 @@ class InnovioController extends MerchantProvider {
 
         this.validateRequestParameters('process', parameters);
 
-        let good_querystring = querystring.stringify(parameters);
-
-        //let bad_querystring = 'req_username=test@example.com&req_password=Passw0rd!1&request_action=CCAUTHCAP&site_id=0&merch_acct_id=100&cust_fname=John&cust_lname=Doe&cust_email=user5@example.com&cust_login=username1&cust_password=12345678Xx&xtl_cust_id=c777777777&xtl_order_id=o111111111&li_prod_id_1=1001&li_value_1=19.95&li_count_1=1&bill_addr=123 MainStreet Apt. 1&bill_addr_city=LosAngeles&bill_addr_state=CA&bill_addr_zip=90066&bill_addr_country=US&pmt_numb=5105105105105100&pmt_key=123&pmt_expiry=12/2014&request_response_format=XML&xtl_ip=10.00.000.90&request_api_version=3.6'
-        //du.warning(this.get('VendorConfiguration').endpoint); process.exit();
+        let parameter_querystring = querystring.stringify(parameters);
 
         var request_options = {
     		  headers: {'content-type' : 'application/x-www-form-urlencoded'},
     		  url:     this.get('VendorConfiguration').endpoint,
-    		  body:    good_querystring
+    		  body:    parameter_querystring
         };
 
         request.post(request_options, (error, response, body) => {

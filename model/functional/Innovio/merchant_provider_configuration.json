@@ -8,15 +8,15 @@
 		"password":{
       "type":"string"
     },
-		"site_id":{
-      "type":"string"
-    },
-		"merchant_account_id":{
-      "type":"string"
-    },
 		"product_id":{
       "type":"string"
-    }
+    },
+		"site_id":{
+			"type":"string"
+		},
+		"merchant_account_id":{
+			"type":"string"
+		}
 	},
 	"required":["username", "password", "site_id", "merchant_account_id", "product_id"]
 }

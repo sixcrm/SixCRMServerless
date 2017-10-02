@@ -59,7 +59,13 @@
 				"processor_id":{
 					"type":"string"
 				},
-				"additional":{
+				"product_id":{
+					"type":"string"
+				},
+				"merchant_account_id":{
+					"type":"string"
+				},
+				"site_id":{
 					"type":"string"
 				}
 			},
