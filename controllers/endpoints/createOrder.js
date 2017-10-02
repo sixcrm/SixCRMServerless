@@ -62,14 +62,13 @@ class createOrderController extends transactionEndpointController{
       		.then(this.updateCustomer)
       		.then(this.getTransactionInfo)
       		.then(this.createOrder)
-          .then((info) => this.pushToRedshift(info))
-          .then((info) => this.handleTracking(info))
-      		.then((info) => this.postOrderProcessing(info))
-      		.then((pass_through) => this.handleNotifications(pass_through))
-      		.catch((error) => {
-          du.error(error);
-          throw error;
-      });
+          .then((info) => {
+            this.pushToRedshift(info);
+            this.handleTracking(info);
+            this.postOrderProcessing(info);
+            this.handleNotifications(info);
+            return info;
+          });
 
     }
 
@@ -144,47 +143,42 @@ class createOrderController extends transactionEndpointController{
 
     validateInfo(info){
 
-        if(!_.isObject(info.session) || !_.has(info.session, 'id')){
-            eu.throwError('not_found', 'Unable to identify session.');
-        }
+      du.debug('Validate Info');
 
-        if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
-            eu.throwError('not_found', 'Unable to identify credit card.');
-        }
+      if(!_.isObject(info.session) || !_.has(info.session, 'id')){
+          eu.throwError('not_found', 'Unable to identify session.');
+      }
 
-        if(info.session.completed == 'true'){
-            eu.throwError('bad_request', 'The specified session is already complete.');
-        }
+      if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
+          eu.throwError('not_found', 'Unable to identify credit card.');
+      }
 
-        if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
-            eu.throwError('not_found', 'No available schedules to purchase.');
-        }
+      if(info.session.completed == 'true'){
+          eu.throwError('bad_request', 'The specified session is already complete.');
+      }
 
-        sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
+      if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
+          eu.throwError('not_found', 'No available schedules to purchase.');
+      }
 
-        campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
+      sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
 
-        return Promise.resolve(info);
+      //Technical Debt:  This is causing some hanging...
+      campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
+
+      return Promise.resolve(info);
 
     }
 
     updateCustomer(info){
 
-        du.debug('Update Customer');
+      du.debug('Update Customer');
 
-        return new Promise((resolve, reject) => {
+      return customerController.addCreditCard(info.session.customer, info.creditcard).then(() => {
 
-            customerController.addCreditCard(info.session.customer, info.creditcard).then(() => {
+        return info;
 
-                return resolve(info);
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
+      });
 
     }
 

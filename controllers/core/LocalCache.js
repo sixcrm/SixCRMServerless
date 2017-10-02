@@ -11,6 +11,42 @@ module.exports = class LocalCache {
 
   }
 
+  resolveQuestion(question, answer_function){
+
+    du.debug('Resolve Question');
+
+    let answer = this.get(question);
+
+    du.deep('Asking: '+question);
+
+    if(_.isNull(answer)){
+
+      du.deep('Executing Answer Function');
+
+      if(!_.isFunction(answer_function)){
+        eu.throwError('server', 'Answer function must be a function');
+      }
+
+      return Promise.resolve(answer_function()).then((answer) => {
+
+        global.SixCRM.localcache.set(question, answer);
+
+        du.warning('Caching Question: '+question, answer)
+
+        return answer;
+
+      });
+
+    }else{
+
+      du.deep('Returning existing answer.');
+
+      return Promise.resolve(answer);
+
+    }
+
+  }
+
   get(key){
 
     du.debug('Get');

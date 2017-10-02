@@ -44,12 +44,15 @@ class confirmOrderController extends transactionEndpointController{
 
     execute(event){
 
-        return this.preprocessing(event)
-			.then((event) => this.acquireQuerystring(event))
-			.then(() => this.validateInput(this.queryString, this.validateEventSchema))
-			.then(this.confirmOrder)
-      .then((result_object) => this.pushToRedshift(result_object))
-			.then((results) => this.handleNotifications(results));
+      return this.preprocessing(event)
+  			.then((event) => this.acquireQuerystring(event))
+  			.then(() => this.validateInput(this.queryString, this.validateEventSchema))
+  			.then(this.confirmOrder)
+        .then(result_object => {
+          this.pushToRedshift(result_object)
+          this.handleNotifications(result_object);
+          return result_object;
+        });
 
     }
 
@@ -102,15 +105,13 @@ class confirmOrderController extends transactionEndpointController{
 
     pushToRedshift(results){
 
-        du.debug('Push To Redshift');
+      du.debug('Push To Redshift');
 
-        return this.pushEventToRedshift('confirm', results.session).then((result) => {
+      return this.pushEventToRedshift('confirm', results.session).then((result) => {
 
-            du.debug(result);
+          return results;
 
-            return results;
-
-        });
+      });
 
     }
 

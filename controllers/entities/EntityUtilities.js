@@ -17,7 +17,7 @@ const cacheController = global.SixCRM.routes.include('controllers', 'providers/C
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 //Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
 
-module.exports = class entityUtilitiesController{
+module.exports = class entityUtilitiesController {
 
     constructor(){
 
@@ -26,27 +26,32 @@ module.exports = class entityUtilitiesController{
 
     }
 
-    can(action, die){
+    //Technical Debt:  Need to introduce identifiers here...
+    can(action, fatal){
 
-        du.debug('Can');
+      du.debug('Can');
 
-        if(_.isUndefined(die)){ die = false; }
+      fatal = (_.isUndefined(fatal))?false:fatal;
 
-        let permission_function = () => this.permissionutilities.validatePermissions(action, this.descriptive_name);
+      let permission_utilities_state = JSON.stringify(this.permissionutilities.getState());
 
-        return permission_function().then((permission) => {
+      let question = permission_utilities_state+this.permissionutilities.buildPermissionString(action, this.descriptive_name);
 
-            if(die === true && permission !== true){
+      let answer_function = () => {
 
-              eu.throwError('forbidden', 'Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+        let permission = this.permissionutilities.validatePermissions(action, this.descriptive_name);
 
-            }else{
+        if(fatal === true && permission !== true){
 
-              return permission;
+          eu.throwError('forbidden', 'Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
 
-            }
+        }
 
-        });
+        return permission;
+
+      }
+
+      return global.SixCRM.localcache.resolveQuestion(question, answer_function);
 
     }
 
@@ -98,7 +103,7 @@ module.exports = class entityUtilitiesController{
       du.debug('Validate');
 
       if(_.isUndefined(path_to_model)){
-          path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
+        path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
       }
 
       let valid = mvu.validateModel(object, path_to_model);
@@ -289,27 +294,25 @@ module.exports = class entityUtilitiesController{
 
     }
 
-    assignPrimaryKey(entity, primary_key){
+    assignPrimaryKey(entity){
 
-        du.debug('Assign Primary Key');
+      du.debug('Assign Primary Key');
 
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+      if(!_.has(entity, this.primary_key)){
 
-        if(!_.has(entity, primary_key)){
+        if(this.primary_key == 'id'){
 
-            if(primary_key == 'id'){
+            entity[this.primary_key] = uuidV4();
 
-                entity.id = uuidV4();
+        }else{
 
-            }else{
-
-                du.warning('Unable to assign primary key "'+primary_key+'" property');
-
-            }
+            du.warning('Unable to assign primary key "'+this.primary_key+'" property');
 
         }
 
-        return entity;
+      }
+
+      return entity;
 
     }
 
@@ -353,33 +356,26 @@ module.exports = class entityUtilitiesController{
 
     appendAccountFilter(query_parameters){
 
-        du.debug('Append Account Filter');
+      du.debug('Append Account Filter');
 
-        if(global.disableaccountfilter !== true){
+      if(this.permissionutilities.accountFilterDisabled() !== true){
 
-            if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+        //Technical Debt:  Shouldn't be validating that the global has the account property here...
+        if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
 
-                if(global.account == '*'){
+          if(!this.permissionutilities.isMasterAccount()){
 
-                    du.warning('Master account in use.');
+            query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
 
-                }else{
+            query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
 
-                    query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
-
-                    query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
-
-                }
-
-            }
-
-        }else{
-
-            du.warning('Global Account Filter Disabled');
+          }
 
         }
 
-        return query_parameters;
+      }
+
+      return query_parameters;
 
     }
 
@@ -711,13 +707,9 @@ module.exports = class entityUtilitiesController{
 
     }
 
-    getID(object, primary_key){
+    getID(object){
 
         du.debug('Get ID');
-
-        du.warning(object, primary_key);
-
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
 
         if(_.isString(object)){
 
@@ -742,9 +734,9 @@ module.exports = class entityUtilitiesController{
 
         }else if(_.isObject(object)){
 
-            if(_.has(object, primary_key)){
+            if(_.has(object, this.primary_key)){
 
-                return object[primary_key];
+                return object[this.primary_key];
 
             }
 
@@ -780,6 +772,18 @@ module.exports = class entityUtilitiesController{
         this.setEnvironmentTableName(name);
 
         this.setTableName(name);
+
+    }
+
+    setPrimaryKey(){
+
+      du.deep('Set Primary Key');
+
+      if(!_.has(this, 'primary_key')){
+
+        this.primary_key = 'id';
+
+      }
 
     }
 
@@ -821,6 +825,15 @@ module.exports = class entityUtilitiesController{
         return name+'s';
 
     }
+
+    asyncronousCreateBehaviors({entity: entity}){
+
+      this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+
+      this.addToSearchIndex(entity, this.descriptive_name);
+
+    }
+
 
     createRedshiftActivityRecord(actor, action, acted_upon, associated_with){
 

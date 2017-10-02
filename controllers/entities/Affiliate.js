@@ -123,6 +123,52 @@ class affiliateController extends entityController {
 
     }
 
+    assureAffiliates(affiliate_ids){
+
+      du.debug('Assure Affiliates');
+
+      arrayutilities.nonEmpty(affiliate_ids, true);
+
+      let all_strings = arrayutilities.every(affiliate_ids, (affiliate_id) => {
+        return _.isString(affiliate_id);
+      });
+
+      if(all_strings == false){
+        eu.throwError('server', 'affiliateController.assureAffiliates assumes all affiliate ID\'s are strings.');
+      }
+
+      let in_parameters = this.dynamoutilities.createINQueryParameters('affiliate_id', affiliate_ids);
+
+      return this.list({query_parameters: in_parameters}).then(affiliates => {
+
+        let return_array = [];
+
+        arrayutilities.map(affiliate_ids, (affiliate_id) => {
+
+          let affiliate_record = arrayutilities.find(affiliates.affiliates, affiliate => {
+            return (affiliate.affiliate_id == affiliate_id);
+          });
+
+          if(_.isUndefined(affiliate_record)){
+
+            let new_affiliate = {affiliate_id: affiliate_id};
+
+            return_array.push(Promise.resolve(this.create({entity:new_affiliate})));
+
+          }else{
+
+            return_array.push(Promise.resolve(affiliate_record));
+
+          }
+
+        });
+
+        return Promise.all(return_array);
+
+      });
+
+    }
+
 }
 
 module.exports = new affiliateController();

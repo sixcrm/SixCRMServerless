@@ -7,8 +7,11 @@ let expect = chai.expect;
 describe('lib/permission-utilities', () => {
 
     beforeEach(() => {
-        process.env.SIX_VERBOSE = 0; // increase this for debug messages
         global.disableactionchecks = false;
+    });
+
+    afterEach(() => {
+      global.SixCRM.localcache.clear('all');
     });
 
     let anyAction = PermissionTestGenerators.anyAction();
@@ -22,10 +25,10 @@ describe('lib/permission-utilities', () => {
             global.disableactionchecks = true;
             PermissionTestGenerators.givenAnyUser();
 
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
-                // then
-                expect(result).to.equal(true);
-            });
+            let result = PermissionUtilities.validatePermissions(anyAction, anyEntity);
+
+            expect(result).to.equal(true);
+
         });
 
         it('throws "Missing request parameteres" when can\'t find the global user', () => {
@@ -33,24 +36,26 @@ describe('lib/permission-utilities', () => {
             delete global.user;
             delete global.account;
 
-            // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
-                // then
-                expect(result).to.equal(false);
-            }).catch(error => {
-                expect(error.message).to.equal('[500] Missing request parameters');
-            });
+            try{
+
+              PermissionUtilities.validatePermissions(anyAction, anyEntity);
+
+            }catch(error){
+
+              expect(error.message).to.equal('[500] Global is missing the user property.');
+
+            }
+
         });
 
         it('returns true for universal permissions', () => {
-            // given
-            PermissionTestGenerators.givenAnyUser();
 
-            // when
-            return PermissionUtilities.validatePermissions('read', 'role').then((result) => {
-                // then
-                expect(result).to.equal(true);
-            });
+          PermissionTestGenerators.givenAnyUser();
+
+          let result = PermissionUtilities.validatePermissions('read', 'role');
+
+          expect(result).to.equal(true);
+
         });
 
         it('returns true when user has permissions over entity', () => {
@@ -60,11 +65,11 @@ describe('lib/permission-utilities', () => {
 
             PermissionTestGenerators.givenUserWithAllowed(anAction, anEntity);
 
-            // when
-            return PermissionUtilities.validatePermissions(anAction, anEntity).then((result) => {
-                // then
-                expect(result).to.equal(true);
-            });
+
+            let result = PermissionUtilities.validatePermissions(anAction, anEntity);
+
+            expect(result).to.equal(true);
+
         });
 
         it('returns true when user has permissions over entity and the id matches with \'*\'', () => {
@@ -74,10 +79,11 @@ describe('lib/permission-utilities', () => {
             user.acl[0].account.id = '*';
 
             // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
+            let result = PermissionUtilities.validatePermissions(anyAction, anyEntity);
                 // then
+
                 expect(result).to.equal(true);
-            });
+
         });
 
         it('returns true when user has asterisk permission over entity', () => {
@@ -88,10 +94,11 @@ describe('lib/permission-utilities', () => {
             PermissionTestGenerators.setGlobalUser(user);
 
             // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
+            let result = PermissionUtilities.validatePermissions(anyAction, anyEntity);
                 // then
+
                 expect(result).to.equal(true);
-            });
+
         });
 
         it('returns true when user has asterisk permission without entity', () => {
@@ -102,10 +109,11 @@ describe('lib/permission-utilities', () => {
             PermissionTestGenerators.setGlobalUser(user);
 
             // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
+            let result = PermissionUtilities.validatePermissions(anyAction, anyEntity);
                 // then
+
                 expect(result).to.equal(true);
-            });
+
         });
         /* Note: No longer true
         it('returns false when user has invalid permission over entity (too many parts)', () => {
@@ -158,10 +166,11 @@ describe('lib/permission-utilities', () => {
             user.acl[0].account.id = '*';
 
             // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
+            let result = PermissionUtilities.validatePermissions(anyAction, anyEntity);
                 // then
-                expect(result).to.equal(false);
-            });
+
+            expect(result).to.equal(false);
+
         });
 
         it('returns false when user has no permissions over entity', () => {
@@ -172,10 +181,11 @@ describe('lib/permission-utilities', () => {
             PermissionTestGenerators.givenUserWithNoPermissions();
 
             // when
-            return PermissionUtilities.validatePermissions(anAction, anEntity).then((result) => {
+            let result = PermissionUtilities.validatePermissions(anAction, anEntity);
                 // then
+
                 expect(result).to.equal(false);
-            });
+
         });
 
         it('returns false when user has been denied permissions over entity', () => {
@@ -186,10 +196,11 @@ describe('lib/permission-utilities', () => {
             PermissionTestGenerators.givenUserWithDenied(anAction, anEntity);
 
             // when
-            return PermissionUtilities.validatePermissions(anAction, anEntity).then((result) => {
+            let result = PermissionUtilities.validatePermissions(anAction, anEntity);
                 // then
+
                 expect(result).to.equal(false);
-            });
+
         });
 
         it('returns false when user and account id does not match', () => {
@@ -198,10 +209,11 @@ describe('lib/permission-utilities', () => {
             global.account += '2';
 
             // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
+            let result = PermissionUtilities.validatePermissions(anyAction, anyEntity);
                 // then
+
                 expect(result).to.equal(false);
-            });
+
         });
 
         it('throws error when the ACL structure is missing role object', () => {
@@ -211,13 +223,16 @@ describe('lib/permission-utilities', () => {
             delete user.acl[0].role;
             PermissionTestGenerators.setGlobalUser(user);
 
-            // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
-                // then
-                expect(result).to.equal(false);
-            }).catch(error => {
-                expect(error.message).to.equal('[500] Unexpected ACL object structure');
-            });
+            try{
+
+              PermissionUtilities.validatePermissions(anyAction, anyEntity);
+
+            }catch(error){
+
+              expect(error.message).to.equal('[500] Unexpected ACL object structure');
+
+            }
+
         });
 
         it('throws error when the ACL structure is missing permissions object', () => {
@@ -227,13 +242,16 @@ describe('lib/permission-utilities', () => {
             delete user.acl[0].role.permissions;
             PermissionTestGenerators.setGlobalUser(user);
 
-            // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
-                // then
-                expect(result).to.equal(false);
-            }).catch(error => {
-                expect(error.message).to.equal('[500] Unexpected ACL object structure');
-            });
+            try{
+
+              PermissionUtilities.validatePermissions(anyAction, anyEntity);
+
+            }catch(error){
+
+              expect(error.message).to.equal('[500] Unexpected ACL object structure');
+
+            }
+
         });
 
         it('throws error when the ACL structure is missing allow object', () => {
@@ -243,13 +261,16 @@ describe('lib/permission-utilities', () => {
             delete user.acl[0].role.permissions.allow;
             PermissionTestGenerators.setGlobalUser(user);
 
-            // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
-                // then
-                expect(result).to.equal(false);
-            }).catch(error => {
-                expect(error.message).to.equal('[500] Unexpected ACL object structure');
-            });
+            try{
+
+              PermissionUtilities.validatePermissions(anyAction, anyEntity);
+
+            }catch(error){
+
+              expect(error.message).to.equal('[500] Unexpected ACL object structure');
+
+            }
+
         });
 
         it('throws error when the ACL account id is missing', () => {
@@ -260,12 +281,18 @@ describe('lib/permission-utilities', () => {
             PermissionTestGenerators.setGlobalUser(user);
 
             // when
-            return PermissionUtilities.validatePermissions(anyAction, anyEntity).then((result) => {
+            try{
+
+              PermissionUtilities.validatePermissions(anyAction, anyEntity);
+
+            }catch(error){
+
+              expect(error.message).to.equal('[500] Unset ACL Account');
+
+            }
                 // then
-                expect(result).to.equal(false);
-            }).catch(error => {
-                expect(error.message).to.equal('[404] Unset ACL Account');
-            });
+
+
         });
     });
 
@@ -285,7 +312,11 @@ describe('lib/permission-utilities', () => {
             let entity = anyEntity;
 
             // then
-            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(false);
+            try{
+              expect(PermissionUtilities.buildPermissionString(action, entity));
+            }catch(error){
+              expect(error.message).to.equal('[500] Empty string')
+            }
         });
 
         it('builds permission string from action and empty entity', () => {
@@ -294,7 +325,12 @@ describe('lib/permission-utilities', () => {
             let entity = '';
 
             // then
-            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(false);
+            try{
+              expect(PermissionUtilities.buildPermissionString(action, entity));
+            }catch(error){
+              expect(error.message).to.equal('[500] Empty string')
+            }
+
         });
 
         it('builds permission string from empty action and empty entity', () => {
@@ -303,7 +339,11 @@ describe('lib/permission-utilities', () => {
             let entity = '';
 
             // then
-            expect(PermissionUtilities.buildPermissionString(action, entity)).to.equal(false);
+            try{
+              expect(PermissionUtilities.buildPermissionString(action, entity));
+            }catch(error){
+              expect(error.message).to.equal('[500] Empty string')
+            }
         });
     });
 
@@ -512,10 +552,13 @@ describe('lib/permission-utilities', () => {
 
             // when
             try {
+
                 PermissionUtilities.buildPermissionObject();
+
             } catch(error) {
                 // then
-                expect(error.message).to.equal('[404] Unset ACL Account');
+                expect(error.message).to.equal('[500] Unset ACL Account');
+
             }
         });
     });
@@ -527,9 +570,11 @@ describe('lib/permission-utilities', () => {
             delete global.user;
 
             // when
-            return PermissionUtilities.getPermissions().then().catch(error => {
-                expect(error.message).to.equal('[500] Missing request parameters');
-            });
+            try{
+              PermissionUtilities.getPermissions();
+            }catch(error){
+              expect(error.message).to.equal('[500] Global is missing the user property.');
+            }
         });
 
         it('throws error when global user is null', () => {
@@ -538,9 +583,12 @@ describe('lib/permission-utilities', () => {
             global.user = null;
 
             // when
-            return PermissionUtilities.getPermissions().then().catch(error => {
-                expect(error.message).to.equal('[500] Missing request parameters');
-            });
+            try{
+              PermissionUtilities.getPermissions();
+            }catch(error){
+              expect(error.message).to.equal('[500] Global is missing the user property.');
+            }
+
         });
 
         it('throws error when global account is missing', () => {
@@ -549,20 +597,26 @@ describe('lib/permission-utilities', () => {
             delete global.account;
 
             // when
-            return PermissionUtilities.getPermissions().then().catch(error => {
-                expect(error.message).to.equal('[500] Missing request parameters');
-            });
+            try{
+              PermissionUtilities.getPermissions();
+            }catch(error){
+              expect(error.message).to.equal('[500] Global is missing the account property.');
+            }
+
         });
 
-        it('throws error when global user is null', () => {
+        it('throws error when global account is null', () => {
             // given
             PermissionTestGenerators.givenAnyUser();
-            delete global.account;
+            global.account = null;
 
             // when
-            return PermissionUtilities.getPermissions().then().catch(error => {
-                expect(error.message).to.equal('[500] Missing request parameters');
-            });
+            try{
+              PermissionUtilities.getPermissions();
+            }catch(error){
+              expect(error.message).to.equal('[500] Global is missing the account property.');
+            }
+
         });
 
         it('resolves permission object otherwise', () => {
@@ -570,9 +624,10 @@ describe('lib/permission-utilities', () => {
             let user = PermissionTestGenerators.givenAnyUser();
 
             // when
-            return PermissionUtilities.getPermissions().then(result => {
-                expect(result).to.be.defined;
-            });
+            let result = PermissionUtilities.getPermissions();
+
+            expect(result).to.be.defined;
+
         });
     });
 });

@@ -104,75 +104,59 @@ class customerController extends entityController {
 
     addCreditCard(customer, creditcard){
 
-        du.debug('Add Credit Card');
+      du.debug('Add Credit Card');
 
-        return new Promise((resolve, reject) => {
+      if(!_.has(customer, this.primary_key)){
 
-            if(!_.has(customer, 'id')){
+          return this.get({id: customer}).then((_customer) => {
 
-                return this.get({id: customer}).then((hydrated_customer) => {
-
-                    return resolve(this.addCreditCard(hydrated_customer, creditcard));
-
-                });
-
+            if(!_.has(_customer, this.primary_key)){
+              eu.throwError('server', 'Customer doesn\'t exist: '+customer);
             }
 
-            if(!_.has(creditcard, 'id')){
+            return this.addCreditCard(_customer, creditcard);
 
-                return reject(eu.getError('bad_request','Invalid customer provided.'));
+          });
 
-            }
+      }
 
+      //Technical Debt: shitty validation
+      if(!_.has(creditcard, 'id')){
 
-            if(_.has(customer, 'creditcards')){
+        eu.throwError('bad_request','Invalid customer provided.');
 
-                if(_.isArray(customer.creditcards)){
-
-                    if(_.contains(customer.creditcards, creditcard.id)){
-
-                        return resolve(customer);
-
-                    }else{
-
-                        customer.creditcards.push(creditcard.id);
-
-                        return this.update({entity: customer}).then((customer) => {
-
-                            return resolve(customer);
-
-                        }).catch((error) => {
-
-                            return reject(error);
-
-                        });
-
-                    }
-
-                }else{
-
-                    return reject(eu.getError('bad_request','Unexpected customer structure.'));
-
-                }
+      }
 
 
-            }else{
+      if(_.has(customer, 'creditcards')){
 
-                customer['creditcards'] = [creditcard.id];
+        if(_.isArray(customer.creditcards)){
 
-                return this.update({entity: customer}).then((customer) => {
+          if(_.contains(customer.creditcards, creditcard.id)){
 
-                    return resolve(customer);
+              return Promise.resolve(customer);
 
-                }).catch((error) => {
+          }else{
 
-                    return reject(error);
+            customer.creditcards.push(creditcard.id);
 
-                });
+            return this.update({entity: customer});
 
-            }
+          }
 
-        });
+        }else{
+
+          eu.throwError('bad_request','Unexpected customer structure.');
+
+        }
+
+      }else{
+
+        customer['creditcards'] = [creditcard.id];
+
+        return this.update({entity: customer});
+
+      }
 
     }
 
@@ -295,8 +279,6 @@ class customerController extends entityController {
         }
 
         return this.getCustomerSessions(customer).then((sessions) => {
-
-          du.warning(sessions);  process.exit();
 
             if (!sessions) {
                 return [];

@@ -239,15 +239,16 @@ module.exports = class Process{
       du.debug('Hydrate Credit Cards');
 
       this.creditCardController.disableACLs();
-      let promises = this.customer.creditcards.map((creditcard) => this.creditCardController.get({id: creditcard}));
+
+      let promises = this.customer.creditcards.map((creditcard) => {
+        return this.creditCardController.get({id: creditcard});
+      });
 
       this.creditCardController.enableACLs();
 
       return Promise.all(promises).then((promises) => {
 
         this.customer.creditcards = promises;
-
-        //du.info(this.customer.creditcards);
 
         return true;
 
@@ -257,37 +258,45 @@ module.exports = class Process{
 
     selectCustomerCreditCard(){
 
-        du.debug('Select Customer Credit Card');
+      du.debug('Select Customer Credit Card');
 
-        let selected_credit_card = null;
+      let selected_credit_card = null;
 
-        this.customer.creditcards.forEach((credit_card) => {
+      arrayutilities.map(this.customer.creditcards, (credit_card) => {
 
-          mvu.validateModel(credit_card, global.SixCRM.routes.path('model','transaction/creditcard.json'));
+        let valid_card = mvu.validateModel(credit_card, global.SixCRM.routes.path('model','transaction/creditcard.json'), null, false);
+
+        if(valid_card){
 
           if(_.has(credit_card, 'default') && credit_card.default == true){
 
             selected_credit_card = credit_card;
 
-            return;
+          }else if(_.isNull(selected_credit_card)){
 
-          }
+            selected_credit_card = credit_card;
 
-          if(_.isNull(selected_credit_card) || credit_card.updated_at > selected_credit_card.updated_at){
+          }else if(!_.has(selected_credit_card, 'default') && credit_card.updated_at > selected_credit_card.updated_at){
 
             selected_credit_card = credit_card;
 
           }
 
-        });
+        }else{
 
-        if(_.isNull(selected_credit_card)){
-            eu.throwError('server', 'Unable to set credit card for customer');
+          du.warning('Invalid Credit Card: '+credit_card);
+
         }
 
-        this.selected_credit_card = selected_credit_card;
+      });
 
-        return Promise.resolve(this.selected_credit_card);
+      if(_.isNull(selected_credit_card)){
+          eu.throwError('server', 'Unable to set credit card for customer');
+      }
+
+      this.selected_credit_card = selected_credit_card;
+
+      return Promise.resolve(this.selected_credit_card);
 
     }
 
