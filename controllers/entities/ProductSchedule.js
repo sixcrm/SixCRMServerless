@@ -189,7 +189,7 @@ class productScheduleController extends entityController {
 
       du.debug('Get Products');
 
-      if(arrayutilities.nonEmpty(product_schedule.schedule)){
+      if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
         let promises = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
           return this.executeAssociatedEntityFunction('productController', 'get', {id: product_schedule.product_id});
@@ -199,7 +199,7 @@ class productScheduleController extends entityController {
 
       }else{
 
-        return null;
+        return Promise.null;
 
       }
 
@@ -210,46 +210,59 @@ class productScheduleController extends entityController {
 
       du.debug('Get Product Schedule Hydrated');
 
-      return new Promise((resolve, reject) => {
+      return this.get({id: id}).then((product_schedule) => {
 
-        return this.get({id: id}).then((product_schedule) => {
+        if(_.has(product_schedule, 'schedule')){
 
           return this.getProducts(product_schedule).then((products) => {
 
-            for(var i = 0; i < product_schedule.schedule.length; i++){
-
-              for(var j = 0; j < products.length; j++){
-
-                if(product_schedule.schedule[i].product_id == products[j].id){
-
-                  product_schedule.schedule[i].product = products[j];
-
-                  delete product_schedule.schedule[i].product_id;
-
-                }
-
-              }
-
-            }
-
-            return resolve(product_schedule);
-
-          }).catch((error) => {
-
-            return reject(error);
+            return this.marryProductsToSchedule(product_schedule, products);
 
           });
 
-        }).catch((error) => {
+        }else{
 
-          return reject(error);
+          return product_schedule;
 
-        });
+        }
 
       });
 
     }
 
+    marryProductsToSchedule(product_schedule, products){
+
+      du.debug('Marry Products To Schedules');
+
+      if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
+
+        if(arrayutilities.nonEmpty(products)){
+
+          for(var i = 0; i < product_schedule.schedule.length; i++){
+
+            arrayutilities.map(products, product => {
+
+              if(product_schedule.schedule[i].product_id == product.id){
+
+                product_schedule.schedule[i].product = product;
+
+                delete product_schedule.schedule[i].product_id;
+
+              }
+
+            });
+
+          }
+
+        }
+
+      }
+
+      return product_schedule;
+
+    }
+
+    /*
     getProductSchedules(product_schedules){
 
       du.debug('Get Product Schedules');
@@ -259,6 +272,7 @@ class productScheduleController extends entityController {
     	return Promise.all(product_schedules.map(product_schedule => this.get({id: product_schedule})));
 
     }
+    */
 
     getProductForPurchase(day, schedule){
 

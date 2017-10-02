@@ -102,7 +102,7 @@ class createUpsellController extends transactionEndpointController{
             var info = {
                 session: promises[0],
                 campaign:  {},
-                schedulesToPurchase: promises[1],
+                productschedules_for_purchase: promises[1],
                 creditcard: {}
             };
 
@@ -116,11 +116,11 @@ class createUpsellController extends transactionEndpointController{
                 eu.throwError('bad_request', 'The specified session is already complete.');
             }
 
-            if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
+            if(!_.isArray(info.productschedules_for_purchase) || (info.productschedules_for_purchase.length < 1)){
                 eu.throwError('not_found', 'No available schedules to purchase.');
             }
 
-            sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
+            sessionController.validateProductSchedules(info.productschedules_for_purchase, info.session);
 
             return info;
 
@@ -155,7 +155,7 @@ class createUpsellController extends transactionEndpointController{
  			 	      eu.throwError('not_found', 'No available creditcard.');
             }
 
-            campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
+            campaignController.validateProductSchedules(info.productschedules_for_purchase, info.campaign);
 
             return info;
 
@@ -170,8 +170,8 @@ class createUpsellController extends transactionEndpointController{
         var promises = [];
 
         var getCustomer = customerController.get({id:info.session.customer});
-        var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.schedulesToPurchase);
-        var getRebills = rebillController.createRebills(info.session, info.schedulesToPurchase, 0);
+        var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.productschedules_for_purchase);
+        var getRebills = rebillController.createRebills(info.session, info.productschedules_for_purchase, 0);
 
         promises.push(getCustomer);
         promises.push(getTransactionProducts);
@@ -189,7 +189,7 @@ class createUpsellController extends transactionEndpointController{
             }
 
 			//Technical Debt: refactor this to use the transaction products above....
-            info.amount = productScheduleController.productSum(0, info.schedulesToPurchase);
+            info.amount = productScheduleController.productSum(0, info.productschedules_for_purchase);
 
             return info;
 
@@ -204,7 +204,7 @@ class createUpsellController extends transactionEndpointController{
       let ph = new processHelperController();
 
       //Technical Debt:  Assumes a single schedule for purchase
-      let productschedule = info.schedulesToPurchase[0];
+      let productschedule = info.productschedules_for_purchase[0];
 
       return ph.process({customer: info.customer, productschedule: productschedule, amount:info.amount}).then((result) => {
 
@@ -238,7 +238,7 @@ class createUpsellController extends transactionEndpointController{
 
         du.debug('Push Events Record');
 
-        let product_schedule = info.schedulesToPurchase[0].id;
+        let product_schedule = info.productschedules_for_purchase[0].id;
 
         return this.pushEventToRedshift('order', info.session, product_schedule).then(() => {
 
@@ -293,11 +293,11 @@ class createUpsellController extends transactionEndpointController{
 
         var promises = [];
         var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
-        var updateSession = sessionController.updateSessionProductSchedules(info.session, info.schedulesToPurchase);
+        var updateSession = sessionController.updateSessionProductSchedules(info.session, info.productschedules_for_purchase);
         var rebillUpdates = rebillController.updateRebillTransactions(rebill, transactions);
 
 		//Technical Debt:  This is deprecated.  Instead, add the session id object to the rebill queue
-		//var createNextRebills = rebillController.createRebills(info.session, info.schedulesToPurchase);
+		//var createNextRebills = rebillController.createRebills(info.session, info.productschedules_for_purchase);
 
         promises.push(addRebillToQueue);
 		//promises.push(createNextRebills);

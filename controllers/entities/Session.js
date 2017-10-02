@@ -505,11 +505,9 @@ class sessionController extends entityController {
 
         }else{
 
-          du.info('Creating new session.');
-
           let session_object = this.createSessionObject(parameters);
 
-          session_object = this.pruneSessionObject(session_object);
+          session_object = this.prune(session_object)
 
           return this.create({entity: session_object});
 

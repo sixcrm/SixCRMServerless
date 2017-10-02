@@ -3,6 +3,7 @@ const _ = require("underscore");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
@@ -63,10 +64,10 @@ class createOrderController extends transactionEndpointController{
       		.then(this.getTransactionInfo)
       		.then(this.createOrder)
           .then((info) => {
-            this.pushToRedshift(info);
-            this.handleTracking(info);
-            this.postOrderProcessing(info);
-            this.handleNotifications(info);
+            //this.pushToRedshift(info);
+            //this.handleTracking(info);
+            //this.postOrderProcessing(info);
+            //this.handleNotifications(info);
             return info;
           });
 
@@ -87,13 +88,11 @@ class createOrderController extends transactionEndpointController{
 
         var promises = [];
 
-        var getSession = sessionController.get({id: event_body['session']});
+        var getSession = sessionController.get({id: event_body.session});
 
-        var getProductSchedules = productScheduleController.getProductSchedules(event_body['product_schedules']);
+        var getProductSchedules = productScheduleController.getList({list_array: event_body.product_schedules});
 
-        var getCreditCard	= creditCardController.createCreditCardObject(event_body['creditcard']).then((creditcard) => {
-            return creditCardController.storeCreditCard(creditcard);
-        });
+        var getCreditCard	= creditCardController.assureCreditCard(event_body.creditcard);
 
         promises.push(getSession);
         promises.push(getProductSchedules);
@@ -103,13 +102,16 @@ class createOrderController extends transactionEndpointController{
 
             var info = {
                 session: promises[0],
-                schedulesToPurchase: promises[1],
                 creditcard: promises[2]
             };
 
+            if(_.has(promises[1], 'productschedules')){
+              info.productschedules_for_purchase = promises[1].productschedules;
+            }
+
             return info;
 
-        })
+        });
 
     }
 
@@ -157,14 +159,19 @@ class createOrderController extends transactionEndpointController{
           eu.throwError('bad_request', 'The specified session is already complete.');
       }
 
-      if(!_.isArray(info.schedulesToPurchase) || (info.schedulesToPurchase.length < 1)){
+      if(!_.isArray(info.productschedules_for_purchase) || (info.productschedules_for_purchase.length < 1)){
           eu.throwError('not_found', 'No available schedules to purchase.');
       }
 
-      sessionController.validateProductSchedules(info.schedulesToPurchase, info.session);
+      arrayutilities.map(info.productschedules_for_purchase, schedule => {
+        if(_.isUndefined(schedule) || _.isNull(schedule)){
+          eu.throwError('not_found', 'Inappropriate productschedule: '+schedule);
+        }
+      });
 
-      //Technical Debt:  This is causing some hanging...
-      campaignController.validateProductSchedules(info.schedulesToPurchase, info.campaign);
+      sessionController.validateProductSchedules(info.productschedules_for_purchase, info.session);
+
+      campaignController.validateProductSchedules(info.productschedules_for_purchase, info.campaign);
 
       return Promise.resolve(info);
 
@@ -191,10 +198,10 @@ class createOrderController extends transactionEndpointController{
 
         var getCustomer = customerController.get({id: info.session.customer});
         //Technical Debt:  Naming convention here could use some work
-        var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.schedulesToPurchase);
+        var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.productschedules_for_purchase);
 
 		    // Note:  This creates the rebill for NOW such that we have a rebill to append the transaction to.
-        var getRebills = rebillController.createRebills(info.session, info.schedulesToPurchase, 0);
+        var getRebills = rebillController.createRebills(info.session, info.productschedules_for_purchase, 0);
 
         promises.push(getCustomer);
         promises.push(getTransactionProducts);
@@ -212,7 +219,7 @@ class createOrderController extends transactionEndpointController{
             }
 
 			      //Technical Debt: refactor this to use the transaction products above....
-            info.amount = productScheduleController.productSum(0, info.schedulesToPurchase);
+            info.amount = productScheduleController.productSum(0, info.productschedules_for_purchase);
 
             return info;
 
@@ -227,7 +234,7 @@ class createOrderController extends transactionEndpointController{
       let ph = new processHelperController();
 
       //Technical Debt:  Assumes a single schedule for purchase
-      let productschedule = info.schedulesToPurchase[0];
+      let productschedule = info.productschedules_for_purchase[0];
 
       return ph.process({customer: info.customer, productschedule: productschedule, amount:info.amount}).then((result) => {
 
@@ -271,11 +278,11 @@ class createOrderController extends transactionEndpointController{
 
         var promises = [];
         var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
-        var updateSession = sessionController.updateSessionProductSchedules(info.session, info.schedulesToPurchase);
+        var updateSession = sessionController.updateSessionProductSchedules(info.session, info.productschedules_for_purchase);
         var rebillUpdates = rebillController.updateRebillTransactions(rebill, transactions);
 
 		    //Technical Debt:  This is deprecated.  Instead, add the session id object to the rebill queue
-        //var createNextRebills = rebillController.createRebills(info.session, info.schedulesToPurchase);
+        //var createNextRebills = rebillController.createRebills(info.session, info.productschedules_for_purchase);
 
         promises.push(addRebillToQueue);
         //promises.push(createNextRebills);
@@ -317,7 +324,7 @@ class createOrderController extends transactionEndpointController{
 
         du.debug('Push Events Record');
 
-        let product_schedule = info.schedulesToPurchase[0].id;
+        let product_schedule = info.productschedules_for_purchase[0].id;
 
         return this.pushEventToRedshift('order', info.session, product_schedule).then(() => {
 

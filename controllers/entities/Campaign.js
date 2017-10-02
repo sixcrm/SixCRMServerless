@@ -319,45 +319,31 @@ class campaignController extends entityController {
 
     validateProductSchedules(product_schedules, campaign){
 
-        if(!_.has(campaign, 'productschedules') || !_.isArray(campaign.productschedules) || campaign.productschedules.length < 1){
+      if(!_.has(campaign, 'productschedules') || !_.isArray(campaign.productschedules) || campaign.productschedules.length < 1){
 
-            eu.throwError('server','Invalid product schedule.');
+        eu.throwError('server','Invalid product schedule.');
 
-        }
+      }
 
-        var campaign_product_schedules = campaign.productschedules;
+      arrayutilities.map(product_schedules, product_schedule => {
 
-        for(var i = 0; i < product_schedules.length; i++){
+        du.info(product_schedule);
 
-            var schedule_found = false;
+        let found = arrayutilities.find(campaign.productschedules, campaign_product_schedule => {
 
-            for(var j = 0; j < campaign_product_schedules.length; j++){
+          return (this.getID(campaign_product_schedule) == this.getID(product_schedule));
 
-                let campaign_product_schedule = campaign_product_schedules[j];
+        });
 
-                if(!this.isUUID(campaign_product_schedule) && _.has(campaign_product_schedules[j], 'id')){
+        if(_.isUndefined(found) || _.isNull(found)){
 
-                    campaign_product_schedule = campaign_product_schedules[j].id;
-
-                }
-
-                if(product_schedules[i].id == campaign_product_schedule){
-
-                    schedule_found = true;
-
-                }
-
-            }
-
-            if(schedule_found == false){
-
-                eu.throwError('server','Product schedule does not agree with campaign product schedule: '+product_schedules[i].id);
-
-            }
+          eu.throwError('server','Product schedule does not agree with campaign product schedule: '+product_schedule);
 
         }
 
-        return true;
+      });
+
+      return true;
 
     }
 
