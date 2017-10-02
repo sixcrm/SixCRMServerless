@@ -60,6 +60,8 @@ module.exports = class entityController extends entityUtilitiesController {
 
         super();
 
+        this.setPrimaryKey();
+
         this.setNames(name);
 
         //Technical Debt:  Need accountrole table?
@@ -191,8 +193,6 @@ module.exports = class entityController extends entityUtilitiesController {
                     query_parameters['scan_index_forward'] = false;
                 }
 
-                du.warning('Query Parameters: ', query_parameters);
-
                 return Promise.resolve(this.dynamoutilities.queryRecordsFull(this.table_name, query_parameters, index_name, (error, data) => {
 
                     if(_.isError(error)){
@@ -216,6 +216,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Technical Debt: this if garbage...
     getList({list_array}){
 
       du.debug('Get List');
@@ -260,30 +261,7 @@ module.exports = class entityController extends entityUtilitiesController {
                     query_parameters['limit'] = limit;
                 }
 
-                if(global.disableaccountfilter !== true){
-
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
-
-                        if(global.account == '*'){
-
-													//for now, do nothing
-
-                        }else{
-
-                            query_parameters.filter_expression = 'account = :accountv';
-                            query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                        }
-
-                    }
-
-                }else{
-
-                    du.warning('Global Account Filter Disabled');
-
-                }
-
-                du.debug(query_parameters);
+                query_parameters = this.appendAccountFilter(query_parameters);
 
                 return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
 
@@ -326,10 +304,6 @@ module.exports = class entityController extends entityUtilitiesController {
     queryByParameters({parameters, pagination}){
 
       du.debug('Query By Parameters');
-
-      //du.debug('Query by secondary index', field, index_value, index_name, pagination);
-
-      du.warning(parameters);
 
       return new Promise((resolve, reject) => {
 
@@ -419,344 +393,263 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    get({id, primary_key}){
+    get({id}){
 
-        du.debug('Get');
+      du.debug('Get');
 
-        return new Promise((resolve, reject) => {
+      return this.can('read').then((permission) => {
 
-            if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+        //Technical Debt:  Remove this.
+        id = this.getID(id);
 
-            //Technical Debt:  Let's try to eliminate this...
-            try{
-                //du.info(id, arguments);
-                id = this.getID(id, primary_key);
-            }catch(e){
-                du.error(e);
-                return reject(e);
+        if(permission !== true){ return null; }
+
+        let query_parameters = {
+          key_condition_expression: this.primary_key+' = :primary_keyv',
+          expression_attribute_values: {':primary_keyv': id}
+        };
+
+        query_parameters = this.appendAccountFilter(query_parameters);
+
+        return new Promise((resolve) => {
+
+          du.warning(query_parameters);
+
+          this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+
+            if(_.isError(error)){
+
+              eu.throwError('server', error);
+
             }
 
-            return this.can('read').then((permission) => {
+            if(_.isObject(data) && _.isArray(data)){
 
-                if(permission != true){
+              if(data.length > 1){
 
-                    return resolve(null);
+                eu.throwError('bad_request','Multiple '+this.descriptive_name+'s returned where one should be returned.');
 
-                }
+              }
 
-                let query_parameters = {
-                    key_condition_expression: primary_key+' = :primary_keyv',
-                    expression_attribute_values: {':primary_keyv': id}
-                };
+              if(_.isUndefined(data[0])){
+                return resolve(null);
+              }
 
-                if(global.disableaccountfilter !== true){
+              return resolve(data[0]);
 
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+            }
 
-                        if(global.account == '*'){
-
-													//for now, do nothing
-
-                        }else{
-
-                            query_parameters.filter_expression = 'account = :accountv';
-                            query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                        }
-
-                    }
-
-                }else{
-
-                    du.warning('Global Account Filter Disabled');
-
-                }
-
-                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
-
-                  if(_.isError(error)){
-
-                    eu.throwError('server', error);
-
-                    return reject(error);
-
-                  }
-
-                  if(_.isObject(data) && _.isArray(data)){
-
-                      if(data.length == 1){
-
-                          return resolve(data[0]);
-
-                      }else{
-
-                          if(data.length > 1){
-
-                              reject(eu.getError('bad_request','Multiple '+this.descriptive_name+'s returned where one should be returned.'));
-
-                          }else{
-
-                              return resolve(null);
-
-                          }
-
-                      }
-
-                  }
-
-                }));
-
-            })
-            .catch((error) => {
-
-                eu.throwError('server', error);
-
-            });
+          });
 
         });
+
+      });
 
     }
 
     countCreatedAfterBySecondaryIndex({date_time, field, index_name, cursor, limit}) {
 
-        du.debug('Count Created After Secondary Index');
+      du.debug('Count Created After Secondary Index');
 
-        return new Promise((resolve, reject) => {
+      return this.can('read').then((permission) => {
 
-            return this.can('read').then((permission) => {
+        if(permission !== true){
 
-                if(permission !== true){
+          return null;
 
-                    return resolve(null);
+        }
 
-                }
+        let query_parameters = {
+            key_condition_expression: '#'+field+' = :index_valuev',
+            expression_attribute_values: {':index_valuev': global.user.id, ':createdv': date_time},
+            expression_attribute_names: {},
+            filter_expression: 'created_at > :createdv'
+        };
 
-                let query_parameters = {
-                    key_condition_expression: '#'+field+' = :index_valuev',
-                    expression_attribute_values: {':index_valuev': global.user.id, ':createdv': date_time},
-                    expression_attribute_names: {},
-                    filter_expression: 'created_at > :createdv'
-                };
+        //Technical Debt:  This is silly.
+        query_parameters.expression_attribute_names['#'+field] = field;
 
-                query_parameters.expression_attribute_names['#'+field] = field;
+        if(!_.isUndefined(cursor)) {
+          query_parameters.ExclusiveStartKey = cursor;
+        }
 
-                if(typeof cursor  !== 'undefined') {
-                    query_parameters.ExclusiveStartKey = cursor;
-                }
+        if(!_.isUndefined(limit)){
+          query_parameters['limit'] = limit;
+        }
 
-                if(typeof limit  !== 'undefined'){
-                    query_parameters['limit'] = limit;
-                }
+        query_parameters = this.appendAccountFilter(query_parameters);
 
-                if(global.disableaccountfilter !== true){
+        return new Promise((resolve) => {
 
-                    if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+          this.dynamoutilities.countRecords(this.table_name, query_parameters, index_name, (error, data) => {
 
-                        if(global.account == '*'){
+            if(_.isError(error)){
 
-                            //for now, do nothing
+              eu.throwError('server', error);
 
-                        }else{
+            }
 
-                            query_parameters.filter_expression += ' AND account = :accountv';
-                            query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-                        }
-
-                    }
-
-                }else{
-
-                    du.warning('Global Account Filter Disabled');
-
-                }
-
-                du.debug(query_parameters);
-
-                return Promise.resolve(this.dynamoutilities.countRecords(this.table_name, query_parameters, index_name, (error, data) => {
-
-                    if(_.isError(error)){
-
-                        return reject(error);
-
-                    }
-
-                    return resolve({ count: data});
-
-                }));
-
-            });
-
-        });
-    }
-
-    //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account)
-    //Technical Debt:  Add Kinesis Activity
-    create({entity, primary_key}){
-
-      du.debug('Create');
-
-      if(_.isUndefined(primary_key)){ primary_key = 'id'; }
-
-      return new Promise((resolve, reject) => {
-
-        return this.can('create', true).then(() => {
-
-          entity = this.assignPrimaryKey(entity, primary_key);
-          entity = this.assignAccount(entity);
-          entity = this.setCreatedAt(entity);
-
-          return this.validate(entity)
-          .then(() => {
-            //du.warning('here!');  process.exit();
-            return this.exists({entity: entity, primary_key: primary_key});
-          })
-          .then((exists) => {
-
-
-              if(exists !== false){ return reject(eu.getError('bad_request','A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"')); }
-
-              return this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
-
-                  if(_.isError(error)){ return reject(error);}
-
-                  return this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null)
-                  .then(() => this.addToSearchIndex(entity, this.descriptive_name))
-                  .then(() => {
-
-                      return resolve(entity);
-
-                  }).catch((error) => {
-
-                      return reject(error);
-
-                  });
-
-              });
-
-          }).catch((error) => {
-
-              return reject(error);
+            resolve({count: data});
 
           });
 
-        }).catch((error) =>{
+        });
 
-          return reject(error);
+      });
+
+    }
+
+    //Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account
+    create({entity}){
+
+      du.debug('Create');
+
+      return this.can('create', true).then(() => {
+
+        entity = this.assignPrimaryKey(entity);
+        entity = this.assignAccount(entity);
+        entity = this.setCreatedAt(entity);
+
+        return this.validate(entity).then(() => {
+
+          return this.exists({entity: entity}).then((exists) => {
+
+            if(exists !== false){
+
+              eu.throwError('bad_request','A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"');
+
+            }
+
+            return new Promise((resolve) => {
+
+              this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
+
+                if(_.isError(error)){
+                  eu.throwError('server', error);
+                }
+
+                return resolve(entity);
+
+              });
+
+            }).then(entity => {
+
+              this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+
+              this.addToSearchIndex(entity, this.descriptive_name);
+
+              return entity;
+
+            });
+
+          });
 
         });
 
-        });
+      });
 
     }
 
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
-    update({entity, primary_key}){
+    update({entity}){
 
-        du.debug('Update');
+      du.debug('Update');
 
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+      return this.can('update', true).then(() => {
 
-        return new Promise((resolve, reject) => {
+        if(!_.has(entity, this.primary_key)){
+          eu.throwError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
+        }
 
-            return this.can('update', true).then(() => {
+        entity = this.assignAccount(entity);
 
-                if(!_.has(entity, primary_key)){ return reject(eu.getError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+primary_key+'"')); }
+        return this.exists({entity: entity}).then((exists) => {
 
-                entity = this.assignAccount(entity);
+          if(exists === false){
+            eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.');
+          }
 
-                return this.exists({entity: entity, primary_key: primary_key})
-                .then((exists) => {
+          entity = this.persistCreatedUpdated(entity, exists);
 
-                    if(exists === false){ return reject(eu.getError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.')); }
+          entity = this.setUpdatedAt(entity);
 
-                  //Note:  People can't change these automatically included fields...
-                    entity = this.persistCreatedUpdated(entity, exists);
+          return this.validate(entity).then(() => {
 
-                    entity = this.setUpdatedAt(entity);
+            return new Promise((resolve) => {
 
-                    return this.validate(entity).then(() => {
+              this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
 
-                        this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
+                if(_.isError(error)){
+                  eu.throwError('server', error);
+                }
 
-                            if(_.isError(error)){ return reject(error);}
+                return resolve(entity);
 
-                            return this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null)
-                          .then(() => this.addToSearchIndex(entity, this.descriptive_name))
-                          .then(() => {
+              });
 
-                              return resolve(entity);
+            }).then(entity => {
 
-                          }).catch((error) => {
+              this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null);
 
-                              return reject(error);
+              this.addToSearchIndex(entity, this.descriptive_name);
 
-                          });
+              return entity;
 
-                        });
-
-                    });
-
-                }).catch((error) => {
-                    return reject(error);
-                });
-
-            }).catch((error) => {
-                return reject(error);
             });
 
+          });
+
         });
+
+      });
 
     }
 
     touch({entity}){
 
-        du.debug('Touch');
+      du.debug('Touch');
 
-        return new Promise((resolve, reject) => {
+      return this.can('update', true).then(() => {
 
-            return this.can('update', true).then(() => {
+        return this.exists({entity: entity}).then((exists) => {
 
-                //Technical Debt: Add Kinesis Activity
-                return this.exists({entity: entity}).then((exists) => {
+          if (!exists) {
 
-                    if (!exists) {
-                        return resolve(this.create({entity: entity}));
-                    } else {
-                        return resolve(this.update({entity: entity}));
-                    }
-                });
+            return this.create({entity: entity});
 
-            }).catch((error) => {
-                return reject(error);
-            });
+          } else {
+
+            return this.update({entity: entity});
+
+          }
+
         });
+
+      });
 
     }
 
-    store({entity, primary_key}){
+    store({entity}){
 
         du.debug('Store');
 
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+        if(!_.has(entity, this.primary_key)){
 
-        if(!_.has(entity, primary_key)){
-
-            return this.create({entity: entity, primary_key: primary_key});
+            return this.create({entity: entity});
 
         }else{
 
           entity = this.assignAccount(entity);
 
-          return this.exists({entity: entity, primary_key: primary_key}).then((exists) => {
+          return this.exists({entity: entity}).then((exists) => {
 
             if(exists === false){
 
-              return this.create({entity: entity, primary_key: primary_key});
+              return this.create({entity: entity});
 
             }else{
 
-              return this.update({entity: entity, primary_key: primary_key});
+              return this.update({entity: entity});
 
             }
 
@@ -768,129 +661,91 @@ module.exports = class entityController extends entityUtilitiesController {
 
 		//NOT ACL enabled
     //Technical Debt:  Add Kinesis Activity
-    delete({id, primary_key}){
+    delete({id}){
 
-        du.debug('Delete');
+      du.debug('Delete');
 
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+      let spoofed_entity = {};
 
-        return new Promise((resolve, reject) => {
+      spoofed_entity[this.primary_key] = id;
 
-          try{
-              id = this.getID(id, primary_key);
-          }catch(e){
-              return reject(e);
-          }
+      return this.can('delete', true)
+      .then(() => this.checkAssociatedEntities({id: id}))
+      .then(() => this.exists({entity: spoofed_entity}))
+      .then((exists) => {
 
-          return this.can('delete', true)
-          .then(() => this.checkAssociatedEntities({id: id}))
-          .then(() => {
+        if(!exists){
+          eu.throwError('not_found','Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.');
+        }
 
-            let query_parameters = {
-                key_condition_expression: primary_key+' = :primary_keyv',
-                expression_attribute_values: {':primary_keyv': id}
-            };
+        return new Promise((resolve) => {
 
-            let delete_parameters = {};
+          let delete_parameters = {};
 
-            delete_parameters[primary_key] = id;
+          delete_parameters[this.primary_key] = id;
 
-      //Technical Debt:  Refactor.
-      //Technical Debt:  What happens if this object that is being deleted is in non-accounts?
-            if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+          this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
 
-              if(global.account == '*'){
-                //for now, do nothing
-
-              }else{
-
-                query_parameters.filter_expression = 'account = :accountv';
-                query_parameters.expression_attribute_values[':accountv'] = global.account;
-
-              }
-
+            if(_.isError(error)){
+              eu.throwError('server', error);
             }
 
-        //Exists?
-            return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+            resolve(delete_parameters);
 
-              if(_.isError(error)){ reject(error);}
+            this.removeFromSearchIndex(id, this.descriptive_name);
 
-              if(!_.isObject(data) || !_.isArray(data) || data.length !== 1){ return reject(eu.getError('not_found','Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.')); }
-
-              this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
-
-                if(_.isError(error)){ reject(error);}
-
-                this.removeFromSearchIndex(id, this.descriptive_name).then((removed) => {
-
-                  du.debug('Removed: '+removed);
-
-                  return resolve(delete_parameters);
-
-                }).catch((error) => {
-
-                  du.debug('Rejecting:', id);
-
-                  return reject(error);
-
-                });
-
-              });
-
-            }));
-
-          }).catch((error) => {
-              reject(error);
           });
 
         });
 
+      });
+
     }
 
-    exists({entity, primary_key}){
+    exists({entity}){
 
-        du.debug('Exists');
+      du.debug('Exists');
 
-        if(_.isUndefined(primary_key)){ primary_key = 'id'; }
+      if(!_.has(entity, this.primary_key)){
 
-        if(!_.has(entity, primary_key)){
+        return Promise.reject(eu.getError('bad_request','Unable to create '+this.descriptive_name+'. Missing property "'+this.primary_key+'"'));
 
-            //Technical Debt:  What is this message?
-            return Promise.reject(eu.getError('bad_request','Unable to create '+this.descriptive_name+'. Missing property "'+primary_key+'"'));
+      }else{
 
-        }else{
+        let query_parameters = {
+            key_condition_expression: this.primary_key+' = :primary_keyv',
+            expression_attribute_values: {':primary_keyv': entity[this.primary_key]}
+        };
 
-            let query_parameters = {
-                key_condition_expression: primary_key+' = :primary_keyv',
-                expression_attribute_values: {':primary_keyv': entity[primary_key]}
-            };
+        query_parameters = this.appendAccountFilter(query_parameters)
 
-            query_parameters = this.appendAccountFilter(query_parameters)
+        return new Promise((resolve) => {
 
-            return new Promise((resolve, reject) => {
+          this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
 
-                this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
+            if(_.isError(error)){
+              eu.throwError('server', error);
+            }
 
-                    if(_.isError(error)){ return reject(error);}
+            if(data.length > 1){
 
-                    if(_.isObject(data) && _.isArray(data) && data.length == 1){
+              eu.throwError('bad_request','Non-unique data present in the database for '+this.primary_key+': '+entity[this.primary_key]);
 
-                        return resolve(data[0]);
+            }
 
-                    }else if(data.length > 1){
+            if(_.isObject(data) && _.isArray(data) && data.length == 1){
 
-                        return reject(eu.getError('bad_request','Non-unique data present in the database for '+primary_key+': '+entity[primary_key]));
+              return resolve(data[0]);
 
-                    }
+            }
 
-                    return resolve(false);
+            return resolve(false);
 
-                });
+          });
 
-            });
+        });
 
-        }
+      }
 
     }
 
@@ -933,6 +788,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Create Associated Entities Object');
 
+      //Technical Debt:  Not every entity has "ID"
       if(!_.has(object, 'id')){
         eu.throwError('server', 'Create Associated Entities expects the object parameter to have field "id"');
       }

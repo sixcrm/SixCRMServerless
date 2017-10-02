@@ -10,12 +10,14 @@
 			"anyOf":[
 				{"$ref": "../definitions/uuidv4.json"},
 				{"$ref": "./customer.json"}
-			]},
+			]
+    },
 		"campaign":{
 			"anyOf":[
 				{"$ref": "../definitions/uuidv4.json"},
 				{"$ref": "./campaign.json"}
-			]},
+			]
+    },
 		"product_schedules":{
 			"type": "array",
 			"items":{

@@ -5,6 +5,7 @@ var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 var arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+var objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -382,38 +383,64 @@ class sessionController extends entityController {
 
     }
 
-    createSessionObject(params){
+    createSessionObject(parameters){
 
-        if(!_.has(params,'customer')){
+      du.debug('Create Session Object');
 
-            return eu.getError('bad_request','A session must be associated with a Customer.');
+      let session = {
+        completed: 'false'
+      };
 
+      let session_template = {
+        required:{
+          customer: 'customer',
+          campaign: 'campaign'
+        },
+        optional:{
+          affiliate: 'affiliate',
+          subaffiliate_1: 'subaffiliate_1',
+          subaffiliate_2: 'subaffiliate_2',
+          subaffiliate_3: 'subaffiliate_3',
+          subaffiliate_4: 'subaffiliate_4',
+          subaffiliate_5: 'subaffiliate_5',
+          cid: 'cid'
         }
+      };
 
-        if(!_.has(params,'campaign')){
+      session = objectutilities.transcribe(session_template.required, parameters, session, true);
 
-            return eu.getError('bad_request','A session must be associated with a Campaign.');
-
-        }
-
-        var session = {
-            id: this.getUUID(),
-            customer: params.customer,
-            campaign: params.campaign,
-            completed: 'false'
-        };
-
-        if(_.has(params, 'affiliate_id') && _.isString(params.affiliate_id)){
-            session.affiliate = params.affiliate_id;
-        }
-
-        return session;
+      return objectutilities.transcribe(session_template.optional, parameters, session, false);
 
     }
 
+    pruneSessionObject(session){
+
+      du.debug('Prune Session Object');
+
+      if(_.has(session.customer)){
+        session.customer = this.getID(session.customer);
+      }
+
+      if(_.has(session.campaign)){
+        session.campaign = this.getID(session.campaign);
+      }
+
+      return session;
+
+    }
+
+    getSessionByCustomer(customer){
+
+      du.debug('Get Session By Customer');
+
+      return this.queryBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index'}).then((result) => this.getResult(result));
+
+    }
+
+    //Technical Debt:  Deprecated but left for backwards copatibility.
     getSessionByCustomerID(customer_id){
 
-        return this.queryBySecondaryIndex({field: 'customer', index_value: customer_id, index_name: 'customer-index'}).then((result) => this.getResult(result));
+      return this.queryBySecondaryIndex({field: 'customer', index_value: customer_id, index_name: 'customer-index'}).then((result) => this.getResult(result));
 
     }
 
@@ -444,83 +471,51 @@ class sessionController extends entityController {
 
     }
 
-    //Technical Debt:  Update me!
-    putSession(parameters){
+    assureSession(parameters){
 
-        return new Promise((resolve, reject) => {
+      du.debug('Assure Session');
 
-            if(!_.has(parameters, 'customer')){
-                reject(eu.getError('bad_request','Parameters object must have a customer'));
-            }
+      //Technical Debt:  Update this shit validate
 
-            if(!_.has(parameters, 'campaign')){
-                reject(eu.getError('bad_request','Parameters object must have a customer'));
-            }
+      return this.getSessionByCustomer(parameters.customer).then((sessions) => {
 
-            /*
-            //Technical Debt:  This assures the presence of fields that we don't necessarily need...
-            ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5'].forEach((affiliate_field) => {
+        let session_found = arrayutilities.find(sessions, (session) => {
 
-                if(!_.has(parameters, affiliate_field)){
-                    parameters[affiliate_field] = null;
-                }
+          if(_.has(session, 'completed') && session.completed == 'false' && _.has(session, 'created_at')){
 
-            });
-            */
+            let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);
 
+            return (timestamp.getTimeDifference(created_at_timestamp) < this.session_length);
 
-            return this.getSessionByCustomerID(parameters.customer).then((sessions) => {
+          }
 
-                var session_found = false;
-
-                if(_.isArray(sessions) && sessions.length > 0){
-                    sessions.forEach((session) => {
-                        if(_.has(session, 'completed') && session.completed == 'false'){
-                            if(_.has(session, "created_at")){
-                                let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);
-                                var time_difference = timestamp.getTimeDifference(created_at_timestamp);
-
-                                if(time_difference < this.session_length){
-                                    resolve(session);
-                                    session_found = true;
-                                    return false;
-                                }
-                            }
-                        }
-                    });
-                }
-
-                if(session_found == false){
-
-                    let session = {};
-
-                    _.union(['customer', 'campaign'], this.affiliate_fields).forEach((parameter) => {
-                        if(_.has(parameters, parameter)){
-                            session[parameter] = parameters[parameter];
-                        }else{
-
-                            //Technical Debt:  Some of this stuff is not necessary...
-                            //session[parameter] = null;
-
-                        }
-
-                    });
-
-                    return this.create({entity: session}).then((session) => {
-                        return resolve(session);
-                    });
-
-                } else {
-                    return reject(eu.getError('not_found',`Session with CustomerID '${parameters.customer}' not found`));
-                }
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
+          return false;
 
         });
+
+        return (_.isUndefined(session_found))?null:session_found;
+
+      }).then(session_found => {
+
+        if(!_.isNull(session_found)){
+
+          du.info('Open session identified.');
+
+          return session_found;
+
+        }else{
+
+          du.info('Creating new session.');
+
+          let session_object = this.createSessionObject(parameters);
+
+          session_object = this.pruneSessionObject(session_object);
+
+          return this.create({entity: session_object});
+
+        }
+
+      });
 
     }
 
@@ -552,23 +547,21 @@ class sessionController extends entityController {
 
     validateProductSchedules(product_schedules, session){
 
-        if(!_.has(session, 'product_schedules') || !_.isArray(session.product_schedules) || session.product_schedules.length < 1){
+      du.debug('Validate Product Schedules');
 
-            return true;
+      if(_.has(session, 'product_schedules') && arrayutilities.nonEmpty(session.product_schedules)){
 
-        }
-
-        for(var i = 0; i < product_schedules.length; i++){
-            var product_schedule_id = product_schedules[i].id;
-
-            for(var j = 0; j < session.product_schedules.length; j++){
-                if(_.isEqual(product_schedule_id, session.product_schedules[j])){
-                    eu.throwError('bad_request','Product schedule already belongs to this session');
-                }
+        arrayutilities.map(product_schedules, (product_schedule) => {
+          arrayutilities.map(session.product_schedules, session_product_schedule => {
+            if(product_schedule.id == session_product_schedule){
+              //eu.throwError('bad_request','Product schedule already belongs to this session: "'+product_schedule.id+'"');
             }
-        }
+          });
+        });
 
-        return true;
+      }
+
+      return true;
 
     }
 

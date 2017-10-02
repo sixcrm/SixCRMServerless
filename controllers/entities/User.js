@@ -431,8 +431,6 @@ class userController extends entityController {
                       return resolve(null);
                   }
 
-                  du.debug('ACLs: ', acls);
-
                   let acl_promises = arrayutilities.map(acls, (acl) => {
                     return this.executeAssociatedEntityFunction('userACLController','getPartiallyHydratedACLObject', acl);
                   });

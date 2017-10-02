@@ -4,6 +4,7 @@ const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/endpoint.js');
 
@@ -159,33 +160,39 @@ module.exports = class AuthenticatedController extends endpointController {
 
     }
 
+    //Technical Debt:  THis function does not need to return a promise...
+    //Technical Debt:  Refactor, this is gross...
     validateRequiredPermissions(event){
 
-        du.debug('Validate Required Permissions');
+      du.debug('Validate Required Permissions');
 
-        return new Promise((resolve, reject) => {
+      let validated_permissions = arrayutilities.map(this.required_permissions, required_permission => {
 
-            permissionutilities.validatePermissionsArray(this.required_permissions).then((permission_object) => {
+        let permission_array = required_permission.split('/');
 
-                du.debug('Permission Object: ', permission_object);
+        let permission_utilities_state = JSON.stringify(permissionutilities.getState());
 
-                if(permission_object.has_permission !== true){
+        let question = permission_utilities_state+permissionutilities.buildPermissionString(permission_array[1], permission_array[0]);
 
-                    let error_string = 'Unable to execute action - user lacks permissions: '+permission_object.permission_failures.join(', ');
+        let answer_function = () => {
 
-                    return reject(eu.getError('fobidden', error_string));
+          let permission = permissionutilities.validatePermissions(permission_array[1], permission_array[0]);
 
-                }
+          return permission;
 
-                return resolve(event);
+        }
 
-            }).catch((error) => {
+        return global.SixCRM.localcache.resolveQuestion(question, answer_function);
 
-                return reject(error);
+      });
 
-            });
+      if(_.contains(validated_permissions, false)){
 
-        });
+        eu.throwError('fobidden', 'Unable to execute action.  User lacks permission.');
+
+      }
+
+      return Promise.resolve(event);
 
     }
 

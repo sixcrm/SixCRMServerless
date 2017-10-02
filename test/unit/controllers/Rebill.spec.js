@@ -177,10 +177,12 @@ describe('controllers/Rebill.js', () => {
             let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
             // when
-            return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).catch((error) => {
-                // then
-                expect(error.message).to.be.defined;
-            });
+            try{
+              rebillController.createRebill(aSession, aProductSchedule, aDayInCycle);
+            }catch(error){
+              expect(error.message).to.be.defined;
+            }
+
         });
 
         it('fails when user does not have permissions', () => {
@@ -209,11 +211,16 @@ describe('controllers/Rebill.js', () => {
 
             let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-            // when
-            return rebillController.createRebill(aSession, aProductSchedule, aDayInCycle).catch((error) => {
-                // then
-                expect(error.message).to.equal('[403] Invalid Permissions: user can not create on rebill');
-            });
+            try {
+
+              rebillController.createRebill(aSession, aProductSchedule, aDayInCycle);
+
+            }catch(error){
+
+              expect(error.message).to.equal('[403] Invalid Permissions: user can not create on rebill');
+
+            }
+
         });
 
         it('creates a rebill with a date in the future', () => {

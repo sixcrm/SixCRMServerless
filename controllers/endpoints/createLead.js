@@ -3,6 +3,8 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
@@ -16,6 +18,7 @@ class createLeadController extends transactionEndpointController{
         super({
             required_permissions: [
                 'user/read',
+                'usersetting/read',
                 'account/read',
                 'customer/read',
                 'customer/create',
@@ -27,7 +30,10 @@ class createLeadController extends transactionEndpointController{
                 'affiliate/read',
                 'affiliate/create',
                 'notification/create',
-                'tracker/read'
+                'notificationsetting/read',
+                'tracker/read',
+                'emailtemplate/read',
+                'smtpprovider/read'
             ],
             notification_parameters: {
                 type: 'lead',
@@ -41,19 +47,25 @@ class createLeadController extends transactionEndpointController{
 
     execute(event){
 
-        du.debug('Execute');
+      du.debug('Execute');
 
-        return this.preprocessing((event))
-  			.then((event) => this.acquireBody(event))
-  			.then((event) => this.validateInput(event, this.validateEventSchema))
-  			.then((event) => this.assureCustomer(event))
-        .then((event) => this.handleAffiliateInformation(event))
-  			.then((event) => this.createSessionObject(event))
-  			.then((session_object) => this.persistSession(session_object))
-        .then((session_object) => this.handleLeadTracking(session_object, event))
-        .then((session_object) => this.pushToRedshift(session_object))
-  			.then((session_object) => this.handleNotifications(session_object))
-        .then((session_object) => this.sendEmails('lead', session_object));
+      return this.preprocessing((event))
+			.then((event) => this.acquireBody(event))
+			.then((event) => this.validateInput(event, this.validateEventSchema))
+			.then((event) => this.assureCustomer(event))
+      .then((event) => this.handleAffiliateInformation(event))
+			.then((event) => this.createSessionObject(event))
+			.then((session_object) => this.persistSession(session_object))
+      .then((session_object) => {
+
+        this.handleLeadTracking(session_object, event);
+        this.pushToRedshift(session_object);
+        this.handleNotifications(session_object);
+        this.sendEmails('lead', session_object);
+
+        return session_object;
+
+      });
 
     }
 
@@ -65,118 +77,64 @@ class createLeadController extends transactionEndpointController{
 
     }
 
-    //Technical Debt:  Streamline to add hydrated model to the event object
     assureCustomer(event){
 
-        du.debug('Assure Customer');
+      return customerController.getCustomerByEmail(event.customer.email).then((customer) => {
 
-        return new Promise((resolve, reject) => {
+        if(_.has(customer, 'id')){
+          return customer;
+        }
 
-            customerController.getCustomerByEmail(event.customer.email).then((customer) => {
+        return customerController.create({entity: event.customer});
 
-                if(!_.has(customer, 'id')){
+      }).then((customer) => {
 
-                    return customerController.create({entity: event.customer}).then((created_customer) => {
+        this.session_customer = customer;
 
-                        if(_.has(created_customer, 'id')){
+        return event;
 
-                            return resolve(event);
-
-                        }
-
-                        return reject(eu.getError('not_implemented', 'Unable to create a new customer.'));
-
-                    }).catch((error) => {
-
-                        return reject(error);
-
-                    });
-
-                }else{
-
-                    return resolve(event);
-
-                }
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
+      });
 
     }
 
     createSessionObject(event){
 
-        du.debug('Create Session Object');
+      du.debug('Create Session Object');
 
-        return new Promise((resolve, reject) => {
+      var promises = [];
 
-            var promises = [];
+      return campaignController.get({id: event.campaign}).then(campaign => {
 
-            var getCampaign = campaignController.get({id: event.campaign});
-            var getCustomer = customerController.getCustomerByEmail(event.customer.email);
+        let protosession = {
+          customer: this.session_customer,
+          campaign: campaign,
+        };
 
-            promises.push(getCampaign);
-            promises.push(getCustomer);
+        if(_.has(event, 'affiliates')){
 
-            return Promise.all(promises).then((promises) => {
+          arrayutilities.map(this.affiliate_fields, (affiliate_field) => {
 
-                let campaign = promises[0];
-                let customer = promises[1];
+            if(_.has(event.affiliates, affiliate_field) && !_.isNull(event.affiliates[affiliate_field])){
 
-                if(!_.has(campaign, 'id')){ return reject(eu.getError('bad_request','A invalid campaign id is specified.')); }
+              protosession[affiliate_field] = event.affiliates[affiliate_field];
 
-                if(!_.has(customer, "id")){ return reject(eu.getError('bad_request','A invalid customer id is specified.')); }
+            }
 
-                let session_object = {
-                    customer: customer.id,
-                    campaign: campaign.id,
-                };
+          });
 
-                this.affiliate_fields.forEach((affiliate_field) => {
+        }
 
-                    if(_.has(event, 'affiliates') && _.has(event.affiliates, affiliate_field)){
+        return sessionController.createSessionObject(protosession);
 
-                        if(!_.isNull(event.affiliates[affiliate_field])){
-
-                            session_object[affiliate_field] = event.affiliates[affiliate_field];
-
-                        }
-
-                    }
-
-                });
-
-                return resolve(session_object);
-
-            });
-
-        });
+      });
 
     }
 
     persistSession(session_object){
 
-        du.debug('Persist Session');
+      du.debug('Persist Session');
 
-        du.warning('Session Object: ', session_object);
-
-        return new Promise((resolve, reject) => {
-
-            sessionController.putSession(session_object).then((session) => {
-
-                return resolve(session);
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
+      return sessionController.assureSession(session_object);
 
     }
 

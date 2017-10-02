@@ -4,6 +4,7 @@ const luhn = require("luhn");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
@@ -80,51 +81,90 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     handleAffiliateInformation(event){
 
-        du.debug('Handle Affiliate Information');
+      du.debug('Handle Affiliate Information');
 
-        if(_.has(event, 'affiliates')){
+      if(_.has(event, 'affiliates')){
 
-            let promises = [];
+        let affiliate_codes = this.extractAffiliateCodes(event);
 
-            for(var i = 0; i < this.affiliate_fields.length; i++){
+        if(arrayutilities.nonEmpty(affiliate_codes)){
 
-                let assurance_field = this.affiliate_fields[i];
+          return this.affiliateController.assureAffiliates(affiliate_codes).then(affiliates => {
 
-                if(_.has(event.affiliates, assurance_field) && event.affiliates[assurance_field] != ''){
+            event = this.replaceAffiliateIDs(event, affiliates);
 
-                    promises[i] = this.affiliateController.assureAffiliate(event.affiliates[assurance_field]);
+            this.validateAllAffiliatesReplaced(event);
 
-                }else{
+            return event;
 
-                    promises[i] = Promise.resolve('');
-
-                }
-
-            }
-
-            return Promise.all(promises).then((promises) => {
-
-                for(var i = 0; i < this.affiliate_fields.length; i++){
-
-                    let assurance_field = this.affiliate_fields[i];
-
-                    if(_.has(promises[i], 'id')){
-
-                        event.affiliates[assurance_field] = promises[i].id;
-
-                    }else{
-
-                        //event.affiliates[assurance_field] = promises[i];
-
-                    }
-
-                }
-
-                return Promise.resolve(event);
-
-            });
+          });
 
         }
+
+
+      }else{
+
+        return Promise.resolve(event);
+
+      }
+
+    }
+
+    validateAllAffiliatesReplaced(event){
+
+      du.debug('Validate All Affiliates Replaced');
+
+      arrayutilities.map(this.affiliate_fields, affiliate_field => {
+        if(_.has(event.affiliates, affiliate_field)){
+          if(!this.affiliateController.isUUID(event.affiliates[affiliate_field])){
+            eu.throwError('server', 'Unable to assure '+affiliate_field+': "'+event.affiliates[affiliate_field]+'".');
+          }
+        }
+      });
+
+    }
+
+    replaceAffiliateIDs(event, affiliates){
+
+      du.debug('Replace Affiliate IDs');
+
+      arrayutilities.map(this.affiliate_fields, affiliate_field => {
+
+        if(_.has(event.affiliates, affiliate_field)){
+
+          let assured_affiliate = arrayutilities.find(affiliates, affiliate => {
+            return (event.affiliates[affiliate_field] == affiliate.affiliate_id);
+          });
+
+          if(!_.isUndefined(assured_affiliate)){
+            event.affiliates[affiliate_field] = assured_affiliate.id;
+          }
+
+        }
+
+      });
+
+      return event;
+
+    }
+
+    extractAffiliateCodes(event){
+
+      du.debug('Extract Affiliate Codes');
+
+      let affiliate_codes = [];
+
+      if(_.has(event, 'affiliates')){
+
+        arrayutilities.map(this.affiliate_fields, affiliate_field => {
+          if(_.has(event.affiliates, affiliate_field)){
+            affiliate_codes.push(event.affiliates[affiliate_field]);
+          }
+        });
+
+      }
+
+      return arrayutilities.unique(affiliate_codes);
 
     }
 
