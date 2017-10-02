@@ -141,6 +141,8 @@ class affiliateController extends entityController {
 
       return this.list({query_parameters: in_parameters}).then(affiliates => {
 
+        affiliates.affiliates = (!_.isArray(affiliates.affiliates))?[]:affiliates.affiliates;
+
         let return_array = [];
 
         arrayutilities.map(affiliate_ids, (affiliate_id) => {

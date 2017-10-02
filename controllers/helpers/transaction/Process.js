@@ -729,7 +729,7 @@ module.exports = class Process{
 
         });
 
-        du.info(merchant_providers, return_array);
+        //du.info(merchant_providers, return_array);
 
         return Promise.resolve(return_array);
 
@@ -749,7 +749,7 @@ module.exports = class Process{
 
         });
 
-        du.info(merchant_providers, return_array);
+        //du.info(merchant_providers, return_array);
 
         return Promise.resolve(return_array);
 
@@ -795,7 +795,7 @@ module.exports = class Process{
 
         });
 
-        du.info(merchant_providers, return_array);
+        //du.info(merchant_providers, return_array);
 
         return Promise.resolve(return_array);
 
@@ -815,7 +815,7 @@ module.exports = class Process{
 
         });
 
-        du.info(merchant_providers, return_array);
+        //du.info(merchant_providers, return_array);
 
         return Promise.resolve(return_array);
 
@@ -843,7 +843,7 @@ module.exports = class Process{
 
         });
 
-        du.info(merchant_providers, return_array);
+        //du.info(merchant_providers, return_array);
 
         return Promise.resolve(return_array);
 

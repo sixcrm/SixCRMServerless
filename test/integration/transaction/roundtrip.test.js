@@ -61,7 +61,7 @@ describe('Round Trip Test', function() {
             };
 
             du.debug('Post data', post_body);
-
+      du.warning('token/acquire/'+account, authorization_string, post_body)
     	this_request.post('token/acquire/'+account)
       .send(post_body)
 			.set('Content-Type', 'application/json')
