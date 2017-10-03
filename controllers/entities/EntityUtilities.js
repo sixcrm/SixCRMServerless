@@ -5,6 +5,7 @@ const uuidV4 = require('uuid/v4');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
@@ -52,6 +53,35 @@ module.exports = class entityUtilitiesController {
       }
 
       return global.SixCRM.localcache.resolveQuestion(question, answer_function);
+
+    }
+
+    prune(entity, primary_key){
+
+      du.debug('Prune');
+
+      primary_key = (_.isUndefined(primary_key))?this.primary_key:primary_key;
+
+      if(objectutilities.isObject(entity)){
+
+          objectutilities.map(entity, entity_property => {
+
+            if(_.has(entity[entity_property], primary_key)){
+
+              entity[entity_property] = entity[entity_property][primary_key];
+
+            }else{
+
+              return this.prune(entity[entity_property]);
+
+
+            }
+
+          });
+
+      }
+
+      return entity;
 
     }
 

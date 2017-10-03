@@ -4,6 +4,7 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 
 class creditCardController extends entityController {
 
@@ -37,6 +38,81 @@ class creditCardController extends entityController {
 
     }
 
+    assureCreditCard(creditcard){
+
+      du.debug('Assure Credit Card');
+
+      du.highlight(creditcard);
+
+      return this.queryBySecondaryIndex({field:'number', index_value: creditcard.number, index_name: 'number-index'}).then(results => {
+
+        if(_.has(results, 'creditcards')){
+
+          let found_card = arrayutilities.find(results.creditcards, (result) => {
+            return this.sameCard(creditcard, result);
+          });
+
+          if(!_.isUndefined(found_card)){
+            return found_card;
+          }
+
+          return this.create({entity: creditcard});
+
+        }
+
+      });
+
+    }
+
+    sameCard(creditcard, test_card, fatal){
+
+      du.debug('Same Card');
+
+      fatal = (_.isUndefined(fatal))?false:fatal;
+
+      let bad_field = arrayutilities.find(objectutilities.getKeys(creditcard), creditcard_field => {
+
+        if(!_.has(test_card, creditcard_field)){
+          return true;
+        }
+
+        let test_field = test_card[creditcard_field];
+        let fact_field = creditcard[creditcard_field];
+
+        if(typeof test_field !== typeof fact_field){
+          return true;
+        }
+
+        if((_.isString(fact_field) || _.isNumber(fact_field)) && fact_field !== test_field){
+          return true;
+        }
+
+        if(_.isObject(fact_field)){
+          if(!_.isMatch(fact_field, test_field)){
+            return true;
+          }
+        }
+
+        return false;
+
+      });
+
+      if(!_.isUndefined(bad_field)){
+
+        let message = 'Cards do not match.  Bad field: '+bad_field;
+
+        if(fatal == true){
+          eu.throwError('server', message);
+        }
+
+        return false;
+
+      }
+
+      return true;
+
+    }
+
     getAddress(creditcard){
         return Promise.resolve(creditcard.address);
     }
@@ -65,89 +141,6 @@ class creditCardController extends entityController {
 
       return cc_number;
 
-    }
-
-    storeCreditCard(creditcard) {
-
-        du.debug('Store Credit Card.');
-
-        return new Promise((resolve, reject) => {
-
-            this.queryBySecondaryIndex({field:'number', index_value: creditcard.number, index_name: 'number-index'})
-              .then((result) => this.getResult(result))
-              .then((creditcards) => {
-
-                  du.warning(creditcards);
-
-                  var card_identified = false;
-
-                  if(!_.isArray(creditcards) && creditcards){
-
-                      return resolve(creditcard);
-                  } else {
-                      creditcards = [];
-                  }
-
-                  creditcards.forEach(function(item){
-
-                      if(card_identified == false && this.isSameCreditCard(creditcard, item)){
-
-                          card_identified = item;
-
-                      }
-
-                  });
-
-                  if(_.has(card_identified, 'id')){
-
-                      return resolve(card_identified);
-
-                  }else if(card_identified == false){
-
-                      return this.create({entity: creditcard}).then((data) => {
-
-                          return resolve(data);
-
-                      }).catch((error) => {
-
-                          return reject(error);
-
-                      });
-
-                  } else {
-
-                      return reject(eu.getError('server','Card not identified.'));
-
-                  }
-
-              }).catch((error) => {
-                  reject(error);
-              });
-
-        });
-
-    }
-
-    isSameCreditCard(creditcard1, creditcard2){
-
-        if(!_.isEqual(creditcard1.ccv, creditcard2.ccv)){
-            return false;
-        }
-
-        if(!_.isEqual(creditcard1.number, creditcard2.number)){
-            return false;
-        }
-
-        if(!_.isEqual(creditcard1.expiration, creditcard2.expiration)){
-            return false;
-        }
-
-        if(!_.isEqual(creditcard1.address, creditcard2.address)){
-
-            return false;
-        }
-
-        return true;
     }
 
     createCreditCardObject(input_object){

@@ -247,7 +247,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         du.debug('Get Product Schedule');
 
-        return info.schedulesToPurchase[0].id;
+        return info.productschedules_for_purchase[0].id;
 
     }
 

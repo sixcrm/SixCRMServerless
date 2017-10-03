@@ -60,7 +60,7 @@ class createLeadController extends transactionEndpointController{
 
         this.handleLeadTracking(session_object, event);
         this.pushToRedshift(session_object);
-        this.handleNotifications(session_object);
+        //this.handleNotifications(session_object);
         this.sendEmails('lead', session_object);
 
         return session_object;

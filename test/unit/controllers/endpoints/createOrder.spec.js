@@ -59,6 +59,9 @@ describe('controllers/endpoints/createOrder.js', () => {
         mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
+            },
+            getList: () => {
+              return Promise.resolve([]);
             }
         });
 
@@ -66,7 +69,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
-            storeCreditCard: () => {
+            assureCreditCard: () => {
                 return Promise.resolve();
             }
         });
@@ -77,6 +80,7 @@ describe('controllers/endpoints/createOrder.js', () => {
         return endpointController.getOrderInfo(eventBody).catch((error) => {
             return expect(error.message).to.equal('No available session.');
         });
+
     });
 
     it('doesn\'t get order info without campaign', () => {
@@ -108,6 +112,9 @@ describe('controllers/endpoints/createOrder.js', () => {
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
+            },
+            getList: () => {
+              return Promise.resolve([]);
             }
         });
 
@@ -115,7 +122,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
-            storeCreditCard: () => {
+            assureCreditCard: () => {
                 return Promise.resolve();
             }
         });
@@ -159,6 +166,9 @@ describe('controllers/endpoints/createOrder.js', () => {
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
             getProductSchedules: () => {
                 return Promise.resolve([]);
+            },
+            getList: () => {
+              return Promise.resolve([]);
             }
         });
 
@@ -166,7 +176,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             createCreditCardObject: () => {
                 return Promise.resolve([]);
             },
-            storeCreditCard: () => {
+            assureCreditCard: () => {
                 return Promise.resolve();
             }
         });

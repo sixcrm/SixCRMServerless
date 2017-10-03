@@ -50,7 +50,7 @@ class confirmOrderController extends transactionEndpointController{
   			.then(this.confirmOrder)
         .then(result_object => {
           this.pushToRedshift(result_object)
-          this.handleNotifications(result_object);
+          //this.handleNotifications(result_object);
           return result_object;
         });
 

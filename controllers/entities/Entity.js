@@ -221,14 +221,15 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Get List');
 
-      if(arrayutilities.nonEmpty(list_array)){
-        //Technical Debt:  Replace this with a IN clause
-        return Promise.all(arrayutilities.map(list_array, (list_item) => {
-          return this.get({id: list_item});
-        }));
+      du.warning('List parameters','','','',list_array);
+
+      if(!arrayutilities.nonEmpty(list_array)){
+        eu.throwError('server', 'getList assumes a non-empty array of identifiers');
       }
 
-      return null;
+      let in_parameters = this.dynamoutilities.createINQueryParameters(this.primary_key, list_array);
+
+      return this.list({query_parameters: in_parameters})
 
     }
 
@@ -297,9 +298,11 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    /*
     search(){
 
     }
+    */
 
     queryByParameters({parameters, pagination}){
 
@@ -510,6 +513,7 @@ module.exports = class entityController extends entityUtilitiesController {
         entity = this.assignAccount(entity);
         entity = this.setCreatedAt(entity);
 
+        du.info(entity);
         return this.validate(entity).then(() => {
 
           return this.exists({entity: entity}).then((exists) => {

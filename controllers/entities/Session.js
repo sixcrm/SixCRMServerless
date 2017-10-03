@@ -505,11 +505,9 @@ class sessionController extends entityController {
 
         }else{
 
-          du.info('Creating new session.');
-
           let session_object = this.createSessionObject(parameters);
 
-          session_object = this.pruneSessionObject(session_object);
+          session_object = this.prune(session_object)
 
           return this.create({entity: session_object});
 
@@ -554,7 +552,7 @@ class sessionController extends entityController {
         arrayutilities.map(product_schedules, (product_schedule) => {
           arrayutilities.map(session.product_schedules, session_product_schedule => {
             if(product_schedule.id == session_product_schedule){
-              //eu.throwError('bad_request','Product schedule already belongs to this session: "'+product_schedule.id+'"');
+              eu.throwError('bad_request','Product schedule already belongs to this session: "'+product_schedule.id+'"');
             }
           });
         });
