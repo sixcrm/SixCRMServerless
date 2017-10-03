@@ -54,22 +54,22 @@ class createOrderController extends transactionEndpointController{
 
     execute(event){
 
-        return this.preprocessing((event))
-      		.then(this.acquireBody)
-      		.then((event) => this.validateInput(event, this.validateEventSchema))
-      		.then(this.getOrderInfo)
-          .then(this.getOrderCampaign)
-          .then(this.validateInfo)
-      		.then(this.updateCustomer)
-      		.then(this.getTransactionInfo)
-      		.then(this.createOrder)
-          .then((info) => {
-            this.pushToRedshift(info);
-            this.handleTracking(info);
-            this.postOrderProcessing(info);
-            this.handleNotifications(info);
-            return info;
-          });
+      return this.preprocessing((event))
+  		.then(this.acquireBody)
+  		.then((event) => this.validateInput(event, this.validateEventSchema))
+  		.then(this.getOrderInfo)
+      .then(this.getOrderCampaign)
+      .then(this.validateInfo)
+  		.then(this.updateCustomer)
+  		.then(this.getTransactionInfo)
+  		.then(this.createOrder)
+      .then((info) => {
+        this.pushToRedshift(info);
+        this.handleTracking(info);
+        this.postOrderProcessing(info);
+        //this.handleNotifications(info);
+        return info;
+      });
 
     }
 
@@ -89,9 +89,7 @@ class createOrderController extends transactionEndpointController{
         var promises = [];
 
         var getSession = sessionController.get({id: event_body.session});
-
         var getProductSchedules = productScheduleController.getList({list_array: event_body.product_schedules});
-
         var getCreditCard	= creditCardController.assureCreditCard(event_body.creditcard);
 
         promises.push(getSession);
@@ -100,16 +98,19 @@ class createOrderController extends transactionEndpointController{
 
         return Promise.all(promises).then((promises) => {
 
-            var info = {
-                session: promises[0],
-                creditcard: promises[2]
-            };
+          du.highlight(promises);
 
-            if(_.has(promises[1], 'productschedules')){
-              info.productschedules_for_purchase = promises[1].productschedules;
-            }
+          var info = {
+            session: promises[0],
+            creditcard: promises[2]
+          };
 
-            return info;
+          if(_.has(promises[1], 'productschedules')){
+            info.productschedules_for_purchase = promises[1].productschedules;
+          }
+
+          //du.warning(info); process.exit();
+          return info;
 
         });
 

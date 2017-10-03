@@ -66,10 +66,10 @@ class createUpsellController extends transactionEndpointController{
   		.then(this.getTransactionInfo)
   		.then(this.createUpsell)
       .then(info => {
-         this.pushToRedshift(info);
-         this.postUpsellProcessing(info);
-         this.handleNotifications(info);
-         return info;
+       this.pushToRedshift(info);
+       this.postUpsellProcessing(info);
+       //this.handleNotifications(info);
+       return info;
       });
 
 
