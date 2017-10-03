@@ -87,7 +87,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         du.debug('Can check:', function_name, 'analytics');
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
 
           let permission = this.permissionutilities.validatePermissions(function_name, 'analytics');
 
