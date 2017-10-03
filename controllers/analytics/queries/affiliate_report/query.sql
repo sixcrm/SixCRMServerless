@@ -10,7 +10,6 @@ SELECT fe.affiliate,
        decode(fe.count_upsell,0,0, 1.0*fe.count_upsell / fe.count_click) AS upsell_percent,
        sum_upsell,
        sum_amount,
-       sum(sum_amount) over () AS all_sum_amount,
        fe.{{period}} AS {{period}}
 FROM
   (SELECT affiliate,
