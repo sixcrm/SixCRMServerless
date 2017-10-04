@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
@@ -13,49 +14,18 @@ const entityUtilitiesController = global.SixCRM.routes.include('controllers','en
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 //Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
 //Technical Debt:  Methods that use "primary key" as argumentation should derive that value from patent class
+//Technical Debt:  Need accountrole table?
+//Technical Debt:  Need notification settings to be bound to the accounts that they refer to?
+//Technical Debt:  Need accesskey to be specific to the account?
+//Technical Debt:  User signing strings should be bound to a specific account?
 
 module.exports = class entityController extends entityUtilitiesController {
 
+  /*
+  * "get" implies a singular result.
+  * "list" implies multiple results.
+  */
 
-  //NEW
-    listByAssociations({id, field, pagination}){
-
-      du.debug('List By Association');
-
-      let scan_parameters = {
-        filter_expression: 'contains(#f1, :id)',
-        expression_attribute_names:{
-            '#f1': field
-        },
-        expression_attribute_values: {
-            ':id': id
-        }
-      };
-
-      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
-
-    }
-
- //NEW
-    listByAssociation({id, field, pagination}){
-
-      du.debug('List By Associations');
-
-      let query_parameters = {
-        filter_expression: '#f1 = :id',
-        expression_attribute_values: {
-          ':id':id
-        },
-        expression_attribute_names: {
-          '#f1':field
-        }
-      };
-
-      return this.list({query_parameters: query_parameters, pagination: pagination});
-
-    }
-
-    //Technical Debt:  The primary key definition should be set in the specific Entity class
     constructor(name){
 
         super();
@@ -63,11 +33,6 @@ module.exports = class entityController extends entityUtilitiesController {
         this.setPrimaryKey();
 
         this.setNames(name);
-
-        //Technical Debt:  Need accountrole table?
-        //Technical Debt:  Need notification settings to be bound to the accounts that they refer to?
-        //Technical Debt:  Need accesskey to be specific to the account?
-        //Technical Debt:  User signing strings should be bound to a specific account?
 
         this.nonaccounts = [
           'user', //can have multiple accounts
@@ -80,425 +45,277 @@ module.exports = class entityController extends entityUtilitiesController {
           'account' //self-referntial, implicit
         ];
 
-        this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
+        this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities-promise.js');
 
     }
 
-    listBySecondaryIndex({field, index_value, index_name, pagination}) {
+    listByAssociations({id, field, pagination, fatal}){
 
-        du.debug('List By Secondary Index');
+      du.debug('List By Association');
 
-        return new Promise((resolve, reject) => {
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
 
-            return this.can('read').then((permission) => {
+        return {
+          filter_expression: 'contains(#f1, :id)',
+          expression_attribute_names:{
+              '#f1': field
+          },
+          expression_attribute_values: {
+              ':id': id
+          }
+        };
 
-                if(permission != true){ return resolve(null); }
-
-                let query_parameters = {
-                    key_condition_expression: '#'+field+' = :index_valuev',
-                    expression_attribute_values: {':index_valuev': index_value},
-                    expression_attribute_names: {},
-                    filter_expression: '#'+field+' = :index_valuev'
-                }
-
-                query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
-                query_parameters = this.appendPagination(query_parameters, pagination);
-                query_parameters = this.appendAccountFilter(query_parameters);
-
-                return this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
-
-                    if(_.isError(error)){ return reject(error); }
-
-                    return this.buildResponse(data, (error, response) => {
-
-                        if(error){ return reject(error); }
-                        return resolve(response);
-
-                    });
-
-                });
-
-            });
-
-        });
+      })
+      .then((query_parameters) => this.scanByParameters({parameters: query_parameters, pagination: pagination}))
+      .catch(this.handleErrors);
 
     }
 
-    list({pagination, query_parameters}){
+    listByAssociation({id, field, pagination, fatal}){
 
-        du.debug('List');
+      du.debug('List By Associations');
 
-        return new Promise((resolve, reject) => {
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
 
-            return this.can('read').then((permission) => {
+        //Technical Debt:  Add validation
 
-                du.debug('List - Can Read');
+        return {
+          filter_expression: '#f1 = :id',
+          expression_attribute_values: {
+            ':id':id
+          },
+          expression_attribute_names: {
+            '#f1':field
+          }
+        };
 
-                if(permission != true){ return resolve(null); }
+      })
+      .then((query_parameters) => this.list({query_parameters: query_parameters, pagination: pagination}))
+      .catch(this.handleErrors);
 
-                if(_.isUndefined(query_parameters)){
-                    query_parameters = {filter_expression: null, expression_attribute_values: null};
-                }
+    }
 
-                query_parameters = this.appendPagination(query_parameters, pagination);
-                query_parameters = this.appendAccountFilter(query_parameters);
+    listBySecondaryIndex({field, index_value, index_name, pagination, fatal}) {
 
-                du.debug('List - Before Scan Records');
+      du.debug('List By Secondary Index');
 
-                return Promise.resolve(this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
 
-                    du.debug('List - After Scan Records');
+        let query_parameters = {
+            key_condition_expression: '#'+field+' = :index_valuev',
+            expression_attribute_values: {':index_valuev': index_value},
+            expression_attribute_names: {},
+            filter_expression: '#'+field+' = :index_valuev'
+        }
 
-                    if(_.isError(error)){ return reject(error); }
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
+        query_parameters = this.appendPagination(query_parameters, pagination);
+        query_parameters = this.appendAccountFilter(query_parameters);
 
-                    return this.buildResponse(data, (error, response) => {
+        return query_parameters;
 
-                        du.debug('List End');
+      })
+      .then((query_parameters) => this.dynamoutilities.scanRecords(this.table_name, query_parameters))
+      .then((data) => this.buildResponse(data))
+      .catch(this.handleErrors);
 
-                        if(error){ return reject(error); }
-                        return resolve(response);
+    }
 
-                    });
+    getList({list_array, fatal}){
 
-                }));
+      du.debug('Get List');
 
-            });
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
 
-        });
+        if(!arrayutilities.nonEmpty(list_array)){
+          eu.throwError('server', 'getList assumes a non-empty array of identifiers');
+        }
+
+      })
+      .then(() => this.dynamoutilities.createINQueryParameters(this.primary_key, list_array))
+      .then((in_parameters) => this.list({query_parameters: in_parameters}))
+      .catch(this.handleErrors);
+
+    }
+
+    list({query_parameters, pagination, fatal}){
+
+      du.debug('List');
+
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
+
+        let default_query_parameters = {
+          filter_expression: null,
+          expression_attribute_values: null
+        };
+
+        query_parameters = this.marryQueryParameters(query_parameters, default_query_parameters);
+        query_parameters = this.appendPagination(query_parameters, pagination);
+        query_parameters = this.appendAccountFilter(query_parameters);
+
+        return query_parameters;
+
+      })
+      .then((query_parameters) => this.dynamoutilities.scanRecords(this.table_name, query_parameters))
+      .then((data) => this.buildResponse(data))
+      .catch(this.handleErrors);
 
     }
 
     //Technical Debt:  You can only paginate against the index...
-    queryBySecondaryIndex({field, index_value, index_name, pagination, reverse_order}){
+    queryBySecondaryIndex({field, index_value, index_name, pagination, reverse_order, fatal}){
 
-        du.debug('Query By Secondary Index');
+      du.debug('Query By Secondary Index');
 
-        return new Promise((resolve, reject) => {
-
-            return this.can('read').then((permission) => {
-
-                if(permission !== true){ return resolve(null); }
-
-                let query_parameters = {
-                    key_condition_expression: '#'+field+' = :index_valuev',
-                    expression_attribute_values: {':index_valuev': index_value},
-                    expression_attribute_names: {}
-                }
-
-                query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
-                query_parameters = this.appendPagination(query_parameters, pagination);
-                query_parameters = this.appendAccountFilter(query_parameters);
-
-                if (reverse_order) {
-                    query_parameters['scan_index_forward'] = false;
-                }
-
-                return Promise.resolve(this.dynamoutilities.queryRecordsFull(this.table_name, query_parameters, index_name, (error, data) => {
-
-                    if(_.isError(error)){
-
-                        return reject(error);
-
-                    }
-
-                    return this.buildResponse(data, (error, response) => {
-
-                        if(error){ return reject(error); }
-                        return resolve(response);
-
-                    });
-
-                }));
-
-            });
-
-        });
-
-    }
-
-    //Technical Debt: this if garbage...
-    getList({list_array}){
-
-      du.debug('Get List');
-
-      du.warning('List parameters','','','',list_array);
-
-      if(!arrayutilities.nonEmpty(list_array)){
-        eu.throwError('server', 'getList assumes a non-empty array of identifiers');
-      }
-
-      let in_parameters = this.dynamoutilities.createINQueryParameters(this.primary_key, list_array);
-
-      return this.list({query_parameters: in_parameters})
-
-    }
-
-    getBySecondaryIndex({field, index_value, index_name, cursor, limit}){
-
-        du.debug('Get By Secondary Index');
-
-        du.debug(Array.from(arguments));
-
-        return new Promise((resolve, reject) => {
-
-            return this.can('read').then((permission) => {
-
-                if(permission != true){
-
-                    return resolve(null);
-
-                }
-
-                let query_parameters = {
-                    key_condition_expression: field+' = :index_valuev',
-                    expression_attribute_values: {':index_valuev': index_value},
-                }
-
-                if(typeof cursor  !== 'undefined'){
-                    query_parameters.ExclusiveStartKey = cursor;
-                }
-
-                if(typeof limit  !== 'undefined'){
-                    query_parameters['limit'] = limit;
-                }
-
-                query_parameters = this.appendAccountFilter(query_parameters);
-
-                return Promise.resolve(this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name, (error, data) => {
-
-                    if(_.isError(error)){ reject(error);}
-
-                    if(_.isArray(data)){
-
-                        if(data.length == 1){
-
-                            return resolve(data[0]);
-
-                        }else{
-
-                            if(data.length > 1){
-
-                                return reject(eu.getError('bad_request','Multiple '+this.descriptive_name+'s returned where one should be returned.'));
-
-                            }else{
-
-                                return resolve(null);
-
-                            }
-
-                        }
-
-                    }
-
-                }));
-
-            });
-
-        });
-
-    }
-
-    /*
-    search(){
-
-    }
-    */
-
-    queryByParameters({parameters, pagination}){
-
-      du.debug('Query By Parameters');
-
-      return new Promise((resolve, reject) => {
-
-          return this.can('read', true)
-          .then(() =>  this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
-          .then(() => {
-
-              let query_parameters = {
-                  filter_expression: parameters.filter_expression,
-                  expression_attribute_values: parameters.expression_attribute_values,
-                  expression_attribute_names: parameters.expression_attribute_names
-              };
-
-              query_parameters = this.appendPagination(query_parameters, pagination);
-              query_parameters = this.appendAccountFilter(query_parameters);
-
-              if(_.has(parameters, 'reverse_order')) {
-                  query_parameters['scan_index_forward'] = !parameters.reverse_order;
-              }
-
-              du.debug('Query Parameters: ', query_parameters);
-
-              return Promise.resolve(this.dynamoutilities.queryRecordsFull(this.table_name, query_parameters, null, (error, data) => {
-
-                  if(_.isError(error)){
-
-                      return reject(error);
-
-                  }
-
-                  return this.buildResponse(data, (error, response) => {
-
-                      if(error){ return reject(error); }
-                      return resolve(response);
-
-                  });
-
-              }));
-
-          });
-
-      });
-
-
-    }
-
-    scanByParameters({parameters, pagination}){
-
-        du.debug('Scan By Parameters');
-
-        return new Promise((resolve, reject) => {
-
-          return this.can('read', true)
-          .then(() =>  this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
-          .then(() => {
-
-            let query_parameters = {
-                filter_expression: parameters.filter_expression,
-                expression_attribute_values: parameters.expression_attribute_values,
-                expression_attribute_names: parameters.expression_attribute_names
-            };
-
-            query_parameters = this.appendPagination(query_parameters, pagination);
-            query_parameters = this.appendAccountFilter(query_parameters);
-
-            return Promise.resolve(this.dynamoutilities.scanRecordsFull(this.table_name, query_parameters, (error, data) => {
-
-                if(_.isError(error)){ return reject(error); }
-
-                return this.buildResponse(data, (error, response) => {
-
-                    if(error){ return reject(error); }
-
-                    return resolve(response);
-
-                });
-
-            }));
-
-        }).catch((error) => {
-
-            return reject(error);
-
-        });
-
-        });
-
-    }
-
-    get({id}){
-
-      du.debug('Get');
-
-      return this.can('read').then((permission) => {
-
-        //Technical Debt:  Remove this.
-        id = this.getID(id);
-
-        if(permission !== true){ return null; }
-
-        let query_parameters = {
-          key_condition_expression: this.primary_key+' = :primary_keyv',
-          expression_attribute_values: {':primary_keyv': id}
-        };
-
-        query_parameters = this.appendAccountFilter(query_parameters);
-
-        return new Promise((resolve) => {
-
-          du.warning(query_parameters);
-
-          this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
-
-            if(_.isError(error)){
-
-              eu.throwError('server', error);
-
-            }
-
-            if(_.isObject(data) && _.isArray(data)){
-
-              if(data.length > 1){
-
-                eu.throwError('bad_request','Multiple '+this.descriptive_name+'s returned where one should be returned.');
-
-              }
-
-              if(_.isUndefined(data[0])){
-                return resolve(null);
-              }
-
-              return resolve(data[0]);
-
-            }
-
-          });
-
-        });
-
-      });
-
-    }
-
-    countCreatedAfterBySecondaryIndex({date_time, field, index_name, cursor, limit}) {
-
-      du.debug('Count Created After Secondary Index');
-
-      return this.can('read').then((permission) => {
-
-        if(permission !== true){
-
-          return null;
-
-        }
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
 
         let query_parameters = {
             key_condition_expression: '#'+field+' = :index_valuev',
-            expression_attribute_values: {':index_valuev': global.user.id, ':createdv': date_time},
-            expression_attribute_names: {},
-            filter_expression: 'created_at > :createdv'
+            expression_attribute_values: {':index_valuev': index_value},
+            expression_attribute_names: {}
+        }
+
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
+        query_parameters = this.appendPagination(query_parameters, pagination);
+        query_parameters = this.appendAccountFilter(query_parameters);
+
+        if (reverse_order) {
+            query_parameters['scan_index_forward'] = false;
+        }
+
+        return query_parameters;
+
+      })
+      .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name))
+      .then((data) => this.buildResponse(data))
+      .catch(this.handleErrors);
+
+    }
+
+    getBySecondaryIndex({field, index_value, index_name, fatal}){
+
+      du.debug('Get By Secondary Index');
+
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
+
+        let query_parameters = {
+            key_condition_expression: field+' = :index_valuev',
+            expression_attribute_values: {':index_valuev': index_value},
+        }
+
+        return this.appendAccountFilter(query_parameters);
+
+      })
+      .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name))
+      .then(data => this.getItems(data))
+      .then(items => this.assureSingular(items))
+      .catch(this.handleErrors);
+
+    }
+
+    queryByParameters({parameters, pagination, index, fatal}){
+
+      du.debug('Query By Parameters');
+
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
+      .then(() => {
+
+        index = (!_.isUndefined(index))?index:null;
+
+        //Technical Debt:  Is this redundant?
+        //Technical Debt:  Use objectutilities.transcribe
+        objectutilities.has(parameters, ['filter_expression', 'expression_attribute_values', 'expression_attribute_names'], true);
+
+        let query_parameters = {
+            filter_expression: parameters.filter_expression,
+            expression_attribute_values: parameters.expression_attribute_values,
+            expression_attribute_names: parameters.expression_attribute_names
         };
 
-        //Technical Debt:  This is silly.
-        query_parameters.expression_attribute_names['#'+field] = field;
+        query_parameters = this.appendPagination(query_parameters, pagination);
+        query_parameters = this.appendAccountFilter(query_parameters);
 
-        if(!_.isUndefined(cursor)) {
-          query_parameters.ExclusiveStartKey = cursor;
+        if(_.has(parameters, 'reverse_order')) {
+            query_parameters['scan_index_forward'] = !parameters.reverse_order;
         }
 
-        if(!_.isUndefined(limit)){
-          query_parameters['limit'] = limit;
-        }
+        return this.dynamoutilities.queryRecords(this.table_name, query_parameters, index);
+
+      })
+      .then((data) => this.buildResponse(data))
+      .catch(this.handleErrors);
+
+    }
+
+    scanByParameters({parameters, pagination, fatal}){
+
+      du.debug('Scan By Parameters');
+
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
+      .then(() => {
+
+        //Technical Debt:  Is this redundant?
+        //Tecnhical Debt:  Use objectutilities.transcribe
+        objectutilities.has(parameters, ['filter_expression','expression_attribute_values', 'expression_attribute_names'], true);
+
+        let query_parameters = {
+            filter_expression: parameters.filter_expression,
+            expression_attribute_values: parameters.expression_attribute_values,
+            expression_attribute_names: parameters.expression_attribute_names
+        };
+
+        query_parameters = this.appendPagination(query_parameters, pagination);
+        query_parameters = this.appendAccountFilter(query_parameters);
+
+        return this.dynamoutilities.scanRecords(this.table_name, query_parameters);
+
+      })
+      .then((data) => this.buildResponse(data))
+      .catch(this.handleErrors);
+
+    }
+
+    //NOTE: Returns an entity
+    get({id, fatal}){
+
+      du.debug('Get');
+
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
+
+        let query_parameters = {
+          key_condition_expression: this.primary_key+' = :primary_keyv',
+          expression_attribute_values: {':primary_keyv': this.getID(id)}
+        };
 
         query_parameters = this.appendAccountFilter(query_parameters);
 
-        return new Promise((resolve) => {
+        return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null);
 
-          this.dynamoutilities.countRecords(this.table_name, query_parameters, index_name, (error, data) => {
+      })
+      .then((data) => this.getItems(data))
+      .then(items => this.assureSingular(items))
+      .catch(this.handleErrors);
 
-            if(_.isError(error)){
-
-              eu.throwError('server', error);
-
-            }
-
-            resolve({count: data});
-
-          });
-
-        });
-
-      });
 
     }
 
@@ -507,48 +324,30 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Create');
 
-      return this.can('create', true).then(() => {
+      return this.can('create', true)
+      .then(() => {
 
         entity = this.assignPrimaryKey(entity);
         entity = this.assignAccount(entity);
         entity = this.setCreatedAt(entity);
 
-        du.info(entity);
-        return this.validate(entity).then(() => {
+      })
+      .then(() => this.validate(entity))
+      .then(() => this.exists({entity: entity}))
+      .then((exists) => {
 
-          return this.exists({entity: entity}).then((exists) => {
+        if(exists !== false){
+          eu.throwError('bad_request','A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"');
+        }
 
-            if(exists !== false){
+      })
+      .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
+      .then(() => {
 
-              eu.throwError('bad_request','A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"');
+        this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+        this.addToSearchIndex(entity, this.descriptive_name);
 
-            }
-
-            return new Promise((resolve) => {
-
-              this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
-
-                if(_.isError(error)){
-                  eu.throwError('server', error);
-                }
-
-                return resolve(entity);
-
-              });
-
-            }).then(entity => {
-
-              this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
-
-              this.addToSearchIndex(entity, this.descriptive_name);
-
-              return entity;
-
-            });
-
-          });
-
-        });
+        return entity;
 
       });
 
@@ -559,51 +358,40 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Update');
 
-      return this.can('update', true).then(() => {
+      return this.can('update', true)
+      .then(() => {
 
         if(!_.has(entity, this.primary_key)){
           eu.throwError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
         }
 
+      })
+      .then(() => {
         entity = this.assignAccount(entity);
+      })
+      .then(() => this.exists({entity: entity, return_entity: true}))
+      .then((existing_entity) => {
 
-        return this.exists({entity: entity}).then((exists) => {
+        if(existing_entity === null){
+          eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist.');
+        }
 
-          if(exists === false){
-            eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist or multiples returned.');
-          }
+        return existing_entity;
 
-          entity = this.persistCreatedUpdated(entity, exists);
+      })
+      .then((existing_entity) => {
+        entity = this.persistCreatedUpdated(entity, existing_entity);
+        entity = this.setUpdatedAt(entity);
+      })
+      .then(() => this.validate(entity))
+      .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
+      .then(() => {
 
-          entity = this.setUpdatedAt(entity);
+        this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null);
 
-          return this.validate(entity).then(() => {
+        this.addToSearchIndex(entity, this.descriptive_name);
 
-            return new Promise((resolve) => {
-
-              this.dynamoutilities.saveRecord(this.table_name, entity, (error) => {
-
-                if(_.isError(error)){
-                  eu.throwError('server', error);
-                }
-
-                return resolve(entity);
-
-              });
-
-            }).then(entity => {
-
-              this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null);
-
-              this.addToSearchIndex(entity, this.descriptive_name);
-
-              return entity;
-
-            });
-
-          });
-
-        });
+        return entity;
 
       });
 
@@ -633,6 +421,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Technical Debt:  Nomenclature should be "assure"
     store({entity}){
 
         du.debug('Store');
@@ -669,87 +458,67 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Delete');
 
-      let spoofed_entity = {};
+      let delete_parameters = {};
 
-      spoofed_entity[this.primary_key] = id;
+      delete_parameters[this.primary_key] = id;
 
       return this.can('delete', true)
       .then(() => this.checkAssociatedEntities({id: id}))
-      .then(() => this.exists({entity: spoofed_entity}))
+      .then(() => this.exists({entity: delete_parameters}))
       .then((exists) => {
-
         if(!exists){
           eu.throwError('not_found','Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.');
         }
+      })
+      .then(() => this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null))
+      .then((result) => {
 
-        return new Promise((resolve) => {
+        this.removeFromSearchIndex(id, this.descriptive_name);
 
-          let delete_parameters = {};
-
-          delete_parameters[this.primary_key] = id;
-
-          this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null, (error) => {
-
-            if(_.isError(error)){
-              eu.throwError('server', error);
-            }
-
-            resolve(delete_parameters);
-
-            this.removeFromSearchIndex(id, this.descriptive_name);
-
-          });
-
-        });
+        return delete_parameters;
 
       });
 
     }
 
-    exists({entity}){
+    //Note: UTILITY Method - has no permissioning... DANGER
+    exists({entity, return_entity}){
 
       du.debug('Exists');
 
       if(!_.has(entity, this.primary_key)){
-
-        return Promise.reject(eu.getError('bad_request','Unable to create '+this.descriptive_name+'. Missing property "'+this.primary_key+'"'));
-
-      }else{
-
-        let query_parameters = {
-            key_condition_expression: this.primary_key+' = :primary_keyv',
-            expression_attribute_values: {':primary_keyv': entity[this.primary_key]}
-        };
-
-        query_parameters = this.appendAccountFilter(query_parameters)
-
-        return new Promise((resolve) => {
-
-          this.dynamoutilities.queryRecords(this.table_name, query_parameters, null, (error, data) => {
-
-            if(_.isError(error)){
-              eu.throwError('server', error);
-            }
-
-            if(data.length > 1){
-
-              eu.throwError('bad_request','Non-unique data present in the database for '+this.primary_key+': '+entity[this.primary_key]);
-
-            }
-
-            if(_.isObject(data) && _.isArray(data) && data.length == 1){
-
-              return resolve(data[0]);
-
-            }
-
-            return resolve(false);
-
-          });
-
-        });
-
+        eu.throwError('server', 'Unable to create '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
       }
+
+      return_entity = _.isUndefined(return_entity)?false:return_entity;
+
+      let query_parameters = {
+          key_condition_expression: this.primary_key+' = :primary_keyv',
+          expression_attribute_values: {':primary_keyv': entity[this.primary_key]}
+      };
+
+      query_parameters = this.appendAccountFilter(query_parameters);
+
+      return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null)
+      .then(data => this.getItems(data))
+      .then(items => this.assureSingular(items))
+      .then(item => {
+
+        if(return_entity == true){
+
+          return item;
+
+        }else{
+
+          if(_.isNull(item)){
+            return false;
+          }
+
+          return true;
+
+        }
+
+      });
 
     }
 

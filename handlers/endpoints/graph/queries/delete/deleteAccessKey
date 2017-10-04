@@ -2,9 +2,9 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
-		deleteaccesskey (id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\") { 
+	mutation {
+		deleteaccesskey (id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\") {
 			id
-		} 
+		}
 	}"
 }

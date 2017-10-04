@@ -38,15 +38,11 @@ class userController extends entityController {
 
         let useracls = data_acquisition_promises[0];
 
-        //du.warning(data_acquisition_promises); process.exit();
-
         if(_.has(useracls, 'useracls') && arrayutilities.nonEmpty(useracls.useracls)){
           arrayutilities.map(useracls.useracls, (useracl) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Campaign', object: useracl}));
           });
         }
-
-        //du.warning(return_array); process.exit();
 
         return return_array;
 
@@ -107,7 +103,7 @@ class userController extends entityController {
 
                 this.disableACLs();
 
-                this.get({id: user_string}).then((user) => {
+                this.get({id: user_string}).then(user => {
 
                     this.enableACLs();
 
@@ -117,6 +113,7 @@ class userController extends entityController {
 
                         this.disableACLs();
 
+                        //Note:  this is redundant...
                         return this.getHydrated({id: user.id}).then((user) => {
 
                             this.enableACLs();
@@ -416,39 +413,28 @@ class userController extends entityController {
 
     getACLPartiallyHydrated(user){
 
-        return new Promise((resolve, reject) => {
+      du.debug('Get ACL Partially Hydrated');
 
-            du.debug('User: ', user.id);
+      return this.executeAssociatedEntityFunction('userACLController','queryBySecondaryIndex', {field: 'user', index_value: user.id, index_name: 'user-index'})
+      .then((response) => this.getResult(response, 'useracls'))
+      .then((acls) => {
 
+        du.debug('ACLs: ', acls);
 
-            this.executeAssociatedEntityFunction('userACLController','queryBySecondaryIndex', {field: 'user', index_value: user.id, index_name: 'user-index'})
-              .then((response) => this.getResult(response, 'useracls'))
-              .then((acls) => {
+        if(!arrayutilities.nonEmpty(acls)){
+          return null;
+        }
 
-                  du.debug('ACLs: ', acls);
-
-                  if(_.isNull(acls)){
-                      return resolve(null);
-                  }
-
-                  let acl_promises = arrayutilities.map(acls, (acl) => {
-                    return this.executeAssociatedEntityFunction('userACLController','getPartiallyHydratedACLObject', acl);
-                  });
-
-                  return Promise.all(acl_promises).then((acl_promises) => {
-
-                      return resolve(acl_promises);
-
-                  }).catch((error) => {
-
-                      return reject(error);
-                  });
-
-              }).catch((error) => {
-                  return reject(error);
-              });
-
+        //Technical Debt:  Convert to a list query where applicable
+        let acl_promises = arrayutilities.map(acls, (acl) => {
+          return this.executeAssociatedEntityFunction('userACLController','getPartiallyHydratedACLObject', acl);
         });
+
+        return Promise.all(acl_promises).then((acl_promises) => {
+          return acl_promises;
+        });
+
+      });
 
     }
 

@@ -843,7 +843,10 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, accesskey){
                 const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
-      	       return accessKeyController.list({pagination: accesskey.pagination});
+      	       return accessKeyController.list({pagination: accesskey.pagination}).then(results => {
+                 console.log(results);
+                 return results;
+               });
             }
         },
         accountlist: {

@@ -5,13 +5,13 @@ const uuidV4 = require('uuid/v4');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
-
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
@@ -24,6 +24,27 @@ module.exports = class entityUtilitiesController {
 
       //Technical Debt:  Why is this here?
       this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+
+    }
+
+    handleErrors(error){
+
+      du.debug('Handle Errors');
+
+      if(_.has(error.code)){
+
+        if(error.code == 403){
+
+          return null;
+
+        }
+
+        eu.throw(error);
+
+      }
+
+      eu.throwError('server', error);
+
 
     }
 
@@ -42,9 +63,15 @@ module.exports = class entityUtilitiesController {
 
         let permission = this.permissionutilities.validatePermissions(action, this.descriptive_name);
 
-        if(fatal === true && permission !== true){
+        if(permission !== true){
 
-          eu.throwError('forbidden', 'Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+          if(fatal == true){
+
+            eu.throwError('forbidden', 'Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+
+          }
+
+          return false;
 
         }
 
@@ -53,6 +80,20 @@ module.exports = class entityUtilitiesController {
       }
 
       return global.SixCRM.localcache.resolveQuestion(question, answer_function);
+
+    }
+
+    catchPermissions(permissions, action){
+
+      du.debug('Catch Permissions');
+
+      action = (_.isUndefined(action))?'read':action;
+
+      if(permissions == false){
+        return Promise.reject('Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+      }
+
+      return permissions;
 
     }
 
@@ -321,6 +362,51 @@ module.exports = class entityUtilitiesController {
         entity['updated_at'] = exists.updated_at;
 
         return entity;
+
+    }
+
+    marryQueryParameters(empirical_parameters, secondary_parameters){
+
+      du.debug('Marry Query Parameters');
+
+      if(_.isUndefined(empirical_parameters) || !_.isObject(empirical_parameters)){
+        return secondary_parameters;
+      }
+
+      arrayutilities.map(objectutilities.getKeys(secondary_parameters), key => {
+
+        if(!_.has(empirical_parameters, key)){
+          empirical_parameters[key] = secondary_parameters[key];
+        }
+
+      });
+
+      return empirical_parameters;
+
+    }
+
+
+    assureSingular(results){
+
+      du.debug('Assure Singular');
+
+      if(_.isNull(results)){
+        return null;
+      }
+
+      if(arrayutilities.isArray(results, true)){
+
+        if(results.length == 1){
+          return results.pop();
+        }
+
+        if(results.length == 0){
+          return null;
+        }
+
+        eu.throwError('server', 'Non-specific '+this.descriptive_name+' entity results.');
+
+      }
 
     }
 
@@ -660,6 +746,7 @@ module.exports = class entityUtilitiesController {
 
       // Technical Debt: We should improve the way we validate the data, either by using dedicated
       // response objects, JSON schema validation or both.
+
         if(_.has(data, "Count")){
             pagination_object.count = data.Count;
         }
@@ -685,55 +772,70 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    buildResponse(data, callback){
+    /*
+    * This adds the pagination fields as well as the descriptive name of the entity before the array
+    */
 
-        du.debug('Build Response');
+    buildResponse(data, secondary_function){
 
-        if(_.isObject(data)){
+      du.debug('Build Response');
 
-            let pagination_object = this.buildPaginationObject(data);
+      objectutilities.isObject(data, true);
 
-            if (!_.has(data, "Items") || (!_.isArray(data.Items))) {
-                return callback(eu.getError('not_found','Data has no items.'), null);
-            }
+      if(!_.has(data, "Items")){
+        eu.throwError('server','Build response expects data object to have property "Items".');
+      }
 
-            if(data.Items.length < 1){
-                data.Items = null;
-            }
+      arrayutilities.isArray(data.Items, true);
 
-            var resolve_object = {
-                pagination: pagination_object
-            };
+      if(!arrayutilities.nonEmpty(data.Items)){
+          data.Items = null;
+      }
 
-            resolve_object[this.descriptive_name+'s'] = data.Items;
+      let resolve_object = {
+        pagination: this.buildPaginationObject(data)
+      };
 
-            return callback(null, resolve_object);
+      resolve_object[this.descriptive_name+'s'] = data.Items;
 
-        } else {
+      if(_.isFunction(secondary_function)){
+        resolve_object = secondary_function(resolve_object);
+      }
 
-            return callback(eu.getError('not_found','Data is not an object.'), null);
-
-        }
+      return resolve_object;
 
     }
 
+    getItems(data){
+
+      du.debug('Get Items');
+
+      objectutilities.isObject(data, true);
+
+      if(_.has(data, "Items") && _.isArray(data.Items)){
+        return data.Items;
+      }
+
+      return null;
+
+    }
+
+
+    //Technical Debt:  This really doesn't need to return a promise
     getResult(result, field){
 
-        du.debug('Get Result');
+      du.debug('Get Result');
 
-        if(_.isUndefined(field)){
-            field = this.descriptive_name+'s';
-        }
+      if(_.isUndefined(field)){
+        field = this.descriptive_name+'s';
+      }
 
-        if(_.has(result, field)){
 
-            return Promise.resolve(result[field]);
-
-        }else{
-
-            return Promise.resolve(null);
-
-        }
+      if(_.has(result, field)){
+        return Promise.resolve(result[field]);
+      }else{
+        return Promise.resolve(null);
+      }
 
     }
 

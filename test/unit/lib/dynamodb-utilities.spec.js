@@ -171,7 +171,7 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
+            //Technical Debt:  Fix!
             DynamoDBUtilities.countRecords(aTableName, anyParams, anyIndex, (err, data) => {
                 // then
                 expect(data).to.deep.equal(anyResults.Count);

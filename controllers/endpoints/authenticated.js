@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/endpoint.js');
 
@@ -79,84 +80,76 @@ module.exports = class AuthenticatedController extends endpointController {
 
     }
 
+    //Technical Debt:  This is wrought with redundancies....
     acquireUser(event){
 
-        du.debug('Acquire User');
+      du.debug('Acquire User');
 
-        if(!_.has(event.requestContext, "authorizer")){
+      objectutilities.hasRecursive(event, 'requestContext.authorizer.user', true);
 
-            return Promise.reject(eu.getError('server','Unable to identify the authorizer property in the event request context.'));
+      let user_string = event.requestContext.authorizer.user;
 
-        }
+      du.debug('Event Request Context Authorizer User Alias:', user_string);
 
-        if(!_.has(event.requestContext.authorizer, "user")){
+      if(!_.isString(user_string)){
 
-            return Promise.reject(eu.getError('server','Unable to identify the user node in the event request context authorizer property.'));
+        eu.throwError('server','Event request context authorizer user is an unrecognized format.');
 
-        }
+      }
 
-        let user_string = event.requestContext.authorizer.user;
+      if(this.userController.isEmail(user_string)){
 
-        du.debug('Event Request Context Authorizer User Alias:', user_string);
+        return this.userController.getUserStrict(user_string).then((user) => {
 
-        if(!_.isString(user_string)){
+          if(_.has(user, 'id')){
 
-            return Promise.reject(eu.getError('server','Event request context authorizer user is an unrecognized format.'));
+            //Technical Debt:  This should use the global configuration object
+            permissionutilities.setGlobalUser(user);
 
-        }
+          }else if(user == false){
 
-        if(this.userController.isEmail(user_string)){
+            if(!this.isUserIntrospection(event)) {
+              eu.throwError('forbidden', 'Unknown user.  Please contact the system administrator.');
+            }
 
-            return this.userController.getUserStrict(user_string).then((user) => {
+            du.warning('Unable to acquire user, setting global user to email.');
 
-                if(_.has(user, 'id')){
+            //Technical Debt:  This should use the global configuration object
+            permissionutilities.setGlobalUser(user_string);
 
-                    permissionutilities.setGlobalUser(user);
+          }
 
-                }else if(user == false){
+          return event;
 
-                    if (!this.isUserIntrospection(event)) {
-                        return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
-                    }
+        });
 
-                    du.warning('Unable to acquire user, setting global user to email.');
+      }else{
 
-                    permissionutilities.setGlobalUser(user_string);
+          return this.userController.getUserByAlias(user_string).then((user) => {
 
-                    return event;
-                }
+              if(_.has(user, 'id')){
 
-                return Promise.resolve(event);
+                  permissionutilities.setGlobalUser(user);
 
-            });
+              }else if(user == false){
 
-        }else{
+                  if (!this.isUserIntrospection(event)) {
+                      return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
+                  }
 
-            return this.userController.getUserByAlias(user_string).then((user) => {
+                  du.warning('Unable to acquire user, setting global user to alias.');
 
-                if(_.has(user, 'id')){
+                  permissionutilities.setGlobalUser(user_string);
 
-                    permissionutilities.setGlobalUser(user);
+                  return event;
 
-                }else if(user == false){
+              }
 
-                    if (!this.isUserIntrospection(event)) {
-                        return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
-                    }
+              return Promise.resolve(event);
 
-                    du.warning('Unable to acquire user, setting global user to alias.');
+          });
 
-                    permissionutilities.setGlobalUser(user_string);
-
-                    return event;
-
-                }
-
-                return Promise.resolve(event);
-
-            });
-
-        }
+      }
 
     }
 

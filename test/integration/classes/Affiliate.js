@@ -71,9 +71,6 @@ module.exports = class AffiliateTest extends IntegrationTest {
     return this.createAffiliate(affiliate_id)
     .then(() => this.createTracker(tracker_id, affiliate_id))
     .then(() => this.deleteAffiliate(affiliate_id, 403))
-    .then(response => {
-      return response;
-    })
     .then(() => this.deleteTracker(tracker_id))
     .then(() => this.deleteAffiliate(affiliate_id));
 
@@ -93,9 +90,13 @@ module.exports = class AffiliateTest extends IntegrationTest {
 
     du.output('Create Tracker');
 
+    du.info(tracker_id, affiliate_id);
+
     let tracker_create_query = 'mutation { createtracker (tracker: { id: "'+tracker_id+'", event_type:["main"], affiliates: ["'+affiliate_id+'"], type: \"postback\", name:\"Testing Tracker 3\", body:\"http://sofun.com\"}) { id, affiliates{ id, name, affiliate_id, created_at, updated_at }, type, name, body, created_at, updated_at } }';
 
-    return this.executeQuery(tracker_create_query);
+    this.executeQuery(tracker_create_query).then(response => { du.warning(response); return response; });
+
+
 
   }
 

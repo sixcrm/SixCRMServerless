@@ -1,22 +1,5 @@
 {
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
-	"body":"
-	mutation {
-		createtracker (tracker: { id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\", event_type:[\"main\"], affiliates: [\"6b6331f6-7f84-437a-9ac6-093ba301e455\"], type: \"postback\", name:\"Testing Tracker 3\", body:\"http://sofun.com\"}) {
-			id,
-			affiliates{
-				id,
-				name,
-				affiliate_id,
-				created_at,
-				updated_at
-			},
-			type,
-			name,
-			body,
-			created_at,
-			updated_at
-		}
-	}"
+	"body":"mutation { createtracker (tracker: { id: \"658869a3-a8e4-4ffa-b7c2-2a0e0e462d26\", event_type:[\"main\"], affiliates: [\"26b665f6-76c8-4ac4-bf9f-88aa80caeaca\"], type: \"postback\", name:\"Testing Tracker 3\", body:\"http://sofun.com\"}) { id, affiliates{ id, name, affiliate_id, created_at, updated_at }, type, name, body, created_at, updated_at } }"
 }

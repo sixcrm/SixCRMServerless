@@ -392,12 +392,12 @@ module.exports.graphObj = new GraphQLObjectType({
             type: trackerType.graphObj,
             description: 'Adds a new tracker.',
             args: {
-                tracker: { type: trackerInputType .graphObj}
+                tracker: { type: trackerInputType.graphObj}
             },
             resolve: (value, tracker) => {
-                const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+              const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-                return trackerController.create({entity: tracker.tracker});
+              return trackerController.create({entity: tracker.tracker});
             }
         },
         updatetracker:{

@@ -3,7 +3,6 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 //Technical Debt:  We shouldn't need the AWS utility classes here...
-const dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
 const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -263,26 +262,40 @@ class rebillController extends entityController {
 
             let timestamp_iso8601 = timestamp.toISO8601(a_timestamp);
 
-            var query_parameters = {filter_expression: 'bill_at < :timestamp_iso8601v AND processing <> :processingv', expression_attribute_values: {':timestamp_iso8601v':timestamp_iso8601, ':processingv':'true'}};
+            var query_parameters = {
+              filter_expression: 'bill_at < :timestamp_iso8601v AND processing <> :processingv',
+              expression_attribute_values: {
+                ':timestamp_iso8601v':timestamp_iso8601,
+                ':processingv':'true'
+              }
+            };
 
             if(!_.isUndefined(cursor)){
               query_parameters.ExclusiveStartKey = cursor;
             }
 
+            let pagination = {};
+
             if(!_.isUndefined(limit)){
-              query_parameters['limit'] = limit;
+              pagination.limit = limit;
             }
 
-            //Technical Debt:  NO. scanByParameters?
-            dynamoutilities.scanRecords(process.env.rebills_table, query_parameters, (error, data) => {
+            this.scanByParameters({query_parameters: query_parameters, pagination: pagination})
+            .then((data) => {
+              //Technical Debt:  This is probably broken
+              du.warning(`
 
-                if(_.isError(error)){
-                    return reject(error);
-                }
 
-                if(_.isArray(data)){
-                    return resolve(data);
-                }
+
+                Hey! Likely Broken!
+
+
+
+              `);
+
+              if(_.isArray(data)){
+                return data;
+              }
 
             });
 
