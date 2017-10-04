@@ -23,7 +23,7 @@ class customerController extends entityController {
 
       let data_acquisition_promises = [
         this.executeAssociatedEntityFunction('customerNoteController', 'listByCustomer', {customer:id}),
-        this.executeAssociatedEntityFunction('sessionController', 'listSessionsByCustomerID', {id:id})
+        this.executeAssociatedEntityFunction('sessionController', 'listSessionsByCustomer', {customer:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -49,22 +49,11 @@ class customerController extends entityController {
 
     }
 
-    //Technical Debt:  Replace with EntityController.listByAssociations
-    listByCreditCardID({id, pagination}){
+    listByCreditCard({creditcard, pagination}){
 
-      du.debug('List By Credit Card ID')
+      du.debug('List By Credit Car')
 
-      let scan_parameters = {
-          filter_expression: 'contains(#f1, :credit_card_id)',
-          expression_attribute_names:{
-              '#f1': 'creditcards',
-          },
-          expression_attribute_values: {
-              ':credit_card_id': id
-          }
-      };
-
-      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
+      return this.listByAssociations({id: this.getID(creditcard), field: 'creditcards', pagination: pagination});
 
     }
 
@@ -98,7 +87,9 @@ class customerController extends entityController {
 
     getAddress(customer){
 
-        return Promise.resolve(customer.address);
+      du.debug('Get Address');
+
+      return Promise.resolve(customer.address);
 
     }
 
@@ -108,15 +99,16 @@ class customerController extends entityController {
 
       if(!_.has(customer, this.primary_key)){
 
-          return this.get({id: customer}).then((_customer) => {
+        return this.get({id: customer}).then((_customer) => {
 
-            if(!_.has(_customer, this.primary_key)){
-              eu.throwError('server', 'Customer doesn\'t exist: '+customer);
-            }
+          //Technical Debt:  Bad validation
+          if(!_.has(_customer, this.primary_key)){
+            eu.throwError('server', 'Customer doesn\'t exist: '+customer);
+          }
 
-            return this.addCreditCard(_customer, creditcard);
+          return this.addCreditCard(_customer, creditcard);
 
-          });
+        });
 
       }
 
@@ -127,26 +119,19 @@ class customerController extends entityController {
 
       }
 
-
       if(_.has(customer, 'creditcards')){
 
-        if(_.isArray(customer.creditcards)){
+        arrayutilities.isArray(customer.creditcards, true);
 
-          if(_.contains(customer.creditcards, creditcard.id)){
+        if(_.contains(customer.creditcards, creditcard.id)){
 
-              return Promise.resolve(customer);
-
-          }else{
-
-            customer.creditcards.push(creditcard.id);
-
-            return this.update({entity: customer});
-
-          }
+            return Promise.resolve(customer);
 
         }else{
 
-          eu.throwError('bad_request','Unexpected customer structure.');
+          customer.creditcards.push(creditcard.id);
+
+          return this.update({entity: customer});
 
         }
 
@@ -162,93 +147,59 @@ class customerController extends entityController {
 
     getCreditCards(customer){
 
-        if(_.has(customer, "creditcards")){
+      du.debug('Get Credit Cards');
 
-          return arrayutilities.map(customer.creditcards, (id) => {
+      if(_.has(customer, "creditcards") && arrayutilities.nonEmpty(customer.creditcards)){
 
-            return this.executeAssociatedEntityFunction('creditCardController', 'get', {id: id});
+        return this.executeAssociatedEntityFunction('creditCardController', 'getList', {list_array: customer.creditcards})
+        .then(creditcards => this.getResult(creditcards, 'creditcards'));
 
-          });
+      }
 
-        }else{
-
-          return null;
-
-        }
-
-    }
-
-	// Technical Debt:  Clumsy, but functional...
-    getCreditCardsPromise(customer){
-
-        let promises = this.getCreditCards(customer);
-
-        if(!_.isNull(promises)){
-
-            return Promise.all(promises);
-
-        }else{
-
-            return Promise.resolve(null);
-
-        }
+      return Promise.resolve(null);
 
     }
 
 
-    getMostRecentCreditCard(customer_id){
+    getMostRecentCreditCard(customer){
 
-        return new Promise((resolve, reject) => {
+      du.debug('Get Most Recent Credit Card');
 
-            this.get({id: customer_id}).then((customer) => {
+      return this.get({id: this.getID(customer)}).then((customer) => {
 
-                if(!_.has(customer, 'id')){ return resolve(null); }
+        if(_.isNull(customer)){ return null; }
 
-                this.getCreditCardsPromise(customer).then((credit_cards) => {
+        return this.getCreditCards(customer).then((credit_cards) => {
 
-                    let most_recent = null;
+          if(arrayutilities.nonEmpty(credit_cards)){
 
-                    if(_.isArray(credit_cards) && credit_cards.length > 0){
+            let sorted_credit_cards = arrayutilities.sort(credit_cards, (a, b) => {
 
-                        credit_cards.forEach((credit_card) => {
+              if(a.updated_at > b.updated_at){ return 1; }
 
-                            if(_.isNull(most_recent) && _.has(credit_card, 'updated_at')){
+              if(a.updated_at < b.updated_at){ return -1; }
 
-                                most_recent = credit_card;
-
-                            }else{
-
-                                if(_.has(credit_card, 'updated_at') && credit_card.updated_at > most_recent.updated_at){
-
-                                    most_recent = credit_card;
-
-                                }
-
-                            }
-
-                        });
-
-                        if(!_.isNull(most_recent)){
-
-                            return resolve(most_recent);
-
-                        }
-
-                    }
-
-                    return reject(eu.getError('not_found','Unable to identify most recent credit card.'));
-
-                });
+              return 0;
 
             });
 
+            return sorted_credit_cards.shift();
+
+          }
+
+          return null;
+
         });
+
+      });
 
     }
 
     getCustomerByEmail(email){
 
-        return this.getBySecondaryIndex({field: 'email', index_value:email, index_name: 'email-index'});
+      du.debug('Get Customer By Email');
+
+      return this.getBySecondaryIndex({field: 'email', index_value: email, index_name: 'email-index'});
 
     }
 
@@ -256,41 +207,36 @@ class customerController extends entityController {
 
       du.debug('Get Customer Sessions');
 
-      let customer_id = customer;
-
-      if(_.has(customer, 'id')){
-
-          customer_id = customer.id;
-
-      }
-
-      return this.executeAssociatedEntityFunction('sessionController', 'getSessionByCustomerID', customer_id);
+      return this.executeAssociatedEntityFunction('sessionController', 'getSessionByCustomer', this.getID(customer));
 
     }
 
     getCustomerRebills(customer){
 
-        let customer_id = customer;
+      du.debug('Get Customer Rebills');
 
-        if(_.has(customer, 'id')){
+      return this.getCustomerSessions(customer).then((sessions) => {
 
-            customer_id = customer.id;
+        if(arrayutilities.nonEmpty(sessions)){
+
+          let session_ids = []
+
+          arrayutilities.map(sessions, (session) => {
+            if(_.has(session, 'id')){
+              session_ids.push(session.id);
+            }
+          });
+
+          session_ids = arrayutilities.unique(session_ids);
+
+          return this.executeAssociatedEntityFunction('rebillController', 'getList', {list_array: session_ids, field: 'parentsession'})
+          .then(rebills => this.getResult(rebills, 'rebills'));
 
         }
 
-        return this.getCustomerSessions(customer).then((sessions) => {
+        return null;
 
-            if (!sessions) {
-                return [];
-            }
-
-            let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
-            });
-
-            return Promise.all(rebill_promises);
-
-        });
+      });
 
     }
 
@@ -301,14 +247,6 @@ class customerController extends entityController {
 
         du.debug('List Transactions By Customer');
 
-        let customer_id = customer;
-
-        if(_.has(customer, 'id')){
-
-          customer_id = customer.id;
-
-        }
-
         return this.getCustomerSessions(customer).then((sessions) => {
 
             if (!sessions) {
@@ -316,7 +254,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
+              return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session});
             });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {
@@ -375,15 +313,8 @@ class customerController extends entityController {
 
       du.debug('List Customer Sessions');
 
-      let customer_id = customer;
-
-      if(_.has(customer, 'id')){
-
-          customer_id = customer.id;
-
-      }
-
-      return this.executeAssociatedEntityFunction('sessionController', 'listSessionsByCustomerID', {id: customer_id, pagination: pagination});
+      return this.executeAssociatedEntityFunction('sessionController', 'listSessionsByCustomer', {customer: customer, pagination: pagination})
+      .then((sessions) => this.getResult(sessions, 'sessions'));
 
     }
 
@@ -400,7 +331,7 @@ class customerController extends entityController {
             }
 
             let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)});
+              return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session});
             });
 
             return Promise.all(rebill_promises).then((rebill_lists) => {

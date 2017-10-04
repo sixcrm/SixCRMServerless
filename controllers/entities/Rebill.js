@@ -231,19 +231,11 @@ class rebillController extends entityController {
 
     }
 
-    listBySession({session}){
+    listBySession({session, pagination}){
 
       du.debug('List By Session');
 
       return this.queryBySecondaryIndex({field: 'parentsession', index_value: this.getID(session), index_name: 'parentsession-index'});
-
-    }
-
-    listRebillsBySessionID({id, pagination}){
-
-      du.debug('List Rebills By Session ID');
-
-      return this.listBySecondaryIndex({field: 'parentsession', index_value: id, index_name:'parentsession-index', pagination: pagination});
 
     }
 

@@ -19,7 +19,7 @@ class creditCardController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('customerController', 'listByCreditCardID', {id:id})
+        this.executeAssociatedEntityFunction('customerController', 'listByCreditCard', {creditcard:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -41,8 +41,6 @@ class creditCardController extends entityController {
     assureCreditCard(creditcard){
 
       du.debug('Assure Credit Card');
-
-      du.highlight(creditcard);
 
       return this.queryBySecondaryIndex({field:'number', index_value: creditcard.number, index_name: 'number-index'}).then(results => {
 
@@ -114,7 +112,11 @@ class creditCardController extends entityController {
     }
 
     getAddress(creditcard){
-        return Promise.resolve(creditcard.address);
+
+      du.debug('Get Address');
+
+      return Promise.resolve(creditcard.address);
+
     }
 
     getBINNumber(creditcard){
@@ -145,15 +147,15 @@ class creditCardController extends entityController {
 
     createCreditCardObject(input_object){
 
-        var creditcard = {
-            number: input_object.number,
-            expiration: input_object.expiration,
-            ccv: input_object.ccv,
-            name: input_object.name,
-            address: input_object.address
-        };
+      var creditcard = {
+          number: input_object.number,
+          expiration: input_object.expiration,
+          ccv: input_object.ccv,
+          name: input_object.name,
+          address: input_object.address
+      };
 
-        return Promise.resolve(creditcard);
+      return Promise.resolve(creditcard);
 
     }
 

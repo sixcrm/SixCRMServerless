@@ -409,7 +409,7 @@ module.exports = class entityUtilitiesController {
       if(arrayutilities.isArray(results, true)){
 
         if(results.length == 1){
-          return results.pop();
+          return results.shift();
         }
 
         if(results.length == 0){

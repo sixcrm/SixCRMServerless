@@ -127,9 +127,11 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    getList({list_array, fatal}){
+    getList({list_array, field, fatal}){
 
       du.debug('Get List');
+
+      field = (_.isUndefined(field))?this.primary_key:field;
 
       return this.can('read', fatal)
       .then((permission) => this.catchPermissions(permission, 'read'))

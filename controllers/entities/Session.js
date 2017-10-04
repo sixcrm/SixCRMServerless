@@ -244,28 +244,12 @@ class sessionController extends entityController {
 
     }
 
-    //Technical Debt:  This shouldn't be necessary.  Harmonize output from Entity.js...
-    listRebillsRaw(session){
-
-      du.debug('List Rebills Raw');
-
-      return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)}).then(rebills => {
-
-        if(_.has(rebills, 'rebills') && arrayutilities.nonEmpty(rebills.rebills)){
-          return rebills.rebills;
-        }
-
-        return null;
-
-      });
-
-    }
-
     listRebills(session){
 
       du.debug('List Rebills');
 
-      return this.executeAssociatedEntityFunction('rebillController', 'listRebillsBySessionID', {id: this.getID(session)})
+      return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session})
+      .then(rebills => this.getResult(rebills, 'rebills'));
 
     }
 
@@ -273,113 +257,14 @@ class sessionController extends entityController {
 
       du.debug('Get Product Schedules');
 
-      if(arrayutilities.nonEmpty(session.product_schedule)){
+      if(arrayutilities.nonEmpty(session.product_schedules)){
 
-        return arrayutilities.map(session.product_schedule, (schedule) => {
-
-          return this.executeAssociatedEntityFunction('productScheduleController', 'get', {id: schedule});
-
-        });
-
-      }else{
-
-        return null;
+        return this.executeAssociatedEntityFunction('productScheduleController', 'getList', {list_array: session.product_schedules})
+        .then(product_schedules => this.getResult(product_schedules, 'productschedules'));
 
       }
 
-    }
-
-    //Technical Debt:  This should be List Products
-    listProducts(session){
-
-      du.debug('List Products');
-
-      return this.listTransactions(session).then((session_rebill_transactions) => {
-
-        if(arrayutilities.nonEmpty(session_rebill_transactions)){
-
-          let product_promises = arrayutilities.map(session_rebill_transactions, (session_rebill_transaction) => {
-
-            return this.executeAssociatedEntityFunction('transactionController', 'getProducts', session_rebill_transaction);
-
-          });
-
-          return Promise.all(product_promises);
-
-        }
-
-      }).then((session_rebill_transaction_products) => {
-
-        //du.highlight('Session Rebill Transaction Products', session_rebill_transaction_products);
-
-        let return_array = [];
-
-        if(arrayutilities.nonEmpty(session_rebill_transaction_products)){
-          arrayutilities.map(session_rebill_transaction_products, (rebill_transaction_products) => {
-            if(arrayutilities.nonEmpty(rebill_transaction_products)){
-              arrayutilities.map(rebill_transaction_products, (rebill_transaction_product) => {
-                return_array.push(rebill_transaction_product);
-              });
-            }
-          });
-        }
-
-        return return_array;
-
-      });
-
-    }
-
-    getSessionHydrated(id){
-
-        return this.get({id: id}).then((session) => {
-
-            return this.hydrate(session);
-
-        });
-
-    }
-
-	//Technical Debt:  This needs to move to a prototype?
-    hydrate(session){
-
-        return new Promise((resolve) => {
-
-            if(!_.has(session, "campaign")){ return null; }
-
-            this.getCampaignHydrated(session.campaign).then((campaign) => {
-
-                session.campaign = campaign;
-
-                return session;
-
-            }).then((session) => {
-
-                if(!_.has(session, "customer")){ return null; }
-
-                return this.getCustomer(session).then((customer) => {
-
-                    session.customer = customer;
-
-                    return session;
-
-                }).then((session) => {
-
-                    return resolve(session);
-
-                }).catch((error) => {
-
-                    throw error;
-
-                });
-
-            }).catch((error) => {
-
-                throw error;
-
-            });
-
-        });
+      return Promise.resolve(null);
 
     }
 
@@ -413,64 +298,68 @@ class sessionController extends entityController {
 
     }
 
-    pruneSessionObject(session){
-
-      du.debug('Prune Session Object');
-
-      if(_.has(session.customer)){
-        session.customer = this.getID(session.customer);
-      }
-
-      if(_.has(session.campaign)){
-        session.campaign = this.getID(session.campaign);
-      }
-
-      return session;
-
-    }
-
     getSessionByCustomer(customer){
 
       du.debug('Get Session By Customer');
 
-      return this.queryBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index'}).then((result) => this.getResult(result));
+      return this.queryBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index'})
+      .then((result) => this.getResult(result));
 
     }
 
-    //Technical Debt:  Deprecated but left for backwards copatibility.
-    getSessionByCustomerID(customer_id){
-
-      return this.queryBySecondaryIndex({field: 'customer', index_value: customer_id, index_name: 'customer-index'}).then((result) => this.getResult(result));
-
-    }
-
-    //Technical Debt:  Replace with EntityController.listByAssociation
     listByCampaignID({id, pagination}) {
 
       du.warning('List By Campaign ID');
 
-      let query_parameters = {
-        filter_expression: '#f1 = :campaign_id',
-        expression_attribute_values: {
-          ':campaign_id':id
-        },
-        expression_attribute_names: {
-          '#f1':'campaign'
-        }
-      };
-
-      return this.list({query_parameters: query_parameters, pagination: pagination});
+      return this.listByAssociation({field: 'campaign', id: id, pagination: pagination})
+      .then(sessions => this.getResult(sessions));
 
     }
 
-    listSessionsByCustomerID({id, pagination}) {
+    listSessionsByCustomer({customer, pagination}) {
 
-      du.debug('List By Customer ID');
+      du.debug('List By Customer');
 
-      return this.listBySecondaryIndex({field: 'customer', index_value: id, index_name: 'customer-index', pagination: pagination});
+      return this.listBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index', pagination: pagination})
+      .then(sessions => this.getResult(sessions));
 
     }
 
+    closeSession(session){
+
+      du.debug('Close Session');
+
+      session.completed = 'true';
+
+      return this.update({entity: session});
+
+    }
+
+    validateProductSchedules(product_schedules, session){
+
+      du.debug('Validate Product Schedules');
+
+      if(_.has(session, 'product_schedules') && arrayutilities.nonEmpty(session.product_schedules)){
+
+        arrayutilities.map(product_schedules, (product_schedule) => {
+          arrayutilities.map(session.product_schedules, session_product_schedule => {
+            if(product_schedule.id == session_product_schedule){
+              eu.throwError('bad_request','Product schedule already belongs to this session: "'+product_schedule.id+'"');
+            }
+          });
+        });
+
+      }
+
+      return true;
+
+    }
+
+    /*
+    * Technical Debt Area...
+    */
+
+    //Technical Debt:  Needs to be more testable, separate functions
     assureSession(parameters){
 
       du.debug('Assure Session');
@@ -517,52 +406,122 @@ class sessionController extends entityController {
 
     }
 
+
+    //Technical Debt:  Overly verbose
     updateSessionProductSchedules(session, product_schedules){
 
-        var session_product_schedules = session.product_schedules;
+      du.debug('Update Session Product Schedules');
 
-        var purchased_product_schedules = [];
+      var session_product_schedules = session.product_schedules;
 
-        product_schedules.forEach((schedule) => {
-            purchased_product_schedules.push(schedule.id);
-        });
+      var purchased_product_schedules = [];
 
-        session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
+      product_schedules.forEach((schedule) => {
+          purchased_product_schedules.push(schedule.id);
+      });
 
-        session.product_schedules = session_product_schedules;
+      session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
 
-        return this.update({entity: session});
+      session.product_schedules = session_product_schedules;
 
-    }
-
-    closeSession(session){
-
-        session.completed = 'true';
-
-        return this.update({entity: session});
+      return this.update({entity: session});
 
     }
 
-    validateProductSchedules(product_schedules, session){
+    //Technical Debt:  This needs to move to a prototype?
+      hydrate(session){
 
-      du.debug('Validate Product Schedules');
+          return new Promise((resolve) => {
 
-      if(_.has(session, 'product_schedules') && arrayutilities.nonEmpty(session.product_schedules)){
+              if(!_.has(session, "campaign")){ return null; }
 
-        arrayutilities.map(product_schedules, (product_schedule) => {
-          arrayutilities.map(session.product_schedules, session_product_schedule => {
-            if(product_schedule.id == session_product_schedule){
-              eu.throwError('bad_request','Product schedule already belongs to this session: "'+product_schedule.id+'"');
-            }
+              this.getCampaignHydrated(session.campaign).then((campaign) => {
+
+                  session.campaign = campaign;
+
+                  return session;
+
+              }).then((session) => {
+
+                  if(!_.has(session, "customer")){ return null; }
+
+                  return this.getCustomer(session).then((customer) => {
+
+                      session.customer = customer;
+
+                      return session;
+
+                  }).then((session) => {
+
+                      return resolve(session);
+
+                  }).catch((error) => {
+
+                      throw error;
+
+                  });
+
+              }).catch((error) => {
+
+                  throw error;
+
+              });
+
           });
-        });
 
       }
 
-      return true;
+      //Technical Debt: gross
+      getSessionHydrated(id){
 
-    }
+          return this.get({id: id}).then((session) => {
 
+              return this.hydrate(session);
+
+          });
+
+      }
+
+      //Technical Debt:  This should be List Products
+      listProducts(session){
+
+        du.debug('List Products');
+
+        return this.listTransactions(session).then((session_rebill_transactions) => {
+
+          if(arrayutilities.nonEmpty(session_rebill_transactions)){
+
+            let product_promises = arrayutilities.map(session_rebill_transactions, (session_rebill_transaction) => {
+
+              return this.executeAssociatedEntityFunction('transactionController', 'getProducts', session_rebill_transaction);
+
+            });
+
+            return Promise.all(product_promises);
+
+          }
+
+        }).then((session_rebill_transaction_products) => {
+
+          //du.highlight('Session Rebill Transaction Products', session_rebill_transaction_products);
+
+          let return_array = [];
+
+          if(arrayutilities.nonEmpty(session_rebill_transaction_products)){
+            arrayutilities.map(session_rebill_transaction_products, (rebill_transaction_products) => {
+              if(arrayutilities.nonEmpty(rebill_transaction_products)){
+                arrayutilities.map(rebill_transaction_products, (rebill_transaction_product) => {
+                  return_array.push(rebill_transaction_product);
+                });
+              }
+            });
+          }
+
+          return return_array;
+
+        });
+
+      }
 }
 
 module.exports = new sessionController();
