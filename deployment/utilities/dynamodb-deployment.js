@@ -15,6 +15,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       super();
 
+      //Technical Debt:  Uptade this to use the Promise library
       this.dynamodbutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
 
       this.controllers = [];

@@ -15,22 +15,11 @@ class trackerController extends entityController {
 
     }
 
-    //Technical Debt:  Replace with EntityController.listByAssociations
     listByCampaignID({id, pagination}){
 
       du.debug('Get By Campaign ID');
 
-      let scan_parameters = {
-        filter_expression: 'contains(#f1, :campaign_id)',
-        expression_attribute_names:{
-            '#f1': 'campaigns'
-        },
-        expression_attribute_values: {
-            ':campaign_id': id
-        }
-      };
-
-      return this.scanByParameters({parameters: scan_parameters});
+      return this.listByAssociations({id: this.getID(id), field: 'campaigns', pagination: pagination});
 
     }
 
@@ -40,7 +29,8 @@ class trackerController extends entityController {
 
         if(_.has(tracker, 'affiliates')){
 
-          return this.executeAssociatedEntityFunction('affiliateController', 'getList', {list_array: tracker.affiliates});
+          return this.executeAssociatedEntityFunction('affiliateController', 'getList', {list_array: tracker.affiliates})
+          .then(affiliates => this.getResult(affiliates, 'affiliates'));
 
         }
 
@@ -54,7 +44,8 @@ class trackerController extends entityController {
 
         if(_.has(tracker, 'campaigns')){
 
-          return this.executeAssociatedEntityFunction('campaignController', 'getList', {list_array: tracker.campaigns});
+          return this.executeAssociatedEntityFunction('campaignController', 'getList', {list_array: tracker.campaigns})
+          .then((campaigns) => this.getResult(campaigns, 'campaigns'));
 
         }
 
@@ -62,26 +53,11 @@ class trackerController extends entityController {
 
     }
 
-    //Technical Debt:  Replace with EntityController.listByAssociations
     listByAffiliateID({affiliate, pagination}){
 
       du.debug('List By Affiliate ID');
 
-      du.info(affiliate);
-
-      let affiliate_id = this.getID(affiliate);
-
-      let scan_parameters = {
-        filter_expression: 'contains(#f1, :affiliate_id)',
-        expression_attribute_names:{
-            '#f1': 'affiliates'
-        },
-        expression_attribute_values: {
-            ':affiliate_id': affiliate_id
-        }
-      };
-
-      return this.scanByParameters({parameters: scan_parameters});
+      return this.listByAssociation({id: this.getID(affiliate), field:'affiliates', pagination: pagination});
 
     }
 

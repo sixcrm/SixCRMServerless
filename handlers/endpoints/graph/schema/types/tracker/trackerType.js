@@ -20,7 +20,9 @@ module.exports.graphObj = new GraphQLObjectType({
         campaigns: {
             type: new GraphQLList(campaignType.graphObj),
             description: 'The associated campaign entities.',
-            resolve: tracker => trackerController.getCampaigns(tracker)
+            resolve: tracker => {
+              return trackerController.getCampaigns(tracker);
+            }
         },
         affiliates: {
             type: new GraphQLList(affiliateType.graphObj),
