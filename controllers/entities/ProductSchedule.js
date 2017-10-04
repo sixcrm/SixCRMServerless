@@ -66,50 +66,46 @@ class productScheduleController extends entityController {
     //Technical Debt:  Expensive!
     //Technical Debt:  Slow
     //Technical Debt:  Dynamo scan't query on map attributes of lists
-    //Technical Debt:  The input argumentation here is gross.
-    listProductSchedulesByProduct(args){
+    listProductSchedulesByProduct({product, pagination}){
 
-        du.debug('List Product Schedules By Product');
+      du.debug('List Product Schedules By Product');
 
-        let product_id = this.getID(args.product);
+      let product_id = this.getID(product);
 
-        let scan_parameters = {};
+      //Technical Debt:  This just attempts to get all products...  BUT DOESN'T
+      return this.scanByParameters({parameters: {}, pagination: pagination})
+      .then((productschedules) => this.getResult(productschedules, 'productschedules'))
+      .then((productschedules) => {
 
-        return this.scanByParameters({parameters: scan_parameters, pagination: args.pagination}).then((results) => {
+        let return_array = [];
 
-          let return_array = [];
+        if(arrayutilities.nonEmpty(productschedules)){
 
-          if(_.has(results, 'productschedules') && _.isArray(results.productschedules) && results.productschedules.length > 0){
+          arrayutilities.map(productschedules, productschedule => {
 
-            results.productschedules.forEach((result) => {
+            if(arrayutilities.nonEmpty(productschedule.schedule)){
 
-              if(_.has(result, 'schedule') && _.isArray(result.schedule) && result.schedule.length > 0){
+              let found = arrayutilities.find(productschedule.schedule, (schedule) => {
+                return (_.has(schedule, 'product_id') && schedule.product_id == product_id);
+              });
 
-                let found = result.schedule.find((schedule) => {
-                  return (_.has(schedule, 'product_id') && schedule.product_id == product_id);
-                });
-
-                if(_.isObject(found)){
-                  return_array.push(result);
-                }
-
+              if(!_.isUndefined(found)){
+                return_array.push(found);
               }
+            }
 
-            });
+          });
 
-            results.productschedules = return_array;
-            results.pagination.count = return_array.length;
-            results.has_next_page = false;
+        }
 
-            return results;
+        return {
+          productschedules: return_array,
+          pagination: this.buildPaginationObject({
+            Count: return_array.length
+          })
+        }
 
-          }else{
-
-            return results;
-
-          }
-
-        });
+      });
 
     }
 

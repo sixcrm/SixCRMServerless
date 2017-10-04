@@ -274,10 +274,6 @@ module.exports = class entityController extends entityUtilitiesController {
       .then(() => this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
       .then(() => {
 
-        //Technical Debt:  Is this redundant?
-        //Tecnhical Debt:  Use objectutilities.transcribe
-        objectutilities.has(parameters, ['filter_expression','expression_attribute_values', 'expression_attribute_names'], true);
-
         let query_parameters = {
             filter_expression: parameters.filter_expression,
             expression_attribute_values: parameters.expression_attribute_values,
