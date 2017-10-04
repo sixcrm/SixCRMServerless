@@ -1,6 +1,3 @@
-# Aggregation by transaction summary variables for revenue aggregated by period
-# This is the top-level query for the Transaction Summary Report
-=======
 # Transactions summary query tied to the transactions Summary (revenue) report
 
 26.09.2017 A.Zelen
@@ -48,6 +45,7 @@ ____
 ---
 ### Query notes
 
+This is the top-level query for the Transaction Summary Report.
 Query returns six variables that represent :
 * `sale` is represented as processor_result = 'success' AND transaction_type = 'new'
 * `rebill` is represented as processor_result = 'success' AND transaction_type = 'rebill'

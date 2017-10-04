@@ -30,8 +30,7 @@ module.exports = function(results, parameters){
                 count_upsell: result.count_upsell,
                 upsell_percent: result.upsell_percent,
                 sum_upsell: result.sum_upsell,
-                sum_amount: result.sum_amount,
-                all_sum_amount: result.all_sum_amount
+                sum_amount: result.sum_amount
               });
 
             });
