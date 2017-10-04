@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -56,28 +57,38 @@ class campaignController extends entityController {
       du.debug('Get Affiliate Allow Deny List');
 
       if(!arrayutilities.nonEmpty(list)){
-        return null;
+        return Promise.resolve(null);
       }
 
-      let list_promises = arrayutilities.map(list, (list_item) => {
+      let return_array = [];
+
+      let affiliate_ids = arrayutilities.filter(list, (list_item) => {
+
+        if(this.isUUID(list_item)){
+          return true;
+        }
 
         if(list_item == '*'){
-          return Promise.resolve({id:'*', name:'All'});
-        }else if(this.isUUID(list_item)){
-          return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: list_item});
+          return_array.push({id:'*', name:'All'});
         }
+
+        return false;
 
       });
 
-      return Promise.all(list_promises);
+      return this.executeAssociatedEntityFunction('affiliateController', 'getList', {list_array: affiliate_ids})
+      .then((affiliates) => this.getResult(affiliates, 'affiliates'))
+      .then(affiliates_array => {
+        return arrayutilities.merge(affiliates_array, return_array)
+      });
 
     }
 
-    listAffiliatesByCampaign(args){
+    listAffiliatesByCampaign({affiliate, pagination}){
 
       du.debug('List Affiliates By Campaign');
 
-      let affiliate_id = this.getID(args.affiliate);
+      let affiliate_id = this.getID(affiliate);
 
       let query_parameters = {
         filter_expression: '#f1 = :affiliate_id OR #f2 = :affiliate_id OR #f3 = :affiliate_id OR #f4 = :affiliate_id OR #f5 = :affiliate_id OR #f6 = :affiliate_id',
@@ -94,13 +105,127 @@ class campaignController extends entityController {
         }
       };
 
-      let pagination = args.pagination;
-
       return this.executeAssociatedEntityFunction('sessionController', 'queryByParameters', {query_parameters: query_parameters, pagination: pagination});
 
     }
 
+    listCampaignsByProductSchedule({product_schedule, pagination}){
+
+      du.debug('List Campaigns By Product Schedule');
+
+      return this.listByAssociations({field: 'productschedules', id: this.getID(product_schedule), pagination: pagination});
+
+    }
+
+    getEmailTemplates(campaign){
+
+      du.debug('Get Email Templates');
+
+      if(_.has(campaign, "emailtemplates") && arrayutilities.nonEmpty(campaign.emailtemplates)){
+
+        return this.executeAssociatedEntityFunction('emailTemplateController', 'getList', {list_array: campaign.emailtemplates})
+        .then(emailtemplates => this.getResult(emailtemplates, 'emailtemplates'));
+
+      }else{
+
+        return Promise.resolve(null);
+
+      }
+
+    }
+
+    getProducts(campaign){
+
+      du.debug('Get Products');
+
+      if(_.has(campaign, "products") && arrayutilities.nonEmpty(campaign.products)){
+
+        return this.executeAssociatedEntityFunction('productController', 'getList', {list_array: campaign.products})
+        .then(products => this.getResult(products, 'products'));
+
+      }else{
+
+        return Promise.resolve(null);
+
+      }
+
+    }
+
+    getProductSchedules(campaign){
+
+      du.debug('Get Product Schedules');
+
+      if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
+
+        return this.executeAssociatedEntityFunction('productScheduleController', 'getList', {list_array: campaign.productschedules})
+        .then(productschedules => this.getResult(productschedules, 'productschedules'));
+
+      }else{
+
+          return Promise.resolve(null);
+
+      }
+
+    }
+
+    validateProductSchedules(product_schedules, campaign){
+
+      du.debug('Validate Product Schedules');
+
+      objectutilities.has(campaign, ['productschedules'], true);
+
+      arrayutilities.nonEmpty(campaign.productschedules, true);
+
+      arrayutilities.map(product_schedules, product_schedule => {
+
+        let found = arrayutilities.find(campaign.productschedules, campaign_product_schedule => {
+
+          return (this.getID(campaign_product_schedule) == this.getID(product_schedule));
+
+        });
+
+        if(_.isUndefined(found)){
+
+          eu.throwError('server','Product schedule does not agree with campaign product schedule: '+product_schedule);
+
+        }
+
+      });
+
+      return true;
+
+    }
+
+    listByAffiliateAllow({affiliate, pagination}){
+
+      du.debug('List by Affiliate Allow');
+
+      return this.listByAssociations({id: this.getID(affiliate), field: 'affiliate_allow', pagination: pagination});
+
+    }
+
+    listByAffiliateDeny({affiliate, pagination}){
+
+      du.debug('List by Affiliate Deny');
+
+      return this.listByAssociations({id: this.getID(affiliate), field: 'affiliate_deny', pagination: pagination});
+
+    }
+
+    getAffiliate(campaign){
+
+      du.debug('Get Affiliate');
+
+      return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: campaign.affiliate});
+
+    }
+
+    /*
+    * Technical Debt Below...
+    */
+
     //Technical Debt:  This seems VERY general in terms of parameterization
+    //Technical Debt:  Replace with getList()
     listCampaignsByProduct(args){
 
       du.debug('Get Campaigns');
@@ -171,26 +296,7 @@ class campaignController extends entityController {
 
     }
 
-    listCampaignsByProductSchedule({product_schedule, pagination}){
-
-      du.debug('List Campaigns By Product Schedule');
-
-      let product_schedule_id = this.getID(product_schedule);
-
-      let scan_parameters = {
-        filter_expression: 'contains(#f1, :product_schedule_id)',
-        expression_attribute_names:{
-            '#f1': 'productschedules'
-        },
-        expression_attribute_values: {
-            ':product_schedule_id': product_schedule_id
-        }
-      };
-
-      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
-
-    }
-
+    //Technical Debt:  Need compound condition here...
     getEmailTemplatesByEventType(campaign, event_type){
 
       du.debug('Get Email Templates By Event Type');
@@ -216,66 +322,8 @@ class campaignController extends entityController {
 
     }
 
-    getEmailTemplates(campaign){
-
-      du.debug('Get Email Templates');
-
-      if(_.has(campaign, "emailtemplates") && arrayutilities.nonEmpty(campaign.emailtemplates)){
-
-        let emailtemplates = arrayutilities.map(campaign.emailtemplates, (id) => {
-          return this.executeAssociatedEntityFunction('emailTemplateController', 'get', {id: id});
-        });
-
-        return Promise.all(emailtemplates).then((emailtemplates) => {
-
-          return emailtemplates;
-
-        });
-
-      }else{
-
-        return Promise.resolve(null);
-
-      }
-
-    }
-
-    getProducts(campaign){
-
-      du.debug('Get Products');
-
-      if(_.has(campaign, "products") && arrayutilities.nonEmpty(campaign.products)){
-
-        return arrayutilities.map(campaign.products, (id) => {
-          return this.executeAssociatedEntityFunction('productController', 'get', {id: id});
-        });
-
-      }else{
-
-        return null;
-
-      }
-
-    }
-
-    getProductSchedules(campaign){
-
-      du.debug('Get Product Schedules');
-
-      if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
-
-        return arrayutilities.map(campaign.productschedules, (id) => {
-          return this.executeAssociatedEntityFunction('productScheduleController', 'get', {id: id});
-        });
-
-      }else{
-
-          return null;
-
-      }
-
-    }
-
+    //Technical Debt: Gross
+    //Technical Debt:  Replace with getList()
     getProductSchedulesHydrated(campaign){
 
       du.debug('Get Product Schedule Hydrated');
@@ -291,14 +339,7 @@ class campaignController extends entityController {
       }
     }
 
-    getAffiliate(campaign){
-
-      du.debug('Get Affiliate');
-
-      return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: campaign.affiliate});
-
-    }
-
+    //Technical Debt: Gross
     hydrate(campaign){
 
       return this.getProductSchedulesHydrated(campaign).then((product_schedules) => {
@@ -311,81 +352,10 @@ class campaignController extends entityController {
 
     }
 
+    //Technical Debt: Gross
     getHydratedCampaign(id) {
 
       return this.get({id: id}).then((campaign) => this.hydrate(campaign));
-
-    }
-
-    validateProductSchedules(product_schedules, campaign){
-
-      if(!_.has(campaign, 'productschedules') || !_.isArray(campaign.productschedules) || campaign.productschedules.length < 1){
-
-        eu.throwError('server','Invalid product schedule.');
-
-      }
-
-      arrayutilities.map(product_schedules, product_schedule => {
-
-        du.info(product_schedule);
-
-        let found = arrayutilities.find(campaign.productschedules, campaign_product_schedule => {
-
-          return (this.getID(campaign_product_schedule) == this.getID(product_schedule));
-
-        });
-
-        if(_.isUndefined(found) || _.isNull(found)){
-
-          eu.throwError('server','Product schedule does not agree with campaign product schedule: '+product_schedule);
-
-        }
-
-      });
-
-      return true;
-
-    }
-
-    //Technical Debt:  Replace with EntityController.listByAssociations
-    listByAffiliateAllow({affiliate, pagination}){
-
-      du.debug('List by Affiliate Allow');
-
-      let affiliate_id = this.getID(affiliate);
-
-      let scan_parameters = {
-        filter_expression: 'contains(#f1, :affiliate_id)',
-        expression_attribute_names:{
-            '#f1': 'affiliate_allow'
-        },
-        expression_attribute_values: {
-            ':affiliate_id': affiliate_id
-        }
-      };
-
-      return this.scanByParameters({parameters: scan_parameters});
-
-    }
-
-    //Technical Debt:  Replace with EntityController.listByAssociations
-    listByAffiliateDeny({affiliate, pagination}){
-
-      du.debug('List by Affiliate Deny');
-
-      let affiliate_id = this.getID(affiliate);
-
-      let scan_parameters = {
-        filter_expression: 'contains(#f1, :affiliate_id)',
-        expression_attribute_names:{
-            '#f1': 'affiliate_deny'
-        },
-        expression_attribute_values: {
-            ':affiliate_id': affiliate_id
-        }
-      };
-
-      return this.scanByParameters({parameters: scan_parameters});
 
     }
 

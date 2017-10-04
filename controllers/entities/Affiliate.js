@@ -70,38 +70,6 @@ class affiliateController extends entityController {
 
     }
 
-    assureAffiliate(value){
-
-        du.debug('Assure Affiliate');
-
-        return this.get({id: value}).then((result) => {
-
-            if(!_.isNull(result)){
-                return result;
-            }
-
-            return this.getBySecondaryIndex({field: 'affiliate_id', index_value: value, index_name: 'affiliate_id-index'}).then((result) => {
-
-                if(!_.isNull(result)){
-                    return result;
-                }
-
-                return this.create({entity:{affiliate_id: value}}).then((result) => {
-
-                    if(!_.isNull(result)){
-                        return result;
-                    }
-
-                    eu.throwError('server','Unable to assure affiliate.');
-
-                });
-
-            });
-
-        });
-
-    }
-
     //Technical Debt:  Incomplete
     getCampaigns(affiliate, pagination){
 

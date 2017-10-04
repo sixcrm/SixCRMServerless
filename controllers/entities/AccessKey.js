@@ -1,5 +1,6 @@
 'use strict';
-var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class accessKeyController extends entityController {
 
@@ -9,7 +10,9 @@ class accessKeyController extends entityController {
 
     getAccessKeyByKey(access_key){
 
-        return this.getBySecondaryIndex({field: 'access_key', index_value: access_key, index_name: 'access_key-index'});
+      du.debug('Get Access Key By Key');
+
+      return this.getBySecondaryIndex({field: 'access_key', index_value: access_key, index_name: 'access_key-index'});
 
     }
 
