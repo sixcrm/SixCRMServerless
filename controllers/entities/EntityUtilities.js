@@ -31,7 +31,9 @@ module.exports = class entityUtilitiesController {
 
       du.debug('Handle Errors');
 
-      if(_.has(error.code)){
+      du.output(error);
+
+      if(_.has(error, 'code')){
 
         if(error.code == 403){
 
@@ -67,7 +69,7 @@ module.exports = class entityUtilitiesController {
 
           if(fatal == true){
 
-            eu.throwError('forbidden', 'Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+            this.throwPermissionsError(action);
 
           }
 
@@ -83,6 +85,14 @@ module.exports = class entityUtilitiesController {
 
     }
 
+    throwPermissionsError(){
+
+      du.debug('Throw Permissions Error');
+
+      eu.throwError('forbidden', 'Invalid Permissions: user can not perform this action on entities of type "'+this.descriptive_name+'".');
+
+    }
+
     catchPermissions(permissions, action){
 
       du.debug('Catch Permissions');
@@ -90,7 +100,9 @@ module.exports = class entityUtilitiesController {
       action = (_.isUndefined(action))?'read':action;
 
       if(permissions == false){
-        return Promise.reject('Invalid Permissions: user can not '+action+' on '+this.descriptive_name);
+
+        this.throwPermissionsError();
+
       }
 
       return permissions;
