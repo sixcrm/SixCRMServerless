@@ -34,7 +34,7 @@ class sessionController extends entityController {
       return Promise.resolve([]);
     }
 
-    listSessionsByAffiliate({affiliate, pagination}){
+    listByAffiliate({affiliate, pagination}){
 
         du.debug('List Sessions By Affiliate');
 
@@ -307,11 +307,11 @@ class sessionController extends entityController {
 
     }
 
-    listByCampaignID({id, pagination}) {
+    listByCampaign({campaign, pagination}) {
 
-      du.warning('List By Campaign ID');
+      du.warning('List By Campaign');
 
-      return this.listByAssociation({field: 'campaign', id: id, pagination: pagination})
+      return this.listByAssociation({field: 'campaign', id: this.getID(campaign), pagination: pagination})
       .then(sessions => this.getResult(sessions));
 
     }

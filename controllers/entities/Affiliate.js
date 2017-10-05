@@ -22,11 +22,10 @@ class affiliateController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        //Technical Debt:  Affiliate allow is not being tested.
-        this.executeAssociatedEntityFunction('campaignController', 'listByAffiliateAllow', {affiliate:id}),
-        this.executeAssociatedEntityFunction('campaignController', 'listByAffiliateDeny', {affiliate:id}),
-        this.executeAssociatedEntityFunction('sessionController', 'listSessionsByAffiliate', {affiliate:id}),
-        this.executeAssociatedEntityFunction('trackerController', 'listByAffiliateID', {affiliate:id})
+        //this.executeAssociatedEntityFunction('campaignController', 'listByAffiliateAllow', {affiliate:id}),
+        //this.executeAssociatedEntityFunction('campaignController', 'listByAffiliateDeny', {affiliate:id}),
+        //this.executeAssociatedEntityFunction('sessionController', 'listSessionsByAffiliate', {affiliate:id}),
+        this.executeAssociatedEntityFunction('trackerController', 'listByAffiliate', {affiliate:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -35,6 +34,8 @@ class affiliateController extends entityController {
         let campaign_deny = data_acquisition_promises[1];
         let sessions = data_acquisition_promises[2];
         let trackers = data_acquisition_promises[3];
+
+        du.warning(data_acquisition_promises);  process.exit();
 
         if(_.has(campaign_allow, 'campaigns') && arrayutilities.nonEmpty(campaign_allow.campaigns)){
           arrayutilities.map(campaign_allow.campaigns, (campaign) => {
@@ -71,23 +72,19 @@ class affiliateController extends entityController {
     }
 
     //Technical Debt:  Incomplete
-    getCampaigns(affiliate, pagination){
+    getCampaigns({affiliate, pagination}){
 
       du.debug('Get Campaigns');
 
-      let affiliate_id = this.getID(affiliate);
-
-      return this.executeAssociatedEntityFunction('sessionController', 'listSessionsByAffiliate', {affiliate: affiliate_id, pagination: pagination});
+      return this.executeAssociatedEntityFunction('sessionController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
 
     }
 
-    getTrackers(affiliate){
+    getTrackers({affiliate, pagination}){
 
       du.debug('Get Trackers');
 
-      let affiliate_id = this.getID(affiliate);
-
-      return this.executeAssociatedEntityFunction('trackerController', 'listBySecondaryIndex', {field:'affiliate', index_value: affiliate_id, index_name: 'affiliate-index'});
+      return this.executeAssociatedEntityFunction('trackerController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
 
     }
 

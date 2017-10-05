@@ -34,10 +34,6 @@ module.exports = class IntegrationTest {
 
       let this_request = request(this.endpoint);
 
-      du.highlight(query);
-      du.info(this.endpoint);
-      du.warning(this.test_jwt);
-
       return this_request.post('graph/'+this.account.id)
       .set('Authorization', this.test_jwt)
       .send(query)
@@ -48,7 +44,7 @@ module.exports = class IntegrationTest {
       //.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
       .end(function(err, response){
 
-        du.info(response.body);
+        //du.info(response.body);
         //process.exit();
 
         if(err){

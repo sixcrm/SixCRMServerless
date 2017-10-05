@@ -23,8 +23,8 @@ class campaignController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('sessionController', 'listByCampaignID', {id:id}),
-        this.executeAssociatedEntityFunction('trackerController', 'listByCampaignID', {id:id})
+        this.executeAssociatedEntityFunction('sessionController', 'listByCampaign', {campaign:id}),
+        this.executeAssociatedEntityFunction('trackerController', 'listByCampaign', {tracker:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {

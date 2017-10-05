@@ -15,11 +15,19 @@ class trackerController extends entityController {
 
     }
 
-    listByCampaignID({id, pagination}){
+    listByCampaign({campaign, pagination}){
 
-      du.debug('Get By Campaign ID');
+      du.debug('List By Campaign');
 
-      return this.listByAssociations({id: this.getID(id), field: 'campaigns', pagination: pagination});
+      return this.listByAssociations({id: this.getID(campaign), field: 'campaigns', pagination: pagination});
+
+    }
+
+    listByAffiliate({affiliate, pagination}){
+
+      du.debug('List By Affiliate');
+
+      return this.listByAssociations({id: this.getID(affiliate), field:'affiliates', pagination: pagination});
 
     }
 
@@ -50,14 +58,6 @@ class trackerController extends entityController {
         }
 
         return null;
-
-    }
-
-    listByAffiliateID({affiliate, pagination}){
-
-      du.debug('List By Affiliate ID');
-
-      return this.listByAssociation({id: this.getID(affiliate), field:'affiliates', pagination: pagination});
 
     }
 
