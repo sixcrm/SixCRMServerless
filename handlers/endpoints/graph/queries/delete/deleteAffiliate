@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
 	mutation {
-		deleteaffiliate (id: \"2b5d7771-9898-4bcf-a707-959d3023c40c\") { 
+		deleteaffiliate (id: \"e8647e0b-cb96-4d4e-9131-62ce55b5cf13\") { 
 			id
 		}
 	}"

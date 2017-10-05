@@ -151,7 +151,7 @@ class customerController extends entityController {
 
       if(_.has(customer, "creditcards") && arrayutilities.nonEmpty(customer.creditcards)){
 
-        return this.executeAssociatedEntityFunction('creditCardController', 'getList', {list_array: customer.creditcards})
+        return this.executeAssociatedEntityFunction('creditCardController', 'listBy', {list_array: customer.creditcards})
         .then(creditcards => this.getResult(creditcards, 'creditcards'));
 
       }
@@ -229,7 +229,7 @@ class customerController extends entityController {
 
           session_ids = arrayutilities.unique(session_ids);
 
-          return this.executeAssociatedEntityFunction('rebillController', 'getList', {list_array: session_ids, field: 'parentsession'})
+          return this.executeAssociatedEntityFunction('rebillController', 'listBy', {list_array: session_ids, field: 'parentsession'})
           .then(rebills => this.getResult(rebills, 'rebills'));
 
         }

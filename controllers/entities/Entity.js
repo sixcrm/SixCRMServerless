@@ -22,8 +22,8 @@ const entityUtilitiesController = global.SixCRM.routes.include('controllers','en
 module.exports = class entityController extends entityUtilitiesController {
 
   /*
-  * "get" implies a singular result.
-  * "list" implies multiple results.
+  * "get" implies a singular object result.
+  * "list" implies multiple results are returned as an object which also has a pagination object
   */
 
     constructor(name){
@@ -127,9 +127,9 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    getList({list_array, field, fatal}){
+    listBy({list_array, field, fatal}){
 
-      du.debug('Get List');
+      du.debug('List By');
 
       field = (_.isUndefined(field))?this.primary_key:field;
 
@@ -138,11 +138,11 @@ module.exports = class entityController extends entityUtilitiesController {
       .then(() => {
 
         if(!arrayutilities.nonEmpty(list_array)){
-          eu.throwError('server', 'getList assumes a non-empty array of identifiers');
+          eu.throwError('server', 'listBy assumes a non-empty array of identifiers');
         }
 
       })
-      .then(() => this.dynamoutilities.createINQueryParameters(this.primary_key, list_array))
+      .then(() => this.dynamoutilities.createINQueryParameters(field, list_array))
       .then((in_parameters) => this.list({query_parameters: in_parameters}))
       .catch(this.handleErrors);
 

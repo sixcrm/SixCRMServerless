@@ -90,7 +90,7 @@ class createUpsellController extends transactionEndpointController{
         var promises = [];
 
         var getSession = sessionController.get({id: event_body['session']});
-        var getProductSchedules = productScheduleController.getList({list_array: event_body['product_schedules']});
+        var getProductSchedules = productScheduleController.listBy({list_array: event_body['product_schedules']});
 
         du.debug('Product Schedules', event_body['product_schedules']);
         du.debug(getProductSchedules);

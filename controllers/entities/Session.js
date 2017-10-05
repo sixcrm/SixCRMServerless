@@ -259,7 +259,7 @@ class sessionController extends entityController {
 
       if(arrayutilities.nonEmpty(session.product_schedules)){
 
-        return this.executeAssociatedEntityFunction('productScheduleController', 'getList', {list_array: session.product_schedules})
+        return this.executeAssociatedEntityFunction('productScheduleController', 'listBy', {list_array: session.product_schedules})
         .then(product_schedules => this.getResult(product_schedules, 'productschedules'));
 
       }

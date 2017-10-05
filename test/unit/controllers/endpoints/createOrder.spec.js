@@ -60,7 +60,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             },
-            getList: () => {
+            listBy: () => {
               return Promise.resolve([]);
             }
         });
@@ -113,7 +113,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             },
-            getList: () => {
+            listBy: () => {
               return Promise.resolve([]);
             }
         });
@@ -167,7 +167,7 @@ describe('controllers/endpoints/createOrder.js', () => {
             getProductSchedules: () => {
                 return Promise.resolve([]);
             },
-            getList: () => {
+            listBy: () => {
               return Promise.resolve([]);
             }
         });

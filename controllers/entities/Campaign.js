@@ -78,7 +78,7 @@ class campaignController extends entityController {
 
       if(arrayutilities.nonEmpty(affiliate_ids)){
 
-        return this.executeAssociatedEntityFunction('affiliateController', 'getList', {list_array: affiliate_ids})
+        return this.executeAssociatedEntityFunction('affiliateController', 'listBy', {list_array: affiliate_ids})
         .then((affiliates) => this.getResult(affiliates, 'affiliates'))
         .then(affiliates_array => {
           return arrayutilities.merge(affiliates_array, return_array)
@@ -130,7 +130,7 @@ class campaignController extends entityController {
 
       if(_.has(campaign, "emailtemplates") && arrayutilities.nonEmpty(campaign.emailtemplates)){
 
-        return this.executeAssociatedEntityFunction('emailTemplateController', 'getList', {list_array: campaign.emailtemplates})
+        return this.executeAssociatedEntityFunction('emailTemplateController', 'listBy', {list_array: campaign.emailtemplates})
         .then(emailtemplates => this.getResult(emailtemplates, 'emailtemplates'));
 
       }else{
@@ -147,7 +147,7 @@ class campaignController extends entityController {
 
       if(_.has(campaign, "products") && arrayutilities.nonEmpty(campaign.products)){
 
-        return this.executeAssociatedEntityFunction('productController', 'getList', {list_array: campaign.products})
+        return this.executeAssociatedEntityFunction('productController', 'listBy', {list_array: campaign.products})
         .then(products => this.getResult(products, 'products'));
 
       }else{
@@ -164,7 +164,7 @@ class campaignController extends entityController {
 
       if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
 
-        return this.executeAssociatedEntityFunction('productScheduleController', 'getList', {list_array: campaign.productschedules})
+        return this.executeAssociatedEntityFunction('productScheduleController', 'listBy', {list_array: campaign.productschedules})
         .then(productschedules => this.getResult(productschedules, 'productschedules'));
 
       }else{
@@ -232,7 +232,7 @@ class campaignController extends entityController {
     */
 
     //Technical Debt:  This seems VERY general in terms of parameterization
-    //Technical Debt:  Replace with getList()
+    //Technical Debt:  Replace with listBy()
     listCampaignsByProduct(args){
 
       du.debug('Get Campaigns');
@@ -330,7 +330,7 @@ class campaignController extends entityController {
     }
 
     //Technical Debt: Gross
-    //Technical Debt:  Replace with getList()
+    //Technical Debt:  Replace with listBy()
     getProductSchedulesHydrated(campaign){
 
       du.debug('Get Product Schedule Hydrated');

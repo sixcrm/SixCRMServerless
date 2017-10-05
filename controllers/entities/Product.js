@@ -83,7 +83,7 @@ class ProductController extends entityController {
 
       du.debug('Get Products');
 
-      return this.getList({list_array: products_array});
+      return this.listBy({list_array: products_array});
 
     }
 

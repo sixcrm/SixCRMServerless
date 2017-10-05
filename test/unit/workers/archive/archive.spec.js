@@ -143,7 +143,7 @@ describe('controllers/workers/archive', function () {
             modelgenerator.randomEntityWithId('rebill').then(rebill => { random_rebill = rebill}),
         ]).then(() => done())});
 
-        it('returns success when archivefilter is not set', () => {
+        xit('returns success when archivefilter is not set', () => {
 
             const archive = global.SixCRM.routes.include('controllers', 'workers/archive.js');
 
