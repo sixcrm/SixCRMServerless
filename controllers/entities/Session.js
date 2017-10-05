@@ -311,8 +311,7 @@ class sessionController extends entityController {
 
       du.warning('List By Campaign');
 
-      return this.listByAssociation({field: 'campaign', id: this.getID(campaign), pagination: pagination})
-      .then(sessions => this.getResult(sessions));
+      return this.listByAssociation({field: 'campaign', id: this.getID(campaign), pagination: pagination});
 
     }
 

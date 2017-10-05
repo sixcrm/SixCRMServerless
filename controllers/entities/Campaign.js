@@ -23,8 +23,8 @@ class campaignController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('sessionController', 'listByCampaign', {campaign:id}),
-        this.executeAssociatedEntityFunction('trackerController', 'listByCampaign', {tracker:id})
+        this.executeAssociatedEntityFunction('sessionController', 'listByCampaign', {campaign:id}).then(sessions => this.getResult(sessions, 'sessions')),
+        this.executeAssociatedEntityFunction('trackerController', 'listByCampaign', {campaign:id}).then(trackers => this.getResult(trackers, 'trackers'))
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -32,16 +32,14 @@ class campaignController extends entityController {
         let sessions = data_acquisition_promises[0];
         let trackers = data_acquisition_promises[1];
 
-        //du.warning(sessions, trackers); process.exit();
-
-        if(_.has(sessions, 'sessions') && arrayutilities.nonEmpty(sessions.sessions)){
-          arrayutilities.map(sessions.sessions, (session) => {
+        if(arrayutilities.nonEmpty(sessions)){
+          arrayutilities.map(sessions, (session) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Session', object: session}));
           });
         }
 
-        if(_.has(trackers, 'trackers') && arrayutilities.nonEmpty(trackers.trackers)){
-          arrayutilities.map(trackers.trackers, (tracker) => {
+        if(arrayutilities.nonEmpty(trackers)){
+          arrayutilities.map(trackers, (tracker) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Tracker', object:tracker}));
           });
         }

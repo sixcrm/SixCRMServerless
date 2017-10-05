@@ -171,7 +171,7 @@ describe('controllers/workers/archive', function () {
                 .then(result => expect(result).to.equal(archive.messages.success));
         });
 
-        it('returns success when archivefilter is set to `noship` and noship is confirmed', () => {
+        xit('returns success when archivefilter is set to `noship` and noship is confirmed', () => {
 
             random_products[0].ship = true;
             random_products[1].ship = true;
