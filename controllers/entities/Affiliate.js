@@ -105,6 +105,7 @@ class affiliateController extends entityController {
 
       let return_array = [];
 
+      du.warning(affiliates);
       arrayutilities.map(affiliate_ids, (affiliate_id) => {
 
         let affiliate_record = arrayutilities.find(affiliates, affiliate => {
@@ -155,7 +156,7 @@ class affiliateController extends entityController {
       affiliate_ids = arrayutilities.unique(affiliate_ids);
 
       return this.listBy({list_array: affiliate_ids, field: 'affiliate_id'})
-      .then(affiliates => this.getResult)
+      .then(affiliates => this.getResult(affiliates, 'affiliates'))
       .then(affiliates => this.assureAffiliatesArrayTransform({affiliate_ids: affiliate_ids, affiliates: affiliates}))
       .then(assured_affiliates => this.validateAssuredAffiliates({affiliate_ids: affiliate_ids, assured_affiliates: assured_affiliates}));
 
