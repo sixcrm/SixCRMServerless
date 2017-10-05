@@ -22,8 +22,8 @@ class customerController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('customerNoteController', 'listByCustomer', {customer:id}),
-        this.executeAssociatedEntityFunction('sessionController', 'listSessionsByCustomer', {customer:id})
+        this.executeAssociatedEntityFunction('customerNoteController', 'listByCustomer', {customer:id}).then(customernotes => this.getResult(customernotes, 'customernotes')),
+        this.executeAssociatedEntityFunction('sessionController', 'listByCustomer', {customer:id}).then(sessions => this.getResult(sessions, 'sessions'))
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -31,14 +31,14 @@ class customerController extends entityController {
         let customernotes = data_acquisition_promises[0];
         let sessions = data_acquisition_promises[1];
 
-        if(_.has(customernotes, 'customernotes') && arrayutilities.nonEmpty(customernotes.customernotes)){
-          arrayutilities.map(customernotes.customernotes, (customernote) => {
+        if(arrayutilities.nonEmpty(customernotes)){
+          arrayutilities.map(customernotes, (customernote) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Customer Note', object: customernote}));
           });
         }
 
-        if(_.has(sessions, 'sessions') && arrayutilities.nonEmpty(sessions.sessions)){
-          arrayutilities.map(sessions.sessions, (session) => {
+        if(arrayutilities.nonEmpty(sessions)){
+          arrayutilities.map(sessions, (session) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Session', object: session}));
           });
         }
@@ -313,8 +313,7 @@ class customerController extends entityController {
 
       du.debug('List Customer Sessions');
 
-      return this.executeAssociatedEntityFunction('sessionController', 'listSessionsByCustomer', {customer: customer, pagination: pagination})
-      .then((sessions) => this.getResult(sessions, 'sessions'));
+      return this.executeAssociatedEntityFunction('sessionController', 'listByCustomer', {customer: customer, pagination: pagination});
 
     }
 

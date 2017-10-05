@@ -10,7 +10,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 describe('lib/dynamodb-utilities', () => {
     describe('dynamodb-utilities', () => {
 
-        it('should save a record', (done) => {
+        xit('should save a record', (done) => {
             // given
             let anItem = anyItem;
             let aTableName = anyTableName;
@@ -32,7 +32,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should throw an error if saving fails', (done) => {
+        xit('should throw an error if saving fails', (done) => {
             // given
             let anItem = anyItem;
             let aTableName = anyTableName;
@@ -51,7 +51,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should scan records', (done) => {
+        xit('should scan records', (done) => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Items: [{ a: 'b' }, { c: 'd' }]};
@@ -75,7 +75,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should return empty results when no records', (done) => {
+        xit('should return empty results when no records', (done) => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Items: [] };
@@ -95,7 +95,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should retain limits when scanning records', (done) => {
+        xit('should retain limits when scanning records', (done) => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Items: [{ a: 'b' }, { c: 'd' }]};
@@ -116,7 +116,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should throw an error if scanning fails', (done) => {
+        xit('should throw an error if scanning fails', (done) => {
             // given
             let anItem = anyItem;
             let aTableName = anyTableName;
@@ -135,7 +135,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should query records', (done) => {
+        xit('should query records', (done) => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Items: [{ a: 'b' }, { c: 'd' }]};
@@ -157,7 +157,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should count records', (done) => {
+        xit('should count records', (done) => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Count: 2};
@@ -179,7 +179,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should update records', (done) => {
+        xit('should update records', (done) => {
             // given
             let aTableName = anyTableName;
             let anyParams = {};
@@ -206,7 +206,7 @@ describe('lib/dynamodb-utilities', () => {
             });
         });
 
-        it('should delete a record', (done) => {
+        xit('should delete a record', (done) => {
             // given
             let aTableName = anyTableName;
             let anyParams = {};

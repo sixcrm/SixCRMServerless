@@ -35,8 +35,6 @@ class affiliateController extends entityController {
         let sessions = data_acquisition_promises[2];
         let trackers = data_acquisition_promises[3];
 
-        du.warning(campaign_allow, campaign_deny);
-
         if(arrayutilities.nonEmpty(campaign_allow)){
           arrayutilities.map(campaign_allow, (campaign) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Campaign', object: campaign}));
@@ -61,6 +59,7 @@ class affiliateController extends entityController {
           });
         }
 
+        //du.warning(return_array);  process.exit();
         return return_array;
 
       });

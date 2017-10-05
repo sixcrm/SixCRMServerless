@@ -2,9 +2,9 @@
 	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"*\" }",
 	"body":"
-	mutation { 
+	mutation {
 		deletesession (id: \"053b54ce-6cd1-4952-8e3e-3eb137cd5a30\") { 
 			id
-		} 
+		}
 	}"
 }

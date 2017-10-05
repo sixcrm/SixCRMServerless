@@ -45,7 +45,7 @@ module.exports = class entityController extends entityUtilitiesController {
           'account' //self-referntial, implicit
         ];
 
-        this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities-promise.js');
+        this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
 
     }
 

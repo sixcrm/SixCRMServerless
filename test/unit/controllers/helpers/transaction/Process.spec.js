@@ -656,7 +656,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       let customer = getValidCustomer();
       let productschedule = getValidProductSchedule();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities-promise.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index) => {
             return Promise.resolve({Items:[customer]});
         }
@@ -840,7 +840,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let credit_card = getValidCreditCard();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities-promise.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
           queryRecords: (table, parameters, index) => {
               return Promise.resolve({Items:[credit_card]});
           }

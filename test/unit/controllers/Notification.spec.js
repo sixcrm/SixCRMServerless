@@ -29,7 +29,7 @@ describe('controllers/Notification.js', () => {
             PermissionTestGenerators.givenAnyUser();
 
             //Technical Debt:  Fix...
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities-promise.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 get: (table, key) => {
                   return Promise.resolve({
                     id: "nikola.bosic@toptal.com/*",

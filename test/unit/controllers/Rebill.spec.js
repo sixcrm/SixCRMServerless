@@ -231,18 +231,17 @@ describe('controllers/Rebill.js', () => {
             let aDayInCycle = givenAnyDayInCycle();
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, []);
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve([]);
                 },
-                saveRecord: (table, entity, callback) => {
-                    callback(null, entity);
+                saveRecord: (table, entity) => {
+                    return Promise.resolve(entity);
                 }
             });
+
             mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
                 addToSearchIndex: (entity, entity_type) => {
-                    return new Promise((resolve) => {
-                        resolve(true);
-                    });
+                    return Promise.resolve(true);
                 }
             });
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
