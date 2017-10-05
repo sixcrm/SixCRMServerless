@@ -21,12 +21,12 @@ module.exports = class AffiliateTest extends IntegrationTest {
     let affiliate_id = uuidV4();
     let campaign_id = uuidV4();
 
+    du.info('Affiliate ID: '+affiliate_id);
+    du.info('Campaign ID: '+campaign_id);
+
     return this.createAffiliate(affiliate_id)
     .then(() => this.createCampaign(campaign_id, affiliate_id))
     .then(() => this.deleteAffiliate(affiliate_id, 403))
-    .then(response => {
-      return response;
-    })
     .then(() => this.deleteCampaign(campaign_id))
     .then(() => this.deleteAffiliate(affiliate_id));
 
