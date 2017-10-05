@@ -105,7 +105,6 @@ class affiliateController extends entityController {
 
       let return_array = [];
 
-      du.warning(affiliates);
       arrayutilities.map(affiliate_ids, (affiliate_id) => {
 
         let affiliate_record = arrayutilities.find(affiliates, affiliate => {
