@@ -79,6 +79,7 @@ class PermissionTestGenerators {
         let user = PermissionTestGenerators.givenUserWithNoPermissions();
 
         user.acl[0].role.permissions.allow.push(`${entity}/${action}`);
+
         PermissionTestGenerators.setGlobalUser(user);
 
         return user;
