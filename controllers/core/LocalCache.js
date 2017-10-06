@@ -7,7 +7,7 @@ module.exports = class LocalCache {
 
   constructor() {
 
-    this.clear();
+    this.clear('all');
 
   }
 

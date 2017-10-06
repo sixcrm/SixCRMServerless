@@ -75,11 +75,13 @@ class campaignController extends entityController {
       });
 
       if(arrayutilities.nonEmpty(affiliate_ids)){
-
         return this.executeAssociatedEntityFunction('affiliateController', 'listBy', {list_array: affiliate_ids})
         .then((affiliates) => this.getResult(affiliates, 'affiliates'))
         .then(affiliates_array => {
-          return arrayutilities.merge(affiliates_array, return_array)
+          if(arrayutilities.nonEmpty(affiliates_array)){
+            return arrayutilities.merge(affiliates_array, return_array)
+          }
+          return return_array;
         });
 
       }

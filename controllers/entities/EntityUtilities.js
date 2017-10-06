@@ -31,8 +31,6 @@ module.exports = class entityUtilitiesController {
 
       du.debug('Handle Errors');
 
-      du.output(error);
-
       if(_.has(error, 'code')){
 
         if(error.code == 403){
@@ -55,12 +53,15 @@ module.exports = class entityUtilitiesController {
 
       du.debug('Can');
 
-      fatal = (_.isUndefined(fatal))?false:fatal;
+      //fatal = (_.isUndefined(fatal))?false:fatal;
 
-      let permission_utilities_state = JSON.stringify(this.permissionutilities.getState());
+      //let permission_utilities_state = JSON.stringify(this.permissionutilities.getState());
 
-      let question = permission_utilities_state+this.permissionutilities.buildPermissionString(action, this.descriptive_name);
+      //let question = permission_utilities_state+this.permissionutilities.buildPermissionString(action, this.descriptive_name);
 
+      return Promise.resolve(this.permissionutilities.validatePermissions(action, this.descriptive_name));
+
+      /*
       let answer_function = () => {
 
         let permission = this.permissionutilities.validatePermissions(action, this.descriptive_name);
@@ -82,6 +83,7 @@ module.exports = class entityUtilitiesController {
       }
 
       return global.SixCRM.localcache.resolveQuestion(question, answer_function);
+      */
 
     }
 
@@ -96,6 +98,8 @@ module.exports = class entityUtilitiesController {
     catchPermissions(permissions, action){
 
       du.debug('Catch Permissions');
+
+      du.warning('Permissions', permissions, 'Action', action);
 
       action = (_.isUndefined(action))?'read':action;
 
@@ -841,7 +845,6 @@ module.exports = class entityUtilitiesController {
       if(_.isUndefined(field)){
         field = this.descriptive_name+'s';
       }
-
 
       if(_.has(result, field)){
         return Promise.resolve(result[field]);

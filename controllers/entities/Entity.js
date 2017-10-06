@@ -136,7 +136,6 @@ module.exports = class entityController extends entityUtilitiesController {
       return this.can('read', fatal)
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
-
         if(!arrayutilities.nonEmpty(list_array)){
           eu.throwError('server', 'listBy assumes a non-empty array of identifiers');
         }
@@ -313,7 +312,6 @@ module.exports = class entityController extends entityUtilitiesController {
       .then((data) => this.getItems(data))
       .then(items => this.assureSingular(items))
       .catch(this.handleErrors);
-
 
     }
 

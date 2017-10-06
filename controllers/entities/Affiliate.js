@@ -60,7 +60,6 @@ class affiliateController extends entityController {
           });
         }
 
-        //du.warning(return_array);  process.exit();
         return return_array;
 
       });
@@ -99,6 +98,26 @@ class affiliateController extends entityController {
 
     }
 
+    hasAffiliateMatch({affiliate_id, affiliates}){
+
+      du.debug('Has Affiliate Match');
+
+      if(arrayutilities.nonEmpty(affiliates)){
+
+        let affiliate_record = arrayutilities.find(affiliates, affiliate => {
+          return (_.has(affiliate, 'affiliate_id') && affiliate.affiliate_id == affiliate_id);
+        });
+
+        if(!_.isUndefined(affiliate_record)){
+          return affiliate_record;
+        }
+
+      }
+
+      return false;
+
+    }
+
     assureAffiliatesArrayTransform({affiliate_ids, affiliates}){
 
       du.debug('Assure Affiliates Array Transform');
@@ -107,21 +126,17 @@ class affiliateController extends entityController {
 
       arrayutilities.map(affiliate_ids, (affiliate_id) => {
 
-        let affiliate_record = arrayutilities.find(affiliates, affiliate => {
-          return (affiliate.affiliate_id == affiliate_id);
-        });
+        let affiliate_match = this.hasAffiliateMatch({affiliate_id: affiliate_id, affiliates: affiliates});
 
-        if(_.isUndefined(affiliate_record)){
+        if(affiliate_match === false){
 
-          let new_affiliate = {affiliate_id: affiliate_id};
+          return_array.push(this.create({entity:{affiliate_id: affiliate_id}}));
 
-          return_array.push(this.create({entity:new_affiliate}));
-
-        }else{
-
-          return_array.push(Promise.resolve(affiliate_record));
+          return;
 
         }
+
+        return_array.push(affiliate_match);
 
       });
 

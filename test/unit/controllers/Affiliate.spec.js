@@ -2,6 +2,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const PermissionTestGenerators = require('../lib/permission-test-generators');
 
 function getValidAffiliateIDsArray(){
@@ -110,25 +111,40 @@ describe('controllers/entities/Affiliate.js', () => {
     });
 
     //Technical Debt:  Fix
-    xit('succeeds when unableable to match affiliates', () => {
+    it('succeeds when unableable to match affiliates', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('create', 'affiliate');
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Entity.js'), {
-        create: ({entity}) => {
-          return Promise.resolve(entity);
-        },
-        constructor: () => {
-          return this;
-        }
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+          queryRecords: (table, parameters, index) => {
+              return Promise.resolve([]);
+          },
+          saveRecord: (table, entity) => {
+              return Promise.resolve(entity);
+          }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+          addToSearchIndex: (entity, entity_type) => {
+              return Promise.resolve(true);
+          }
+      });
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+           createActivity: () => {
+              return Promise.resolve();
+          }
       });
 
       let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
 
       let valid_affiliate_ids_array = getValidAffiliateIDsArray();
 
-      affiliateController.assureAffiliatesArrayTransform({affiliate_ids: valid_affiliate_ids_array, affiliates: []}).then(assured_affiliates => {
-        expect(assured_affiliates).to.deep.equal({});
+      affiliateController.assureAffiliatesArrayTransform({
+        affiliate_ids: valid_affiliate_ids_array,
+        affiliates: []
+      }).then(assured_affiliates => {
+        expect(assured_affiliates.length).to.equal(1);
+        expect(assured_affiliates.shift().affiliate_id).to.equal(valid_affiliate_ids_array.shift);
       });
 
     });

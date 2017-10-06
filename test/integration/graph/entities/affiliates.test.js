@@ -52,7 +52,17 @@ describe('Graph '+entity+' Test', function() {
               let account = test_account.id;
 
               it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
-                  var query = tu.getQuery(test.query);
+
+                var query = tu.getQuery(test.query);
+
+                du.info(
+                  'Account: '+account,
+                  'JWT: '+test_jwt,
+                  'query: '+query
+                );
+
+
+
 
                   this_request.post('graph/'+account)
 							.set('Authorization', test_jwt)
