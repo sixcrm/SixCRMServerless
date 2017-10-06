@@ -5,6 +5,7 @@ const uuidV4 = require('uuid/v4');
 //Technical Debt:  We shouldn't need the AWS utility classes here...
 const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -22,6 +23,14 @@ class rebillController extends entityController {
       return Promise.resolve([]);
     }
 
+    listBySession({session, pagination}){
+
+      du.debug('List By Session');
+
+      return this.queryBySecondaryIndex({field: 'parentsession', index_value: this.getID(session), index_name: 'parentsession-index'});
+
+    }
+
 	  //Note: rebills don't get product associations, only product schedules
     getProducts(rebill){
 
@@ -29,9 +38,8 @@ class rebillController extends entityController {
 
       if(_.has(rebill, 'products') && arrayutilities.nonEmpty(rebill.products)){
 
-        return arrayutilities.map(rebill.products, (id) => {
-          return this.executeAssociatedEntityFunction('productController', 'get', {id: id});
-        });
+        return this.executeAssociatedEntityFunction('productController', 'listBy', {list_array: rebill.products})
+        .then(products => this.getResult(products, 'products'));
 
       }else{
 
@@ -47,8 +55,20 @@ class rebillController extends entityController {
 
       if(_.has(rebill, 'product_schedules') && arrayutilities.nonEmpty(rebill.product_schedules)){
 
-        return this.executeAssociatedEntityFunction('productScheduleController', 'listBy', {list_array: rebill.product_schedules})
-        .then((product_schedules) => this.getResult(product_schedules, 'productschedules'));
+        if(arrayutilities.nonEmpty(rebill.product_schedules)){
+
+          let list_array = arrayutilities.filter(rebill.product_schedules, (list_item) => {
+            return stringutilities.nonEmpty(list_item);
+          });
+
+          if(arrayutilities.nonEmpty(list_array)){
+
+            return this.executeAssociatedEntityFunction('productScheduleController', 'listBy', {list_array: list_array})
+            .then((product_schedules) => this.getResult(product_schedules, 'productschedules'));
+
+          }
+
+        }
 
       }
 
@@ -68,7 +88,7 @@ class rebillController extends entityController {
 
       if(!_.has(rebill, 'parentsession')){ return null; }
 
-      return this.executeAssociatedEntityFunction('sessionController', 'get', {id: rebill.parentsession});
+      return this.executeAssociatedEntityFunction('sessionController', 'get', {id: this.getID(rebill.parentsession)});
 
     }
 
@@ -168,24 +188,25 @@ class rebillController extends entityController {
 	//the product schedule needs to be a part of the rebill, not the product
     createRebill(session, product_schedule, day_in_cycle){
 
-        du.debug('Create Rebill', product_schedule);
+      du.debug('Create Rebill', product_schedule);
 
-        if(!_.isNumber(day_in_cycle)){
+      if(!_.isNumber(day_in_cycle)){
 
-            day_in_cycle = this.calculateDayInCycle(session.created);
+        day_in_cycle = this.calculateDayInCycle(session.created);
 
-        }
+      }
 
-        var rebill_parameters = this.calculateRebill(day_in_cycle, product_schedule);
+      var rebill_parameters = this.calculateRebill(day_in_cycle, product_schedule);
 
-        var rebill_object = this.buildRebillObject({
-            parentsession: session.id,
-            bill_at: rebill_parameters.bill_at,
-            product_schedules: [product_schedule.id],
-            amount: rebill_parameters.amount
-        });
+      //Technical Debt:  This should use a entity method
+      var rebill_object = this.buildRebillObject({
+          parentsession: session.id,
+          bill_at: rebill_parameters.bill_at,
+          product_schedules: [product_schedule.id],
+          amount: rebill_parameters.amount
+      });
 
-        return this.create({entity: rebill_object});
+      return this.create({entity: rebill_object});
 
     }
 
@@ -223,14 +244,6 @@ class rebillController extends entityController {
             });
 
         });
-
-    }
-
-    listBySession({session, pagination}){
-
-      du.debug('List By Session');
-
-      return this.queryBySecondaryIndex({field: 'parentsession', index_value: this.getID(session), index_name: 'parentsession-index'});
 
     }
 

@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
 var random = global.SixCRM.routes.include('lib', 'random.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
@@ -22,22 +23,11 @@ class transactionController extends entityController {
       */
     }
 
-    //Technical Debt:  Replace with EntityController.listByAssociation
     listByMerchantProviderID({id, pagination}){
 
       du.debug('List By Merchant Provider ID');
 
-      let scan_parameters = {
-          filter_expression: '#f1 = :merchant_provider_id',
-          expression_attribute_names:{
-              '#f1': 'merchant_provider',
-          },
-          expression_attribute_values: {
-              ':merchant_provider_id': id
-          }
-      };
-
-      return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
+      return this.listByAssociation({field: 'merchant_provider', id: id, pagination: pagination});
 
     }
 
@@ -54,39 +44,57 @@ class transactionController extends entityController {
 	//Technical Debt:  Why is this missing rebills
     getParentRebill(transaction){
 
-        if(_.has(transaction, 'rebill')){
+      du.debug('Get Parent Rebill');
 
-          return this.executeAssociatedEntityFunction('rebillController', 'get', {id: transaction.rebill});
+      if(_.has(transaction, 'rebill')){
 
-        }else{
-            return null;
-        }
+        return this.executeAssociatedEntityFunction('rebillController', 'get', {id: this.getID(transaction.rebill)});
+
+      }
+
+      return null;
 
     }
 
-    getProduct(id){
+    getProduct(product){
 
-      return this.executeAssociatedEntityFunction('productController', 'get', {id: id});
+      du.debug('Get Product');
+
+      return this.executeAssociatedEntityFunction('productController', 'get', {id: this.getID(product)});
 
     }
 
     //Technical Debt:  Refactor name
     getTransactionProducts(transaction){
 
-        return transaction.products.map((transactionproduct) => {
+      du.debug('Get Transaction Products');
 
-            var base_product = {
-                "amount": transactionproduct.amount,
-                "product": transactionproduct.product
-            };
+      let return_array = [];
 
-            if(_.has(transactionproduct, "shippingreceipt")){
-                base_product['shippingreceipt'] = transactionproduct.shippingreceipt;
-            }
+      arrayutilities.map(transaction.products, (transactionproduct) => {
 
-            return base_product;
+        if(_.has(transactionproduct, 'amount') && _.has(transactionproduct, 'product')){
 
-        });
+          let base_product = {
+              "amount": transactionproduct.amount,
+              "product": transactionproduct.product
+          };
+
+          if(_.has(transactionproduct, "shippingreceipt")){
+              base_product['shippingreceipt'] = transactionproduct.shippingreceipt;
+          }
+
+          return_array.push(base_product);
+
+        }
+
+      });
+
+      if(arrayutilities.nonEmpty(return_array)){
+        return return_array;
+      }
+
+      return null;
 
     }
 
@@ -102,7 +110,9 @@ class transactionController extends entityController {
           promises.push(this.executeAssociatedEntityFunction('productController', 'get', {id: transaction_product.product}));
 
         }else{
+
           return null;
+
         }
 
         if(_.has(transaction_product, "shippingreceipt")){

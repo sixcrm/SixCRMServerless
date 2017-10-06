@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
@@ -135,14 +136,16 @@ module.exports = class entityController extends entityUtilitiesController {
 
       return this.can('read', fatal)
       .then((permission) => this.catchPermissions(permission, 'read'))
-      .then(() => {
-        if(!arrayutilities.nonEmpty(list_array)){
-          eu.throwError('server', 'listBy assumes a non-empty array of identifiers');
+      .then(() => this.transformListArray(list_array))
+      .then((list_array) => {
+
+        if(arrayutilities.nonEmpty(list_array)){
+          return this.list({query_parameters: this.dynamoutilities.createINQueryParameters(field, list_array)});
         }
 
+        return null;
+
       })
-      .then(() => this.dynamoutilities.createINQueryParameters(field, list_array))
-      .then((in_parameters) => this.list({query_parameters: in_parameters}))
       .catch(this.handleErrors);
 
     }
