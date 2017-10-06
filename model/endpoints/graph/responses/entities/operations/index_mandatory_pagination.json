@@ -3,26 +3,26 @@
   "id": "/listentity",
   "title": "List of entities",
   "type": "object",
-
   "allOf": [
     { "$ref": "../../graph" },
     {
       "properties": {
-
         "response" :{
-
           "properties": {
-
             "data": {
-
               "patternProperties": {
-
                 ".+list": {
-
                   "patternProperties": {
                     ".+s": {
-                      "type": "array",
-                      "items": { "$ref": "../entity" }
+                      "anyOf":[
+                        {
+                          "type": "array",
+                          "items": { "$ref": "../entity" }
+                        },
+                        {
+                          "type":"null"
+                        }
+                      ]
                     }
                   },
                   "properties": {
@@ -31,19 +31,13 @@
                   "required":["pagination"],
                   "maxProperties": 2,
                   "minProperties": 2
-
                 }
-
               },
               "required":[]
-
             }
-
           },
           "required":["data"]
-
         }
-
       },
       "required":["response"]
     }

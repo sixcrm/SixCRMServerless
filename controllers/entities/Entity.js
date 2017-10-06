@@ -150,6 +150,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Technical Debt:  This does not necessarily return results of size "limit".  Next page can be true...
     list({query_parameters, pagination, fatal}){
 
       du.debug('List');
