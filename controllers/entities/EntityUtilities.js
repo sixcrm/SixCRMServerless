@@ -59,7 +59,15 @@ module.exports = class entityUtilitiesController {
 
       //let question = permission_utilities_state+this.permissionutilities.buildPermissionString(action, this.descriptive_name);
 
-      return Promise.resolve(this.permissionutilities.validatePermissions(action, this.descriptive_name));
+
+      return Promise.resolve(this.permissionutilities.validatePermissions(action, this.descriptive_name)).then(permission => {
+
+          du.info('Can '+action+' on '+this.descriptive_name+': '+permission);
+
+          return permission;
+
+      });
+
 
       /*
       let answer_function = () => {

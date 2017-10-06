@@ -1,6 +1,6 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
-	"pathParameters": "{ \"account\": \"*\" }",
+	"requestContext":"{\"authorizer\":{ \"user\": \"owner.user@test.com\" }}",
+	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	mutation { 
 		updatefulfillmentprovider ( fulfillmentprovider: { id: \"2cd22324-4619-4f98-8319-f6f3cabc62d8\", name: \"test2\", username: \"test\", password: \"test\", endpoint: \"test\", provider: \"HASHTAG\", customer_id:\"9001\"}) {

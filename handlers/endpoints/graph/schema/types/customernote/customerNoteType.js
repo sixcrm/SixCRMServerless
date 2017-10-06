@@ -13,38 +13,38 @@ module.exports.graphObj = new GraphQLObjectType({
     description: 'A customer note.',
     fields: () => ({
         id: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The id of the customer note.',
+          type: new GraphQLNonNull(GraphQLString),
+          description: 'The id of the customer note.',
         },
         body: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The body of the customer note.',
+          type: new GraphQLNonNull(GraphQLString),
+          description: 'The body of the customer note.',
         },
         account: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The account that the customer note belongs to.'
+          type: new GraphQLNonNull(GraphQLString),
+          description: 'The account that the customer note belongs to.'
         },
         customer: {
-            type: new GraphQLNonNull(customerType.graphObj),
-            description: 'The customer that the note pertains to.',
-            resolve: (customernote) => {
-              return customerNoteController.getCustomer(customernote);
-            }
+          type: new GraphQLNonNull(customerType.graphObj),
+          description: 'The customer that the note pertains to.',
+          resolve: (customernote) => {
+            return customerNoteController.getCustomer(customernote);
+          }
         },
         user: {
-            type: new GraphQLNonNull(userType.graphObj),
-            description: 'The user that created the customer note.',
-            resolve: (customernote) => {
-              return customerNoteController.getUser(customernote);
-            }
+          type: new GraphQLNonNull(userType.graphObj),
+          description: 'The user that created the customer note.',
+          resolve: (customernote) => {
+            return customerNoteController.getUser(customernote);
+          }
         },
         created_at: {
-	  type: new GraphQLNonNull(GraphQLString),
-            description: 'ISO8601 datetime when the entity was created.',
+	        type: new GraphQLNonNull(GraphQLString),
+          description: 'ISO8601 datetime when the entity was created.',
         },
         updated_at: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'ISO8601 datetime when the entity was updated.',
+          type: new GraphQLNonNull(GraphQLString),
+          description: 'ISO8601 datetime when the entity was updated.',
         }
     }),
     interfaces: []

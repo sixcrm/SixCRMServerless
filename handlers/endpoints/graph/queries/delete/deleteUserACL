@@ -1,6 +1,6 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
-	"pathParameters": "{ \"account\": \"*\" }",
+	"requestContext":"{\"authorizer\":{ \"user\": \"owner.user@test.com\" }}",
+	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	mutation { 
 		deleteuseracl (id: \"a9cfa0d1-ea58-45d9-8ae7-3a0d0e4ab463\") { 

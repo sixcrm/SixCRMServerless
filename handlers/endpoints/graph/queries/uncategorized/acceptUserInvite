@@ -1,6 +1,6 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
-	"pathParameters": "{ \"account\": \"*\" }",
+	"requestContext":"{\"authorizer\":{ \"user\": \"owner.user@test.com\" }}",
+	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	mutation { 
 		acceptinvite (invite: {token: \"6a8eb335020a390e9d0a7f9bb4d8975d6c57902e\", parameters:\"bmV3LnVzZXJAdGVzdC5jb206ZDNmYTNiZjMtNzgyNC00OWY0LTgyNjEtODc2NzQ0ODJiZjFjOmUwOWFjNDRiLTZjZGUtNDU3Mi04MTYyLTYwOWY2ZjBhZWNhODoxNDg5MjU5NTEz\"}) { 

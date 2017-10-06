@@ -1,6 +1,6 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"super.user@test.com\"}}",
-	"pathParameters": "{ \"account\": \"*\" }",
+	"requestContext":"{\"authorizer\":{ \"user\": \"owner.user@test.com\" }}",
+	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	{
 		usersigningstring (id: \"ed5fcb78-9093-4a97-b62e-8ffcf2347ff5\") {
