@@ -47,13 +47,8 @@ class rebillController extends entityController {
 
       if(_.has(rebill, 'product_schedules') && arrayutilities.nonEmpty(rebill.product_schedules)){
 
-        let promises = arrayutilities.map(rebill.product_schedules, (id) => {
-
-          return this.executeAssociatedEntityFunction('productScheduleController', 'get', {id: id});
-
-        });
-
-        return Promise.all(promises);
+        return this.executeAssociatedEntityFunction('productScheduleController', 'listBy', {list_array: rebill.product_schedules})
+        .then((product_schedules) => this.getResult(product_schedules, 'productschedules'));
 
       }
 

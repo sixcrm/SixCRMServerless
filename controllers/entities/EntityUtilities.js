@@ -998,21 +998,38 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    executeAssociatedEntityFunction(controller_name, function_name, function_arguments){
+    executeAssociatedEntityFunction(controller_name, function_name, function_arguments, retry){
 
       du.debug('Execute Associated Entity Function');
 
-      if(!_.has(this, controller_name) || !_.isFunction(this[controller_name][function_name])){
+      retry = (_.isUndefined(retry))?false:retry;
+
+      if(_.has(this, controller_name) && _.isFunction(this[controller_name][function_name])){
+
+        return this[controller_name][function_name](function_arguments);
+
+      }else{
+
+        if(retry){
+
+          let controller_file_name = this.translateControllerNameToFilename(controller_name);
+
+          this[controller_name] = global.SixCRM.routes.include('entities', controller_file_name);
+          du.debug(this[controller_name]);
+          du.info(function_name);
+          du.debug(_.isFunction(this[controller_name]['get']));
+          process.exit();
+          eu.throwError('server', 'Unable to execute controller function: '+controller_name+'.'+function_name+'('+JSON.stringify(function_arguments)+')');
+
+        }
 
         let controller_file_name = this.translateControllerNameToFilename(controller_name);
 
-        du.info(controller_file_name, function_name);
-
         this[controller_name] = global.SixCRM.routes.include('entities', controller_file_name);
 
-      }
+        return this.executeAssociatedEntityFunction(controller_name, function_name, function_arguments, true);
 
-      return this[controller_name][function_name](function_arguments);
+      }
 
     }
 
