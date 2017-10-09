@@ -55,12 +55,13 @@ describe('Graph '+entity+' Test', function() {
 
                 var query = tu.getQuery(test.query);
 
+                /*
                 du.info(
                   'Account: '+account,
                   'JWT: '+test_jwt,
                   'query: '+query
                 );
-
+                */
 
 
 
