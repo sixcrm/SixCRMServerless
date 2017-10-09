@@ -54,21 +54,26 @@ class confirmShippedController extends workerController {
             return Promise.all(transaction_products).then((transaction_products) => {
                 var shipping_provider_stati = [];
 
-                transaction_products.map((transaction_product) => {
-                    if(transaction_product.product.ship == 'true'){
-						// We only have the ID here, so this fails
-                        if(!_.has(transaction_product, "shippingreceipt") || !_.has(transaction_product.shippingreceipt,'trackingnumber')){
-                            shipped = this.messages.notshipped;
+                return transaction_products.map((transaction_product) => {
+
+                    return transactionController.get(transaction_product.product).then(product => {
+
+                        if(product.ship == 'true') {
+
+                            if(!_.has(transaction_product, "shippingreceipt") || !_.has(transaction_product.shippingreceipt,'trackingnumber')){
+                                shipped = this.messages.notshipped;
+
+                            }
 
                         }
 
-                    }
+                    });
 
                 });
 
             }).then(() => {
 
-                if(shipped == 'true'){
+                if(shipped == 'true' || shipped === true){
                     shipped = this.messages.shipped;
                 }
                 return shipped;

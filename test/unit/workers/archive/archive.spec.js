@@ -35,8 +35,6 @@ describe('controllers/workers/archive', function () {
         mockery.deregisterAll();
     });
 
-    const an_id = '7da91dc9-341b-4389-94ad-15b811996eef';
-
     describe('confirmSecondAttempt', () => {
 
         let random_rebill;
@@ -83,12 +81,10 @@ describe('controllers/workers/archive', function () {
                 .catch(result => expect(result.message).to.equal('List failed.'));
         });
 
+        it('returns true when no transaction has a product that is `ship`', () => {
 
-        //Technical Debt:  Broken
-        xit('returns true when no transaction has a product that is `ship`', () => {
-
-            random_products[0].ship = true;
-            random_products[1].ship = false;
+            random_products[0].product.ship = true;
+            random_products[1].product.ship = false;
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
                 listTransactions: (rebill) => {
@@ -108,11 +104,10 @@ describe('controllers/workers/archive', function () {
                 .then(result => expect(result).to.equal(true));
         });
 
-        //Technical Debt:  Breaking in Circle
-        xit('returns false when no transaction has no products that are `ship`', () => {
+        it('returns false when no transaction has no products that are `ship`', () => {
 
-            random_products[0].ship = false;
-            random_products[1].ship = false;
+            random_products[0].product.ship = false;
+            random_products[1].product.ship = false;
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
                 listTransactions: (rebill) => {
@@ -143,7 +138,7 @@ describe('controllers/workers/archive', function () {
             modelgenerator.randomEntityWithId('rebill').then(rebill => { random_rebill = rebill}),
         ]).then(() => done())});
 
-        xit('returns success when archivefilter is not set', () => {
+        it('returns success when archivefilter is not set', () => {
 
             const archive = global.SixCRM.routes.include('controllers', 'workers/archive.js');
 
@@ -161,7 +156,7 @@ describe('controllers/workers/archive', function () {
                 .catch(result => expect(result.message).to.equal('[501] Unrecognized archive filter: invalid_filter'));
         });
 
-        xit('returns success when archivefilter is set to `all`', () => {
+        it('returns success when archivefilter is set to `all`', () => {
 
             const archive = global.SixCRM.routes.include('controllers', 'workers/archive.js');
 
@@ -171,36 +166,10 @@ describe('controllers/workers/archive', function () {
                 .then(result => expect(result).to.equal(archive.messages.success));
         });
 
-        xit('returns success when archivefilter is set to `noship` and noship is confirmed', () => {
+        it('returns skip when archivefilter is set to `noship` and noship is confirmed', () => {
 
-            random_products[0].ship = true;
-            random_products[1].ship = true;
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-                listTransactions: (rebill) => {
-                    return Promise.resolve(random_transactions);
-                }
-            });
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-                getProducts: (transaction) => {
-                    return Promise.resolve(random_products);
-                }
-            });
-
-            const archive = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-
-            process.env.archivefilter = archive.archivefilters.noship;
-
-            return archive.archive(random_rebill)
-                .then(result => expect(result).to.equal(archive.messages.success));
-        });
-
-        //Technical Debt:  Broken
-        xit('returns skip when archivefilter is set to `noship` and noship is not confirmed', () => {
-
-            random_products[0].ship = false;
-            random_products[1].ship = false;
+            random_products[0].product.ship = true;
+            random_products[1].product.ship = true;
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
                 listTransactions: (rebill) => {
@@ -220,6 +189,31 @@ describe('controllers/workers/archive', function () {
 
             return archive.archive(random_rebill)
                 .then(result => expect(result).to.equal(archive.messages.skip));
+        });
+
+        it('returns success when archivefilter is set to `noship` and noship is not confirmed', () => {
+
+            random_products[0].product.ship = false;
+            random_products[1].product.ship = false;
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+                listTransactions: (rebill) => {
+                    return Promise.resolve(random_transactions);
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
+                getProducts: (transaction) => {
+                    return Promise.resolve(random_products);
+                }
+            });
+
+            const archive = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+
+            process.env.archivefilter = archive.archivefilters.noship;
+
+            return archive.archive(random_rebill)
+                .then(result => expect(result).to.equal(archive.messages.success));
         });
 
         it('returns success when archivefilter is set to `twoattempts` and second attempt is confirmed', () => {
