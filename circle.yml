@@ -70,26 +70,26 @@ deployment:
 
       ###########
       #CloudSearch
-      - node ./deployment/cloudsearch/deploy.js
+      - ./tools/inCommit.sh ^deployment/cloudsearch/.* && echo "skipping, no updates" || node ./deployment/cloudsearch/deploy.js
       #- node ./deployment/cloudsearch/purge.js
       ###########
 
       ###########
       #ElastiCache
-      - node ./deployment/elasticache/deploy.js
+      - ./tools/inCommit.sh ^deployment/elasticache/.* && echo "skipping, no updates" || node ./deployment/elasticache/deploy.js
       #- node ./deployment/elasticache/purge.js
       ###########
 
       ###########
       #DynamoDB
       #- node ./deployment/dynamodb/purge_tables.js
-      - node ./deployment/dynamodb/deploy_tables.js
+      - ./tools/inCommit.sh ^model/dynamodb/.* && echo "skipping, no updates" || node ./deployment/dynamodb/deploy_tables.js
       ###########
 
       ##########
       #Redshift
-      - node ./deployment/redshift/deploy_cluster.js
-      - node ./deployment/redshift/deploy_tables.js
+      - ./tools/inCommit.sh ^model/redshift/.* && echo "skipping, no updates" || node ./deployment/redshift/deploy_cluster.js
+      - ./tools/inCommit.sh ^model/redshift/.* && echo "skipping, no updates" || ./deployment/redshift/deploy_tables.js
 
       #Technical Debt:  Eliminate this.
       - echo "Pausing to allow queries to complete..." && sleep 240
@@ -100,7 +100,7 @@ deployment:
 
       ###########
       #Kinesis
-      - node ./deployment/kinesis/deploy_streams.js
+      - ./tools/inCommit.sh ^deployment/kinesis/.* && echo "skipping, no updates" || node ./deployment/kinesis/deploy_streams.js
       ###########
 
       ###########
@@ -211,26 +211,26 @@ deployment:
 
       ###########
       #CloudSearch
-      - node ./deployment/cloudsearch/deploy.js
-      - node ./deployment/cloudsearch/purge.js
+      - ./tools/inCommit.sh ^deployment/cloudsearch/.* && echo "skipping, no updates" || node ./deployment/cloudsearch/deploy.js
+      - ./tools/inCommit.sh ^deployment/cloudsearch/.* && echo "skipping, no updates" || node ./deployment/cloudsearch/purge.js
       ###########
 
       ###########
       #ElastiCache
-      - node ./deployment/elasticache/deploy.js
-      - node ./deployment/elasticache/purge.js
+      - ./tools/inCommit.sh ^deployment/elasticache/.* && echo "skipping, no updates" || node ./deployment/elasticache/deploy.js
+      - ./tools/inCommit.sh ^deployment/elasticache/.* && echo "skipping, no updates" || node ./deployment/elasticache/purge.js
       ###########
 
       ###########
       #DynamoDB
-      - node ./deployment/dynamodb/purge_tables.js
-      - node ./deployment/dynamodb/deploy_tables.js
+      - ./tools/inCommit.sh ^model/dynamodb/.* && echo "skipping, no updates" || node ./deployment/dynamodb/purge_tables.js
+      - ./tools/inCommit.sh ^model/dynamodb/.* && echo "skipping, no updates" || node ./deployment/dynamodb/deploy_tables.js
       ###########
 
       ###########
       #Redshift
-      - node ./deployment/redshift/deploy_cluster.js
-      - node ./deployment/redshift/deploy_tables.js
+      - ./tools/inCommit.sh ^deployment/redshift/.* && echo "skipping, no updates" || node ./deployment/redshift/deploy_cluster.js
+      - ./tools/inCommit.sh ^model/redshift/.* && echo "skipping, no updates" || node ./deployment/redshift/deploy_tables.js
 
       #Technical Debt:  Eliminate this.
       - echo "Pausing to allow queries to complete..." && sleep 240
@@ -241,7 +241,7 @@ deployment:
 
       ###########
       #Kinesis
-      - node ./deployment/kinesis/deploy_streams.js
+      - ./tools/inCommit.sh ^deployment/kinesis/.* && echo "skipping, no updates" || node ./deployment/kinesis/deploy_streams.js
       ###########
 
       ###########
