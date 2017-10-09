@@ -36,6 +36,23 @@ class accountController extends entityController {
 
     }
 
+    list({pagination, fatal}){
+
+      du.debug("List");
+
+      let query_parameters = {};
+
+      if(global.account !== '*'){
+
+        query_parameters = this.appendFilterExpression(query_parameters, 'id = :accountv');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
+
+      }
+
+      return super.list({query_parameters: query_parameters, pagination: pagination, fatal: fatal});
+
+    }
+
 }
 
 module.exports = new accountController();

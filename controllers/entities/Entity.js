@@ -173,7 +173,7 @@ module.exports = class entityController extends entityUtilitiesController {
       })
       .then((query_parameters) => this.dynamoutilities.scanRecords(this.table_name, query_parameters))
       .then((data) => this.buildResponse(data))
-      .catch(this.handleErrors);
+      .catch((error) => this.handleErrors(error, fatal));
 
     }
 

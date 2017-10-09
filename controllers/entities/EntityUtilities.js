@@ -27,13 +27,15 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    handleErrors(error){
+    handleErrors(error, fatal){
 
       du.debug('Handle Errors');
 
+      fatal = (_.isUndefined(fatal))?false:fatal;
+
       if(_.has(error, 'code')){
 
-        if(error.code == 403){
+        if(error.code == 403 && fatal == false){
 
           return null;
 
