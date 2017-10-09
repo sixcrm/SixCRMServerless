@@ -126,6 +126,7 @@ let paginationInputType = require('./pagination/paginationInputType');
 let cacheInputType = require('./cache/cacheInputType');
 
 let list_fatal = true;
+let get_fatal = true;
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -602,7 +603,7 @@ module.exports.graphObj = new GraphQLObjectType({
           resolve: function(root, transaction){
               const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 
-              return transactionController.get({id: transaction.id});
+              return transactionController.get({id: transaction.id, fatal: get_fatal});
           }
         },
         shippingreceipt: {
@@ -616,7 +617,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, shippingreceipt){
                 const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
 
-                return shippingReceiptController.get({id: shippingreceipt.id});
+                return shippingReceiptController.get({id: shippingreceipt.id, fatal: get_fatal});
             }
         },
         rebill: {
@@ -630,7 +631,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, rebill){
                 const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-                return rebillController.get({id: rebill.id});
+                return rebillController.get({id: rebill.id, fatal: get_fatal});
             }
         },
         session: {
@@ -644,7 +645,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, session){
                 const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
-                return sessionController.get({id: session});
+                return sessionController.get({id: session, fatal: get_fatal});
             }
         },
         customer: {
@@ -658,7 +659,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, customer){
                 const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
-                return customerController.get({id:customer.id});
+                return customerController.get({id:customer.id, fatal: get_fatal});
             }
         },
         customernote: {
@@ -672,7 +673,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, customernote){
                 const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
 
-                return customerNoteController.get({id:customernote.id});
+                return customerNoteController.get({id:customernote.id, fatal: get_fatal});
             }
         },
         product: {
@@ -686,7 +687,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, product){
                 const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 
-                return productController.get({id: product.id});
+                return productController.get({id: product.id, fatal: get_fatal});
             }
         },
         emailtemplate: {
@@ -700,7 +701,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, emailtemplate){
                 const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 
-                return emailTemplateController.get({id: emailtemplate.id});
+                return emailTemplateController.get({id: emailtemplate.id, fatal: get_fatal});
             }
         },
         smtpprovider: {
@@ -714,7 +715,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, smtpprovider){
                 const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
 
-                return SMTPProviderController.get({id: smtpprovider.id});
+                return SMTPProviderController.get({id: smtpprovider.id, fatal: get_fatal});
             }
         },
         emailtemplatelist: {
@@ -962,7 +963,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, productschedule){
                 const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
-            	return productScheduleController.get({id: productschedule.id});
+            	return productScheduleController.get({id: productschedule.id, fatal: get_fatal});
             }
         },
         merchantprovider: {
@@ -976,7 +977,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, merchantprovider){
                 const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
-      	       return merchantProviderController.get({id: merchantprovider.id});
+      	       return merchantProviderController.get({id: merchantprovider.id, fatal: get_fatal});
             }
         },
         fulfillmentprovider: {
@@ -990,7 +991,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, fulfillmentprovider){
                 const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 
-                return fulfillmentProviderController.get({id: fulfillmentprovider.id});
+                return fulfillmentProviderController.get({id: fulfillmentprovider.id, fatal: get_fatal});
             }
         },
         loadbalancer: {
@@ -1004,7 +1005,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, loadbalancer){
                 const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
 
-                return loadBalancerController.get({id: loadbalancer.id});
+                return loadBalancerController.get({id: loadbalancer.id, fatal: get_fatal});
             }
         },
         creditcard: {
@@ -1018,7 +1019,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, creditcard){
                 const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 
-                return creditCardController.get({id: creditcard.id});
+                return creditCardController.get({id: creditcard.id, fatal: get_fatal});
             }
         },
         campaign: {
@@ -1032,7 +1033,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, campaign){
                 const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-                return campaignController.get({id: campaign.id});
+                return campaignController.get({id: campaign.id, fatal: get_fatal});
             }
         },
         affiliate: {
@@ -1046,7 +1047,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, affiliate){
                 const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
-                return affiliateController.get({id: affiliate.id});
+                return affiliateController.get({id: affiliate.id, fatal: get_fatal});
             }
         },
         tracker: {
@@ -1060,7 +1061,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, tracker){
                 const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-                return trackerController.get({id: tracker.id});
+                return trackerController.get({id: tracker.id, fatal: get_fatal});
             }
         },
         accesskey: {
@@ -1074,7 +1075,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, accesskey){
                 const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
-                return accessKeyController.get({id: accesskey.id});
+                return accessKeyController.get({id: accesskey.id, fatal: get_fatal});
             }
         },
         account: {
@@ -1088,7 +1089,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, account){
                 const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
 
-                return accountController.get({id: account.id});
+                return accountController.get({id: account.id, fatal: get_fatal});
             }
         },
         role: {
@@ -1102,7 +1103,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, role){
                 const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
-                return roleController.get({id: role.id});
+                return roleController.get({id: role.id, fatal: get_fatal});
             }
         },
         user: {
@@ -1118,7 +1119,7 @@ module.exports.graphObj = new GraphQLObjectType({
       	       if(_.has(user,"id")){
                  const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
-                 return userController.get({id: user.id});
+                 return userController.get({id: user.id, fatal: get_fatal});
              }else{
                  return null;
              }
@@ -1137,7 +1138,7 @@ module.exports.graphObj = new GraphQLObjectType({
             	if(_.has(useracl, 'id')){
                 const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
-                return userACLController.get({id: useracl.id});
+                return userACLController.get({id: useracl.id, fatal: get_fatal});
             }else{
                 return null;
             }
@@ -1160,11 +1161,11 @@ module.exports.graphObj = new GraphQLObjectType({
                 if (_.has(usersetting, 'user')) {
                     const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 
-                    return userSettingController.get({id: usersetting.user, primary_key: 'user'});
+                    return userSettingController.get({id: usersetting.user, primary_key: 'user', fatal: get_fatal});
                 } else {
                     const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 
-                    return userSettingController.get({id: usersetting.id, primary_key: 'id'});
+                    return userSettingController.get({id: usersetting.id, primary_key: 'id', fatal: get_fatal});
                 }
             }
         },
@@ -1190,7 +1191,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (root, user_signing_string) => {
                 const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
-                return userSigningStringController.get({id: user_signing_string.id});
+                return userSigningStringController.get({id: user_signing_string.id, fatal: get_fatal});
             }
         },
         usersigningstringlist: {
@@ -1217,7 +1218,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 if (_.has(notification, 'id')) {
                     const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-                    return notificationController.get({id: notification.id});
+                    return notificationController.get({id: notification.id, fatal: get_fatal});
                 } else {
                     return null;
                 }
@@ -1240,11 +1241,11 @@ module.exports.graphObj = new GraphQLObjectType({
                 if (_.has(notificationsetting, 'user')) {
                     const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 
-                    return notificationSettingController.get({id: notificationsetting.user, primary_key: 'user'});
+                    return notificationSettingController.get({id: notificationsetting.user, primary_key: 'user', fatal: get_fatal});
                 } else {
                     const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 
-                    return notificationSettingController.get({id: notificationsetting.id, primary_key:'id'});
+                    return notificationSettingController.get({id: notificationsetting.id, primary_key:'id', fatal: get_fatal});
                 }
             }
         },
@@ -1287,7 +1288,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 if (_.has(user_device_token, 'id')) {
                     const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 
-                    return userDeviceTokenController.get({id: user_device_token.id});
+                    return userDeviceTokenController.get({id: user_device_token.id, fatal: get_fatal});
                 }else{
                     return null;
                 }
