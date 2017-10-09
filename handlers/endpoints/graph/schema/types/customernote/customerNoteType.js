@@ -7,6 +7,7 @@ let customerType = require('../customer/customerType');
 let userType = require('../user/userType');
 
 const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'CustomerNote',
@@ -25,14 +26,15 @@ module.exports.graphObj = new GraphQLObjectType({
           description: 'The account that the customer note belongs to.'
         },
         customer: {
-          type: new GraphQLNonNull(customerType.graphObj),
+          type: customerType.graphObj,
           description: 'The customer that the note pertains to.',
           resolve: (customernote) => {
+            //du.warning('customernote: '+customernote);
             return customerNoteController.getCustomer(customernote);
           }
         },
         user: {
-          type: new GraphQLNonNull(userType.graphObj),
+          type: userType.graphObj,
           description: 'The user that created the customer note.',
           resolve: (customernote) => {
             return customerNoteController.getUser(customernote);

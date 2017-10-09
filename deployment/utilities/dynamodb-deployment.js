@@ -83,6 +83,27 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
     }
 
+    getAllTableKeys(table_name){
+
+      du.debug('Get All Table Keys');
+
+      du.warning(table_name);
+
+      return this.dynamodbutilities.scanRecords(table_name).then(results => {
+        let return_array = [];
+
+        if(_.has(results, 'Items')){
+          arrayutilities.map(results.Items, item => {
+            if(_.has(item, 'id')){
+              return_array.push(item.id);
+            }
+          });
+        }
+        return arrayutilities.unique(return_array);
+      });
+
+    }
+
     purgeTable(table_definition_filename){
 
       du.debug('Purge Table');
@@ -93,17 +114,46 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
         if(objectutilities.isObject(result)){
 
-          //du.highlight(table_definition.Table.TableName+' table exists, purging');
+          du.highlight(table_definition.Table.TableName+' table exists, purging');
 
-          du.warning('Complete this feature...');
+          return this.getAllTableKeys(table_definition.Table.TableName).then(table_keys => {
+
+            if(table_keys.length > 100){
+
+              //destroy
+              //rebuild
+              return true;
+
+            }
+
+            if(arrayutilities.nonEmpty(table_keys)){
+              let delete_promises = arrayutilities.map(table_keys, (table_key) => {
+                this.dynamodbutilities.deleteRecord(table_definition.Table.TableName, {id: table_key}, null, null);
+              });
+
+              return Promise.all(delete_promises).then(delete_promises => {
+
+                du.output(delete_promises.length+' records deleted.');
+
+                return true;
+
+              });
+
+            }else{
+
+              du.output('Table is empty.');
+
+            }
+
+          });
 
         }else{
 
-          //du.highlight(table_definition.Table.TableName+' table doesn\'t exist, skipping');
+          du.highlight(table_definition.Table.TableName+' table doesn\'t exist.');
+
+          return true;
 
         }
-
-        return true;
 
       });
 
