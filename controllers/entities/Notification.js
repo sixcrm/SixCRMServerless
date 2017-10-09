@@ -14,11 +14,6 @@ class notificationController extends entityController {
         super('notification');
     }
 
-    /**
-	 * Get the notifications for current user.
-	 *
-     * @returns {Promise}
-     */
     listForCurrentUser(pagination) {
 
       du.debug('List For Current User');
@@ -43,7 +38,7 @@ class notificationController extends entityController {
       return this.executeAssociatedEntityFunction('notificationReadController', 'getLastSeenTime', {})
       .then(last_seen_time => {
 
-        let query_parameters = {
+        return {
             key_condition_expression: '#user = :index_valuev',
             expression_attribute_values: {':index_valuev': global.user.id, ':createdv': last_seen_time}, //Technical Debt:  should not acquire global user like this...
             expression_attribute_names: {'#user': 'user'},
@@ -51,19 +46,17 @@ class notificationController extends entityController {
             select: 'COUNT'
         };
 
-        return this.queryByParameters({parameters: query_parameters, index: 'user-index'});
-
-      }).then(data => {
-
-        du.warning(data);
+      })
+      .then(query_parameters => this.queryByParameters({parameters: query_parameters, index: 'user-index'}))
+      .then(data => {
 
         if(objectutilities.has(data, 'Count', true)){
 
-          if(_.isNumber(data.Count)){ return data.Count; }
-
-          eu.throwError('server', 'Not a number.');
+          return {count: parseInt(data.Count)};
 
         }
+
+        eu.throwError('server', 'Response data is missing the "Count" field.');
 
       });
 

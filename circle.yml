@@ -82,6 +82,7 @@ deployment:
 
       ###########
       #DynamoDB
+      # Technical Debt: Upgrade this to purge only TEST data
       #- node ./deployment/dynamodb/purge_tables.js
       - ./tools/inCommit.sh ^model/dynamodb/.* && echo "skipping, no updates" || node ./deployment/dynamodb/deploy_tables.js
       ###########
@@ -151,6 +152,7 @@ deployment:
 
       ###########
       #DynamoDB
+      # Technical Debt: Upgrade this to purge only TEST data
       #- node ./deployment/dynamodb/purge_tables.js
       - node ./deployment/dynamodb/deploy_tables.js
       ###########
@@ -223,14 +225,14 @@ deployment:
 
       ###########
       #DynamoDB
-      - ./tools/inCommit.sh ^model/dynamodb/.* && echo "skipping, no updates" || node ./deployment/dynamodb/purge_tables.js
+      - node ./deployment/dynamodb/purge_tables.js && exit 0;
       - ./tools/inCommit.sh ^model/dynamodb/.* && echo "skipping, no updates" || node ./deployment/dynamodb/deploy_tables.js
       ###########
 
       ###########
       #Redshift
       - ./tools/inCommit.sh ^deployment/redshift/.* && echo "skipping, no updates" || node ./deployment/redshift/deploy_cluster.js
-      - ./tools/inCommit.sh ^model/redshift/.* && echo "skipping, no updates" || node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240
+      - ./tools/inCommit.sh ^model/redshift/.* && echo "skipping, no updates" || ( node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 )
 
       - node ./deployment/redshift/seed_referential.js
       - node ./deployment/redshift/seed_tables.js

@@ -247,12 +247,21 @@ module.exports = class entityController extends entityUtilitiesController {
         //Technical Debt:  Use objectutilities.transcribe
         objectutilities.has(parameters, ['filter_expression', 'expression_attribute_values', 'expression_attribute_names'], true);
 
-        let query_parameters = {
-            filter_expression: parameters.filter_expression,
-            expression_attribute_values: parameters.expression_attribute_values,
-            expression_attribute_names: parameters.expression_attribute_names
+        let query_parameters_template = {
+          required:{
+            filter_expression: 'filter_expression',
+            expression_attribute_values:'expression_attribute_values',
+            expression_attribute_names:'expression_attribute_names'
+          },
+          optional: {
+            key_condition_expression: 'key_condition_expression',
+            select:'select'
+          }
         };
 
+        let query_parameters = objectutilities.transcribe(query_parameters_template.required, parameters, {}, true);
+
+        query_parameters = objectutilities.transcribe(query_parameters_template.optional, parameters, query_parameters, false);
         query_parameters = this.appendPagination(query_parameters, pagination);
         query_parameters = this.appendAccountFilter(query_parameters);
 

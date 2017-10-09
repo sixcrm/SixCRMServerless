@@ -816,7 +816,8 @@ module.exports = class entityUtilitiesController {
       objectutilities.isObject(data, true);
 
       if(!_.has(data, "Items")){
-        eu.throwError('server','Build response expects data object to have property "Items".');
+        du.warning('Missing Items property');
+        return data;
       }
 
       arrayutilities.isArray(data.Items, true);
