@@ -778,7 +778,7 @@ class userController extends entityController {
 
     }
 
-    getUsersByAccount({pagination}){
+    getUsersByAccount({pagination, fatal}){
 
       du.debug('Get Users By Account');
 
@@ -789,7 +789,7 @@ class userController extends entityController {
 
       if(global.account == '*'){
 
-        return this.list({pagination: pagination});
+        return this.list({pagination: pagination, fatal: fatal});
 
       }else{
 
@@ -797,7 +797,7 @@ class userController extends entityController {
           eu.throwError('server', 'Unexpected account ID type: '+global.account);
         }
 
-        return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: global.account}).then(user_acl_objects => {
+        return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: global.account, fatal: fatal}).then(user_acl_objects => {
 
           if(arrayutilities.isArray(user_acl_objects) && user_acl_objects.length > 0){
 

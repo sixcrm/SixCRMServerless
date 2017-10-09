@@ -243,7 +243,7 @@ class customerController extends entityController {
     // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
     // we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
     //Technical Debt:  Please refactor.
-    listTransactionsByCustomer(customer, pagination){
+    listTransactionsByCustomer({customer, pagination, fatal}){
 
         du.debug('List Transactions By Customer');
 
@@ -309,7 +309,7 @@ class customerController extends entityController {
 
     }
 
-    listCustomerSessions(customer, pagination) {
+    listCustomerSessions({customer, pagination}) {
 
       du.debug('List Customer Sessions');
 
@@ -319,7 +319,7 @@ class customerController extends entityController {
 
     // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
     // we retrieve data in 2 steps (sessions first, then rebills for each session and combine the results).
-    listCustomerRebills(customer, pagination) {
+    listCustomerRebills({customer, pagination}) {
 
       du.debug('List Customer Rebills');
 

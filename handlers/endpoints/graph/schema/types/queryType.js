@@ -169,7 +169,7 @@ module.exports.graphObj = new GraphQLObjectType({
               return tokenHelperController.list({fatal:list_fatal});
             }
         },
-      	userintrospection:{
+        userintrospection:{
       	  type: userType.graphObj,
           description: 'Retrieves or creates a user.',
     	    resolve: function(){
@@ -186,7 +186,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, users){
               const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
-              return userController.getUsersByAccount({pagination: users.pagination});
+              return userController.getUsersByAccount({pagination: users.pagination, fatal: list_fatal});
             }
         },
         trackerlistbyaffiliate: {
@@ -198,7 +198,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
               const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-              return trackerController.listByAffiliate({affiliate: args.affiliate, pagination: args.pagination});
+              return trackerController.listByAffiliate({affiliate: args.affiliate, pagination: args.pagination, fatal: list_fatal});
             }
         },
         customernotelistbycustomer: {
@@ -213,7 +213,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, customernote){
               const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
 
-      	      return customerNoteController.listByCustomer({customer: customernote.customer, pagination: customernote.pagination});
+      	      return customerNoteController.listByCustomer({customer: customernote.customer, pagination: customernote.pagination, fatal: list_fatal});
             }
         },
         productschedulelistbyproduct: {
@@ -225,7 +225,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
               const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
-              return productScheduleController.listProductSchedulesByProduct(args);
+              return productScheduleController.listProductSchedulesByProduct({product: args.product, pagination: args.pagination, fatal: list_fatal});
             }
         },
         transactionlistbycustomer: {
@@ -240,7 +240,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, transaction){
               const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
-              return customerController.listTransactionsByCustomer(transaction.customer, transaction.pagination);
+              return customerController.listTransactionsByCustomer({customer: transaction.customer, pagination: transaction.pagination, fatal: list_fatal});
             }
         },
         sessionlistbycustomer: {
@@ -255,7 +255,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, session){
                 const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
-                return customerController.listCustomerSessions(session.customer, session.pagination);
+                return customerController.listCustomerSessions({customer: session.customer, pagination: session.pagination, fatal: list_fatal});
             }
         },
         sessionlistbyaffiliate: {
@@ -270,7 +270,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
-                return sessionController.listSessionsByAffiliate({affiliate: args.affiliate, pagination: args.pagination});
+                return sessionController.listSessionsByAffiliate({affiliate: args.affiliate, pagination: args.pagination, fatal: list_fatal});
             }
         },
         rebilllistbycustomer: {
@@ -287,7 +287,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, rebill){
                 const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
-                return customerController.listCustomerRebills(rebill.customer, rebill.pagination);
+                return customerController.listCustomerRebills({customer: rebill.customer, pagination: rebill.pagination, fatal: list_fatal});
             }
         },
         campaignlistbyproductschedule: {
@@ -299,7 +299,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
               const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-              return campaignController.listCampaignsByProductSchedule(args);
+              return campaignController.listCampaignsByProductSchedule({product_schedule: args.productschedule, pagination: args.pagination, fatal: list_fatal});
             }
         },
         campaignlistbyproduct: {
@@ -311,7 +311,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
               const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-              return campaignController.listCampaignsByProduct(args);
+              return campaignController.listCampaignsByProduct({product: args.product, pagination: args.pagination, fatal: list_fatal});
             }
         },
         notificationcount: {
@@ -319,7 +319,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function() {
                 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-                return notificationController.numberOfUnseenNotifications();
+                return notificationController.numberOfUnseenNotifications({fatal: list_fatal});
             }
         },
         notificationtest: {
@@ -327,7 +327,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function() {
                 const notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 
-                return notificationProviderController.test();
+                return notificationProviderController.test({fatal: get_fatal});
             }
         },
         notificationlist: {
@@ -338,7 +338,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, notification) {
                 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-                return notificationController.listForCurrentUser(notification.pagination);
+                return notificationController.listForCurrentUser({pagination: notification.pagination, fatal: list_fatal});
             }
         },
         notificationsettingdefault: {
@@ -346,7 +346,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: () => {
                 const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 
-                return notificationSettingController.getDefaultProfile();
+                return notificationSettingController.getDefaultProfile({fatal: get_fatal});
             }
         },
         userdevicetokensbyuserlist: {
@@ -360,7 +360,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, user_device_token) {
                 const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 
-                return userDeviceTokenController.getUserDeviceTokensByUser(user_device_token.user);
+                return userDeviceTokenController.getUserDeviceTokensByUser({user: user_device_token.user, fatal: list_fatal});
             }
         },
 
