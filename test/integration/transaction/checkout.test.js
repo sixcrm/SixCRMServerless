@@ -91,7 +91,7 @@ describe('Checkout Test', function() {
           "customer":{
             "firstname":"Rama",
             "lastname":"Damunaste",
-            "email":"rama@damunaste.com",
+            "email":"rama@damunaste2.com",
             "phone":"1234567890",
             "billing":{
               "line1":"10 Downing St.",
@@ -111,16 +111,16 @@ describe('Checkout Test', function() {
           },
           "creditcard":{
       			"number": "4111111111111111",
-      			"expiration": "1025",
-      			"ccv": "999",
+      			"expiration": "1024",
+      			"ccv": "888",
       			"name": "Rama Damunaste",
       			"address": {
-      				"line1": "10 Skid Rw.",
-      				"line2": "Suite 100",
+      				"line1": "10 Different Skid Rw.",
+      				"line2": "Suite 101",
       				"city": "Portland",
       				"state": "Oregon",
-      				"zip": "97213",
-      			 	"country": "USA"
+      				"zip": "97203",
+      			 	"country": "US"
       			}
           }
         };
