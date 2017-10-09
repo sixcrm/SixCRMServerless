@@ -49,6 +49,7 @@ module.exports = class entityUtilitiesController {
     }
 
     //Technical Debt:  Need to introduce identifiers here...
+    //Technical Debt:  Fatal is unused here...
     can(action, fatal){
 
       du.debug('Can');
@@ -62,9 +63,15 @@ module.exports = class entityUtilitiesController {
 
       return Promise.resolve(this.permissionutilities.validatePermissions(action, this.descriptive_name)).then(permission => {
 
-          du.info('Can '+action+' on '+this.descriptive_name+': '+permission);
+        if(permission == false && fatal == true){
 
-          return permission;
+          this.throwPermissionsError();
+
+        }
+
+        du.info('Can '+action+' on '+this.descriptive_name+': '+permission);
+
+        return permission;
 
       });
 
