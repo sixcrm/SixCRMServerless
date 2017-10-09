@@ -46,12 +46,16 @@ class creditCardController extends entityController {
 
         if(_.has(results, 'creditcards')){
 
-          let found_card = arrayutilities.find(results.creditcards, (result) => {
-            return this.sameCard(creditcard, result);
-          });
+          if(arrayutilities.nonEmpty(results.creditcards)){
 
-          if(!_.isUndefined(found_card)){
-            return found_card;
+            let found_card = arrayutilities.find(results.creditcards, (result) => {
+              return this.sameCard(creditcard, result);
+            });
+
+            if(!_.isUndefined(found_card)){
+              return found_card;
+            }
+
           }
 
           return this.create({entity: creditcard});

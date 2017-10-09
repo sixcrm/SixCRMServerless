@@ -98,7 +98,7 @@ class createOrderController extends transactionEndpointController{
 
         return Promise.all(promises).then((promises) => {
 
-          du.highlight(promises);
+          //du.highlight(promises); process.exit();
 
           var info = {
             session: promises[0],

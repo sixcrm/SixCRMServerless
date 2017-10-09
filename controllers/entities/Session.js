@@ -366,21 +366,30 @@ class sessionController extends entityController {
 
       return this.getSessionByCustomer(parameters.customer).then((sessions) => {
 
-        let session_found = arrayutilities.find(sessions, (session) => {
+        if(arrayutilities.nonEmpty(sessions)){
 
-          if(_.has(session, 'completed') && session.completed == 'false' && _.has(session, 'created_at')){
+          let session_found = arrayutilities.find(sessions, (session) => {
 
-            let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);
+            if(_.has(session, 'completed') && session.completed == 'false' && _.has(session, 'created_at')){
 
-            return (timestamp.getTimeDifference(created_at_timestamp) < this.session_length);
+              let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);
 
+              return (timestamp.getTimeDifference(created_at_timestamp) < this.session_length);
+
+            }
+
+            return false;
+
+          });
+
+          if(!_.isUndefined(session_found)){
+            return session_found;
           }
 
-          return false;
+        }
 
-        });
+        return null;
 
-        return (_.isUndefined(session_found))?null:session_found;
 
       }).then(session_found => {
 
