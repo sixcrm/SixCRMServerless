@@ -32,7 +32,7 @@ class accountController extends entityController {
 
       du.debug('Get ACL');
 
-      return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {id: account.id});
+      return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {id: this.getID(account)});
 
     }
 

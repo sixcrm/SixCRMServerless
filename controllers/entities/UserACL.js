@@ -98,12 +98,12 @@ class userACLController extends entityController {
 
     }
 
-    getACLByAccount(account){
+    getACLByAccount({id}){
 
       du.debug('Get ACL By Account');
 
       global.disableaccountfilter = true;
-      return this.queryBySecondaryIndex({field: 'account', index_value: account, index_name:'account-index'}).then((result) => {
+      return this.queryBySecondaryIndex({field: 'account', index_value: id, index_name: 'account-index'}).then((result) => {
         global.disableaccountfilter = false;
         return this.getResult(result);
       });

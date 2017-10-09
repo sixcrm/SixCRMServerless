@@ -9,12 +9,16 @@
 				name,
 				active,
 				created_at,
-				updated_at
+				updated_at,
+				acl {
+					id
+				}
 			},
 			pagination {
 				count,
 				end_cursor,
-				has_next_page
+				has_next_page,
+				last_evaluated
 			}
 		},
 	}"
