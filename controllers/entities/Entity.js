@@ -243,10 +243,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
         index = (!_.isUndefined(index))?index:null;
 
-        //Technical Debt:  Is this redundant?
-        //Technical Debt:  Use objectutilities.transcribe
-        objectutilities.has(parameters, ['filter_expression', 'expression_attribute_values', 'expression_attribute_names'], true);
-
         let query_parameters_template = {
           required:{
             filter_expression: 'filter_expression',

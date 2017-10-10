@@ -392,6 +392,18 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
+  tracking:
+    handler: handlers/endpoints/tracking/handler.tracking
+    events:
+      - http:
+         path: tracking/{account}
+         method: post
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
   publichtml:
     handler: handlers/endpoints/publichtml/handler.publichtml
     events:

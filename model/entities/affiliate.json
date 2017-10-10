@@ -10,9 +10,7 @@
 		"name":{
 			"type": "string"
 		},
-		"affiliate_id":{
-			"type":"string"
-		},
+		"affiliate_id":{"$ref": "../definitions/sixcrmaffiliate_id.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},

@@ -66,6 +66,14 @@ class affiliateController extends entityController {
 
     }
 
+    getByAffiliateID(affiliate_id){
+
+      du.debug('Get By Affiliate ID');
+
+      return this.getBySecondaryIndex({field: 'affiliate_id', index_value: affiliate_id, index_name:'affiliate_id-index'});
+
+    }
+
     getCampaigns({affiliate, pagination}){
 
       du.debug('Get Campaigns');

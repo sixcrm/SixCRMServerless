@@ -11,7 +11,27 @@ class trackerController extends entityController {
 
     constructor(){
 
-        super('tracker');
+      super('tracker');
+
+    }
+
+    listByCampaignAndAffiliate({campaign, affiliate, pagination}){
+
+      du.debug('List By Campaign And Affiliate');
+
+      let query_parameters = {
+        filter_expression: 'contains(#f1, :campaign_id) AND contains(#f2, :affiliate_id)',
+        expression_attribute_values: {
+          ':affiliate_id':this.getID(affiliate),
+          ':campaign_id':this.getID(campaign)
+        },
+        expression_attribute_names: {
+          '#f1':'campaigns',
+          '#f2':'affiliates'
+        }
+      };
+
+      return this.scanByParameters({parameters: query_parameters, pagination: pagination});
 
     }
 
