@@ -1,26 +1,98 @@
-var fs = require('fs');
-var util = require('util');
-var path = require('path');
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
-var expect = chai.expect;
-var assert = chai.assert;
-chai.should();
-require('../../../bootstrap.test')
+const fs = require('fs');
+const chai = require("chai");
+const expect = chai.expect;
+const mockery = require('mockery');
+const modelgenerator = global.SixCRM.routes.include('test', 'model-generator.js');
 
-// Disabled for now. One of two errors, either:
-// "Error: Unexpected response from USPS"
-// or "TypeError: this.dynamodb.query is not a function" in lib/dynamodb-utilities.js
+require('../../../bootstrap.test');
 
-// describe('workers/confirmDelivered', function () {
-// 	describe('confirmDelivered', function (done) {
-// 		it('will be DELIVERED', function() {
-//             console.log("==============");
-//             var confirmDelivered = require('../../../../controllers/workers/confirmDelivered');
-//             var rebill = require('./fixtures/validRebill');
-// 			var actual = confirmDelivered.confirmDelivered(rebill);
-// 			return Promise.resolve(actual).should.eventually.equal("DELIVERED")
-// 		})
-// 	});
-// });
+describe('controllers/workers/confirmDelivered', function () {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    let random_rebill;
+    let random_transactions;
+    let random_products;
+    let random_transaction_product;
+    let random_shipping_receipt;
+    let example_usps_response = {
+        parsed_status: 'example_usps_status'
+    };
+
+    beforeEach((done) => { Promise.all([
+        modelgenerator.randomEntityWithId('rebill').then(rebill => { random_rebill = rebill}),
+        modelgenerator.randomEntityWithId('shippingreceipt').then(shipping_receipt => { random_shipping_receipt = shipping_receipt}),
+        modelgenerator.randomEntityWithId('transaction').then(transaction => { random_transactions = [transaction]}),
+        modelgenerator.randomEntityWithId('product').then(product => { random_products = [{product: product},{product: product}]}),
+        modelgenerator.randomEntityWithId('transactionproduct').then(transaction_product => { random_transaction_product = transaction_product})
+    ]).then(() =>{
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+                listTransactions: (rebill) => {
+                    return Promise.resolve(random_transactions);
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
+                getTransactionProduct: (transaction) => {
+                    return Promise.resolve(random_transaction_product);
+                },
+                get: (id) => {
+                    return Promise.resolve(random_products[0].product);
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/ShippingStatus.js'), {
+                getStatus: () => {
+                    return Promise.resolve(example_usps_response);
+                }
+            });
+
+            done();
+        }
+    )});
+
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    after(() => {
+        mockery.deregisterAll();
+    });
+
+    describe.only('confirmDelivered', () => {
+
+        it('returns success message by default', () => {
+
+            const confirmDelivered = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
+
+            return confirmDelivered.confirmDelivered(random_rebill)
+                .then(result => {
+                    expect(result.message).to.equal(confirmDelivered.messages.delivered);
+                    expect(result.forward.id).to.equal(random_rebill.id);
+
+                });
+        });
+
+        it('returns parsed message from shipping provider status', () => {
+
+            random_transaction_product.shippingreceipt = random_shipping_receipt;
+
+            const confirmDelivered = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
+
+
+
+            return confirmDelivered.confirmDelivered(random_rebill)
+                .then(result => expect(result.message).to.equal(example_usps_response.parsed_status));
+        });
+
+
+    });
+
+
+});
