@@ -65,7 +65,7 @@ describe('controllers/workers/confirmDelivered', function () {
         mockery.deregisterAll();
     });
 
-    describe.only('confirmDelivered', () => {
+    describe('confirmDelivered', () => {
 
         it('returns success message by default', () => {
 
