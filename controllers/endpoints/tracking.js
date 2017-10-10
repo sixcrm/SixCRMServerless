@@ -62,7 +62,7 @@ class trackingController extends transactionEndpointController{
 
       du.debug('Acquire Trackers');
 
-      return trackerController.listByCampaignAndAffiliate({campaign: event.campaign, affiliate: this.affiliate});
+      return trackerController.listByCampaignAndAffiliate({campaign: event.campaign, affiliate: this.affiliate, type:'html'});
 
     }
 

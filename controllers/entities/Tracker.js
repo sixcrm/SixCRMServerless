@@ -15,7 +15,7 @@ class trackerController extends entityController {
 
     }
 
-    listByCampaignAndAffiliate({campaign, affiliate, pagination}){
+    listByCampaignAndAffiliate({campaign, affiliate, type, pagination}){
 
       du.debug('List By Campaign And Affiliate');
 
@@ -30,6 +30,12 @@ class trackerController extends entityController {
           '#f2':'affiliates'
         }
       };
+
+      if(!_.isUndefined(type)){
+        query_parameters.filter_expression += ' AND #f3 = :type';
+        query_parameters.expression_attribute_values[':type'] = type;
+        query_parameters.expression_attribute_names['#f3'] = 'type';
+      }
 
       return this.scanByParameters({parameters: query_parameters, pagination: pagination});
 
