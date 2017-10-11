@@ -5,14 +5,20 @@
             "AttributeName": "id",
             "KeyType": "HASH"
         }],
-        "AttributeDefinitions": [{
+        "AttributeDefinitions": [
+          {
             "AttributeName": "id",
             "AttributeType": "S"
-        },
-        {
-            "AttributeName": "rebill",
+          },
+          {
+              "AttributeName": "rebill",
+              "AttributeType": "S"
+          },
+          {
+            "AttributeName": "account",
             "AttributeType": "S"
-        }],
+          }
+        ],
         "GlobalSecondaryIndexes": [
 		  {
 			 "IndexName": "rebill-index",

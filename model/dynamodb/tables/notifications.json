@@ -5,19 +5,25 @@
       "AttributeName": "id",
       "KeyType": "HASH"
     }],
-    "AttributeDefinitions": [{
-      "AttributeName": "id",
-      "AttributeType": "S"
-    }, {
-      "AttributeName": "user",
-      "AttributeType": "S"
-    }, {
-      "AttributeName": "created_at",
-      "AttributeType": "S"
-    }, {
-      "AttributeName": "updated_at",
-      "AttributeType": "S"
-    }],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      }, {
+        "AttributeName": "user",
+        "AttributeType": "S"
+      }, {
+        "AttributeName": "created_at",
+        "AttributeType": "S"
+      }, {
+        "AttributeName": "updated_at",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "account",
+        "AttributeType": "S"
+      }
+    ],
     "GlobalSecondaryIndexes": [
       {
         "IndexName": "user-index",

@@ -7,13 +7,17 @@
         }],
          "AttributeDefinitions": [
          	{
-				"AttributeName": "id",
-				"AttributeType": "S"
+    				"AttributeName": "id",
+    				"AttributeType": "S"
         	},
-			{
-				"AttributeName": "email",
-				"AttributeType": "S"
-			}
+    			{
+    				"AttributeName": "email",
+    				"AttributeType": "S"
+    			},
+          {
+            "AttributeName": "account",
+            "AttributeType": "S"
+          }
         ],
          "GlobalSecondaryIndexes": [
 		  {

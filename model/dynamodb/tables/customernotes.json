@@ -5,19 +5,23 @@
             "AttributeName": "id",
             "KeyType": "HASH"
         }],
-         "AttributeDefinitions": [
+        "AttributeDefinitions": [
          	{
-				"AttributeName": "id",
-				"AttributeType": "S"
+    				"AttributeName": "id",
+    				"AttributeType": "S"
         	},
-			{
-				"AttributeName": "customer",
-				"AttributeType": "S"
-			},
-		 	{
-				"AttributeName": "created_at",
-				"AttributeType": "S"
-		 	}
+    			{
+    				"AttributeName": "customer",
+    				"AttributeType": "S"
+    			},
+    		 	{
+    				"AttributeName": "created_at",
+    				"AttributeType": "S"
+    		 	},
+          {
+            "AttributeName": "account",
+            "AttributeType": "S"
+          }
         ],
          "GlobalSecondaryIndexes": [
 		  {

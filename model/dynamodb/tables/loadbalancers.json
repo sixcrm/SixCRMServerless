@@ -5,12 +5,18 @@
             "AttributeName": "id",
             "KeyType": "HASH"
         }],
-        "AttributeDefinitions": [{
+        "AttributeDefinitions": [
+          {
             "AttributeName": "id",
             "AttributeType": "S"
-        }],
+          },
+          {
+            "AttributeName": "account",
+            "AttributeType": "S"
+          }
+        ],
         "ProvisionedThroughput": {
-            "ReadCapacityUnits": 4, 
+            "ReadCapacityUnits": 4,
             "WriteCapacityUnits": 1
         }
     }

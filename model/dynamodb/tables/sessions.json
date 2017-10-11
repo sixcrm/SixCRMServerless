@@ -12,7 +12,12 @@
         {
             "AttributeName": "customer",
             "AttributeType": "S"
-        }],
+        },
+        {
+          "AttributeName": "account",
+          "AttributeType": "S"
+        }
+      ],
         "GlobalSecondaryIndexes": [
 		  {
 			 "IndexName": "customer-index",

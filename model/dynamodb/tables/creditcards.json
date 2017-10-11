@@ -5,14 +5,20 @@
             "AttributeName": "id",
             "KeyType": "HASH"
         }],
-        "AttributeDefinitions": [{
+        "AttributeDefinitions": [
+          {
             "AttributeName": "id",
             "AttributeType": "S"
-        },
-        {
+          },
+          {
             "AttributeName": "number",
             "AttributeType": "S"
-        }],
+          },
+          {
+            "AttributeName": "account",
+            "AttributeType": "S"
+          }
+        ],
         "GlobalSecondaryIndexes": [{
 			"IndexName": "number-index",
 			"KeySchema": [

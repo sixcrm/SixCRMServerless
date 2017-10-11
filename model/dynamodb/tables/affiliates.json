@@ -11,8 +11,27 @@
         },{
   				"AttributeName": "affiliate_id",
   				"AttributeType": "S"
+  			},{
+  				"AttributeName": "account",
+  				"AttributeType": "S"
   			}],
         "GlobalSecondaryIndexes": [{
+          "IndexName": "account-index",
+          "KeySchema": [
+           {
+              "AttributeName": "account",
+              "KeyType": "HASH"
+           }
+          ],
+          "Projection": {
+           "ProjectionType": "ALL"
+          },
+          "ProvisionedThroughput": {
+           "ReadCapacityUnits": 1,
+           "WriteCapacityUnits": 1
+          }
+        },
+        {
           "IndexName": "affiliate_id-index",
           "KeySchema": [
            {

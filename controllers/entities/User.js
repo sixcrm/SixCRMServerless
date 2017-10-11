@@ -11,6 +11,7 @@ const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js
 const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
+//Technical Debt:  The list method here is tricky
 class userController extends entityController {
 
     constructor(){

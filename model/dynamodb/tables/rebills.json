@@ -5,16 +5,24 @@
             "AttributeName": "id",
             "KeyType": "HASH"
         }],
-        "AttributeDefinitions": [{
+        "AttributeDefinitions": [
+          {
             "AttributeName": "id",
             "AttributeType": "S"
-        }, {
+          },
+          {
             "AttributeName": "parentsession",
             "AttributeType": "S"
-        }, {
+          },
+          {
             "AttributeName": "bill_at",
             "AttributeType": "S"
-        }],
+          },
+          {
+            "AttributeName": "account",
+            "AttributeType": "S"
+          }
+        ],
         "GlobalSecondaryIndexes": [{
             "IndexName": "parentsession-index",
             "KeySchema": [{

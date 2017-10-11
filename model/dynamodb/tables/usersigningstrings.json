@@ -5,13 +5,16 @@
       "AttributeName": "id",
       "KeyType": "HASH"
     }],
-    "AttributeDefinitions": [{
-      "AttributeName": "id",
-      "AttributeType": "S"
-    }, {
-      "AttributeName": "user",
-      "AttributeType": "S"
-    }],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "user",
+        "AttributeType": "S"
+      }
+    ],
     "GlobalSecondaryIndexes": [
       {
         "IndexName": "user-index",

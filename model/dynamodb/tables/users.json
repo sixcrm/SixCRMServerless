@@ -6,18 +6,22 @@
             "KeyType": "HASH"
         }],
         "AttributeDefinitions": [
-			{
-				"AttributeName": "id",
-				"AttributeType": "S"
-			},
-			{
-				"AttributeName": "access_key_id",
-				"AttributeType": "S"
-			},
-			{
-				"AttributeName": "alias",
-				"AttributeType": "S"
-			}
+    			{
+    				"AttributeName": "id",
+    				"AttributeType": "S"
+    			},
+    			{
+    				"AttributeName": "access_key_id",
+    				"AttributeType": "S"
+    			},
+    			{
+    				"AttributeName": "alias",
+    				"AttributeType": "S"
+    			},
+          {
+            "AttributeName": "account",
+            "AttributeType": "S"
+          }
         ],
         "GlobalSecondaryIndexes": [
           {
