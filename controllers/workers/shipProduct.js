@@ -28,6 +28,7 @@ class shipProductController extends workerController {
 
     }
 
+    // Technical Debt: Unused fulfillment response. I assume it's to be used in the receipt.
     issueShippingReceipt(fulfillment_response, transaction_product, transaction){
         return new Promise((resolve, reject) => {
 
