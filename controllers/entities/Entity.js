@@ -117,7 +117,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
         query_parameters = this.appendPagination(query_parameters, pagination);
-        query_parameters = this.appendAccountFilter(query_parameters);
+        query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
         return query_parameters;
 
@@ -151,7 +151,7 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //Technical Debt:  This does not necessarily return results of size "limit".  Next page can be true...
-    list({query_parameters, pagination, fatal}){
+    list({query_parameters, pagination, reverse_order, account, fatal}){
 
       du.debug('List');
 
@@ -166,12 +166,68 @@ module.exports = class entityController extends entityUtilitiesController {
 
         query_parameters = this.marryQueryParameters(query_parameters, default_query_parameters);
         query_parameters = this.appendPagination(query_parameters, pagination);
-        query_parameters = this.appendAccountFilter(query_parameters);
+        query_parameters = this.appendAccountFilter({query_parameters: query_parameters, account: account});
+
+        if (reverse_order) {
+            query_parameters['scan_index_forward'] = false;
+        }
 
         return query_parameters;
 
       })
       .then((query_parameters) => this.dynamoutilities.scanRecords(this.table_name, query_parameters))
+      .then((data) => this.buildResponse(data))
+      .catch((error) => this.handleErrors(error, fatal));
+
+    }
+
+    listByUser({query_parameters, user, pagination, reverse_order, fatal}){
+
+      du.debug('List By User');
+
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
+
+        query_parameters = this.appendUserCondition({query_parameters: query_parameters, user: user});
+        query_parameters = this.appendPagination(query_parameters, pagination);
+
+        if (reverse_order) {
+            query_parameters['scan_index_forward'] = false;
+        }
+
+        return query_parameters;
+
+      })
+      .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, 'user-index'))
+      .then((data) => this.buildResponse(data))
+      .catch((error) => this.handleErrors(error, fatal));
+
+    }
+
+    listByAccount({query_parameters, account, pagination, reverse_order, fatal}){
+
+      du.debug('List By Account');
+
+      if(this.isMasterAccount()){
+        return this.list(arguments[0]);
+      }
+
+      return this.can('read', fatal)
+      .then((permission) => this.catchPermissions(permission, 'read'))
+      .then(() => {
+
+        query_parameters = this.appendAccountCondition({query_parameters: query_parameters, account: account});
+        query_parameters = this.appendPagination(query_parameters, pagination);
+
+        if (reverse_order) {
+            query_parameters['scan_index_forward'] = false;
+        }
+
+        return query_parameters;
+
+      })
+      .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, 'account-index'))
       .then((data) => this.buildResponse(data))
       .catch((error) => this.handleErrors(error, fatal));
 
@@ -194,7 +250,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
         query_parameters = this.appendPagination(query_parameters, pagination);
-        query_parameters = this.appendAccountFilter(query_parameters);
+        query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
         if (reverse_order) {
             query_parameters['scan_index_forward'] = false;
@@ -222,7 +278,7 @@ module.exports = class entityController extends entityUtilitiesController {
             expression_attribute_values: {':index_valuev': index_value},
         }
 
-        return this.appendAccountFilter(query_parameters);
+        return this.appendAccountFilter({query_parameters: query_parameters});
 
       })
       .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name))
@@ -259,7 +315,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         query_parameters = objectutilities.transcribe(query_parameters_template.optional, parameters, query_parameters, false);
         query_parameters = this.appendPagination(query_parameters, pagination);
-        query_parameters = this.appendAccountFilter(query_parameters);
+        query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
         if(_.has(parameters, 'reverse_order')) {
             query_parameters['scan_index_forward'] = !parameters.reverse_order;
@@ -289,7 +345,7 @@ module.exports = class entityController extends entityUtilitiesController {
         };
 
         query_parameters = this.appendPagination(query_parameters, pagination);
-        query_parameters = this.appendAccountFilter(query_parameters);
+        query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
         return this.dynamoutilities.scanRecords(this.table_name, query_parameters);
 
@@ -313,7 +369,7 @@ module.exports = class entityController extends entityUtilitiesController {
           expression_attribute_values: {':primary_keyv': this.getID(id)}
         };
 
-        query_parameters = this.appendAccountFilter(query_parameters);
+        query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
         return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null);
 
@@ -502,7 +558,7 @@ module.exports = class entityController extends entityUtilitiesController {
           expression_attribute_values: {':primary_keyv': entity[this.primary_key]}
       };
 
-      query_parameters = this.appendAccountFilter(query_parameters);
+      query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
       return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null)
       .then(data => this.getItems(data))

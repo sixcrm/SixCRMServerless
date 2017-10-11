@@ -783,20 +783,11 @@ class userController extends entityController {
 
       du.debug('Get Users By Account');
 
-      //Technical Debt:  Use Entity Methods
-      if(!_.has(global, 'account')){
-        eu.throwError('server', 'Global variable missing account property.');
-      }
-
       if(global.account == '*'){
 
         return this.list({pagination: pagination, fatal: fatal});
 
       }else{
-
-        if(!this.isUUID(global.account)){
-          eu.throwError('server', 'Unexpected account ID type: '+global.account);
-        }
 
         return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: global.account, fatal: fatal}).then(user_acl_objects => {
 

@@ -14,20 +14,6 @@ class notificationController extends entityController {
         super('notification');
     }
 
-    listForCurrentUser(pagination) {
-
-      du.debug('List For Current User');
-
-      return this.executeAssociatedEntityFunction('notificationReadController', 'markNotificationsAsSeen', {}).then(() => {
-
-        let user_id = global.user.id;
-
-        return this.queryBySecondaryIndex({field: 'user', index_value: user_id, index_name: 'user-index', pagination: pagination, reverse_order: true});
-
-      })
-
-    }
-
     numberOfUnseenNotifications() {
 
       du.debug('Number of Unseen Notifications');

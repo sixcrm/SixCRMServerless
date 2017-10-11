@@ -1,6 +1,6 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"nikola.bosic@coingcs.com\"}}",
-	"pathParameters": "{ \"account\": \"5db7ed46-75b1-4ecd-b489-e61ef5d1107a\" }",
+	"requestContext":"{\"authorizer\":{\"user\":\"owner.user@test.com\"}}",
+	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	query {
 		notificationlist (pagination:{limit: \"10\"}){

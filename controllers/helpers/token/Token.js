@@ -6,7 +6,7 @@ const mbu = global.SixCRM.routes.include('lib','model-builder-utilities.js');
 
 class Token {
 
-  list(){
+  getTokensSchema(){
 
     du.debug('Token List');
 

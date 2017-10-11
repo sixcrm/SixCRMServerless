@@ -63,32 +63,49 @@ describe('notificationController', function () {
 
     it('count should reset when we see notifications', function (done) {
         notificationController.numberOfUnseenNotifications().then((response) => {
+
             // given we don't have a notifications
             return expect(response.count).to.equal(0);
+
         }).then(() => {
+
             // when we create a notification
             return notificationController.create({entity: aNotification});
+
         }).then(() => {
+
             return notificationController.numberOfUnseenNotifications();
+
         }).then((response) => {
+
             // then we should see count of 1
             return expect(response.count).to.equal(1);
+
         }).then(() => {
+
             // when we see the notifications
-            return notificationController.listForCurrentUser();
+            return notificationController.listByUser();
+
         }).then(() => {
+
             return notificationController.numberOfUnseenNotifications().then(() => {
 
                 // Technical Debt: We call this twice to buy some time, otherwise the counter is outdated.
                 return notificationController.numberOfUnseenNotifications();
             });
+
         }).then((response) => {
+
             // then we should see count of 0
             expect(response.count).to.equal(0);
             done();
+
         }).catch((error) => {
+
             done(error);
+
         });
+
     });
 
 });

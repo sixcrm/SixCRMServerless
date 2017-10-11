@@ -503,20 +503,39 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    appendAccountFilter(query_parameters){
+    appendUserCondition({query_parameters, user}){
 
-      du.debug('Append Account Filter');
+      du.debug('Append User Condition');
+
+      user = (_.isUndefined(user))?global.user:user;
 
       if(this.permissionutilities.accountFilterDisabled() !== true){
 
-        //Technical Debt:  Shouldn't be validating that the global has the account property here...
-        if(_.has(global, 'account') && !_.contains(this.nonaccounts, this.descriptive_name)){
+        query_parameters = this.appendKeyConditionExpression(query_parameters, '#user = :userv');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':userv', this.getID(user));
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#user', 'user');
+
+      }
+
+      return query_parameters;
+
+    }
+
+    appendAccountCondition({query_parameters, account}){
+
+      du.debug('Append Account Condition');
+
+      account = (_.isUndefined(account))?global.account:account;
+
+      if(!this.permissionutilities.accountFilterDisabled()){
+
+        if(!_.contains(this.nonaccounts, this.descriptive_name)){
 
           if(!this.permissionutilities.isMasterAccount()){
 
-            query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
-
-            query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
+            query_parameters = this.appendKeyConditionExpression(query_parameters, '#account = :accountv');
+            query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', this.getID(account));
+            query_parameters = this.appendExpressionAttributeNames(query_parameters, '#account', 'account');
 
           }
 
@@ -528,9 +547,45 @@ module.exports = class entityUtilitiesController {
 
     }
 
+    appendAccountFilter({query_parameters, account}){
+
+      du.debug('Append Account Filter');
+
+      account = (_.isUndefined(account))?global.account:account;
+
+      if(this.permissionutilities.accountFilterDisabled() !== true){
+
+        if(!_.contains(this.nonaccounts, this.descriptive_name)){
+
+          if(!this.isMasterAccount()){
+
+            query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
+
+            query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', account);
+
+          }
+
+        }
+
+      }
+
+      return query_parameters;
+
+    }
+
+    isMasterAccount(){
+
+      du.debug('Is Master Account');
+
+      return this.permissionutilities.isMasterAccount();
+
+    }
+
     appendPagination(query_parameters, pagination){
 
         du.debug('Append Pagination');
+
+        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
         if(!_.isUndefined(pagination) && _.isObject(pagination)){
 
@@ -562,6 +617,8 @@ module.exports = class entityUtilitiesController {
 
         du.debug('Append Limit');
 
+        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+
         if(!_.isUndefined(limit)){
 
             if(_.isString(limit) || _.isNumber(limit)){
@@ -589,6 +646,8 @@ module.exports = class entityUtilitiesController {
     appendExclusiveStartKey(query_parameters, exclusive_start_key){
 
         du.debug('Append Exclusive Start Key');
+
+        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
         if(!_.isUndefined(exclusive_start_key)){
 
@@ -622,6 +681,8 @@ module.exports = class entityUtilitiesController {
         du.debug('Append Cursor');
 
         du.debug(cursor);
+
+        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
         if(!_.isUndefined(cursor) && !_.isNull(cursor)){
 
@@ -695,6 +756,8 @@ module.exports = class entityUtilitiesController {
 
         du.debug('Append Expression Attribute Names');
 
+        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+
         query_parameters = this.assurePresence(query_parameters, 'expression_attribute_names');
 
         query_parameters.expression_attribute_names[key] = value;
@@ -703,13 +766,21 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    appendKeyConditionExpression(query_parameters, key, value){
+    appendKeyConditionExpression(query_parameters, condition_expression, conjunction){
 
         du.debug('Append Key Condition Expression');
 
+        conjunction = (_.isUndefined(conjunction))?'AND':conjunction;
+
+        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+
         query_parameters = this.assurePresence(query_parameters, 'key_condition_expression');
 
-        query_parameters.key_condition_expression[key] = value;
+        if(stringutilities.nonEmpty(query_parameters.key_condition_expression)){
+          query_parameters.key_condition_expression += ' '+conjunction+' '+condition_expression;
+        }else{
+          query_parameters.key_condition_expression = condition_expression;
+        }
 
         return query_parameters;
 
@@ -718,6 +789,8 @@ module.exports = class entityUtilitiesController {
     appendExpressionAttributeValues(query_parameters, key, value){
 
         du.debug('Append Expression Attribute Values');
+
+        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
         query_parameters = this.assurePresence(query_parameters, 'expression_attribute_values');
 
@@ -731,6 +804,8 @@ module.exports = class entityUtilitiesController {
     appendFilterExpression(query_parameters, filter_expression){
 
         du.debug('Append Filter Expression');
+
+        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
         if (_.has(query_parameters, 'filter_expression')){
 
