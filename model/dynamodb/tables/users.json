@@ -1,65 +1,83 @@
 {
-    "Table": {
-        "TableName": "users",
-        "KeySchema": [{
-            "AttributeName": "id",
-            "KeyType": "HASH"
-        }],
-        "AttributeDefinitions": [
-    			{
-    				"AttributeName": "id",
-    				"AttributeType": "S"
-    			},
-    			{
-    				"AttributeName": "access_key_id",
-    				"AttributeType": "S"
-    			},
-    			{
-    				"AttributeName": "alias",
-    				"AttributeType": "S"
-    			},
+  "Table":{
+    "TableName":"users",
+    "KeySchema":[
+      {
+        "AttributeName":"id",
+        "KeyType":"HASH"
+      }
+    ],
+    "AttributeDefinitions":[
+      {
+        "AttributeName":"id",
+        "AttributeType":"S"
+      },
+      {
+        "AttributeName":"access_key_id",
+        "AttributeType":"S"
+      },
+      {
+        "AttributeName":"alias",
+        "AttributeType":"S"
+      },
+      {
+        "AttributeName":"account",
+        "AttributeType":"S"
+      }
+    ],
+    "GlobalSecondaryIndexes":[
+      {
+        "IndexName":"alias-index",
+        "KeySchema":[
           {
-            "AttributeName": "account",
-            "AttributeType": "S"
+            "AttributeName":"alias",
+            "KeyType":"HASH"
           }
         ],
-        "GlobalSecondaryIndexes": [
-          {
-			 "IndexName": "alias-index",
-			 "KeySchema": [
-				{
-				   "AttributeName": "alias",
-				   "KeyType": "HASH"
-				}
-			 ],
-			 "Projection": {
-				"ProjectionType": "ALL"
-			 },
-			 "ProvisionedThroughput": {
-				"ReadCapacityUnits": 6,
-				"WriteCapacityUnits": 1
-			 }
-		  },
-		  {
-			 "IndexName": "access_key_id-index",
-			 "KeySchema": [
-				{
-				   "AttributeName": "access_key_id",
-				   "KeyType": "HASH"
-				}
-			 ],
-			 "Projection": {
-				"ProjectionType": "ALL"
-			 },
-			 "ProvisionedThroughput": {
-				"ReadCapacityUnits": 1,
-				"WriteCapacityUnits": 1
-			 }
-		  }
-		],
-        "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1,
-            "WriteCapacityUnits": 1
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":6,
+          "WriteCapacityUnits":1
         }
+      },
+      {
+        "IndexName":"access_key_id-index",
+        "KeySchema":[
+          {
+            "AttributeName":"access_key_id",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":1,
+          "WriteCapacityUnits":1
+        }
+      },
+      {
+        "IndexName":"account-index",
+        "KeySchema":[
+          {
+            "AttributeName":"account",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":1,
+          "WriteCapacityUnits":1
+        }
+      }
+    ],
+    "ProvisionedThroughput":{
+      "ReadCapacityUnits":1,
+      "WriteCapacityUnits":1
     }
+  }
 }

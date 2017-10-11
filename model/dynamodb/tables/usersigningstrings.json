@@ -1,41 +1,43 @@
 {
-  "Table": {
-    "TableName": "usersigningstrings",
-    "KeySchema": [{
-      "AttributeName": "id",
-      "KeyType": "HASH"
-    }],
-    "AttributeDefinitions": [
+  "Table":{
+    "TableName":"usersigningstrings",
+    "KeySchema":[
       {
-        "AttributeName": "id",
-        "AttributeType": "S"
-      },
-      {
-        "AttributeName": "user",
-        "AttributeType": "S"
+        "AttributeName":"id",
+        "KeyType":"HASH"
       }
     ],
-    "GlobalSecondaryIndexes": [
+    "AttributeDefinitions":[
       {
-        "IndexName": "user-index",
-        "KeySchema": [
+        "AttributeName":"id",
+        "AttributeType":"S"
+      },
+      {
+        "AttributeName":"user",
+        "AttributeType":"S"
+      }
+    ],
+    "GlobalSecondaryIndexes":[
+      {
+        "IndexName":"user-index",
+        "KeySchema":[
           {
-            "AttributeName": "user",
-            "KeyType": "HASH"
+            "AttributeName":"user",
+            "KeyType":"HASH"
           }
         ],
-        "Projection": {
-          "ProjectionType": "ALL"
+        "Projection":{
+          "ProjectionType":"ALL"
         },
-        "ProvisionedThroughput": {
-          "ReadCapacityUnits": 1,
-          "WriteCapacityUnits": 1
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":1,
+          "WriteCapacityUnits":1
         }
       }
     ],
-    "ProvisionedThroughput": {
-      "ReadCapacityUnits": 1,
-      "WriteCapacityUnits": 1
+    "ProvisionedThroughput":{
+      "ReadCapacityUnits":1,
+      "WriteCapacityUnits":1
     }
   }
 }

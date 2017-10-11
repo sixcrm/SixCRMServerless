@@ -1,17 +1,21 @@
 {
-    "Table": {
-        "TableName": "accounts",
-        "KeySchema": [{
-            "AttributeName": "id",
-            "KeyType": "HASH"
-        }],
-        "AttributeDefinitions": [{
-            "AttributeName": "id",
-            "AttributeType": "S"
-        }],
-        "ProvisionedThroughput": {
-            "ReadCapacityUnits": 3,
-            "WriteCapacityUnits": 1
-        }
+  "Table":{
+    "TableName":"accounts",
+    "KeySchema":[
+      {
+        "AttributeName":"id",
+        "KeyType":"HASH"
+      }
+    ],
+    "AttributeDefinitions":[
+      {
+        "AttributeName":"id",
+        "AttributeType":"S"
+      }
+    ],
+    "ProvisionedThroughput":{
+      "ReadCapacityUnits":3,
+      "WriteCapacityUnits":1
     }
+  }
 }

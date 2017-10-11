@@ -1,21 +1,24 @@
 {
-  "Table": {
-    "TableName": "notificationsettings",
-    "KeySchema": [{
-      "AttributeName": "id",
-      "KeyType": "HASH"
-    }],
-    "AttributeDefinitions": [
+  "Table":{
+    "TableName":"notificationsettings",
+    "KeySchema":[
       {
-        "AttributeName": "id",
-        "AttributeType": "S"
+        "AttributeName":"id",
+        "KeyType":"HASH"
       }
     ],
-    "ProvisionedThroughput": {
-      "ReadCapacityUnits": 1,
-      "WriteCapacityUnits": 1
+    "AttributeDefinitions":[
+      {
+        "AttributeName":"id",
+        "AttributeType":"S"
+      }
+    ],
+    "ProvisionedThroughput":{
+      "ReadCapacityUnits":1,
+      "WriteCapacityUnits":1
     }
   },
-  "Seeds": [
+  "Seeds":[
+
   ]
 }

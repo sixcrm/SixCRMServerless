@@ -1,23 +1,43 @@
 {
-    "Table": {
-        "TableName": "trackers",
-        "KeySchema": [{
-            "AttributeName": "id",
-            "KeyType": "HASH"
-        }],
-        "AttributeDefinitions": [
+  "Table":{
+    "TableName":"trackers",
+    "KeySchema":[
+      {
+        "AttributeName":"id",
+        "KeyType":"HASH"
+      }
+    ],
+    "AttributeDefinitions":[
+      {
+        "AttributeName":"id",
+        "AttributeType":"S"
+      },
+      {
+        "AttributeName":"account",
+        "AttributeType":"S"
+      }
+    ],
+    "GlobalSecondaryIndexes":[
+      {
+        "IndexName":"account-index",
+        "KeySchema":[
           {
-            "AttributeName": "id",
-            "AttributeType": "S"
-          },
-          {
-            "AttributeName": "account",
-            "AttributeType": "S"
+            "AttributeName":"account",
+            "KeyType":"HASH"
           }
         ],
-        "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1,
-            "WriteCapacityUnits": 1
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":1,
+          "WriteCapacityUnits":1
         }
+      }
+    ],
+    "ProvisionedThroughput":{
+      "ReadCapacityUnits":1,
+      "WriteCapacityUnits":1
     }
+  }
 }
