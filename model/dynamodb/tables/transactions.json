@@ -53,22 +53,6 @@
           "ReadCapacityUnits":1,
           "WriteCapacityUnits":1
         }
-      },
-      {
-        "IndexName":"account-index",
-        "KeySchema":[
-          {
-            "AttributeName":"account",
-            "KeyType":"HASH"
-          }
-        ],
-        "Projection":{
-          "ProjectionType":"ALL"
-        },
-        "ProvisionedThroughput":{
-          "ReadCapacityUnits":1,
-          "WriteCapacityUnits":1
-        }
       }
     ],
     "ProvisionedThroughput":{

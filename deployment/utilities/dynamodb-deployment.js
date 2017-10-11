@@ -31,7 +31,11 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
           return this.dynamodbutilities.createTable(table_definition.Table).then((result) => {
 
-            return this.dynamodbutilities.waitFor(table_definition.Table.TableName, 'tableExists');
+            return this.dynamodbutilities.waitFor(table_definition.Table.TableName, 'tableExists').then((result) => {
+
+              du.highlight('Successfully created table: '+table_definition.Table.TableName);
+
+            });
 
           });
 
@@ -50,14 +54,15 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       du.debug('Table Exists');
 
-      return this.dynamodbutilities.describeTable(table_name).then((results) => {
+      return this.dynamodbutilities.describeTable(table_name, false).then((results) => {
 
-        if(_.isNull(results)){
-          du.highlight('Table not found: '+table_name);
-          return false;
-        }
         du.highlight('Table found: '+table_name);
         return results;
+
+      }).catch(error => {
+
+        du.highlight('Unable to find table '+table_name);
+        return false;
 
       });
 
@@ -178,6 +183,49 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
       });
 
     }
+    /*
+    deployTables() {
+
+      du.debug('Deploy Tables');
+
+      return this.getTableDefinitionFilenames().then((table_definition_filenames) => {
+
+        let table_deployment_promises = arrayutilities.map(table_definition_filenames, (table_definition_filename) => {
+          return () => this.deployTable(table_definition_filename);
+        });
+
+        let table_deployment_functions = arrayutilities.chunk(table_deployment_promises, 2);
+
+        let reduction_function = (current, next) => {
+
+          if(arrayutilities.nonEmpty(current)){
+
+            let current_promises = arrayutilities.map(current, entry => {
+              return entry();
+            });
+
+            du.highlight('current promises: ', current_promises);
+
+            return Promise.all(current_promises);
+
+          }else{
+
+            return Promise.all(current).then(() => {
+              return next;
+            });
+
+          }
+
+        };
+
+        return arrayutilities.serial(table_deployment_functions, reduction_function, Promise.resolve()).then(() => {
+          return 'Complete';
+        });
+
+      });
+
+    }
+    */
 
     destroyTables(){
 

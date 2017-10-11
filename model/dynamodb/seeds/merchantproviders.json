@@ -78,7 +78,7 @@
 		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"name":"Innovio Account",
 		"processor":{
-			"name":"Innovio"
+			"name":"Humbolt"
 		},
 		"processing":{
 			"monthly_cap": 2000000.00,
@@ -95,7 +95,7 @@
 		"enabled":true,
 		"gateway": {
 			"type":"Innovio",
-			"name":"Some Innovio Account",
+			"name":"Innovio",
 			"username":"timothy.dalbey@sixrm.com",
 			"password":"vIngelB92SWGNBDHTTQK",
 			"product_id":"64219",
