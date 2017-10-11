@@ -16,6 +16,17 @@ class affiliateController extends entityController {
 
     }
 
+    newList({pagination}){
+
+      du.debug('List');
+
+      return this.listBySecondaryIndex({field:'account', index_value: global.account, pagination: pagination});
+      //return this.queryBySecondaryIndex({field: 'account', index_value: global.account, index_name: 'account-index', pagination: pagination})
+      //return this.queryBySecondaryIndex({field: 'account', index_value: global.account, index_name: 'account-index', pagination: pagination})
+      //return this.listByAssociation({id: global.account, field: 'account', pagination: pagination});
+
+    }
+
     associatedEntitiesCheck({id}){
 
       du.debug('Associated Entities Check');

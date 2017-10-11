@@ -789,9 +789,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, affiliate){
-                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+              const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
-                return affiliateController.list({pagination: affiliate.pagination, fatal:list_fatal});
+              return affiliateController.newList({pagination: affiliate.pagination, fatal:list_fatal});
             }
         },
         trackerlist: {

@@ -538,7 +538,7 @@ module.exports = class entityUtilitiesController {
 
             if(_.has(pagination, 'limit')){
 
-                query_parameters = this.appendLimit(query_parameters, pagination.limit);
+              //query_parameters = this.appendLimit(query_parameters, pagination.limit);
 
             }
 

@@ -121,8 +121,6 @@ module.exports = class Response {
 
   getResultJSON(){
 
-    du.warning(this);
-
     du.debug('Get Result JSON');
 
     return {
@@ -130,6 +128,7 @@ module.exports = class Response {
       result: this.getResult(),
       message: this.getMessage()
     };
+
   }
 
   getCode(){

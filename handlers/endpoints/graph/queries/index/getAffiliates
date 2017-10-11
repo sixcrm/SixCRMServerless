@@ -1,6 +1,6 @@
 {
-	"requestContext":"{\"authorizer\":{ \"user\": \"super.user@test.com\" }}",
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
+	"requestContext":"{\"authorizer\":{ \"user\": \"timothy.dalbey@crmblackbox.com\" }}",
+	"pathParameters": "{ \"account\": \"616a135e-0466-4018-989a-4df2411069a3\" }",
 	"body":"
 	query {
 		affiliatelist (pagination:{limit: \"10\"}){

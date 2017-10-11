@@ -22,10 +22,9 @@ module.exports = class InnovioResponse extends Response {
 
     du.debug('Map Response Code');
 
-    //Technical Debt:  Update this... (note multiple success messages...)
-    if(parsed_response.API_RESPONSE == 507){
+    if(parsed_response.TRANS_STATUS_NAME == 'APPROVED'){
       return 'success';
-    }else if(parsed_response.API_RESPONSE == 600){
+    }else if(parsed_response.TRANS_STATUS_NAME == 'DECLINED'){
       return 'declined';
     }
 
