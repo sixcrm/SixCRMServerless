@@ -12,7 +12,6 @@ class emailTemplateController extends entityController {
 
     }
 
-    //Technical Debt:  Replace with EntityController.listByAssociation
     listBySMTPProvider({smtpprovider: smtpprovider, pagination: pagination}){
 
       du.debug('List By SMTP Provider');
@@ -27,7 +26,8 @@ class emailTemplateController extends entityController {
         }
       };
 
-      return this.list({query_parameters: query_parameters, pagination: pagination});
+      //Technical Debt:  Use listByAccount()
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
 
     }
 

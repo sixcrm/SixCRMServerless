@@ -48,7 +48,6 @@ class ProductController extends entityController {
 
     }
 
-    //Technical Debt:  Replace with EntityController.listByAssociation
     listByFulfillmentProvider({fulfillment_provider, pagination}){
 
       du.debug('List By Fulfillment Provider');
@@ -63,7 +62,7 @@ class ProductController extends entityController {
         }
       };
 
-      return this.list({query_parameters: query_parameters, pagination: pagination});
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
 
     }
 

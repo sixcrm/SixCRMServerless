@@ -310,7 +310,6 @@ class productScheduleController extends entityController {
 
     }
 
-    //Technical Debt:  Replace with EntityController.listByAssociation
     listByLoadBalancer({loadbalancer, pagination}){
 
       du.debug('List By Load Balancer');
@@ -325,7 +324,7 @@ class productScheduleController extends entityController {
         }
       };
 
-      return this.list({query_parameters: query_parameters, pagination: pagination});
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
 
     }
 

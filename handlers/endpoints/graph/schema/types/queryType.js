@@ -1206,9 +1206,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, user_signing_strings) {
-                const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+              const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
-                return userSigningStringController.listByUser({pagination: user_signing_strings.pagination, fatal:list_fatal});
+              return userSigningStringController.listByUser({pagination: user_signing_strings.pagination, fatal:list_fatal});
             }
         },
         notification: {

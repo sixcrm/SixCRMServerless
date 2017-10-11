@@ -581,7 +581,7 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    appendPagination(query_parameters, pagination){
+    appendPagination({query_parameters, pagination}){
 
         du.debug('Append Pagination');
 
@@ -589,11 +589,9 @@ module.exports = class entityUtilitiesController {
 
         if(!_.isUndefined(pagination) && _.isObject(pagination)){
 
-            du.debug('Pagination Object:', pagination);
-
             if(_.has(pagination, 'limit')){
 
-              //query_parameters = this.appendLimit(query_parameters, pagination.limit);
+              query_parameters = this.appendLimit({query_parameters: query_parameters, limit: pagination.limit});
 
             }
 
@@ -613,31 +611,29 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    appendLimit(query_parameters, limit){
+    appendLimit({query_parameters, limit}){
 
         du.debug('Append Limit');
 
         query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        if(!_.isUndefined(limit)){
+        limit = (_.isUndefined(limit))?100:limit;
 
-            if(_.isString(limit) || _.isNumber(limit)){
-
-                limit = parseInt(limit);
-
-                if(_.isNumber(limit) && limit > 0){
-
-                    query_parameters['limit'] = limit;
-
-                }else{
-
-                    eu.throwError('bad_request','Limit is a unrecognized format: '+limit);
-
-                }
-
-            }
-
+        if(_.isString(limit) || _.isNumber(limit)){
+          limit = parseInt(limit);
+        }else{
+          limit = 100;
         }
+
+        if(limit < 1){
+          eu.throwError('forbidded', 'The graph API limit minimum is 1.');
+        }
+
+        if(limit > 100){
+          eu.throwError('forbidded', 'The graph API record limit is 100.');
+        }
+
+        query_parameters['limit'] = limit;
 
         return query_parameters;
 

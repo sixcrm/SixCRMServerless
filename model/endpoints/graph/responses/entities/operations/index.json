@@ -21,8 +21,16 @@
 
                   "patternProperties": {
                     ".+s": {
-                      "type": "array",
-                      "items": { "$ref": "../entity" }
+                      "anyOf":[
+                        {
+                          "type": "array",
+                          "items": { "$ref": "../entity" }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+
                     }
                   },
                   "properties": {

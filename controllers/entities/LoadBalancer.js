@@ -47,7 +47,7 @@ class loadBalancerController extends entityController {
 
       du.debug('List By Merchant Provider ID');
 
-      return this.list({}).then(loadbalancers => {
+      return this.listByAccount().then(loadbalancers => {
 
         let return_array = [];
 
