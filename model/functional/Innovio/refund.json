@@ -1,0 +1,40 @@
+{
+	"title": "Innovio Merchant Provider Refund Object",
+	"type": "object",
+	"properties": {
+		"req_username":{
+			"type": "string"
+		},
+		"req_password":{
+			"type": "string"
+		},
+		"request_action":{
+			"type": "string",
+			"enum":["CCCREDIT"]
+		},
+		"site_id":{
+			"type": "string"
+		},
+		"merchant_acct_id":{
+			"type": "string"
+		},
+		"request_response_format":{
+			"type": "string"
+		},
+		"request_api_version":{
+			"type": "string"
+		},
+		"request_ref_po_id":{
+			"anyOf":[
+				{
+					"type":"string"
+				},
+				{
+					"type":"number"
+				}
+			]
+		},
+		"li_value_1":{"$ref": "../../definitions/currency.json"}
+	},
+	"required":["request_action","request_response_format","request_api_version", "req_username","req_password","site_id","merchant_acct_id", "request_ref_po_id", "li_value_1"]
+}

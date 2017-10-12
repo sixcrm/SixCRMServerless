@@ -23,7 +23,9 @@ module.exports = class Response {
 
     du.debug('Handle Response');
 
-    if(!_.isNull(error)){
+    //du.info(arguments); exit();
+
+    if(!_.isUndefined(error) && !_.isNull(error)){
 
       this.handleError(error);
 

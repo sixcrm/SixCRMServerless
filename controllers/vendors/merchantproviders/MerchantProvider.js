@@ -16,6 +16,100 @@ module.exports = class MerchantProvider {
 
     }
 
+    setMerchantProviderParameters({return_parameters}){
+
+      du.debug('Set Merchant Provider Parameters');
+
+      let merchant_provider_configuration = this.get('MerchantProviderParameters');
+
+      return_parameters = objectutilities.transcribe(this.merchant_provider_parameters.required, merchant_provider_configuration, return_parameters, true);
+
+      return objectutilities.transcribe(this.merchant_provider_parameters.optional, merchant_provider_configuration, return_parameters);
+
+    }
+
+    setVendorParameters({return_parameters}){
+
+      du.debug('Set Vendor Parameters');
+
+      let vendor_configuration = this.get('VendorConfiguration');
+
+      return objectutilities.transcribe(this.vendor_parameters.required, vendor_configuration, return_parameters, true);
+
+    }
+
+    setMethodParameters({return_parameters, method_parameters}){
+
+      du.debug('Set Method Parameters');
+
+      return objectutilities.transcribe(this.method_parameters.required, method_parameters, return_parameters, true);
+
+    }
+
+    postToProcessor({action, method_parameters, request_parameters}){
+
+      du.debug('Post To Processor');
+
+      return new Promise((resolve, reject) => {
+
+        let parameters = this.createParameterObject();
+
+        parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
+
+        parameters = this.setRequestParameters({type: action, request_parameters: request_parameters, return_parameters: parameters});
+
+        this.validateRequestParameters(action, parameters);
+
+        let parameter_querystring = querystring.stringify(parameters);
+
+        var request_options = {
+    		  headers: {'content-type' : 'application/x-www-form-urlencoded'},
+    		  url:     this.get('VendorConfiguration').endpoint,
+    		  body:    parameter_querystring
+        };
+
+        request.post(request_options, (error, response, body) => {
+
+          if(_.isError(error)){
+            reject(error);
+          }
+
+          resolve({response: response, body: body});
+
+        });
+
+      });
+
+    }
+
+    createParameterObject(){
+
+      du.debug('Create Parameter Object');
+
+      let return_parameters = this.setVendorParameters({return_parameters:{}});
+
+      return_parameters = this.setMerchantProviderParameters({return_parameters:return_parameters});
+
+      return return_parameters;
+
+    }
+
+    setRequestParameters({type, request_parameters, return_parameters}){
+
+      du.debug('Set Request Parameters');
+
+      objectutilities.hasRecursive(this.transaction_parameters, type+'.required', true);
+
+      return_parameters = objectutilities.transcribe(this.transaction_parameters[type].required, request_parameters, return_parameters, true);
+
+      if(objectutilities.hasRecursive(this.transaction_parameters, type+'.optional')){
+        return_parameters = objectutilities.transcribe(this.transaction_parameters[type].optional, request_parameters, return_parameters, false);
+      }
+
+      return return_parameters;
+
+    }
+
     configure(merchant_provider_parameters){
 
       du.debug('Configure');

@@ -20,6 +20,28 @@ class NMIController extends MerchantProvider {
 
       this.configure(merchant_provider_parameters);
 
+      this.merchant_provider_parameters = {
+        required: {
+          username: 'username',
+          password:'password',
+        },
+        optional: {
+          processor_id: 'processor_id'
+        }
+      };
+
+      this.method_parameters = {
+        required: {
+          type: 'type'
+        }
+      };
+
+      this.vendor_parameters = {
+        required:{
+          endpoint:'endpoint'
+        }
+      };
+
       this.transaction_parameters = {
         process: {
           required: {
@@ -69,35 +91,10 @@ class NMIController extends MerchantProvider {
 
       du.debug('Refund');
 
-      return new Promise((resolve, reject) => {
+      const method_parameters = {type: 'refund'};
 
-        const method_parameters = {type: 'refund'};
-
-        let parameters = this.createParameterObject();
-
-        parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
-
-        parameters = this.setRequestParameters({type: 'refund', request_parameters: request_parameters, return_parameters: parameters});
-
-        this.validateRequestParameters('refund', parameters);
-
-        var request_options = {
-  			  headers: {'content-type' : 'application/x-www-form-urlencoded'},
-  			  url:     this.get('VendorConfiguration').endpoint,
-  			  body:    querystring.stringify(parameters)
-        };
-
-        request.post(request_options, (error, response, body) => {
-
-          if(_.isError(error)){
-            reject(error);
-          }
-
-          resolve(this.getResponseObject({error: error, response: response, body: body}));
-
-        });
-
-      });
+      return this.postToProcessor({action: 'refund', method_parameters: method_parameters, request_parameters: request_parameters})
+      .then((response_object) => this.getResponseObject(response_object));
 
     }
 
@@ -105,35 +102,10 @@ class NMIController extends MerchantProvider {
 
       du.debug('Void');
 
-      return new Promise((resolve, reject) => {
+      const method_parameters = {type: 'void'};
 
-        const method_parameters = {type: 'void'};
-
-        let parameters = this.createParameterObject();
-
-        parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
-
-        parameters = this.setRequestParameters({type: 'void', request_parameters: request_parameters, return_parameters: parameters});
-
-        this.validateRequestParameters('void', parameters);
-
-        var request_options = {
-  			  headers: {'content-type' : 'application/x-www-form-urlencoded'},
-  			  url:     this.get('VendorConfiguration').endpoint,
-  			  body:    querystring.stringify(parameters)
-        };
-
-        request.post(request_options, (error, response, body) => {
-
-          if(_.isError(error)){
-            reject(error);
-          }
-
-          resolve(this.getResponseObject({error: error, response: response, body: body}));
-
-        });
-
-      });
+      return this.postToProcessor({action: 'void', method_parameters: method_parameters, request_parameters: request_parameters})
+      .then((response_object) => this.getResponseObject(response_object));
 
     }
 
@@ -141,111 +113,10 @@ class NMIController extends MerchantProvider {
 
       du.debug('Process');
 
-      return new Promise((resolve, reject) => {
+      const method_parameters = {type: 'sale'};
 
-        const method_parameters = {type: 'sale'};
-
-        let parameters = this.createParameterObject();
-
-        parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
-
-        parameters = this.setRequestParameters({type: 'process', request_parameters: request_parameters, return_parameters: parameters});
-
-        this.validateRequestParameters('process', parameters);
-
-        var request_options = {
-  			  headers: {'content-type' : 'application/x-www-form-urlencoded'},
-  			  url:     this.get('VendorConfiguration').endpoint,
-  			  body:    querystring.stringify(parameters)
-        };
-
-        request.post(request_options, (error, response, body) => {
-
-          if(_.isError(error)){
-            reject(error);
-          }
-
-          resolve(this.getResponseObject({error: error, response: response, body: body}));
-
-        });
-
-      });
-
-    }
-
-    setRequestParameters({type, request_parameters, return_parameters}){
-
-      du.debug('Set Request Parameters');
-
-      objectutilities.hasRecursive(this.transaction_parameters, type+'.required', true);
-      objectutilities.hasRecursive(this.transaction_parameters, type+'.optional', true);
-
-      return_parameters = objectutilities.transcribe(this.transaction_parameters[type].required, request_parameters, return_parameters, true);
-      return objectutilities.transcribe(this.transaction_parameters[type].optional, request_parameters, return_parameters, false);
-
-    }
-
-    createParameterObject(){
-
-      du.debug('Create Parameter Object');
-
-      let return_parameters = this.setVendorParameters({return_parameters:{}});
-
-      return_parameters = this.setMerchantProviderParameters({return_parameters:return_parameters});
-
-      return return_parameters;
-
-    }
-
-    setVendorParameters({return_parameters}){
-
-      du.debug('Set Vendor Parameters');
-
-      let vendor = {
-        required:{
-          endpoint:'endpoint'
-        }
-      };
-
-      let vendor_configuration = this.get('VendorConfiguration');
-
-      return objectutilities.transcribe(vendor.required, vendor_configuration, return_parameters, true);
-
-    }
-
-    setMerchantProviderParameters({return_parameters}){
-
-      du.debug('Set Merchant Provider Parameters');
-
-      let merchant_provider = {
-        required: {
-          username: 'username',
-          password:'password',
-        },
-        optional: {
-          processor_id: 'processor_id'
-        }
-      };
-
-      let merchant_provider_configuration = this.get('MerchantProviderParameters');
-
-      return_parameters = objectutilities.transcribe(merchant_provider.required, merchant_provider_configuration, return_parameters, true);
-
-      return objectutilities.transcribe(merchant_provider.optional, merchant_provider_configuration, return_parameters);
-
-    }
-
-    setMethodParameters({return_parameters, method_parameters}){
-
-      du.debug('Set Method Parameters');
-
-      let method = {
-        required: {
-          type: 'type'
-        }
-      };
-
-      return objectutilities.transcribe(method.required, method_parameters, return_parameters, true);
+      return this.postToProcessor({action: 'process', method_parameters: method_parameters, request_parameters: request_parameters})
+      .then((response_object) => this.getResponseObject(response_object));
 
     }
 

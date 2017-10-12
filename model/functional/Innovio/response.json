@@ -3,7 +3,14 @@
 	"type": "object",
 	"properties": {
 		"API_RESPONSE":{
-			"type":"number"
+			"anyOf":[
+				{
+					"type":"number"
+				},
+				{
+					"type":"string"
+				}
+			]
 		},
 		"SERVICE_RESPONSE":{
 			"type":"number"

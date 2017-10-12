@@ -2,7 +2,6 @@
 
 let chai = require('chai');
 let expect = chai.expect;
-const mockery = require('mockery');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
@@ -49,19 +48,50 @@ function getValidRequestParametersObject(){
 
 }
 
+function executeProcess(){
+
+  let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+
+  const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+
+  let innovio_controller = new InnovioController(merchant_provider_configuration);
+
+  let request_parameters = getValidRequestParametersObject();
+
+  return innovio_controller.process(request_parameters);
+
+}
+
+function executeVoid(transaction_object){
+
+  let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+
+  const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+
+  let innovio_controller = new InnovioController(merchant_provider_configuration);
+
+  return innovio_controller.void(transaction_object);
+
+}
+
+function executeRefund(transaction_object){
+
+  let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+
+  const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+
+  let innovio_controller = new InnovioController(merchant_provider_configuration);
+
+  return innovio_controller.refund(transaction_object);
+
+}
+
+
 describe('vendors/merchantproviders/Innovio.js', () => {
 
   it('Should complete a sale', () => {
 
-    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
-
-    const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-
-    let innovio_controller = new InnovioController(merchant_provider_configuration);
-
-    let request_parameters = getValidRequestParametersObject();
-
-    return innovio_controller.process(request_parameters).then(response => {
+    return executeProcess().then(response => {
 
       expect(response).to.have.property('message');
       expect(response).to.have.property('result');
@@ -74,11 +104,52 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
   });
 
-  xit('Should complete a refund', () => {
+  it('Should complete a refund but result with order not settled advisory', () => {
+
+    return executeProcess()
+    .then(results=> {
+
+      du.info(results);
+
+      return {
+        transaction_id: results.result.PO_ID,
+        li_value_1: results.result.TRANS_VALUE
+      };
+    })
+    .then((transaction_object) => executeRefund(transaction_object))
+    .then(response => {
+
+      expect(response).to.have.property('message');
+      expect(response).to.have.property('result');
+      expect(response).to.have.property('code');
+
+      expect(response.code).to.equal('error');
+      expect(response.message).to.equal('Order not settled: Please reverse');
+
+    });
 
   });
 
-  xit('Should complete a void', () => {
+  it('Should complete a void', () => {
+
+    return executeProcess()
+    .then(results=> {
+      return {
+        transaction_id: results.result.PO_ID,
+        polid1: results.result.PO_LI_ID_1
+      };
+    })
+    .then((transaction_object) => executeVoid(transaction_object))
+    .then(response => {
+
+      expect(response).to.have.property('message');
+      expect(response).to.have.property('result');
+      expect(response).to.have.property('code');
+
+      expect(response.code).to.equal('success');
+      expect(response.message).to.equal('APPROVED');
+
+    });
 
   });
 

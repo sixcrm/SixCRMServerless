@@ -5,6 +5,7 @@ const querystring = require('querystring');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
@@ -36,15 +37,19 @@ module.exports = class InnovioResponse extends Response {
 
     du.debug('Map Response Message');
 
-    if(_.has(parsed_response, 'TRANS_STATUS_NAME')){
+    if(_.has(parsed_response, 'TRANS_STATUS_NAME') && stringutilities.nonEmpty(parsed_response.TRANS_STATUS_NAME)){
       return parsed_response.TRANS_STATUS_NAME;
+    }
+
+    if(_.has(parsed_response, 'SERVICE_ADVICE') && stringutilities.nonEmpty(parsed_response.SERVICE_ADVICE)){
+      return parsed_response.SERVICE_ADVICE;
     }
 
     return null;
 
   }
 
-  parseResponse({response: response, body:body}){
+  parseResponse({response:response, body:body}){
 
     du.debug('Parse Response');
 
