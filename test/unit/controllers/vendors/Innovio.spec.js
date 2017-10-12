@@ -180,7 +180,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
     let request_parameters = getValidRequestParametersObject();
 
-    parameters_object = innovio_controller.setRequestParameters({request_parameters: request_parameters, return_parameters: parameters_object});
+    parameters_object = innovio_controller.setRequestParameters({type: 'process', request_parameters: request_parameters, return_parameters: parameters_object});
 
     const required_properties = {
       request_response_format: 'JSON',
@@ -231,7 +231,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
     parameters_object = innovio_controller.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters_object});
 
-    parameters_object = innovio_controller.setRequestParameters({request_parameters: request_parameters, return_parameters: parameters_object});
+    parameters_object = innovio_controller.setRequestParameters({type: 'process', request_parameters: request_parameters, return_parameters: parameters_object});
 
     innovio_controller.validateRequestParameters('process', parameters_object);
 
