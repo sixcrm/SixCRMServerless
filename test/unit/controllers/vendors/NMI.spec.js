@@ -196,7 +196,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
     let request_parameters = getValidRequestParametersObject();
 
-    parameters_object = nmi_controller.setRequestParameters({request_parameters: request_parameters, return_parameters: parameters_object});
+    parameters_object = nmi_controller.setRequestParameters({type:'process', request_parameters: request_parameters, return_parameters: parameters_object});
 
     const required_properties = {
       username: 'test@example.com',
@@ -245,7 +245,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
     parameters_object = nmi_controller.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters_object});
 
-    parameters_object = nmi_controller.setRequestParameters({request_parameters: request_parameters, return_parameters: parameters_object});
+    parameters_object = nmi_controller.setRequestParameters({type: 'process', request_parameters: request_parameters, return_parameters: parameters_object});
 
     nmi_controller.validateRequestParameters('process', parameters_object);
 

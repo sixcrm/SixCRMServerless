@@ -20,6 +20,82 @@ class InnovioController extends MerchantProvider {
 
     }
 
+    void(request_parameters){
+
+      du.debug('Void');
+
+      const method_parameters = {request_action: 'CCREVERSE'};
+
+      return new Promise((resolve, reject) => {
+
+        let parameters = this.createParameterObject();
+
+        parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
+
+        parameters = this.setRequestParameters({request_parameters: request_parameters, return_parameters: parameters});
+
+        this.validateRequestParameters('refund', parameters);
+
+        let parameter_querystring = querystring.stringify(parameters);
+
+        var request_options = {
+    		  headers: {'content-type' : 'application/x-www-form-urlencoded'},
+    		  url:     this.get('VendorConfiguration').endpoint,
+    		  body:    parameter_querystring
+        };
+
+        request.post(request_options, (error, response, body) => {
+
+          if(_.isError(error)){
+            reject(error);
+          }
+
+          resolve(this.getResponseObject({error: error, response: response, body: body}));
+
+        });
+
+      });
+
+    }
+
+    refund(request_parameters){
+
+      du.debug('Refund');
+
+      const method_parameters = {request_action: 'CCCREDIT'};
+
+      return new Promise((resolve, reject) => {
+
+        let parameters = this.createParameterObject();
+
+        parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
+
+        parameters = this.setRequestParameters({request_parameters: request_parameters, return_parameters: parameters});
+
+        this.validateRequestParameters('refund', parameters);
+
+        let parameter_querystring = querystring.stringify(parameters);
+
+        var request_options = {
+    		  headers: {'content-type' : 'application/x-www-form-urlencoded'},
+    		  url:     this.get('VendorConfiguration').endpoint,
+    		  body:    parameter_querystring
+        };
+
+        request.post(request_options, (error, response, body) => {
+
+          if(_.isError(error)){
+            reject(error);
+          }
+
+          resolve(this.getResponseObject({error: error, response: response, body: body}));
+
+        });
+
+      });
+
+    }
+
     process(request_parameters){
 
       du.debug('Process');
