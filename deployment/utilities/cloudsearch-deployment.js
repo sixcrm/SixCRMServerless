@@ -1,5 +1,6 @@
 'use strict';
 const _ = require('underscore');
+const fs = require('fs');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
@@ -109,7 +110,7 @@ class CloudsearchDeployment{
 
         if(documents.length > 0){
 
-          return '['+arrayutilities.compress(documents,',')+']';
+          return '['+arrayutilities.compress(documents, ',', '')+']';
 
         }else{
 

@@ -214,7 +214,7 @@ deployment:
       ###########
       #CloudSearch
       - ./tools/inCommit.sh ^deployment/cloudsearch/.* && echo "skipping, no updates" || node ./deployment/cloudsearch/deploy.js
-      - ./tools/inCommit.sh ^deployment/cloudsearch/.* && echo "skipping, no updates" || node ./deployment/cloudsearch/purge.js
+      - node ./deployment/cloudsearch/purge.js
       ###########
 
       ###########
