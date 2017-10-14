@@ -240,75 +240,6 @@ class customerController extends entityController {
 
     }
 
-    // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
-    // we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
-    //Technical Debt:  Please refactor.
-    listTransactionsByCustomer({customer, pagination, fatal}){
-
-        du.debug('List Transactions By Customer');
-
-        return this.getCustomerSessions(customer).then((sessions) => {
-
-            if (!sessions) {
-                return this.createEndOfPaginationResponse('transactions', []);
-            }
-
-            let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session});
-            });
-
-            return Promise.all(rebill_promises).then((rebill_lists) => {
-
-                du.debug('Rebill lists are', rebill_lists);
-
-                let rebill_ids = [];
-
-                rebill_lists = rebill_lists || [];
-
-                rebill_lists.forEach((rebill_list) => {
-
-                  let list = rebill_list || [];
-
-                  list.forEach((rebill) => {
-                      rebill_ids.push(rebill.id);
-                  });
-
-                });
-
-                let transaction_promises = arrayutilities.map(rebill_ids, (rebill) => {
-                  return this.executeAssociatedEntityFunction('transactionController', 'listBySecondaryIndex', {field: 'rebill', index_value: rebill, index_name: 'rebill-index', pagination: pagination});
-                });
-
-                return Promise.all(transaction_promises).then(transaction_responses => {
-
-                  let transactions = [];
-
-                  transaction_responses = transaction_responses || [];
-
-                  transaction_responses.forEach((transaction_response) => {
-
-                    let transactions_from_response = transaction_response.transactions || [];
-
-                    transactions_from_response.forEach((transaction) => {
-                      if (transaction && _.has(transaction, 'id')) {
-                        transactions.push(transaction);
-                      } else {
-                        du.warning('Invalid transaction', transaction);
-                      }
-                    });
-
-                  });
-
-                  return this.createEndOfPaginationResponse('transactions', transactions);
-
-                });
-
-            });
-
-        });
-
-    }
-
     listCustomerSessions({customer, pagination}) {
 
       du.debug('List Customer Sessions');
@@ -355,25 +286,6 @@ class customerController extends entityController {
         });
     }
 
-    createEndOfPaginationResponse(items_name, items) {
-
-        du.debug('Create End Of Pagination Response', items_name, items);
-
-        let pagination = {};
-
-        pagination.count = items.length;
-        pagination.end_cursor = '';
-        pagination.has_next_page = false;
-
-        let response = {};
-
-        response[items_name] = items;
-        response['pagination'] = pagination;
-
-        du.debug('Returning', response);
-
-        return Promise.resolve(response);
-    }
 }
 
 module.exports = new customerController();

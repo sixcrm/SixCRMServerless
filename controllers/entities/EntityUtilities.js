@@ -1135,4 +1135,26 @@ module.exports = class entityUtilitiesController {
 
     }
 
+    //Technical Debt:  Evaluate the utility of this method.
+    createEndOfPaginationResponse(items_name, items) {
+
+      du.debug('Create End Of Pagination Response');
+
+      let pagination = {};
+
+      pagination.count = items.length;
+      pagination.end_cursor = '';
+      pagination.has_next_page = false;
+
+      let response = {};
+
+      response[items_name] = items;
+      response['pagination'] = pagination;
+
+      du.debug('Returning', response);
+
+      return Promise.resolve(response);
+
+    }
+
 }

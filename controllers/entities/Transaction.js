@@ -298,6 +298,76 @@ class transactionController extends entityController {
 
     }
 
+    // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
+    // we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
+    //Technical Debt:  Please refactor.
+    listByCustomer({customer, pagination, fatal}){
+
+        du.debug('List Transactions By Customer');
+
+        return this.executeAssociatedEntityFunction('customerController', 'getCustomerSessions', customer)
+        .then(sessions => {
+
+          if (!sessions) {
+            return this.createEndOfPaginationResponse('transactions', []);
+          }
+
+          //Technical Debt:  Use a list method.
+          let rebill_promises = arrayutilities.map(sessions, (session) => {
+            return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session}).then(rebills => this.getResult(rebills, 'rebills'))
+          });
+
+          return Promise.all(rebill_promises).then((rebill_lists) => {
+
+            let rebill_ids = [];
+
+            rebill_lists = rebill_lists || [];
+
+            arrayutilities.map(rebill_lists, (rebill_list) => {
+
+              let list = rebill_list || [];
+
+              arrayutilities.map(list, (rebill) => {
+                  rebill_ids.push(rebill.id);
+              });
+
+            });
+
+            let transaction_promises = arrayutilities.map(rebill_ids, (rebill) => {
+              return this.executeAssociatedEntityFunction('transactionController', 'listBySecondaryIndex', {field: 'rebill', index_value: rebill, index_name: 'rebill-index', pagination: pagination});
+            });
+
+            return Promise.all(transaction_promises).then(transaction_responses => {
+
+              let transactions = [];
+
+              transaction_responses = transaction_responses || [];
+
+              transaction_responses.forEach((transaction_response) => {
+
+                let transactions_from_response = transaction_response.transactions || [];
+
+                transactions_from_response.forEach((transaction) => {
+                  if (transaction && _.has(transaction, 'id')) {
+                    transactions.push(transaction);
+                  } else {
+                    du.warning('Invalid transaction', transaction);
+                  }
+                });
+
+              });
+
+              return this.createEndOfPaginationResponse('transactions', transactions);
+
+            });
+
+          });
+
+      });
+
+    }
+
+
 }
 
 module.exports = new transactionController();

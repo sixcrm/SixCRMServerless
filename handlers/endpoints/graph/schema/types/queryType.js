@@ -239,9 +239,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, transaction){
-              const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+              const transactionsController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 
-              return customerController.listTransactionsByCustomer({customer: transaction.customer, pagination: transaction.pagination, fatal: list_fatal});
+              return transactionsController.listByCustomer({customer: transaction.customer, pagination: transaction.pagination, fatal: list_fatal});
             }
         },
         sessionlistbycustomer: {
