@@ -43,7 +43,10 @@ describe('Get '+test_name+' Test', function() {
     let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
     it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
+
         var query = tu.getQuery(test_query);
+
+        du.info(test_jwt, account.id, query);
 
         this_request.post('graph/'+account.id)
 				.set('Authorization', test_jwt)
@@ -54,19 +57,16 @@ describe('Get '+test_name+' Test', function() {
 				.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 				.end(function(err, response){
-    if(err){
-						//du.warning(err);
-    }
 
 					du.debug(response.body);
 
-    assert.isObject(response.body.response, JSON.stringify(response.body));
+          assert.isObject(response.body.response, JSON.stringify(response.body));
 
-    assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/campaign/campaigndelta'));
+          assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/campaign/campaigndelta'));
 
-    done();
+          done();
 
-});
+        });
 
     });
 

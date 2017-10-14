@@ -13,7 +13,9 @@ module.exports.graphObj = new GraphQLObjectType({
       campaign:{
         type: campaignType.graphObj,
         description: 'The campaign',
-        resolve: campaign => campaignController.get(campaign)
+        resolve: (delta) => {
+          return campaignController.get({id: delta.campaign});
+        }
       },
       percent_change_amount:{
           type: new GraphQLNonNull(GraphQLString),

@@ -9,6 +9,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
+//Technical Debt:  Need a refactor.
 
 module.exports = class Process{
 
