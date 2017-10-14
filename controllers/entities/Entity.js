@@ -534,6 +534,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       delete_parameters[this.primary_key] = id;
 
+
       return this.can('delete', true)
       .then(() => this.checkAssociatedEntities({id: id}))
       .then(() => this.exists({entity: delete_parameters}))

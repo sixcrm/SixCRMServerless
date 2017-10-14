@@ -121,6 +121,8 @@ class NotificationProvider {
 
         du.debug('Save and send notification.');
 
+        //du.warning(user); process.exit();
+
         return Promise.all([
             notificationSettingController.get({id: user}), // notification settings
             userSettingController.get({id: user}), // user settings
@@ -211,7 +213,9 @@ class NotificationProvider {
                     }
                 }
 
-                return Promise.all(notificationSendOperations).then(() => notification);
+                return Promise.all(notificationSendOperations).then(() => {
+                  return notification;
+                });
             });
         });
 

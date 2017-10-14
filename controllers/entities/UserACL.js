@@ -45,8 +45,10 @@ class userACLController extends entityController {
       du.debug('UserACLController Create');
 
       return super.create({entity: entity, primary_key: primary_key}).then((acl) => {
-        return this.createNotification(acl, 'created', 'You have been assigned to a new account.');
+        this.createNotification(acl, 'created', 'You have been assigned to a new account.');
+        return acl;
       });
+
 
     }
 
@@ -57,18 +59,23 @@ class userACLController extends entityController {
       return super.update({entity: entity, primary_key: primary_key}).then((acl) => {
 
         this.createNotification(acl, 'updated', 'Your role on account has been updated.');
+        return acl;
 
       });
 
     }
 
-    delete(acl, primary_key) {
+    delete({id, primary_key}) {
 
-        return super.delete({entity: acl, primary_key: primary_key})
-            .then(() =>
-                this.createNotification(acl, 'deleted', 'You have been removed from account.')
-                    .then(() => acl)
-                    .catch(() => acl));
+      return super.delete({id: id, primary_key: primary_key}).then((acl) => {
+
+        //Technical Debt:  Broken
+        //this.createNotification(acl, 'deleted', 'You have been removed from account.');
+
+        return acl;
+
+      });
+
     }
 
     //Technical Debt:  This doesn't go here.
