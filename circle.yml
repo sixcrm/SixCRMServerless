@@ -225,7 +225,7 @@ deployment:
 
       ###########
       #DynamoDB
-      - node ./deployment/dynamodb/purge_tables.js && exit 0;
+      #- node ./deployment/dynamodb/purge_tables.js && exit 0;
       - ./tools/inCommit.sh ^model/dynamodb/.* && echo "skipping, no updates" || node ./deployment/dynamodb/deploy_tables.js
       ###########
 
