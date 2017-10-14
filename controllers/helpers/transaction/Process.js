@@ -117,7 +117,8 @@ module.exports = class Process{
 
       du.debug('Process Transaction');
 
-      return this.instantiateGateway()
+      return this.validateSelectedMerchantProvider()
+      .then(() => this.instantiateGateway())
       .then(() => this.createProcessingParameters())
       .then(processing_parameters => {
         return this.instantiated_gateway.process(processing_parameters);
@@ -126,6 +127,16 @@ module.exports = class Process{
         response.merchant_provider = this.selected_merchantprovider.id;
         return response;
       });
+
+    }
+
+    validateSelectedMerchantProvider(){
+
+      du.debug('Validate Selected Merchant Provider');
+
+      mvu.validateModel(this.selected_merchantprovider, global.SixCRM.routes.path('model','transaction/merchantprovider.json'));
+
+      return Promise.resolve(true);
 
     }
 
@@ -687,8 +698,6 @@ module.exports = class Process{
 
       du.debug('Marry Merchant Provider Summaries');
 
-      du.warning(this.merchantprovider_summaries);
-
       this.merchantprovider_summaries.forEach(summary => {
 
         arrayutilities.filter(this.merchantproviders, (merchantprovider, index) => {
@@ -729,7 +738,7 @@ module.exports = class Process{
 
         });
 
-        //du.info(merchant_providers, return_array);
+        du.info(return_array);
 
         return Promise.resolve(return_array);
 
@@ -749,7 +758,7 @@ module.exports = class Process{
 
         });
 
-        //du.info(merchant_providers, return_array);
+        du.info(return_array);
 
         return Promise.resolve(return_array);
 
@@ -795,7 +804,7 @@ module.exports = class Process{
 
         });
 
-        //du.info(merchant_providers, return_array);
+        du.info(return_array);
 
         return Promise.resolve(return_array);
 
@@ -815,7 +824,7 @@ module.exports = class Process{
 
         });
 
-        //du.info(merchant_providers, return_array);
+        du.info(return_array);
 
         return Promise.resolve(return_array);
 
@@ -828,14 +837,17 @@ module.exports = class Process{
         let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
           if(parseInt(merchant_provider.summary.summary.today.count) >= parseInt(merchant_provider.processing.transaction_counts.daily)){
+            du.warning('Daily Count Shortage');
             return false;
           }
 
           if(parseInt(merchant_provider.summary.summary.thisweek.count) >= parseInt(merchant_provider.processing.transaction_counts.weekly)){
+            du.warning('Weekly Count Shortage');
             return false;
           }
 
           if(parseInt(merchant_provider.summary.summary.thismonth.count) >= parseInt(merchant_provider.processing.transaction_counts.monthly)){
+            du.warning('Monthly Count Shortage');
             return false;
           }
 
@@ -843,7 +855,7 @@ module.exports = class Process{
 
         });
 
-        //du.info(merchant_providers, return_array);
+        du.info(return_array);
 
         return Promise.resolve(return_array);
 
@@ -853,24 +865,11 @@ module.exports = class Process{
 
       du.debug('Instantiate Gateway');
 
-      if(!_.has(this, 'selected_merchantprovider')){
-        eu.throwError('server','Process.instantiateGateway assumes selected_merchantprovider property');
-      }
-
       let gateway = null;
 
-      //Technical Debt:  If all Merchant Providers have hit thier cap, this is not going to work.
-     	if(objectutilities.hasRecursive(this,'selected_merchantprovider.gateway.name')){
+      let GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+this.selected_merchantprovider.gateway.name+'/handler.js');
 
-        let GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+this.selected_merchantprovider.gateway.name+'/handler.js');
-
-        gateway = new GatewayController(this.selected_merchantprovider.gateway);
-
-      }else{
-
-     		eu.throwError('server','Process.instantiateGateway did not recognize selected_merchantprovider.gateway.name as valid.');
-
-     	}
+      gateway = new GatewayController(this.selected_merchantprovider.gateway);
 
       this.instantiated_gateway = gateway;
 

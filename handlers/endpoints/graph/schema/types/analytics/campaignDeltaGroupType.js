@@ -2,6 +2,7 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+
 let campaignType = require('../campaign/campaignType');
 const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 

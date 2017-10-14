@@ -50,9 +50,9 @@
 			"reserve_rate": 0.5,
 			"maximum_chargeback_ratio":0.17,
 			"transaction_counts":{
-				"daily":6000,
-				"monthly":6000,
-				"weekly":6000
+				"daily":60000,
+				"monthly":60000,
+				"weekly":60000
 			}
 		},
 		"enabled":true,
