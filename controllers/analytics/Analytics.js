@@ -52,51 +52,6 @@ class AnalyticsController extends AnalyticsUtilities{
           'phone'
         ];
 
-        this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
-
-
-    }
-
-    executeAnalyticsFunction(argumentation, function_name){
-
-        if(_.isFunction(this[function_name])){
-
-            return this.can(function_name).then((permission) => {
-
-                if(permission !== true){
-                    return Promise.reject('Insufficient Permissions');
-                }
-
-                this.setCacheSettings(argumentation);
-
-                return this[function_name](argumentation);
-
-            });
-
-        }else{
-
-            return Promise.reject(eu.getError('server', 'AnalyticsController.'+function_name+' is not defined.'));
-
-        }
-
-    }
-
-    can(function_name){
-
-        du.debug('Can');
-
-        du.debug('Can check:', function_name, 'analytics');
-
-        return new Promise((resolve) => {
-
-          let permission = this.permissionutilities.validatePermissions(function_name, 'analytics');
-
-          du.debug('Has permission:', permission);
-
-          return resolve(permission);
-
-        });
-
     }
 
     getBINList(parameters){
