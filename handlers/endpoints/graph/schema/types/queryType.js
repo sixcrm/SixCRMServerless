@@ -270,8 +270,9 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
                 const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+                //here
 
-                return sessionController.listSessionsByAffiliate({affiliate: args.affiliate, pagination: args.pagination, fatal: list_fatal});
+                return sessionController.listByAffiliate({affiliate: args.affiliate, pagination: args.pagination, fatal: list_fatal});
             }
         },
         rebilllistbycustomer: {
