@@ -21,7 +21,7 @@ class ProductController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('productScheduleController', 'listProductSchedulesByProduct', {product: id}),
+        this.executeAssociatedEntityFunction('productScheduleController', 'listByProduct', {product: id}),
         this.executeAssociatedEntityFunction('transactionController', 'listByProductID', {id:id})
       ];
 
@@ -94,7 +94,7 @@ class ProductController extends entityController {
         eu.throwError('bad_request','getProductSchedules requires a product argument.');
       }
 
-      return this.executeAssociatedEntityFunction('productScheduleController', 'listProductSchedulesByProduct', {product: args.product, pagination: args.pagination});
+      return this.executeAssociatedEntityFunction('productScheduleController', 'listByProduct', {product: args.product, pagination: args.pagination});
 
     }
 

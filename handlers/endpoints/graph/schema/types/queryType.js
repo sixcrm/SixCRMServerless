@@ -226,7 +226,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
               const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
-              return productScheduleController.listProductSchedulesByProduct({product: args.product, pagination: args.pagination, fatal: list_fatal});
+              return productScheduleController.listByProduct({product: args.product, pagination: args.pagination, fatal: list_fatal});
             }
         },
         transactionlistbycustomer: {

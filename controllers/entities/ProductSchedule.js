@@ -66,9 +66,9 @@ class productScheduleController extends entityController {
     //Technical Debt:  Expensive!
     //Technical Debt:  Slow
     //Technical Debt:  Dynamo scan't query on map attributes of lists
-    listProductSchedulesByProduct({product, pagination}){
+    listByProduct({product, pagination}){
 
-      du.debug('List Product Schedules By Product');
+      du.debug('List By Product');
 
       let product_id = this.getID(product);
 
@@ -90,7 +90,7 @@ class productScheduleController extends entityController {
               });
 
               if(!_.isUndefined(found)){
-                return_array.push(found);
+                return_array.push(productschedule);
               }
             }
 

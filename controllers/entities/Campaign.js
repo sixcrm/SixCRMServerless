@@ -242,7 +242,7 @@ class campaignController extends entityController {
         eu.throwError('bad_request','listCampaignsByProduct requires a product argument.');
       }
 
-      return this.executeAssociatedEntityFunction('productScheduleController', 'listProductSchedulesByProduct', {product: args.product, pagination: args.pagination}).then((product_schedules) => {
+      return this.executeAssociatedEntityFunction('productScheduleController', 'listByProduct', {product: args.product, pagination: args.pagination}).then((product_schedules) => {
 
         if(_.has(product_schedules, 'productschedules') && _.isArray(product_schedules.productschedules)){
 
