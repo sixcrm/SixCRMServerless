@@ -132,13 +132,28 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
             }
 
             if(arrayutilities.nonEmpty(table_keys)){
+
+              let seeds = global.SixCRM.routes.include('seeds', table_definition.Table.TableName);
+              let delete_count = 0;
+
               let delete_promises = arrayutilities.map(table_keys, (table_key) => {
-                this.dynamodbutilities.deleteRecord(table_definition.Table.TableName, {id: table_key}, null, null);
+
+                  if (seeds.find((seed) => seed.id === table_key)) {
+                      du.info('Deleting ' + table_definition.Table.TableName + ' with id ' + table_key);
+
+                      this.dynamodbutilities.deleteRecord(table_definition.Table.TableName, {id: table_key}, null, null);
+                      delete_count++;
+
+                      return;
+                  } else {
+                      du.output('Not deleting ' + table_definition.Table.TableName + ' with id ' + table_key);
+                  }
+
               });
 
               return Promise.all(delete_promises).then(delete_promises => {
 
-                du.output(delete_promises.length+' records deleted.');
+                du.output(delete_count+' records deleted.');
 
                 return true;
 
