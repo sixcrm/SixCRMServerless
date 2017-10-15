@@ -109,7 +109,9 @@ let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
 let listBINsType =  require('./analytics/listBINsType');
 
-let transactionReportType = require('./analytics/transactionReportType');
+let transactionsReportTimeseriesType = require('./analytics/transactions_report/transactionsReportTimeseriesType');
+let transactionsReportSummaryType = require('./analytics/transactions_report/transactionsReportSummaryType');
+let transactionsReportDetailType = require('./analytics/transactions_report/transactionsReportDetailType');
 
 let listActivityType = require('./analytics/listActivityType');
 
@@ -370,8 +372,8 @@ module.exports.graphObj = new GraphQLObjectType({
         * Analytics Endpoints
         */
 
-        transactionreport: {
-            type: transactionReportType.graphObj,
+        transactionsreporttimeseries: {
+            type: transactionsReportTimeseriesType.graphObj,
             args: {
                 analyticsfilter: { type: analyticsFilterInputType.graphObj },
                 cache: {type: cacheInputType.graphObj},
@@ -381,17 +383,52 @@ module.exports.graphObj = new GraphQLObjectType({
 
               const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-              let result = analyticsController.executeAnalyticsFunction(args, 'getTransactionReport');
+              return analyticsController.executeAnalyticsFunction(args, 'getTransactionsReportTimeseries');
+
+            }
+        },
+        transactionsreportsummary: {
+            type: transactionsReportSummaryType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj},
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+
+              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+              let result = analyticsController.executeAnalyticsFunction(args, 'getTransactionsReportSummary');
 
               return Promise.resolve(result).then(result => {
-                console.log(result);
 
                 return result;
+
               });
 
             }
         },
+        transactionsreportdetail: {
+            type: transactionsReportDetailType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj},
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, args){
 
+              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+              let result = analyticsController.executeAnalyticsFunction(args, 'getTransactionsReportDetail');
+
+              return Promise.resolve(result).then(result => {
+
+                return result;
+
+              });
+
+            }
+        },
         listmerchantprovidersummaries: {
             type: listMerchantProviderSummariesType.graphObj,
             args: {

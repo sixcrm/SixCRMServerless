@@ -206,9 +206,21 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
-    getTransactionReport(parameters){
+    getTransactionsReportSummary(parameters){
 
-        du.debug('Get Transaction Report Revenue Summary');
+        du.debug('Get Transactions Report Summary');
+
+        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, 1);
+
+        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
+
+        return this.getResults('transactions_report_summary', parameters, this.default_query_filters);
+
+    }
+
+    getTransactionsReportTimeseries(parameters){
+
+        du.debug('Get Transactions Report Timeseries');
 
         let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
 
@@ -216,7 +228,17 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
-        return this.getResults('transactions_revenue_summary', parameters, this.default_query_filters);
+        return this.getResults('transactions_report_timeseries', parameters, this.default_query_filters);
+
+    }
+
+    getTransactionsReportDetail(parameters){
+
+      du.debug('Get Transaction Report Detail');
+
+      parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      return this.getResults('transactions_report_detail', parameters, this.default_query_filters);
 
     }
 

@@ -5,12 +5,9 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
-const transactionSummaryPeriodType = require('./transactionSummaryPeriodType');
-const analyticsPaginationType = require('./paginationType');
-
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'TransactionReportByDayType',
-    description: 'Transaction report by day',
+    name: 'TransactionsReportTimeseriesRowType',
+    description: 'Transactions Report Timeseries Row',
     fields: () => ({
       period: {
         type: GraphQLString
