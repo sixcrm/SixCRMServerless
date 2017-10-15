@@ -4,6 +4,7 @@ const _  = require('underscore');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 //Technical Debt:  All of these types frequently have the same fields (id, account, active, created_at, updated_at).  This would be a excellent usage of fragments...
 
@@ -203,6 +204,19 @@ module.exports.graphObj = new GraphQLObjectType({
 
               return trackerController.listByAffiliate({affiliate: args.affiliate, pagination: args.pagination, fatal: list_fatal});
             }
+        },
+        notificationlistbytype: {
+          type: notificationListType.graphObj,
+          args: {
+              type: {type: GraphQLString},
+              user: {type: GraphQLBoolean},
+              pagination: {type: paginationInputType.graphObj}
+          },
+          resolve: function(root, args){
+            const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
+
+            return notificationController.listByType({type: args.type, user: args.user, pagination: args.pagination, fatal: list_fatal});
+          }
         },
         customernotelistbycustomer: {
             type: customerNoteListType.graphObj,

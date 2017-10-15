@@ -64,6 +64,30 @@ class notificationController extends entityController {
 
     }
 
+    listByType({type, pagination, user, fatal}){
+
+      du.debug('List By Type');
+
+      let query_parameters = {
+        filter_expression: '#type = :typev',
+        expression_attribute_names: {
+          '#type': 'type'
+        },
+        expression_attribute_values: {
+          ':typev': type
+        }
+      };
+
+      if(!_.isUndefined(user) && user == true){
+        query_parameters.filter_expression += ' AND #user = :userv';
+        query_parameters.expression_attribute_names['#user'] = 'user';
+        query_parameters.expression_attribute_values[':userv'] = this.getID(global.user)
+      }
+
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal});
+
+    }
+
 }
 
 module.exports = new notificationController();
