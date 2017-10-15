@@ -251,18 +251,15 @@ function getValidProductSchedule(){
 describe('helpers/transaction/Process.spec.js', () => {
 
     before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
     });
 
     afterEach(() => {
         mockery.resetCache();
-    });
-
-    after(() => {
         mockery.deregisterAll();
     });
 
@@ -284,11 +281,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.filterMerchantProviders().then((result) => {
 
@@ -337,9 +334,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.selectMerchantProvider().then((result) => {
 
@@ -366,11 +363,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.filterMerchantProviders().then((result) => {
 
@@ -397,11 +394,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.filterMerchantProviders().then((result) => {
 
@@ -428,11 +425,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.filterMerchantProviders().then((result) => {
 
@@ -459,11 +456,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.filterMerchantProviders().then((result) => {
 
@@ -490,11 +487,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.filterMerchantProviders().then((result) => {
 
@@ -521,11 +518,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.filterMerchantProviders().then((result) => {
 
@@ -550,11 +547,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.selected_credit_card = creditcard;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.selected_credit_card = creditcard;
 
       return ph.selectMerchantProviderWithDistributionLeastSumOfSquares().then((result) => {
 
@@ -572,7 +569,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       try{
         ph.setParameters(parameters);
       }catch(error){
-        expect(error.message).to.equal('[500] Process class parameters missing required field:"customer".');
+        expect(error.message).to.equal('[500] Missing source object field: "customer".');
       };
 
       parameters = {
@@ -582,7 +579,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       try{
         ph.setParameters(parameters);
       }catch(error){
-        expect(error.message).to.equal('[500] Process class parameters missing required field:"productschedule".');
+        expect(error.message).to.equal('[500] Missing source object field: "productschedule".');
       };
 
       parameters = {
@@ -593,7 +590,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       try{
         ph.setParameters(parameters);
       }catch(error){
-        expect(error.message).to.equal('[500] Process class parameters missing required field:"amount".');
+        expect(error.message).to.equal('[500] Missing source object field: "amount".');
       };
 
     });
@@ -610,9 +607,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       ph.setParameters(parameters);
 
-      expect(ph.customer).to.equal(parameters.customer);
-      expect(ph.productschedule).to.equal(parameters.productschedule);
-      expect(ph.amount).to.equal(parameters.amount);
+      expect(ph.parameters.customer).to.equal(parameters.customer);
+      expect(ph.parameters.productschedule).to.equal(parameters.productschedule);
+      expect(ph.parameters.amount).to.equal(parameters.amount);
 
     });
 
@@ -629,7 +626,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       ph.setParameters(parameters);
 
-      expect(ph.merchantprovider).to.equal('123');
+      expect(ph.parameters.merchantprovider).to.equal('123');
 
     });
 
@@ -647,7 +644,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       ph.setParameters(parameters);
 
-      expect(ph.somethingelse).to.be.undefined;
+      expect(ph.parameters.somethingelse).to.be.undefined;
 
     });
 
@@ -675,7 +672,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       return ph.hydrateParameters().then(() => {
 
-        expect(ph.customer).to.equal(customer);
+        expect(ph.parameters.customer).to.equal(customer);
 
       });
 
@@ -687,20 +684,9 @@ describe('helpers/transaction/Process.spec.js', () => {
       let customer = getValidCustomer();
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: (table, parameters, index, callback) => {
-            callback(null, [productschedule]);
+        queryRecords: (table, parameters, index) => {
+          return Promise.resolve({Items:[productschedule]});
         }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
-        get: (product_schedule_id) => {
-          return Promise.resolve(productschedule);
-        },
-        isUUID:() => {
-          return true;
-        },
-        disableACLs: () => {},
-        enableACLs: () => {}
       });
 
       let ph = new processHelperController();
@@ -716,7 +702,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       return ph.hydrateParameters().then(() => {
 
-        expect(ph.productschedule).to.equal(productschedule);
+        expect(ph.parameters.productschedule).to.equal(productschedule);
 
       });
 
@@ -812,7 +798,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
     });
 
-    it('passes when parameters validate', () => {
+   it('passes when parameters validate', () => {
 
       let ph = new processHelperController();
 
@@ -824,19 +810,13 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       ph.setParameters(parameters);
 
-      let validated = false;
-
-      try{
-       validated = ph.validateParameters();
-      }catch(e){
-       du.warning(e);
-      }
+      let validated = ph.validateParameters();
 
       expect(validated).to.equal(true);
 
     });
 
-    it('hydrates credit cards', () => {
+   it('hydrates credit cards', () => {
 
       let credit_card = getValidCreditCard();
 
@@ -858,7 +838,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       return ph.hydrateCreditCards().then(() => {
 
-        ph.customer.creditcards.forEach((credit_card) => {
+        ph.parameters.customer.creditcards.forEach((credit_card) => {
 
           let validated = mvu.validateModel(credit_card, global.SixCRM.routes.path('model','entities/creditcard.json'));
 
@@ -872,7 +852,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
     });
 
-    it('selects the default credit card', () => {
+   it('selects the default credit card', () => {
 
       let ph = new processHelperController();
 
@@ -966,11 +946,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_credit_card = getValidCreditCard();
+      ph.parameters.selected_credit_card = getValidCreditCard();
 
       return ph.setBINNumber().then(binnumber => {
 
-        expect(binnumber).to.equal(ph.selected_credit_card.bin.substring(0, 6));
+        expect(binnumber).to.equal(ph.parameters.selected_credit_card.bin.substring(0, 6));
 
       });
 
@@ -988,12 +968,12 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_credit_card = getValidCreditCard();
+      ph.parameters.selected_credit_card = getValidCreditCard();
       ph.setBINNumber();
 
       return ph.getSelectedCreditCardProperties().then(selected_credit_card_properties => {
 
-        expect(ph.selected_credit_card.properties).to.equal(cc_properties);
+        expect(ph.parameters.selected_credit_card.properties).to.equal(cc_properties);
 
       });
 
@@ -1027,47 +1007,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       return ph.getLoadBalancer().then(loadbalancer => {
 
         expect(loadbalancer).to.deep.equal(lb_1);
-        expect(ph.loadbalancer).to.deep.equal(lb_1);
-
-      });
-
-    });
-
-    it('fails to select a loadbalancer if loadbalancer are not set', () => {
-
-      let ph = new processHelperController();
-
-      return ph.selectLoadBalancer().catch(error => {
-        expect(error.message).to.equal('[500] Loadbalancer must be set before selecting a loadbalancer.');
-      });
-
-    });
-
-    it('selects a load balancer', () => {
-
-      let lb_1 = getValidLoadBalancer();
-
-      let parameters = {
-        customer: getValidCustomer(),
-        productschedule: getValidProductSchedule(),
-        amount: '12.99'
-      };
-
-      let cc_1 = getValidCreditCard();
-
-      parameters.customer.creditcards = [cc_1];
-      parameters.productschedule.loadbalancer = lb_1;
-
-      let ph = new processHelperController();
-
-      ph.loadbalancer = lb_1;
-
-      ph.setParameters(parameters);
-
-      return ph.selectLoadBalancer().then(loadbalancer => {
-
-        expect(ph).to.have.property('selected_loadbalancer');
-        expect(ph.selected_loadbalancer).to.equal(lb_1);
+        expect(ph.parameters.selected_loadbalancer).to.deep.equal(lb_1);
 
       });
 
@@ -1090,12 +1030,12 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let lb_1 = getValidLoadBalancer();
 
-      ph.selected_loadbalancer = lb_1;
+      ph.parameters.selected_loadbalancer = lb_1;
 
       return ph.getMerchantProviders().then(result => {
 
         expect(result).to.equal(merchantproviders);
-        expect(ph.merchantproviders).to.equal(merchantproviders);
+        expect(ph.parameters.merchantproviders).to.equal(merchantproviders);
 
       });
 
@@ -1127,8 +1067,8 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_credit_card = getValidCreditCard();
-      ph.selected_credit_card.properties = getValidCreditCardProperties();
+      ph.parameters.selected_credit_card = getValidCreditCard();
+      ph.parameters.selected_credit_card.properties = getValidCreditCardProperties();
 
       return ph.filterTypeMismatchedMerchantProviders(merchantproviders).then(filtered_merchantproviders => {
 
@@ -1147,9 +1087,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_credit_card = getValidCreditCard();
-      ph.selected_credit_card.properties = getValidCreditCardProperties();
-      ph.selected_credit_card.properties.brand = 'American Express';
+      ph.parameters.selected_credit_card = getValidCreditCard();
+      ph.parameters.selected_credit_card.properties = getValidCreditCardProperties();
+      ph.parameters.selected_credit_card.properties.brand = 'American Express';
 
       return ph.filterTypeMismatchedMerchantProviders(merchantproviders).then(filtered_merchantproviders => {
 
@@ -1175,7 +1115,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.merchantproviders = merchantproviders;
+      ph.parameters.merchantproviders = merchantproviders;
 
       return ph.getMerchantProviderSummaries().then(results => {
 
@@ -1192,15 +1132,15 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.merchantproviders = merchantproviders;
-      ph.merchantprovider_summaries = merchantprovider_summaries;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.merchantprovider_summaries = merchantprovider_summaries;
 
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
 
       return ph.marryMerchantProviderSummaries().then(() => {
 
-        expect(ph.merchantproviders).to.deep.equal(merchantproviders);
+        expect(ph.parameters.merchantproviders).to.deep.equal(merchantproviders);
 
       });
 
@@ -1216,10 +1156,10 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.merchantproviders = merchantproviders;
+      ph.parameters.merchantproviders = merchantproviders;
 
-      return ph.filterInvalidMerchantProviders(ph.merchantproviders).then(results => {
-        expect(results).to.deep.equal(ph.merchantproviders);
+      return ph.filterInvalidMerchantProviders(ph.parameters.merchantproviders).then(results => {
+        expect(results).to.deep.equal(ph.parameters.merchantproviders);
       });
 
     });
@@ -1249,9 +1189,10 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.merchantproviders = merchantproviders;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 1.00;
 
-      return ph.filterCAPShortageMerchantProviders(ph.merchantproviders).then(results => {
+      return ph.filterCAPShortageMerchantProviders(ph.parameters.merchantproviders).then(results => {
 
         expect(results).to.deep.equal(merchantproviders);
 
@@ -1354,8 +1295,8 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.merchantproviders = merchantproviders;
-      ph.selected_loadbalancer = loadbalancer;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.selected_loadbalancer = loadbalancer;
 
       return ph.calculateLoadBalancerSum().then(result => {
 
@@ -1382,12 +1323,12 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.merchantproviders = merchantproviders;
+      ph.parameters.merchantproviders = merchantproviders;
 
       try{
         ph.calculateLoadBalancerSum();
       }catch(error){
-          expect(error.message).to.equal('[500] Process.calculateLoadBalancerSum assumes the selected_loadbalancer property is set');
+          expect(error.message).to.equal('[500] Process.calculateLoadBalancerSum assumes the selected_loadbalancer property is set and has property "merchantproviders"');
       }
 
     });
@@ -1400,7 +1341,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer = loadbalancer;
 
       return ph.getMerchantProviderTargetDistribution(merchantproviders[1]).then((target_distribution) => {
         expect(target_distribution).to.equal(loadbalancer.merchantproviders[1].distribution);
@@ -1420,9 +1361,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.amount = 100.00;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.amount = 100.00;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
 
       let expected_percentage = (mathutilities.safePercentage(3000, (4000+100), 8))/100;
 
@@ -1444,9 +1385,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.amount = 100.00;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.amount = 100.00;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
 
       let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
 
@@ -1468,8 +1409,8 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
 
       let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
 
@@ -1479,7 +1420,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       }catch(error){
 
-        expect(error.message).to.equal('[500] Process.getMerchantProviderDistribution assumes that amount property is set');
+        expect(error.message).to.equal('[500] Process.getMerchantProviderDistribution assumes that amount property is set and numeric');
 
       }
 
@@ -1497,16 +1438,16 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.amount = '100';
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.amount = '100';
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
 
       let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
 
       try{
         ph.getMerchantProviderHypotheticalBaseDistribution(merchantproviders[1], 100);
       }catch(error){
-        expect(error.message).to.equal('[500] Process.getMerchantProviderDistribution assumes that amount property is numeric');
+        expect(error.message).to.equal('[500] Process.getMerchantProviderDistribution assumes that amount property is set and numeric');
       }
 
     });
@@ -1523,9 +1464,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.amount = 100.00;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.amount = 100.00;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
 
       let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
 
@@ -1549,9 +1490,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
 
       try{
         ph.selectMerchantProviderFromLSS()
@@ -1573,12 +1514,12 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.target_distribution_array = [0.75, 0.25];
-      ph.hypothetical_distribution_base_array = [0.84, 0.16];
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.target_distribution_array = [0.75, 0.25];
+      ph.parameters.hypothetical_distribution_base_array = [0.84, 0.16];
 
       return ph.selectMerchantProviderFromLSS().then(result => {
 
@@ -1600,12 +1541,12 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_loadbalancer = loadbalancer;
-      ph.selected_loadbalancer.monthly_sum = 4000.00;
-      ph.merchantproviders = merchantproviders;
-      ph.amount = 40.00;
-      ph.target_distribution_array = [0.75, 0.25];
-      ph.hypothetical_distribution_base_array = [0.1, 0.9];
+      ph.parameters.selected_loadbalancer = loadbalancer;
+      ph.parameters.selected_loadbalancer.monthly_sum = 4000.00;
+      ph.parameters.merchantproviders = merchantproviders;
+      ph.parameters.amount = 40.00;
+      ph.parameters.target_distribution_array = [0.75, 0.25];
+      ph.parameters.hypothetical_distribution_base_array = [0.1, 0.9];
 
       return ph.selectMerchantProviderFromLSS().then(result => {
 
@@ -1621,11 +1562,11 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.selected_merchantprovider = merchantproviders[0];
+      ph.parameters.selected_merchantprovider = merchantproviders[0];
 
       return ph.instantiateGateway().then(response => {
 
-        expect((ph.instantiated_gateway.constructor.name)).to.equal('NMIController');
+        expect((ph.parameters.instantiated_gateway.constructor.name)).to.equal('NMIController');
 
       });
 
@@ -1638,9 +1579,9 @@ describe('helpers/transaction/Process.spec.js', () => {
       let amount = 40.00;
       let ph = new processHelperController();
 
-      ph.customer = customer;
-      ph.selected_credit_card = creditcard;
-      ph.amount = amount;
+      ph.parameters.customer = customer;
+      ph.parameters.selected_credit_card = creditcard;
+      ph.parameters.amount = amount;
 
       return ph.createProcessingParameters().then(parameters => {
 
@@ -1688,6 +1629,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
           return Promise.resolve(creditcard);
         },
+        getID:(object) => {
+          return object;
+        },
         disableACLs: () => {},
         enableACLs: () => {},
         getBINNumber: (creditcard_number) => { return creditcard_number.slice(0, 6); }
@@ -1696,7 +1640,26 @@ describe('helpers/transaction/Process.spec.js', () => {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
         getLoadBalancer: (product_schedule) => {
           return Promise.resolve(loadbalancer);
-        }
+        },
+        getID:(object) => {
+          return object;
+        },
+        get:({id: id}) => {
+          return Promise.resolve(productschedule);
+        },
+        disableACLs: () => {},
+        enableACLs: () => {},
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
+        getID:(object) => {
+          return object;
+        },
+        get:({id: id}) => {
+          return Promise.resolve(customer);
+        },
+        disableACLs: () => {},
+        enableACLs: () => {},
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'LoadBalancer.js'), {
