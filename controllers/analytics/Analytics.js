@@ -206,6 +206,23 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    /* Report Pages */
+    getMerchantReport(parameters){
+
+        du.debug('Get Merchant Report');
+
+        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
+
+        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
+
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+        parameters = this.appendPeriod(parameters, period_selection);
+
+        return this.getResults('merchant_report', parameters, this.default_query_filters);
+
+    }
+
     getTransactionsReportSummary(parameters){
 
         du.debug('Get Transactions Report Summary');
@@ -226,7 +243,9 @@ class AnalyticsController extends AnalyticsUtilities{
 
         let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
 
-        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+        parameters = this.appendPeriod(parameters, period_selection);
 
         return this.getResults('transactions_report_timeseries', parameters, this.default_query_filters);
 
@@ -241,6 +260,7 @@ class AnalyticsController extends AnalyticsUtilities{
       return this.getResults('transactions_report_detail', parameters, this.default_query_filters);
 
     }
+    /* End Report Pages */
 
     getCampaignDelta(parameters){
 

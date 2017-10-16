@@ -18,6 +18,12 @@
 	      chargeback_count,
 	      current_active_customer,
 	      count_alert_count
+			},
+			pagination {
+				order,
+				limit,
+				offset,
+				count
 			}
 		}
 	}"

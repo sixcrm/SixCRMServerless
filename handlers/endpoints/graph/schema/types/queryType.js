@@ -114,6 +114,8 @@ let transactionsReportTimeseriesType = require('./analytics/transactions_report/
 let transactionsReportSummaryType = require('./analytics/transactions_report/transactionsReportSummaryType');
 let transactionsReportDetailType = require('./analytics/transactions_report/transactionsReportDetailType');
 
+let merchantReportType = require('./analytics/merchant_report/merchantReportType');
+
 let listActivityType = require('./analytics/listActivityType');
 
 let eventsByFacetType =  require('./analytics/eventsByFacetType');
@@ -385,7 +387,19 @@ module.exports.graphObj = new GraphQLObjectType({
         /*
         * Analytics Endpoints
         */
+        merchantreport: {
+            type: merchantReportType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj},
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
+              return analyticsController.executeAnalyticsFunction(args, 'getMerchantReport');
+            }
+        },
         transactionsreporttimeseries: {
             type: transactionsReportTimeseriesType.graphObj,
             args: {
@@ -891,7 +905,6 @@ module.exports.graphObj = new GraphQLObjectType({
       	       return fulfillmentProviderController.listByAccount({pagination: fulfillmentprovider.pagination, fatal:list_fatal});
             }
         },
-
         accesskeylist: {
           type: accessKeyListType.graphObj,
           args: {

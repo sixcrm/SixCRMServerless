@@ -23,7 +23,7 @@
 			  subaffiliate_4,
 			  subaffiliate_5,
 			  transaction_subtype
-			}
+			},
 			pagination {
 				order,
 				limit,
