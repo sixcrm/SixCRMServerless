@@ -7,7 +7,9 @@
 			accesskeys {
 				id,
 				access_key,
-				secret_key,,
+				secret_key,
+				name,
+				notes,
 				created_at,
 				updated_at
 			},

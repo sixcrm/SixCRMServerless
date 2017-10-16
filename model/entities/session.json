@@ -6,6 +6,7 @@
 	"description": "A session",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
+    "account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"customer":{
 			"anyOf":[
 				{"$ref": "../definitions/uuidv4.json"},
@@ -63,5 +64,5 @@
 			"type":"string"
 		}
 	},
-	"required":["id", "customer", "campaign", "created_at", "updated_at"]
+	"required":["id", "customer", "campaign", "account", "created_at", "updated_at"]
 }

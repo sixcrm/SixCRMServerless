@@ -6,7 +6,7 @@
 	"properties": {
 		"id": {"$ref": "../definitions/uuidv4.json"},
 		"user": {"$ref": "../definitions/useridentifier.json"},
-		"account": {"$ref": "../definitions/sixcrmidentifier.json"},
+		"account": {"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"created_at": {"$ref": "../definitions/iso8601.json"},
 		"updated_at": {"$ref": "../definitions/iso8601.json"}
 	},

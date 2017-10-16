@@ -3,10 +3,12 @@
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	mutation {
-		updateaccesskey (accesskey: { id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\", access_key: \"test\", secret_key: \"testingname2\"}) {
+		updateaccesskey (accesskey: { id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\", access_key: \"test\", secret_key: \"testingname2\",  name:\"Testing Access Key Update\", notes:\"These are notes.  So are these.\"}) {
 			id,
 			access_key,
 			secret_key,
+			name,
+			notes,
 			created_at,
       updated_at
 		}

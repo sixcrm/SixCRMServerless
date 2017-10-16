@@ -38,7 +38,6 @@ module.exports = class entityController extends entityUtilitiesController {
         this.nonaccounts = [
           'user', //can have multiple accounts
           'userdevicetoken', //userbound
-          'accesskey', //userbound
           'notificationsetting', //userbound,
           'usersetting', //userbound
           'usersigningstring', //userbound

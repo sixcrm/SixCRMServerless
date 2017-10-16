@@ -14,7 +14,7 @@
 			"type":"array",
 			"items":{"$ref": "../definitions/uuidv4.json"}
 		},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"type":{
 			"type":"string",
 			"enum":["postback","html"]

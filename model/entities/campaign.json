@@ -5,8 +5,11 @@
 	"type": "object",
 	"description": "A single campaign",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json", "description": "ID of campaign"},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"id":{
+			"$ref": "../definitions/uuidv4.json",
+			"description": "ID of campaign"
+		},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"allow_prepaid":{
 			"type":"boolean"
 		},

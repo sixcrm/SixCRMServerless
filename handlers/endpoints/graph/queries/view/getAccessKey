@@ -1,5 +1,5 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"customerservice.user@test.com\"}}",
+	"requestContext":"{\"authorizer\":{\"user\":\"owner.user@test.com\"}}",
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	query{
@@ -7,6 +7,8 @@
 			id,
 			access_key,
 			secret_key,
+			name,
+			notes,
 			created_at,
 			updated_at
 		}

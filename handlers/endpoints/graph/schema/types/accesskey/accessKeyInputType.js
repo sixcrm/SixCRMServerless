@@ -8,6 +8,8 @@ module.exports.graphObj = new GraphQLInputObjectType({
     fields: () => ({
         id:					{ type: new GraphQLNonNull(GraphQLString) },
         access_key:			{ type: new GraphQLNonNull(GraphQLString) },
-        secret_key:			{ type: new GraphQLNonNull(GraphQLString) }
+        secret_key:			{ type: new GraphQLNonNull(GraphQLString) },
+        name:			  { type: GraphQLString },
+        notes:			{ type: GraphQLString }
     })
 });

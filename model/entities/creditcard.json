@@ -6,7 +6,7 @@
 	"description": "A credit card object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"address":{"$ref": "../definitions/address.json"},
 		"number":{"$ref": "../definitions/creditcardnumber.json"},
 		"ccv":{"$ref": "../definitions/creditcardccv.json"},

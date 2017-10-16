@@ -5,7 +5,7 @@
 	"type": "object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"name":{ "type":"string" },
 		"merchantproviders":{
 			"type":"array",

@@ -892,18 +892,16 @@ module.exports.graphObj = new GraphQLObjectType({
             }
         },
 
-        //Technical Debt:  User bound?  This need to be more strongly considered.
         accesskeylist: {
-            type: accessKeyListType.graphObj,
-            args: {
-                pagination: {type: paginationInputType.graphObj}
-            },
-            resolve: function(root, accesskey){
-              const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+          type: accessKeyListType.graphObj,
+          args: {
+              pagination: {type: paginationInputType.graphObj}
+          },
+          resolve: function(root, accesskey){
+            const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
-      	      return accessKeyController.list({pagination: accesskey.pagination, fatal:list_fatal});
-
-            }
+    	      return accessKeyController.listByAccount({pagination: accesskey.pagination, fatal:list_fatal});
+          }
         },
         accountlist: {
             type: accountListType.graphObj,

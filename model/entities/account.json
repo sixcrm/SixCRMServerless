@@ -5,7 +5,10 @@
 	"type": "object",
 	"description": "An account",
 	"properties": {
-		"id":{"$ref": "../definitions/sixcrmidentifier.json", "description": "ID of account"},
+		"id":{
+			"$ref": "../definitions/sixcrmaccountidentifier.json",
+			"description": "ID of account"
+		},
 		"name":{
 			"type":"string",
 			"minLength":3

@@ -6,7 +6,7 @@
 	"description": "A rebill",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"amount":{"$ref": "../definitions/currency.json"},
 		"bill_at":{"$ref": "../definitions/iso8601.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},

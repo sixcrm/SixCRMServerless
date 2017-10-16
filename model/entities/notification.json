@@ -9,7 +9,7 @@
 		"action":{
 			"type":"string"
 		},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"title": {
 			"type":"string"
 		},

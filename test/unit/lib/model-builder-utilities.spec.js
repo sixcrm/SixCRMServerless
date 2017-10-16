@@ -38,7 +38,7 @@ describe('lib/model-builder-utilities', () => {
         it('works recursively', () => {
             // given
             const path_to_model_under_test = 'entities/account.json';
-            const path_to_reference = 'definitions/sixcrmidentifier.json';
+            const path_to_reference = 'definitions/sixcrmaccountidentifier.json';
             const path_to_subreference = 'definitions/uuidv4.json';
 
             let model = global.SixCRM.routes.include('model', path_to_model_under_test);

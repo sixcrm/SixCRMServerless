@@ -7,7 +7,7 @@
 			"type":"string",
 			"format":"email"
 		},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"role":{"$ref": "../definitions/uuidv4.json"}
 	},
 	"required":["email", "account", "role"]

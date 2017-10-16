@@ -6,7 +6,7 @@
 	"description": "A customer",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json", "description": "ID of customer"},
-		"account":{"$ref": "../definitions/sixcrmidentifier.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"email":{
 			"type":"string",
 			"format":"email"
