@@ -8,6 +8,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
@@ -575,7 +576,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
       if(version_number.length > 0){
 
-        version_number = mathutilities.toNumber(version_number.pop().replace(/[^0-9]/g, ''));
+        version_number = numberutilities.toNumber(version_number.pop().replace(/[^0-9]/g, ''));
 
         return version_number;
 

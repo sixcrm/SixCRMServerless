@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/hypothetical_distribution_base_array.json",
+	"title": "Hypothetical Distribution Base Array",
+	"type":"array",
+	"items":{"$ref": "./../definitions/percentage.json"},
+	"minItems": 1
+}

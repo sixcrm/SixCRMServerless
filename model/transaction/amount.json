@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/amount",
+	"id":"/amount.json",
 	"title": "Amount",
 	"anyOf":[
 		{
@@ -9,6 +9,7 @@
 		},
 		{
 			"type": "number", "minimum":0.01
-		}
+		},
+		{"$ref": "../definitions/currency.json"}
 	]
 }

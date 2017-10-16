@@ -2,126 +2,101 @@
 	"$schema": "http://json-schema.org/schema#",
 	"id":"/merchantprovider.json",
 	"title": "Merchant Provider",
-	"type": "object",
-	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"},
-		"Percentage": {
-			"type":"number",
-			"minimum":0,
-			"maximum":1,
-			"exculsiveMinimum":false,
-			"exculsiveMaximum":false
-		},
-		"CURRENCY":{
-			"anyOf":[
-				{
-					"type":"string",
-					"pattern":"^\\$[0-9]+\\.[0-9]{2}$"
-				},
-				{
-					"type":"number",
-					"minimum": 0
-				}
-			]
-		}
-	},
-	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
-		"name":{
-			"type":"string",
-			"minLength":2
-		},
-		"processor":{
-			"type":"object",
-			"properties":{
+	"anyOf":[
+		{
+			"type": "object",
+			"properties": {
+				"id":{"$ref": "../definitions/uuidv4.json"},
+				"account":{"$ref": "../definitions/sixcrmidentifier.json"},
 				"name":{
 					"type":"string",
-					"enum":["NMA","Humbolt","GMA","Group ISO"]
+					"minLength":2
 				},
-				"id":{
-					"type":"string"
-				}
-			},
-			"required":["name"]
-		},
-		"processing":{
-			"type":"object",
-			"properties":{
-				"monthly_cap": {"$ref": "#/definitions/CURRENCY"},
-				"discount_rate":{"$ref": "#/definitions/Percentage"},
-				"transaction_fee":{"$ref": "#/definitions/CURRENCY"},
-				"reserve_rate": {"$ref": "#/definitions/Percentage"},
-				"maximum_chargeback_ratio":{"$ref": "#/definitions/Percentage"},
-				"transaction_counts":{
+				"processor":{
 					"type":"object",
 					"properties":{
-						"daily":{
-							"type":"integer",
-							"minimum":0,
-							"exclusiveMinimum":false
+						"name":{
+							"type":"string",
+							"enum":["NMA","Humbolt","GMA","Group ISO"]
 						},
-						"weekly":{
-							"type":"integer",
-							"minimum":0,
-							"exclusiveMinimum":false
+						"id":{
+							"type":"string"
+						}
+					},
+					"required":["name"]
+				},
+				"processing":{
+					"type":"object",
+					"properties":{
+						"monthly_cap": {"$ref": "../definitions/currency.json"},
+						"discount_rate":{"$ref": "../definitions/percentage.json"},
+						"transaction_fee":{"$ref": "../definitions/currency.json"},
+						"reserve_rate": {"$ref": "../definitions/percentage.json"},
+						"maximum_chargeback_ratio":{"$ref": "../definitions/percentage.json"},
+						"transaction_counts":{
+							"type":"object",
+							"properties":{
+								"daily":{"$ref": "../definitions/nonnegativeinteger.json"},
+								"weekly":{"$ref": "../definitions/nonnegativeinteger.json"},
+								"monthly":{"$ref": "../definitions/nonnegativeinteger.json"}
+							}
+						}
+					},
+					"required":["monthly_cap","discount_rate", "transaction_fee", "reserve_rate", "maximum_chargeback_ratio", "transaction_counts"]
+				},
+				"gateway": {
+					"type":"object",
+					"properties":{
+						"name":{
+							"type":"string",
+							"enum":["NMI","Innovio"]
+						}
+					},
+					"required":["name"]
+				},
+				"enabled":{
+					"type":"boolean"
+				},
+				"allow_prepaid":{
+					"type":"boolean"
+				},
+				"accepted_payment_methods":{
+					"type":"array",
+					"items":{
+						"type":"string"
+					},
+					"minItems":1,
+					"uniqueItems":true
+				},
+				"customer_service":{
+					"type":"object",
+					"properties":{
+						"email":{
+							"type":"string",
+							"format":"email"
 						},
-						"monthly":{
-							"type":"integer",
-							"minimum":0,
-							"exclusiveMinimum":false
+						"url":{
+							"type":"string",
+							"format":"uri"
+						},
+						"description":{
+							"type":"string"
 						}
 					}
-				}
-			},
-			"required":["monthly_cap","discount_rate", "transaction_fee", "reserve_rate", "maximum_chargeback_ratio", "transaction_counts"]
-		},
-		"gateway": {
-			"type":"object",
-			"properties":{
-				"name":{
-					"type":"string",
-					"enum":["NMI","Innovio"]
-				}
-			},
-			"required":["name"]
-		},
-		"enabled":{
-			"type":"boolean"
-		},
-		"allow_prepaid":{
-			"type":"boolean"
-		},
-		"accepted_payment_methods":{
-			"type":"array",
-			"items":{
-				"type":"string",
-				"enum":["Visa", "Mastercard", "American Express","LOCAL CARD"]
-			},
-			"minItems":1,
-			"uniqueItems":true
-		},
-		"customer_service":{
-			"type":"object",
-			"properties":{
-				"email":{
-					"type":"string",
-					"format":"email"
 				},
-				"url":{
-					"type":"string",
-					"format":"uri"
-				},
-				"description":{
-					"type":"string"
+				"created_at":{"$ref": "../definitions/iso8601.json"},
+				"updated_at":{"$ref": "../definitions/iso8601.json"},
+				"summary":{
+					"anyOf":[
+							{"$ref":"merchantprovidersummary.json"},
+							{"type":"null"}
+					]
 				}
-			}
+			},
+			"required":["id", "account", "name", "processor", "processing", "gateway", "enabled", "allow_prepaid", "accepted_payment_methods", "created_at", "updated_at"]
 		},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"},
-		"summary":{"$ref":"merchantprovidersummary.json"}
-	},
-	"required":["id", "account", "name", "processor", "processing", "gateway", "enabled", "allow_prepaid", "accepted_payment_methods", "created_at", "updated_at", "summary"]
+		{
+			"type":{"$ref": "../definitions/uuidv4.json"}
+		}
+	]
 }

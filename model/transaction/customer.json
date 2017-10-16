@@ -1,63 +1,70 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/customer",
+	"id":"/customer.json",
 	"title": "Customer",
-	"type": "object",
 	"definitions": {
 		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
 		"ISO8601": {"$ref": "../definitions/iso8601.json"},
 		"OptionalUUIDv4":{"$ref": "../definitions/optionaluuidv4.json"},
 		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
 	},
-	"properties": {
-		"id":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/SixAccountIdentifier"},
-		"email":{
-			"type":"string",
-			"format":"email"
-		},
-		"firstname":{
-			"type":"string",
-			"minLength": 1
-		},
-		"lastname":{
-			"type":"string",
-			"minLength": 1
-		},
-		"phone":{
-			"type":"string"
-		},
-		"address":{
-			"type":"object",
+	"anyOf":[
+		{
+			"type": "object",
 			"properties": {
-				"line1":{
+				"id":{"$ref": "#/definitions/UUIDv4"},
+				"account":{"$ref": "#/definitions/SixAccountIdentifier"},
+				"email":{
+					"type":"string",
+					"format":"email"
+				},
+				"firstname":{
+					"type":"string",
+					"minLength": 1
+				},
+				"lastname":{
+					"type":"string",
+					"minLength": 1
+				},
+				"phone":{
 					"type":"string"
 				},
-				"line2":{
-					"type":"string"
+				"address":{
+					"type":"object",
+					"properties": {
+						"line1":{
+							"type":"string"
+						},
+						"line2":{
+							"type":"string"
+						},
+						"city":{
+							"type":"string"
+						},
+						"state":{
+							"type":"string"
+						},
+						"zip":{
+							"type":"string"
+						},
+						"country":{
+							"type":"string"
+						}
+					},
+					"required":["line1","city","state","zip","country"]
 				},
-				"city":{
-					"type":"string"
+				"creditcards":{
+					"type":"array",
+					"items":{"$ref":"/creditcard.json"},
+		      "minItems":1
 				},
-				"state":{
-					"type":"string"
-				},
-				"zip":{
-					"type":"string"
-				},
-				"country":{
-					"type":"string"
-				}
+				"created_at":{"$ref": "#/definitions/ISO8601"},
+				"updated_at":{"$ref": "#/definitions/ISO8601"}
 			},
-			"required":["line1","city","state","zip","country"]
+			"required":["account", "firstname", "lastname", "address", "email", "created_at", "updated_at"]
 		},
-		"creditcards":{
-			"type":"array",
-			"items":{"$ref": "#/definitions/UUIDv4"},
-      "minItems":1
-		},
-		"created_at":{"$ref": "#/definitions/ISO8601"},
-		"updated_at":{"$ref": "#/definitions/ISO8601"}
-	},
-	"required":["account", "firstname", "lastname", "address", "email", "created_at", "updated_at"]
+		{
+			"type":{"$ref": "#/definitions/UUIDv4"}
+		}
+	]
 }

@@ -1,6 +1,7 @@
 'use strict';
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
+let currencyutilities = global.SixCRM.routes.include('lib', 'currency-utilities.js');
 
 module.exports = function(results, parameters){
 
@@ -18,15 +19,15 @@ module.exports = function(results, parameters){
               summary: {
                 today: {
                   count: parseInt(result.num_transactions_today),
-                  amount: parseFloat(result.amount_transactions_today)
+                  amount: currencyutilities.toCurrency(result.amount_transactions_today)
                 },
                 thisweek: {
                   count: parseInt(result.num_transactions_week),
-                  amount: parseFloat(result.amount_transactions_week)
+                  amount: currencyutilities.toCurrency(result.amount_transactions_week)
                 },
                 thismonth: {
                   count: parseInt(result.num_transactions_month),
-                  amount: parseFloat(result.amount_transactions_month)
+                  amount: currencyutilities.toCurrency(result.amount_transactions_month)
                 }
               }
           });

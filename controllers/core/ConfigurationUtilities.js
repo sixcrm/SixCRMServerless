@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class ConfigurationUtilities {
@@ -46,7 +47,7 @@ module.exports = class ConfigurationUtilities {
       attempt_count = 0;
     }
 
-    if(!mathutilities.isInteger(attempt_count)){
+    if(!numberutilities.isInteger(attempt_count)){
       eu.throwError('server', 'Attempt count is not an integer');
     }
 
@@ -64,7 +65,7 @@ module.exports = class ConfigurationUtilities {
 
         attempt_count++;
 
-        du.deep('Pausing for status update ('+mathutilities.appendOrdinalSuffix(attempt_count)+' attempt)...');
+        du.deep('Pausing for status update ('+numberutilities.appendOrdinalSuffix(attempt_count)+' attempt)...');
 
         return timestamp.delay(100)().then(() => {
 

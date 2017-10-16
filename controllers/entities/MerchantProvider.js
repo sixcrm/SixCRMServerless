@@ -58,7 +58,7 @@ class merchantProviderController extends entityController {
 
         let refund_parameters = {
             type: 'refund',
-            amount: encodeURIComponent(mathutilities.formatFloat(refund.amount, 2))
+            amount: encodeURIComponent(numberutilities.formatFloat(refund.amount, 2))
         };
 
         if(_.has(transaction, 'processor_response')){

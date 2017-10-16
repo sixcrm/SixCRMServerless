@@ -8,12 +8,14 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const ProcessUtilities = global.SixCRM.routes.include('helpers', 'transaction/ProcessUtilities.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
-//Technical Debt: Use setters and getters of a parameters object.
-module.exports = class Process{
+module.exports = class Process extends ProcessUtilities{
 
     constructor(){
+
+      super();
 
       this.parameter_definitions = {
         required:{
@@ -26,7 +28,7 @@ module.exports = class Process{
         }
       };
 
-      this.parameters = {};
+      this.parameters = new Parameters();
 
       this.productScheduleController = global.SixCRM.routes.include('entities','ProductSchedule.js');
 
@@ -52,8 +54,7 @@ module.exports = class Process{
       .then(() => this.setBINNumber())
       .then(() => this.getSelectedCreditCardProperties())
       .then(() => this.selectMerchantProvider())
-      .then(() => this.processTransaction())
-      .then((response) => this.respond(response));
+      .then(() => this.processTransaction());
 
     }
 
@@ -69,7 +70,7 @@ module.exports = class Process{
       .then(() => this.selectMerchantProviderWithDistributionLeastSumOfSquares())
       .then((merchantprovider) => {
 
-        this.parameters.selected_merchantprovider = merchantprovider;
+        this.parameters.set('selected_merchantprovider', merchantprovider);
 
         return merchantprovider;
 
@@ -81,13 +82,15 @@ module.exports = class Process{
 
       du.debug('Filter Merchant Providers');
 
-      return this.filterInvalidMerchantProviders(this.parameters.merchantproviders)
+      let merchant_providers = this.parameters.get('merchantproviders');
+
+      return this.filterInvalidMerchantProviders(merchant_providers)
       .then((merchant_providers) => this.filterDisabledMerchantProviders(merchant_providers))
       .then((merchantproviders) => this.filterTypeMismatchedMerchantProviders(merchantproviders))
       .then((merchantproviders) => this.filterCAPShortageMerchantProviders(merchantproviders))
       .then((merchantproviders) => this.filterCountShortageMerchantProviders(merchantproviders))
       .then((merchantproviders) => {
-        this.merchantproviders = merchantproviders
+        this.parameters.set('merchantproviders', merchantproviders);
         return merchantproviders;
       });
 
@@ -95,11 +98,13 @@ module.exports = class Process{
 
     selectMerchantProviderWithDistributionLeastSumOfSquares(){
 
-      if(arrayutilities.nonEmpty(this.parameters.merchantproviders)){
+      let merchantproviders = this.parameters.get('merchantproviders');
 
-        if(this.parameters.merchantproviders.length == 1){
+      if(arrayutilities.nonEmpty(merchantproviders)){
 
-          return Promise.resolve(this.parameters.merchantproviders.shift());
+        if(merchantproviders.length == 1){
+
+          return Promise.resolve(merchantproviders.shift());
 
         }else{
 
@@ -121,35 +126,19 @@ module.exports = class Process{
 
       du.debug('Process Transaction');
 
-      return this.validateSelectedMerchantProvider()
-      .then(() => this.instantiateGateway())
+      return this.instantiateGateway()
       .then(() => this.createProcessingParameters())
       .then(processing_parameters => {
-        return this.parameters.instantiated_gateway.process(processing_parameters);
+        let instantiated_gateway = this.parameters.get('instantiated_gateway');
+
+        return instantiated_gateway.process(processing_parameters);
       })
       .then(response => {
-        response.merchant_provider = this.parameters.selected_merchantprovider.id;
+        let selected_merchantprovider = this.parameters.get('selected_merchantprovider')
+
+        response.merchant_provider = selected_merchantprovider.id;
         return response;
       });
-
-    }
-
-    //Technical Debt: Untested.
-    validateSelectedMerchantProvider(){
-
-      du.debug('Validate Selected Merchant Provider');
-
-      mvu.validateModel(this.parameters.selected_merchantprovider, global.SixCRM.routes.path('model','transaction/merchantprovider.json'));
-
-      return Promise.resolve(true);
-
-    }
-
-    respond(response){
-
-      du.debug(response);
-
-      return response;
 
     }
 
@@ -157,22 +146,30 @@ module.exports = class Process{
 
       du.debug('Set Parameters');
 
-      this.parameters = objectutilities.transcribe(this.parameter_definitions.required, parameters, this.parameters, true);
+      let temporary = objectutilities.transcribe(this.parameter_definitions.required, parameters, {}, true);
 
-      this.parameters = objectutilities.transcribe(this.parameter_definitions.optional, parameters, this.parameters, false);
+      temporary = objectutilities.transcribe(this.parameter_definitions.optional, parameters, temporary, false);
+
+      objectutilities.map(temporary, (parameter) => {
+        this.parameters.set(parameter, temporary[parameter]);
+      })
 
       return Promise.resolve(true);
 
     }
 
+    //Technical Debt:  Here...
     hydrateParameters(){
 
       du.debug('Hydrate Parameters');
 
       let promises = [];
 
-      let customer_id = this.customerController.getID(this.parameters.customer);
-      let productschedule_id = this.productScheduleController.getID(this.parameters.productschedule);
+      let customer = this.parameters.get('customer');
+      let productschedule = this.parameters.get('productschedule');
+
+      let customer_id = this.customerController.getID(customer);
+      let productschedule_id = this.productScheduleController.getID(productschedule);
 
       this.customerController.disableACLs();
       promises.push(this.customerController.get({id: customer_id}));
@@ -181,9 +178,9 @@ module.exports = class Process{
 
       return Promise.all(promises).then((promises) => {
 
-        this.parameters.customer = promises[0];
+        this.parameters.set('customer', promises[0]);
 
-        this.parameters.productschedule = promises[1];
+        this.parameters.set('productschedule', promises[1]);
 
         return promises;
 
@@ -196,11 +193,13 @@ module.exports = class Process{
       du.debug('Validate Parameters');
       //Technical Debt:  This should just be a big object that gets validated once...
 
+      /*
       objectutilities.map(this.parameter_definitions.required, (required_parameter) => {
 
         mvu.validateModel(this.parameters[required_parameter], global.SixCRM.routes.path('model','transaction/'+required_parameter+'.json'));
 
       });
+      */
 
       return true;
 
@@ -211,19 +210,21 @@ module.exports = class Process{
 
       du.debug('Hydrate Credit Cards');
 
+      let customer = this.parameters.get('customer', ['creditcards']);
+
       this.creditCardController.disableACLs();
-
-      let promises = arrayutilities.map(this.parameters.customer.creditcards, (creditcard) => {
-
+      let promises = arrayutilities.map(customer.creditcards, (creditcard) => {
         return this.creditCardController.get({id: this.creditCardController.getID(creditcard)});
-
       });
 
       this.creditCardController.enableACLs();
 
+
       return Promise.all(promises).then((promises) => {
 
-        this.parameters.customer.creditcards = promises;
+        customer.creditcards = promises;
+
+        this.parameters.set('customer', customer);
 
         return true;
 
@@ -235,43 +236,35 @@ module.exports = class Process{
 
       du.debug('Select Customer Credit Card');
 
-      let selected_credit_card = null;
+      let selected_creditcard = null;
 
-      arrayutilities.map(this.parameters.customer.creditcards, (credit_card) => {
+      let creditcards = this.parameters.get('customer', ['creditcards']).creditcards;
 
-        let valid_card = mvu.validateModel(credit_card, global.SixCRM.routes.path('model','transaction/creditcard.json'), null, false);
+      arrayutilities.map(creditcards, (credit_card) => {
 
-        if(valid_card){
+        if(_.has(credit_card, 'default') && credit_card.default == true){
 
-          if(_.has(credit_card, 'default') && credit_card.default == true){
+          selected_creditcard = credit_card;
 
-            selected_credit_card = credit_card;
+        }else if(_.isNull(selected_creditcard)){
 
-          }else if(_.isNull(selected_credit_card)){
+          selected_creditcard = credit_card;
 
-            selected_credit_card = credit_card;
+        }else if(!_.has(selected_creditcard, 'default') && credit_card.updated_at > selected_creditcard.updated_at){
 
-          }else if(!_.has(selected_credit_card, 'default') && credit_card.updated_at > selected_credit_card.updated_at){
-
-            selected_credit_card = credit_card;
-
-          }
-
-        }else{
-
-          du.warning('Invalid Credit Card: '+credit_card);
+          selected_creditcard = credit_card;
 
         }
 
       });
 
-      if(_.isNull(selected_credit_card)){
+      if(_.isNull(selected_creditcard)){
         eu.throwError('server', 'Unable to set credit card for customer');
       }
 
-      this.parameters.selected_credit_card = selected_credit_card;
+      this.parameters.set('selected_creditcard', selected_creditcard);
 
-      return Promise.resolve(this.parameters.selected_credit_card);
+      return Promise.resolve(selected_creditcard);
 
     }
 
@@ -279,11 +272,9 @@ module.exports = class Process{
 
       du.debug('Set BIN Number');
 
-      if(!objectutilities.hasRecursive(this, 'parameters.selected_credit_card.number')){
-        eu.throwError('server', 'Unable to identify selected credit card.');
-      }
+      let selected_creditcard = this.parameters.get('selected_creditcard');
 
-      let binnumber = this.creditCardController.getBINNumber(this.parameters.selected_credit_card.number);
+      let binnumber = this.creditCardController.getBINNumber(selected_creditcard.number);
 
       if(_.isNull(binnumber)){
 
@@ -291,7 +282,9 @@ module.exports = class Process{
 
       }
 
-      this.parameters.selected_credit_card.bin = binnumber;
+      selected_creditcard.bin = binnumber;
+
+      this.parameters.set('selected_creditcard', selected_creditcard);
 
       return Promise.resolve(binnumber);
 
@@ -301,11 +294,9 @@ module.exports = class Process{
 
       du.debug('Get Selected Credit Card Properties');
 
-      if(!objectutilities.hasRecursive(this, 'parameters.selected_credit_card.bin')){
-        eu.throwError('server', 'Process.getSelectedCreditCardProperties assumes selected_credit_card property with a associated BIN');
-      }
+      let selected_creditcard = this.parameters.get('selected_creditcard', ['bin']);
 
-      let analytics_parameters = {binfilter: {binnumber:[parseInt(this.parameters.selected_credit_card.bin)]}};
+      let analytics_parameters = {binfilter: {binnumber:[parseInt(selected_creditcard.bin)]}};
 
       return this.analyticsController.getBINList(analytics_parameters).then((properties) => {
 
@@ -315,7 +306,9 @@ module.exports = class Process{
 
         if(_.has(properties, 'bins') && arrayutilities.nonEmpty(properties.bins)){
 
-          this.parameters.selected_credit_card.properties = properties.bins[0];
+          selected_creditcard.properties = properties.bins[0];
+
+          this.parameters.set('selected_creditcard', selected_creditcard);
 
           return properties[0];
 
@@ -327,6 +320,7 @@ module.exports = class Process{
 
     }
 
+    /*
     validateProcessClass(process_stage){
 
       du.debug('Validate Process Class');
@@ -342,22 +336,23 @@ module.exports = class Process{
       }
 
     }
+    */
 
+    //Technical Debt: This is kinda messy
     calculateLoadBalancerSum(){
 
       du.debug('Calculate Loadbalancer Sum');
 
-      if(!objectutilities.hasRecursive(this, 'parameters.selected_loadbalancer.merchantproviders')){
-        eu.throwError('server', 'Process.calculateLoadBalancerSum assumes the selected_loadbalancer property is set and has property "merchantproviders"');
-      }
+      let selected_loadbalancer = this.parameters.get('selected_loadbalancer', ['merchantproviders']);
+      let merchantproviders = this.parameters.get('merchantproviders');
 
-      if(!arrayutilities.nonEmpty(this.parameters.selected_loadbalancer.merchantproviders)){
+      if(!arrayutilities.nonEmpty(selected_loadbalancer.merchantproviders)){
         eu.throwError('server', 'Process.calculateLoadBalancerSum assumes the selected_loadbalancer.merchantproviders property is a non-empty array.');
       }
 
-      let sum_array = arrayutilities.map(this.parameters.selected_loadbalancer.merchantproviders, lb_merchantprovider => {
+      let sum_array = arrayutilities.map(selected_loadbalancer.merchantproviders, lb_merchantprovider => {
 
-        let merchantprovider = arrayutilities.find(this.parameters.merchantproviders, (merchantprovider => {
+        let merchantprovider = arrayutilities.find(merchantproviders, (merchantprovider => {
           return (merchantprovider.id == lb_merchantprovider.id);
         }));
 
@@ -382,7 +377,9 @@ module.exports = class Process{
         eu.throwError('server', 'Process.calculateLoadBalancerSum assumes a sum of merchant providers to be numeric.');
       }
 
-      this.parameters.selected_loadbalancer.monthly_sum = sum;
+      selected_loadbalancer.monthly_sum = sum;
+
+      this.parameters.set('selected_loadbalancer', selected_loadbalancer);
 
       return Promise.resolve(sum);
 
@@ -400,13 +397,12 @@ module.exports = class Process{
         eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that additional_amount argument is numeric');
       }
 
-      if(!objectutilities.hasRecursive(this, 'parameters.amount') || !_.isNumber(this.parameters.amount)){
-        eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that amount property is set and numeric');
-      }
+      let amount = this.parameters.get('amount');
+      let selected_loadbalancer = this.parameters.get('selected_loadbalancer', ['monthly_sum']);
 
 
-      if(!objectutilities.hasRecursive(this, 'parameters.selected_loadbalancer.monthly_sum') || !_.isNumber(this.parameters.selected_loadbalancer.monthly_sum)){
-        eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that selected_loadbalancer.monthly_sum property is set and numeric');
+      if(!_.isNumber(selected_loadbalancer.monthly_sum)){
+        eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that selected_loadbalancer.monthly_sum property is numeric');
       }
 
       if(!objectutilities.hasRecursive(merchantprovider, 'summary.summary.thismonth.amount') || !_.isNumber(merchantprovider.summary.summary.thismonth.amount)){
@@ -414,7 +410,7 @@ module.exports = class Process{
       }
 
       let numerator = (merchantprovider.summary.summary.thismonth.amount + additional_amount);
-      let denominator = (this.parameters.selected_loadbalancer.monthly_sum + this.parameters.amount);
+      let denominator = (selected_loadbalancer.monthly_sum + amount);
       let percentage = mathutilities.safePercentage(numerator, denominator, 8);
 
       return (percentage/100);
@@ -423,15 +419,15 @@ module.exports = class Process{
 
     getMerchantProviderTargetDistribution(merchantprovider){
 
-      if(!objectutilities.hasRecursive(this, 'parameters.selected_loadbalancer.merchantproviders')){
-        eu.throwError('server','Process.getMerchantProviderTarget assumes that the selected_loadbalancer.merchantproviders property is set');
-      }
+      du.debug('Get Merchant Provider');
 
-      if(!arrayutilities.nonEmpty(this.parameters.selected_loadbalancer.merchantproviders)){
+      let selected_loadbalancer = this.parameters.get('selected_loadbalancer', ['merchantproviders']);
+
+      if(!arrayutilities.nonEmpty(selected_loadbalancer.merchantproviders)){
         eu.throwError('server','Process.getMerchantProviderTarget assumes that the selected_loadbalancer.merchantproviders an array and has length greater than 0');
       }
 
-      let loadbalancer_mp = arrayutilities.find(this.parameters.selected_loadbalancer.merchantproviders, (lb_mp) => {
+      let loadbalancer_mp = arrayutilities.find(selected_loadbalancer.merchantproviders, (lb_mp) => {
         return (lb_mp.id == merchantprovider.id);
       });
 
@@ -447,19 +443,15 @@ module.exports = class Process{
 
       du.debug('Calculate Distribution Targets Array');
 
-      let distribution_targets_array = arrayutilities.map(this.parameters.merchantproviders, (merchantprovider) => {
+      let merchantproviders = this.parameters.get('merchantproviders');
 
-        try {
-          return this.getMerchantProviderTargetDistribution(merchantprovider);
-        }catch(e){
-          return e;
-        }
-
+      let distribution_targets_array = arrayutilities.map(merchantproviders, (merchantprovider) => {
+        return this.getMerchantProviderTargetDistribution(merchantprovider);
       });
 
       return Promise.all(distribution_targets_array).then(distribution_targets_array => {
 
-        this.parameters.target_distribution_array = distribution_targets_array;
+        this.parameters.set('target_distribution_array', distribution_targets_array);
 
         return distribution_targets_array;
 
@@ -471,34 +463,18 @@ module.exports = class Process{
 
       du.debug('Calculate Hypothetical Base Distribution Array');
 
-      return new Promise((resolve, reject) => {
+      let merchantproviders = this.parameters.get('merchantproviders');
 
-        let hypothetical_distribution_base_array = arrayutilities.map(this.parameters.merchantproviders, (merchantprovider) => {
+      let hypothetical_distribution_base_array = arrayutilities.map(merchantproviders, (merchantprovider) => {
+        return this.getMerchantProviderHypotheticalBaseDistribution(merchantprovider);
+      });
 
-          try{
+      return Promise.all(hypothetical_distribution_base_array)
+      .then(hypothetical_distribution_base_array => {
 
-            return this.getMerchantProviderHypotheticalBaseDistribution(merchantprovider);
+        this.parameters.set('hypothetical_distribution_base_array', hypothetical_distribution_base_array);
 
-          }catch(e){
-
-            return e;
-
-          }
-
-        });
-
-        return Promise.all(hypothetical_distribution_base_array).then(hypothetical_distribution_base_array => {
-
-          this.parameters.hypothetical_distribution_base_array = hypothetical_distribution_base_array;
-
-          return resolve(hypothetical_distribution_base_array);
-
-        //Technical Debt: Catch is unprecedented here...
-        }).catch(error => {
-
-          return reject(error);
-
-        });
+        return hypothetical_distribution_base_array;
 
       });
 
@@ -508,33 +484,30 @@ module.exports = class Process{
 
       du.debug('Select Merchant Provider From LSS');
 
-      if(!objectutilities.hasRecursive(this, 'parameters.hypothetical_distribution_base_array')){
-        eu.throwError('server', 'Process.selectMerchantProviderFromLSS assumes hypothetical_distribution_base_array is set');
-      }
+      let hypothetical_distribution_base_array = this.parameters.get('hypothetical_distribution_base_array');
+      let target_distribution_array = this.parameters.get('target_distribution_array');
+      let merchantproviders = this.parameters.get('merchantproviders');
+      let amount = this.parameters.get('amount');
+      let index = 0;
+      let lss = null;
+      let selected_merchantprovider = null;
 
-      if(!_.isArray(this.parameters.hypothetical_distribution_base_array)){
+      if(!_.isArray(hypothetical_distribution_base_array)){
         eu.throwError('server', 'Process.selectMerchantProviderFromLSS assumes hypothetical_distribution_base_array is an array');
       }
 
-      if(!objectutilities.hasRecursive(this, 'parameters.target_distribution_array')){
-        eu.throwError('server', 'Process.selectMerchantProviderFromLSS assumes target_distribution_array is set');
-      }
-
-      if(!_.isArray(this.parameters.target_distribution_array)){
+      if(!_.isArray(target_distribution_array)){
         eu.throwError('server', 'Process.selectMerchantProviderFromLSS assumes target_distribution_array is an array');
       }
 
-      let lss = null;
-      let index = 0;
-      let selected_merchantprovider = null;
+      //Technical Debt:  This looks like it needs to be a more testable function
+      arrayutilities.map(merchantproviders, (merchantprovider) => {
 
-      arrayutilities.map(this.parameters.merchantproviders, (merchantprovider) => {
+        let hypothetical_distribution_base_array_clone = hypothetical_distribution_base_array;
 
-        let hypothetical_distribution_base_array_clone = this.parameters.hypothetical_distribution_base_array;
+        hypothetical_distribution_base_array_clone[index] += this.getMerchantProviderHypotheticalBaseDistribution(merchantprovider, amount);
 
-        hypothetical_distribution_base_array_clone[index] += this.getMerchantProviderHypotheticalBaseDistribution(merchantprovider, this.parameters.amount);
-
-        let ss = mathutilities.calculateLSS(this.parameters.target_distribution_array, hypothetical_distribution_base_array_clone);
+        let ss = mathutilities.calculateLSS(target_distribution_array, hypothetical_distribution_base_array_clone);
 
         if(_.isNull(lss) || _.isNull(selected_merchantprovider) || ss < lss){
 
@@ -556,9 +529,11 @@ module.exports = class Process{
 
       du.debug('Get Loadbalancer');
 
-      return this.productScheduleController.getLoadBalancer(this.parameters.productschedule).then((loadbalancer) => {
+      let productschedule = this.parameters.get('productschedule');
 
-        this.parameters.selected_loadbalancer = loadbalancer;
+      return this.productScheduleController.getLoadBalancer(productschedule).then((loadbalancer) => {
+
+        this.parameters.set('selected_loadbalancer', loadbalancer);
 
         return loadbalancer;
 
@@ -570,15 +545,13 @@ module.exports = class Process{
 
       du.debug('Get Merchant Providers');
 
-      if(!objectutilities.hasRecursive(this, 'parameters.selected_loadbalancer')){
-        eu.throwError('server', 'A load balancer must be selected before selecting merchant providers.');
-      }
+      let selected_loadbalancer = this.parameters.get('selected_loadbalancer');
 
       this.loadBalancerController.disableACLs();
-      return this.loadBalancerController.getMerchantProviders(this.parameters.selected_loadbalancer).then((merchantproviders) => {
+      return this.loadBalancerController.getMerchantProviders(selected_loadbalancer).then((merchantproviders) => {
         this.loadBalancerController.enableACLs();
 
-        this.parameters.merchantproviders = merchantproviders;
+        this.parameters.set('merchantproviders', merchantproviders);
 
         return merchantproviders;
 
@@ -590,7 +563,9 @@ module.exports = class Process{
 
       du.debug('Get Merchant Provider Summaries');
 
-      let merchantprovider_ids = arrayutilities.map(this.parameters.merchantproviders, merchantprovider => {
+      let merchantproviders = this.parameters.get('merchantproviders');
+
+      let merchantprovider_ids = arrayutilities.map(merchantproviders, merchantprovider => {
         return merchantprovider.id;
       });
 
@@ -600,7 +575,7 @@ module.exports = class Process{
       return this.analyticsController.getMerchantProviderSummaries(parameters).then(results => {
         this.analyticsController.enableACLs();
 
-        this.parameters.merchantprovider_summaries = results.merchantproviders;
+        this.parameters.set('merchantprovider_summaries', results.merchantproviders);
 
         return results;
 
@@ -612,19 +587,24 @@ module.exports = class Process{
 
       du.debug('Marry Merchant Provider Summaries');
 
-      arrayutilities.map(this.parameters.merchantprovider_summaries, (summary) => {
+      let merchantprovider_summaries = this.parameters.get('merchantprovider_summaries');
+      let merchantproviders = this.parameters.get('merchantproviders');
 
-        arrayutilities.filter(this.parameters.merchantproviders, (merchantprovider, index) => {
+      arrayutilities.map(merchantprovider_summaries, (summary) => {
+
+        arrayutilities.filter(merchantproviders, (merchantprovider, index) => {
 
           if(merchantprovider.id == summary.merchantprovider.id){
-            this.parameters.merchantproviders[index].summary = summary;
+            merchantproviders[index].summary = summary;
           }
 
         });
 
       });
 
-      return Promise.resolve(this.parameters.merchantproviders);
+      this.parameters.set('merchantproviders', merchantproviders);
+
+      return Promise.resolve(merchantproviders);
 
     }
 
@@ -634,7 +614,7 @@ module.exports = class Process{
 
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        return mvu.validateModel(merchant_provider, global.SixCRM.routes.path('model','transaction/merchantprovider.json'), null, false);
+        return (_.has(merchant_provider, 'summary'));
 
       });
 
@@ -647,13 +627,7 @@ module.exports = class Process{
       du.debug('Filter Disabled Merchant Providers');
 
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
-
-          if(!_.has(merchant_provider, 'enabled')){
-            eu.throwError('server','Merchant Provider missing "enabled" field.');
-          }
-
-          return merchant_provider.enabled;
-
+        return (merchant_provider.enabled == true);
       });
 
       return Promise.resolve(return_array);
@@ -664,29 +638,15 @@ module.exports = class Process{
 
       du.debug('Filter Type Mismatched Merchant Providers');
 
-      if(!objectutilities.hasRecursive(this, 'parameters.selected_credit_card.properties.brand')){
-        eu.throwError('server', 'Process.filterTypeMismatchedMerchantProviders assumes selected_credit_card.properties.brand property');
-      }
-
-      let cleanstring = (a_string) => {
-        return stringutilities.removeWhitespace(a_string).toLowerCase();
-      }
+      let selected_creditcard = this.parameters.get('selected_creditcard', ['properties.brand']);
 
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        if(!_.has(merchant_provider, 'accepted_payment_methods')){
-          eu.throwError('server', 'Merchant Provider does not have the "accepted_payment_methods" property.');
-        }
-
-        if(!_.isArray(merchant_provider.accepted_payment_methods)){
-          eu.throwError('server', 'Merchant Provider "accepted_payment_methods" is not an array.');
-        }
-
-        let accepted_payment_methods_array = merchant_provider.accepted_payment_methods.map((accepted_payment_method) => {
-          return cleanstring(accepted_payment_method);
+        let accepted_payment_methods_array = arrayutilities.map(merchant_provider.accepted_payment_methods, (accepted_payment_method) => {
+          return this.makeGeneralBrandString(accepted_payment_method);
         });
 
-        return _.contains(accepted_payment_methods_array, cleanstring(this.parameters.selected_credit_card.properties.brand));
+        return _.contains(accepted_payment_methods_array, this.makeGeneralBrandString(selected_creditcard.properties.brand));
 
       });
 
@@ -698,9 +658,11 @@ module.exports = class Process{
 
       du.debug('Filter CAP Shortage Merchant Providers');
 
+      let amount = this.parameters.get('amount');
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        let proposed_total = (parseFloat(merchant_provider.summary.summary.thismonth.amount) + parseFloat(this.parameters.amount));
+        //Technical Debt:  Lets abstract this to a different function
+        let proposed_total = (parseFloat(merchant_provider.summary.summary.thismonth.amount) + parseFloat(amount));
         let cap = parseFloat(merchant_provider.processing.monthly_cap);
 
         return !(proposed_total >= cap);
@@ -744,15 +706,13 @@ module.exports = class Process{
 
       du.debug('Instantiate Gateway');
 
-      let gateway = null;
+      let selected_merchantprovider = this.parameters.get('selected_merchantprovider', ['gateway.name']);
 
-      du.warning(this.parameters);
+      const GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+selected_merchantprovider.gateway.name+'/handler.js');
 
-      let GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+this.parameters.selected_merchantprovider.gateway.name+'/handler.js');
+      let gateway = new GatewayController(selected_merchantprovider.gateway);
 
-      gateway = new GatewayController(this.parameters.selected_merchantprovider.gateway);
-
-      this.parameters.instantiated_gateway = gateway;
+      this.parameters.set('instantiated_gateway', gateway);
 
       return Promise.resolve(gateway);
 
@@ -762,22 +722,106 @@ module.exports = class Process{
 
       du.debug('Create Processing Parameters');
 
-      if(!objectutilities.hasRecursive(this, 'parameters.customer')){
-        eu.throwError('server', 'Process.createProcessingParameters assumes customer property');
-      }
+      let customer = this.parameters.get('customer');
+      let selected_creditcard = this.parameters.get('selected_creditcard');
+      let amount = this.parameters.get('amount');
 
-      if(!objectutilities.hasRecursive(this, 'parameters.selected_credit_card')){
-        eu.throwError('server', 'Process.createProcessingParameters assumes selected_credit_card property');
-      }
-
-      if(!objectutilities.hasRecursive(this, 'parameters.amount')){
-        eu.throwError('server', 'Process.createProcessingParameters assumes amount property');
-      }
-
-      let parameters = {customer: this.parameters.customer, creditcard: this.parameters.selected_credit_card, amount: this.parameters.amount};
+      let parameters = {
+        customer: customer,
+        creditcard: selected_creditcard,
+        amount: amount
+      };
 
       return Promise.resolve(parameters);
 
     }
+
+}
+
+class Parameters {
+
+  constructor(){
+    this.store = {};
+    this.validation = {
+      'selected_merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
+      'creditcard': global.SixCRM.routes.path('model','transaction/creditcard.json'),
+      'selected_creditcard': global.SixCRM.routes.path('model','transaction/creditcard.json'),
+      'customer': global.SixCRM.routes.path('model','transaction/customer.json'),
+      'productschedule': global.SixCRM.routes.path('model','transaction/productschedule.json'),
+      'merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
+      'merchantproviders': global.SixCRM.routes.path('model','transaction/merchantproviders.json'),
+      'amount':global.SixCRM.routes.path('model','transaction/amount.json'),
+      'loadbalancer': global.SixCRM.routes.path('model','transaction/loadbalancer.json'),
+      'selected_loadbalancer': global.SixCRM.routes.path('model','transaction/loadbalancer.json'),
+      'target_distribution_array': global.SixCRM.routes.path('model', 'transaction/target_distribution_array.json'),
+      'hypothetical_distribution_base_array': global.SixCRM.routes.path('model', 'transaction/hypothetical_distribution_base_array.json'),
+      'merchantprovider_summaries':global.SixCRM.routes.path('model', 'transaction/merchantprovider_summaries.json')
+    };
+  }
+
+  set(key, value){
+
+    du.debug('Set');
+
+    if(this.validate(key, value)){
+
+      this.store[key] = value;
+
+    }
+
+  }
+
+  get(key, additional_parameters, fatal){
+
+    du.debug('Get');
+
+    fatal = (_.isUndefined(fatal))?true:fatal;
+
+    let return_object = null;
+
+    if(_.has(this.store, key)){
+
+      return_object = this.store[key];
+
+      if(arrayutilities.nonEmpty(additional_parameters)){
+
+        let missing_parameter = arrayutilities.find(additional_parameters, (additional_parameter) => {
+          if(objectutilities.hasRecursive(return_object, additional_parameter)){
+            return false;
+          }
+          return true;
+        });
+
+        if(stringutilities.isString(missing_parameter) && fatal){
+          eu.throwError('server', key+' is missing "'+missing_parameter+'" property.');
+        }
+
+      }
+
+    }
+
+    if(_.isNull(return_object) && fatal){
+      eu.throwError('server', '"'+key+'" property is not set.');
+    }
+
+    return return_object;
+
+  }
+
+  validate(key, value, fatal){
+
+    du.debug('Validate');
+
+    fatal = (_.isUndefined(fatal))?true:fatal;
+
+    if(_.has(this.validation, key)){
+      return mvu.validateModel(value, this.validation[key], null, fatal);
+    }else{
+      du.warning('Missing Model: '+ key);
+    }
+
+    return true;
+
+  }
 
 }
