@@ -1,13 +1,13 @@
 'use strict';
 const GraphQLList = require('graphql').GraphQLList;
-const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLInt = require('graphql').GraphQLInt;
+const GraphQLObjectType = require('graphql').GraphQLObjectType;
+const GraphQLJSON = require('graphql-type-json');
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'TransactionsReportTimeseriesRowType',
-    description: 'Transactions Report Timeseries Row',
+    name: 'TransactionSummaryReportSummaryType',
+    description: 'Transactions Report Timeseries',
     fields: () => ({
       period: {
         type: GraphQLString
