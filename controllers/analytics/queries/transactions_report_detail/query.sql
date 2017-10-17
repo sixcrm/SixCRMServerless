@@ -15,4 +15,5 @@ WHERE 1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 ORDER BY DATETIME {{order}}
-LIMIT {{limit}} OFFSET {{offset}};
+LIMIT {{limit}}
+OFFSET {{offset}};

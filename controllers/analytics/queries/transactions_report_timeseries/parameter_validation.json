@@ -123,6 +123,20 @@
 				"type":"string",
 				"enum": ["main", "upsell"]
 			}
+		},
+		"limit":{
+			"type": ["integer"],
+			"minimum": 0,
+			"maximum": 100,
+			"exclusiveMaximum": false,
+			"exclusiveMinimum": true
+		},
+		"offset":{
+			"type": ["integer"],
+			"minimum": 0,
+			"maximum": 100,
+			"exclusiveMaximum": true,
+			"exclusiveMinimum": false
 		}
 	},
 	"required":["start", "end", "account", "period"]

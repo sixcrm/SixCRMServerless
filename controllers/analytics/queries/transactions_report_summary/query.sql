@@ -70,4 +70,6 @@ SELECT
 FROM f_transactions
 WHERE 1
   {{filter}}
-  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}';
+  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
+LIMIT {{limit}}
+OFFSET {{offset}};
