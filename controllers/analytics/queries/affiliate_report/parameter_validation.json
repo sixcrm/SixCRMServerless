@@ -159,5 +159,5 @@
       "exclusiveMinimum": false
     }
   },
-  "required": ["start", "end", "period", "offset", "limit","order"]
+  "required": ["start", "end", "period", "offset", "limit", "order"]
 }

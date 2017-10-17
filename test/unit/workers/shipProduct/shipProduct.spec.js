@@ -89,7 +89,7 @@ describe('controllers/workers/shipProduct', function () {
 
     describe('executeFulfillment', () => {
 
-        it('processes transaction with products', () => {
+        xit('processes transaction with products', () => {
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
@@ -102,7 +102,7 @@ describe('controllers/workers/shipProduct', function () {
 
     describe('processTransaction', () => {
 
-        it('processes transaction with products', () => {
+        xit('processes transaction with products', () => {
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
@@ -110,7 +110,7 @@ describe('controllers/workers/shipProduct', function () {
                 .then(result => expect(result).to.equal(shipProduct.messages.noship));
         });
 
-        it('throws error when transaction has no products', () => {
+        xit('throws error when transaction has no products', () => {
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
@@ -124,7 +124,7 @@ describe('controllers/workers/shipProduct', function () {
 
     describe('shipProducts', () => {
 
-        it('returns noship message by default', () => {
+        xit('returns noship message by default', () => {
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 

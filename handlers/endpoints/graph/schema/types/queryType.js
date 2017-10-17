@@ -110,11 +110,14 @@ let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
 let listBINsType =  require('./analytics/listBINsType');
 
+/* Reports */
 let transactionsReportTimeseriesType = require('./analytics/transactions_report/transactionsReportTimeseriesType');
 let transactionsReportSummaryType = require('./analytics/transactions_report/transactionsReportSummaryType');
 let transactionsReportDetailType = require('./analytics/transactions_report/transactionsReportDetailType');
-
 let merchantReportType = require('./analytics/merchant_report/merchantReportType');
+let affiliateReportType = require('./analytics/affiliate_report/affiliateReportType')
+let affiliateReportSummaryType = require('./analytics/affiliate_report/affiliateReportSummaryType')
+/* End Reports */
 
 let listActivityType = require('./analytics/listActivityType');
 
@@ -387,6 +390,33 @@ module.exports.graphObj = new GraphQLObjectType({
         /*
         * Analytics Endpoints
         */
+        affiliatereportsummary: {
+          type: affiliateReportSummaryType.graphObj,
+          args: {
+              analyticsfilter: { type: analyticsFilterInputType.graphObj },
+              cache: {type: cacheInputType.graphObj}
+          },
+          resolve: function(root, args){
+            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+            return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReportSummary').then(result => {
+              console.log(result);  process.exit();
+            });
+          }
+        },
+        affiliatereport: {
+          type: affiliateReportType.graphObj,
+          args: {
+              analyticsfilter: { type: analyticsFilterInputType.graphObj },
+              cache: {type: cacheInputType.graphObj},
+              pagination: {type: analyticsPaginationInputType.graphObj}
+          },
+          resolve: function(root, args){
+            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+            return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReport');
+          }
+        },
         merchantreport: {
             type: merchantReportType.graphObj,
             args: {
