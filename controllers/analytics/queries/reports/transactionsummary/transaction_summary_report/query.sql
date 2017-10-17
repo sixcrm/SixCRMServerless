@@ -67,9 +67,11 @@ SELECT
       END
   ),0) AS chargeback_count,
   count(distinct case when transaction_type='new' then customer else null end) as current_active_customer,
-  0 count_alert_count  
+  0 count_alert_count
 FROM f_transactions
 WHERE 1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-GROUP BY date_trunc('day',datetime);
+GROUP BY date_trunc('day',datetime)
+LIMIT {{limit}}
+OFFSET {{offset}};

@@ -53,3 +53,5 @@ WHERE 1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 GROUP BY merchant_provider
+LIMIT {{limit}}
+OFFSET {{offset}};

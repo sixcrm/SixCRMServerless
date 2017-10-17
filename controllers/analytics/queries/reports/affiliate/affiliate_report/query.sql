@@ -56,6 +56,6 @@ RIGHT OUTER JOIN
    GROUP BY affiliate,
             DATE_TRUNC('{{period}}',datetime)) ft ON (fe.affiliate = ft.affiliate
                                                       AND fe.{{period}} = ft.{{period}})
-ORDER BY DATETIME {{order}}
+ORDER BY {{period}} {{order}}
 LIMIT {{limit}}
 OFFSET {{offset}};
