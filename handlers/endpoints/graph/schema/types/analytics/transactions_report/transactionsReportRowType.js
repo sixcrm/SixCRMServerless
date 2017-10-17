@@ -14,8 +14,8 @@ const affiliateController = global.SixCRM.routes.include('controllers', 'entitie
 const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'TransactionsReportDetailRowType',
-    description: 'Transactions Report Detail Row',
+    name: 'TransactionsReportRowType',
+    description: 'Transactions Report Row',
     fields: () => ({
       id: {
         type: new GraphQLNonNull(GraphQLString),

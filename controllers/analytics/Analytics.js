@@ -220,7 +220,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters, period_selection);
 
-        return this.getResults('affiliate_report_summary', parameters, this.default_query_filters);
+        return this.getResults('reports/affiliate/affiliate_report_summary', parameters, this.default_query_filters);
 
     }
 
@@ -236,7 +236,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters, period_selection);
 
-        return this.getResults('affiliate_report', parameters, this.default_query_filters);
+        return this.getResults('reports/affiliate/affiliate_report', parameters, this.default_query_filters);
 
     }
 
@@ -252,11 +252,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters, period_selection);
 
-        return this.getResults('merchant_report', parameters, this.default_query_filters);
+        return this.getResults('reports/merchantprovider/merchantprovider_report', parameters, this.default_query_filters);
 
     }
 
-    getTransactionsReportSummary(parameters){
+    getTransactionSummaryReportSummary(parameters){
 
         du.debug('Get Transactions Report Summary');
 
@@ -264,11 +264,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
-        return this.getResults('transactions_report_summary', parameters, this.default_query_filters);
+        return this.getResults('reports/transactionsummary/transaction_summary_report_summary', parameters, this.default_query_filters);
 
     }
 
-    getTransactionsReportTimeseries(parameters){
+    getTransactionSummaryReport(parameters){
 
         du.debug('Get Transactions Report Timeseries');
 
@@ -280,17 +280,17 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters, period_selection);
 
-        return this.getResults('transactions_report_timeseries', parameters, this.default_query_filters);
+        return this.getResults('reports/transactionsummary/transaction_summary_report', parameters, this.default_query_filters);
 
     }
 
-    getTransactionsReportDetail(parameters){
+    getTransactionsReport(parameters){
 
-      du.debug('Get Transaction Report Detail');
+      du.debug('Get Transaction Report');
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      return this.getResults('transactions_report_detail', parameters, this.default_query_filters);
+      return this.getResults('reports/transactions/transactions_report', parameters, this.default_query_filters);
 
     }
     /* End Report Pages */
