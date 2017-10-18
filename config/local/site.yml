@@ -46,6 +46,7 @@ lambda:
     createrebillstoarchive: 'createrebills'
     recovertoarchive: 'archiverecover'
     indextoarchive: 'indexentities'
+    sendnotificationtoarchive: 'sendnotification'
     forwardmessage_deliveredtoarchive: 'deliveredtoarchive'
     forwardmessage_shippedtodelivered: 'shippedtodelivered'
     forwardmessage_pendingtoshipped: 'pendingtoshipped'
@@ -56,6 +57,7 @@ lambda:
     forwardmessage_recovertohold: 'recovertohold'
     forwardmessage_createrebillstoarchive: 'rebilltoarchive'
     forwardmessage_indextoarchive: 'indextoarchive'
+    forwardmessage_sendnotificationtoarchive: 'sendnotificationtoarchive'
     forwardmessage_recovertoarchive: 'recovertoarchive'
 
 shipping_providers:

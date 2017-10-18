@@ -23,6 +23,8 @@ var workerController = global.SixCRM.routes.include('controllers', 'workers/work
 *
 */
 
+//Technical Debt:  Refactor
+
 class forwardMessageController extends workerController {
 
     constructor(){

@@ -69,7 +69,9 @@ describe('controllers/workers/worker', function () {
             let worker = new workerController();
 
             return worker.parseInputEvent(object_with_body)
-                .catch(response => expect(response.message).to.deep.equal('Unexpected token o in JSON at position 1'));
+            .catch((response) => {
+              expect(response.message).to.deep.equal('Unexpected token o in JSON at position 1')
+            });
         });
 
         it('handles serialized objects', () => {

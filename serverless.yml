@@ -28,6 +28,7 @@ provider:
     aws_account: ${file(./config/${opt:stage}/site.yml):aws.account}
     dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
     search_indexing_queue: 'search_indexing'
+    send_notification_queue: 'send_notification'
     rebill_queue: 'rebill'
     bill_queue: 'bill'
     hold_queue: 'hold'
@@ -245,6 +246,18 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
       archivefilter: 'ALL'
 
+  sendnotificationtoarchive:
+    handler: handlers/workers/forwardmessages/handler.forwardmessage
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_sendnotificationtoarchive}
+      origin_queue: 'send_notification'
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.sendnotificationtoarchive}
+      archivefilter: 'ALL'
+
 # Workers
 
   randomredshiftdata:
@@ -293,6 +306,9 @@ functions:
       - schedule:
           rate: rate(2 hours)
           enabled: true
+
+  sendnotification:
+    handler: handlers/workers/sendnotifications/handler.sendnotifications
 
   processbilling:
     handler: handlers/workers/processbilling/handler.processbilling

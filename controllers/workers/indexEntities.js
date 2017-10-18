@@ -52,7 +52,9 @@ class indexEntitiesController extends workerController {
 
     }
 
+    //Technical Debt: The messages should be handed to this by forward messages...  this is inappropriate here...
     getMessages() {
+
         du.debug('Get Messages');
 
         return sqsutilities.receiveMessages({queue: process.env.search_indexing_queue, limit: 10}).then((messages) => {

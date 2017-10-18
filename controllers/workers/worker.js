@@ -1,6 +1,7 @@
 'use strict';
-const Validator = require('jsonschema').Validator;
 const _ = require('underscore');
+const Validator = require('jsonschema').Validator;
+
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
@@ -14,63 +15,73 @@ module.exports = class workerController {
 
     }
 
-    parseInputEvent(event){
+    parseInputEvent(event, return_field){
 
-        return new Promise((resolve, reject) => {
+      du.debug('Parse Input Event');
 
-            if(_.isObject(event)){
+      return_field = (_.isUndefined(return_field))?'id':return_field;
 
-				//object of structure {id:"blah-blah"}
-                if(_.has(event, 'id')){
+      let return_object = null;
 
-					//useful for local success_event.json inclusion
-                    resolve(event.id);
+      if(_.isObject(event)){
 
-				//object of structure {... Body:'{\n  "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3"\n}'}
-				//This is normally what's going to be coming back from SQS
-                }else if(_.has(event, "Body")){
+        if(_.isString(return_field) && _.has(event, return_field)){
 
-                    try{
+          return_object = event[return_field];
 
-                        let parsed_event = JSON.parse(event.Body);
+        }else if(_.has(event, "Body")){
 
-                        if(_.has(parsed_event, 'id')){
-                            resolve(parsed_event.id);
-                        }
+          try{
 
-                    }catch(error){
-                        reject(error);
-                    }
+            let parsed_event = JSON.parse(event.Body);
 
-				//if, somehow the function was passed a raw id 'blah-blah'
-                }else{
+            if(_.isString(return_field) && _.has(parsed_event, return_field)){
 
-					//might be garbage...
-                    resolve(event);
-
-                }
-
-			// if event is '{"id":"blah-blah"}'
-            }else if(_.isString(event)){
-
-                try{
-                    let parsed_event = JSON.parse(event);
-
-                    if(_.has(parsed_event, 'id')){
-                        resolve(parsed_event.id);
-                    }
-
-                }catch(error){
-                    reject(error);
-                }
+              return_object = parsed_event[return_field];
 
             }else{
 
-                reject(eu.getError('validation','Unrecognized event format: '+event));
+              return_object = parsed_event;
 
             }
 
-        });
+          }catch(error){
+
+            return Promise.reject(error);
+
+          }
+
+        }else{
+
+          return_object = event;
+
+        }
+
+        return Promise.resolve(return_object);
+
+      }else if(_.isString(event)){
+
+        let parsed_event = null;
+
+        try{
+
+          parsed_event = JSON.parse(event);
+
+        }catch(error){
+
+          return Promise.reject(error);
+
+        }
+
+        if(!_.isNull(parsed_event)){
+
+          return this.parseInputEvent(parsed_event, return_field);
+
+        }
+
+      }
+
+      return Promise.reject(eu.getError('server','Unrecognized event format: '+event));
 
     }
 

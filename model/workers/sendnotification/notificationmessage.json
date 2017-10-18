@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/notificationmessage",
+	"title": "Notification Message",
+	"type": "object",
+  "properties": {
+    "user":{
+      "type": "string",
+      "format": "email"
+    },
+    "account": {
+      "type":"string"
+    },
+    "scope":{
+      "type":"object",
+      "properties":{
+        "user":{
+          "type":"boolean"
+        },
+        "account":{
+          "type": "boolean"
+        }
+      },
+      "required":["user", "account"]
+    },
+    "type":{
+      "type":"string"
+    },
+    "action":{
+      "type":"string"
+    },
+    "title":{
+      "type":"string"
+    },
+    "body":{
+      "type":"string"
+    }
+  },
+  "required":["account", "scope", "type", "action", "title"]
+}

@@ -302,7 +302,9 @@ class NotificationProvider {
                 permissionUtils.enableACLs();
             }
         });
+
     }
+
 }
 
 module.exports = new NotificationProvider();

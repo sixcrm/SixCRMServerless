@@ -17,29 +17,29 @@ class createLeadController extends transactionEndpointController{
     constructor(){
         super({
             required_permissions: [
-                'user/read',
-                'usersetting/read',
-                'account/read',
-                'customer/read',
-                'customer/create',
-                'customer/update',
-                'session/create',
-                'session/update',
-                'session/read',
-                'campaign/read',
-                'affiliate/read',
-                'affiliate/create',
-                'notification/create',
-                'notificationsetting/read',
-                'tracker/read',
-                'emailtemplate/read',
-                'smtpprovider/read'
+              'user/read',
+              'usersetting/read',
+              'account/read',
+              'customer/read',
+              'customer/create',
+              'customer/update',
+              'session/create',
+              'session/update',
+              'session/read',
+              'campaign/read',
+              'affiliate/read',
+              'affiliate/create',
+              'notification/create',
+              'notificationsetting/read',
+              'tracker/read',
+              'emailtemplate/read',
+              'smtpprovider/read'
             ],
             notification_parameters: {
-                type: 'lead',
-                action: 'created',
-                title:  'New Lead',
-                body: 'A new lead has been created.'
+              type: 'lead',
+              action: 'created',
+              title:  'New Lead',
+              body: 'A new lead has been created.'
             }
         });
 

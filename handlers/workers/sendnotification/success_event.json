@@ -1,0 +1,12 @@
+{
+  "user":"timothy.dalbey@sixcrm.com",
+  "account":"*",
+  "scope":{
+    "user":true,
+    "account":true
+  },
+  "type":"somenotificationtype",
+  "action":"someaction",
+  "title":"sometitle",
+  "body":"somebody"
+}
