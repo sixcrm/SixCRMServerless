@@ -28,8 +28,5 @@
   },
   {
     "Bucket": "resources"
-  },
-  {
-    "Bucket": "test"
   }
 ]

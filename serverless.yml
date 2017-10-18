@@ -70,7 +70,6 @@ functions:
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
       development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
 
-
   verifysitejwt:
     handler: handlers/authorizers/verifysitejwt/handler.verifyjwt
     environment:
@@ -268,12 +267,12 @@ functions:
           enabled: true
 
 
-  sesnotifications:
-    handler: handlers/workers/sesnotifications/handler.sesnotifications
-    events:
-      - sns:
-          topicName: SESNotifications
-          displayName: SES Notifications
+  #sesnotifications:
+  #  handler: handlers/workers/sesnotifications/handler.sesnotifications
+  #  events:
+  #    - sns:
+  #        topicName: SESNotifications
+  #        displayName: SES Notifications
 
   #Technical Debt:  This seems broken
   #slackalarm:
@@ -420,13 +419,13 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
-  publichtml:
-    handler: handlers/endpoints/publichtml/handler.publichtml
-    events:
-      - http:
-         path: publichtml/{encoded}
-         method: get
-         cors: true
+  #publichtml:
+  #  handler: handlers/endpoints/publichtml/handler.publichtml
+  #  events:
+  #    - http:
+  #       path: publichtml/{encoded}
+  #       method: get
+  #       cors: true
 
   checkout:
     handler: handlers/endpoints/checkout/handler.checkout
