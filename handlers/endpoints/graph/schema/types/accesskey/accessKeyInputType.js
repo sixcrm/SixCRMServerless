@@ -6,7 +6,7 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'AccessKeyInput',
     fields: () => ({
-        id:					{ type: new GraphQLNonNull(GraphQLString) },
+        id:					{ type: GraphQLString },
         access_key:			{ type: new GraphQLNonNull(GraphQLString) },
         secret_key:			{ type: new GraphQLNonNull(GraphQLString) },
         name:			  { type: GraphQLString },
