@@ -208,6 +208,22 @@ class AnalyticsController extends AnalyticsUtilities{
 
     /* Report Pages */
 
+    getAffiliateReportSubaffiliates(parameters){
+
+        du.debug('Get Affiliate Report Subaffiliates');
+
+        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
+
+        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
+
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+        parameters = this.appendPeriod(parameters, period_selection);
+
+        return this.getResults('reports/affiliate/affiliate_report_subaffiliates', parameters, this.default_query_filters);
+
+    }
+
     getAffiliateReportSummary(parameters){
 
         du.debug('Get Affiliate Report Summary');

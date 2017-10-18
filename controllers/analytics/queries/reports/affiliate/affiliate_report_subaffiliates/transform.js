@@ -19,7 +19,7 @@ module.exports = function(results, parameters){
             results.forEach((result) => {
 
               return_array.push({
-                affiliate: result.affiliate,
+                affiliate: result.subaffiliate,
                 count_click: result.count_click,
                 count_partials: result.count_partials,
                 partials_percent: result.partials_percent,
@@ -37,13 +37,13 @@ module.exports = function(results, parameters){
 
         }
 
-        du.info(return_array);
+        du.highlight(return_array);
 
         parameters['count'] = return_array.length;
 
         let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
 
-        let return_object = {affiliates:return_array, pagination: pagination_object};
+        let return_object = {subaffiliates:return_array, pagination: pagination_object};
 
         return resolve(return_object);
 

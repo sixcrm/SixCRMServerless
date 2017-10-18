@@ -115,8 +115,9 @@ let transactionSummaryReportType = require('./analytics/transaction_summary_repo
 let transactionSummaryReportSummaryType = require('./analytics/transaction_summary_report/transactionSummaryReportSummaryType');
 let transactionsReportType = require('./analytics/transactions_report/transactionsReportType');
 let merchantReportType = require('./analytics/merchant_report/merchantReportType');
-let affiliateReportType = require('./analytics/affiliate_report/affiliateReportType')
-let affiliateReportSummaryType = require('./analytics/affiliate_report/affiliateReportSummaryType')
+let affiliateReportType = require('./analytics/affiliate_report/affiliateReportType');
+let affiliateReportSummaryType = require('./analytics/affiliate_report/affiliateReportSummaryType');
+let affiliateReportSubaffiliatesType = require('./analytics/affiliate_report/affiliateReportSubaffiliatesType');
 /* End Reports */
 
 let listActivityType = require('./analytics/listActivityType');
@@ -390,6 +391,19 @@ module.exports.graphObj = new GraphQLObjectType({
         /*
         * Analytics Endpoints
         */
+        affiliatereportsubaffiliates: {
+          type: affiliateReportSubaffiliatesType.graphObj,
+          args: {
+              analyticsfilter: { type: analyticsFilterInputType.graphObj },
+              cache: {type: cacheInputType.graphObj},
+              pagination: {type: analyticsPaginationInputType.graphObj}
+          },
+          resolve: function(root, args){
+            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+            return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReportSubaffiliates');
+          }
+        },
         affiliatereportsummary: {
           type: affiliateReportSummaryType.graphObj,
           args: {
@@ -399,9 +413,7 @@ module.exports.graphObj = new GraphQLObjectType({
           resolve: function(root, args){
             const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReportSummary').then(result => {
-              console.log(result);  process.exit();
-            });
+            return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReportSummary');
           }
         },
         affiliatereport: {
