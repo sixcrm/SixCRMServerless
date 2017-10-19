@@ -22,63 +22,30 @@ class indexEntitiesController extends workerController {
 
     execute(event){
 
-        du.debug('Executing Entity Index');
+        du.debug('Executing Entity Index', event);
 
-        return this.getMessages().then((messages) => {
+        return new Promise((resolve, reject) => {
 
-            return new Promise((resolve, reject) => {
+            let processed_documents = indexingutilities.createIndexingDocument(event);
 
-                let processed_documents = indexingutilities.createIndexingDocument(messages);
+            du.debug('Documents ready for indexing.', processed_documents);
 
-                du.debug('Documents ready for indexing.', processed_documents);
+            cloudsearchutilities.uploadDocuments(processed_documents).then((response) => {
 
-                cloudsearchutilities.uploadDocuments(processed_documents).then((response) => {
+                du.debug('Cloudsearch indexing response: ', response);
 
-                    du.debug('Cloudsearch indexing response: ', response);
+                if(_.has(response, 'status') && response.status == 'success'){
+                    return resolve(this.messages.success);
+                }else{
+                    return resolve(this.messages.successnoaction);
+                }
 
-                    if(_.has(response, 'status') && response.status == 'success'){
-                        return resolve(this.messages.success);
-                    }else{
-                        return resolve(this.messages.successnoaction);
-                    }
-
-                }).catch(() => {
-                    return reject(this.messages.failure);
-                });
-
+            }).catch(() => {
+                return reject(this.messages.failure);
             });
 
         });
 
-    }
-
-    //Technical Debt: The messages should be handed to this by forward messages...  this is inappropriate here...
-    getMessages() {
-
-        du.debug('Get Messages');
-
-        return sqsutilities.receiveMessages({queue: process.env.search_indexing_queue, limit: 10}).then((messages) => {
-
-            du.debug('Got Messages' + messages);
-
-            if (messages && messages.length > 0) {
-
-                du.debug('There are ' + messages.length + 'messages.');
-
-                // If there are 10 messages (maximum), invoke the lambda again so it picks the rest of the messages.
-                if (messages.length === 10) {
-                    lambdautilities.invokeFunction({
-                        function_name: lambdautilities.buildLambdaName('indexentities'),
-                        payload: JSON.stringify({}),
-                        invocation_type: 'Event'
-                    }); // 'Event' type will make the lambda execute asynchronously.
-                }
-
-                return messages;
-            } else {
-                return [];
-            }
-        });
     }
 
 }
