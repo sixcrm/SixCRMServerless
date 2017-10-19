@@ -160,6 +160,8 @@ class forwardMessagesController extends workerController {
                         payload: JSON.stringify(messages)
                     };
 
+                    du.debug('Invoke parameters:  ', invoke_parameters);
+
                     lambda.invokeFunction(invoke_parameters).then((workerdata) => {
 
                         du.debug('Workerdata:', workerdata);
