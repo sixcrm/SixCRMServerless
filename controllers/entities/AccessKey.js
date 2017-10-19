@@ -1,11 +1,41 @@
 'use strict';
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class accessKeyController extends entityController {
 
     constructor(){
         super('accesskey');
+    }
+
+    create({entity: entity}){
+
+      du.debug('Access Key Controller: Create');
+
+      const accesskey_helper = global.SixCRM.routes.include('helpers', 'accesskey/AccessKey.js');
+
+      entity.access_key = accesskey_helper.generateAccessKey();
+      entity.secret_key = accesskey_helper.generateSecretKey();
+
+      return super.create({entity: entity});
+
+    }
+
+    update({entity: entity}){
+
+      du.debug('Access Key Controller: Update');
+
+      du.info(entity);
+
+      return this.get({id: this.getID(entity)}).then(existing_access_key => {
+
+        entity = objectutilities.transcribe({access_key: 'access_key', secret_key: 'secret_key'}, existing_access_key, entity, false);
+
+        return super.update({entity: entity});
+
+      });
+
     }
 
     /*

@@ -11,30 +11,31 @@ const accessKeyController = global.SixCRM.routes.include('controllers', 'entitie
 
 class verifySignatureController {
 
-    execute(event){
+  execute(event){
 
-        return this.parseEventSignature(event)
-      .then(this.createTokenObject)
-      .then(this.verifyTimestamp)
-      .then(this.verifySignature)
-      .then(this.populateAuthorityUser);
+    return this.parseEventSignature(event)
+    .then(this.createTokenObject)
+    .then(this.verifyTimestamp)
+    .then(this.verifySignature)
+    .then(this.populateAuthorityUser);
 
-    }
+  }
 
  	parseEventSignature(event){
 
-     du.debug('Parse Event Signature');
+    du.debug('Parse Event Signature');
 
-     var tokens = event.authorizationToken.split(':');
+    var tokens = event.authorizationToken.split(':');
 
-     if(!_.isArray(tokens) || !(tokens.length == 3)){
+    if(!_.isArray(tokens) || !(tokens.length == 3)){
 
-         du.warning('Signature failed:  Incorrect structure');
+     du.warning('Signature failed:  Incorrect structure');
 
-         return Promise.reject(false);
-     }
+     return Promise.reject(false);
 
-     return Promise.resolve(tokens);
+    }
+
+    return Promise.resolve(tokens);
 
  	}
 
@@ -98,7 +99,7 @@ class verifySignatureController {
     verifySignature(token_object){
 
         du.debug('Verify Signature');
-
+        //
         if(!signature.validateSignature(token_object.access_key.secret_key, token_object.timestamp, token_object.signature)){
 
             du.warning('Signature failed:  Incorrect Signature');
