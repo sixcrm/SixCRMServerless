@@ -1,19 +1,19 @@
 with EVENTS_SUB1 as (SELECT subaffiliate_1 as subaffiliate,
-          count(CASE
+          sum(CASE
                     WHEN type='click' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_click,
-          count(CASE
+          sum(CASE
                     WHEN type='lead' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_partials,
-          count(CASE
+          sum(CASE
                     WHEN type LIKE 'upsell%' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_upsell,
-          count(CASE
+          sum(CASE
                     WHEN type ='order' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
    FROM f_events fe
@@ -25,21 +25,21 @@ with EVENTS_SUB1 as (SELECT subaffiliate_1 as subaffiliate,
    GROUP BY subaffiliate_1,
             DATE_TRUNC('{{period}}',datetime)),
 EVENTS_SUB2 as (SELECT subaffiliate_2 as subaffiliate,
-          count(CASE
+          sum(CASE
                     WHEN type='click' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_click,
-          count(CASE
+          sum(CASE
                     WHEN type='lead' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_partials,
-          count(CASE
+          sum(CASE
                     WHEN type LIKE 'upsell%' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_upsell,
-          count(CASE
+          sum(CASE
                     WHEN type ='order' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
    FROM f_events fe
@@ -53,21 +53,21 @@ EVENTS_SUB2 as (SELECT subaffiliate_2 as subaffiliate,
    UNION
    SELECT * FROM EVENTS_SUB1),
 EVENTS_SUB3 as (SELECT subaffiliate_3 as subaffiliate,
-          count(CASE
+          sum(CASE
                     WHEN type='click' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_click,
-          count(CASE
+          sum(CASE
                     WHEN type='lead' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_partials,
-          count(CASE
+          sum(CASE
                     WHEN type LIKE 'upsell%' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_upsell,
-          count(CASE
+          sum(CASE
                     WHEN type ='order' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
    FROM f_events fe
@@ -81,21 +81,21 @@ EVENTS_SUB3 as (SELECT subaffiliate_3 as subaffiliate,
    UNION
    SELECT * FROM EVENTS_SUB2),
 EVENTS_SUB4 as (SELECT subaffiliate_4 as subaffiliate,
-          count(CASE
+          sum(CASE
                     WHEN type='click' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_click,
-          count(CASE
+          sum(CASE
                     WHEN type='lead' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_partials,
-          count(CASE
+          sum(CASE
                     WHEN type LIKE 'upsell%' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_upsell,
-          count(CASE
+          sum(CASE
                     WHEN type ='order' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
    FROM f_events fe
@@ -109,21 +109,21 @@ EVENTS_SUB4 as (SELECT subaffiliate_4 as subaffiliate,
    UNION
    SELECT * FROM EVENTS_SUB3),
 EVENTS_SUB5 as (SELECT subaffiliate_5 as subaffiliate,
-          count(CASE
+          sum(CASE
                     WHEN type='click' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_click,
-          count(CASE
+          sum(CASE
                     WHEN type='lead' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_partials,
-          count(CASE
+          sum(CASE
                     WHEN type LIKE 'upsell%' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_upsell,
-          count(CASE
+          sum(CASE
                     WHEN type ='order' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
    FROM f_events fe
@@ -141,10 +141,10 @@ TRANSACTIONS_SUB1 AS (SELECT sum(amount) sum_amount,
                   WHEN transaction_subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
-          count(CASE
+          sum(CASE
                     WHEN transaction_subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_1
@@ -161,10 +161,10 @@ TRANSACTIONS_SUB2 AS (SELECT sum(amount) sum_amount,
                   WHEN transaction_subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
-          count(CASE
+          sum(CASE
                     WHEN transaction_subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_2
@@ -183,10 +183,10 @@ TRANSACTIONS_SUB3 AS (SELECT sum(amount) sum_amount,
                   WHEN transaction_subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
-          count(CASE
+          sum(CASE
                     WHEN transaction_subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_3
@@ -205,10 +205,10 @@ TRANSACTIONS_SUB4 AS (SELECT sum(amount) sum_amount,
                   WHEN transaction_subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
-          count(CASE
+          sum(CASE
                     WHEN transaction_subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_4
@@ -220,17 +220,17 @@ TRANSACTIONS_SUB4 AS (SELECT sum(amount) sum_amount,
      AND subaffiliate_4 !=''
    GROUP BY subaffiliate_4,
             DATE_TRUNC('{{period}}',datetime)
-  UNION
+  UNION ALL
   SELECT * FROM TRANSACTIONS_SUB3),
 TRANSACTIONS_SUB5 AS (SELECT sum(amount) sum_amount,
           sum(CASE
                   WHEN transaction_subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
-          count(CASE
+          sum(CASE
                     WHEN transaction_subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
-                    ELSE NULL
+                    ELSE 0
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_5 as subaffiliate
