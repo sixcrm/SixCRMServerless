@@ -73,7 +73,7 @@ class fulfillmentTriggerController {
         return fulfillmentProviderEntityController.get({id: id}).then((entity) => {
 
             // Technical Debt: Extract this to generic logic and reuse it.
-            if (entity.name === 'HASHTAG') {
+            if (entity.provider === 'HASHTAG') {
                 return HashtagController.testConnection(entity).then(response => {
                     return { response: response }
                 });
