@@ -31,6 +31,8 @@ let emailTemplateType = require('./emailtemplate/emailTemplateType');
 
 let fulfillmentProviderInputType = require('./fulfillmentprovider/fulfillmentProviderInputType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
+let fulfillmentProviderValidationInputType = require('./fulfillmentprovider/fulfillmentProviderValidationInputType');
+let fulfillmentProviderValidationType = require('./fulfillmentprovider/fulfillmentProviderValidationType');
 
 let deleteOutputType = require('./general/deleteOutputType');
 
@@ -132,6 +134,18 @@ module.exports.graphObj = new GraphQLObjectType({
               const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
 
               return SMTPProviderController.validateSMTPProvider(args.smtpvalidation);
+            }
+        },
+        fulfillmentprovidervalidation: {
+            type: fulfillmentProviderValidationType.graphObj,
+            description:  'Validates a Fulfillment Provider configuration',
+            args: {
+                fulfillmentprovidervalidation: { type: fulfillmentProviderValidationInputType.graphObj }
+            },
+            resolve: function(root, args){
+                const FulfillmentTriggerController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js');
+
+                return FulfillmentTriggerController.validateProvider(args.fulfillmentprovidervalidation);
             }
         },
         //Note: Fix

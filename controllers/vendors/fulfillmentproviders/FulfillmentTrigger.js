@@ -3,8 +3,9 @@ var _ = require('underscore');
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var HashtagController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/Hashtag.js');
-var fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+const HashtagController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/Hashtag/Hashtag.js');
+const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+const fulfillmentProviderEntityController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 
 class fulfillmentTriggerController {
 
@@ -28,6 +29,7 @@ class fulfillmentTriggerController {
 
             }
 
+            // Technical Debt: Extract this to generic logic and reuse it.
             switch(transaction_product.product.fulfillment_provider.provider){
 
             case 'HASHTAG':
@@ -63,6 +65,19 @@ class fulfillmentTriggerController {
 
             return transaction_product;
 
+        });
+
+    }
+
+    validateProvider(id) {
+        return fulfillmentProviderEntityController.get({id: id}).then((entity) => {
+
+            // Technical Debt: Extract this to generic logic and reuse it.
+            if (entity.name === 'HASHTAG') {
+                return HashtagController.testConnection(entity).then(response => {
+                    return { response: response }
+                });
+            }
         });
 
     }
