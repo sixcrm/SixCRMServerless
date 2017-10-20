@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/sqsmessage.json",
+	"title": "SQS Messages",
+	"type": "object",
+  "properties":{
+    "MessageId":{
+      "type":"string"
+    },
+    "ReceiptHandle":{
+      "type":"string"
+    },
+    "Body":{
+      "type":"string"
+    },
+    "MD5OfBody":{
+      "type":"string"
+    }
+  },
+  "required":["MessageId", "ReceiptHandle", "Body", "MD5OfBody"]
+}

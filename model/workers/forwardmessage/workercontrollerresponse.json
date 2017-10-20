@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/workercontrollerresponse.json",
+	"title": "Worker Controller Response",
+	"type": "object",
+  "properties":{
+    "statusCode":{
+      "type":"number"
+    },
+    "body":{
+      "type":"string"
+    }
+  },
+  "required":["statusCode", "body"]
+}
