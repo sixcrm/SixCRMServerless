@@ -28,37 +28,28 @@ class fulfillmentTriggerController {
 
         return new Promise((resolve, reject) => {
 
-            if(!_.has(transaction_product.product, "fulfillment_provider") || !_.has(transaction_product.product.fulfillment_provider, "name")){
+            this.assertNameAndType(transaction_product.product.fulfillment_provider);
 
-                reject(eu.getError('bad_request', 'Unable to identify fulfillment provider associated with the transaction_product.'));
+            let controller = this.getControllerInstance(transaction_product.product.fulfillment_provider.provider);
 
-            }
+            return controller.triggerFulfillment(transaction_product).then((fulfillment_response) => {
 
-            // Technical Debt: Extract this to generic logic and reuse it.
-            switch(transaction_product.product.fulfillment_provider.provider){
+                return resolve(fulfillment_response);
 
-            case 'HASHTAG':
-
-                HashtagController.triggerFulfillment(transaction_product).then((fulfillment_response) => {
-
-                    return resolve(fulfillment_response);
-
-                }).catch((error) => {
-                    return reject(error);
-                });
-
-                break;
-
-            default:
-
-                reject(eu.getError('not_implemented','Unknown fulfillment provider: ' + transaction_product.product.fulfillment_provider.provider));
-
-                break;
-
-            }
+            }).catch((error) => {
+                return reject(error);
+            });
 
         });
 
+    }
+
+    assertNameAndType(provider) {
+        if(!_.has(provider, "name") || !_.has(provider.provider)){
+
+            eu.throwError('bad_request', 'Unable to identify fulfillment provider associated with the transaction_product.');
+
+        }
     }
 
 	//Technical Debt:  It'd be better if the object that was coming through the pipe was hydrated...
@@ -74,20 +65,38 @@ class fulfillmentTriggerController {
 
     }
 
+    getControllerInstance(provider) {
+
+        du.debug('Get Controller Instance', provider);
+
+        let provider_type = provider.provider;
+
+        switch(provider_type){
+
+            case 'HASHTAG':
+
+                return HashtagController;
+
+            default:
+
+                eu.throwError('not_implemented','Unknown fulfillment provider: ' + provider_type);
+
+                break;
+
+        }
+    }
+
     validateProvider(id) {
 
         du.debug('Validate Provider', id);
 
         return fulfillmentProviderEntityController.get({id: id}).then((entity) => {
 
-            du.debug(entity);
+            let controller = this.getControllerInstance(entity);
 
-            // Technical Debt: Extract this to generic logic and reuse it.
-            if (entity.provider === 'HASHTAG') {
-                return HashtagController.testConnection(entity).then(response => {
-                    return { response: response }
-                });
-            }
+            return controller.testConnection(entity).then(response => {
+                return { response: response }
+            });
         });
 
     }
