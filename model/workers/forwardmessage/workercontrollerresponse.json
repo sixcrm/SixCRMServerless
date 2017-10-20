@@ -4,12 +4,15 @@
 	"title": "Worker Controller Response",
 	"type": "object",
   "properties":{
-    "statusCode":{
-      "type":"number"
+    "message": {
+      "type":"string"
     },
-    "body":{
+    "forward": {
+      "type":"string"
+    },
+    "failed": {
       "type":"string"
     }
   },
-  "required":["statusCode", "body"]
+  "required":["message"]
 }

@@ -28,7 +28,8 @@ provider:
     aws_account: ${file(./config/${opt:stage}/site.yml):aws.account}
     dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
     search_indexing_queue: 'search_indexing'
-    send_notification_queue: 'send_notification'
+    #Technical Debt:  update to "send_notifications"
+    send_notifications_queue: 'send_notification'
     rebill_queue: 'rebill'
     bill_queue: 'bill'
     hold_queue: 'hold'
@@ -250,11 +251,11 @@ functions:
     events:
       - schedule:
           rate: rate(1 minute)
-          enabled: true
+          enabled: false
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_sendnotificationtoarchive}
+      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_sendnotificationstoarchive}
       origin_queue: 'send_notification'
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.sendnotificationtoarchive}
+      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.sendnotificationstoarchive}
       archivefilter: 'ALL'
 
 # Workers

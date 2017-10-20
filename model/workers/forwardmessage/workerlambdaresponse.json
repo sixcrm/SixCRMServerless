@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/workerlambdaresponse.json",
+	"title": "Worker Lambda Response",
+	"type": "object",
+  "properties":{
+    "statusCode":{
+      "type":"number"
+    },
+    "headers":{
+      "type":"object"
+    },
+    "body":{
+      "type":"string"
+    }
+  },
+  "required":["statusCode", "body", "headers"]
+}

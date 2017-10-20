@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/lambdaresponse.json",
+	"title": "Lambda Response",
+	"type": "object",
+  "properties":{
+    "response": {
+      "type": "object"
+    },
+    "message":{
+      "type":"object"
+    },
+    "error":{
+      "anyOf":[
+        {
+          "type":"null"
+        },
+        {
+          "type":"object"
+        }
+      ]
+    }
+  },
+  "required":["response", "message", "error"]
+}

@@ -65,7 +65,6 @@ class forwardMessageController extends workerController {
         return [];
 
       })
-      .then((responses) => this.deleteMessages(responses))
       .then((responses) => this.respond(responses))
       .catch((error) => {
         eu.throwError('server', error);
@@ -78,43 +77,29 @@ class forwardMessageController extends workerController {
 
       du.debug('Respond');
 
+      du.warning(responses);
+
       return responses;
 
     }
 
-    deleteMessage(response){
+    deleteMessage(response, message_receipt_handle){
 
       du.debug('Delete Message');
 
-      if(_.contains(response.response.result, [this.messages.success, this.messages.failforward])){
+      if(_.contains(response.result, [this.messages.success, this.messages.failforward])){
 
-        du.warning('Deletes disabled');
-
-        return Promise.resolve(response);
-        /*
         return sqs.deleteMessage({
           queue: process.env.origin_queue,
-          receipt_handle: response.message.ReceiptHandle
+          receipt_handle: message_receipt_handle
         }).then(() => {
             return response;
         });
-        */
 
       }
 
+      //no action event...
       return Promise.resolve(response);
-
-    }
-
-    deleteMessages(responses){
-
-      du.debug('Delete Messages');
-
-      let delete_promises = arrayutilities.map(responses, response => {
-        return this.deleteMessage(response);
-      });
-
-      return Promise.all(delete_promises);
 
     }
 
@@ -122,7 +107,7 @@ class forwardMessageController extends workerController {
 
       du.debug('Handle No Action');
 
-      if(!_.has(response.response, 'result')){
+      if(!_.has(response, 'result')){
 
         response = this.markResponse(response, 'successnoaction');
 
@@ -161,7 +146,7 @@ class forwardMessageController extends workerController {
 
     }
 
-    handleFowarding(response){
+    handleForwarding(response){
 
       du.debug('Handle Forwarding');
 
@@ -190,48 +175,130 @@ class forwardMessageController extends workerController {
 
     }
 
-    validateResponse(response){
+    validateLambdaResponse(response){
 
-      du.debug('Validate Response');
+      du.debug('Validate Lambda Response');
 
-      mvu.validateModel(response, global.SixCRM.routes.path('model', 'workers/forwardmessage/workerresponse.json'), null, true);
+      mvu.validateModel(response, global.SixCRM.routes.path('model', 'workers/forwardmessage/lambdaresponse.json'), null, true);
 
       return Promise.resolve(response);
 
     }
 
-    handleResponse(response){
+    validateWorkerLambdaResponse(response){
+
+      du.debug('Validate Worker Response');
+
+      mvu.validateModel(response, global.SixCRM.routes.path('model', 'workers/forwardmessage/workerlambdaresponse.json'), null, true);
+
+      return Promise.resolve(response);
+
+    }
+
+    validateWorkerControllerResponse(response){
+
+      du.debug('Validate Worker Response');
+
+      mvu.validateModel(response, global.SixCRM.routes.path('model', 'workers/forwardmessage/workercontrollerresponse.json'), null, true);
+
+      return Promise.resolve(response);
+
+    }
+
+    validateForwardMessage(forwardmessage){
+
+      du.debug('Validate Forward Message');
+
+      mvu.validateModel(forwardmessage, global.SixCRM.routes.path('model', 'workers/forwardmessage/forwardmessage.json'), null, true);
+
+      return Promise.resolve(forwardmessage);
+
+    }
+
+    parseLambdaResponse(response){
+
+      du.debug('Parse Lambda Response');
+
+      response = response.Payload;
+
+      try{
+        response = JSON.parse(response);
+      }catch(error){
+
+        du.error('JSON Parse Error: ', error);
+
+      }
+
+      return response;
+
+    }
+
+    parseWorkerLambdaResponse(response){
+
+      du.debug('Parse Lambda Response');
+
+      response = response.body;
+
+      try{
+        response = JSON.parse(response);
+      }catch(error){
+        du.error('JSON Parse Error: ', error);
+      }
+
+      return response;
+
+    }
+
+    handleResponse(forwardmessage){
 
       du.debug('Handle Response');
 
-      return this.validateResponse(response)
+      return this.validateForwardMessage(forwardmessage)
+      .then((forwardmessage) => {
+        return forwardmessage.response;
+      })
+      .then((response) => this.validateLambdaResponse(response))
+      .then((response) => this.parseLambdaResponse(response))
+      .then((response) => this.validateWorkerLambdaResponse(response))
+      .then((response) => this.parseWorkerLambdaResponse(response))
+      .then((response) => this.validateWorkerControllerResponse(response))
       .then((response) => {
 
-        return this.handleFailures(response)
-        .then((response) => this.handleForwarding(response))
-        .then((response) => this.handleNoAction(response));
+        return this.handleFailures(response, forwardmessage)
+        .then((response) => this.handleForwarding(response, forwardmessage))
+        .then((response) => this.handleNoAction(response, forwardmessage));
 
       })
       .then((response) => {
 
-        this.deleteMessage(response.message);
-        return response;
+        return this.deleteMessage(response, forwardmessage.message.ReceiptHandle)
+        .then((delete_response) => {
+
+          du.info('Delete Response:', delete_response);
+
+          return response;
+
+        });
 
       });
 
     }
 
-    handleResponses(responses, messages){
+    handleResponses(forwardmessages){
 
       du.debug('Handle Responses');
 
-      let handled_responses = arrayutilities.map(responses, response => {
+      let handled_forwardmessages_promises = arrayutilities.map(forwardmessages, forwardmessage => {
 
-        return this.handleResponse(response);
+        return this.handleResponse(forwardmessage);
 
       });
 
-      return Promise.all(handled_responses);
+      return Promise.all(handled_forwardmessages_promises).then(handled_forwardmessages_promises => {
+        //validate?
+        return handled_forwardmessages_promises;
+
+      });
 
     }
 
@@ -239,24 +306,34 @@ class forwardMessageController extends workerController {
 
       du.debug('Forward Message');
 
-      return new Promise((resolve) => {
+      let invoke_parameters = {
+        function_name: lambda.buildLambdaName(process.env.workerfunction),
+        payload: JSON.stringify(message)
+      };
 
-        let invoke_parameters = {
-          function_name: lambda.buildLambdaName(process.env.workerfunction),
-          payload: JSON.stringify(message)
-        };
+      return lambda.invokeFunction(invoke_parameters).then(response => {
 
-        lambda.invokeFunction(invoke_parameters, (error, workerdata) => {
+        return response;
 
-          return resolve({
-            response: workerdata,
-            message: message,
-            error: error
-          });
-
-        });
-
+      })
+      .then((response) => {
+        if(_.isError(response)){
+          return this.assembleForwardMessageResponseObject(null, message, response);
+        }
+        return this.assembleForwardMessageResponseObject(response, message, null);
       });
+
+    }
+
+    assembleForwardMessageResponseObject(response, message, error){
+
+      du.debug('Assemble Forward Message Response Object');
+
+      return {
+        response: response,
+        message: message,
+        error: error
+      };
 
     }
 
@@ -272,11 +349,10 @@ class forwardMessageController extends workerController {
       });
 
       return Promise.all(message_handler_promises).then(results => {
-        du.warning('here');
-        du.info(results);
         return results;
       }).catch(error => {
         du.error(error);
+        process.exit();
       });
 
     }
@@ -343,9 +419,9 @@ class forwardMessageController extends workerController {
 
       du.debug('Mark Response');
 
-      if(!_.has(response.response, 'result')){
+      if(!_.has(response, 'result')){
 
-        response.response.result = this.messages[code];
+        response.result = this.messages[code];
 
       }
 

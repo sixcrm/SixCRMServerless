@@ -44,14 +44,15 @@ function getValidLambdaResponseError(){
   }
 }
 
-function getValidResponse(){
+function getValidForwardMessage(){
 
   return {
     message: getValidMessages().shift(),
     response: {
       statusCode:200,
       body: JSON.stringify('some response')
-    }
+    },
+    error:null
   };
 
 }
@@ -387,8 +388,8 @@ describe('workers/forwardMessage', () => {
     it('succeeds for valid messages of length less than limit', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: (parameters, callback) => {
-          callback(null, getValidLambdaResponse());
+        invokeFunction: (parameters) => {
+          return Promise.resolve(getValidLambdaResponse());
         },
         buildLambdaName: (shortname) => {
           return 'alambdaname';
@@ -416,7 +417,7 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
         invokeFunction: (parameters, callback) => {
-          callback(null, getValidLambdaResponse());
+          return Promise.resolve(getValidLambdaResponse());
         },
         buildLambdaName: (shortname) => {
           return 'alambdaname';
@@ -444,7 +445,7 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
         invokeFunction: (parameters, callback) => {
-          callback(getInvokeError(), null);
+          return Promise.resolve(getInvokeError());
         },
         buildLambdaName: (shortname) => {
           return 'alambdaname';
@@ -459,10 +460,12 @@ describe('workers/forwardMessage', () => {
 
         arrayutilities.map(responses, response => {
 
+          du.info(response);
+
           expect(response).to.have.property('response');
           expect(response).to.have.property('message');
           expect(response).to.have.property('error');
-          expect(response.response).to.be.null;
+          expect(response.response).to.equal(null);
           expect(response.error instanceof Error).to.equal(true);
 
         });
@@ -479,9 +482,9 @@ describe('workers/forwardMessage', () => {
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      let response = getValidResponse();
+      let response = getValidForwardMessage();
 
-      forwardMessageController.validateResponse(response).then(valid_response => {
+      forwardMessageController.validateForwardMessage(response).then(valid_response => {
         expect(valid_response).to.deep.equal(response);
       });
 
@@ -489,7 +492,7 @@ describe('workers/forwardMessage', () => {
 
     it('fails to validate responses', () => {
 
-      let response = getValidResponse();
+      let response = getValidForwardMessage();
 
       let invalid_responses = [{}, null, 123, 'abc', new Error, [], () => {}];
 
@@ -510,7 +513,7 @@ describe('workers/forwardMessage', () => {
 
       arrayutilities.map(invalid_responses, (invalid_response) => {
         try{
-          forwardMessageController.validateResponse(invalid_response);
+          forwardMessageController.validateForwardMessage(invalid_response);
         }catch(error){
           expect(error.message).to.equal('[500] One or more validation errors occurred.');
         }
