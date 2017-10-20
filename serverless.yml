@@ -245,8 +245,8 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
       archivefilter: 'ALL'
 
-  sendnotificationtoarchive:
-    handler: handlers/workers/forwardmessages/handler.forwardmessage
+  sendnotificationstoarchive:
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
@@ -302,7 +302,7 @@ functions:
           rate: rate(2 hours)
           enabled: true
 
-  sendnotification:
+  sendnotifications:
     handler: handlers/workers/sendnotifications/handler.sendnotifications
 
   processbilling:

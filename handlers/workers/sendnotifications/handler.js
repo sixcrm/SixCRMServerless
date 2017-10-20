@@ -1,15 +1,15 @@
 'use strict';
 require('../../../SixCRM.js');
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const sendNotificationController = global.SixCRM.routes.include('controllers', 'workers/sendNotifications.js');
+const sendNotificationsController = global.SixCRM.routes.include('controllers', 'workers/sendNotifications.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
-module.exports.sendnotification = (event, context, callback) => {
+module.exports.sendnotifications = (event, context, callback) => {
 
-  sendNotificationController.execute(event).then((result) => {
+  sendNotificationsController.execute(event).then((result) => {
 
-    if(result !== sendNotificationController.messages.success && result !== sendNotificationController.messages.successnoaction){
+    if(result !== sendNotificationsController.messages.success && result !== sendNotificationsController.messages.successnoaction){
 
       new LambdaResponse().issueResponse(200, {
         message: result
@@ -17,7 +17,7 @@ module.exports.sendnotification = (event, context, callback) => {
 
     }else{
 
-      sendNotificationController.createForwardMessage(event).then((forward_object) => {
+      sendNotificationsController.createForwardMessage(event).then((forward_object) => {
         new LambdaResponse().issueResponse(200, {
           message: result,
           forward: forward_object
@@ -28,7 +28,7 @@ module.exports.sendnotification = (event, context, callback) => {
 
   }).catch((error) => {
 
-    du.warning('Send Notification Catch Error', error);
+    du.error(error);
 
     return new LambdaResponse().issueError(error.message, event, callback);
 
