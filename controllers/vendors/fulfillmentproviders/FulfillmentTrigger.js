@@ -2,6 +2,7 @@
 var _ = require('underscore');
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const HashtagController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/Hashtag/Hashtag.js');
 const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
@@ -15,11 +16,15 @@ class fulfillmentTriggerController {
 
     triggerFulfillment(transaction_product){
 
+        du.debug('Trigger Fulfillment');
+
         return this.getFulfillmentProvider(transaction_product).then((transaction_product) => this.executeFulfillment(transaction_product));
 
     }
 
     executeFulfillment(transaction_product){
+
+        du.debug('Execute Fulfillment');
 
         return new Promise((resolve, reject) => {
 
@@ -70,7 +75,12 @@ class fulfillmentTriggerController {
     }
 
     validateProvider(id) {
+
+        du.debug('Validate Provider', id);
+
         return fulfillmentProviderEntityController.get({id: id}).then((entity) => {
+
+            du.debug(entity);
 
             // Technical Debt: Extract this to generic logic and reuse it.
             if (entity.provider === 'HASHTAG') {
