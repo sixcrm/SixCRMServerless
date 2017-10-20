@@ -145,7 +145,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 const FulfillmentTriggerController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js');
 
-                return FulfillmentTriggerController.validateProvider(args.fulfillmentprovidervalidation);
+                return FulfillmentTriggerController.validateProvider(args.fulfillmentprovidervalidation.fulfillmentprovider);
             }
         },
         //Note: Fix
