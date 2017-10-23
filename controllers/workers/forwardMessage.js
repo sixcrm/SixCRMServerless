@@ -26,8 +26,6 @@ var workerController = global.SixCRM.routes.include('controllers', 'workers/work
 *
 */
 
-//Technical Debt:  Refactor
-
 class forwardMessageController extends workerController {
 
     constructor(){
@@ -98,7 +96,6 @@ class forwardMessageController extends workerController {
 
       }
 
-      //no action event...
       return Promise.resolve(response);
 
     }
@@ -113,7 +110,7 @@ class forwardMessageController extends workerController {
 
       }
 
-      return response;
+      return Promise.resolve(response);
 
     }
 
@@ -131,14 +128,13 @@ class forwardMessageController extends workerController {
           return resolve(response);
         }
 
-        sqs.sendMessage({message_body: response.response.failed, queue: process.env.failure_queue}, (error, data) => {
+        sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error, data) => {
 
           if(_.isError(error)){
             return reject(error);
           }
 
-          response = this.markResponse(response, 'failforward');
-          return resolve(response);
+          return resolve(this.markResponse(response, 'failforward'));
 
         });
 
@@ -166,8 +162,7 @@ class forwardMessageController extends workerController {
             return reject(error);
           }
 
-          response = this.markResponse(response, 'success');
-          return resolve(response);
+          return resolve(this.markResponse(response, 'success'));
 
         });
 
@@ -215,7 +210,7 @@ class forwardMessageController extends workerController {
 
     }
 
-    parseLambdaResponse(response){
+    parseLambdaResponsePayload(response){
 
       du.debug('Parse Lambda Response');
 
@@ -224,16 +219,14 @@ class forwardMessageController extends workerController {
       try{
         response = JSON.parse(response);
       }catch(error){
-
         du.error('JSON Parse Error: ', error);
-
       }
 
       return response;
 
     }
 
-    parseWorkerLambdaResponse(response){
+    parseWorkerLambdaResponseBody(response){
 
       du.debug('Parse Lambda Response');
 
@@ -258,9 +251,9 @@ class forwardMessageController extends workerController {
         return forwardmessage.response;
       })
       .then((response) => this.validateLambdaResponse(response))
-      .then((response) => this.parseLambdaResponse(response))
+      .then((response) => this.parseLambdaResponsePayload(response))
       .then((response) => this.validateWorkerLambdaResponse(response))
-      .then((response) => this.parseWorkerLambdaResponse(response))
+      .then((response) => this.parseWorkerLambdaResponseBody(response))
       .then((response) => this.validateWorkerControllerResponse(response))
       .then((response) => {
 
