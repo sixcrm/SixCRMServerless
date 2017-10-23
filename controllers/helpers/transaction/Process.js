@@ -7,6 +7,7 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const ProcessUtilities = global.SixCRM.routes.include('helpers', 'transaction/ProcessUtilities.js');
 
@@ -357,7 +358,7 @@ module.exports = class Process extends ProcessUtilities{
         }));
 
         if(objectutilities.hasRecursive(merchantprovider, 'summary.summary.thismonth.amount')){
-          return merchantprovider.summary.summary.thismonth.amount;
+          return parseFloat(merchantprovider.summary.summary.thismonth.amount);
         }
 
         du.warning('Merchant Provider missing critical properties: "merchantprovider.summary.summary.thismonth.amount".');
@@ -405,8 +406,16 @@ module.exports = class Process extends ProcessUtilities{
         eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that selected_loadbalancer.monthly_sum property is numeric');
       }
 
-      if(!objectutilities.hasRecursive(merchantprovider, 'summary.summary.thismonth.amount') || !_.isNumber(merchantprovider.summary.summary.thismonth.amount)){
-        eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that merchantprovider.summary.summary.thismonth.amount property is numeric');
+      if(!objectutilities.hasRecursive(merchantprovider, 'summary.summary.thismonth.amount')){
+        eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that merchantprovider.summary.summary.thismonth.amount property is set');
+      }
+
+      if(!numberutilities.isNumber(merchantprovider.summary.summary.thismonth.amount)){
+        if(_.isString(merchantprovider.summary.summary.thismonth.amount) && stringutilities.isNumeric(merchantprovider.summary.summary.thismonth.amount)){
+          merchantprovider.summary.summary.thismonth.amount = parseFloat(merchantprovider.summary.summary.thismonth.amount);
+        }else{
+          eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that merchantprovider.summary.summary.thismonth.amount property is numeric');
+        }
       }
 
       let numerator = (merchantprovider.summary.summary.thismonth.amount + additional_amount);
