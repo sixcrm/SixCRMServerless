@@ -213,26 +213,26 @@ deployment:
 
       ###########
       #CloudSearch
-      - ./tools/inCommit.sh ^deployment/cloudsearch/.* && echo "skipping, no updates" || node ./deployment/cloudsearch/deploy.js
+      - node ./deployment/cloudsearch/deploy.js
       - node ./deployment/cloudsearch/purge.js
       ###########
 
       ###########
       #ElastiCache
-      - ./tools/inCommit.sh ^deployment/elasticache/.* && echo "skipping, no updates" || node ./deployment/elasticache/deploy.js
-      - ./tools/inCommit.sh ^deployment/elasticache/.* && echo "skipping, no updates" || node ./deployment/elasticache/purge.js
+      - node ./deployment/elasticache/deploy.js
+      - node ./deployment/elasticache/purge.js
       ###########
 
       ###########
       #DynamoDB
       #- node ./deployment/dynamodb/purge_tables.js && exit 0;
-      - ./tools/inCommit.sh ^model/dynamodb/.* && echo "skipping, no updates" || node ./deployment/dynamodb/deploy_tables.js
+      - node ./deployment/dynamodb/deploy_tables.js
       ###########
 
       ###########
       #Redshift
-      - ./tools/inCommit.sh ^deployment/redshift/.* && echo "skipping, no updates" || node ./deployment/redshift/deploy_cluster.js
-      - ./tools/inCommit.sh ^model/redshift/.* && echo "skipping, no updates" || ( node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 )
+      - node ./deployment/redshift/deploy_cluster.js
+      - node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240
 
       - node ./deployment/redshift/seed_referential.js
       - node ./deployment/redshift/seed_tables.js
@@ -240,7 +240,7 @@ deployment:
 
       ###########
       #Kinesis
-      - ./tools/inCommit.sh ^deployment/kinesis/.* && echo "skipping, no updates" || node ./deployment/kinesis/deploy_streams.js
+      - node ./deployment/kinesis/deploy_streams.js
       ###########
 
       ###########
