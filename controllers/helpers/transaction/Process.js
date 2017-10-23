@@ -612,6 +612,10 @@ module.exports = class Process extends ProcessUtilities{
 
       du.debug('Filter Invalid Merchant Providers');
 
+      if(!arrayutilities.nonEmpty(merchant_providers)){
+        eu.throwError('server', 'No merchant providers to select from.');
+      }
+
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
         return (_.has(merchant_provider, 'summary'));
@@ -626,6 +630,10 @@ module.exports = class Process extends ProcessUtilities{
 
       du.debug('Filter Disabled Merchant Providers');
 
+      if(!arrayutilities.nonEmpty(merchant_providers)){
+        eu.throwError('server', 'No merchant providers to select from.');
+      }
+
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
         return (merchant_provider.enabled == true);
       });
@@ -637,6 +645,10 @@ module.exports = class Process extends ProcessUtilities{
     filterTypeMismatchedMerchantProviders(merchant_providers){
 
       du.debug('Filter Type Mismatched Merchant Providers');
+
+      if(!arrayutilities.nonEmpty(merchant_providers)){
+        eu.throwError('server', 'No merchant providers to select from.');
+      }
 
       let selected_creditcard = this.parameters.get('selected_creditcard', ['properties.brand']);
 
@@ -658,6 +670,10 @@ module.exports = class Process extends ProcessUtilities{
 
       du.debug('Filter CAP Shortage Merchant Providers');
 
+      if(!arrayutilities.nonEmpty(merchant_providers)){
+        eu.throwError('server', 'No merchant providers to select from.');
+      }
+
       let amount = this.parameters.get('amount');
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
@@ -676,6 +692,10 @@ module.exports = class Process extends ProcessUtilities{
     filterCountShortageMerchantProviders(merchant_providers){
 
       du.debug('Filter Count Shortage Merchant Providers');
+
+      if(!arrayutilities.nonEmpty(merchant_providers)){
+        eu.throwError('server', 'No merchant providers to select from.');
+      }
 
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 

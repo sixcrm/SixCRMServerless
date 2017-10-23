@@ -7,15 +7,15 @@
 			"name":"NMA"
 		},
 		"processing":{
-			"monthly_cap": 1000000.00,
+			"monthly_cap": 2000000.00,
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
 			"maximum_chargeback_ratio":0.17,
 			"transaction_counts":{
-				"daily":100000,
-				"monthly":100000,
-				"weekly":100000
+				"daily":200000,
+				"monthly":200000,
+				"weekly":200000
 			}
 		},
 		"enabled":true,
@@ -44,15 +44,15 @@
 			"name":"NMA"
 		},
 		"processing":{
-			"monthly_cap": 2000000.00,
+			"monthly_cap": 4000000.00,
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
 			"maximum_chargeback_ratio":0.17,
 			"transaction_counts":{
-				"daily":60000,
-				"monthly":60000,
-				"weekly":60000
+				"daily":120000,
+				"monthly":120000,
+				"weekly":120000
 			}
 		},
 		"enabled":true,
@@ -81,15 +81,15 @@
 			"name":"Humbolt"
 		},
 		"processing":{
-			"monthly_cap": 2000000.00,
+			"monthly_cap": 4000000.00,
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
 			"maximum_chargeback_ratio":0.17,
 			"transaction_counts":{
-				"daily":6000,
-				"monthly":6000,
-				"weekly":6000
+				"daily":12000,
+				"monthly":12000,
+				"weekly":12000
 			}
 		},
 		"enabled":true,
