@@ -12,7 +12,7 @@ class CloudsearchDeployment{
 
       this.cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
-      this.setDomainName();
+      this.setDomainName()
 
     }
 
@@ -73,6 +73,8 @@ class CloudsearchDeployment{
       };
 
       return this.cloudsearchutilities.search(query_parameters).then((results) => {
+
+        du.warning(results);
 
         let documents = [];
 
