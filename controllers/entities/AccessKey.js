@@ -26,11 +26,11 @@ class accessKeyController extends entityController {
 
       du.debug('Access Key Controller: Update');
 
-      du.info(entity);
-
       return this.get({id: this.getID(entity)}).then(existing_access_key => {
 
-        entity = objectutilities.transcribe({access_key: 'access_key', secret_key: 'secret_key'}, existing_access_key, entity, false);
+        if(objectutilities.isObject(existing_access_key)){
+          entity = objectutilities.transcribe({access_key: 'access_key', secret_key: 'secret_key'}, existing_access_key, entity, false);
+        }
 
         return super.update({entity: entity});
 
