@@ -235,12 +235,13 @@ functions:
       archivefilter: 'TWOATTEMPTS'
 
   indextoarchive:
-    handler: handlers/workers/forwardmessages/handler.forwardmessages
+    handler: handlers/workers/forwardmessage/handler.forwardmessage
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
     environment:
+      bulk: true
       name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_indextoarchive}
       origin_queue: 'search_indexing'
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}

@@ -497,6 +497,37 @@ describe('workers/forwardMessage', () => {
 
     });
 
+    it('succeeds for when bulk is set', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
+        invokeFunction: (parameters, callback) => {
+          return Promise.resolve(getValidLambdaResponse());
+        },
+        buildLambdaName: (shortname) => {
+          return 'alambdaname';
+        }
+      });
+
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
+
+      process.env.bulk = true;
+
+      return forwardMessageController.forwardMessages(messages).then(responses => {
+
+        expect(responses.length).to.equal(1);
+
+        arrayutilities.map(responses, response => {
+          expect(response).to.have.property('response');
+          expect(response).to.have.property('message');
+          expect(response.message.length).to.equal(messages.length);
+        });
+
+      });
+
+    });
+
   });
 
   describe('validateForwardMessage', () => {
@@ -1014,7 +1045,7 @@ describe('workers/forwardMessage', () => {
       mockery.deregisterAll();
     });
 
-    it('successfully handles response', () => {
+    xit('successfully handles response', () => {
 
       let forward_message = getValidForwardMessage();
 

@@ -330,16 +330,26 @@ class forwardMessageController extends workerController {
 
     }
 
-    //Note:  This is the only difference between forwardMessage and forwardMessages...
     forwardMessages(messages){
 
       du.debug('Forward Messages');
 
-      let message_handler_promises = arrayutilities.map(messages, (message) => {
+      let message_handler_promises = [];
 
-        return this.forwardMessage(message);
+      if(_.has(process.env, 'bulk') && process.env.bulk == 'true'){
 
-      });
+        //Note:  This is the only difference between forwardMessage and forwardMessages...
+        message_handler_promises.push(this.forwardMessage(messages));
+
+      }else{
+
+        message_handler_promises = arrayutilities.map(messages, (message) => {
+
+          return this.forwardMessage(message);
+
+        });
+
+      }
 
       return Promise.all(message_handler_promises).then(results => {
         return results;
@@ -357,6 +367,7 @@ class forwardMessageController extends workerController {
       if(arrayutilities.nonEmpty(messages) && messages.length >= this.message_limit){
 
         du.warning('Invoking additonal Lambdas');
+
         return lambda.invokeFunction({
           function_name: lambda.buildLambdaName(process.env.name),
           payload: JSON.stringify({}),
@@ -425,202 +436,3 @@ class forwardMessageController extends workerController {
 }
 
 module.exports = new forwardMessageController();
-
-    /*
-    parseSQSMessage(workerdata_payload){
-
-        return new Promise((resolve, reject) => {
-
-            if(_.isObject(workerdata_payload)){
-                resolve(workerdata_payload);
-            }else if(_.isString(workerdata_payload)){
-                var message;
-
-                try{
-                    message = JSON.parse(workerdata_payload);
-                }catch(error){
-                    reject(error);
-                }
-                resolve(message);
-            }
-
-        });
-
-
-    }
-
-    parseLambdaResponse(lambda_response){
-
-        return new Promise((resolve, reject) => {
-
-            var parsed_lambda_response;
-
-            if(_.isString(lambda_response)){
-                try{
-                    parsed_lambda_response = JSON.parse(lambda_response);
-                }catch(error){
-                    reject(error);
-                }
-
-                resolve(parsed_lambda_response);
-
-            }else{
-
-                resolve(lambda_response);
-
-            }
-
-        });
-
-    }
-
-    forwardMessage(){
-
-        du.debug('Forward Message');
-
-        var controller_instance = this;
-
-        return new Promise((resolve, reject) => {
-
-            sqs.receiveMessages({queue: process.env.origin_queue, limit: 10}).then((messages) => {
-
-                if (messages && messages.length > 0) {
-
-                    // If there are 10 messages (maximum), invoke the lambda again so it picks the rest of the messages.
-                    if (messages.length === 10) {
-                        lambda.invokeFunction({
-                          function_name: lambda.buildLambdaName(process.env.name),
-                          payload: JSON.stringify({}),
-                          invocation_type: 'Event'
-                        }); // 'Event' type will make the lambda execute asynchronously.
-                    }
-
-                    messages.forEach(function(message) {
-
-                      du.debug('Handling Message:', message);
-
-						          //Technical Debt: in the case of a local context, I want this to invoke a local function...
-                      let invoke_parameters = {
-                        function_name: lambda.buildLambdaName(process.env.workerfunction),
-                        payload: JSON.stringify(message)
-                      };
-
-                      lambda.invokeFunction(invoke_parameters, (error, workerdata) => {
-
-                        if(_.isError(error)){
-                          reject(error);
-                          return;
-                        }
-
-                        if(workerdata.StatusCode !== 200){
-                          reject(eu.getError('server','Non-200 Status Code returned from Lambda invokation.'));
-                        }
-
-                            controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
-
-                                if(!_.has(response, 'statusCode')){
-
-                                    let error_message = ' Worker data object has unrecognized structure.';
-
-                                    if(_.has(response, 'body')){
-                                        error_message += response.body;
-                                    }
-
-                                    reject(eu.getError('server',error_message));
-
-                                }
-
-                                if( response.statusCode !== 200){
-
-                                    let error_message = 'Non-200 Status Code returned in workerdata object: ';
-
-                                    if(_.has(response, 'body')){
-                                        error_message += response.body;
-                                    }
-                                    reject(eu.getError('server', error_message));
-
-                                }
-
-                                controller_instance.parseLambdaResponse(response.body).then((response) => {
-
-                                    if(_.has(response, "forward")){
-
-                                        if(_.has(process.env, "destination_queue")){
-
-                                            sqs.sendMessage({message_body: response.forward, queue: process.env.destination_queue}, (error, data) => {
-
-                                                if(_.isError(error)){
-                                                    reject(error);
-                                                }
-
-                                                return sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle})
-                                                    .then(() => {
-                                                        return resolve(controller_instance.messages.success);
-                                                    });
-
-                                            });
-
-                                        }else{
-
-                                            return sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle})
-                                                .then(() => {
-                                                    return resolve(controller_instance.messages.success);
-                                                });
-
-                                        }
-
-                                    }else{
-
-                                        if(_.has(process.env, 'failure_queue')){
-
-                                            if(_.has(response, "failed")){
-
-                                                sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error, data) => {
-
-                                                    if(_.isError(error)){ reject(error); }
-
-                                                    sqs.deleteMessage({queue: process.env.origin_queue, receipt_handle: message.ReceiptHandle})
-                                                        .then(() => {
-                                                            return resolve(controller_instance.failforward);
-                                                        });
-
-                                                });
-
-                                            }else{
-
-                                                resolve(controller_instance.messages.successnoaction);
-
-                                            }
-
-                                        }else{
-
-                                            resolve(controller_instance.messages.successnoaction);
-
-                                        }
-
-                                    }
-
-                                });
-
-                            });
-
-                        });
-
-                    });
-
-                }else{
-
-                    resolve(this.messages.successnomessages);
-
-                }
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
-
-    }
-    */
