@@ -36,7 +36,7 @@ class userACLController extends entityController {
 
       du.debug('getACLByUser');
 
-      return this.queryBySecondaryIndex({field: 'user', index_value: this.getID(user), index_name: 'user-index'});
+      return this.listByUser({user:user});
 
     }
 

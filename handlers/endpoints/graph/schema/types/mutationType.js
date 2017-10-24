@@ -98,6 +98,8 @@ const GraphQLString = require('graphql').GraphQLString;
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Mutation',
     fields: () => ({
+
+        //Technical Debt:  See below??
         //Note: Fix
         acceptinvite:{
             type: userType.graphObj,
@@ -111,6 +113,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 return userController.acceptInvite(invite.invite);
             }
         },
+        //Technical Debt:  See below??
         //Note: Fix
         inviteuser:{
             type: userInviteType.graphObj,
