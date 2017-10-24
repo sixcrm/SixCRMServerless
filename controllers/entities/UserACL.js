@@ -31,10 +31,9 @@ class userACLController extends entityController {
 
     }
 
-    //Technical Debt:  Deprecated
     getACLByUser({user: user}){
 
-      du.debug('getACLByUser');
+      du.debug('Get ACL By User');
 
       return this.listByUser({user:user});
 
