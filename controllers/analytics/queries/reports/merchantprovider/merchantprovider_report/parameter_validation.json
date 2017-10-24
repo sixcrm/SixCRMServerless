@@ -139,5 +139,5 @@
 			"exclusiveMinimum": false
 		}
 	},
-	"required":["start", "end", "account"]
+	"required":["start", "end"]
 }

@@ -461,8 +461,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: transactionSummaryReportSummaryType.graphObj,
             args: {
                 analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                cache: {type: cacheInputType.graphObj},
-                pagination: {type: analyticsPaginationInputType.graphObj}
+                cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
 
