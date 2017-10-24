@@ -37,7 +37,9 @@ class HashtagController extends fulfillmentProviderController {
                 FacilityID: facility_id,
                 CustomerID: customer_id
             }
-        }).catch(error => error.message);
+        }).catch(error => {
+            return { error_message: error.message }
+        });
     }
 
 }

@@ -3,6 +3,7 @@ var _ = require('underscore');
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const HashtagController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/Hashtag/Hashtag.js');
 const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
@@ -45,7 +46,10 @@ class fulfillmentTriggerController {
     }
 
     assertNameAndType(provider) {
-        if(!_.has(provider, "name") || !_.has(provider.provider)){
+
+        du.debug('Assert Name and Type');
+
+        if(!_.has(provider, "name") || !_.has(provider, "provider")){
 
             eu.throwError('bad_request', 'Unable to identify fulfillment provider associated with the transaction_product.');
 
@@ -55,7 +59,7 @@ class fulfillmentTriggerController {
 	//Technical Debt:  It'd be better if the object that was coming through the pipe was hydrated...
     getFulfillmentProvider(transaction_product){
 
-        return fulfillmentProviderController.get({id: transaction_product.product.fulfillment_provider}).then((fulfillment_provider) => {
+        return fulfillmentProviderEntityController.get({id: transaction_product.product.fulfillment_provider}).then((fulfillment_provider) => {
 
             transaction_product.product.fulfillment_provider = fulfillment_provider;
 
@@ -69,7 +73,17 @@ class fulfillmentTriggerController {
 
         du.debug('Get Controller Instance', provider);
 
-        let provider_type = provider.provider;
+        let provider_type;
+
+        if (stringutilities.isString(provider)) {
+            provider_type = provider;
+        }
+
+        if (_.has(provider, "provider")) {
+
+            provider_type = provider.provider;
+
+        }
 
         switch(provider_type){
 
