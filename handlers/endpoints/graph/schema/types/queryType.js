@@ -323,7 +323,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
               const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-              return campaignController.listCampaignsByProductSchedule({product_schedule: args.productschedule, pagination: args.pagination, fatal: list_fatal});
+              return campaignController.listCampaignsByProductSchedule({productschedule: args.productschedule, pagination: args.pagination, fatal: list_fatal});
             }
         },
         campaignlistbyproduct: {
