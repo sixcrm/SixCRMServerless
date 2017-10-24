@@ -68,7 +68,17 @@
 		"acted_upon_type": {"$ref": "#/definitions/SixEntityTypesArray"},
 		"associated_with": {"$ref": "#/definitions/SixIdentifierArray"},
 		"associated_with_type": {"$ref": "#/definitions/SixEntityTypesArray"},
-		"account":{"$ref": "#/definitions/OptionalSixDynamoIdentifier"},
+		"account":{
+			"anyOf":[
+				{
+					"$ref": "#/definitions/OptionalSixDynamoIdentifier"
+				},
+				{
+					"type":"array",
+					"items":{"$ref": "#/definitions/OptionalSixDynamoIdentifier"}
+				}
+			]
+		},
 		"action":{
 			"type":"string"
 		}
