@@ -166,15 +166,15 @@ class shipProductController extends workerController {
 
                         return Promise.all(fulfillment_triggers).then((fulfillment_trigger_responses) => {
 
-                            fulfillment_trigger_responses.map((fulfillment_trigger_response) => {
+                            for (const response of fulfillment_trigger_responses) {
 
-                                if(fulfillment_trigger_response != 'NOTIFIED'){
+                                if(response != 'NOTIFIED'){
 
-                                    return fulfillment_trigger_response;
+                                    return response; // if message was not 'NOTIFIED' return it instead
 
                                 }
 
-                            });
+                            }
 
                             return this.messages.notified;
 
