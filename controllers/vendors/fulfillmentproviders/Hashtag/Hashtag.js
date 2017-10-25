@@ -24,7 +24,7 @@ class HashtagController extends fulfillmentProviderController {
 
     }
 
-    testConnection({login, password, threepl_id, facility_id, customer_id}) {
+    testConnection({login, password, threepl_id, threepl_key, facility_id, customer_id}) {
 
         du.debug('Test connection.');
 
@@ -32,6 +32,7 @@ class HashtagController extends fulfillmentProviderController {
             name: 'FindOrders',
             parameters: {
                 ThreePLID: threepl_id,
+                ThreePLKey: threepl_key,
                 Login: login,
                 Password: password,
                 FacilityID: facility_id,
