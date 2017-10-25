@@ -116,11 +116,11 @@ class campaignController extends entityController {
 
     }
 
-    listCampaignsByProductSchedule({product_schedule, pagination}){
+    listCampaignsByProductSchedule({productschedule, pagination}){
 
       du.debug('List Campaigns By Product Schedule');
 
-      return this.listByAssociations({field: 'productschedules', id: this.getID(product_schedule), pagination: pagination});
+      return this.listByAssociations({field: 'productschedules', id: this.getID(productschedule), pagination: pagination});
 
     }
 
@@ -233,71 +233,62 @@ class campaignController extends entityController {
 
     //Technical Debt:  This seems VERY general in terms of parameterization
     //Technical Debt:  Replace with listBy()
-    listCampaignsByProduct(args){
+    //Technical Debt:  Use a better query method instead of iterating over "listCampaignsByProductSchedule()"
+    listCampaignsByProduct({product, pagination, fatal}){
 
-      du.debug('Get Campaigns');
+      du.debug('Get Campaigns By Product');
 
-      //Technical Debt:  Clumsy.  Adjust parameterization
-      if(!_.has(args, 'product')){
-        eu.throwError('bad_request','listCampaignsByProduct requires a product argument.');
-      }
+      return this.executeAssociatedEntityFunction('productScheduleController', 'listByProduct', {product: this.getID(product)})
+      .then((productschedules) => this.getResult(productschedules, 'productschedules'))
+      .then((productschedules) => {
 
-      return this.executeAssociatedEntityFunction('productScheduleController', 'listByProduct', {product: args.product, pagination: args.pagination}).then((product_schedules) => {
+        du.warning('Product Schedules:', productschedules);
 
-        if(_.has(product_schedules, 'productschedules') && _.isArray(product_schedules.productschedules)){
+        let campaigns = arrayutilities.map(productschedules, (productschedule) => {
+          return this.listCampaignsByProductSchedule({productschedule: this.getID(productschedule), pagination: pagination})
+        });
 
-          let campaigns = arrayutilities.map(product_schedules.productschedules, (product_schedule) => {
-            return this.listCampaignsByProductSchedule({productschedule: product_schedule, pagination: args.pagination})
+        //Technical Debt: everything below this is clumsy...
+        return Promise.all(campaigns).then((responses) => {
+          let return_array = [];
+
+          arrayutilities.map(responses, (response) => {
+            if(arrayutilities.nonEmpty(response.campaigns)){
+              arrayutilities.map(response.campaigns, campaign => {
+                return_array.push(campaign);
+              });
+            }
           });
 
-          return Promise.all(campaigns).then((responses) => {
+          //Inelegant
+          return_array = arrayutilities.filter(return_array, (possible_duplicate, index) => {
 
-            let return_array = [];
+            let duplicate = false;
 
-            responses.forEach((response) => {
-
-              if(_.has(response, 'campaigns') && _.isArray(response.campaigns) && response.campaigns.length > 0){
-
-                response.campaigns.forEach((campaign) => {
-
-                  return_array.push(campaign);
-
-                });
-
-              }
-
-            });
-
-            return_array = arrayutilities.filter(return_array, (possible_duplicate, index) => {
-
-              let duplicate = false;
-
-              for(var i = 0; i < return_array.length; i++){
-                if(possible_duplicate.id == return_array[i].id){
-                  if(i > index){
-                    duplicate = true;
-                    return;
-                  }
+            for(var i = 0; i < return_array.length; i++){
+              if(possible_duplicate.id == return_array[i].id){
+                if(i > index){
+                  duplicate = true;
+                  return;
                 }
               }
+            }
 
-              return !duplicate;
-
-            });
-
-            return {
-              campaigns: return_array,
-              pagination: {
-                count: return_array.length,
-                end_cursor: '',
-                has_next_page: false,
-                last_evaluated: ''
-              }
-            };
+            return !duplicate;
 
           });
 
-        }
+          return {
+            campaigns: return_array,
+            pagination: {
+              count: return_array.length,
+              end_cursor: '',
+              has_next_page: false,
+              last_evaluated: ''
+            }
+          };
+
+        });
 
       });
 

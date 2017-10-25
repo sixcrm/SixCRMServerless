@@ -402,13 +402,14 @@ class userController extends entityController {
 
     getACL(user){
 
+      du.debug('Get ACL');
+
       if(_.has(user, 'acl') && _.isArray(user.acl)){
           return user.acl;
       }
 
-      return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', {user: user.id}).then(useracls => {
-        return this.getResult(useracls);
-      });
+      return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', {user: user.id})
+      .then(useracls => this.getResult(useracls, 'useracls'));
 
     }
 

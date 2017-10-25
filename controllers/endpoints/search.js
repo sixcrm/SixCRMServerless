@@ -10,18 +10,18 @@ class searchController extends authenticatedController {
 
     constructor(){
 
-        super();
-		//Technical Debt:  This needs to be configured.
-        this.entity_types = {
-            product: 'product',
-            campaign: 'campaign',
-            creditcard: 'credit_card',
-            customer: 'customer',
-            productschedule: 'product_schedule',
-            merchantprovider: 'merchant_provider',
-            shippingreceipt: 'shipping_receipt',
-            transaction: 'transaction'
-        };
+      super();
+	//Technical Debt:  This needs to be configured.
+      this.entity_types = {
+        product: 'product',
+        campaign: 'campaign',
+        creditcard: 'credit_card',
+        customer: 'customer',
+        productschedule: 'product_schedule',
+        merchantprovider: 'merchant_provider',
+        shippingreceipt: 'shipping_receipt',
+        transaction: 'transaction'
+      };
 
     }
 

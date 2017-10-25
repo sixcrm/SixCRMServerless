@@ -44,6 +44,7 @@ let merchantProviderListType = require('./merchantprovider/merchantProviderListT
 let notificationListType = require('./notification/notificationListType');
 let notificationCountType = require('./notification/notificationCountType');
 let notificationTestType = require('./notification/notificationTestType');
+let alertTestType = require('./notification/alertTestType');
 let notificationType = require('./notification/notificationType');
 
 let notificationSettingListType = require('./notificationsetting/notificationSettingListType');
@@ -323,7 +324,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
               const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-              return campaignController.listCampaignsByProductSchedule({product_schedule: args.productschedule, pagination: args.pagination, fatal: list_fatal});
+              return campaignController.listCampaignsByProductSchedule({productschedule: args.productschedule, pagination: args.pagination, fatal: list_fatal});
             }
         },
         campaignlistbyproduct: {
@@ -352,6 +353,14 @@ module.exports.graphObj = new GraphQLObjectType({
                 const notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 
                 return notificationProviderController.test({fatal: get_fatal});
+            }
+        },
+        alerttest: {
+            type: alertTestType.graphObj,
+            resolve: function() {
+                const notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
+
+                return notificationProviderController.test({fatal: get_fatal, type: 'alert'});
             }
         },
         notificationlist: {
@@ -461,8 +470,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: transactionSummaryReportSummaryType.graphObj,
             args: {
                 analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                cache: {type: cacheInputType.graphObj},
-                pagination: {type: analyticsPaginationInputType.graphObj}
+                cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
 

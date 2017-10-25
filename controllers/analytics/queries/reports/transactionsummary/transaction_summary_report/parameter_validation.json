@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/AggregationProcessorAmountInput",
+	"id":"/TransactionSummaryReport",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -139,5 +139,5 @@
 			"exclusiveMinimum": false
 		}
 	},
-	"required":["start", "end", "account", "period"]
+	"required":["start", "end", "period"]
 }

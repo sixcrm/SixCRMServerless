@@ -96,16 +96,16 @@ class NotificationProvider {
     /**
      * Send a test notification to current user.
      */
-    test() {
+    test({type}) {
         du.debug('Sending a test notification.');
 
         let notification_object = {
             account: global.account,
             user: global.user.id,
-            type: 'dummy',
+            type: type || 'dummy',
             action: 'test',
-            title: 'A notification from SixCRM!',
-            body: 'This is a test notification. Do you see it?'
+            title: 'A ' + type || '' + ' notification from SixCRM!',
+            body: 'This is a test ' + type || '' + 'notification. Do you see it?'
         };
 
         return this.createNotificationForAccountAndUser(notification_object).then(() => {
