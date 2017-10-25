@@ -15,18 +15,18 @@ INSERT INTO sys_sixcrm.sys_table_version
 
 CREATE TABLE IF NOT EXISTS d_bin
 (
-  binnumber    INTEGER      NOT NULL PRIMARY KEY,
-  brand        VARCHAR(128) NOT NULL,
-  bank         VARCHAR(128) NOT NULL,
-  type         VARCHAR(128) ,
-  level        VARCHAR(128) ,
-  country      VARCHAR(128) NOT NULL,
-  info         VARCHAR(128) NOT NULL,
-  country_iso  VARCHAR(2) NOT NULL,
-  country2_iso VARCHAR(3) NOT NULL,
-  country3_iso INTEGER ,
-  webpage      VARCHAR(128) ,
-  phone        VARCHAR(128)
+  binnumber    INTEGER      NOT NULL PRIMARY KEY encode delta,
+  brand        VARCHAR(128) NOT NULL encode zstd,
+  bank         VARCHAR(128) NOT NULL encode zstd,
+  type         VARCHAR(128) encode zstd,
+  level        VARCHAR(128) encode zstd,
+  country      VARCHAR(128) NOT NULL encode zstd,
+  info         VARCHAR(128) NOT NULL encode zstd,
+  country_iso  VARCHAR(2) NOT NULL encode zstd,
+  country2_iso VARCHAR(3) NOT NULL encode zstd,
+  country3_iso INTEGER encode zstd,
+  webpage      VARCHAR(128) encode zstd,
+  phone        VARCHAR(128) encode zstd
 
 )
    DISTSTYLE all sortkey (binnumber);
