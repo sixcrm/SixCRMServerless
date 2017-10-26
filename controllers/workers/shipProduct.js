@@ -178,10 +178,6 @@ class shipProductController extends workerController {
 
                             return this.messages.notified;
 
-                        }).then((result_message) => {
-
-                            return result_message;
-
                         });
 
                     }else{
