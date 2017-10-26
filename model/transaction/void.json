@@ -1,0 +1,36 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/void.json",
+	"title": "Void",
+	"type":"object",
+	"properties":{
+		"transaction":{
+			"type":"object",
+			"properties":{
+				"id": {"$ref": "../definitions/uuidv4.json"},
+				"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+				"rebill":{"$ref": "../definitions/uuidv4.json"},
+				"alias":{"$ref": "../definitions/transactionalias.json"},
+				"products":{
+					"type":"array",
+					"items":{
+						"type": "object",
+						"properties": {
+							"product":{"$ref": "../definitions/uuidv4.json"},
+							"amount":{"$ref": "../definitions/currency.json"}
+						},
+						"required":["product", "amount"]
+					},
+					"minItems": 1
+				},
+				"processor_response":{
+					"type": "object"
+				},
+				"merchant_provider":{"$ref": "../definitions/uuidv4.json"},
+				"created_at":{"$ref": "../definitions/iso8601.json"},
+				"updated_at":{"$ref": "../definitions/iso8601.json"}
+			}
+		}
+	},
+	"required":["transaction"]
+}

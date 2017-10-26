@@ -32,6 +32,33 @@ function getValidMethodParametersObject(){
   return {request_action: 'CCAUTHCAP'};
 }
 
+function getValidVoidRequestParametersObject(){
+
+  return {
+    transaction:{
+      "amount": 34.99,
+      "id": "e624af6a-21dc-4c64-b310-3b0523f8ca42",
+      "alias":"T56S2HJO32",
+      "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
+      "processor_response": {
+        "message":"Success",
+        "result":{
+          "PO_ID":"17171717"
+        }
+      },
+      "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
+      "products":[{
+        "product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
+        "amount":34.99
+      }],
+      "created_at":"2017-04-06T18:40:41.405Z",
+      "updated_at":"2017-04-06T18:41:12.521Z"
+    }
+  };
+
+}
+
 function getValidRequestParametersObject(){
 
   return {
@@ -241,16 +268,21 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
   it('Should process a transaction', () => {
 
+    /*
     let mocked_callback = {
       API_RESPONSE: 600,
       TRANS_STATUS_NAME: 'Declined'
     };
+    */
 
+    /*
     mockery.registerMock('request', {
       post: (request_options, callback) => {
         callback(null, null, JSON.stringify(mocked_callback));
       }
     });
+
+    */
 
     let merchant_provider_configuration = getValidMerchantProviderConfiguation();
 
@@ -261,6 +293,39 @@ describe('vendors/merchantproviders/Innovio.js', () => {
     let request_parameters = getValidRequestParametersObject();
 
     return innovio_controller.process(request_parameters).then(response => {
+
+      du.warning(response);
+      expect(response).to.have.property('message');
+      expect(response).to.have.property('result');
+
+    });
+
+  });
+
+  it('Should void a transaction', () => {
+
+    let mocked_callback = {
+      API_RESPONSE: 600,
+      TRANS_STATUS_NAME: 'Declined'
+    };
+
+    /*
+    mockery.registerMock('request', {
+      post: (request_options, callback) => {
+        callback(null, null, JSON.stringify(mocked_callback));
+      }
+    });
+    */
+
+    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+
+    const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+
+    let innovio_controller = new InnovioController(merchant_provider_configuration);
+
+    let request_parameters = getValidVoidRequestParametersObject();
+
+    return innovio_controller.void(request_parameters).then(response => {
 
       expect(response).to.have.property('message');
       expect(response).to.have.property('result');

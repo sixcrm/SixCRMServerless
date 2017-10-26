@@ -45,5 +45,5 @@
 			]
 		}
 	},
-	"required":["request_action","request_response_format","request_api_version", "req_username","req_password","site_id","merchant_acct_id", "request_ref_po_id", "request_ref_po_li_id"]
+	"required":["request_action","request_response_format","request_api_version", "req_username","req_password","site_id","merchant_acct_id", "request_ref_po_id"]
 }
