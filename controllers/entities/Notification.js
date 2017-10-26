@@ -64,6 +64,13 @@ class notificationController extends entityController {
 
     }
 
+    listByUser({query_parameters, user, pagination, reverse_order, fatal}) {
+
+        return this.executeAssociatedEntityFunction('notificationReadController', 'markNotificationsAsSeen', {})
+            .then(() => super.listByUser({query_parameters, user, pagination, reverse_order, fatal}))
+
+    }
+
     listByType({type, pagination, user, fatal}){
 
       du.debug('List By Type');
