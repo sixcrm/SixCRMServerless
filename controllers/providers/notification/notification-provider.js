@@ -176,6 +176,11 @@ class NotificationProvider {
                 createNotification.read_at = timestamp.getISO8601();
             }
 
+            // If the type of notification is 'alert' it should not have 'read_at' so it becomes visible to the user.
+            if (createNotification.type === 'alert') {
+                delete createNotification.read_at;
+            }
+
             du.debug('About to create notification', createNotification);
 
             return notificationController.create({entity: createNotification}).then((notification) => {
