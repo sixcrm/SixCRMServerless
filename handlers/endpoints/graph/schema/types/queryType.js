@@ -44,6 +44,7 @@ let merchantProviderListType = require('./merchantprovider/merchantProviderListT
 let notificationListType = require('./notification/notificationListType');
 let notificationCountType = require('./notification/notificationCountType');
 let notificationTestType = require('./notification/notificationTestType');
+let alertTestType = require('./notification/alertTestType');
 let notificationType = require('./notification/notificationType');
 
 let notificationSettingListType = require('./notificationsetting/notificationSettingListType');
@@ -352,6 +353,14 @@ module.exports.graphObj = new GraphQLObjectType({
                 const notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 
                 return notificationProviderController.test({fatal: get_fatal});
+            }
+        },
+        alerttest: {
+            type: alertTestType.graphObj,
+            resolve: function() {
+                const notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
+
+                return notificationProviderController.test({fatal: get_fatal, type: 'alert'});
             }
         },
         notificationlist: {

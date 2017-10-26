@@ -96,16 +96,16 @@ class NotificationProvider {
     /**
      * Send a test notification to current user.
      */
-    test() {
+    test({type}) {
         du.debug('Sending a test notification.');
 
         let notification_object = {
             account: global.account,
             user: global.user.id,
-            type: 'dummy',
+            type: type || 'dummy',
             action: 'test',
-            title: 'A notification from SixCRM!',
-            body: 'This is a test notification. Do you see it?'
+            title: 'A ' + type || '' + ' notification from SixCRM!',
+            body: 'This is a test ' + type || '' + 'notification. Do you see it?'
         };
 
         return this.createNotificationForAccountAndUser(notification_object).then(() => {
@@ -174,6 +174,11 @@ class NotificationProvider {
             // If user does not want to receive 'six' notifications, or this type of notification, mark it as already read.
             if (!this.wantsToReceive('six', user_settings) || !_.contains(notificationTypes, notification_parameters.type)) {
                 createNotification.read_at = timestamp.getISO8601();
+            }
+
+            // If the type of notification is 'alert' it should not have 'read_at' so it becomes visible to the user.
+            if (createNotification.type === 'alert') {
+                delete createNotification.read_at;
             }
 
             du.debug('About to create notification', createNotification);
