@@ -83,7 +83,7 @@ class shipProductController extends workerController {
     executeFulfillment(transaction_product, transaction){
         return new Promise((resolve, reject) => {
 
-            if(transaction_product.product.ship == 'true'){
+            if(this.shouldShip(transaction_product)){
 
                 if(!_.has(transaction_product, 'shippingreceipt')){
 
@@ -131,6 +131,10 @@ class shipProductController extends workerController {
 
     }
 
+    shouldShip(transaction_product) {
+        return transaction_product.product.ship === 'true' || transaction_product.product.ship === true;
+    }
+
     processTransaction(transaction){
         return new Promise((resolve, reject) => {
 
@@ -152,7 +156,7 @@ class shipProductController extends workerController {
 
                     transaction_products.forEach((transaction_product) => {
 
-                        if(transaction_product.product.ship == 'true'){
+                        if(this.shouldShip(transaction_product)){
 
                             var transactionProductExecuteFulfillment = this.executeFulfillment(transaction_product, transaction);
 
@@ -177,10 +181,6 @@ class shipProductController extends workerController {
                             }
 
                             return this.messages.notified;
-
-                        }).then((result_message) => {
-
-                            return result_message;
 
                         });
 
