@@ -26,7 +26,7 @@ describe('controllers/workers/shipProduct', function () {
         modelgenerator.randomEntityWithId('rebill').then(rebill => { random_rebill = rebill}),
         modelgenerator.randomEntityWithId('shippingreceipt').then(shipping_receipt => { random_shipping_receipt = shipping_receipt}),
         modelgenerator.randomEntityWithId('transaction').then(transaction => { random_transactions = [transaction]}),
-        modelgenerator.randomEntityWithId('product').then(product => { random_products = [{product: product},{product: product}]}),
+        modelgenerator.randomEntityWithId('product').then(product => { random_products = [product, product]}),
         modelgenerator.randomEntityWithId('transactionproduct').then(transaction_product => { random_transaction_product = transaction_product})
     ]).then(() =>{
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
@@ -40,7 +40,10 @@ describe('controllers/workers/shipProduct', function () {
                     return Promise.resolve(random_transaction_product);
                 },
                 get: (id) => {
-                    return Promise.resolve(random_products[0].product);
+                    return Promise.resolve(random_transactions[0]);
+                },
+                update: (entity) => {
+                    return Promise.resolve(random_transactions[0]);
                 }
             });
 
@@ -58,6 +61,12 @@ describe('controllers/workers/shipProduct', function () {
                 }
             });
 
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
+                triggerFulfillment: (transaction_product) => {
+                    return Promise.resolve('NOTIFIED');
+                }
+            });
+
             done();
         }
     )});
@@ -72,42 +81,106 @@ describe('controllers/workers/shipProduct', function () {
 
     describe('issueShippingReceipt', () => {
 
-        xit('processes transaction with products', () => {
+        it('updates transaction with new shipping receipt', () => {
+            let fulfillment_response = { message: 'example_response' };
 
-            let a_fulfillment_response = { message: 'example_response' };
+            let transaction_product = random_transaction_product;
 
-            let updated_transaction;
+            transaction_product.product = random_products[0];
+
+            random_transactions[0].products[0].product = transaction_product.product.id;
+            random_transactions[0].products[0].amount = transaction_product.amount;
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
-            return shipProduct.issueShippingReceipt(a_fulfillment_response, random_transaction_product, random_transactions[0])
-                .then(result => expect(result).to.equal(updated_transaction.noship));
+            return shipProduct.issueShippingReceipt(fulfillment_response, transaction_product, random_transactions[0])
+                .then(result => expect(result).to.equal(random_transactions[0]));
         });
 
+        it('throws error if transaction already has shipping receipt', () => {
+            let fulfillment_response = { message: 'example_response' };
 
+            random_transactions[0].products[0].shippingreceipt = random_shipping_receipt;
+
+            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+            return shipProduct.issueShippingReceipt(fulfillment_response, random_transaction_product, random_transactions[0])
+                .catch(error => expect(error.message).to.equal('[404] Unable to re-acquire transaction'));
+        });
+
+        it('throws error if transaction with specific product doesn\'t exist in transaction list', () => {
+            let fulfillment_response = { message: 'example_response' };
+
+            // Prepare transaction_product
+            let transaction_product = random_transaction_product;
+
+            transaction_product.product = random_products[0]; // hydrate
+
+            // Prepare transaction with defferent products than on transaction_product
+            let unrelated_transaction = random_transactions[0];
+
+            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+            return shipProduct.issueShippingReceipt(fulfillment_response, transaction_product, unrelated_transaction)
+                .catch(error => expect(error.message).to.equal('[404] Unable to re-acquire transaction'));
+        });
     });
 
     describe('executeFulfillment', () => {
 
-        xit('processes transaction with products', () => {
+        it('returns `noship` when product should not be shipped', () => {
+
+            let transaction_product = random_transaction_product;
+
+            random_transaction_product.product = random_products[0];
+            random_transaction_product.product.ship = 'false';
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
-            return shipProduct.executeFulfillment(random_transaction_product, random_transactions[0])
+            return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
                 .then(result => expect(result).to.equal(shipProduct.messages.noship));
         });
 
+        it('returns `notified` when transaction already has a shipping receipt', () => {
+            let transaction_product = random_transaction_product;
 
+            transaction_product.product = random_products[0];
+            transaction_product.product.ship = 'true';
+            transaction_product.shippingreceipt = random_shipping_receipt;
+
+            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+            return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
+                .then(result => expect(result).to.equal(shipProduct.messages.notified));
+        });
     });
 
     describe('processTransaction', () => {
 
-        xit('processes transaction with products', () => {
+        xit('returns `noship` when no products should be shipped', () => {
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
-            return shipProduct.processTransaction(random_transactions[0])
+            let transaction = random_transactions[0];
+
+            return shipProduct.processTransaction(transaction)
                 .then(result => expect(result).to.equal(shipProduct.messages.noship));
+        });
+
+        it('returns `notified` when product should be shipped and fulfillment response was ok', () => {
+
+            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+            let transaction = random_transactions[0];
+
+            let transaction_product = random_transaction_product;
+
+            transaction_product.product = random_products[0];
+            transaction_product.product.ship = 'true';
+            transaction_product.shippingreceipt = random_shipping_receipt;
+
+            return shipProduct.processTransaction(transaction)
+                .then(result => expect(result).to.equal(shipProduct.messages.notified));
         });
 
         xit('throws error when transaction has no products', () => {
@@ -131,8 +204,6 @@ describe('controllers/workers/shipProduct', function () {
             return shipProduct.shipProducts(random_rebill)
                 .then(result => expect(result).to.equal(shipProduct.messages.noship));
         });
-
-
     });
 
 
