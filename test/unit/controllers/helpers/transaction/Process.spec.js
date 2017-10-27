@@ -822,24 +822,6 @@ describe('helpers/transaction/Process.spec.js', () => {
 
   });
 
-  it('passes when parameters validate', () => {
-
-    let ph = new processHelperController();
-
-    let parameters = {
-      customer: getValidCustomer(),
-      productschedule: getValidProductSchedule(),
-      amount: getValidAmount()
-    };
-
-    ph.setParameters(parameters);
-
-    let validated = ph.validateParameters();
-
-    expect(validated).to.equal(true);
-
-  });
-
   it('hydrates credit cards', () => {
 
     let credit_card = getValidCreditCard();
@@ -1580,26 +1562,6 @@ describe('helpers/transaction/Process.spec.js', () => {
       return ph.selectMerchantProviderFromLSS().then(result => {
 
         expect(result).to.equal(merchantproviders[0]);
-
-      });
-
-    });
-
-   it('instantiates a processor class ', () => {
-
-      let merchantproviders = getValidMerchantProviders();
-      let merchantprovider_summaries = getValidMerchantProviderSummaries();
-
-      merchantproviders[0].summary = merchantprovider_summaries[0];
-      merchantproviders[1].summary = merchantprovider_summaries[1];
-
-      let ph = new processHelperController();
-
-      ph.parameters.set('selected_merchantprovider', merchantproviders[0]);
-
-      return ph.instantiateGateway().then(response => {
-
-        expect((ph.parameters.get('instantiated_gateway').constructor.name)).to.equal('NMIController');
 
       });
 

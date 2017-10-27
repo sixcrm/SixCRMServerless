@@ -69,7 +69,7 @@ class NMIController extends MerchantProvider {
         },
         refund: {
           required:{
-            transactionid:'transaction_id'
+            transactionid:'transaction.processor_response.result.transactionid'
           },
           optional:{
             amount:'amount'
@@ -77,7 +77,7 @@ class NMIController extends MerchantProvider {
         },
         void: {
           required:{
-            transactionid:'transaction_id'
+            transactionid:'transaction.processor_response.result.transactionid'
           },
           optional:{
             amount:'amount'

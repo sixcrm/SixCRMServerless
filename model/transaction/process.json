@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/process.json",
+	"title": "Process",
+	"type":"object",
+	"properties":{
+		"customer":{"$ref": "./customer.json"},
+		"creditcard":{"$ref": "./creditcard.json"},
+		"amount":{"$ref": "./amount.json"}
+	},
+	"required":["customer","creditcard","amount"]
+}

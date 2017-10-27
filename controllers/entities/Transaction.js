@@ -31,6 +31,14 @@ class transactionController extends entityController {
 
     }
 
+    getMerchantProvider(transaction){
+
+      du.debug('Get Merchant Provider');
+
+      return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: this.getID(transaction.merchant_provider)});
+
+    }
+
     //Technical Debt:  This is pretty complicated.
     listByProductID({id, pagination}){
 
@@ -183,7 +191,7 @@ class transactionController extends entityController {
         du.debug('Create Transaction Object');
 
         //Technical Debt: Why is this necessary?
-        let merchant_provider = this.getMerchantProvider(parameters, processor_response);
+        let merchant_provider = this.getMerchantProviderID(parameters, processor_response);
 
         var return_object = {
             rebill: parameters.rebill.id,
@@ -198,7 +206,7 @@ class transactionController extends entityController {
 
     }
 
-    getMerchantProvider(parameters, processor_response){
+    getMerchantProviderID(parameters, processor_response){
 
         du.debug('Get Merchant Provider');
 

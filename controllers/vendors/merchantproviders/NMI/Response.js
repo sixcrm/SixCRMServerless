@@ -18,6 +18,29 @@ module.exports = class NMIResponse extends Response {
 
   }
 
+  getTransactionID(transaction){
+
+    du.debug('Get Transaction ID');
+
+    let processor_response = null;
+
+    if(_.has(transaction, 'processor_response')){
+      processor_response = transaction.processor_response;
+      try{
+        processor_response = JSON.parse(processor_response);
+      }catch(error){
+        //do nothing
+      }
+    }
+
+    if(objectutilities.hasRecursive(processor_response, 'results.transactionid')){
+      return processor_response.results.transactionid;
+    }
+
+    eu.throwError('server', 'Unable to identify the Transaction ID');
+
+  }
+
   mapResponseCode({parsed_response}){
 
     du.debug('Map Response Code');

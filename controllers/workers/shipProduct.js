@@ -46,7 +46,7 @@ class shipProductController extends workerController {
 
                 for(var i=0; i< raw_transaction.products.length; i++){
 
-                    if(!_.has(raw_transaction, 'shippingreceipt')){
+                    if(!_.has(raw_transaction.products[i], 'shippingreceipt')){
 
                         if(raw_transaction.products[i].product == transaction_product.product.id && raw_transaction.products[i].amount == transaction_product.amount){
 
@@ -67,7 +67,7 @@ class shipProductController extends workerController {
                 }
 
                 if(found == false){
-                    eu.getError('not_found','Unable to re-acquire transaction');
+                    eu.throwError('not_found','Unable to re-acquire transaction');
                 }
 
             }).then((updated_transaction) => {

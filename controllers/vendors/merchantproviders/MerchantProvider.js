@@ -70,6 +70,7 @@ module.exports = class MerchantProvider {
 
         request.post(request_options, (error, response, body) => {
 
+          du.warning(error);
           if(_.isError(error)){
             reject(error);
           }

@@ -9,10 +9,10 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
-const ProcessUtilities = global.SixCRM.routes.include('helpers', 'transaction/ProcessUtilities.js');
+const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
-module.exports = class Process extends ProcessUtilities{
+module.exports = class Process extends TransactionUtilities{
 
     constructor(){
 
@@ -29,7 +29,22 @@ module.exports = class Process extends ProcessUtilities{
         }
       };
 
-      this.parameters = new Parameters();
+      this.parameter_validation = {
+        'process': global.SixCRM.routes.path('model','transaction/process.json'),
+        'selected_merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
+        'creditcard': global.SixCRM.routes.path('model','transaction/creditcard.json'),
+        'selected_creditcard': global.SixCRM.routes.path('model','transaction/creditcard.json'),
+        'customer': global.SixCRM.routes.path('model','transaction/customer.json'),
+        'productschedule': global.SixCRM.routes.path('model','transaction/productschedule.json'),
+        'merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
+        'merchantproviders': global.SixCRM.routes.path('model','transaction/merchantproviders.json'),
+        'amount':global.SixCRM.routes.path('model','transaction/amount.json'),
+        'loadbalancer': global.SixCRM.routes.path('model','transaction/loadbalancer.json'),
+        'selected_loadbalancer': global.SixCRM.routes.path('model','transaction/loadbalancer.json'),
+        'target_distribution_array': global.SixCRM.routes.path('model', 'transaction/target_distribution_array.json'),
+        'hypothetical_distribution_base_array': global.SixCRM.routes.path('model', 'transaction/hypothetical_distribution_base_array.json'),
+        'merchantprovider_summaries':global.SixCRM.routes.path('model', 'transaction/merchantprovider_summaries.json')
+      };
 
       this.productScheduleController = global.SixCRM.routes.include('entities','ProductSchedule.js');
 
@@ -41,6 +56,8 @@ module.exports = class Process extends ProcessUtilities{
 
       this.analyticsController = global.SixCRM.routes.include('analytics', 'Analytics.js');
 
+      this.instantiateParameters();
+
     }
 
     process(parameters){
@@ -49,7 +66,6 @@ module.exports = class Process extends ProcessUtilities{
 
       return this.setParameters(parameters)
       .then(() => this.hydrateParameters())
-      .then(() => this.validateParameters())
       .then(() => this.hydrateCreditCards())
       .then(() => this.selectCustomerCreditCard())
       .then(() => this.setBINNumber())
@@ -129,10 +145,13 @@ module.exports = class Process extends ProcessUtilities{
 
       return this.instantiateGateway()
       .then(() => this.createProcessingParameters())
-      .then(processing_parameters => {
+      .then(() => {
+
+        let processing_parameters = this.parameters.get('process');
         let instantiated_gateway = this.parameters.get('instantiated_gateway');
 
         return instantiated_gateway.process(processing_parameters);
+
       })
       .then(response => {
         let selected_merchantprovider = this.parameters.get('selected_merchantprovider')
@@ -143,23 +162,6 @@ module.exports = class Process extends ProcessUtilities{
 
     }
 
-    setParameters(parameters){
-
-      du.debug('Set Parameters');
-
-      let temporary = objectutilities.transcribe(this.parameter_definitions.required, parameters, {}, true);
-
-      temporary = objectutilities.transcribe(this.parameter_definitions.optional, parameters, temporary, false);
-
-      objectutilities.map(temporary, (parameter) => {
-        this.parameters.set(parameter, temporary[parameter]);
-      })
-
-      return Promise.resolve(true);
-
-    }
-
-    //Technical Debt:  Here...
     hydrateParameters(){
 
       du.debug('Hydrate Parameters');
@@ -186,23 +188,6 @@ module.exports = class Process extends ProcessUtilities{
         return promises;
 
       });
-
-    }
-
-    validateParameters(){
-
-      du.debug('Validate Parameters');
-      //Technical Debt:  This should just be a big object that gets validated once...
-
-      /*
-      objectutilities.map(this.parameter_definitions.required, (required_parameter) => {
-
-        mvu.validateModel(this.parameters[required_parameter], global.SixCRM.routes.path('model','transaction/'+required_parameter+'.json'));
-
-      });
-      */
-
-      return true;
 
     }
 
@@ -760,6 +745,8 @@ module.exports = class Process extends ProcessUtilities{
         creditcard: selected_creditcard,
         amount: amount
       };
+
+      this.parameters.set('process', parameters);
 
       return Promise.resolve(parameters);
 
