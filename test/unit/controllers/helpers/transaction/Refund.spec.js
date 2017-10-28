@@ -26,6 +26,7 @@ function getValidRefundParameters(){
 
 function assumePermissionedRole(){
 
+  //PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
   //This doesn't work
   global.user = {
   	"name":"Owner Test User",

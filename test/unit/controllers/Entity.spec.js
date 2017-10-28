@@ -29,82 +29,6 @@ describe('controllers/Entity.js', () => {
         mockery.deregisterAll();
     });
 
-    describe('can', () => {
-
-        before(() => {
-            entityController = new EntityController('entity');
-        });
-
-        afterEach(() => {
-            delete global.user;
-        });
-
-        it('fails when user is not defined', () => {
-            // given
-            let anAction = 'create';
-
-            try{
-
-              entityController.can(anAction);
-
-            }catch(error){
-
-              expect(error.message).to.equal('[500] Global is missing the user property.');
-
-            }
-
-
-        });
-
-        it('fails when user is denied for action', () => {
-
-            let anAction = 'create';
-            let anEntity = 'entity';
-
-            PermissionTestGenerators.givenUserWithDenied(anAction, anEntity);
-
-            try {
-
-              entityController.can(anAction);
-
-            }catch(error){
-
-              expect(error.message).to.equal('[500] Unexpected ACL object structure:  Empty role.permission.allow object.');
-
-            }
-
-        });
-
-        it('fails when user is not allowed for action', () => {
-
-          let anAction = 'create';
-          let anEntity = 'entity';
-
-          PermissionTestGenerators.givenUserWithNoPermissions();
-
-          try {
-            entityController.can(anAction);
-          }catch(error){
-            expect(error.message).to.equal('[500] Unexpected ACL object structure:  Empty role.permission.allow object.');
-          }
-
-        });
-
-        it('succeeds when user is allowed for action', () => {
-            // given
-            let anAction = 'create';
-            let anEntity = 'entity';
-
-            PermissionTestGenerators.givenUserWithAllowed(anAction, anEntity);
-            // when
-            return entityController.can(anAction).then((can) => {
-                // then
-                expect(can).to.equal(true);
-            });
-        });
-
-    });
-
     describe('create', () => {
 
       beforeEach(() => {
@@ -114,11 +38,14 @@ describe('controllers/Entity.js', () => {
 
        it('fails when user is not defined', () => {
 
-            try{
-              entityController.create({entity: {}})
-            }catch(error){
-              expect(error.message).to.equal('[500] Global is missing the user property.');
-            }
+         const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+         let entityController = new EC('entity');
+
+          try{
+            entityController.create({entity: {}})
+          }catch(error){
+            expect(error.message).to.equal('[500] Global is missing the user property.');
+          }
 
         });
 
@@ -249,11 +176,14 @@ describe('controllers/Entity.js', () => {
 
         it('fails when user is not defined', () => {
 
-            try {
-              entityController.update({entity: {}})
-            }catch(error){
-              expect(error.message).to.equal('[500] Global is missing the user property.');
-            }
+          const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+          let entityController = new EC('entity');
+
+          try {
+            entityController.update({entity: {}})
+          }catch(error){
+            expect(error.message).to.equal('[500] Global is missing the user property.');
+          }
 
         });
 
@@ -845,36 +775,44 @@ describe('controllers/Entity.js', () => {
 
         it('should allow valid mail', () => {
 
-            let validEmails = [];
+          const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+          let entityController = new EC('entity');
 
-            validEmails.push('test@example.com');
-            validEmails.push('test@example.co.uk');
+          let validEmails = [];
 
-            for (let email of validEmails) {
+          validEmails.push('test@example.com');
+          validEmails.push('test@example.co.uk');
 
-              expect(entityController.isEmail(email)).to.equal(true, `'${email}' should be considered a valid email but is not.`)
+          for (let email of validEmails) {
 
-            }
+            expect(entityController.isEmail(email)).to.equal(true, `'${email}' should be considered a valid email but is not.`)
+
+          }
 
         });
 
         it('should disallow invalid mail', () => {
-            let invalidEmails = [];
 
-            invalidEmails.push('test@');
-            invalidEmails.push('example.co.uk');
-            invalidEmails.push('@');
-            invalidEmails.push('a@b');
-            invalidEmails.push('test.@example.com');
-            invalidEmails.push('test@.example.com');
-            invalidEmails.push(null);
-            invalidEmails.push();
-            invalidEmails.push({});
-            invalidEmails.push(['email@example.com']);
+          const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+          let entityController = new EC('entity');
 
-            for (let email of invalidEmails) {
-                expect(entityController.isEmail(email)).to.equal(false, `'${email}' should not be considered valid.`)
-            }
+          let invalidEmails = [];
+
+          invalidEmails.push('test@');
+          invalidEmails.push('example.co.uk');
+          invalidEmails.push('@');
+          invalidEmails.push('a@b');
+          invalidEmails.push('test.@example.com');
+          invalidEmails.push('test@.example.com');
+          invalidEmails.push(null);
+          invalidEmails.push();
+          invalidEmails.push({});
+          invalidEmails.push(['email@example.com']);
+
+          for (let email of invalidEmails) {
+              expect(entityController.isEmail(email)).to.equal(false, `'${email}' should not be considered valid.`)
+          }
+
         });
     });
 
