@@ -1,14 +1,14 @@
-SELECT SUM(fe.count_click) AS count_click,
-       SUM(fe.count_partials) AS count_partials,
-       SUM(decode(fe.count_click,0,0, 1.0*fe.count_partials / fe.count_click)) AS partials_percent,
+SELECT nvl(SUM(fe.count_click),0) AS count_click,
+       nvl(SUM(fe.count_partials),0) AS count_partials,
+       SUM(decode(nvl(fe.count_click,0),0,0, 1.0*fe.count_partials / fe.count_click)) AS partials_percent,
        SUM(coalesce(decline_count,0)) AS decline_count,
        SUM(coalesce(decode(decline_count,0,0, 1.0*decline_count / fe.count_click),0)) AS declines_percent,
-       SUM(fe.count_sales) AS count_sales,
-       SUM(decode(fe.count_sales,0,0, 1.0*fe.count_sales / fe.count_click)) AS sales_percent,
-       SUM(fe.count_upsell) AS count_upsell,
-       SUM(decode(fe.count_upsell,0,0, 1.0*fe.count_upsell / fe.count_click)) AS upsell_percent,
-       SUM(sum_upsell) AS sum_upsell,
-       SUM(sum_amount) AS sum_amount
+       nvl(SUM(fe.count_sales),0) AS count_sales,
+       SUM(decode(nvl(fe.count_sales,0),0,0, 1.0*fe.count_sales / fe.count_click)) AS sales_percent,
+       nvl(SUM(fe.count_upsell),0) AS count_upsell,
+       SUM(decode(nvl(fe.count_upsell,0),0,0, 1.0*fe.count_upsell / fe.count_click)) AS upsell_percent,
+       nvl(SUM(sum_upsell),0) AS sum_upsell,
+       nvl(SUM(sum_amount),0) AS sum_amount
 FROM
   (SELECT affiliate,
           count(CASE
