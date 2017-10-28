@@ -13,105 +13,23 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
+const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
+
+//Technical Debt:  Much of this controller should be abstracted to a "Query Builder" helper
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 //Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
 
-module.exports = class entityUtilitiesController {
+module.exports = class entityUtilitiesController extends PermissionedController {
 
     constructor(){
 
-      //Technical Debt:  Why is this here?
-      this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+      super();
 
     }
 
-    handleErrors(error, fatal){
-
-      du.debug('Handle Errors');
-
-      fatal = (_.isUndefined(fatal))?false:fatal;
-
-      if(_.has(error, 'code')){
-
-        if(error.code == 403 && fatal == false){
-
-          return null;
-
-        }
-
-        eu.throw(error);
-
-      }
-
-      eu.throwError('server', error);
-
-
-    }
-
-    //Technical Debt:  Need to introduce identifiers here...
-    //Technical Debt:  Fatal is unused here...
-    can(action, fatal){
-
-      du.debug('Can');
-
-      //fatal = (_.isUndefined(fatal))?false:fatal;
-
-      //let permission_utilities_state = JSON.stringify(this.permissionutilities.getState());
-
-      //let question = permission_utilities_state+this.permissionutilities.buildPermissionString(action, this.descriptive_name);
-
-
-      return Promise.resolve(this.permissionutilities.validatePermissions(action, this.descriptive_name)).then(permission => {
-
-        if(permission == false && fatal == true){
-
-          this.throwPermissionsError();
-
-        }
-
-        du.info('Can '+action+' on '+this.descriptive_name+': '+permission);
-
-        return permission;
-
-      });
-
-
-      /*
-      let answer_function = () => {
-
-        let permission = this.permissionutilities.validatePermissions(action, this.descriptive_name);
-
-        if(permission !== true){
-
-          if(fatal == true){
-
-            this.throwPermissionsError(action);
-
-          }
-
-          return false;
-
-        }
-
-        return permission;
-
-      }
-
-      return global.SixCRM.localcache.resolveQuestion(question, answer_function);
-      */
-
-    }
-
-    throwPermissionsError(){
-
-      du.debug('Throw Permissions Error');
-
-      eu.throwError('forbidden', 'Invalid Permissions: user can not perform this action on entities of type "'+this.descriptive_name+'".');
-
-    }
-
+    //Technical Debt:  Refactor.
     catchPermissions(permissions, action){
 
       du.debug('Catch Permissions');
@@ -127,6 +45,28 @@ module.exports = class entityUtilitiesController {
       }
 
       return permissions;
+
+    }
+
+    handleErrors(error, fatal){
+
+      du.debug('Handle Errors');
+
+      fatal = (_.isUndefined(fatal))?false:fatal;
+
+      if(_.has(error, 'code')){
+        //Technical Debt: This appears bound to permissions...
+        if(error.code == 403 && fatal == false){
+
+          return null;
+
+        }
+
+        eu.throw(error);
+
+      }
+
+      eu.throwError('server', error);
 
     }
 
@@ -159,49 +99,6 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    getFromCache(cache_object_key, data_function){
-
-        du.debug('Get From Cache');
-
-        return this.assureCacheController().then(() => {
-
-            return this.cacheController.useCache(cache_object_key, data_function).then((permission) => {
-
-                return permission;
-
-            });
-
-        });
-
-    }
-
-    assureCacheController(){
-
-        du.debug('Assure Cache Controller');
-
-        if(!_.has(this, 'cacheController')){
-            this.cacheController = new cacheController();
-        }
-
-        return Promise.resolve(true);
-
-    }
-
-    createCanCacheKeyObject(action, entity){
-
-        let user = this.getID(this.acquireGlobalUser());
-
-        let account = this.acquireGlobalAccount();
-
-        return {
-            user: user,
-            account: account,
-            action: action,
-            entity: entity
-        };
-
-    }
-
     validate(object, path_to_model){
 
       du.debug('Validate');
@@ -221,8 +118,11 @@ module.exports = class entityUtilitiesController {
     }
 
     getUUID(){
+
       du.debug('Get UUID');
+
       return uuidV4();
+
     }
 
     isUUID(string, version){
@@ -241,50 +141,7 @@ module.exports = class entityUtilitiesController {
 
     }
 
-    disableACLs(){
-
-        du.debug('Disable ACLs');
-
-        this.permissionutilities.disableACLs();
-
-        return;
-
-    }
-
-    enableACLs(){
-
-        du.debug('Enable ACLs');
-
-        this.permissionutilities.enableACLs();
-
-        return;
-
-    }
-
-    unsetGlobalUser(){
-
-        du.debug('Unset Global User');
-
-        this.permissionutilities.unsetGlobalUser();
-
-        return;
-
-    }
-
-    setGlobalUser(user){
-
-        du.debug('Set Global User');
-
-        if(_.has(user, 'id') || this.isEmail(user)){
-
-            this.permissionutilities.setGlobalUser(user);
-
-        }
-
-        return;
-
-    }
-
+    //Technical Debt:  This seems strange.
     acquireGlobalUser(){
 
         du.debug('Acquire Global User');
@@ -299,6 +156,7 @@ module.exports = class entityUtilitiesController {
 
     }
 
+    //Technical Debt:  This seems strange.
     acquireGlobalAccount(){
 
         du.debug('Acquire Global Account');
@@ -313,16 +171,18 @@ module.exports = class entityUtilitiesController {
 
     }
 
+    //Technical Debt:  This belongs in a helper
     removeFromSearchIndex(id, entity_type){
 
-        du.debug('Remove From Search Index');
+      du.debug('Remove From Search Index');
 
-        let entity = {id:id, entity_type: entity_type};
+      let entity = {id:id, entity_type: entity_type};
 
-        return indexingutilities.removeFromSearchIndex(entity);
+      return indexingutilities.removeFromSearchIndex(entity);
 
     }
 
+    //Technical Debt:  This belongs in a helper
     addToSearchIndex(entity, entity_type){
 
         du.debug('Add To Search Index');
@@ -418,7 +278,6 @@ module.exports = class entityUtilitiesController {
 
     }
 
-
     assureSingular(results){
 
       du.debug('Assure Singular');
@@ -473,6 +332,7 @@ module.exports = class entityUtilitiesController {
 
             du.debug('No account specified in the entity record');
 
+            //Technical Debt:  This is inappropriate here...
             if(_.has(global, 'account')){
 
                 du.debug('Global account identified.  Appending to the entity.');
@@ -507,9 +367,10 @@ module.exports = class entityUtilitiesController {
 
       du.debug('Append User Condition');
 
+      //Technical Debt:  This is inappropriate here...
       user = (_.isUndefined(user))?global.user:user;
 
-      if(this.permissionutilities.accountFilterDisabled() !== true){
+      if(this.accountFilterDisabled() !== true){
 
         query_parameters = this.appendKeyConditionExpression(query_parameters, '#user = :userv');
         query_parameters = this.appendExpressionAttributeValues(query_parameters, ':userv', this.getID(user));
@@ -525,13 +386,14 @@ module.exports = class entityUtilitiesController {
 
       du.debug('Append Account Condition');
 
+      //Technical Debt:  This is inappropriate here...
       account = (_.isUndefined(account))?global.account:account;
 
-      if(!this.permissionutilities.accountFilterDisabled()){
+      if(!this.accountFilterDisabled()){
 
         if(!_.contains(this.nonaccounts, this.descriptive_name)){
 
-          if(!this.permissionutilities.isMasterAccount()){
+          if(!this.isMasterAccount()){
 
             query_parameters = this.appendKeyConditionExpression(query_parameters, '#account = :accountv');
             query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', this.getID(account));
@@ -551,9 +413,10 @@ module.exports = class entityUtilitiesController {
 
       du.debug('Append Account Filter');
 
+      //Technical Debt:  This is inappropriate here...
       account = (_.isUndefined(account))?global.account:account;
 
-      if(this.permissionutilities.accountFilterDisabled() !== true){
+      if(this.accountFilterDisabled() !== true){
 
         if(!_.contains(this.nonaccounts, this.descriptive_name)){
 
@@ -570,14 +433,6 @@ module.exports = class entityUtilitiesController {
       }
 
       return query_parameters;
-
-    }
-
-    isMasterAccount(){
-
-      du.debug('Is Master Account');
-
-      return this.permissionutilities.isMasterAccount();
 
     }
 
@@ -1064,6 +919,7 @@ module.exports = class entityUtilitiesController {
 
     asyncronousCreateBehaviors({entity: entity}){
 
+      //Technical Debt:  This is inappropriate here...  These belong in helpers
       this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
 
       this.addToSearchIndex(entity, this.descriptive_name);
@@ -1073,6 +929,7 @@ module.exports = class entityUtilitiesController {
 
     createRedshiftActivityRecord(actor, action, acted_upon, associated_with){
 
+        //Technical Debt:  This is inappropriate here...
         let activityHelper = global.SixCRM.routes.include('helpers', 'redshift/Activity.js');
 
         return activityHelper.createActivity(actor, action, acted_upon, associated_with);
@@ -1157,4 +1014,33 @@ module.exports = class entityUtilitiesController {
 
     }
 
+      /*
+      getFromCache(cache_object_key, data_function){
+
+          du.debug('Get From Cache');
+
+          return this.assureCacheController().then(() => {
+
+              return this.cacheController.useCache(cache_object_key, data_function).then((permission) => {
+
+                  return permission;
+
+              });
+
+          });
+
+      }
+
+      assureCacheController(){
+
+          du.debug('Assure Cache Controller');
+
+          if(!_.has(this, 'cacheController')){
+              this.cacheController = new cacheController();
+          }
+
+          return Promise.resolve(true);
+
+      }
+      */
 }

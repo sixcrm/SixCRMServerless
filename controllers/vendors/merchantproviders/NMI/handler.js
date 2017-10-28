@@ -78,9 +78,6 @@ class NMIController extends MerchantProvider {
         void: {
           required:{
             transactionid:'transaction.processor_response.result.transactionid'
-          },
-          optional:{
-            amount:'amount'
           }
         }
       };

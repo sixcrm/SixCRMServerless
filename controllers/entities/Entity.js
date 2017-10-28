@@ -54,7 +54,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('List By Association');
 
-      return this.can('read', fatal)
+      return this.can({action:'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -79,7 +79,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('List By Associations');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -107,7 +107,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('List By Secondary Index');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -139,7 +139,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       field = (_.isUndefined(field))?this.primary_key:field;
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => this.transformListArray(list_array))
       .then((list_array) => {
@@ -163,7 +163,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('List');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -194,7 +194,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('List By User');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -223,7 +223,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return this.list(arguments[0]);
       }
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -248,7 +248,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Query By Secondary Index');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -279,7 +279,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Get By Secondary Index');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -302,7 +302,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Query By Parameters');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
       .then(() => {
@@ -343,7 +343,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Scan By Parameters');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
       .then(() => {
@@ -370,7 +370,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Get');
 
-      return this.can('read', fatal)
+      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
@@ -395,7 +395,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Create');
 
-      return this.can('create', true)
+      return this.can({action: 'create', object: this.descriptive_name, fatal: true})
       .then(() => {
 
         entity = this.assignPrimaryKey(entity);
@@ -429,7 +429,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Update');
 
-      return this.can('update', true)
+      return this.can({action: 'update', object: this.descriptive_name, fatal: true})
       .then(() => {
 
         if(!_.has(entity, this.primary_key)){
@@ -472,7 +472,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Touch');
 
-      return this.can('update', true).then(() => {
+      return this.can({action: 'update', object: this.descriptive_name, fatal: true}).then(() => {
 
         return this.exists({entity: entity}).then((exists) => {
 
@@ -534,7 +534,7 @@ module.exports = class entityController extends entityUtilitiesController {
       delete_parameters[this.primary_key] = id;
 
 
-      return this.can('delete', true)
+      return this.can({action: 'delete', object: this.descriptive_name, fatal: true})
       .then(() => this.checkAssociatedEntities({id: id}))
       .then(() => this.exists({entity: delete_parameters}))
       .then((exists) => {

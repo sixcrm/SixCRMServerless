@@ -69,7 +69,7 @@ class InnovioController extends MerchantProvider {
         },
         refund: {
           required:{
-            request_ref_po_id:'transaction.processor_response.result.TRANS_ID',
+            request_ref_po_id:'transaction.processor_response.result.PO_ID',
             li_value_1:'amount'
           }
         },

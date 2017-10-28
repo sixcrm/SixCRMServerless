@@ -10,30 +10,32 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 
 const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
-
+const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 //Technical Debt:  Create SQL Query Builder class and abstract the query building methods there.
 
-module.exports = class AnalyticsUtilities {
+module.exports = class AnalyticsUtilities extends PermissionedController {
 
     constructor(){
 
-        this.period_options = [
-          {name:"minute", seconds: 60},
-          {name:"hour", seconds: 3600},
-          {name:"day", seconds: 86400},
-          {name:"week", seconds: 604800},
-          {name:"month", seconds: 2678400},
-          {name:"quarter", seconds: 7776000},
-          {name:"year", seconds: 30412800}
-        ];
+      super();
 
-        this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
+      this.period_options = [
+        {name:"minute", seconds: 60},
+        {name:"hour", seconds: 3600},
+        {name:"day", seconds: 86400},
+        {name:"week", seconds: 604800},
+        {name:"month", seconds: 2678400},
+        {name:"quarter", seconds: 7776000},
+        {name:"year", seconds: 30412800}
+      ];
 
-        this.cacheController = new cacheController();
+      this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 
-        this.period_count_default = 30;
+      this.cacheController = new cacheController();
 
-        this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+      this.period_count_default = 30;
+
+      this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
     }
 
@@ -41,7 +43,7 @@ module.exports = class AnalyticsUtilities {
 
       if(_.isFunction(this[function_name])){
 
-        return this.can(function_name).then((permission) => {
+        return this.can({action: function_name, object: 'analytics', fatal: false}).then((permission) => {
 
           if(permission !== true){
 
@@ -58,24 +60,6 @@ module.exports = class AnalyticsUtilities {
       }
 
       eu.throwError('server', 'AnalyticsController.'+function_name+' is not defined.');
-
-    }
-
-    can(function_name){
-
-        du.debug('Can');
-
-        du.debug('Can check:', function_name, 'analytics');
-
-        return new Promise((resolve) => {
-
-          let permission = this.permissionutilities.validatePermissions(function_name, 'analytics');
-
-          du.debug('Has permission:', permission);
-
-          return resolve(permission);
-
-        });
 
     }
 

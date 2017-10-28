@@ -61,6 +61,42 @@ function getValidVoidRequestParametersObject(){
 
 }
 
+function getValidRefundRequestParametersObject(){
+
+  return {
+    transaction:{
+      "amount": 34.99,
+      "id": "e624af6a-21dc-4c64-b310-3b0523f8ca42",
+      "alias":"T56S2HJO32",
+      "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
+      "processor_response": {
+        "message":"Success",
+        "result":{
+          "response":"1",
+          "responsetext":"SUCCESS",
+          "authcode":"123456",
+          "transactionid":"3448894418",
+          "avsresponse":"N",
+          "cvvresponse":"",
+          "orderid":"",
+          "type":"sale",
+          "response_code":"100"
+        }
+      },
+      "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
+      "products":[{
+        "product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
+        "amount":34.99
+      }],
+      "created_at":"2017-04-06T18:40:41.405Z",
+      "updated_at":"2017-04-06T18:41:12.521Z"
+    },
+    amount: 34.99
+  };
+
+}
+
 function getValidRequestParametersObject(){
 
   return {
@@ -132,9 +168,6 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
   afterEach(() => {
       mockery.resetCache();
-  });
-
-  after(() => {
       mockery.deregisterAll();
   });
 
@@ -319,13 +352,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
   it('Should void a transaction', () => {
 
     //Technical Debt:  This already exists from the previous test... (derp)
-    /*
     mockery.registerMock('request', {
       post: (request_options, callback) => {
         callback(null, null, getMockResponse());
       }
     });
-    */
 
     let merchant_provider_configuration = getValidMerchantProviderConfiguation();
 
@@ -343,6 +374,33 @@ describe('vendors/merchantproviders/NMI.js', () => {
       expect(response).to.have.property('result');
 
     });
+
+  });
+
+    it('Should refund a transaction', () => {
+
+      mockery.registerMock('request', {
+        post: (request_options, callback) => {
+          callback(null, null, getMockResponse());
+        }
+      });
+
+      let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+
+      const NMIController = global.SixCRM.routes.include('vendors', 'merchantproviders/NMI/handler.js');
+
+      let nmi_controller = new NMIController(merchant_provider_configuration);
+
+      let request_parameters = getValidRefundRequestParametersObject();
+
+      return nmi_controller.refund(request_parameters).then(response => {
+
+        du.warning(response);
+        expect(response).to.have.property('code');
+        expect(response).to.have.property('message');
+        expect(response).to.have.property('result');
+
+      });
 
   });
 
