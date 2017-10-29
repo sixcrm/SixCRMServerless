@@ -50,7 +50,7 @@ EVENTS_SUB2 as (SELECT subaffiliate_2 as subaffiliate,
      AND subaffiliate_2 !=''
    GROUP BY subaffiliate_2,
             DATE_TRUNC('{{period}}',datetime)
-   UNION
+   UNION ALL
    SELECT * FROM EVENTS_SUB1),
 EVENTS_SUB3 as (SELECT subaffiliate_3 as subaffiliate,
           sum(CASE
@@ -78,7 +78,7 @@ EVENTS_SUB3 as (SELECT subaffiliate_3 as subaffiliate,
      AND subaffiliate_3 !=''
    GROUP BY subaffiliate_3,
             DATE_TRUNC('{{period}}',datetime)
-   UNION
+   UNION ALL
    SELECT * FROM EVENTS_SUB2),
 EVENTS_SUB4 as (SELECT subaffiliate_4 as subaffiliate,
           sum(CASE
@@ -106,7 +106,7 @@ EVENTS_SUB4 as (SELECT subaffiliate_4 as subaffiliate,
      AND subaffiliate_4 !=''
    GROUP BY subaffiliate_4,
             DATE_TRUNC('{{period}}',datetime)
-   UNION
+   UNION ALL
    SELECT * FROM EVENTS_SUB3),
 EVENTS_SUB5 as (SELECT subaffiliate_5 as subaffiliate,
           sum(CASE
@@ -134,7 +134,7 @@ EVENTS_SUB5 as (SELECT subaffiliate_5 as subaffiliate,
      AND subaffiliate_5 !=''
    GROUP BY subaffiliate_5,
             DATE_TRUNC('{{period}}',datetime)
-   UNION
+   UNION ALL
    SELECT * FROM EVENTS_SUB4),
 TRANSACTIONS_SUB1 AS (SELECT sum(amount) sum_amount,
           sum(CASE
@@ -176,7 +176,7 @@ TRANSACTIONS_SUB2 AS (SELECT sum(amount) sum_amount,
      AND subaffiliate_2 !=''
    GROUP BY subaffiliate_2,
             DATE_TRUNC('{{period}}',datetime)
-  UNION
+  UNION ALL
   SELECT * FROM TRANSACTIONS_SUB1),
 TRANSACTIONS_SUB3 AS (SELECT sum(amount) sum_amount,
           sum(CASE
@@ -198,7 +198,7 @@ TRANSACTIONS_SUB3 AS (SELECT sum(amount) sum_amount,
      AND subaffiliate_3 !=''
    GROUP BY subaffiliate_3,
             DATE_TRUNC('{{period}}',datetime)
-  UNION
+  UNION ALL
   SELECT * FROM TRANSACTIONS_SUB2),
 TRANSACTIONS_SUB4 AS (SELECT sum(amount) sum_amount,
           sum(CASE
@@ -242,18 +242,18 @@ TRANSACTIONS_SUB5 AS (SELECT sum(amount) sum_amount,
      AND subaffiliate_5 !=''
    GROUP BY subaffiliate_5,
             DATE_TRUNC('{{period}}',datetime)
-  UNION
+  UNION ALL
   SELECT * FROM TRANSACTIONS_SUB4)
-SELECT fe.subaffiliate,
-       fe.count_click,
-       fe.count_partials,
-       decode(fe.count_click,0,0, 1.0*fe.count_partials / fe.count_click) AS partials_percent,
+SELECT ft.subaffiliate,
+       nvl(fe.count_click,0) AS count_click,
+       nvl(fe.count_partials,0) AS count_partials,
+       decode(nvl(fe.count_click,0),0,0, 1.0*fe.count_partials / fe.count_click) AS partials_percent,
        coalesce(decline_count,0) AS decline_count,
-       coalesce(decode(decline_count,0,0, 1.0*decline_count / fe.count_click),0) AS declines_percent,
-       fe.count_sales,
-       decode(fe.count_sales,0,0, 1.0*fe.count_sales / fe.count_click) AS sales_percent,
-       fe.count_upsell,
-       decode(fe.count_upsell,0,0, 1.0*fe.count_upsell / fe.count_click) AS upsell_percent,
+       coalesce(decode(nvl(decline_count,0),0,0, 1.0*decline_count / fe.count_click),0) AS declines_percent,
+       nvl(fe.count_sales,0) AS count_sales,
+       decode(nvl(fe.count_sales,0),0,0, 1.0*fe.count_sales / fe.count_click) AS sales_percent,
+       nvl(fe.count_upsell,0) AS count_upsell ,
+       decode(nvl(fe.count_upsell,0),0,0, 1.0*fe.count_upsell / fe.count_click) AS upsell_percent,
        sum_upsell,
        sum_amount,
        fe.{{period}} AS {{period}}

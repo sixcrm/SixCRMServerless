@@ -17,16 +17,16 @@ INSERT INTO sys_sixcrm.sys_table_version
 
 CREATE TABLE IF NOT EXISTS f_activity
 (
-  id                   VARCHAR(36)  NOT NULL,
-  datetime             TIMESTAMP    NOT NULL,
-  account              VARCHAR(36),
-  actor                VARCHAR(100) NOT NULL,
-  actor_type           VARCHAR(20),
-  action               VARCHAR(20),
-  acted_upon           VARCHAR(100),
-  acted_upon_type      VARCHAR(20),
-  associated_with      VARCHAR(100),
-  associated_with_type VARCHAR(20)
+  id                   VARCHAR(36)  NOT NULL encode ZSTD,
+  datetime             TIMESTAMP    NOT NULL encode ZSTD,
+  account              VARCHAR(36) encode ZSTD,
+  actor                VARCHAR(100) NOT NULL encode ZSTD,
+  actor_type           VARCHAR(20) encode ZSTD,
+  action               VARCHAR(20) encode bytedict,
+  acted_upon           VARCHAR(100) encode ZSTD,
+  acted_upon_type      VARCHAR(20) encode bytedict,
+  associated_with      VARCHAR(100) encode ZSTD,
+  associated_with_type VARCHAR(20) encode bytedict
 ) SORTKEY (datetime);
 
 

@@ -6,7 +6,8 @@
   "idle_timeout": 30000,
   "cluster": {
     "cluster_identifier": "sixcrm",
-    "node_type": "dc1.large",
+    "node_type": "dc2.large",
+    "allow_version_upgrade": true,
     "automated_snapshot_retention_period": 3,
     "cluster_type": "single-node",
     "publicly_accessible": true,

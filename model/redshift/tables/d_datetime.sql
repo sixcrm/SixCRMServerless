@@ -15,7 +15,7 @@ INSERT INTO sys_sixcrm.sys_table_version
 
 CREATE TABLE IF NOT EXISTS d_datetime
 (
-  datetime TIMESTAMP encode delta
+  datetime TIMESTAMP encode zstd
 ) DISTSTYLE all sortkey (datetime);
 
 COMMENT ON TABLE d_datetime IS 'Date dimensional table distribution style set to all, recommended for dimensional table';

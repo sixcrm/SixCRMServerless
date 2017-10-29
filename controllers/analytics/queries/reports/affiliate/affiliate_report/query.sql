@@ -1,16 +1,16 @@
-SELECT fe.affiliate,
-       fe.count_click,
-       fe.count_partials,
-       decode(fe.count_click,0,0, 1.0*fe.count_partials / fe.count_click) AS partials_percent,
+SELECT ft.affiliate,
+       nvl(fe.count_click,0) AS count_click,
+       nvl(fe.count_partials,0) AS count_partials,
+       decode(nvl(fe.count_click,0),0,0, 1.0*fe.count_partials / fe.count_click) AS partials_percent,
        coalesce(decline_count,0) AS decline_count,
-       coalesce(decode(decline_count,0,0, 1.0*decline_count / fe.count_click),0) AS declines_percent,
-       fe.count_sales,
-       decode(fe.count_sales,0,0, 1.0*fe.count_sales / fe.count_click) AS sales_percent,
-       fe.count_upsell,
-       decode(fe.count_upsell,0,0, 1.0*fe.count_upsell / fe.count_click) AS upsell_percent,
+       coalesce(decode(nvl(decline_count,0),0,0, 1.0*decline_count / fe.count_click),0) AS declines_percent,
+       nvl(fe.count_sales,0) AS count_sales,
+       decode(nvl(fe.count_sales,0),0,0, 1.0*fe.count_sales / fe.count_click) AS sales_percent,
+       nvl(fe.count_upsell,0) AS count_upsell ,
+       decode(nvl(fe.count_upsell,0),0,0, 1.0*fe.count_upsell / fe.count_click) AS upsell_percent,
        sum_upsell,
        sum_amount,
-       fe.{{period}} AS {{period}}
+       ft.{{period}} AS {{period}}
 FROM
   (SELECT affiliate,
           count(CASE
@@ -56,6 +56,6 @@ RIGHT OUTER JOIN
    GROUP BY affiliate,
             DATE_TRUNC('{{period}}',datetime)) ft ON (fe.affiliate = ft.affiliate
                                                       AND fe.{{period}} = ft.{{period}})
-ORDER BY {{period}} {{order}}
+ORDER BY affiliate,{{period}} {{order}}
 LIMIT {{limit}}
 OFFSET {{offset}};

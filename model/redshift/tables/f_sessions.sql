@@ -21,12 +21,12 @@ CREATE TABLE IF NOT EXISTS f_sessions
   completed      VARCHAR(6)  NOT NULL,
   created_at     TIMESTAMP,
   updated_at     TIMESTAMP,
-  affiliate      VARCHAR(128),
-  subaffiliate_1 VARCHAR(128),
-  subaffiliate_2 VARCHAR(128),
-  subaffiliate_3 VARCHAR(128),
-  subaffiliate_4 VARCHAR(128),
-  subaffiliate_5 VARCHAR(128),
+  affiliate      VARCHAR(36),
+  subaffiliate_1 VARCHAR(36),
+  subaffiliate_2 VARCHAR(36),
+  subaffiliate_3 VARCHAR(36),
+  subaffiliate_4 VARCHAR(36),
+  subaffiliate_5 VARCHAR(36),
   cid            VARCHAR(36)
 
 ) SORTKEY (id);
