@@ -223,37 +223,45 @@ class transactionController extends entityController {
 
     createTransactionObject(parameters, processor_response){
 
-        du.debug('Create Transaction Object');
+      du.debug('Create Transaction Object');
 
-        //Technical Debt: Why is this necessary?
-        let merchant_provider = this.getMerchantProviderID(parameters, processor_response);
+      //Technical Debt: Why is this necessary?
+      let merchant_provider = this.getMerchantProviderID(parameters, processor_response);
 
-        var return_object = {
-            rebill: parameters.rebill.id,
-            processor_response: JSON.stringify(processor_response),
-            amount: parameters.amount,
-            products: parameters.products,
-            alias: this.createAlias(),
-            merchant_provider: merchant_provider
-        };
+      let type = (_.isUndefined(parameters.type))?'sale':parameters.type;
 
-        return return_object;
+      var return_object = {
+          rebill: this.getID(parameters.rebill),
+          processor_response: JSON.stringify(processor_response),
+          amount: parameters.amount,
+          products: parameters.products,
+          alias: this.createAlias(),
+          merchant_provider: merchant_provider,
+          type: type
+      };
+
+      if(_.has(parameters, 'associated_transaction')){
+        return_object.associated_transaction  = parameters.associated_transaction;
+      }
+
+      return return_object;
 
     }
 
+    //Technical Debt:  This seems deprecated.
     getMerchantProviderID(parameters, processor_response){
 
-        du.debug('Get Merchant Provider');
+      du.debug('Get Merchant Provider');
 
-        if(_.has(parameters, 'merchant_provider') && this.isUUID(parameters.merchant_provider)){
-            return parameters.merchant_provider;
-        }
+      if(_.has(parameters, 'merchant_provider') && this.isUUID(parameters.merchant_provider)){
+          return parameters.merchant_provider;
+      }
 
-        if(_.has(processor_response, 'merchant_provider') && this.isUUID(processor_response.merchant_provider)){
-            return processor_response.merchant_provider;
-        }
+      if(_.has(processor_response, 'merchant_provider') && this.isUUID(processor_response.merchant_provider)){
+          return processor_response.merchant_provider;
+      }
 
-        return null;
+      return null;
 
     }
 

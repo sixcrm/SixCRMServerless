@@ -61,6 +61,7 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.validateAmount())
     .then(() => this.executeRefund())
     .then(() => this.createTransaction())
+    //Technical Debt:  Add a event that corresponds to what just happened.
     .then(() => this.transformResponse());
 
   }
@@ -74,10 +75,11 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.hydrateTransaction())
     .then(() => this.getAssociatedTransactions())
     .then(() => this.validateAssociatedTransactions())
-    //.then(() => this.setAmount())
-    //.then(() => this.validateAmount())
+    .then(() => this.setAmount())
+    .then(() => this.validateAmount())
     .then(() => this.executeReverse())
     .then(() => this.createTransaction())
+    //Technical Debt:  Add a event that corresponds to what just happened.
     .then(() => this.transformResponse());
 
   }
@@ -88,6 +90,8 @@ module.exports = class Register extends PermissionedController {
     du.debug('Set Parameters');
 
     let local_parameters = {};
+
+    this.parameters.set('transaction_type', action);
 
     if(objectutilities.hasRecursive(this, 'parameter_definitions.'+action+'.required', true)){
 
@@ -243,7 +247,6 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  //Note that the amount argument has been ommitted here...
   executeReverse(){
 
     du.debug('Execute Reverse');
@@ -261,8 +264,6 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  //Technical Debt:  I wonder if this really should go here...
-  //Technical Debt:  What happens when it fails?  Shouldn't we add that as a event?
   createTransaction(){
 
     du.debug('Create Transaction');
@@ -271,11 +272,28 @@ module.exports = class Register extends PermissionedController {
 
     if(processor_response.code === 'success'){
 
-      //type: refund/sale/reverse
-      //create transaction
-      this.parameters.set('result_transaction', {});
+      let hydrated_transaction = this.parameters.get('hydrated_transaction');
+      let amount = this.parameters.get('amount');
+      let transaction_type = this.parameters.get('transaction_type');
+
+      let transaction_prototype = {
+        rebill: hydrated_transaction.rebill,
+        amount: amount,
+        products: hydrated_transaction.products,
+        merchant_provider: hydrated_transaction.merchant_provider,
+        type: transaction_type,
+        associated_transaction: hydrated_transaction.id
+      };
+
+      transaction_prototype = this.transactionController.createTransactionObject(transaction_prototype, processor_response);
+
+      return this.transactionController.create({entity: transaction_prototype}).then(result_transaction => {
+        this.parameters.set('result_transaction', result_transaction);
+      });
 
     }
+
+    return Promise.resolve(null);
 
   }
 

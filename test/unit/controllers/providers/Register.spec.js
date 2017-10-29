@@ -68,6 +68,29 @@ function getValidAssociatedTransactions(){
   }];
 }
 
+function getProcessorResponseObject(){
+
+  return {
+    code: 'success',
+    result: {
+      message: "Success",
+      result:{
+        response:"1",
+        responsetext:"SUCCESS",
+        authcode:"123456",
+        transactionid:"3448894418",
+        avsresponse:"N",
+        cvvresponse:"",
+        orderid:"",
+        type:"sale",
+        response_code:"100"
+      }
+    },
+    message: 'Some message'
+  };
+
+}
+
 function getInvalidArgumentsArray(omit){
 
   let invalid_arguments = [{}, [], new Error(), null, undefined, 123, 'abc', () => {}];
@@ -78,6 +101,20 @@ function getInvalidArgumentsArray(omit){
   });
 
 }
+
+function assumePermissionedRole(){
+
+  let permissions = [
+    {
+      action:'*',
+      object: '*'
+    }
+  ];
+
+  PermissionTestGenerators.givenUserWithPermissionArray(permissions, 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+}
+
 
 describe('controllers/providers/Register.js', () => {
 
@@ -546,7 +583,52 @@ describe('controllers/providers/Register.js', () => {
 
     it('creates a transaction for successes', () => {
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+        queryRecords: (table, parameters, index, callback) => {
+          return Promise.resolve([]);
+        },
+        saveRecord: (tableName, entity, callback) => {
+          return Promise.resolve(entity);
+        }
+      });
 
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+        createActivity: (actor, action, acted_upon, associated_with) => {
+          return true;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+        addToSearchIndex: (entity) => {
+          return entity;
+        }
+      });
+
+      assumePermissionedRole()
+
+      let registerController = new RegisterController();
+
+      let transaction = getValidTransactionObject();
+      let processor_response = getProcessorResponseObject();
+
+      registerController.parameters.set('transaction_type', 'refund');
+      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('amount', 10.00);
+      registerController.parameters.set('processor_response', processor_response);
+
+      return registerController.createTransaction().then(() => {
+
+        let result_transaction = registerController.parameters.get('result_transaction');
+
+        du.warning(result_transaction);
+
+        expect(result_transaction).to.have.property('id');
+        expect(result_transaction).to.have.property('associated_transaction');
+        expect(result_transaction).to.have.property('type');
+        expect(result_transaction.associated_transaction).to.equal(transaction.id);
+        expect(result_transaction.type).to.equal('refund');
+
+      });
 
     });
 
