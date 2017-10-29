@@ -15,18 +15,18 @@ INSERT INTO sys_sixcrm.sys_table_version
 
 CREATE TABLE IF NOT EXISTS f_events
 (
-  session          VARCHAR(128) NOT NULL encode ZSTD,
-  type             VARCHAR(10) NOT NULL encode ZSTD,
-  datetime         TIMESTAMP    NOT NULL encode ZSTD,
-  account          VARCHAR(36)  NOT NULL encode ZSTD,
-  campaign         VARCHAR(36)  NOT NULL encode ZSTD,
-  product_schedule VARCHAR(36) encode ZSTD,
-  affiliate        VARCHAR(36) encode ZSTD,
-  subaffiliate_1   VARCHAR(128) encode ZSTD,
-  subaffiliate_2   VARCHAR(128) encode ZSTD,
-  subaffiliate_3   VARCHAR(128) encode ZSTD,
-  subaffiliate_4   VARCHAR(128) encode ZSTD,
-  subaffiliate_5   VARCHAR(128) encode ZSTD
+  session          VARCHAR(36) NOT NULL,
+  type             VARCHAR(10)  NOT NULL,
+  datetime         TIMESTAMP    NOT NULL,
+  account          VARCHAR(36)  NOT NULL,
+  campaign         VARCHAR(36)  NOT NULL,
+  product_schedule VARCHAR(36),
+  affiliate        VARCHAR(36),
+  subaffiliate_1   VARCHAR(36),
+  subaffiliate_2   VARCHAR(36),
+  subaffiliate_3   VARCHAR(36),
+  subaffiliate_4   VARCHAR(36),
+  subaffiliate_5   VARCHAR(36)
 ) SORTKEY (account,datetime);
 
 COMMENT ON TABLE d_datetime IS 'Fact table with information about events';
