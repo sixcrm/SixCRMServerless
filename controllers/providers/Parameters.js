@@ -73,9 +73,13 @@ module.exports = class Parameters {
     fatal = (_.isUndefined(fatal))?true:fatal;
 
     if(_.has(this.validation, key)){
+
       return mvu.validateModel(value, this.validation[key], null, fatal);
+
     }else{
+
       du.warning('Missing Model: '+ key);
+
     }
 
     return true;

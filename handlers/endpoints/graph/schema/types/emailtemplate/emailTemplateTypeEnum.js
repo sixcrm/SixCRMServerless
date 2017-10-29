@@ -29,8 +29,8 @@ module.exports.graphObj = new GraphQLEnumType({
         RETURNTOMANUFACTURER: {
             value: 'returntomanufacturer'
         },
-        REFUNDVOID: {
-            value: 'refundvoid'
+        REFUNDREVERSE: {
+            value: 'refundreverse'
         }
     }
 });

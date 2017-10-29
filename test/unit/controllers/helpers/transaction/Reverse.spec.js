@@ -11,9 +11,10 @@ let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-const VoidHelperController = global.SixCRM.routes.include('helpers', 'transaction/Void.js');
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
 
-function getValidVoidParameters(){
+function getValidReverseParameters(){
 
   let transaction = getValidTransaction();
 
@@ -27,33 +28,17 @@ function getValidVoidParameters(){
 
 function assumePermissionedRole(){
 
-  //This doesn't work
-  global.user = {
-  	"name":"Owner Test User",
-  	"first_name": "Owner",
-  	"last_name": "Test User",
-  	"auth0_id":"google-oauth2|115021313586107803846",
-  	"id":"owner.user@test.com",
-  	"active":true,
-  	"termsandconditions":"0.1",
-  	"alias":"9a47a739432d7f12d233a27fab6d36f9a65db3a2",
-  	"created_at":"2017-04-06T18:40:41.405Z",
-  	"updated_at":"2017-04-06T18:41:12.521Z",
-    "acls":[
-      {
-          "id":"1d28d82f-87f1-48eb-9a25-13513956776a",
-          "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-          "user":"owner.user@test.com",
-          "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
-          "created_at":"2017-04-06T18:40:41.405Z",
-          "updated_at":"2017-04-06T18:41:12.521Z"
-      }
-    ]
-  };
+  let permissions = [
+    {
+      action:'*',
+      object: '*'
+    }
+  ];
 
-  global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
+  PermissionTestGenerators.givenUserWithPermissionArray(permissions, 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 }
+
 
 function getInvalidArgumentsArray(omit){
 
@@ -134,7 +119,7 @@ function getValidParameters(){
 
 }
 
-describe('helpers/transaction/Void.js', () => {
+describe('helpers/transaction/Reverse.js', () => {
 
     before(() => {
       mockery.enable({
@@ -151,11 +136,11 @@ describe('helpers/transaction/Void.js', () => {
 
     describe('constructor', () => {
 
-      it('successfully constructs a void class', () => {
+      it('successfully constructs a reverse class', () => {
 
-        let vh = new VoidHelperController();
+        let vh = new ReverseHelperController();
 
-        expect(vh.constructor.name).to.equal('Void');
+        expect(vh.constructor.name).to.equal('Reverse');
 
       });
 
@@ -165,7 +150,7 @@ describe('helpers/transaction/Void.js', () => {
 
       it('fails to set parameters', () => {
 
-        let vh = new VoidHelperController();
+        let vh = new ReverseHelperController();
         let invalid_arguments_array = getInvalidArgumentsArray();
 
         arrayutilities.map(invalid_arguments_array, invalid_argument => {
@@ -179,7 +164,7 @@ describe('helpers/transaction/Void.js', () => {
 
       it('successfully sets parameters', () => {
 
-        let vh = new VoidHelperController();
+        let vh = new ReverseHelperController();
 
         let valid_parameters = getValidParameters();
 
@@ -193,9 +178,9 @@ describe('helpers/transaction/Void.js', () => {
 
       it('successfully hydrates the parameters', () => {
 
-        //assumePermissionedRole();
+        assumePermissionedRole();
 
-        let vh = new VoidHelperController();
+        let vh = new ReverseHelperController();
 
         let valid_parameters = getValidParameters();
 
@@ -225,9 +210,11 @@ describe('helpers/transaction/Void.js', () => {
       //fails when transaction isn't set
       //fails when transaction isn't the right thing...
 
-      it('successfully hydrates the parameters', () => {
+      it('successfully creates processing parameters', () => {
 
-        let vh = new VoidHelperController();
+        //assumePermissionedRole();
+
+        let vh = new ReverseHelperController();
 
         vh.parameters.set('transaction', getValidTransaction());
 
@@ -235,7 +222,7 @@ describe('helpers/transaction/Void.js', () => {
 
           expect(processing_parameters).to.have.property('transaction');
 
-          expect(vh.parameters.get('void')).to.deep.equal(processing_parameters);
+          expect(vh.parameters.get('reverse')).to.deep.equal(processing_parameters);
 
         });
 
@@ -243,9 +230,9 @@ describe('helpers/transaction/Void.js', () => {
 
     });
 
-    describe('void', () => {
+    describe('reverse', () => {
 
-      it('successfully voids a transaction', () => {
+      it('successfully reverses a transaction', () => {
 
           //Test: complete
 

@@ -8,6 +8,7 @@ const expect = chai.expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js');
 
@@ -26,32 +27,14 @@ function getValidRefundParameters(){
 
 function assumePermissionedRole(){
 
-  //PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
-  //This doesn't work
-  global.user = {
-  	"name":"Owner Test User",
-  	"first_name": "Owner",
-  	"last_name": "Test User",
-  	"auth0_id":"google-oauth2|115021313586107803846",
-  	"id":"owner.user@test.com",
-  	"active":true,
-  	"termsandconditions":"0.1",
-  	"alias":"9a47a739432d7f12d233a27fab6d36f9a65db3a2",
-  	"created_at":"2017-04-06T18:40:41.405Z",
-  	"updated_at":"2017-04-06T18:41:12.521Z",
-    "acls":[
-      {
-          "id":"1d28d82f-87f1-48eb-9a25-13513956776a",
-          "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-          "user":"owner.user@test.com",
-          "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
-          "created_at":"2017-04-06T18:40:41.405Z",
-          "updated_at":"2017-04-06T18:41:12.521Z"
-      }
-    ]
-  };
+  let permissions = [
+    {
+      action:'*',
+      object: '*'
+    }
+  ];
 
-  global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
+  PermissionTestGenerators.givenUserWithPermissionArray(permissions, 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 }
 
@@ -193,7 +176,7 @@ describe('helpers/transaction/Refund.js', () => {
 
       it('successfully hydrates the parameters', () => {
 
-        //assumePermissionedRole();
+        assumePermissionedRole();
 
         let vh = new RefundHelperController();
 
@@ -226,6 +209,8 @@ describe('helpers/transaction/Refund.js', () => {
       //fails when transaction isn't the right thing...
 
       it('successfully hydrates the parameters', () => {
+
+        assumePermissionedRole()
 
         let vh = new RefundHelperController();
 

@@ -13,6 +13,7 @@ class transactionController extends entityController {
         super('transaction');
     }
 
+    //Technical Debt:  Finish
     associatedEntitiesCheck({id}){
       return Promise.resolve([]);
       /*
@@ -156,6 +157,40 @@ class transactionController extends entityController {
         du.debug('Transaction Products', transaction.products);
 
         return Promise.all(transaction.products.map(transaction_product => this.getTransactionProduct(transaction_product)));
+
+    }
+
+    listByAssociatedTransaction({id, types}){
+
+      du.debug('List By Parent Transaction');
+
+      id = this.getID(id);
+
+      let query_parameters = {
+        filter_expression: '#associatedtransaction = :associated_transaction_id',
+        expression_attribute_values: {
+          ':associated_transaction_id': id
+        },
+        expression_attribute_names: {
+          '#associatedtransaction': 'associatedtransaction'
+        }
+      };
+
+      if(!_.isUndefined(types) && arrayutilities.nonEmpty(types)){
+
+        let additional_conditions = [];
+
+        arrayutilities.map(types, (type) => {
+          additional_conditions.push('#typefield = :type'+type);
+          query_parameters.expression_attribute_values[':type'+type] = type;
+          query_parameters.expression_attribute_names['#typefield'] = 'type';
+        });
+
+        query_parameters.filter_expression += ' AND '+arrayutilities.compress(additional_conditions, ' OR ', '');
+
+      }
+
+      return this.listByAccount({query_parameters: query_parameters});
 
     }
 

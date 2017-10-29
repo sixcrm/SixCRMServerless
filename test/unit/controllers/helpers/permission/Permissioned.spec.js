@@ -31,7 +31,6 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
       mockery.deregisterAll();
   });
 
-  //Techincal Debt:  This belongs in the PermissionedController Test Package now
   describe('can', () => {
 
     beforeEach(() => {

@@ -73,7 +73,7 @@ class InnovioController extends MerchantProvider {
             li_value_1:'amount'
           }
         },
-        void: {
+        reverse: {
           required:{
             request_ref_po_id:'transaction.processor_response.result.PO_ID'
           }
@@ -104,13 +104,13 @@ class InnovioController extends MerchantProvider {
 
     }
 
-    void(request_parameters){
+    reverse(request_parameters){
 
-      du.debug('Void');
+      du.debug('Reverse');
 
       const method_parameters = {request_action: 'CCREVERSE'};
 
-      return this.postToProcessor({action: 'void', method_parameters: method_parameters, request_parameters: request_parameters})
+      return this.postToProcessor({action: 'reverse', method_parameters: method_parameters, request_parameters: request_parameters})
       .then((response) => this.getResponseObject(response));
 
     }

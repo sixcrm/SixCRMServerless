@@ -22,7 +22,7 @@ ____
 * `Product` -- Need to **hydrate**
 * `Cycle` -- Does **not exist** in RS
 * `Recycle #` -- Does **not exist** in RS
-* `Type (Sale, Refund, Void, Decline etc)`
+* `Type (Sale, Refund, Reverse, Decline etc)`
 * `Amount`
 * `Result (Success, Soft Decline, Hard Decline)`
 * `Gateway response` -- Does **not exist** in RS

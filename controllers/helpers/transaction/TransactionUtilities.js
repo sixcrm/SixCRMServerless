@@ -4,6 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class TransactionUtilities {
 
@@ -32,7 +33,7 @@ module.exports = class TransactionUtilities {
 
       objectutilities.map(temporary, (parameter) => {
         this.parameters.set(parameter, temporary[parameter]);
-      })
+      });
 
       return Promise.resolve(true);
 
@@ -42,8 +43,6 @@ module.exports = class TransactionUtilities {
     instantiateParameters(){
 
       du.debug('Instantiate Parameters');
-
-      const Parameters = global.SixCRM.routes.include('helpers', 'transaction/Parameters.js');
 
       let validation = {};
 

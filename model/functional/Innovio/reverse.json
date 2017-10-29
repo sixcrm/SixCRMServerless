@@ -1,5 +1,5 @@
 {
-	"title": "Innovio Merchant Provider Refund Object",
+	"title": "Innovio Merchant Provider Reverse Object",
 	"type": "object",
 	"properties": {
 		"req_username":{

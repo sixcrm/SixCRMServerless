@@ -12,7 +12,7 @@ const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
-module.exports = class Void extends TransactionUtilities{
+module.exports = class Reverse extends TransactionUtilities{
 
     constructor(){
 
@@ -26,11 +26,11 @@ module.exports = class Void extends TransactionUtilities{
       };
 
       this.parameter_validation = {
-        'void': global.SixCRM.routes.path('model','transaction/void.json'),
+        'reverse': global.SixCRM.routes.path('model','transaction/reverse.json'),
         'transaction': global.SixCRM.routes.path('model','transaction/transaction.json'),
         'merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
         'selected_merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
-        'amount':global.SixCRM.routes.path('model','transaction/amount.json')
+        //'amount':global.SixCRM.routes.path('model','transaction/amount.json')
       };
 
       this.transactionController = global.SixCRM.routes.include('entities','Transaction.js');
@@ -39,29 +39,29 @@ module.exports = class Void extends TransactionUtilities{
 
     }
 
-    void(parameters){
+    reverse(parameters){
 
-      du.debug('Void');
+      du.debug('Reverse');
 
       return this.setParameters(parameters)
       .then(() => this.hydrateParameters())
-      .then(() => this.voidTransaction());
+      .then(() => this.reverseTransaction());
 
     }
 
     //Technical Debt: Untested...
-    voidTransaction(){
+    reverseTransaction(){
 
-      du.debug('Process Transaction');
+      du.debug('Reverse Transaction');
 
       return this.instantiateGateway()
       .then(() => this.createProcessingParameters())
       .then(() => {
 
         let instantiated_gateway = this.parameters.get('instantiated_gateway');
-        let processing_parameters = this.parameters.get('void');
+        let processing_parameters = this.parameters.get('reverse');
 
-        return instantiated_gateway.void(processing_parameters);
+        return instantiated_gateway.reverse(processing_parameters);
 
       });
 
@@ -86,7 +86,7 @@ module.exports = class Void extends TransactionUtilities{
         transaction: transaction
       };
 
-      this.parameters.set('void', parameters);
+      this.parameters.set('reverse', parameters);
 
       return Promise.resolve(parameters);
 
@@ -98,8 +98,6 @@ module.exports = class Void extends TransactionUtilities{
 
       let transaction = this.parameters.get('transaction');
 
-      //Technical Debt:  I don't like this.
-      this.transactionController.disableACLs();
       return this.transactionController.get({id: transaction})
       .then((transaction) => {
 
@@ -110,7 +108,6 @@ module.exports = class Void extends TransactionUtilities{
       })
       .then((merchantprovider) => {
 
-        this.transactionController.enableACLs();
         this.parameters.set('selected_merchantprovider', merchantprovider);
 
         return true;

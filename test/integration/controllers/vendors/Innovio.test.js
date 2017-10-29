@@ -62,7 +62,7 @@ function executeProcess(){
 
 }
 
-function executeVoid(transaction_object){
+function executeReverse(transaction_object){
 
   let merchant_provider_configuration = getValidMerchantProviderConfiguation();
 
@@ -70,7 +70,7 @@ function executeVoid(transaction_object){
 
   let innovio_controller = new InnovioController(merchant_provider_configuration);
 
-  return innovio_controller.void(transaction_object);
+  return innovio_controller.reverse(transaction_object);
 
 }
 
@@ -130,7 +130,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
   });
 
-  it('Should complete a void', () => {
+  it('Should complete a reverse', () => {
 
     return executeProcess()
     .then(results=> {
@@ -139,7 +139,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
         polid1: results.result.PO_LI_ID_1
       };
     })
-    .then((transaction_object) => executeVoid(transaction_object))
+    .then((transaction_object) => executeReverse(transaction_object))
     .then(response => {
 
       expect(response).to.have.property('message');

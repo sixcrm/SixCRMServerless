@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/associatedtransactions.json",
+	"title": "Associated Transactions",
+	"type":"array",
+	"items": {"$ref": "../../entities/transaction.json"}
+}

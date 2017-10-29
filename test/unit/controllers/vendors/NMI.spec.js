@@ -26,7 +26,7 @@ function getValidMethodParametersObject(){
   return {type: 'sale'};
 }
 
-function getValidVoidRequestParametersObject(){
+function getValidReverseRequestParametersObject(){
 
   return {
     transaction:{
@@ -349,7 +349,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
   });
 
-  it('Should void a transaction', () => {
+  it('Should reverse a transaction', () => {
 
     //Technical Debt:  This already exists from the previous test... (derp)
     mockery.registerMock('request', {
@@ -364,9 +364,9 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
     let nmi_controller = new NMIController(merchant_provider_configuration);
 
-    let request_parameters = getValidVoidRequestParametersObject();
+    let request_parameters = getValidReverseRequestParametersObject();
 
-    return nmi_controller.void(request_parameters).then(response => {
+    return nmi_controller.reverse(request_parameters).then(response => {
 
       du.warning(response);
       expect(response).to.have.property('code');

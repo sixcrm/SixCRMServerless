@@ -75,7 +75,7 @@ class NMIController extends MerchantProvider {
             amount:'amount'
           }
         },
-        void: {
+        reverse: {
           required:{
             transactionid:'transaction.processor_response.result.transactionid'
           }
@@ -95,13 +95,13 @@ class NMIController extends MerchantProvider {
 
     }
 
-    void(request_parameters){
+    reverse(request_parameters){
 
-      du.debug('Void');
+      du.debug('Reverse');
 
       const method_parameters = {type: 'void'};
 
-      return this.postToProcessor({action: 'void', method_parameters: method_parameters, request_parameters: request_parameters})
+      return this.postToProcessor({action: 'reverse', method_parameters: method_parameters, request_parameters: request_parameters})
       .then((response_object) => this.getResponseObject(response_object));
 
     }

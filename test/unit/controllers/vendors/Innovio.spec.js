@@ -32,7 +32,7 @@ function getValidMethodParametersObject(){
   return {request_action: 'CCAUTHCAP'};
 }
 
-function getValidVoidRequestParametersObject(){
+function getValidReverseRequestParametersObject(){
 
   return {
     transaction:{
@@ -302,7 +302,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
   });
 
-  it('Should void a transaction', () => {
+  it('Should reverse a transaction', () => {
 
     let mocked_callback = {
       API_RESPONSE: 600,
@@ -323,9 +323,9 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
     let innovio_controller = new InnovioController(merchant_provider_configuration);
 
-    let request_parameters = getValidVoidRequestParametersObject();
+    let request_parameters = getValidReverseRequestParametersObject();
 
-    return innovio_controller.void(request_parameters).then(response => {
+    return innovio_controller.reverse(request_parameters).then(response => {
 
       expect(response).to.have.property('message');
       expect(response).to.have.property('result');

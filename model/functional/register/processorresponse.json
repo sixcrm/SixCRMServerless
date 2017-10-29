@@ -1,0 +1,18 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/processorresponse",
+	"title": "Processor Response",
+	"type":"object",
+	"properties":{
+		"code":{
+			"type":"string"
+		},
+		"result":{
+			"type":"object"
+		},
+		"message":{
+			"type":"string"
+		}
+	},
+	"required":["code","result","message"]
+}

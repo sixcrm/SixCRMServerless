@@ -75,7 +75,9 @@ module.exports = class Refund extends TransactionUtilities{
 
       let transaction = this.parameters.get('transaction');
 
+      du.warning(transaction);
       if(_.has(transaction, 'processor_response')){
+
         try{
           transaction.processor_response = JSON.parse(transaction.processor_response);
         }catch(error){
@@ -102,19 +104,14 @@ module.exports = class Refund extends TransactionUtilities{
 
       let transaction = this.parameters.get('transaction');
 
-      //Technical Debt:  I don't like this.
-      this.transactionController.disableACLs();
       return this.transactionController.get({id: transaction})
       .then((transaction) => {
-
-        this.parameters.set('transaction', transaction);
 
         return this.transactionController.getMerchantProvider(transaction);
 
       })
       .then((merchantprovider) => {
 
-        this.transactionController.enableACLs();
         this.parameters.set('selected_merchantprovider', merchantprovider);
 
         return true;

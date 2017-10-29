@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/void.json",
-	"title": "Void",
+	"id":"/reverse.json",
+	"title": "Reverse",
 	"type":"object",
 	"properties":{
 		"transaction":{

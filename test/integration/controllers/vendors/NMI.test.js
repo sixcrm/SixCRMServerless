@@ -6,7 +6,7 @@ const mockery = require('mockery');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-function executeVoid(transaction_object){
+function executeReverse(transaction_object){
 
   let merchant_provider_configuration = getValidMerchantProviderConfiguation();
 
@@ -14,7 +14,7 @@ function executeVoid(transaction_object){
 
   let nmi_controller = new NMIController(merchant_provider_configuration);
 
-  return nmi_controller.void(transaction_object);
+  return nmi_controller.reverse(transaction_object);
 
 }
 
@@ -126,13 +126,13 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
   });
 
-  it('Should complete a void', () => {
+  it('Should complete a reverse', () => {
 
     return executeProcess()
     .then(results => {
       return {transaction_id: results.result.transactionid};
     })
-    .then((transaction_object) => executeVoid(transaction_object))
+    .then((transaction_object) => executeReverse(transaction_object))
     .then(response => {
 
       expect(response).to.have.property('message');
@@ -140,7 +140,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
       expect(response).to.have.property('code');
 
       expect(response.code).to.equal('success');
-      expect(response.message).to.equal('Transaction Void Successful');
+      expect(response.message).to.equal('Transaction Reverse Successful');
 
     });
 

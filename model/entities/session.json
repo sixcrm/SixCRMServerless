@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-	"id":"/Session",
+	"id":"/session",
 	"title": "Session",
 	"type": "object",
 	"description": "A session",

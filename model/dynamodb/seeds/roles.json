@@ -44,7 +44,8 @@
 			"usersetting/*",
 			"usersigningstring/*",
 			"userdevicetoken/*",
-			"tracker/*"
+			"tracker/*",
+			"register/*"
 		],
 		"deny":["*"]
 	},
@@ -74,7 +75,8 @@
 			"usersetting/*",
 			"usersigningstring/*",
 			"userdevicetoken/*",
-			"analytics/getActivityByIdentifier"
+			"analytics/getActivityByIdentifier",
+			"register/*"
 		],
 		"deny":["*"]
 	},

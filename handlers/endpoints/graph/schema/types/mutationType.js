@@ -88,6 +88,12 @@ let sessionType = require('./session/sessionType');
 
 let identifierInputType = require('./general/identifierInputType');
 
+//Register
+let refundType = require('./register/refund/refundType');
+let refundInputType = require('./register/refund/refundInputType');
+let reverseType = require('./register/reverse/reverseType');
+let reverseInputType = require('./register/reverse/reverseInputType');
+
 let SMTPValidationInputType = require('./smtpvalidation/SMTPValidationInputType')
 let SMTPValidationType = require('./smtpvalidation/SMTPValidationType');
 
@@ -96,9 +102,34 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Mutation',
-    fields: () => ({
+  name: 'Mutation',
+  fields: () => ({
+    refund:{
+      type: refundType.graphObj,
+      description: 'Refunds a customer funds based on pre-existing customer transaction.',
+      args: {
+        refund: { type: refundInputType.graphObj }
+      },
+      resolve: (value, refund) => {
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
 
+        return registerController.refundTransaction(refund.refund);
+      }
+    },
+    reverse: {
+      type: reverseType.graphObj,
+      description: 'Reverses a customer transaction with the merchant provider.',
+      args: {
+        reverse: { type: reverseInputType.graphObj }
+      },
+      resolve: (value, reverse) => {
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
+
+        return registerController.reverseTransaction(reverse.reverse);
+      }
+    },
         //Technical Debt:  See below??
         //Note: Fix
         acceptinvite:{

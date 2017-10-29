@@ -1,0 +1,15 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/transactioninput",
+	"title": "Transaction Input",
+	"anyOf":[
+    {"$ref": "../../definitions/uuidv4.json"},
+    {
+      "type":"object",
+      "properties":{
+        "id": {"$ref": "../../definitions/uuidv4.json"}
+      },
+      "required":["id"]
+    }
+  ]
+}
