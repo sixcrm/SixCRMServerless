@@ -211,6 +211,7 @@ describe('controllers/providers/Register.js', () => {
 
   });
 
+  //Technical Debt:  This belongs in the test package from the Parameters.js object
   describe('setParameters', () => {
 
     //Technical Debt: test invalid argumentation types...

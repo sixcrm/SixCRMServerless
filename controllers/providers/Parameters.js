@@ -9,11 +9,29 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 
 module.exports = class Parameters {
 
-  constructor({validation}){
+  constructor({validation, definition}){
 
     this.store = {};
 
-    this.validation = validation;
+    this.setParameterValidation({parameter_validation: validation});
+
+    this.setParameterDefinition({parameter_definition: definition});
+
+  }
+
+  setParameterValidation({parameter_validation}){
+
+    du.debug('Set Parameter Validation');
+
+    this.parameter_validation = parameter_validation;
+
+  }
+
+  setParameterDefinition({parameter_definition}){
+
+    du.debug('Set Parameter Definition');
+
+    this.parameter_definition = parameter_definition;
 
   }
 
@@ -72,9 +90,9 @@ module.exports = class Parameters {
 
     fatal = (_.isUndefined(fatal))?true:fatal;
 
-    if(_.has(this.validation, key)){
+    if(_.has(this.parameter_validation, key)){
 
-      return mvu.validateModel(value, this.validation[key], null, fatal);
+      return mvu.validateModel(value, this.parameter_validation[key], null, fatal);
 
     }else{
 
@@ -85,5 +103,34 @@ module.exports = class Parameters {
     return true;
 
   }
+
+  setParameters({argumentation: argumentation, action: action}){
+
+    du.debug('Set Parameters');
+
+    let local_parameters = {};
+
+    if(objectutilities.hasRecursive(this, 'parameter_definition.'+action+'.required', true)){
+
+      local_parameters = objectutilities.transcribe(this.parameter_definition[action].required, argumentation, local_parameters, true);
+
+    }
+
+    if(objectutilities.hasRecursive(this, 'parameter_definition.'+action+'.optional')){
+
+      local_parameters = objectutilities.transcribe(this.parameter_definition[action].optional, argumentation, local_parameters);
+
+    }
+
+    objectutilities.map(local_parameters, local_parameter => {
+
+      this.set(local_parameter, local_parameters[local_parameter]);
+
+    });
+
+    return true;
+
+  }
+
 
 }

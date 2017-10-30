@@ -45,7 +45,7 @@ module.exports = class Register extends PermissionedController {
       'amount':global.SixCRM.routes.path('model', 'definitions/currency.json')
     }
 
-    this.parameters = new Parameters({validation: this.parameter_validation});
+    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
 
   }
 
@@ -66,6 +66,18 @@ module.exports = class Register extends PermissionedController {
 
   }
 
+  setParameters({argumentation, action}){
+
+    du.debug('Set Parameters');
+
+    this.parameters.setParameters({argumentation: argumentation, action: action});
+
+    this.parameters.set('transaction_type', action);
+
+    return Promise.resolve(true);
+
+  }
+
   reverseTransaction({transaction}){
 
     du.debug('Reverse Transaction');
@@ -81,37 +93,6 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.createTransaction())
     //Technical Debt:  Add a event that corresponds to what just happened.
     .then(() => this.transformResponse());
-
-  }
-
-  //Technical Debt:  This function should live with the Parameters Object as some sort of a utility.
-  setParameters({argumentation: argumentation, action: action}){
-
-    du.debug('Set Parameters');
-
-    let local_parameters = {};
-
-    this.parameters.set('transaction_type', action);
-
-    if(objectutilities.hasRecursive(this, 'parameter_definitions.'+action+'.required', true)){
-
-      local_parameters = objectutilities.transcribe(this.parameter_definitions[action].required, argumentation, local_parameters, true);
-
-    }
-
-    if(objectutilities.hasRecursive(this, 'parameter_definitions.'+action+'.optional')){
-
-      local_parameters = objectutilities.transcribe(this.parameter_definitions[action].optional, argumentation, local_parameters);
-
-    }
-
-    objectutilities.map(local_parameters, local_parameter => {
-
-      this.parameters.set(local_parameter, local_parameters[local_parameter]);
-
-    });
-
-    return Promise.resolve(true);
 
   }
 

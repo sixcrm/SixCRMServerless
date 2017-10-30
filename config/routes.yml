@@ -14,3 +14,4 @@ tabledefinitions: /model/dynamodb/tables/
 seeds: /model/dynamodb/seeds/
 analytics: /controllers/analytics/
 vendors: /controllers/vendors/
+authorizers: /controllers/authorizers/

@@ -363,6 +363,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     }
 
+    //Technical Debt:  Why was the account condition stuff here?
     appendUserCondition({query_parameters, user}){
 
       du.debug('Append User Condition');
@@ -370,13 +371,9 @@ module.exports = class entityUtilitiesController extends PermissionedController 
       //Technical Debt:  This is inappropriate here...
       user = (_.isUndefined(user))?global.user:user;
 
-      if(this.accountFilterDisabled() !== true){
-
-        query_parameters = this.appendKeyConditionExpression(query_parameters, '#user = :userv');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':userv', this.getID(user));
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#user', 'user');
-
-      }
+      query_parameters = this.appendKeyConditionExpression(query_parameters, '#user = :userv');
+      query_parameters = this.appendExpressionAttributeValues(query_parameters, ':userv', this.getID(user));
+      query_parameters = this.appendExpressionAttributeNames(query_parameters, '#user', 'user');
 
       return query_parameters;
 

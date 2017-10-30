@@ -1,0 +1,31 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/decodedauthorizationtoken",
+	"title": "Decoded Authorization Token",
+	"type": "object",
+	"properties":{
+		"email": {
+			"type":"string",
+			"format":"email"
+		},
+	  "email_verified":{
+			"type":"boolean"
+		},
+		"picture":{
+			"type":"string"
+		},
+		"iss":{
+			"type":"string",
+			"format":"uri"
+		},
+		"sub":{
+			"type":"string"
+		},
+		"aud":{
+			"type":"string"
+		},
+		"exp":{"$ref": "../definitions/nonnegativeinteger.json"},
+	  "iat":{"$ref": "../definitions/nonnegativeinteger.json"}
+	}
+
+}

@@ -14,7 +14,6 @@ ses:
 #Technical Debt:  This sort of thing should be encrypted...
 jwt:
   issuer: 'https://staging-api.sixcrm.com'
-  development_bypass: 'deathstalker'
   site: #This is the key for all graph requests (AKA Six users)
     secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
     domain: ''

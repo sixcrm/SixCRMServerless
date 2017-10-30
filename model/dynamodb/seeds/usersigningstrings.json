@@ -7,5 +7,14 @@
     "used_at": null,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
+  },
+  {
+    "id": "6d662332-9a00-42e7-beef-44fb55142fb7",
+    "user": "owner.user@test.com",
+    "name": "test key 1",
+    "signing_string": "somerandomstringthatprobablyshouldn'tbeused",
+    "used_at": null,
+    "created_at":"2017-04-06T18:40:41.405Z",
+    "updated_at":"2017-04-06T18:41:12.521Z"
   }
 ]

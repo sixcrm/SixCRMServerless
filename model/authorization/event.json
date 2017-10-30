@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/event",
+	"title": "Event",
+	"type": "object",
+	"properties": {
+		"authorizationToken":{
+			"type":"string"
+		}
+	},
+	"required":["authorizationToken"]
+}
