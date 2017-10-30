@@ -115,7 +115,7 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       verifySiteJWTController.setParameters(test_event);
 
-      let authorization_token = verifySiteJWTController.parameters.get('authorization_token');
+      let authorization_token = verifySiteJWTController.parameters.get('encoded_authorization_token');
 
       expect(authorization_token).to.equal(test_event.authorizationToken);
 
@@ -269,6 +269,22 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
         expect(arrayutilities.nonEmpty(signingstrings)).to.equal(true);
 
+      });
+
+    });
+
+  });
+
+  describe('execute', () => {
+
+    it('successfully authorizes a valid JWT', () => {
+
+      let valid_event = getValidEvent();
+
+      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+
+      return verifySiteJWTController.execute(valid_event).then((result) => {
+        expect(result).to.equal(getValidUser())
       });
 
     });

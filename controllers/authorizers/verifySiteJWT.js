@@ -12,7 +12,7 @@ class verifySiteJWTController {
       this.parameter_definition = {
         event: {
           required: {
-            authorization_token: 'authorizationToken'
+            encoded_authorization_token: 'authorizationToken'
           },
           optional:{}
         }
@@ -20,6 +20,7 @@ class verifySiteJWTController {
       }
 
       this.parameter_validation = {
+        verified_authorization_token: global.SixCRM.routes.path('model', 'definitions/jwt.json'),
         user_signing_strings: global.SixCRM.routes.path('model', 'authorization/usersigningstrings.json'),
         encoded_authorization_token: global.SixCRM.routes.path('model', 'definitions/jwt.json'),
         decoded_authorization_token: global.SixCRM.routes.path('model', 'authorization/decodedauthorizationtoken.json')
