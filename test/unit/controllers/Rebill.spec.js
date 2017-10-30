@@ -559,21 +559,18 @@ describe('controllers/Rebill.js', () => {
             });
         });
 
-        // Technical debt: This test fails because EntityUtilities validate entities before saving. Validation is based
-        // on schema, and schema allows only de-hydrated transactions. The question is, should really transactions be
-        // hydrated here, or not?
-        xit('merges transactions', () => {
+        it('merges transactions', () => {
 
             // given
-            a_rebill.transactions = [transaction_1, transaction_2];
+            a_rebill.transactions = [transaction_1.id, transaction_2.id];
 
             let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
             // when
-            return rebillController.updateRebillTransactions(a_rebill, [transaction_3, transaction_4]).then((savedRebill) => {
+            return rebillController.updateRebillTransactions(a_rebill, [transaction_3.id, transaction_4.id]).then((savedRebill) => {
                 // then
                 expect(a_rebill.transactions).to.deep.equal([
-                    transaction_1, transaction_2, transaction_3, transaction_4
+                    transaction_1.id, transaction_2.id, transaction_3.id, transaction_4.id
                 ]);
             });
         });
