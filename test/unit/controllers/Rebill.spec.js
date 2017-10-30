@@ -194,11 +194,11 @@ describe('controllers/Rebill.js', () => {
             let aDayInCycle = givenAnyDayInCycle();
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    callback(null, []);
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({Items:[]})
                 },
-                saveRecord: (table, entity, callback) => {
-                    callback(null, entity);
+                saveRecord: (table, entity) => {
+                    return Promise.resolve(entity)
                 }
             });
             mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
@@ -311,11 +311,12 @@ describe('controllers/Rebill.js', () => {
             mockery.deregisterAll();
         });
 
-        //Ljubomir:  THis is broken on my machine.  Account is of type [Function] and does not validate
-        xit('should add a rebill to bill queue', () => {
+        let a_rebill;
 
-            // given
-            return modelgenerator.randomEntityWithId('rebill').then((aRebill) => {
+        beforeEach((done) => {
+
+            modelgenerator.randomEntityWithId('rebill').then((rebill) => {
+                a_rebill = rebill;
 
                 // mock sqs utilities that always succeed
                 mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
@@ -329,17 +330,20 @@ describe('controllers/Rebill.js', () => {
                 mockery.registerMock(global.SixCRM.routes.path('lib', 'permission-utilities.js'), {
                     validatePermissions: (action, entity) => {
                         return new Promise((resolve) => resolve(true));
+                    },
+                    accountFilterDisabled: () => {
+                        return true;
                     }
 
                 });
 
                 // mock dynamodb utilities that return a single rebill and save always succeeds
                 mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                    queryRecords: (table, parameters, index, callback) => {
-                        callback(null, [aRebill]);
+                    queryRecords: () => {
+                        return Promise.resolve({Items: [rebill]});
                     },
-                    saveRecord: (table, entity, callback) => {
-                        callback(null, entity);
+                    saveRecord: (table_name, entity) => {
+                        return Promise.resolve(entity)
                     }
                 });
 
@@ -361,16 +365,62 @@ describe('controllers/Rebill.js', () => {
                     }
                 });
 
-                let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-
-                // when
-                return rebillController.addRebillToQueue(aRebill, 'bill').then(() => {
-                    // then
-                    expect(aRebill.processing).to.be.equal('true');
-                    expect(aRebill.entity_type).to.be.equal('rebill');
-                });
-
+                done();
             });
+        });
+
+        it('should add a rebill to bill queue', () => {
+
+            let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+            // when
+            return rebillController.addRebillToQueue(a_rebill, 'bill').then(() => {
+                // then
+                expect(a_rebill.processing).to.equal('true');
+                expect(a_rebill.entity_type).to.equal('rebill');
+            });
+
+
+        });
+
+        it('should add a rebill to failure queue', () => {
+
+            let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+            // when
+            return rebillController.addRebillToQueue(a_rebill, 'billfailure').then(() => {
+                // then
+                expect(a_rebill.processing).to.equal('true');
+                expect(a_rebill.entity_type).to.equal('rebill');
+            });
+
+
+        });
+
+        it('should add a rebill to hold queue', () => {
+
+            let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+            // when
+            return rebillController.addRebillToQueue(a_rebill, 'hold').then(() => {
+                // then
+                expect(a_rebill.processing).to.equal('true');
+                expect(a_rebill.entity_type).to.equal('rebill');
+            });
+
+
+        });
+
+        it('should throw error for unknown queue name', () => {
+
+            let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+            // when
+            return rebillController.addRebillToQueue(a_rebill, 'unknown_queue').catch((error) => {
+                // then
+                expect(error.message).to.equal('[500] Bad queue name.');
+            });
+
 
         });
     });
@@ -380,8 +430,7 @@ describe('controllers/Rebill.js', () => {
             mockery.deregisterAll();
         });
 
-        //Ljubomir:  THis is broken on my machine.  Account is of type [Function] and does not validate
-        xit('should modify rebill', () => {
+        it('should modify rebill', () => {
             // given
             return modelgenerator.randomEntityWithId('rebill').then((aRebill) => {
 
@@ -397,11 +446,11 @@ describe('controllers/Rebill.js', () => {
 
                 // mock dynamodb utilities that return a single rebill and save always succeeds
                 mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                    queryRecords: (table, parameters, index, callback) => {
-                        callback(null, [aRebill]);
+                    queryRecords: (table, parameters, index) => {
+                        return Promise.resolve({Items:[aRebill]})
                     },
-                    saveRecord: (table, entity, callback) => {
-                        callback(null, entity);
+                    saveRecord: (table, entity) => {
+                        return Promise.resolve(entity)
                     }
                 });
 
@@ -460,32 +509,74 @@ describe('controllers/Rebill.js', () => {
     });
 
     describe('updateRebillTransactions', () => {
+
+        let a_rebill;
+        let transaction_1;
+        let transaction_2;
+        let transaction_3;
+        let transaction_4;
+
         after(() => {
             mockery.deregisterAll();
         });
 
-        before(() => {
+        before((done) => {
             PermissionTestGenerators.givenUserWithAllowed('create', 'rebill');
+
+            // mock permission utilities that always allow the action
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'permission-utilities.js'), {
+                validatePermissions: (action, entity) => {
+                    return new Promise((resolve) => resolve(true));
+                },
+                accountFilterDisabled: () => {
+                    return true;
+                }
+
+            });
+
+            // mock dynamodb utilities that return a single rebill and save always succeeds
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({Items:[a_rebill]})
+                },
+                saveRecord: (table, entity) => {
+                    return Promise.resolve(entity)
+                }
+            });
+
+            Promise.all([
+            modelgenerator.randomEntityWithId('rebill'),
+            modelgenerator.randomEntityWithId('transaction'),
+            modelgenerator.randomEntityWithId('transaction'),
+            modelgenerator.randomEntityWithId('transaction'),
+            modelgenerator.randomEntityWithId('transaction')]).then((results) => {
+                a_rebill = results[0];
+                transaction_1 = results[1];
+                transaction_2 = results[2];
+                transaction_3 = results[3];
+                transaction_4 = results[4];
+                done();
+            });
         });
 
-        //Technical Debt:  This needs significant refactoring...
-        /*
-        it('merges transactions', () => {
+        // Technical debt: This test fails because EntityUtilities validate entities before saving. Validation is based
+        // on schema, and schema allows only de-hydrated transactions. The question is, should really transactions be
+        // hydrated here, or not?
+        xit('merges transactions', () => {
 
-
-            let aRebill = {
-                transactions: ['1', '2']
-            };
+            // given
+            a_rebill.transactions = [transaction_1, transaction_2];
 
             let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
             // when
-            return rebillController.updateRebillTransactions(aRebill, ['3', '4']).then((savedRebill) => {
+            return rebillController.updateRebillTransactions(a_rebill, [transaction_3, transaction_4]).then((savedRebill) => {
                 // then
-                expect(aRebill.transactions).to.deep.equal(['1', '2', '3', '4']);
+                expect(a_rebill.transactions).to.deep.equal([
+                    transaction_1, transaction_2, transaction_3, transaction_4
+                ]);
             });
         });
-        */
 
     });
 
