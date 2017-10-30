@@ -61,12 +61,6 @@ describe('controllers/workers/shipProduct', function () {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
-                triggerFulfillment: (transaction_product) => {
-                    return Promise.resolve('NOTIFIED');
-                }
-            });
-
             done();
         }
     )});
@@ -116,7 +110,7 @@ describe('controllers/workers/shipProduct', function () {
 
             transaction_product.product = random_products[0]; // hydrate
 
-            // Prepare transaction with defferent products than on transaction_product
+            // Prepare transaction with different products than on transaction_product
             let unrelated_transaction = random_transactions[0];
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
@@ -142,6 +136,7 @@ describe('controllers/workers/shipProduct', function () {
         });
 
         it('returns `notified` when transaction already has a shipping receipt', () => {
+
             let transaction_product = random_transaction_product;
 
             transaction_product.product = random_products[0];
@@ -153,19 +148,72 @@ describe('controllers/workers/shipProduct', function () {
             return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
                 .then(result => expect(result).to.equal(shipProduct.messages.notified));
         });
-    });
 
-    describe('processTransaction', () => {
+        it('returns `failed` when shipping receipt hasn\'t been successfully fulfilled', () => {
 
-        xit('returns `noship` when no products should be shipped', () => {
+            let transaction_product = random_transaction_product;
+
+            transaction_product.product = random_products[0];
+            transaction_product.product.ship = 'true';
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
+                triggerFulfillment: (transaction_product) => {
+                    return Promise.resolve('FAILED');
+                }
+            });
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
+            return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
+                .then(result => expect(result).to.equal(shipProduct.messages.failed));
+        });
+
+        it('returns unchanged response from fulfillment provider if it was not recognized', () => {
+
+            let transaction_product = random_transaction_product;
+
+            transaction_product.product = random_products[0];
+            transaction_product.product.ship = 'true';
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
+                triggerFulfillment: (transaction_product) => {
+                    return Promise.resolve('unexpected response');
+                }
+            });
+
+            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+            return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
+                .then(result => expect(result).to.equal('unexpected response'));
+        });
+
+        it('returns `notified` when shipping receipt has been successfully fulfilled', () => {
+
+            let transaction_product = random_transaction_product;
+
             let transaction = random_transactions[0];
 
-            return shipProduct.processTransaction(transaction)
-                .then(result => expect(result).to.equal(shipProduct.messages.noship));
+            transaction_product.product = random_products[0];
+            transaction_product.product.ship = 'true';
+
+            //Prepare transaction_product for issuing shipping receipt
+            transaction.products[0].product = transaction_product.product.id;
+            transaction.products[0].amount = transaction_product.amount;
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
+                triggerFulfillment: (transaction_product) => {
+                    return Promise.resolve('NOTIFIED');
+                }
+            });
+
+            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+            return shipProduct.executeFulfillment(transaction_product, transaction)
+                .then(result => expect(result).to.equal(shipProduct.messages.notified));
         });
+    });
+
+    describe('processTransaction', () => {
 
         it('returns `notified` when product should be shipped and fulfillment response was ok', () => {
 
@@ -183,7 +231,7 @@ describe('controllers/workers/shipProduct', function () {
                 .then(result => expect(result).to.equal(shipProduct.messages.notified));
         });
 
-        xit('throws error when transaction has no products', () => {
+        it('throws error when transaction has no products', () => {
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
@@ -193,11 +241,43 @@ describe('controllers/workers/shipProduct', function () {
                 .catch(error => expect(error.message).to.equal('[500] No product in transaction?'));
         });
 
+        it('returns `noship` when product should not be shipped', () => {
+
+            let transaction = random_transactions[0];
+
+            let transaction_product = random_transaction_product;
+
+            transaction_product.product = random_products[0];
+            transaction_product.product.ship = 'false';
+
+            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+            return shipProduct.processTransaction(transaction)
+                .then(result => expect(result).to.equal(shipProduct.messages.noship));
+        });
+
+        it('returns unchanged response from fulfillment provider if it was not recognized', () => {
+
+            let transaction = random_transactions[0];
+
+            random_transaction_product.product = random_products[0];
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
+                triggerFulfillment: (transaction_product) => {
+                    return Promise.resolve('unexpected response');
+                }
+            });
+
+            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+            return shipProduct.processTransaction(transaction)
+                .then(result => expect(result).to.equal('unexpected response'));
+        });
     });
 
     describe('shipProducts', () => {
 
-        xit('returns noship message by default', () => {
+        it('returns noship message when product should not be shipped', () => {
 
             const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
@@ -205,6 +285,4 @@ describe('controllers/workers/shipProduct', function () {
                 .then(result => expect(result).to.equal(shipProduct.messages.noship));
         });
     });
-
-
 });
