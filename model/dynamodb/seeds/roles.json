@@ -82,4 +82,15 @@
 	},
 	"created_at":"2017-04-06T18:40:41.405Z",
 	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"6341d12d-4c36-4717-bf6d-1d0cbebe63d8",
+	"name": "No Permissions",
+	"active":true,
+	"permissions":{
+		"allow":[],
+		"deny":["*"]
+	},
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
 }]

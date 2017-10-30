@@ -8,6 +8,17 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+
+function getValidSelfSignedJWT(){
+
+  let raw_token = jwtutilities.createSiteJWTContents({user:{email:'owner.user@test.com'}});
+
+  let signing_string = getValidUserSigningStrings()[0].signing_string;
+
+  return jwtutilities.signJWT(raw_token, signing_string);
+
+}
 
 function getDecodedToken(){
 
@@ -66,6 +77,7 @@ function getValidUser(){
 
 function setEnvironmentVariables(){
 
+  process.env.jwt_issuer = 'https://development-api.sixcrm.com';
   process.env.site_jwt_expiration = global.SixCRM.configuration.site_config.jwt.site.expiration;
   process.env.site_jwt_secret_key = global.SixCRM.configuration.site_config.jwt.site.secret_key;
   process.env.jwt_issuer = global.SixCRM.configuration.site_config.jwt.issuer;
@@ -293,7 +305,41 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
   describe('verifyEncodedTokenWithUserSigningStrings', () => {
 
-    it('', () => {
+    it('successfully authorizes a valid self-signed JWT', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSigningString.js'), {
+        listByUser: ({user}) => {
+          return Promise.resolve({usersigningstrings: getValidUserSigningStrings()});
+        },
+        disableACLs:() => {
+
+        },
+        enableACLs:() => {
+
+        },
+        getResult: (result, field) => {
+
+          du.debug('Get Result');
+
+          return Promise.resolve(result[field]);
+
+        }
+
+      });
+
+      jwtutilities.jwt_parameters.site_jwt_expiration = global.SixCRM.configuration.site_config.jwt.site.expiration;
+
+      let valid_event = getValidEvent();
+
+      let valid_self_signed_jwt = getValidSelfSignedJWT();
+
+      valid_event.authorizationToken = valid_self_signed_jwt;
+
+      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+
+      return verifySiteJWTController.execute(valid_event).then((result) => {
+        expect(result).to.equal(getValidUser())
+      });
 
     });
 

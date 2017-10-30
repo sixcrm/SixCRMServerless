@@ -6,6 +6,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
+//Technical Debt:  Deactivating.  Making HTTP requests or something that are timing out.
 
 describe('controllers/Rebill.js', () => {
     const oneDayInSeconds = 86400;
