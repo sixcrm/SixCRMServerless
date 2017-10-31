@@ -40,7 +40,10 @@ class processBillingController extends workerController {
       this.parameter_validation = {
         event: global.SixCRM.routes.path('model', 'workers/processBilling/event.json'),
         rebill: global.SixCRM.routes.path('model', 'entities/rebill.json'),
-        transactionproducts: global.SixCRM.routes.path('model', 'workers/processBilling/transactionproducts.json')
+        transactionproducts: global.SixCRM.routes.path('model', 'workers/processBilling/transactionproducts.json'),
+        //transactions: global.SixCRM.routes.path('model', 'workers/processBilling/transactions.json'),
+        productschedules:global.SixCRM.routes.path('model', 'workers/processBilling/productschedules.json'),
+        parentsession: global.SixCRM.routes.path('model', 'entities/session.json')
       }
 
       const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -165,13 +168,17 @@ class processBillingController extends workerController {
 
       var promises = [];
 
-      promises.push(rebillController.listTransactions(rebill));
+      //promises.push(rebillController.listTransactions(rebill));
       promises.push(rebillController.listProductSchedules(rebill));
       promises.push(rebillController.getParentSession(rebill));
 
       return Promise.all(promises).then((promises) => {
 
-        this.parameters.set('transactions', promises[0]);
+        du.warning(promises);
+
+        //note: what happens if these don't exist
+
+        //this.parameters.set('transactions', promises[0]);
         this.parameters.set('productschedules', promises[1]);
         this.parameters.set('parentsession', promises[2]);
 

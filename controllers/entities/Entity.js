@@ -145,7 +145,7 @@ module.exports = class entityController extends entityUtilitiesController {
       .then((list_array) => {
 
         if(arrayutilities.nonEmpty(list_array)){
-          return this.list({query_parameters: this.dynamoutilities.createINQueryParameters(field, list_array)});
+          return this.list({query_parameters: this.createINQueryParameters({field: field, list_array: list_array})});
         }
 
         return null;
@@ -644,6 +644,14 @@ module.exports = class entityController extends entityUtilitiesController {
           id: object.id
         }
       };
+
+    }
+
+    createINQueryParameters({field, list_array}){
+
+      du.debug('Create IN Query Parameters');
+
+      return this.dynamoutilities.createINQueryParameters(field, list_array);
 
     }
 

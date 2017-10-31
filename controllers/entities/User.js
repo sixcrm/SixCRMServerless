@@ -802,7 +802,7 @@ class userController extends entityController {
 
             user_ids = arrayutilities.unique(user_ids);
 
-            let in_parameters = this.dynamoutilities.createINQueryParameters('id', user_ids);
+            let in_parameters = this.createINQueryParameters({field:'id', list_array: user_ids});
 
             //Technical Debt:  Refactor, must return all users with correct pagination
             return this.list({pagination: pagination, query_parameters: in_parameters});

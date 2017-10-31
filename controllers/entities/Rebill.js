@@ -49,24 +49,22 @@ class rebillController extends entityController {
 
     }
 
-    getProductSchedules(rebill) {
+    listProductSchedules(rebill) {
 
-      du.debug('Get Product Schedules');
+      du.debug('List Product Schedules');
 
       if(_.has(rebill, 'product_schedules') && arrayutilities.nonEmpty(rebill.product_schedules)){
 
-        if(arrayutilities.nonEmpty(rebill.product_schedules)){
+        let list_array = arrayutilities.filter(rebill.product_schedules, (list_item) => {
+          return stringutilities.nonEmpty(list_item);
+        });
 
-          let list_array = arrayutilities.filter(rebill.product_schedules, (list_item) => {
-            return stringutilities.nonEmpty(list_item);
-          });
+        if(arrayutilities.nonEmpty(list_array)){
 
-          if(arrayutilities.nonEmpty(list_array)){
+          let query_parameters = this.createINQueryParameters({field: 'id', list_array: list_array});
 
-            return this.executeAssociatedEntityFunction('productScheduleController', 'listBy', {list_array: list_array})
-            .then((product_schedules) => this.getResult(product_schedules, 'productschedules'));
-
-          }
+          return this.executeAssociatedEntityFunction('productScheduleController', 'listByAccount', {query_parameters: query_parameters})
+          .then((product_schedules) => this.getResult(product_schedules, 'productschedules'));
 
         }
 
