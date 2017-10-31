@@ -125,7 +125,7 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
     let configuration_groups = {
       'describe': ['ClusterIdentifier'],
       'wait': ['ClusterIdentifier'],
-      'create': ['ClusterIdentifier', 'NodeType', 'MasterUsername', 'MasterUserPassword', 'ClusterType', 'DBName', 'AutomatedSnapshotRetentionPeriod', 'PubliclyAccessible', 'Port', 'IamRoles'],
+      'create': ['ClusterIdentifier', 'NodeType', 'MasterUsername', 'MasterUserPassword', 'ClusterType','NumberOfNodes', 'DBName', 'AutomatedSnapshotRetentionPeriod', 'PubliclyAccessible', 'Port', 'IamRoles'],
       'destroy': ['ClusterIdentifier', 'FinalClusterSnapshotIdentifier', 'SkipFinalClusterSnapshot']
     };
 
@@ -134,6 +134,7 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
       NodeType: ['node_type'],
       DBName: ['database'],
       ClusterType: ['cluster_type'],
+      NumberOfNodes: ['number_of_nodes'],
       AutomatedSnapshotRetentionPeriod: ['automated_snapshot_retention_period'],
       PubliclyAccessible: ['publicly_accessible'],
       SkipFinalClusterSnapshot: ['skip_final_cluster_snapshot'],
