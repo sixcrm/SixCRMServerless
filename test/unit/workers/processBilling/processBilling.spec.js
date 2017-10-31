@@ -25,7 +25,7 @@ function getValidRebill(){
     "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
     "parentsession": "7b556e82-5a4c-4199-b8bc-0d86b3d8b47b",
     "product_schedules": ["2200669e-5e49-4335-9995-9c02f041d91b"],
-    "amount": 23.99,
+    "amount": 79.99,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
   };
@@ -115,7 +115,7 @@ describe('controllers/workers/processBilling', () => {
 
     it('successfully acquires rebill properties', () => {
 
-      PermissionTestGenerators.givenUserWithAllowed('*', '*');
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let valid_rebill = getValidRebill();
 

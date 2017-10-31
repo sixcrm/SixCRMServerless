@@ -179,8 +179,8 @@ class processBillingController extends workerController {
         //note: what happens if these don't exist
 
         //this.parameters.set('transactions', promises[0]);
-        this.parameters.set('productschedules', promises[1]);
-        this.parameters.set('parentsession', promises[2]);
+        this.parameters.set('productschedules', promises[0]);
+        this.parameters.set('parentsession', promises[1]);
 
         return true;
 

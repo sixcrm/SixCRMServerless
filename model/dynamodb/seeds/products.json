@@ -75,5 +75,16 @@
 		"fulfillment_provider":"2344f424-7571-4b40-aea0-e39615fa0338",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id": "6d90346a-5547-454c-91fe-9d101a08f68f",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name": "Testing Product (Don't delete!)",
+		"sku":"2098298739485739485",
+		"ship":true,
+		"shipping_delay":3600,
+		"fulfillment_provider":"2344f424-7571-4b40-aea0-e39615fa0338",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
 	}
 ]
