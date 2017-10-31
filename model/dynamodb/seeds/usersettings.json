@@ -11,7 +11,7 @@
         },
         {
           "name": "email",
-          "receive": true,
+          "receive": false,
           "data": "ljubomir@toptal.com"
         },
         {
