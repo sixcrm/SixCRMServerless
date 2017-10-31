@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/creditcards.json",
+	"title": "Credit Cards",
+  "type":"array",
+  "items":{"$ref": "../../entities/creditcard.json"}
+}

@@ -290,8 +290,11 @@ module.exports = class Register extends PermissionedController {
 
   }
 
+  executeProcess({customer}){
 
-  processTransaction({customer, blah}){
+    du.debug('Execute Process');
+
+    return Promise.resolve(true);
 
   }
 

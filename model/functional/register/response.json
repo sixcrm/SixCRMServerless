@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/response",
+	"title": "Response",
+	"type":"object",
+	"properties":{
+		"transaction":{
+			"anyOf":[
+				{"type":"null"},
+				{"$ref": "../../entities/transaction.json"}
+			]
+		},
+		"processor_response":{"$ref": "./processorresponse.json"}
+	},
+	"required":["transaction","processor_response"]
+}

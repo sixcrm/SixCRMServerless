@@ -115,7 +115,9 @@ class rebillController extends entityController {
 
     calculateDayInCycle(session_start){
 
-        return timestamp.getDaysDifference(session_start);
+      du.debug('Calculate Day In Cycle');
+
+      return timestamp.getDaysDifference(session_start);
 
     }
 

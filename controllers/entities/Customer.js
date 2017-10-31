@@ -51,7 +51,7 @@ class customerController extends entityController {
 
     listByCreditCard({creditcard, pagination}){
 
-      du.debug('List By Credit Car')
+      du.debug('List By Credit Card')
 
       return this.listByAssociations({id: this.getID(creditcard), field: 'creditcards', pagination: pagination});
 
@@ -151,7 +151,13 @@ class customerController extends entityController {
 
       if(_.has(customer, "creditcards") && arrayutilities.nonEmpty(customer.creditcards)){
 
-        return this.executeAssociatedEntityFunction('creditCardController', 'listBy', {list_array: customer.creditcards})
+        let creditcardids = arrayutilities.map(customer.creditcards, creditcard => {
+          return this.getID(creditcard);
+        });
+
+        let query_parameters = this.createINQueryParameters({field: 'id', list_array: creditcardids});
+
+        return this.executeAssociatedEntityFunction('creditCardController', 'listByAccount', {query_parameters: query_parameters})
         .then(creditcards => this.getResult(creditcards, 'creditcards'));
 
       }
