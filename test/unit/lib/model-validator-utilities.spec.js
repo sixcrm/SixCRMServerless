@@ -78,6 +78,32 @@ describe('lib/model-validator-utilities', () => {
             }
         });
 
+        it('validates valid model against schema with `anyOf`', () => {
+
+            let valid_model_1 = '581e5fff-c2ad-49e4-8a7e-344525cd3a37';
+            let valid_model_2 = {
+                id: 'fd8ec126-4b06-404f-933b-e2a257eba8e0',
+                alias: 'TNIRRZ7JJL',
+                account: '*',
+                rebill: '2FA1f1d6-9Be9-4A74-8EA0-aBd39dE4433E',
+                products:
+                    [ { product: '5956be48-5f60-41E5-9dDa-b029eEB966b5',
+                        amount: 70663065.66088085 },
+                        { product: '6D3A5Fd2-FF46-47ba-96E2-8A164adEA3Ce',
+                            amount: '$$$020.76' } ],
+                processor_response: 'cillum',
+                merchant_provider: 'caCC662b-e04D-4a2e-A1c1-3A6E1c13a0AB',
+                created_at: '4606-25-20T24:47:69S5',
+                updated_at: '1609-10-77T77:38:50-83:57',
+                type: 'reverse',
+                amount: 9.99 };
+
+            let schema = global.SixCRM.routes.path('model', 'functional/register/debug-transactioninput.json');
+
+            expect(mvu.validateModel(valid_model_1, schema)).to.be.true;
+            expect(mvu.validateModel(valid_model_2, schema)).to.be.true;
+        });
+
     });
 
     describe('entities', () => {
