@@ -67,7 +67,9 @@ describe('controllers/workers/confirmDelivered', function () {
 
     describe('confirmDelivered', () => {
 
-        it('returns success message by default', () => {
+        it('returns success message for transactions without shipping receipt', () => {
+
+            delete random_transaction_product.shippingreceipt;
 
             const confirmDelivered = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
 
@@ -79,16 +81,48 @@ describe('controllers/workers/confirmDelivered', function () {
                 });
         });
 
-        it('returns parsed message from shipping provider status', () => {
+        it('returns success message for transactions without products', () => {
+
+            random_transactions = random_transactions.map((transaction) => {
+                delete transaction.products;
+                return transaction;
+            });
+
+            const confirmDelivered = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
+
+            return confirmDelivered.confirmDelivered(random_rebill)
+                .then(result => {
+                    expect(result.message).to.equal(confirmDelivered.messages.delivered);
+                    expect(result.forward.id).to.equal(random_rebill.id);
+
+                });
+        });
+
+        it('returns parsed message from shipping provider status when transaction has shipping receipt', () => {
 
             random_transaction_product.shippingreceipt = random_shipping_receipt;
 
             const confirmDelivered = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
 
-
-
             return confirmDelivered.confirmDelivered(random_rebill)
                 .then(result => expect(result.message).to.equal(example_usps_response.parsed_status));
+        });
+
+        // Technical Debt - this case is obviously not implemented, hence the disabled test.
+        xit('handles incorrect or undexpected shipping provider status', () => {
+
+            random_transaction_product.shippingreceipt = random_shipping_receipt;
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/ShippingStatus.js'), {
+                getStatus: () => {
+                    return Promise.resolve('incorrect response');
+                }
+            });
+
+            const confirmDelivered = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
+
+            return confirmDelivered.confirmDelivered(random_rebill)
+                .then(response => expect(response.message).to.not.equal(confirmDelivered.messages.delivered));
         });
 
 
