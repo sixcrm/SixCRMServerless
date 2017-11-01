@@ -69,7 +69,6 @@ functions:
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
       transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
-      development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
 
   verifysitejwt:
     handler: handlers/authorizers/verifysitejwt/handler.verifyjwt
@@ -77,7 +76,6 @@ functions:
       site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
       site_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.site.expiration}
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
-      development_bypass: ${file(./config/${opt:stage}/site.yml):jwt.development_bypass}
 
 ########################
 # Backend Graph Endpoint renders entity data to the website

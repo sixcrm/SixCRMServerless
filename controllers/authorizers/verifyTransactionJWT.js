@@ -72,26 +72,6 @@ class verifyTransactionJWTController {
 
     }
 
-    developmentBypass(token){
-
-        du.debug('Development Bypass');
-
-        if(_.has(process.env, 'stage') && _.contains(['local', 'development'], process.env.stage)){
-
-            if(_.has(process.env, 'development_bypass') && token == process.env.development_bypass){
-
-                du.warning('Executing Development Bypass');
-
-                return true;
-
-            }
-
-        }
-
-        return false;
-
-    }
-
     validateToken(token){
 
         du.debug('Validate Token');

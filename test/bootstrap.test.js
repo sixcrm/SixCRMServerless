@@ -50,7 +50,6 @@ process.env = {
     'endpoint'                    : 'http://localhost:8001',
     'dynamo_endpoint'             : 'http://localhost:8001',
     'transaction_key'             : 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi',
-    'development_bypass'          : 'deathstalker',
     // DynamoDB Utilities
     'stage'                       : 'local', // endpoints/confirmOrder validateInputs will fail otherwise with 'ResourceNotFoundException'
     //'IS_OFFLINE'                  : true,

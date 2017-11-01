@@ -35,7 +35,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLList(productScheduleType.graphObj),
             description:
         'The product schedules associated with the rebill',
-            resolve: rebill => rebillController.getProductSchedules(rebill),
+            resolve: rebill => rebillController.listProductSchedules(rebill),
         },
         transactions: {
 	  type: new GraphQLList(transactionType.graphObj),
