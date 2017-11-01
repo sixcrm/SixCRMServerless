@@ -71,17 +71,17 @@ class notificationController extends entityController {
 
     }
 
-    listByType({type, pagination, user, fatal}){
+    listByTypes({types, pagination, user, fatal}){
 
       du.debug('List By Type');
 
       let query_parameters = {
-        filter_expression: '#type = :typev',
+        filter_expression: '#type IN :typev',
         expression_attribute_names: {
           '#type': 'type'
         },
         expression_attribute_values: {
-          ':typev': type
+          ':typev': types
         }
       };
 
