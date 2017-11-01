@@ -449,7 +449,7 @@ describe('controllers/workers/processBilling', () => {
         constructor(){
 
         }
-        executeProcess({customer}){
+        processTransaction({customer, productschedule, amount}){
           return Promise.resolve(getValidRegisterResponse());
         }
       }
@@ -466,6 +466,11 @@ describe('controllers/workers/processBilling', () => {
 
       return processBillingController.process().then(result => {
         expect(result).to.equal(true);
+
+        let register_response = processBillingController.parameters.get('registerresponse');
+
+        expect(register_response).to.deep.equal(getValidRegisterResponse())
+
       });
 
     });

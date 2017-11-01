@@ -32,7 +32,18 @@ module.exports = class Register extends PermissionedController {
           transaction: 'transaction'
         },
         optional: {}
+      },
+      process:{
+        required:{
+          customer:'customer',
+          amount:'amount',
+          productschedule:'productschedule'
+        },
+        optional:{
+          merchantprovider:'merchantprovider'
+        }
       }
+
       //Technical Debt: Add process
     };
 
@@ -42,7 +53,9 @@ module.exports = class Register extends PermissionedController {
       'transaction': global.SixCRM.routes.path('model', 'functional/register/transactioninput.json'),
       'hydrated_transaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
       'associated_transactions':global.SixCRM.routes.path('model', 'functional/register/associatedtransactions.json'),
-      'amount':global.SixCRM.routes.path('model', 'definitions/currency.json')
+      'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
+      'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+      'productschedule':global.SixCRM.routes.path('model', 'entities/productschedule.json')
     }
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
@@ -60,6 +73,19 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.setAmount())
     .then(() => this.validateAmount())
     .then(() => this.executeRefund())
+    .then(() => this.createTransaction())
+    //Technical Debt:  Add a event that corresponds to what just happened.
+    .then(() => this.transformResponse());
+
+  }
+
+  processTransaction(){
+
+    du.debug('process Transaction');
+
+    return this.can({action: 'process', object: 'register', fatal: true})
+    .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
+    .then(() => this.executeProcess())
     .then(() => this.createTransaction())
     //Technical Debt:  Add a event that corresponds to what just happened.
     .then(() => this.transformResponse());
@@ -290,11 +316,28 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  executeProcess({customer}){
+  executeProcess(){
 
     du.debug('Execute Process');
 
-    return Promise.resolve(true);
+    const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
+    let processController = new ProcessController();
+
+    let customer = this.parameters.get('customer');
+    let productschedule = this.parameters.get('productschedule');
+    let amount = this.parameters.get('amount');
+    let merchantprovider = this.parameters.get('merchantprovider', null, false);
+
+    let argument_object = {customer: customer, productschedule: productschedule, amount: amount};
+
+    if(!_.isNull(merchantprovider)){
+      argument_object.merchantprovider = merchantprovider;
+    }
+
+    return processController.process(argument_object).then(result => {
+      this.parameters.set('processor_response', result);
+      return true;
+    });
 
   }
 

@@ -10,6 +10,54 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
+function getValidAmount(){
+  return 79.99;
+}
+
+function getValidProductSchedules(){
+
+  return [
+    {
+      updated_at: '2017-04-06T18:41:12.521Z',
+      schedule:[
+        {
+          start: 0,
+          period: 30,
+          price: 79.99,
+          product_id: '6d90346a-5547-454c-91fe-9d101a08f68f'
+        }
+      ],
+      created_at: '2017-04-06T18:40:41.405Z',
+      account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+      id: '2200669e-5e49-4335-9995-9c02f041d91b',
+      name: 'Testing Product Schedule',
+      loadbalancer: '927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3'
+    }
+  ];
+
+}
+
+function getValidCustomer(){
+  return {
+    updated_at: '2017-10-31T20:10:05.380Z',
+    lastname: 'Damunaste',
+    created_at: '2017-10-14T16:15:19.506Z',
+    creditcards: [ 'df84f7bb-06bd-4daa-b1a3-6a2c113edd72' ],
+    firstname: 'Rama',
+    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+    address:{
+      zip: '97213',
+      country: 'US',
+      state: 'Oregon',
+      city: 'London',
+      line1: '10 Downing St.'
+    },
+    id: '24f7c851-29d4-4af9-87c5-0298fa74c689',
+    email: 'rama@damunaste.org',
+    phone: '1234567890'
+  };
+}
+
 function getValidTransactionID(){
   return 'e624af6a-21dc-4c64-b310-3b0523f8ca42';
 }
@@ -567,6 +615,121 @@ describe('controllers/providers/Register.js', () => {
       registerController.parameters.set('amount', 10.00);
 
       return registerController.executeRefund().then(() => {
+
+        let response = registerController.parameters.get('processor_response');
+
+        expect(response).to.have.property('message');
+        expect(response).to.have.property('code');
+        expect(response).to.have.property('result');
+
+      });
+
+    });
+
+  });
+
+  describe('executeReverse', () => {
+
+    it('successfully executes a reverse', () => {
+
+      let fake = class Reverse {
+
+        constructor(){
+
+        }
+
+        reverse(){
+
+          return Promise.resolve({
+            code: 'error',
+            result:
+             { response: '3',
+               responsetext: 'Reverse amount may not exceed the transaction balance REFID:3220888806',
+               authcode: '',
+               transactionid: '',
+               avsresponse: '',
+               cvvresponse: '',
+               orderid: '',
+               type: 'refund',
+               response_code: '300' },
+            message: 'Reverse amount may not exceed the transaction balance REFID:3220888806'
+          });
+
+        }
+
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Reverse.js'), fake);
+
+      let registerController = new RegisterController();
+
+      let transaction = getValidTransactionObject();
+
+      let associated_transactions = getValidAssociatedTransactions();
+
+      associated_transactions[1].amount = 14.99;
+      associated_transactions[0].amount = 9.99;
+
+      registerController.parameters.set('hydrated_transaction', transaction);
+
+      return registerController.executeReverse().then(() => {
+
+        let response = registerController.parameters.get('processor_response');
+
+        expect(response).to.have.property('message');
+        expect(response).to.have.property('code');
+        expect(response).to.have.property('result');
+
+      });
+
+    });
+
+  });
+
+  describe('executeProcess', () => {
+
+    it('successfully executes a process', () => {
+
+      let fake = class Process {
+
+        constructor(){
+
+        }
+
+        process(){
+
+          return Promise.resolve({
+            code: 'error',
+            result:
+             { response: '3',
+               responsetext: 'Refund amount may not exceed the transaction balance REFID:3220888806',
+               authcode: '',
+               transactionid: '',
+               avsresponse: '',
+               cvvresponse: '',
+               orderid: '',
+               type: 'refund',
+               response_code: '300' },
+            message: 'Refund amount may not exceed the transaction balance REFID:3220888806'
+          });
+
+        }
+
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Process.js'), fake);
+
+      let registerController = new RegisterController();
+
+      let customer = getValidCustomer();
+      let productschedule = getValidProductSchedules().pop();
+      let amount = getValidAmount();
+
+      registerController.parameters.set('productschedule', productschedule);
+      registerController.parameters.set('customer', customer);
+      registerController.parameters.set('amount', amount);
+
+      return registerController.executeProcess().then(() => {
 
         let response = registerController.parameters.get('processor_response');
 

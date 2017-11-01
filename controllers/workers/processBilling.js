@@ -100,7 +100,6 @@ class processBillingController extends workerController {
     .then(() => this.postProcessing())
     .then(() => this.respond());
 
-
   }
 
   validateRebillTimestamp(){
@@ -200,6 +199,7 @@ class processBillingController extends workerController {
 
   }
 
+  //Technical Debt:  add merchant provider here where necessary
   acquireRebillSubProperties(){
 
     du.debug('Acquire Rebill Sub-Properties');
@@ -279,19 +279,27 @@ class processBillingController extends workerController {
 
   }
 
+  //Technical Debt:  Merchant Provider is necessary in the context of a rebill
   process(){
 
     du.debug('Process');
 
     let customer = this.parameters.get('customer');
-    let product_schedule = this.parameters.get('productschedule');
+    let productschedule = this.parameters.get('productschedule');
     let transaction_products = this.parameters.get('transactionproducts');
     let amount = this.parameters.get('amount');
+    let merchantprovider = this.parameters.get('merchantprovider', null, false);
+
+    let argument_object = {customer:customer, productschedule: productschedule, amount: amount};
+
+    if(!_.isNull(merchantprovider)){
+      argument_object.merchantprovider = merchantprovider;
+    }
 
     const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
     let registerController = new RegisterController();
 
-    return registerController.executeProcess({customer:customer}).then(response => {
+    return registerController.processTransaction({customer:customer, productschedule: productschedule, amount: amount}).then(response => {
 
       this.parameters.set('registerresponse', response);
 
