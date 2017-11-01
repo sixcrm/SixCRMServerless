@@ -75,14 +75,20 @@ class notificationController extends entityController {
 
       du.debug('List By Type');
 
+      let expression = '';
+      let values = {};
+
+      Object.keys(types).forEach(key => {
+          expression += (expression ? ' OR ' : '') + '#type = :typev' + key;
+          values[':typev' + key] = types[key];
+      });
+
       let query_parameters = {
-        filter_expression: '#type IN :typev',
+        filter_expression: '(' + expression + ')',
         expression_attribute_names: {
           '#type': 'type'
         },
-        expression_attribute_values: {
-          ':typev': types
-        }
+        expression_attribute_values: values
       };
 
       if(!_.isUndefined(user) && user == true){
