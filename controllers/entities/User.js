@@ -734,7 +734,8 @@ class userController extends entityController {
 
                     return notificationProvider.createNotificationsForAccount({
                         account: global.account,
-                        type: 'invitation_sent',
+                        type: 'notification',
+                        category: 'invitation_sent',
                         action: link,
                         title: 'Invitation Sent',
                         message: `User with email ${userinvite.email} has been invited to account ${account.name}.`

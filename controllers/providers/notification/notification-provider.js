@@ -102,7 +102,8 @@ class NotificationProvider {
         let notification_object = {
             account: global.account,
             user: global.user.id,
-            type: type || 'dummy',
+            type: type || 'notification',
+            category: 'message',
             action: 'test',
             title: 'A ' + type || '' + ' notification from SixCRM!',
             body: 'This is a test ' + type || '' + 'notification. Do you see it?'
@@ -117,7 +118,8 @@ class NotificationProvider {
      * Save given notification in the system, and send it though all channels, respecting user settings.
      */
     saveAndSendNotification(notification_parameters, account, user) {
-        let notificationTypes = ['dummy']; // 'dummy' is used in helper utilities
+        let notificationCategoriesToSend = ['message']; // always send notifications of category 'message'
+        let notificationTypesToSend = ['alert']; // always send notifications of type 'alert'
 
         du.debug('Save and send notification.');
 
@@ -154,7 +156,7 @@ class NotificationProvider {
                 if (group && group.notifications) {
                     group.notifications.forEach((notification) => {
                         if (notification.default) {
-                            notificationTypes.push(notification.key);
+                            notificationCategoriesToSend.push(notification.key);
                         }
                     })
                 } else {
@@ -166,18 +168,19 @@ class NotificationProvider {
                 "user": user,
                 "account": account,
                 "type": notification_parameters.type,
+                "category": notification_parameters.category,
                 "action": notification_parameters.action,
                 "title": notification_parameters.title,
                 "body": notification_parameters.body
             };
 
-            // If user does not want to receive 'six' notifications, or this type of notification, mark it as already read.
-            if (!this.wantsToReceive('six', user_settings) || !_.contains(notificationTypes, notification_parameters.type)) {
+            // If user does not want to receive 'six' notifications, or this category of notification, mark it as already read.
+            if (!this.wantsToReceive('six', user_settings) || !_.contains(notificationCategoriesToSend, notification_parameters.category)) {
                 createNotification.read_at = timestamp.getISO8601();
             }
 
-            // If the type of notification is 'alert' it should not have 'read_at' so it becomes visible to the user.
-            if (createNotification.type === 'alert') {
+            // If the type of notification is in the list of types to send, it should not have 'read_at' so it becomes visible to the user.
+            if (_.contains(notificationTypesToSend, notification_parameters.type)) {
                 delete createNotification.read_at;
             }
 
@@ -189,8 +192,8 @@ class NotificationProvider {
 
                 let notificationSendOperations = [];
 
-                // If user wanted to receive this type of notification.
-                if (_.contains(notificationTypes, notification.type)) {
+                // If user wanted to receive this category of notification, or notification type is in the list of types to send.
+                if (_.contains(notificationCategoriesToSend, notification.category) || _.contains(notificationTypesToSend, notification.type)) {
 
                     // If user wanted to receive through this channel.
                     if (this.wantsToReceive('email', user_settings)) {

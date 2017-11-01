@@ -84,7 +84,8 @@ class userACLController extends entityController {
         let notification = {
             account: acl.account,
             user: acl.user,
-            type: 'acl',
+            type: 'notification',
+            category: 'acl',
             action: action,
             title: text,
             body: text
