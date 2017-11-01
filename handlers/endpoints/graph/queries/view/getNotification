@@ -10,9 +10,10 @@
             action,
             body,
             title,
+            expires_at,
             created_at,
             read_at,
             updated_at
-		} 
+		}
 	}"
 }

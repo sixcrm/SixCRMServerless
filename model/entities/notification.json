@@ -22,9 +22,10 @@
 		"body": {
 			"type":"string"
 		},
+		"expires_at":{"$ref": "../definitions/iso8601.json"},
 		"read_at":{"$ref": "../definitions/iso8601.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["account", "user", "action", "title", "type", "category", "created_at", "updated_at"]
+	"required":["account", "user", "action", "title", "type", "created_at", "updated_at"]
 }

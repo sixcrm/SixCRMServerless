@@ -25,7 +25,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The type of the notification.',
         },
         category: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: GraphQLString,
             description: 'The category of the notification.',
         },
         action: {
@@ -39,6 +39,10 @@ module.exports.graphObj = new GraphQLObjectType({
         body: {
             type: GraphQLString,
             description: 'Notification body.'
+        },
+        expires_at: {
+            type: GraphQLString,
+            description: 'ISO8601 datetime at which notification expires.',
         },
         read_at: {
             type: GraphQLString,
