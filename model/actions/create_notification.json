@@ -12,6 +12,9 @@
     "type":{
       "type":"string"
     },
+    "category":{
+      "type":"string"
+    },
     "action":{
       "type":"string"
     },

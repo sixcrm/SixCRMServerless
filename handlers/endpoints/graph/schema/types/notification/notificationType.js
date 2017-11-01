@@ -24,6 +24,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The type of the notification.',
         },
+        category: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The category of the notification.',
+        },
         action: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The action associated with the notification.',

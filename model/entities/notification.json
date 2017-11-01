@@ -16,6 +16,9 @@
 		"type": {
 			"type":"string"
 		},
+		"category": {
+			"type":"string"
+		},
 		"body": {
 			"type":"string"
 		},
@@ -23,5 +26,5 @@
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["account", "user", "action", "title", "type", "created_at", "updated_at"]
+	"required":["account", "user", "action", "title", "type", "category", "created_at", "updated_at"]
 }
