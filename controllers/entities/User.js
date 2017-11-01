@@ -734,7 +734,8 @@ class userController extends entityController {
 
                     return notificationProvider.createNotificationsForAccount({
                         account: global.account,
-                        type: 'invitation_sent',
+                        type: 'notification',
+                        category: 'invitation_sent',
                         action: link,
                         title: 'Invitation Sent',
                         message: `User with email ${userinvite.email} has been invited to account ${account.name}.`
@@ -802,7 +803,7 @@ class userController extends entityController {
 
             user_ids = arrayutilities.unique(user_ids);
 
-            let in_parameters = this.dynamoutilities.createINQueryParameters('id', user_ids);
+            let in_parameters = this.createINQueryParameters({field:'id', list_array: user_ids});
 
             //Technical Debt:  Refactor, must return all users with correct pagination
             return this.list({pagination: pagination, query_parameters: in_parameters});

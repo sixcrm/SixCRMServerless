@@ -23,7 +23,6 @@
 			"type":"array",
 			"items":{"$ref": "../definitions/uuidv4.json"}
 		}
-
 	},
 	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession", "product_schedules"]
 }

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/event.json",
+	"title": "Event",
+  "anyOf":[
+    {
+      "type":"object",
+      "properties":{
+        "Body":{
+          "type":"string"
+        }
+      },
+      "required":["Body"]
+    },
+    {
+      "type":"string"
+    }
+  ]
+}

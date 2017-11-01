@@ -3,11 +3,5 @@
 	"id":"/associatedtransactions.json",
 	"title": "Associated Transactions",
 	"type":"array",
-	"items": {
-		"type":"object",
-		"properties":{
-			"id": {"$ref": "../../definitions/uuidv4.json"}
-		},
-		"required":["id"]
-	}
+	"items": {"$ref": "../../entities/transaction.json"}
 }

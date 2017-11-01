@@ -46,7 +46,8 @@ if (!user) {
 let notification_object = {
     account: account,
     user: user,
-    type: 'dummy',
+    type: 'notification',
+    category: 'message',
     action: 'test',
     title: 'testing notification',
     body: body

@@ -3,7 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('lib/notification-provider', () => {
+describe.only('lib/notification-provider', () => {
 
     before(() => {
         mockery.enable({
@@ -25,6 +25,7 @@ describe('lib/notification-provider', () => {
         let valid_object = {
             account: '*',
             type: 'any',
+            category: 'any',
             action: 'any',
             title: 'any',
             body: 'any'
@@ -90,6 +91,21 @@ describe('lib/notification-provider', () => {
             }
         });
 
+        it('should not allow object without a body', () => {
+            // given
+            let notification_object = Object.assign({}, valid_object);
+
+            // when
+            delete notification_object.category;
+
+            try {
+                return NotificationProvider.validateCreateNotificationObject(notification_object);
+            } catch(error) {
+                // then
+                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
+            }
+        });
+
         it('should allow valid object', () => {
             return NotificationProvider.validateCreateNotificationObject(valid_object).then((result) => {
                 expect(result).to.be.defined;
@@ -102,6 +118,7 @@ describe('lib/notification-provider', () => {
         let valid_object = {
             account: '*',
             type: 'any',
+            category: 'any',
             action: 'any',
             title: 'any',
             body: 'any'
@@ -158,6 +175,7 @@ describe('lib/notification-provider', () => {
             account: '*',
             user: 'user@example.com',
             type: 'any',
+            category: 'any',
             action: 'any',
             title: 'any',
             body: 'any'
@@ -191,6 +209,7 @@ describe('lib/notification-provider', () => {
                     expect(notification_object.user).to.equal(valid_object.user);
                     expect(notification_object.account).to.equal(valid_object.account);
                     expect(notification_object.type).to.equal(valid_object.type);
+                    expect(notification_object.category).to.equal(valid_object.category);
                     expect(notification_object.action).to.equal(valid_object.action);
                     expect(notification_object.body).to.equal(valid_object.body);
                     done();

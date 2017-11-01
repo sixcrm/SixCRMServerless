@@ -126,12 +126,13 @@ class productScheduleController extends entityController {
 
       let transaction_products = [];
 
-      schedules_to_purchase.forEach((schedule) => {
+      arrayutilities.map(schedules_to_purchase, (schedule) => {
 
         let product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
 
         transaction_products.push({
           amount: parseFloat(product_for_purchase.price),
+          //Technical Debt: "product_id" is bad nomenclature
           product: product_for_purchase.product_id
         });
 

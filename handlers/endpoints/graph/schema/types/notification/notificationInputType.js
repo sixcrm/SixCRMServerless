@@ -11,8 +11,10 @@ module.exports.graphObj = new GraphQLInputObjectType({
         account:	{ type: new GraphQLNonNull(GraphQLString) },
         title:   	{ type: new GraphQLNonNull(GraphQLString) },
         type: 	    { type: new GraphQLNonNull(GraphQLString) },
+        category:   { type: GraphQLString },
         action: 	{ type: new GraphQLNonNull(GraphQLString) },
-        body:	{ type: new GraphQLNonNull(GraphQLString) },
-        read_at:		{ type: GraphQLString }
+        body:	    { type: new GraphQLNonNull(GraphQLString) },
+        expires_at:	{ type: GraphQLString },
+        read_at:	{ type: GraphQLString }
     })
 });

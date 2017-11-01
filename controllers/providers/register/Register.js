@@ -1,10 +1,11 @@
 'use strict'
 const _ = require('underscore');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -32,18 +33,30 @@ module.exports = class Register extends PermissionedController {
           transaction: 'transaction'
         },
         optional: {}
+      },
+      process:{
+        required:{
+          rebill: 'rebill'
+        },
+        optional:{
+        }
       }
-      //Technical Debt: Add process
     };
 
     this.parameter_validation = {
-      //Technical Debt:  This does not want to import ../../entities/transaction.json for some reason...
       'processor_response': global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
       'transaction': global.SixCRM.routes.path('model', 'functional/register/transactioninput.json'),
       'hydrated_transaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
       'associated_transactions':global.SixCRM.routes.path('model', 'functional/register/associatedtransactions.json'),
-      'amount':global.SixCRM.routes.path('model', 'definitions/currency.json')
-    }
+      'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
+      'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+      'productschedule':global.SixCRM.routes.path('model', 'entities/productschedule.json'),
+      'rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
+      'transactionproducts': global.SixCRM.routes.path('model', 'workers/processBilling/transactionproducts.json'),
+      'productschedules':global.SixCRM.routes.path('model', 'workers/processBilling/productschedules.json'),
+      'parentsession': global.SixCRM.routes.path('model', 'entities/session.json'),
+      'creditcards': global.SixCRM.routes.path('model', 'workers/processBilling/creditcards.json'),
+    };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
 
@@ -66,6 +79,23 @@ module.exports = class Register extends PermissionedController {
 
   }
 
+  processTransaction(){
+
+    du.debug('process Transaction');
+
+    return this.can({action: 'process', object: 'register', fatal: true})
+    .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
+    .then(() => this.setDependencies('process'))
+    .then(() => this.acquireRebillProperties())
+    .then(() => this.validateRebillForProcessing())
+    .then(() => this.acquireRebillSubProperties())
+    .then(() => this.calculateAmount())
+    .then(() => this.executeProcess())
+    .then(() => this.createTransaction())
+    .then(() => this.transformResponse());
+
+  }
+
   setParameters({argumentation, action}){
 
     du.debug('Set Parameters');
@@ -75,6 +105,18 @@ module.exports = class Register extends PermissionedController {
     this.parameters.set('transaction_type', action);
 
     return Promise.resolve(true);
+
+  }
+
+  setDependencies(action){
+
+    du.debug('Set Dependencies');
+
+    this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+    this.productScheduleController = global.SixCRM.routes.include('entities', 'ProductSchedule.js');
+    this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+    return true;
 
   }
 
@@ -290,8 +332,203 @@ module.exports = class Register extends PermissionedController {
 
   }
 
+  executeProcess(){
 
-  processTransaction({customer, blah}){
+    du.debug('Execute Process');
+
+    let customer = this.parameters.get('customer');
+    let productschedule = this.parameters.get('productschedule');
+    let amount = this.parameters.get('amount');
+    let merchantprovider = this.parameters.get('merchantprovider', null, false);
+
+    let argument_object = {customer: customer, productschedule: productschedule, amount: amount};
+
+    if(!_.isNull(merchantprovider)){
+      argument_object.merchantprovider = merchantprovider;
+    }
+
+    const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
+    let processController = new ProcessController();
+
+    return processController.process(argument_object).then(result => {
+      this.parameters.set('processor_response', result);
+      return true;
+    });
+
+  }
+
+  acquireRebillProperties(){
+
+    du.debug('Acquire Rebill Properties');
+
+    let rebill = this.parameters.get('rebill');
+
+    var promises = [];
+
+    promises.push(this.rebillController.listProductSchedules(rebill));
+    promises.push(this.rebillController.getParentSession(rebill));
+
+    return Promise.all(promises).then((promises) => {
+
+      this.parameters.set('productschedules', promises[0]);
+      this.parameters.set('parentsession', promises[1]);
+
+      return true;
+
+    });
+
+  }
+
+  validateRebillForProcessing(){
+
+    du.debug('Validate Rebill For Processing');
+
+    return this.validateRebillTimestamp()
+    .then(() => this.validateAttemptRecord())
+    .then(() => this.validateSession())
+    .catch((error) => {
+      return Promise.reject(error);
+    });
+
+  }
+
+  validateSession(){
+
+    du.debug('Validate Session');
+
+    let parentsession = this.parameters.get('parentsession');
+
+    var day_in_cycle = this.rebillController.calculateDayInCycle(parentsession.created_at);
+
+    if(!_.isNumber(day_in_cycle) || day_in_cycle < 0){
+      eu.throwError('server', 'Invalid day in cycle returned for session.');
+    }
+
+    return Promise.resolve(true);
+
+  }
+
+  validateAttemptRecord(){
+
+    du.debug('Validate Attempt Record');
+
+    let rebill = this.parameters.get('rebill');
+
+    if(_.has(rebill, 'second_attempt')){
+
+      eu.throwError('server','The rebill has already been attempted three times.');
+
+    }
+
+    if(_.has(rebill, 'first_attempt')){
+
+      let time_difference = timestamp.getTimeDifference(rebill.first_attempt);
+
+      if(time_difference < (60 * 60 * 24)){
+
+        eu.throwError('server','Rebill\'s first attempt is too recent.');
+
+      }
+
+    }
+
+    return Promise.resolve(true);
+
+  }
+
+  validateRebillTimestamp(){
+
+    du.debug('Validate Rebill Timestamp');
+
+    let rebill = this.parameters.get('rebill');
+
+    let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
+
+    if(timestamp.getTimeDifference(bill_at_timestamp) < 0){
+      eu.throwError('server', 'Rebill is not eligible for processing at this time.');
+    }
+
+    return Promise.resolve(true);
+
+  }
+
+  acquireRebillSubProperties(){
+
+    du.debug('Acquire Rebill Sub-Properties');
+
+    let promises = [
+      this.acquireProducts(),
+      this.acquireCustomer()
+    ];
+
+    return Promise.all(promises)
+    .then(() => this.acquireCustomerCreditCards())
+    .then(() => Promise.resolve(true));
+
+  }
+
+  acquireProducts(){
+
+    du.debug('Acquire Products');
+
+    let parentsession = this.parameters.get('parentsession');
+    let productschedules = this.parameters.get('productschedules');
+
+    //Technical Debt:  Need "ProcessUtilities" class
+    let day_in_cycle = this.rebillController.calculateDayInCycle(parentsession.created_at);
+    let transaction_products = this.productScheduleController.getTransactionProducts(day_in_cycle, productschedules);
+
+    this.parameters.set('transactionproducts', transaction_products);
+
+    return Promise.resolve(true);
+
+  }
+
+  acquireCustomer(){
+
+    du.debug('Acquire Customer');
+
+    let parentsession  = this.parameters.get('parentsession');
+
+    return this.customerController.get({id: parentsession.customer}).then(customer => {
+
+      this.parameters.set('customer', customer);
+
+    });
+
+  }
+
+  acquireCustomerCreditCards(){
+
+    du.debug('Acquire Customer Creditcard');
+
+    let customer = this.parameters.get('customer');
+
+    return this.customerController.getCreditCards(customer).then(creditcards => {
+
+      this.parameters.set('creditcards', creditcards);
+
+      return Promise.resolve(true);
+
+    });
+
+  }
+
+  calculateAmount(){
+
+    du.debug('Calculate Amount');
+
+    let transactionproducts = this.parameters.get('transactionproducts');
+
+    let product_amounts = arrayutilities.map(transactionproducts, product => {
+      return parseInt(product.amount);
+    })
+
+    let amount = mathutilities.sum(product_amounts);
+
+    this.parameters.set('amount', amount);
+
+    return Promise.resolve(true);
 
   }
 
