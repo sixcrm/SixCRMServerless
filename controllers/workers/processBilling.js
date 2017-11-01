@@ -56,7 +56,7 @@ class processBillingController extends workerController {
 
             var promises = [];
 
-            promises.push(rebillController.lisetTransactions(rebill));
+            promises.push(rebillController.listTransactions(rebill));
             promises.push(rebillController.getProductSchedules(rebill));
             promises.push(rebillController.getParentSession(rebill));
 
