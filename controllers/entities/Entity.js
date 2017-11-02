@@ -655,4 +655,10 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    appendDisjunctionQueryParameters({query_parameters, field_name, array }){
+
+      return this.dynamoutilities.appendDisjunctionQueryParameters(query_parameters, field_name, array);
+
+    }
+
 }
