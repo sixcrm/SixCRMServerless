@@ -75,20 +75,51 @@ class notificationController extends entityController {
 
       du.debug('List By Type');
 
-      let query_parameters = this.createINQueryParameters({field: 'type', list_array: types});
+      let query_parameters = this.appendDisjunctionCondition({field: 'type', array: types});
 
       if(!_.isUndefined(user) && user == true){
         query_parameters.filter_expression += ' AND #user = :userv';
-
-        if (!_.has(query_parameters, 'expression_attribute_names')) {
-            query_parameters.expression_attribute_names = {};
-        }
-
         query_parameters.expression_attribute_names['#user'] = 'user';
         query_parameters.expression_attribute_values[':userv'] = this.getID(global.user)
       }
 
       return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal});
+
+    }
+
+    appendDisjunctionCondition({query_parameters, field, array }){
+
+        du.debug('Append Disjunction Condition');
+
+        // instantiate query_parameters object if undefined, or complete if incomplete
+        if (!query_parameters) {
+            query_parameters = {};
+        }
+
+        if (!query_parameters.filter_expression) {
+            query_parameters.filter_expression = '';
+        }
+
+        if (!query_parameters.expression_attribute_names) {
+            query_parameters.expression_attribute_names = {};
+        }
+
+        if (!query_parameters.expression_attribute_values) {
+            query_parameters.expression_attribute_values = {};
+        }
+
+        let expression = '';
+
+        // append OR fragment to expression, add value for each element in array and add attribute name
+        Object.keys(array).forEach(key => {
+            expression += (expression ? ' OR ' : '') + `#${field} = :${field}v` + key;
+            query_parameters.expression_attribute_values[`:${field}v` + key] = array[key];
+        });
+
+        query_parameters.filter_expression += '(' + expression + ')';
+        query_parameters.expression_attribute_names['#' + field] = 'field';
+
+        return query_parameters;
 
     }
 
