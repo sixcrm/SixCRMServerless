@@ -7,6 +7,41 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const WorkerResponse = global.SixCRM.routes.include('workers', 'WorkerResponse.js');
+
+function getValidCompoundWorkerResponse(response, message){
+
+  return {worker_response_object: getValidWorkerResponse(response), message: message};
+
+}
+
+function getValidMessage(){
+
+  return getValidMessages().pop();
+
+}
+
+function getValidWorkerResponse(response){
+
+  return new WorkerResponse(response);
+
+}
+
+function getValidMockWorker(){
+
+  let WorkerResponse = global.SixCRM.routes.include('workers', 'WorkerResponse.js');
+  class aWorker {
+    constructor(){
+
+    }
+    execute(message){
+      return Promise.resolve(new WorkerResponse('success'));
+    }
+  }
+
+  return new aWorker();
+
+}
 
 function getValidMessages(){
   return [
@@ -90,7 +125,7 @@ function getInvokeError(){
 
 describe('workers/forwardMessage', () => {
 
-  describe('validateRequest', () => {
+  describe('validateEnvironment', () => {
 
     it('fails when origin queue is not set.', () => {
 
@@ -98,11 +133,11 @@ describe('workers/forwardMessage', () => {
 
       try{
 
-        forwardMessageController.validateRequest()
+        forwardMessageController.validateEnvironment()
 
       }catch(error){
 
-        expect(error.message).to.equal('[500] Expected object to have key "origin_queue"');
+        expect(error.message).to.equal('[500] One or more validation errors occurred.');
 
       };
 
@@ -116,11 +151,11 @@ describe('workers/forwardMessage', () => {
 
       try{
 
-        forwardMessageController.validateRequest()
+        forwardMessageController.validateEnvironment()
 
       }catch(error){
 
-        expect(error.message).to.equal('[500] Expected object to have key "name"');
+        expect(error.message).to.equal('[500] One or more validation errors occurred.');
 
       };
 
@@ -135,11 +170,11 @@ describe('workers/forwardMessage', () => {
 
       try{
 
-        forwardMessageController.validateRequest()
+        forwardMessageController.validateEnvironment()
 
       }catch(error){
 
-        expect(error.message).to.equal('[500] Expected object to have key "workerfunction"');
+        expect(error.message).to.equal('[500] One or more validation errors occurred.');
 
       };
 
@@ -372,7 +407,7 @@ describe('workers/forwardMessage', () => {
 
   });
 
-  describe('forwardMessages', () => {
+  describe('forwardMessagesToWorkers', () => {
 
     before(() => {
       mockery.enable({
@@ -393,17 +428,16 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length 0', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: () => {
-          return Promise.resolve('')
-        }
-      });
+      let mock_worker = getValidMockWorker();
+      mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
+      process.env.workerfunction = 'aWorker.js';
 
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+      let forwardMessageController = global.SixCRM.routes.include('workers', 'forwardMessage.js');
 
       let messages = [];
 
-      return forwardMessageController.forwardMessages(messages).then(messages => {
+      return forwardMessageController.forwardMessagesToWorkers(messages).then(messages => {
+        delete process.env.workerfunction;
         expect(messages).to.deep.equal([]);
       });
 
@@ -411,26 +445,27 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length less than limit', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: (parameters) => {
-          return Promise.resolve(getValidLambdaResponse());
-        },
-        buildLambdaName: (shortname) => {
-          return 'alambdaname';
-        }
-
-      });
+      let mock_worker = getValidMockWorker();
+      mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
+      process.env.workerfunction = 'aWorker.js';
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
       let messages = getValidMessages();
 
-      return forwardMessageController.forwardMessages(messages).then(responses => {
+      return forwardMessageController.forwardMessagesToWorkers(messages).then(responses => {
 
         expect(responses.length).to.equal(messages.length);
+
         arrayutilities.map(responses, response => {
+
+          expect(response).to.have.property('worker_response_object');
+          expect(response.worker_response_object).to.have.property('response');
+          expect(response.worker_response_object.response).to.have.property('code');
+          expect(response.worker_response_object.response.code).to.equal('success');
           expect(response).to.have.property('message');
-          expect(response).to.have.property('response');
+          expect(response.message).to.have.property('ReceiptHandle');
+
         });
 
       });
@@ -439,57 +474,53 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length equal to limit', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: (parameters, callback) => {
-          return Promise.resolve(getValidLambdaResponse());
-        },
-        buildLambdaName: (shortname) => {
-          return 'alambdaname';
-        }
-      });
+      let mock_worker = getValidMockWorker();
+      mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
+      process.env.workerfunction = 'aWorker.js';
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
       let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
 
-      return forwardMessageController.forwardMessages(messages).then(responses => {
+      return forwardMessageController.forwardMessagesToWorkers(messages).then(responses => {
 
         expect(responses.length).to.equal(messages.length);
         arrayutilities.map(responses, response => {
+
+          expect(response).to.have.property('worker_response_object');
+          expect(response.worker_response_object).to.have.property('response');
+          expect(response.worker_response_object.response).to.have.property('code');
+          expect(response.worker_response_object.response.code).to.equal('success');
           expect(response).to.have.property('message');
-          expect(response).to.have.property('response');
+          expect(response.message).to.have.property('ReceiptHandle');
+
         });
 
       });
 
     });
 
-    it('handles errors', () => {
+    //Technical Debt:  Throw an error, see what happens
+    xit('handles errors', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: (parameters, callback) => {
-          return Promise.resolve(getInvokeError());
-        },
-        buildLambdaName: (shortname) => {
-          return 'alambdaname';
-        }
-      });
+      let mock_worker = getValidMockWorker();
+      mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
+      process.env.workerfunction = 'aWorker.js';
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
       let messages = getValidMessages();
 
-      return forwardMessageController.forwardMessages(messages).then(responses => {
+      return forwardMessageController.forwardMessagesToWorkers(messages).then(responses => {
 
         arrayutilities.map(responses, response => {
 
-          du.info(response);
-
-          expect(response).to.have.property('response');
+          expect(response).to.have.property('worker_response_object');
+          expect(response.worker_response_object).to.have.property('response');
+          expect(response.worker_response_object.response).to.have.property('code');
+          expect(response.worker_response_object.response.code).to.equal('success');
           expect(response).to.have.property('message');
-          expect(response).to.have.property('error');
-          expect(response.response).to.equal(null);
-          expect(response.error instanceof Error).to.equal(true);
+          expect(response.message).to.have.property('ReceiptHandle');
 
         });
 
@@ -499,14 +530,9 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for when bulk is set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: (parameters, callback) => {
-          return Promise.resolve(getValidLambdaResponse());
-        },
-        buildLambdaName: (shortname) => {
-          return 'alambdaname';
-        }
-      });
+      let mock_worker = getValidMockWorker();
+      mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
+      process.env.workerfunction = 'aWorker.js';
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
@@ -514,63 +540,24 @@ describe('workers/forwardMessage', () => {
 
       process.env.bulk = true;
 
-      return forwardMessageController.forwardMessages(messages).then(responses => {
+      return forwardMessageController.forwardMessagesToWorkers(messages).then(responses => {
 
         expect(responses.length).to.equal(1);
 
         arrayutilities.map(responses, response => {
-          expect(response).to.have.property('response');
-          expect(response).to.have.property('message');
-          expect(response.message.length).to.equal(messages.length);
+
+          expect(response).to.have.property('worker_response_object');
+          expect(response.worker_response_object).to.have.property('response');
+          expect(response.worker_response_object.response).to.have.property('code');
+          expect(response.worker_response_object.response.code).to.equal('success');
+          expect(response).to.have.property('messages');
+          expect(response.messages.length).to.equal(messages.length);
+
+          arrayutilities.map(response.messages, response_message => {
+            expect(response_message).to.have.property('ReceiptHandle');
+          })
+
         });
-
-      });
-
-    });
-
-  });
-
-  describe('validateForwardMessage', () => {
-
-    it('successfully validates a response', () => {
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      let response = getValidForwardMessage();
-
-      forwardMessageController.validateForwardMessage(response).then(valid_response => {
-        expect(valid_response).to.deep.equal(response);
-      });
-
-    });
-
-    it('fails to validate responses', () => {
-
-      let response = getValidForwardMessage();
-
-      let invalid_responses = [{}, null, 123, 'abc', new Error, [], () => {}];
-
-      let a_invalid_response = objectutilities.clone(response);
-
-      delete a_invalid_response.message
-      invalid_responses.push(a_invalid_response);
-
-      a_invalid_response = objectutilities.clone(response);
-      delete a_invalid_response.response
-      invalid_responses.push(a_invalid_response);
-
-      a_invalid_response = objectutilities.clone(response);
-      delete a_invalid_response.message
-      invalid_responses.push(a_invalid_response);
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      arrayutilities.map(invalid_responses, (invalid_response) => {
-        try{
-          forwardMessageController.validateForwardMessage(invalid_response);
-        }catch(error){
-          expect(error.message).to.equal('[500] One or more validation errors occurred.');
-        }
 
       });
 
@@ -580,305 +567,23 @@ describe('workers/forwardMessage', () => {
 
   describe('respond', () => {
 
+    //make sure the response has the original message in the body
     it('responds correctly when there are no messages', () => {
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      let response = forwardMessageController.respond([]);
+      let RelayResponse = global.SixCRM.routes.include('workers', 'RelayResponse.js');
+      let relay_response = new RelayResponse('success');
 
-      expect(response).to.deep.equal([]);
+      let response = forwardMessageController.respond('success');
 
-    });
-
-  });
-
-  describe('assembleForwardMessageResponseObject', () => {
-
-    it('correctly assembles a forward message object', () => {
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      let response = {};
-      let message = {};
-      let error = new Error();
-
-      let forward_message_response = forwardMessageController.assembleForwardMessageResponseObject(response, message, error);
-
-      expect(forward_message_response).to.have.property('response');
-      expect(forward_message_response).to.have.property('error');
-      expect(forward_message_response).to.have.property('message');
-      expect(forward_message_response.response).to.deep.equal(response);
-      expect(forward_message_response.message).to.deep.equal(message);
-      expect(forward_message_response.error).to.deep.equal(error);
+      expect(response).to.deep.equal(relay_response);
 
     });
 
   });
 
-  describe('validateLambdaResponse', () => {
-
-    it('fails to validate invalid Lambda Responses', () => {
-
-      let response = getValidLambdaResponse();
-
-      let invalid_responses = [{}, null, 123, 'abc', new Error, [], () => {}];
-
-      let a_invalid_response = objectutilities.clone(response);
-
-      delete a_invalid_response.StatusCode
-      invalid_responses.push(a_invalid_response);
-
-      a_invalid_response = objectutilities.clone(response);
-      delete a_invalid_response.Payload
-      invalid_responses.push(a_invalid_response);
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      arrayutilities.map(invalid_responses, (invalid_response) => {
-
-        try{
-          forwardMessageController.validateLambdaResponse(invalid_response);
-        }catch(error){
-          expect(error.message).to.equal('[500] One or more validation errors occurred.');
-        }
-
-      });
-
-    });
-
-    it('successfully validates a Lambda Responses', () => {
-
-      let response = getValidLambdaResponse();
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      forwardMessageController.validateLambdaResponse(response).then(valid_response => {
-
-        expect(valid_response).to.deep.equal(response);
-
-      });
-
-    });
-
-  });
-
-  describe('validateWorkerLambdaResponse', () => {
-
-    it('fails to validate invalid ', () => {
-
-      let response = getValidWorkerLambdaResponse();
-
-      let invalid_responses = [{}, null, 123, 'abc', new Error, [], () => {}];
-
-      let a_invalid_response = objectutilities.clone(response);
-
-      delete a_invalid_response.StatusCode
-      invalid_responses.push(a_invalid_response);
-
-      a_invalid_response = objectutilities.clone(response);
-      delete a_invalid_response.Payload
-      invalid_responses.push(a_invalid_response);
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      arrayutilities.map(invalid_responses, (invalid_response) => {
-
-        try{
-          forwardMessageController.validateWorkerLambdaResponse(invalid_response);
-        }catch(error){
-          expect(error.message).to.equal('[500] One or more validation errors occurred.');
-        }
-
-      });
-
-    });
-
-    it('successfully validates a worker lambda response ', () => {
-
-      let response = getValidWorkerLambdaResponse();
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      forwardMessageController.validateWorkerLambdaResponse(response).then(validated_response => {
-        expect(validated_response).to.deep.equal(response);
-      });
-
-    });
-
-  });
-
-  describe('validateWorkerControllerResponse', () => {
-
-    it('fails to validate invalid response', () => {
-
-      let response = getValidWorkerControllerResponse();
-
-      let invalid_responses = [{}, null, 123, 'abc', new Error, [], () => {}];
-
-      let a_invalid_response = objectutilities.clone(response);
-
-      delete a_invalid_response.message
-      invalid_responses.push(a_invalid_response);
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      arrayutilities.map(invalid_responses, (invalid_response) => {
-
-        try{
-          forwardMessageController.validateWorkerControllerResponse(invalid_response);
-        }catch(error){
-          expect(error.message).to.equal('[500] One or more validation errors occurred.');
-        }
-
-      });
-
-    });
-
-    it('successfully validates a worker controller response ', () => {
-
-      let response = getValidWorkerControllerResponse();
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      forwardMessageController.validateWorkerControllerResponse(response).then(validated_response => {
-        expect(validated_response).to.deep.equal(response);
-      });
-
-    });
-
-  });
-
-  describe('parseLambdaResponsePayload', () => {
-
-    it('successfully parses a JSON string', () => {
-
-      let lambda_response = getValidLambdaResponse();
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      let payload = forwardMessageController.parseLambdaResponsePayload(lambda_response);
-
-      expect(payload).to.deep.equal(JSON.parse(lambda_response.Payload));
-
-    });
-
-    it('successfully passes a object on', () => {
-
-      let lambda_response = getValidLambdaResponse();
-
-      lambda_response.Payload = JSON.parse(lambda_response.Payload);
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      let payload = forwardMessageController.parseLambdaResponsePayload(lambda_response);
-
-      expect(payload).to.deep.equal(lambda_response.Payload);
-
-    });
-
-  });
-
-  describe('parseWorkerLambdaResponse(', () => {
-
-    it('successfully parses a JSON string', () => {
-
-      let worker_lambda_response = getValidWorkerLambdaResponse();
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      let parsed_body = forwardMessageController.parseWorkerLambdaResponseBody(worker_lambda_response);
-
-      expect(parsed_body).to.deep.equal(JSON.parse(worker_lambda_response.body));
-
-    });
-
-    it('successfully passes a object on', () => {
-
-      let worker_lambda_response = getValidWorkerLambdaResponse();
-
-      worker_lambda_response.body = JSON.parse(worker_lambda_response.body);
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      let parsed_body = forwardMessageController.parseWorkerLambdaResponseBody(worker_lambda_response);
-
-      expect(parsed_body).to.deep.equal(worker_lambda_response.body);
-
-    });
-
-  });
-
-  describe('handleForwarding', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    it('does not foward a object missing the forward property', () => {
-
-      let missing_forward = {};
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      return forwardMessageController.handleForwarding(missing_forward).then(returned_missing_forward => {
-        expect(returned_missing_forward).to.deep.equal(missing_forward);
-      });
-
-    });
-
-    it('does not foward process.env.destination_queue property is not set', () => {
-
-      let has_forward = {
-        forward: 'some_message'
-      };
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      return forwardMessageController.handleForwarding(has_forward).then(returned_has_forward => {
-        expect(returned_has_forward).to.deep.equal(has_forward);
-      });
-
-    });
-
-    it('marks the object with "SUCCESS"', () => {
-
-      let has_forward = {
-        forward: 'some_message'
-      };
-
-      process.env.destination_queue = 'some_queue';
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body: body, queue: queue}, callback) => {
-          return callback(null, {});
-        }
-      });
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      return forwardMessageController.handleForwarding(has_forward).then(returned_has_forward => {
-        expect(returned_has_forward).to.have.property('result');
-        expect(returned_has_forward.result).to.equal(forwardMessageController.messages.success);
-      });
-
-    });
-
-  });
-
-  describe('handleFailures', () => {
+  describe('handleFailure', () => {
 
     before(() => {
       mockery.enable({
@@ -899,88 +604,255 @@ describe('workers/forwardMessage', () => {
 
     it('does not foward a object missing the failure property', () => {
 
-      let missing_failure = {};
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          throw new Error();
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      return forwardMessageController.handleFailures(missing_failure).then(returned_missing_failure => {
-        expect(returned_missing_failure).to.deep.equal(missing_failure);
+      return forwardMessageController.handleFailure(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
       });
 
     });
 
     it('does not foward when process.env.failure_queue property is not set', () => {
 
-      let has_failure = {
-        failed: 'some_message'
-      };
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          throw new Error();
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      return forwardMessageController.handleFailures(has_failure).then(returned_has_failure => {
-        expect(returned_has_failure).to.deep.equal(has_failure);
+      return forwardMessageController.handleFailure(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
       });
 
     });
 
-    it('marks the object with "FAILFORWARD"', () => {
+    it('succesfully fowards to failure queue', () => {
 
-      let has_failure = {
-        failed: 'some_message'
-      };
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          console.log('Forwarding to queue: '+queue);
+          return callback(null, true);
+        }
+      });
 
       process.env.failure_queue = 'some_queue';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body: body, queue: queue}, callback) => {
-          return callback(null, {});
-        }
-      });
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      return forwardMessageController.handleFailures(has_failure).then(returned_has_failure => {
-        expect(returned_has_failure).to.have.property('result');
-        expect(returned_has_failure.result).to.equal(forwardMessageController.messages.failforward);
+      return forwardMessageController.handleFailure(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
       });
 
     });
 
   });
+
+  describe('handleSuccess', () => {
+
+    before(() => {
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      global.SixCRM.localcache.clear('all');
+    });
+
+    afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
+
+    it('does not foward a object missing the success property', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          throw new Error();
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
+
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleSuccess(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('does not foward when process.env.destination_queue property is not set', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          throw new Error();
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
+
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleSuccess(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('succesfully fowards to destination queue', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          console.log('Forwarding to queue: '+queue);
+          return callback(null, true);
+        }
+      });
+
+      process.env.failure_queue = 'some_queue';
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
+
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleSuccess(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+  });
+
+  describe('handleError', () => {
+
+    before(() => {
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      global.SixCRM.localcache.clear('all');
+    });
+
+    afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
+
+    it('does not foward a object missing the error property', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          throw new Error();
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
+
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleError(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('does not foward when process.env.error_queue property is not set', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          throw new Error();
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('error', getValidMessage());
+
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleError(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('succesfully fowards to error queue', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          console.log('Forwarding to queue: '+queue);
+          return callback(null, true);
+        }
+      });
+
+      process.env.error_queue = 'some_queue';
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('error', getValidMessage());
+
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleError(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+  });
+
 
   describe('handleNoAction', () => {
 
+    it('does not foward a object missing the noaction property', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage: ({message_body, queue}, callback) => {
+          throw new Error();
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
+
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleNoAction(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
     it('successfully handles noaction', () => {
 
-      let no_result = {};
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      return forwardMessageController.handleNoAction(no_result).then(returned => {
-        expect(returned).to.have.property('result');
-        expect(returned.result).to.equal(forwardMessageController.messages.successnoaction);
-      });
-
-    });
-
-    it('successfully skips noaction', () => {
-
-      let no_result = {
-        result:'Already Set'
-      };
-
-      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
-      return forwardMessageController.handleNoAction(no_result).then(returned => {
-        expect(returned).to.have.property('result');
-        expect(returned.result).to.equal(no_result.result);
+      return forwardMessageController.handleNoAction(compoundWorkerResponse).then(response_object => {
+        expect(response_object).to.deep.equal(compoundWorkerResponse);
       });
 
     });
 
   });
 
-  describe('deleteMessage', () => {
+  describe('handleDelete', () => {
 
     before(() => {
       mockery.enable({
@@ -999,34 +871,80 @@ describe('workers/forwardMessage', () => {
       mockery.deregisterAll();
     });
 
-    it('successfully deletes a message', () => {
+    it('does not delete noaction type', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue: queue, receipt_handle: receipt_handle}) => {
-          return Promise.resolve(receipt_handle);
+        deleteMessage: ({queue, receipt_handle}) => {
+          throw new Error();
         }
       });
 
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      let deletethis = {
-        result: forwardMessageController.messages.success,
+      return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
+        expect(returned).to.deep.equal(compoundWorkerResponse);
+      });
 
-      };
+    });
 
-      let message_receipt_handle = 'abc123'
+    it('successfully deletes fail type', () => {
 
-      return forwardMessageController.deleteMessage(deletethis, message_receipt_handle).then(returned => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.warning('mock delete executed');
+          return Promise.resolve(true);
+        }
+      });
 
-        expect(returned).to.deep.equal(deletethis);
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
+      return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
+        expect(returned).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('successfully deletes success type', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.warning('mock delete executed');
+          return Promise.resolve(true);
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
+        expect(returned).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('successfully deletes error type', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.warning('mock delete executed');
+          return Promise.resolve(true);
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('error', getValidMessage());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
+        expect(returned).to.deep.equal(compoundWorkerResponse);
       });
 
     });
 
   });
 
-  describe('handleRespose', () => {
+  describe('handleWorkerResponseObject', () => {
 
     before(() => {
       mockery.enable({
@@ -1045,21 +963,21 @@ describe('workers/forwardMessage', () => {
       mockery.deregisterAll();
     });
 
-    xit('successfully handles response', () => {
+    it('successfully handles a worker response', () => {
 
-      let forward_message = getValidForwardMessage();
+      let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage())
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue: queue, receipt_handle: receipt_handle}) => {
-          return Promise.resolve(receipt_handle);
+        deleteMessage: ({queue, receipt_handle}) => {
+          return Promise.resolve(true);
         }
       });
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      forwardMessageController.handleResponse(forward_message).then(result => {
+      forwardMessageController.handleWorkerResponseObject(compound_worker_response_object).then(result => {
 
-        expect(true).to.equal(true);
+        expect(result).to.equal(compound_worker_response_object);
 
       });
 

@@ -1,435 +1,214 @@
 'use strict';
 const _ = require("underscore");
-const sqs = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
-const lambda = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+var relayController = global.SixCRM.routes.include('controllers', 'workers/relayController.js');
 
-/*
-*
-* This class is complicated.
-* The most important thing to note about this class is the following:
-* - If the lambda worker function returns a 200 and a response which is JSON
-* -- If the JSON has a "forward" object
-* --- If the destination queue is configured
-* ---- then it'll pass the forward object along
-* --- otherwise, it'll just delete the message
-* -- If the JSON has a "failed" object
-* --- If the failure queue is configured
-* ---- Then it'll forward the object to the failure queue
-* -- Otherwise, it'll return a success, no-action event
-*
-*/
-
-class forwardMessageController extends workerController {
+class forwardMessageController extends relayController {
 
     constructor(){
 
       super();
 
-      this.messages = {
-        success:'SUCCESS',
-        successnoaction:'SUCCESSNOACTION',
-        successnomessages:'SUCCESSNOMESSAGES',
-        failforward:'FAILFORWARD'
-      };
-
       this.message_limit = 10;
 
     }
 
+    //Technical Debt: Test this
     execute(event){
 
-      du.warning(event);
-
-      return this.validateRequest()
-      .then(() => this.getMessages())
-      .then((messages) => this.validateMessages(messages))
+      return this.validateEnvironment() //Make sure that process.env has all necessary parameters
+      .then(() => this.getMessages()) //Get messages from origin queue
+      .then((messages) => this.validateMessages(messages)) //validate all messages that are returned from the origin queue (What happens if we fail validation?)
       .then((messages) => {
 
         if(arrayutilities.nonEmpty(messages)){
 
-          return this.invokeAdditionalLambdas(messages)
-          .then((messages) => this.forwardMessages(messages))
-          .then((responses) => this.handleResponses(responses));
+          return this.invokeAdditionalLambdas(messages) //Trigger another instance of this to handle additional messages
+          .then((messages) => this.forwardMessagesToWorkers(messages)) //Send messages to configured worker function
 
         }
 
         return [];
 
       })
-      .then((responses) => this.respond(responses))
+      .then((worker_response_objects) => this.handleWorkerResponseObjects(worker_response_objects))
+      .then(() => this.respond('success'))
       .catch((error) => {
-        eu.throwError('server', error);
+        this.response('error');
       });
 
     }
 
-    //Ultimately, if we're here it's a success...
-    respond(responses){
+    forwardMessagesToWorkers(messages){
 
-      du.debug('Respond');
+      du.debug('Forward Messages To Workers');
 
-      du.warning(responses);
-
-      return responses;
-
-    }
-
-    deleteMessage(response, message_receipt_handle){
-
-      du.debug('Delete Message');
-
-      if(_.contains(response.result, [this.messages.success, this.messages.failforward])){
-
-        return sqs.deleteMessage({
-          queue: process.env.origin_queue,
-          receipt_handle: message_receipt_handle
-        }).then(() => {
-            return response;
-        });
-
-      }
-
-      return Promise.resolve(response);
-
-    }
-
-    handleNoAction(response){
-
-      du.debug('Handle No Action');
-
-      if(!_.has(response, 'result')){
-
-        response = this.markResponse(response, 'successnoaction');
-
-      }
-
-      return Promise.resolve(response);
-
-    }
-
-    handleFailures(response){
-
-      du.debug('Handle Failures');
-
-      return new Promise((resolve, reject) => {
-
-        if(!_.has(response, "failed")){
-          return resolve(response);
-        }
-
-        if(!_.has(process.env, 'failure_queue')){
-          return resolve(response);
-        }
-
-        sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error, data) => {
-
-          if(_.isError(error)){
-            return reject(error);
-          }
-
-          return resolve(this.markResponse(response, 'failforward'));
-
-        });
-
-      });
-
-    }
-
-    handleForwarding(response){
-
-      du.debug('Handle Forwarding');
-
-      return new Promise((resolve, reject) => {
-
-        if(!_.has(response, "forward")){
-          return resolve(response);
-        }
-
-        if(!_.has(process.env, "destination_queue")){
-          return resolve(response);
-        }
-
-        sqs.sendMessage({message_body: response.forward, queue: process.env.destination_queue}, (error, data) => {
-
-          if(_.isError(error)){
-            return reject(error);
-          }
-
-          return resolve(this.markResponse(response, 'success'));
-
-        });
-
-      });
-
-    }
-
-    validateLambdaResponse(response){
-
-      du.debug('Validate Lambda Response');
-
-      mvu.validateModel(response, global.SixCRM.routes.path('model', 'workers/forwardmessage/lambdaresponse.json'), null, true);
-
-      return Promise.resolve(response);
-
-    }
-
-    validateWorkerLambdaResponse(response){
-
-      du.debug('Validate Worker Response');
-
-      mvu.validateModel(response, global.SixCRM.routes.path('model', 'workers/forwardmessage/workerlambdaresponse.json'), null, true);
-
-      return Promise.resolve(response);
-
-    }
-
-    validateWorkerControllerResponse(response){
-
-      du.debug('Validate Worker Response');
-
-      mvu.validateModel(response, global.SixCRM.routes.path('model', 'workers/forwardmessage/workercontrollerresponse.json'), null, true);
-
-      return Promise.resolve(response);
-
-    }
-
-    validateForwardMessage(forwardmessage){
-
-      du.debug('Validate Forward Message');
-
-      mvu.validateModel(forwardmessage, global.SixCRM.routes.path('model', 'workers/forwardmessage/forwardmessage.json'), null, true);
-
-      return Promise.resolve(forwardmessage);
-
-    }
-
-    parseLambdaResponsePayload(response){
-
-      du.debug('Parse Lambda Response');
-
-      response = response.Payload;
-
-      try{
-        response = JSON.parse(response);
-      }catch(error){
-        du.error('JSON Parse Error: ', error);
-      }
-
-      return response;
-
-    }
-
-    parseWorkerLambdaResponseBody(response){
-
-      du.debug('Parse Lambda Response');
-
-      response = response.body;
-
-      try{
-        response = JSON.parse(response);
-      }catch(error){
-        du.error('JSON Parse Error: ', error);
-      }
-
-      return response;
-
-    }
-
-    handleResponse(forwardmessage){
-
-      du.debug('Handle Response');
-
-      return this.validateForwardMessage(forwardmessage)
-      .then((forwardmessage) => {
-        return forwardmessage.response;
-      })
-      .then((response) => this.validateLambdaResponse(response))
-      .then((response) => this.parseLambdaResponsePayload(response))
-      .then((response) => this.validateWorkerLambdaResponse(response))
-      .then((response) => this.parseWorkerLambdaResponseBody(response))
-      .then((response) => this.validateWorkerControllerResponse(response))
-      .then((response) => {
-
-        return this.handleFailures(response, forwardmessage)
-        .then((response) => this.handleForwarding(response, forwardmessage))
-        .then((response) => this.handleNoAction(response, forwardmessage));
-
-      })
-      .then((response) => {
-
-        return this.deleteMessage(response, forwardmessage.message.ReceiptHandle)
-        .then((delete_response) => {
-
-          du.info('Delete Response:', delete_response);
-
-          return response;
-
-        });
-
-      });
-
-    }
-
-    handleResponses(forwardmessages){
-
-      du.debug('Handle Responses');
-
-      let handled_forwardmessages_promises = arrayutilities.map(forwardmessages, forwardmessage => {
-
-        return this.handleResponse(forwardmessage);
-
-      });
-
-      return Promise.all(handled_forwardmessages_promises).then(handled_forwardmessages_promises => {
-        //validate?
-        return handled_forwardmessages_promises;
-
-      });
-
-    }
-
-    forwardMessage(message){
-
-      du.debug('Forward Message');
-
-      let invoke_parameters = {
-        function_name: lambda.buildLambdaName(process.env.workerfunction),
-        payload: JSON.stringify(message)
-      };
-
-      return lambda.invokeFunction(invoke_parameters).then(response => {
-
-        return response;
-
-      })
-      .then((response) => {
-        if(_.isError(response)){
-          return this.assembleForwardMessageResponseObject(null, message, response);
-        }
-        return this.assembleForwardMessageResponseObject(response, message, null);
-      });
-
-    }
-
-    assembleForwardMessageResponseObject(response, message, error){
-
-      du.debug('Assemble Forward Message Response Object');
-
-      return {
-        response: response,
-        message: message,
-        error: error
-      };
-
-    }
-
-    forwardMessages(messages){
-
-      du.debug('Forward Messages');
-
-      let message_handler_promises = [];
+      let worker_promises = [];
 
       if(_.has(process.env, 'bulk') && process.env.bulk == 'true'){
 
-        //Note:  This is the only difference between forwardMessage and forwardMessages...
-        message_handler_promises.push(this.forwardMessage(messages));
+        worker_promises.push(this.invokeWorker(messages));
 
       }else{
 
-        message_handler_promises = arrayutilities.map(messages, (message) => {
-
-          return this.forwardMessage(message);
-
+        arrayutilities.map(messages, (message) => {
+          worker_promises.push(this.invokeWorker(message));
         });
 
       }
 
-      return Promise.all(message_handler_promises).then(results => {
-        return results;
-      }).catch(error => {
-        du.error(error);
-        process.exit();
+      return Promise.all(worker_promises).then((worker_promises) => {
+        return worker_promises;
       });
 
     }
 
-    invokeAdditionalLambdas(messages){
+    invokeWorker(message){
 
-      du.debug('Invoke Additional Lambdas');
+      du.debug('invokeWorker');
 
-      if(arrayutilities.nonEmpty(messages) && messages.length >= this.message_limit){
+      let WorkerController = global.SixCRM.routes.include('workers', process.env.workerfunction);
 
-        du.warning('Invoking additonal Lambdas');
+      return WorkerController.execute(message).then(response => {
+        if(_.has(process.env, 'bulk') && process.env.bulk == 'true'){
+          return {worker_response_object: response, messages: message};
+        }
+        return {worker_response_object: response, message: message};
+      });
 
-        return lambda.invokeFunction({
-          function_name: lambda.buildLambdaName(process.env.name),
-          payload: JSON.stringify({}),
-          invocation_type: 'Event' //Asynchronous execution
+    }
+
+
+    handleWorkerResponseObjects(worker_response_objects){
+
+      du.debug('Handle Worker Response Objects');
+
+      let handle_worker_response_object_promises = arrayutilities.map(worker_response_objects, worker_response_object => {
+        return this.handleWorkerResponseObject(worker_response_object);
+      });
+
+      return Promise.all(handle_worker_response_object_promises)
+      .then(handle_worker_response_object_promises => {
+        return handle_worker_response_object_promises;
+      });
+
+    }
+
+    handleWorkerResponseObject(worker_response_object){
+
+      du.debug('Handle Worker Response Object');
+
+      return this.validateWorkerResponseObject(worker_response_object)
+      .then((worker_response_object) => this.handleError(worker_response_object))
+      .then((worker_response_object) => this.handleFailure(worker_response_object))
+      .then((worker_response_object) => this.handleSuccess(worker_response_object))
+      .then((worker_response_object) => this.handleNoAction(worker_response_object))
+      .then((worker_response_object) => this.handleDelete(worker_response_object));
+
+    }
+
+    validateWorkerResponseObject(compound_worker_response_object){
+
+      du.debug('Validate Worker Response Object');
+
+      mvu.validateModel(compound_worker_response_object, global.SixCRM.routes.path('model', 'workers/forwardmessage/compoundworkerresponseobject.json'));
+
+      if(objectutilities.getClassName(compound_worker_response_object.worker_response_object) !== 'WorkerResponse'){
+        eu.throwError('server', 'Unrecognized worker response: '+compound_worker_response_object.worker_response_object);
+      }
+
+      return Promise.resolve(compound_worker_response_object);
+
+    }
+
+    handleNoAction(compound_worker_response_object){
+
+      du.debug('Handle No Action');
+
+      if(compound_worker_response_object.worker_response_object.getCode() !== 'noaction'){
+        return Promise.resolve(compound_worker_response_object);
+      }
+
+      //do nothing anyhow...
+
+      return Promise.resolve(compound_worker_response_object);
+
+    }
+
+    handleFailure(compound_worker_response_object){
+
+      du.debug('Handle Failure');
+
+      if(compound_worker_response_object.worker_response_object.getCode() !== 'fail'){
+        return Promise.resolve(compound_worker_response_object);
+      }
+
+      if(!_.has(process.env, 'failure_queue')){
+        return Promise.resolve(compound_worker_response_object);
+      }
+
+      return this.pushMessagetoQueue({body: compound_worker_response_object.message, queue: process.env.failure_queue})
+      .then(() => { return compound_worker_response_object; });
+
+    }
+
+    handleError(compound_worker_response_object){
+
+      du.debug('Handle Error');
+
+      if(compound_worker_response_object.worker_response_object.getCode() !== 'error'){
+        return Promise.resolve(compound_worker_response_object);
+      }
+
+      if(!_.has(process.env, 'error_queue')){
+        return Promise.resolve(compound_worker_response_object);
+      }
+
+      return this.pushMessagetoQueue({body: compound_worker_response_object.message, queue: process.env.error_queue})
+      .then(() => { return compound_worker_response_object; });
+
+    }
+
+    handleSuccess(compound_worker_response_object){
+
+      du.debug('Handle Success');
+
+      if(compound_worker_response_object.worker_response_object.getCode() !== 'success'){
+        return Promise.resolve(compound_worker_response_object);
+      }
+
+      if(!_.has(process.env, 'destination_queue')){
+        return Promise.resolve(compound_worker_response_object);
+      }
+
+      return this.pushMessagetoQueue({body: compound_worker_response_object.message, queue: process.env.destination_queue})
+      .then(() => { return compound_worker_response_object; });
+
+    }
+
+    handleDelete(compound_worker_response_object){
+
+      du.debug('Handle Delete');
+
+      if(_.contains(['success', 'fail', 'error'], compound_worker_response_object.worker_response_object.getCode())){
+        return this.deleteMessage({
+          queue: process.env.origin_queue,
+          receipt_handle: this.getReceiptHandle(compound_worker_response_object.message)
         }).then(() => {
-          return messages;
+          return compound_worker_response_object;
         });
+      }else{
+
+        du.debug('Non-delete type: '+compound_worker_response_object.worker_response_object.getCode());
 
       }
 
-      du.warning('No additonal Lambdas');
-
-      return Promise.resolve(messages);
-
-    }
-
-    validateMessages(messages){
-
-      du.debug('Validate Messages');
-
-      mvu.validateModel(messages, global.SixCRM.routes.path('model', 'workers/forwardmessage/sqsmessages.json'), null, true);
-
-      return Promise.resolve(messages);
-
-    }
-
-    getMessages(){
-
-      du.debug('Get Messages');
-
-      return sqs.receiveMessages({queue: process.env.origin_queue, limit: this.message_limit}).then(results => {
-        du.info(results);
-        return results;
-      });
-
-    }
-
-    validateRequest(){
-
-      du.debug('Validate Request');
-
-      objectutilities.hasRecursive(process, 'env.origin_queue', true);
-
-      objectutilities.hasRecursive(process, 'env.name', true);
-
-      objectutilities.hasRecursive(process, 'env.workerfunction', true);
-
-      return Promise.resolve(true);
-
-    }
-
-    markResponse(response, code){
-
-      du.debug('Mark Response');
-
-      if(!_.has(response, 'result')){
-
-        response.result = this.messages[code];
-
-      }
-
-      return response;
+      return Promise.resolve(compound_worker_response_object);
 
     }
 

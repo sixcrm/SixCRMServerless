@@ -6,16 +6,14 @@ var forwardMessageController = global.SixCRM.routes.include('controllers', 'work
 /* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.forwardmessage = (event, context, callback) => {
 
-    forwardMessageController.execute().then((response) => {
+  return forwardMessageController.execute().then(() => {
 
-        new LambdaResponse().issueResponse(200, {
-            message: response
-        }, callback);
+    new LambdaResponse().issueResponse(200, {}, callback);
 
-    }).catch((error) =>{
+  }).catch((error) =>{
 
-        new LambdaResponse().issueError(error.message, event, callback);
+    new LambdaResponse().issueError(error.message, event, callback);
 
-    });
+  });
 
 }

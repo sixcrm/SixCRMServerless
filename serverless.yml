@@ -102,7 +102,7 @@ functions:
 # State Machine Lambdas
 ########################
 
-# Movement Managers
+# Relays (forwardmessage)
 
   billtohold:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -111,11 +111,11 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      name: '${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_billtohold}'
+      name: 'billtohold'
       origin_queue: 'bill'
-      destination: 'hold'
+      destination_queue: 'hold'
       failure_queue: 'bill_failed'
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.billtohold}
+      workerfunction: 'processbilling'
 
   recovertohold:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -167,7 +167,6 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
       origin_queue: 'pending'
       destination_queue: 'shipped'
-
 
   shippedtodelivered:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -266,6 +265,19 @@ functions:
           rate: rate(5 minutes)
           enabled: true
 
+  createrebills:
+    handler: handlers/workers/createrebills/handler.createrebills
+    events:
+      - schedule:
+          rate: rate(2 hours)
+          enabled: true
+
+  pickrebill:
+    handler: handlers/workers/pickrebill/handler.pickrebill
+    events:
+      - schedule:
+          rate: rate(2 hours)
+          enabled: true
 
   #sesnotifications:
   #  handler: handlers/workers/sesnotifications/handler.sesnotifications
@@ -285,55 +297,6 @@ functions:
   #    slackChannel: ${file(./config/${opt:stage}/site.yml):slack.channel}
   #    kmsEncryptedHookUrl: ${file(./config/${opt:stage}/site.yml):slack.kms_encrypted_hook_url}
 
-  indexentities:
-    handler: handlers/workers/indexentities/handler.indexentities
-
-  createrebills:
-    handler: handlers/workers/createrebills/handler.createrebills
-    events:
-      - schedule:
-          rate: rate(2 hours)
-          enabled: true
-
-  pickrebill:
-    handler: handlers/workers/pickrebill/handler.pickrebill
-    events:
-      - schedule:
-          rate: rate(2 hours)
-          enabled: true
-
-  sendnotifications:
-    handler: handlers/workers/sendnotifications/handler.sendnotifications
-
-  processbilling:
-    handler: handlers/workers/processbilling/handler.processbilling
-
-  shipproduct:
-    handler: handlers/workers/shipproduct/handler.shipproduct
-
-  confirmshipped:
-    handler: handlers/workers/confirmshipped/handler.confirmshipped
-
-  confirmdelivered:
-    handler: handlers/workers/confirmdelivered/handler.confirmdelivered
-    environment:
-      usps_user_id: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.user_id}
-      usps_password: ${file(./config/${opt:stage}/site.yml):shipping_providers.usps.password}
-
-  archivedelivered:
-    handler: handlers/workers/archive/handler.archive
-    environment:
-      archivefilter: 'ALL'
-
-  archivehold:
-    handler: handlers/workers/archive/handler.archive
-    environment:
-      archivefilter: 'NOSHIP'
-
-  archiverecover:
-    handler: handlers/workers/archive/handler.archive
-    environment:
-      archivefilter: 'TWOATTEMPTS'
 
 ########################
 # Transaction Endpoints  (initial customer entrypoint)

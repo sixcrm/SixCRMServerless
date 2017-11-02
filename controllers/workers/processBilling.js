@@ -12,20 +12,16 @@ const workerController = global.SixCRM.routes.include('controllers', 'workers/wo
 const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
+//Technical Debt:  Need to either mark the rebill with the attempt number or update the method which checks the rebill for existing failed attempts (better idea.)
 class processBillingController extends workerController {
 
   constructor(){
     super();
 
-    this.messages = {
-      success: 'BILLED',
-      failed: 'FAILED'
-    };
-
     this.parameter_definition = {
       execute: {
         required: {
-          event: 'event'
+          message: 'message'
         },
         optional:{}
       }
@@ -47,14 +43,13 @@ class processBillingController extends workerController {
 
   }
 
-  execute(event){
+  execute(message){
 
     du.debug('Execute');
 
-    return this.setParameters({argumentation: {event: event}, action: 'execute'})
+    return this.setParameters({argumentation: {message: message}, action: 'execute'})
     .then(() => this.acquireRebill())
     .then(() => this.process())
-    //.then(() => this.postProcessing())
     .then(() => this.respond());
 
   }
@@ -103,68 +98,12 @@ class processBillingController extends workerController {
 
     du.debug('Respond');
 
-    return Promise.resolve(true);
-
-  }
-
-  /*
-  postProcessing(){
-
-    du.debug('Post Processing');
-
-    return this.evaluateRegisterResponse()
-    .then(() => this.markRebill());
-
-  }
-  */
-
-
-
-  /*
-  evaluateRegisterResponse(){
-
-    du.debug('Evaluate Register Response');
-
     let register_response = this.parameters.get('registerresponse');
 
-    if(register_response.message == 'success'){
-      this.parameters.set('responsemessage', this.messages.success);
-    }else{
-      this.parameters.set('responsemessage', this.messages.failed);
-    }
-
-    return Promise.resolve(true);
+    //validate register response
+    return super.response('success');
 
   }
-  */
-
-  /*
-  //Technical Debt:  This methodology could lead to state issues.
-  //Technical Debt:  We should create a updateField method in the Entity class to address exactly this sort of functionality across
-  markRebill(){
-
-    du.debug('Mark Rebill');
-
-    let rebill = this.parameters.get('rebill');
-
-    let now = timestamp.createTimestampSeconds();
-
-    if(_.has(rebill, 'first_attempt')){
-
-      rebill.second_attempt = now;
-
-    }else{
-
-      rebill.first_attempt = now;
-
-    }
-
-    return rebillController.update({entity: rebill}).then(() => {
-      return true;
-    });
-
-  }
-  */
 
 }
 

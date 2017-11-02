@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/compoundworkerresponseobject.json",
+	"title": "Compound Worker Response Object",
+	"type": "object",
+  "properties":{
+    "worker_response_object":{
+      "type":"object"
+    },
+    "message":{"$ref": "./sqsmessage.json"},
+    "messages":{
+      "type":"array",
+      "items":{"$ref": "./sqsmessage.json"}
+    }
+  },
+  "oneOf":[
+    {"required":["worker_response_object", "message"]},
+    {"required":["worker_response_object", "messages"]}
+  ]
+}

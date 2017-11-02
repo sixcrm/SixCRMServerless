@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/processenv.json",
+	"title": "Process Env",
+	"type": "object",
+  "properties":{
+    "origin_queue":{
+      "type":"string"
+    },
+    "name":{
+      "type":"string"
+    },
+    "worker_function":{
+      "type":"string"
+    },
+    "destination_queue":{
+      "type":"string"
+    },
+    "failure_queue":{
+      "type":"string"
+    },
+    "bulk":{
+      "type":"string"
+    }
+  },
+  "required":["origin_queue", "name", "worker_function"]
+}

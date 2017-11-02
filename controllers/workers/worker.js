@@ -1,13 +1,12 @@
 'use strict';
 const _ = require('underscore');
-const Validator = require('jsonschema').Validator;
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-const rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
-const sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+const WorkerResponse = global.SixCRM.routes.include('controllers','workers/WorkerResponse.js');
+const WorkerRequest = global.SixCRM.routes.include('controllers','workers/WorkerRequest.js');
 
 module.exports = class workerController {
 
@@ -85,36 +84,45 @@ module.exports = class workerController {
 
     }
 
+    //Technical Debt: Refactor to the reponse class
     createForwardMessage(event){
-        return this.parseInputEvent(event).then((id) => {
-            return JSON.stringify({id:id});
-        });
+      return this.parseInputEvent(event).then((id) => {
+        return JSON.stringify({id:id});
+      });
     }
 
+    //Technical Debt: This is messy
     acquireRebill(event){
 
-        return this.parseInputEvent(event).then((id) => {
+      return this.parseInputEvent(event).then((id) => {
 
-			//let's add a hydration method here...
-            return rebillController.get({id: id}).then((rebill) => {
+        const rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
 
-                return this.validateRebill(rebill).then(() => rebill);
+        return rebillController.get({id: id}).then((rebill) => {
 
-            });
+          this.validateRebill(rebill);
+
+          return rebill;
 
         });
+
+      });
 
 
     }
 
+    //Technical Debt:  This is messy
     acquireSession(event){
 
         return this.parseInputEvent(event).then((id) => {
 
-			//let's add a hydration method here...
+          const sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+
             return sessionController.get({id: id}).then((session) => {
 
-                return this.validateSession(session).then(() => session);
+                this.validateSession(session)
+
+                return session;
 
             });
 
@@ -124,15 +132,20 @@ module.exports = class workerController {
 
     validateRebill(rebill){
 
-        return Promise.resolve(
-            mvu.validateModel(rebill, global.SixCRM.routes.path('model', 'entities/rebill.json')));
+      mvu.validateModel(rebill, global.SixCRM.routes.path('model', 'entities/rebill.json'));
 
     }
 
     validateSession(session){
 
-        return Promise.resolve(
-            mvu.validateModel(session, global.SixCRM.routes.path('model', 'entities/session.json')));
+      mvu.validateModel(session, global.SixCRM.routes.path('model', 'entities/session.json'));
+
+    }
+
+    respond(response){
+
+      return new WorkerResponse(response);
+
     }
 
 }
