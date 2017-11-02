@@ -3,7 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe.only('lib/notification-provider', () => {
+describe('lib/notification-provider', () => {
 
     before(() => {
         mockery.enable({
