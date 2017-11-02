@@ -231,5 +231,37 @@ describe('lib/dynamodb-utilities', () => {
                 done();
             });
         });
+
+        it('should create disjunction parameters when existing parameters are undefined', () => {
+            const result = DynamoDBUtilities.appendDisjunctionQueryParameters(undefined, 'type', ['type1', 'type2']);
+
+            expect(result.expression_attribute_names).to.deep.equal({'#type': 'type'});
+            expect(result.expression_attribute_values).to.deep.equal({':typev0': 'type1', ':typev1': 'type2'});
+            expect(result.filter_expression).to.equal('(#type = :typev0 OR #type = :typev1)');
+        });
+
+        it('should create disjunction parameters when existing parameters are incomplete', () => {
+            let query_parameters = {
+                filter_expression: 'sample_query AND ',
+            };
+            const result = DynamoDBUtilities.appendDisjunctionQueryParameters(query_parameters, 'type', ['type1', 'type2']);
+
+            expect(result.expression_attribute_names).to.deep.equal({'#type': 'type'});
+            expect(result.expression_attribute_values).to.deep.equal({':typev0': 'type1', ':typev1': 'type2'});
+            expect(result.filter_expression).to.equal('sample_query AND (#type = :typev0 OR #type = :typev1)');
+        });
+
+        it('should create disjunction parameters when existing parameters are complete', () => {
+            let query_parameters = {
+                expression_attribute_names: {'#sample': 'sample'},
+                expression_attribute_values: {':samplev': 'sample'},
+                filter_expression: 'sample_query AND '
+            };
+            const result = DynamoDBUtilities.appendDisjunctionQueryParameters(query_parameters, 'type', ['type1', 'type2']);
+
+            expect(result.expression_attribute_names).to.deep.equal({'#sample': 'sample','#type': 'type'});
+            expect(result.expression_attribute_values).to.deep.equal({':samplev': 'sample', ':typev0': 'type1', ':typev1': 'type2'});
+            expect(result.filter_expression).to.equal('sample_query AND (#type = :typev0 OR #type = :typev1)');
+        })
     });
 });
