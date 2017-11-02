@@ -79,6 +79,11 @@ class notificationController extends entityController {
 
       if(!_.isUndefined(user) && user == true){
         query_parameters.filter_expression += ' AND #user = :userv';
+
+        if (!_.has(query_parameters, 'expression_attribute_names')) {
+            query_parameters.expression_attribute_names = {};
+        }
+
         query_parameters.expression_attribute_names['#user'] = 'user';
         query_parameters.expression_attribute_values[':userv'] = this.getID(global.user)
       }
