@@ -10,7 +10,7 @@
     "name":{
       "type":"string"
     },
-    "worker_function":{
+    "workerfunction":{
       "type":"string"
     },
     "destination_queue":{
@@ -23,5 +23,5 @@
       "type":"string"
     }
   },
-  "required":["origin_queue", "name", "worker_function"]
+  "required":["origin_queue", "name", "workerfunction"]
 }

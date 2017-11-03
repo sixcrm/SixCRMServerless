@@ -3,6 +3,8 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 const _ = require('underscore');
+const uuidV4 = require('uuid/v4');
+
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -30,6 +32,7 @@ function getValidWorkerResponse(response){
 function getValidMockWorker(){
 
   let WorkerResponse = global.SixCRM.routes.include('workers', 'WorkerResponse.js');
+
   class aWorker {
     constructor(){
 
@@ -49,13 +52,13 @@ function getValidMessages(){
       "MessageId": "f0b56385-ff0d-46d9-8faa-328c0f65ad1a",
       "ReceiptHandle": "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
       "MD5OfBody": "d9e803e2c0e1752dcf57050a2b94f5d9",
-      "Body": "abc123"
+      "Body": JSON.stringify({id: uuidV4()})
     },
     {
       "MessageId": "fa969951-ae5f-4ff9-8b1b-1085a407f0cd",
       "ReceiptHandle": "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
       "MD5OfBody": "d9e803e2c0e1752dcf57050a2b94f5d9",
-      "Body": "xyz789"
+      "Body": JSON.stringify({id: uuidV4()})
     }
   ];
 }
@@ -137,7 +140,7 @@ describe('workers/forwardMessage', () => {
 
       }catch(error){
 
-        expect(error.message).to.equal('[500] One or more validation errors occurred.');
+        expect(error.message).to.have.string('[500] One or more validation errors occured:');
 
       };
 
@@ -155,7 +158,7 @@ describe('workers/forwardMessage', () => {
 
       }catch(error){
 
-        expect(error.message).to.equal('[500] One or more validation errors occurred.');
+        expect(error.message).to.have.string('[500] One or more validation errors occured:');
 
       };
 
@@ -174,7 +177,7 @@ describe('workers/forwardMessage', () => {
 
       }catch(error){
 
-        expect(error.message).to.equal('[500] One or more validation errors occurred.');
+        expect(error.message).to.have.string('[500] One or more validation errors occured:');
 
       };
 
@@ -205,18 +208,19 @@ describe('workers/forwardMessage', () => {
 
       process.env.origin_queue = 'dummy_queue';
 
+      let valid_messages = getValidMessages();
+
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
         receiveMessages: ({queue, limit}) => {
-          let messages = getValidMessages();
 
-          return Promise.resolve(messages);
+          return Promise.resolve(valid_messages);
         }
       });
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
       return forwardMessageController.getMessages().then((messages) => {
-        expect(messages).to.deep.equal(getValidMessages());
+        expect(messages).to.deep.equal(valid_messages);
       });
 
     });
@@ -342,10 +346,10 @@ describe('workers/forwardMessage', () => {
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      let messages = getValidMessages();
+      let valid_messages = getValidMessages();
 
-      return forwardMessageController.invokeAdditionalLambdas(messages).then((messages) => {
-        expect(messages).to.deep.equal(getValidMessages());
+      return forwardMessageController.invokeAdditionalLambdas(valid_messages).then((messages) => {
+        expect(messages).to.deep.equal(valid_messages);
       });
 
     });
@@ -429,6 +433,7 @@ describe('workers/forwardMessage', () => {
     it('succeeds for valid messages of length 0', () => {
 
       let mock_worker = getValidMockWorker();
+
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
       process.env.workerfunction = 'aWorker.js';
 
@@ -446,6 +451,7 @@ describe('workers/forwardMessage', () => {
     it('succeeds for valid messages of length less than limit', () => {
 
       let mock_worker = getValidMockWorker();
+
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
       process.env.workerfunction = 'aWorker.js';
 
@@ -475,6 +481,7 @@ describe('workers/forwardMessage', () => {
     it('succeeds for valid messages of length equal to limit', () => {
 
       let mock_worker = getValidMockWorker();
+
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
       process.env.workerfunction = 'aWorker.js';
 
@@ -504,6 +511,7 @@ describe('workers/forwardMessage', () => {
     xit('handles errors', () => {
 
       let mock_worker = getValidMockWorker();
+
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
       process.env.workerfunction = 'aWorker.js';
 
@@ -531,6 +539,7 @@ describe('workers/forwardMessage', () => {
     it('succeeds for when bulk is set', () => {
 
       let mock_worker = getValidMockWorker();
+
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
       process.env.workerfunction = 'aWorker.js';
 

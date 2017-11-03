@@ -10,9 +10,7 @@
     "ReceiptHandle":{
       "type":"string"
     },
-    "Body":{
-      "type":"string"
-    },
+    "Body":{"$ref": "./sqsmessagebody.json"},
     "MD5OfBody":{
       "type":"string"
     }

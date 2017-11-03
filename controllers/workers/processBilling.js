@@ -29,7 +29,7 @@ class processBillingController extends workerController {
     }
 
     this.parameter_validation = {
-      event: global.SixCRM.routes.path('model', 'workers/processBilling/event.json'),
+      message: global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
       rebill: global.SixCRM.routes.path('model', 'entities/rebill.json'),
       registerresponse: global.SixCRM.routes.path('model', 'functional/register/response.json')
     }
@@ -49,8 +49,18 @@ class processBillingController extends workerController {
 
     return this.setParameters({argumentation: {message: message}, action: 'execute'})
     .then(() => this.acquireRebill())
+    .then((rebill) => {
+
+      if(_.isObject(rebill)){
+        this.parameters.set('rebill', rebill);
+      }
+
+    })
     .then(() => this.process())
-    .then(() => this.respond());
+    .then(() => this.respond())
+    .catch((error) => {
+      return super.respond('error', error.message);
+    })
 
   }
 
@@ -58,17 +68,17 @@ class processBillingController extends workerController {
 
     du.debug('Acquire Rebill');
 
-    let event = this.parameters.get('event');
+    let message = this.parameters.get('message');
 
-    return super.acquireRebill(event);
+    return super.acquireRebill(message);
 
   }
 
-  setParameters(thing){
+  setParameters(parameters_object){
 
     du.debug('Set Parameters');
 
-    this.parameters.setParameters(arguments[0]);
+    this.parameters.setParameters(parameters_object);
 
     return Promise.resolve(true);
 

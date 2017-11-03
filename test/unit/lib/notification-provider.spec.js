@@ -42,7 +42,7 @@ describe('lib/notification-provider', () => {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
             } catch(error) {
                 // then
-                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
+                return expect(error.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 
@@ -57,7 +57,7 @@ describe('lib/notification-provider', () => {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
             } catch(error) {
                 // then
-                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
+                return expect(error.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 
@@ -72,7 +72,7 @@ describe('lib/notification-provider', () => {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
             } catch(error) {
                 // then
-                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
+                return expect(error.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 
@@ -87,7 +87,7 @@ describe('lib/notification-provider', () => {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
             } catch(error) {
                 // then
-                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
+                return expect(error.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 
@@ -102,7 +102,7 @@ describe('lib/notification-provider', () => {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
             } catch(error) {
                 // then
-                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
+                return expect(error.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 
@@ -141,7 +141,7 @@ describe('lib/notification-provider', () => {
                 return NotificationProvider.createNotificationsForAccount(notification_object);
             } catch (error) {
                 // then
-                return expect(error.message).to.equal('[500] One or more validation errors occurred.');
+                return expect(error.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 

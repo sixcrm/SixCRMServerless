@@ -115,7 +115,8 @@ functions:
       origin_queue: 'bill'
       destination_queue: 'hold'
       failure_queue: 'bill_failed'
-      workerfunction: 'processbilling'
+      workerfunction: 'processBilling.js'
+      error_queue: 'some_queue'
 
   recovertohold:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -124,7 +125,7 @@ functions:
           rate: cron(0 1 ? * FRI *)
           enabled: true
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertohold}
+      name: 'recovertohold'
       origin_queue: 'recover'
       destination_queue: 'hold'
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
@@ -136,12 +137,11 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtopending}
+      name: 'holdtopending'
       origin_queue: 'hold'
       destination_queue: 'pending'
       failure_queue: 'pending_failed'
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtopending}
-
+      workerfunction: 'shipProduct.js'
 
   pendingfailedtopending:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -154,7 +154,6 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
       origin_queue: 'pending_failed'
       destination_queue: 'pending'
-
 
   pendingtoshipped:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -179,9 +178,6 @@ functions:
       workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
       origin_queue: 'shipped'
       destination_queue: 'delivered'
-
-
-# Archive Methods (Exit Points)
 
   deliveredtoarchive:
     handler: handlers/workers/forwardmessage/handler.forwardmessage
@@ -257,19 +253,12 @@ functions:
       archivefilter: 'ALL'
 
 # Workers
-
+#These do not use the forwardMessage controller because thier datasources are not SQS
   randomredshiftdata:
     handler: handlers/workers/randomredshiftdata/handler.randomredshiftdata
     events:
       - schedule:
           rate: rate(5 minutes)
-          enabled: true
-
-  createrebills:
-    handler: handlers/workers/createrebills/handler.createrebills
-    events:
-      - schedule:
-          rate: rate(2 hours)
           enabled: true
 
   pickrebill:
@@ -401,6 +390,7 @@ functions:
 ########################
 # Resource definitions for required system resources
 ########################
+#Technical Debt:  Move this to the deployment directory
 
 resources:
   Resources:

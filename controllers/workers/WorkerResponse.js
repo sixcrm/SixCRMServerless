@@ -69,4 +69,20 @@ module.exports = class WorkerResponse{
 
   }
 
+  setAdditionalInformation(additional_information){
+
+    this.additional_information = additional_information;
+
+  }
+
+  getAdditionalInformation(){
+
+    if(_.has(this, 'additional_information')){
+      return this.additional_information;
+    }
+
+    return null;
+
+  }
+
 }

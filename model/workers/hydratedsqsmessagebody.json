@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/hydratedsqsmessagebody.json",
+	"title": "Hydrated SQS Message Body",
+	"type": "object",
+  "properties":{
+    "id":{"$ref": "../definitions/uuidv4.json"},
+    "referring_workerfunction":{
+      "type":"string"
+    },
+    "additional_information":{
+      "type":"string"
+    }
+  },
+  "required":["id"]
+}

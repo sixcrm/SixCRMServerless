@@ -19,7 +19,7 @@ class forwardMessageController extends relayController {
     }
 
     //Technical Debt: Test this
-    execute(event){
+    execute(){
 
       return this.validateEnvironment() //Make sure that process.env has all necessary parameters
       .then(() => this.getMessages()) //Get messages from origin queue
@@ -31,15 +31,19 @@ class forwardMessageController extends relayController {
           return this.invokeAdditionalLambdas(messages) //Trigger another instance of this to handle additional messages
           .then((messages) => this.forwardMessagesToWorkers(messages)) //Send messages to configured worker function
 
-        }
+        }else{
 
-        return [];
+          du.highlight('No messages in queue!');
+          return [];
+
+        }
 
       })
       .then((worker_response_objects) => this.handleWorkerResponseObjects(worker_response_objects))
       .then(() => this.respond('success'))
       .catch((error) => {
-        this.response('error');
+        du.error(error);
+        this.respond('error');
       });
 
     }
@@ -75,10 +79,13 @@ class forwardMessageController extends relayController {
       let WorkerController = global.SixCRM.routes.include('workers', process.env.workerfunction);
 
       return WorkerController.execute(message).then(response => {
+
         if(_.has(process.env, 'bulk') && process.env.bulk == 'true'){
           return {worker_response_object: response, messages: message};
         }
+
         return {worker_response_object: response, message: message};
+
       });
 
     }
@@ -134,6 +141,8 @@ class forwardMessageController extends relayController {
         return Promise.resolve(compound_worker_response_object);
       }
 
+      du.info('Is noaction.');
+
       //do nothing anyhow...
 
       return Promise.resolve(compound_worker_response_object);
@@ -148,11 +157,21 @@ class forwardMessageController extends relayController {
         return Promise.resolve(compound_worker_response_object);
       }
 
+      du.highlight('Is fail.');
+
       if(!_.has(process.env, 'failure_queue')){
+
+        du.warning('Fail Queue Not Configured');
+
         return Promise.resolve(compound_worker_response_object);
+
       }
 
-      return this.pushMessagetoQueue({body: compound_worker_response_object.message, queue: process.env.failure_queue})
+      let body = this.createDiagnosticMessageBody(compound_worker_response_object);
+
+      du.info("Updated Message Body: "+body);
+
+      return this.pushMessagetoQueue({body: body, queue: process.env.failure_queue})
       .then(() => { return compound_worker_response_object; });
 
     }
@@ -165,11 +184,21 @@ class forwardMessageController extends relayController {
         return Promise.resolve(compound_worker_response_object);
       }
 
+      du.highlight('Is error.');
+
       if(!_.has(process.env, 'error_queue')){
+
+        du.warning('Error Queue Not Configured');
+
         return Promise.resolve(compound_worker_response_object);
+
       }
 
-      return this.pushMessagetoQueue({body: compound_worker_response_object.message, queue: process.env.error_queue})
+      let body = this.createDiagnosticMessageBody(compound_worker_response_object);
+
+      du.info("Updated Message Body: "+body);
+
+      return this.pushMessagetoQueue({body: body, queue: process.env.error_queue})
       .then(() => { return compound_worker_response_object; });
 
     }
@@ -182,11 +211,17 @@ class forwardMessageController extends relayController {
         return Promise.resolve(compound_worker_response_object);
       }
 
+      du.info('Is success.');
+
       if(!_.has(process.env, 'destination_queue')){
+
+        du.warning('Error Queue Not Configured');
+
         return Promise.resolve(compound_worker_response_object);
+
       }
 
-      return this.pushMessagetoQueue({body: compound_worker_response_object.message, queue: process.env.destination_queue})
+      return this.pushMessagetoQueue({body: compound_worker_response_object.message.Body, queue: process.env.destination_queue})
       .then(() => { return compound_worker_response_object; });
 
     }

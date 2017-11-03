@@ -31,7 +31,7 @@ describe('createRebills', function () {
         return ModelGenerator.randomEntity('session').then((session) => {
 
             return fn.execute(session).catch((error) => {
-                expect(error.message).to.be.equal('[500] One or more validation errors occurred.');
+                expect(error.message).to.be.have.string('[500] One or more validation errors occured:');
             });
 
         });

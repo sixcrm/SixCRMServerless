@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const RelayResponse = global.SixCRM.routes.include('controllers','workers/RelayResponse.js');
 
@@ -46,7 +47,7 @@ module.exports = class relayController {
 
       du.debug('Validate Messages');
 
-      mvu.validateModel(messages, global.SixCRM.routes.path('model', 'workers/forwardmessage/sqsmessages.json'), null, true);
+      mvu.validateModel(messages, global.SixCRM.routes.path('model', 'workers/sqsmessages.json'));
 
       return Promise.resolve(messages);
 
@@ -57,7 +58,6 @@ module.exports = class relayController {
       du.debug('Get Messages');
 
       return this.sqsutilities.receiveMessages({queue: process.env.origin_queue, limit: this.message_limit}).then(results => {
-        du.info(results);
         return results;
       });
 
@@ -121,6 +121,34 @@ module.exports = class relayController {
       }
 
       eu.throwError('server', 'Message does not have a receipt handle.');
+
+    }
+
+    createDiagnosticMessageBody(compound_worker_response_object){
+
+      du.debug('Append Diagnostic Information');
+
+      objectutilities.hasRecursive(compound_worker_response_object, 'message.Body', true);
+
+      let message_body = compound_worker_response_object.message.Body;
+
+      try{
+        message_body = JSON.parse(message_body);
+      }catch(error){
+        return message_body;
+      }
+
+      let additional_information = compound_worker_response_object.worker_response_object.getAdditionalInformation();
+
+      if(!_.isNull(additional_information)){
+        message_body.additional_information = additional_information;
+      }
+
+      objectutilities.hasRecursive(process, 'env.workerfunction', true);
+
+      message_body.referring_workerfunction = global.SixCRM.routes.path('workers',process.env.workerfunction);
+
+      return JSON.stringify(message_body);
 
     }
 

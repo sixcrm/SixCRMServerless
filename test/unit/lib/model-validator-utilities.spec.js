@@ -12,7 +12,7 @@ let schemaWithNestedReferences = `${__dirname}/model/entity.json`;
 describe('lib/model-validator-utilities', () => {
 
     describe('validateModel', () => {
-        it('validates valid model without references', () => {
+        it.only('validates valid model without references', () => {
 
             let validModel = {
                 count: 0, order: 'asc', limit: 0, offset: 0
@@ -30,7 +30,7 @@ describe('lib/model-validator-utilities', () => {
             try {
                 mvu.validateModel(invalidModel, schemaWithNoReferences);
             } catch (e) {
-                expect(e.message).to.equal('[500] One or more validation errors occurred.');
+                expect(e.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 
@@ -48,7 +48,7 @@ describe('lib/model-validator-utilities', () => {
             try {
                 mvu.validateModel(invalidModel, schemaWithNoReferences);
             } catch (e) {
-                expect(e.message).to.equal('[500] One or more validation errors occurred.');
+                expect(e.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 
@@ -74,7 +74,7 @@ describe('lib/model-validator-utilities', () => {
             try {
                 mvu.validateModel(invalidModel, schemaWithNoReferences);
             } catch (e) {
-                expect(e.message).to.equal('[500] One or more validation errors occurred.');
+                expect(e.message).to.have.string('[500] One or more validation errors occured:');
             }
         });
 
@@ -119,7 +119,7 @@ describe('lib/model-validator-utilities', () => {
                         try {
                             mvu.validateModel(invalid_model, schema);
                         } catch (e) {
-                            expect(e.message).to.equal('[500] One or more validation errors occurred.');
+                            expect(e.message).to.have.string('[500] One or more validation errors occured:');
                         }
                     });
 

@@ -1,6 +1,7 @@
 'use strict'
 const _ = require('underscore');
 const chai = require("chai");
+const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -66,7 +67,20 @@ function getValidMessages(){
     MD5OfBody:"SomeMD5"
   };
 
-  return [a_message, JSON.stringify(a_message)];
+  return [
+    {
+      MessageId:"someMessageID",
+      ReceiptHandle:"SomeReceiptHandle",
+      Body: JSON.stringify({id:uuidV4()}),
+      MD5OfBody:"SomeMD5"
+    },
+    {
+      MessageId:"someMessageID",
+      ReceiptHandle:"SomeReceiptHandle",
+      Body: JSON.stringify({id:uuidV4()}),
+      MD5OfBody:"SomeMD5"
+    }
+  ];
 
 }
 
@@ -130,25 +144,21 @@ describe('controllers/workers/processBilling', () => {
 
     it('successfully sets parameters', () => {
 
-      let valid_messages = getValidMessages();
+      let valid_message = getValidMessages().pop();
 
       let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
 
-      arrayutilities.map(valid_messages, valid_message => {
+      return processBillingController.setParameters({argumentation: {message: valid_message}, action: 'execute'}).then(() => {
 
-        processBillingController.setParameters({argumentation: {message: valid_message}, action: 'execute'}).then(() => {
-          let the_message = processBillingController.parameters.get('message');
+        let the_message = processBillingController.parameters.get('message');
 
-          expect(the_message).to.equal(valid_message);
-
-        });
+        expect(the_message).to.equal(valid_message);
 
       });
 
     });
 
   });
-
 
   //Technical Debt:  Incomplete
   describe('process', () => {

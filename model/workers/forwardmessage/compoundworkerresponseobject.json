@@ -7,10 +7,10 @@
     "worker_response_object":{
       "type":"object"
     },
-    "message":{"$ref": "./sqsmessage.json"},
+    "message":{"$ref": "../sqsmessage.json"},
     "messages":{
       "type":"array",
-      "items":{"$ref": "./sqsmessage.json"}
+      "items":{"$ref": "../sqsmessage.json"}
     }
   },
   "oneOf":[

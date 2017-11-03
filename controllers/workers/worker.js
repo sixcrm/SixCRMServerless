@@ -4,6 +4,8 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
 
 const WorkerResponse = global.SixCRM.routes.include('controllers','workers/WorkerResponse.js');
 const WorkerRequest = global.SixCRM.routes.include('controllers','workers/WorkerRequest.js');
@@ -12,89 +14,40 @@ module.exports = class workerController {
 
     constructor(){
 
+      //Technical Debt: DANGER!
+      permissionutilities.setPermissions('*',['*/*'],[])
+
     }
 
-    parseInputEvent(event, return_field){
+    parseMessageBody(message, response_field){
 
-      du.debug('Parse Input Event');
+      du.debug('Parse Input Message');
 
-      return_field = (_.isUndefined(return_field))?'id':return_field;
+        response_field = (_.isUndefined(response_field))?'id':response_field;
 
-      let return_object = null;
-
-      if(_.isObject(event)){
-
-        if(_.isString(return_field) && _.has(event, return_field)){
-
-          return_object = event[return_field];
-
-        }else if(_.has(event, "Body")){
-
-          try{
-
-            let parsed_event = JSON.parse(event.Body);
-
-            if(_.isString(return_field) && _.has(parsed_event, return_field)){
-
-              return_object = parsed_event[return_field];
-
-            }else{
-
-              return_object = parsed_event;
-
-            }
-
-          }catch(error){
-
-            return Promise.reject(error);
-
-          }
-
-        }else{
-
-          return_object = event;
-
-        }
-
-        return Promise.resolve(return_object);
-
-      }else if(_.isString(event)){
-
-        let parsed_event = null;
+        let message_body;
 
         try{
-
-          parsed_event = JSON.parse(event);
-
+          message_body = JSON.parse(message.Body);
         }catch(error){
-
-          return Promise.reject(error);
-
+          du.error(error);
+          eu.throwError('server', 'Unable to parse message body: '+message.Body);
         }
 
-        if(!_.isNull(parsed_event)){
+        this.validateMessageBody(message_body);
 
-          return this.parseInputEvent(parsed_event, return_field);
+        objectutilities.has(message_body, response_field, true);
 
-        }
-
-      }
-
-      return Promise.reject(eu.getError('server','Unrecognized event format: '+event));
+        return Promise.resolve(message_body[response_field])
 
     }
 
-    //Technical Debt: Refactor to the reponse class
-    createForwardMessage(event){
-      return this.parseInputEvent(event).then((id) => {
-        return JSON.stringify({id:id});
-      });
-    }
+    acquireRebill(message){
 
-    //Technical Debt: This is messy
-    acquireRebill(event){
+      du.debug('Acquire Rebill');
 
-      return this.parseInputEvent(event).then((id) => {
+      return this.parseMessageBody(message, 'id')
+      .then(id => {
 
         const rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
 
@@ -108,43 +61,60 @@ module.exports = class workerController {
 
       });
 
-
     }
 
-    //Technical Debt:  This is messy
-    acquireSession(event){
+    acquireSession(message){
 
-        return this.parseInputEvent(event).then((id) => {
+      return this.parseMessageBody(message, 'id')
+      .then((id) => {
 
-          const sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+        const sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
 
-            return sessionController.get({id: id}).then((session) => {
+        return sessionController.get({id: id}).then((session) => {
 
-                this.validateSession(session)
+          this.validateSession(session);
 
-                return session;
-
-            });
+          return session;
 
         });
+
+      });
 
     }
 
     validateRebill(rebill){
 
-      mvu.validateModel(rebill, global.SixCRM.routes.path('model', 'entities/rebill.json'));
+      du.debug('Validate Rebill');
+
+      return mvu.validateModel(rebill, global.SixCRM.routes.path('model', 'entities/rebill.json'));
 
     }
 
     validateSession(session){
 
-      mvu.validateModel(session, global.SixCRM.routes.path('model', 'entities/session.json'));
+      du.debug('Validate Session');
+
+      return mvu.validateModel(session, global.SixCRM.routes.path('model', 'entities/session.json'));
 
     }
 
-    respond(response){
+    validateMessageBody(message_body){
 
-      return new WorkerResponse(response);
+      du.debug('Validate Message Body');
+
+      mvu.validateModel(message_body, global.SixCRM.routes.path('model', 'workers/hydratedsqsmessagebody.json'));
+
+    }
+
+    respond(response, additional_information){
+
+      response = new WorkerResponse(response);
+
+      if(!_.isUndefined(additional_information)){
+        response.setAdditionalInformation(additional_information);
+      }
+
+      return response;
 
     }
 
