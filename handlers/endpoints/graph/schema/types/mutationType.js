@@ -73,7 +73,6 @@ let userACLInputType = require('./useracl/userACLInputType');
 let userACLType = require('./useracl/userACLType');
 let userInputType  = require('./user/userInputType');
 let userInviteInputType = require('./userinvite/userInviteInputType');
-let userInviteResendInputType = require('./userinvite/userInviteResendInputType');
 let userInviteType = require('./userinvite/userInviteType');
 let userType = require('./user/userType');
 let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
@@ -157,18 +156,6 @@ module.exports.graphObj = new GraphQLObjectType({
                 const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
                 return userController.invite(userinvite.userinvite);
-            }
-        },
-        inviteresend:{
-            type: userInviteResendInputType.graphObj,
-            description: 'Resend pending invite.',
-            args: {
-                inviteresend: { type: userInviteInputType.graphObj}
-            },
-            resolve: (value, inviteresend) => {
-                const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-
-                return userController.inviteResend(inviteresend.inviteresend.acl);
             }
         },
         smtpvalidation: {
