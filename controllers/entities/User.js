@@ -732,13 +732,28 @@ class userController extends entityController {
 
                 return inviteutilities.invite(invite_parameters).then((link) => {
 
-                    return notificationProvider.createNotificationsForAccount({
-                        account: global.account,
-                        type: 'notification',
-                        category: 'invitation_sent',
-                        action: link,
-                        title: 'Invitation Sent',
-                        message: `User with email ${userinvite.email} has been invited to account ${account.name}.`
+                    du.debug('Creating pending ACL object.');
+
+                    let acl_object = {
+                        user: userinvite.email,
+                        account: account.id,
+                        role: role.id,
+                        pending: 'invitation sent'
+                    };
+
+                    du.debug('ACL object to create:', acl_object);
+
+                    return this.executeAssociatedEntityFunction('userACLController', 'create', {entity: acl_object}).then(() => {
+
+                        return notificationProvider.createNotificationsForAccount({
+                            account: global.account,
+                            type: 'notification',
+                            category: 'invitation_sent',
+                            action: link,
+                            title: 'Invitation Sent',
+                            message: `User with email ${userinvite.email} has been invited to account ${account.name}.`
+                        })
+
                     }).then(() => {
                         return resolve({link:link});
                     });
