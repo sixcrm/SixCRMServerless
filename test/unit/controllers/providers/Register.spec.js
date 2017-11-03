@@ -8,9 +8,50 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
+function getValidMerchantProvider(){
+
+  return {
+    id:"6c40761d-8919-4ad6-884d-6a46a776cfb9",
+    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    name:"NMI Account 1",
+    processor:{
+      name:"NMA",
+      id:"someIDValue"
+    },
+    processing:{
+      monthly_cap: 50000.00,
+      discount_rate:0.9,
+      transaction_fee:0.06,
+      reserve_rate: 0.5,
+      maximum_chargeback_ratio:0.17,
+      transaction_counts:{
+        daily:30,
+        monthly:30,
+        weekly:30
+      }
+    },
+    enabled:true,
+    gateway: {
+      name:"NMI",
+      username:"demo",
+      password:"password",
+    },
+    allow_prepaid:true,
+    accepted_payment_methods:["Visa", "Mastercard", "American Express"],
+    customer_service:{
+      email:"customer.service@mid.com",
+      url:"http://mid.com",
+      description:"Some string here..."
+    },
+    created_at:"2017-04-06T18:40:41.405Z",
+    updated_at:"2017-04-06T18:41:12.521Z"
+  };
+
+}
 function getValidCreditCard(){
   return {
     "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
@@ -141,6 +182,7 @@ function getValidTransactionObject(){
       "amount":34.99
     }],
     "type":"sale",
+    "result":"success",
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
   };
@@ -160,6 +202,7 @@ function getValidAssociatedTransactions(){
       "amount":34.99
     }],
     "type":"reverse",
+    "result":"success",
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
   },
@@ -176,6 +219,7 @@ function getValidAssociatedTransactions(){
       "amount":34.99
     }],
     "type":"refund",
+    "result":"success",
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
   }];
@@ -810,7 +854,7 @@ describe('controllers/providers/Register.js', () => {
 
   describe('createTransaction', () => {
 
-    it('creates a transaction for successes', () => {
+    it('creates a transaction for successful sale', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index, callback) => {
@@ -833,13 +877,120 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
-      assumePermissionedRole()
+      assumePermissionedRole();
 
       let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
       let processor_response = getProcessorResponseObject();
 
+      registerController.parameters.set('rebill', getValidRebill());
+      registerController.parameters.set('transaction_type', 'sale');
+      registerController.parameters.set('amount', 10.00);
+      registerController.parameters.set('processor_response', processor_response);
+      registerController.parameters.set('merchantprovider', getValidMerchantProvider());
+      registerController.parameters.set('transaction_products', transaction.products);
+
+      return registerController.createTransaction().then(() => {
+
+        let result_transaction = registerController.parameters.get('result_transaction');
+
+        expect(result_transaction).to.have.property('id');
+        expect(result_transaction).to.have.property('type');
+        expect(result_transaction.type).to.equal('sale');
+        expect(result_transaction.result).to.equal('success');
+
+      });
+
+    });
+
+    it('creates a transaction for sale decline', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+        queryRecords: (table, parameters, index, callback) => {
+          return Promise.resolve([]);
+        },
+        saveRecord: (tableName, entity, callback) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+        createActivity: (actor, action, acted_upon, associated_with) => {
+          return true;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+        addToSearchIndex: (entity) => {
+          return entity;
+        }
+      });
+
+      assumePermissionedRole();
+
+      let registerController = new RegisterController();
+
+      let transaction = getValidTransactionObject();
+      let processor_response = getProcessorResponseObject();
+
+      processor_response.code = 'declined';
+
+      registerController.parameters.set('rebill', getValidRebill());
+      registerController.parameters.set('transaction_type', 'sale');
+      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('amount', 10.00);
+      registerController.parameters.set('processor_response', processor_response);
+
+      return registerController.createTransaction().then(() => {
+
+        let result_transaction = registerController.parameters.get('result_transaction');
+
+        expect(result_transaction).to.have.property('id');
+        expect(result_transaction).to.have.property('associated_transaction');
+        expect(result_transaction).to.have.property('type');
+        expect(result_transaction).to.have.property('result');
+        expect(result_transaction.associated_transaction).to.equal(transaction.id);
+        expect(result_transaction.type).to.equal('sale');
+        expect(result_transaction.result).to.equal('declined');
+
+      });
+
+    });
+
+    it('creates a transaction for refund error', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+        queryRecords: (table, parameters, index, callback) => {
+          return Promise.resolve([]);
+        },
+        saveRecord: (tableName, entity, callback) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+        createActivity: (actor, action, acted_upon, associated_with) => {
+          return true;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+        addToSearchIndex: (entity) => {
+          return entity;
+        }
+      });
+
+      assumePermissionedRole();
+
+      let registerController = new RegisterController();
+
+      let transaction = getValidTransactionObject();
+      let processor_response = getProcessorResponseObject();
+
+      processor_response.code = 'error';
+
+      registerController.parameters.set('rebill', getValidRebill());
       registerController.parameters.set('transaction_type', 'refund');
       registerController.parameters.set('hydrated_transaction', transaction);
       registerController.parameters.set('amount', 10.00);
@@ -849,13 +1000,13 @@ describe('controllers/providers/Register.js', () => {
 
         let result_transaction = registerController.parameters.get('result_transaction');
 
-        du.warning(result_transaction);
-
         expect(result_transaction).to.have.property('id');
         expect(result_transaction).to.have.property('associated_transaction');
         expect(result_transaction).to.have.property('type');
+        expect(result_transaction).to.have.property('result');
         expect(result_transaction.associated_transaction).to.equal(transaction.id);
         expect(result_transaction.type).to.equal('refund');
+        expect(result_transaction.result).to.equal('error');
 
       });
 
@@ -1104,6 +1255,80 @@ describe('controllers/providers/Register.js', () => {
           expect(creditcards).to.be.defined;
           expect(customer).to.be.defined;
           expect(transactionproducts).to.be.defined;
+
+        });
+
+      });
+
+    });
+
+    describe('transformResponse', () => {
+
+      it('successfully responds to success', () => {
+
+        let registerController = new RegisterController();
+
+        registerController.parameters.set('result_transaction', getValidTransactionObject());
+        registerController.parameters.set('processor_response', getProcessorResponseObject());
+
+        return registerController.transformResponse().then(response => {
+
+          expect(objectutilities.getClassName(response)).to.equal('RegisterResponse');
+          expect(response.getCode()).to.equal('success');
+          expect(response.getTransaction()).to.deep.equal(getValidTransactionObject());
+          expect(response.getProcessorResponse()).to.deep.equal(getProcessorResponseObject());
+
+        });
+
+      });
+
+      it('successfully responds to decline', () => {
+
+        let processor_response = getProcessorResponseObject();
+
+        processor_response.code = 'declined';
+
+        let declined_transaction = getValidTransactionObject();
+
+        declined_transaction.result = 'declined';
+
+        let registerController = new RegisterController();
+
+        registerController.parameters.set('result_transaction', declined_transaction);
+        registerController.parameters.set('processor_response', processor_response);
+
+        return registerController.transformResponse().then(response => {
+
+          expect(objectutilities.getClassName(response)).to.equal('RegisterResponse');
+          expect(response.getCode()).to.equal('fail');
+          expect(response.getTransaction()).to.deep.equal(declined_transaction);
+          expect(response.getProcessorResponse()).to.deep.equal(processor_response);
+
+        });
+
+      });
+
+      it('successfully responds to error', () => {
+
+        let processor_response = getProcessorResponseObject();
+
+        processor_response.code = 'error';
+
+        let error_transaction = getValidTransactionObject();
+
+        error_transaction.result = 'error';
+
+        let registerController = new RegisterController();
+
+        registerController.parameters.set('result_transaction', error_transaction);
+        registerController.parameters.set('processor_response', processor_response);
+
+        return registerController.transformResponse().then(response => {
+
+          expect(objectutilities.getClassName(response)).to.equal('RegisterResponse');
+          expect(response.getCode()).to.equal('error');
+          expect(response.getTransaction()).to.deep.equal(error_transaction);
+          expect(response.getProcessorResponse()).to.deep.equal(processor_response);
 
         });
 

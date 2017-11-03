@@ -10,12 +10,20 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
+const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
+
 //Technical Debt:  MVU does not want to load schemas from the entities directory
 module.exports = class Register extends PermissionedController {
 
   constructor(){
 
     super();
+
+    this.processor_response_map = {
+      success:'success',
+      declined:'fail',
+      error:'error'
+    };
 
     this.transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 
@@ -46,6 +54,7 @@ module.exports = class Register extends PermissionedController {
     this.parameter_validation = {
       'processor_response': global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
       'transaction': global.SixCRM.routes.path('model', 'functional/register/transactioninput.json'),
+      'result_transaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
       'hydrated_transaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
       'associated_transactions':global.SixCRM.routes.path('model', 'functional/register/associatedtransactions.json'),
       'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
@@ -74,7 +83,6 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.validateAmount())
     .then(() => this.executeRefund())
     .then(() => this.createTransaction())
-    //Technical Debt:  Add a event that corresponds to what just happened.
     .then(() => this.transformResponse());
 
   }
@@ -96,30 +104,6 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  setParameters({argumentation, action}){
-
-    du.debug('Set Parameters');
-
-    this.parameters.setParameters({argumentation: argumentation, action: action});
-
-    this.parameters.set('transaction_type', action);
-
-    return Promise.resolve(true);
-
-  }
-
-  setDependencies(action){
-
-    du.debug('Set Dependencies');
-
-    this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
-    this.productScheduleController = global.SixCRM.routes.include('entities', 'ProductSchedule.js');
-    this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-
-    return true;
-
-  }
-
   reverseTransaction({transaction}){
 
     du.debug('Reverse Transaction');
@@ -133,7 +117,6 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.validateAmount())
     .then(() => this.executeReverse())
     .then(() => this.createTransaction())
-    //Technical Debt:  Add a event that corresponds to what just happened.
     .then(() => this.transformResponse());
 
   }
@@ -154,13 +137,14 @@ module.exports = class Register extends PermissionedController {
 
   }
 
+  //Technical Debt:  Update such that only successful transactions are returned
   getAssociatedTransactions(){
 
     du.debug('Get Associated Transactions');
 
     let hydrated_transaction = this.parameters.get('hydrated_transaction');
 
-    return this.transactionController.listByAssociatedTransaction({id: hydrated_transaction, types:['reverse','refund']})
+    return this.transactionController.listByAssociatedTransaction({id: hydrated_transaction, types:['reverse','refund'], results: ['success']})
     .then(associated_transactions => this.transactionController.getResult(associated_transactions, 'transactions'))
     .then(associated_transactions => {
 
@@ -291,32 +275,45 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Create Transaction');
 
+    let rebill = this.parameters.get('rebill');
+    let amount = this.parameters.get('amount');
+    let transaction_type = this.parameters.get('transaction_type');
     let processor_response = this.parameters.get('processor_response');
+    let processor_response_code = this.getProcessorResponseCode();
 
-    if(processor_response.code === 'success'){
+    let transaction_prototype = {
+      rebill: rebill,
+      amount: amount,
+      type: transaction_type,
+      result: processor_response_code,
+    };
 
+    if(_.contains(['reverse','refund'], transaction_type)){
       let hydrated_transaction = this.parameters.get('hydrated_transaction');
-      let amount = this.parameters.get('amount');
-      let transaction_type = this.parameters.get('transaction_type');
 
-      let transaction_prototype = {
-        rebill: hydrated_transaction.rebill,
-        amount: amount,
+      transaction_prototype = objectutilities.merge(transaction_prototype, {
         products: hydrated_transaction.products,
         merchant_provider: hydrated_transaction.merchant_provider,
-        type: transaction_type,
-        associated_transaction: hydrated_transaction.id
-      };
-
-      transaction_prototype = this.transactionController.createTransactionObject(transaction_prototype, processor_response);
-
-      return this.transactionController.create({entity: transaction_prototype}).then(result_transaction => {
-        this.parameters.set('result_transaction', result_transaction);
+        associated_transaction: hydrated_transaction.id,
+        products: hydrated_transaction.products
       });
-
     }
 
-    return Promise.resolve(null);
+    if(_.contains(['sale'], transaction_type)){
+      let merchant_provider = this.parameters.get('merchantprovider');
+      let transaction_products = this.parameters.get('transaction_products');
+
+      transaction_prototype = objectutilities.merge(transaction_prototype, {
+        merchant_provider: merchant_provider.id,
+        products: transaction_products
+      });
+    }
+
+    transaction_prototype = this.transactionController.createTransactionObject(transaction_prototype, processor_response);
+
+    return this.transactionController.create({entity: transaction_prototype}).then(result_transaction => {
+      this.parameters.set('result_transaction', result_transaction);
+    });
 
   }
 
@@ -324,11 +321,37 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Transform Response');
 
-    let refund_transaction = this.parameters.get('result_transaction', null, false);
+    let result_transaction = this.parameters.get('result_transaction', null, false);
 
     let processor_response = this.parameters.get('processor_response');
 
-    return {transaction: refund_transaction, processor_response: processor_response};
+    let response_category = this.getProcessorResponseCategory();
+
+    return Promise.resolve(new RegisterResponse({
+      transaction: result_transaction,
+      processor_response: processor_response,
+      response_type: response_category
+    }));
+
+  }
+
+  getProcessorResponseCategory(){
+
+    du.debug('Get Processor Response Category');
+
+    let processor_response_code = this.getProcessorResponseCode();
+
+    objectutilities.hasRecursive(this, 'processor_response_map.'+processor_response_code, true);
+
+    return this.processor_response_map[processor_response_code];
+
+  }
+
+  getProcessorResponseCode(){
+
+    du.debug('Get Processor Response');
+
+    return this.parameters.get('processor_response').code;
 
   }
 
@@ -339,12 +362,12 @@ module.exports = class Register extends PermissionedController {
     let customer = this.parameters.get('customer');
     let productschedule = this.parameters.get('productschedule');
     let amount = this.parameters.get('amount');
-    let merchantprovider = this.parameters.get('merchantprovider', null, false);
+    let merchant_provider = this.parameters.get('merchantprovider', null, false);
 
     let argument_object = {customer: customer, productschedule: productschedule, amount: amount};
 
-    if(!_.isNull(merchantprovider)){
-      argument_object.merchantprovider = merchantprovider;
+    if(!_.isNull(merchant_provider)){
+      argument_object.merchantprovider = merchant_provider;
     }
 
     const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
@@ -458,7 +481,8 @@ module.exports = class Register extends PermissionedController {
 
     let promises = [
       this.acquireProducts(),
-      this.acquireCustomer()
+      this.acquireCustomer(),
+      this.acquireMerchantProvider()
     ];
 
     return Promise.all(promises)
@@ -498,6 +522,24 @@ module.exports = class Register extends PermissionedController {
 
   }
 
+  acquireMerchantProvider(){
+
+    du.debug('Acquire Merchant Provider');
+
+    let rebill =  this.parameters.get('rebill');
+
+    if(_.has(rebill, 'merchant_provider')){
+
+      return this.rebillController.getMerchantProvider(rebill).then(merchant_provider => {
+
+        this.parameters.set('merchantprovider', merchant_provider);
+
+      });
+
+    }
+
+  }
+
   acquireCustomerCreditCards(){
 
     du.debug('Acquire Customer Creditcard');
@@ -527,6 +569,30 @@ module.exports = class Register extends PermissionedController {
     let amount = mathutilities.sum(product_amounts);
 
     this.parameters.set('amount', amount);
+
+    return Promise.resolve(true);
+
+  }
+
+  setDependencies(action){
+
+    du.debug('Set Dependencies');
+
+    this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+    this.productScheduleController = global.SixCRM.routes.include('entities', 'ProductSchedule.js');
+    this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+    return true;
+
+  }
+
+  setParameters({argumentation, action}){
+
+    du.debug('Set Parameters');
+
+    this.parameters.setParameters({argumentation: argumentation, action: action});
+
+    this.parameters.set('transaction_type', action);
 
     return Promise.resolve(true);
 

@@ -108,10 +108,9 @@ class processBillingController extends workerController {
 
     du.debug('Respond');
 
-    let register_response = this.parameters.get('registerresponse');
+    let register_response = this.parameters.get('registerresponse').getCode();
 
-    //validate register response
-    return super.response('success');
+    return super.response(register_response);
 
   }
 

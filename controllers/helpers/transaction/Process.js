@@ -79,6 +79,26 @@ module.exports = class Process extends TransactionUtilities{
 
       du.debug('Select Merchant Provider');
 
+      let merchant_provider = this.parameters.get('merchantprovider', null, false);
+
+      if(!_.isNull(merchant_provider)){
+
+        return this.hydrateMerchantProvider()
+        .then(() => this.setMerchantProviders())
+        .then(() => this.getMerchantProviderSummaries())
+        .then(() => this.marryMerchantProviderSummaries())
+        .then(() => this.filterMerchantProviders())
+        .then(() => this.selectMerchantProviderWithDistributionLeastSumOfSquares())
+        .then((merchantprovider) => {
+
+          this.parameters.set('selected_merchantprovider', merchantprovider);
+
+          return merchantprovider;
+
+        });
+
+      }
+
       return this.getLoadBalancer()
       .then(() => this.getMerchantProviders())
       .then(() => this.getMerchantProviderSummaries())
@@ -90,6 +110,22 @@ module.exports = class Process extends TransactionUtilities{
         this.parameters.set('selected_merchantprovider', merchantprovider);
 
         return merchantprovider;
+
+      });
+
+    }
+
+    hydrateMerchantProvider(){
+
+      du.debug('Hydrate Merchant Provider');
+
+      let merchant_provider = this.parameters.get('merchantprovider');
+
+      let id = this.merchantProviderController.getID(merchant_provider);
+
+      return this.merchantProviderController.get({id:id}).then(merchant_provider => {
+
+        this.parameters.set('merchantprovider', merchant_provider);
 
       });
 

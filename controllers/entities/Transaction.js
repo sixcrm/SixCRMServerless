@@ -228,8 +228,6 @@ class transactionController extends entityController {
       //Technical Debt: Why is this necessary?
       let merchant_provider = this.getMerchantProviderID(parameters, processor_response);
 
-      let type = (_.isUndefined(parameters.type))?'sale':parameters.type;
-
       var return_object = {
           rebill: this.getID(parameters.rebill),
           processor_response: JSON.stringify(processor_response),
@@ -237,7 +235,8 @@ class transactionController extends entityController {
           products: parameters.products,
           alias: this.createAlias(),
           merchant_provider: merchant_provider,
-          type: type
+          type: parameters.type,
+          result: parameters.result
       };
 
       if(_.has(parameters, 'associated_transaction')){

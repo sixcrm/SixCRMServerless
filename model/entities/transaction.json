@@ -30,11 +30,15 @@
 			"type": "string",
 			"enum":["sale", "refund", "reverse"]
 		},
+		"result":{
+			"type":"string",
+			"enum":["success","declined","error"]
+		},
 		"amount":{
 			"type": {"$ref": "../definitions/currency.json"}
 		},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["id", "alias", "account", "rebill", "products", "processor_response", "merchant_provider", "created_at", "updated_at", "type", "amount"]
+	"required":["id", "alias", "account", "rebill", "products", "processor_response", "merchant_provider", "created_at", "updated_at", "type", "result", "amount"]
 }

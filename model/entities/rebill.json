@@ -12,6 +12,7 @@
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"},
 		"parentsession":{"$ref": "../definitions/uuidv4.json"},
+		"merchant_provider":{"$ref": "../definitions/uuidv4.json"},
 		"processing":{
 			"type":["string", "boolean"]
 		},

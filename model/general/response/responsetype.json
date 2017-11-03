@@ -1,0 +1,7 @@
+{
+	"title": "Response Type",
+  "id":"/responsetype.json",
+	"type": "string",
+	"description": "The response type",
+	"enum":["success","fail","error"]
+}
