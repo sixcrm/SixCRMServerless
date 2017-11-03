@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib','timestamp');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -71,7 +72,7 @@ class notificationController extends entityController {
 
     }
 
-    listByTypes({types, pagination, user, fatal}){
+    listByTypes({types, onlyUnexpired, pagination, user, fatal}){
 
       du.debug('List By Type');
 
@@ -81,6 +82,11 @@ class notificationController extends entityController {
         query_parameters.filter_expression += ' AND #user = :userv';
         query_parameters.expression_attribute_names['#user'] = 'user';
         query_parameters.expression_attribute_values[':userv'] = this.getID(global.user)
+      }
+
+      if (onlyUnexpired) {
+          query_parameters.expression_attribute_values[':currentv'] = timestamp.getISO8601();
+          query_parameters.filter_expression += ' AND ( attribute_not_exists(expires_at) OR expires_at > :currentv )';
       }
 
       return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal});

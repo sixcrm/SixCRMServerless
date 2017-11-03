@@ -217,13 +217,14 @@ module.exports.graphObj = new GraphQLObjectType({
           type: notificationListType.graphObj,
           args: {
               types: {type: new GraphQLList(GraphQLString)},
+              onlyUnexpired: {type: GraphQLBoolean},
               user: {type: GraphQLBoolean},
               pagination: {type: paginationInputType.graphObj}
           },
           resolve: function(root, args){
             const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 
-            return notificationController.listByTypes({types: args.types, user: args.user, pagination: args.pagination, fatal: list_fatal});
+            return notificationController.listByTypes({types: args.types, user: args.user, onlyUnexpired: args.onlyUnexpired, pagination: args.pagination, fatal: list_fatal});
           }
         },
         customernotelistbycustomer: {
