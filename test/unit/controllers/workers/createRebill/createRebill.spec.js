@@ -3,7 +3,7 @@ const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 
-require('../../../bootstrap.test');
+require('../../../../bootstrap.test');
 
 describe('controllers/workers/createRebills', function () {
 

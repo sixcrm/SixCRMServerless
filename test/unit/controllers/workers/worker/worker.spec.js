@@ -5,7 +5,7 @@ const mockery = require('mockery');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 const modelgenerator = global.SixCRM.routes.include('test', 'model-generator.js');
 
-require('../../../bootstrap.test');
+require('../../../../bootstrap.test');
 
 describe('controllers/workers/worker', function () {
 

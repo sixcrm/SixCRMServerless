@@ -4,7 +4,7 @@ const expect = chai.expect;
 const mockery = require('mockery');
 const modelgenerator = global.SixCRM.routes.include('test', 'model-generator.js');
 
-require('../../../bootstrap.test');
+require('../../../../bootstrap.test');
 
 describe('controllers/workers/shipProduct', function () {
 
