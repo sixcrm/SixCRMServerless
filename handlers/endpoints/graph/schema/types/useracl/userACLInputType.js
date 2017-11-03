@@ -7,6 +7,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'UserACLInputType',
     fields: () => ({
   	id:						{ type: GraphQLString },
+    pending:				{ type: GraphQLString },
   	user:					{ type: new GraphQLNonNull(GraphQLString) },
     account:				{ type: new GraphQLNonNull(GraphQLString) },
     role:					{ type: new GraphQLNonNull(GraphQLString) }
