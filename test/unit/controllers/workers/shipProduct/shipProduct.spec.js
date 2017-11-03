@@ -268,7 +268,7 @@ describe('controllers/workers/shipProduct', function () {
                 .then(result => expect(result).to.equal(shipProduct.messages.noship));
         });
 
-        it('returns unchanged response from fulfillment provider if it was not recognized', () => {
+        xit('returns unchanged response from fulfillment provider if it was not recognized', () => {
 
             let transaction = random_transactions[0];
 
