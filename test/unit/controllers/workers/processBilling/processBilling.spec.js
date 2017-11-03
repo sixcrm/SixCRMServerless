@@ -57,6 +57,19 @@ function getValidRegisterResponse(){
   };
 }
 
+function getValidMessages(){
+
+  let a_message = {
+    MessageId:"someMessageID",
+    ReceiptHandle:"SomeReceiptHandle",
+    Body: JSON.stringify({id:"00c103b4-670a-439e-98d4-5a2834bb5f00"}),
+    MD5OfBody:"SomeMD5"
+  };
+
+  return [a_message, JSON.stringify(a_message)];
+
+}
+
 function getValidEvents(){
 
   let a_event = {
@@ -117,16 +130,17 @@ describe('controllers/workers/processBilling', () => {
 
     it('successfully sets parameters', () => {
 
-      let valid_events = getValidEvents();
+      let valid_messages = getValidMessages();
 
       let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
 
-      arrayutilities.map(valid_events, valid_event => {
+      arrayutilities.map(valid_messages, valid_message => {
 
-        processBillingController.setParameters({argumentation: {event: valid_event}, action: 'execute'}).then(() => {
-          let the_event = processBillingController.parameters.get('event');
+        processBillingController.setParameters({argumentation: {message: valid_message}, action: 'execute'}).then(() => {
+          let the_message = processBillingController.parameters.get('message');
 
-          expect(the_event).to.equal(the_event);
+          expect(the_message).to.equal(valid_message);
+
         });
 
       });
