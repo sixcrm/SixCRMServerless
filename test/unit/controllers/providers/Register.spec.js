@@ -352,7 +352,7 @@ describe('controllers/providers/Register.js', () => {
         try{
           registerController.setParameters({argumentation: {transaction: invalid_argument}, action: 'refund'});
         }catch(error){
-          expect(error.message).to.have.string('[500] One or more validation errors occured:');
+          expect(error.message).to.have.string('[500] One or more validation errors occurred:');
         }
 
       });

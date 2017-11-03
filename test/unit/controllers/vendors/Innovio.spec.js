@@ -117,7 +117,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
     try {
       let innovio_controller = new InnovioController({});
     }catch(error){
-      expect(error.message).to.have.string('[500] One or more validation errors occured:');
+      expect(error.message).to.have.string('[500] One or more validation errors occurred:');
     }
 
   });

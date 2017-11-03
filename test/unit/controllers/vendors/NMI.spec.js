@@ -181,7 +181,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
     }catch(error){
 
-      expect(error.message).to.have.string('[500] One or more validation errors occured:');
+      expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
     }
 

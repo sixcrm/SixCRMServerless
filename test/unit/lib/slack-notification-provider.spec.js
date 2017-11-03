@@ -55,7 +55,7 @@ describe('lib/slack-notification-provider', () => {
             } catch(error) {
                 // then
                 expect(error).not.to.be.null;
-                return expect(error.message).to.have.string('[500] One or more validation errors occured:');
+                return expect(error.message).to.have.string('[500] One or more validation errors occurred:');
             }
         });
 

@@ -620,7 +620,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
        }catch(e){
 
-         expect(e.message).to.have.string('[500] One or more validation errors occured:');
+         expect(e.message).to.have.string('[500] One or more validation errors occurred:');
 
        }
 
@@ -638,7 +638,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
        }catch(e){
 
-         expect(e.message).to.have.string('[500] One or more validation errors occured:');
+         expect(e.message).to.have.string('[500] One or more validation errors occurred:');
 
        }
 
@@ -656,7 +656,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
        }catch(e){
 
-         expect(e.message).to.have.string('[500] One or more validation errors occured:');
+         expect(e.message).to.have.string('[500] One or more validation errors occurred:');
 
        }
 
@@ -817,7 +817,7 @@ describe('helpers/transaction/Process.spec.js', () => {
     try{
       ph.setParameters(parameters);
     }catch(error){
-      expect(error.message).to.have.string('[500] One or more validation errors occured:');
+      expect(error.message).to.have.string('[500] One or more validation errors occurred:');
     };
 
   });
@@ -1452,7 +1452,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       try{
         ph.parameters.set('amount', '100');
       }catch(error){
-        expect(error.message).to.have.string('[500] One or more validation errors occured:');
+        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
       }
 
     });
