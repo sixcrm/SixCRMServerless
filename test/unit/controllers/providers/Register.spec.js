@@ -897,6 +897,44 @@ describe('controllers/providers/Register.js', () => {
 
     });
 
+    it('returns error if rebill has been attempted three times', (done) => {
+
+      let valid_rebill = getValidRebill();
+
+      let registerController = new RegisterController();
+
+      registerController.parameters.set('rebill', valid_rebill);
+
+      valid_rebill.second_attempt = Date.now();
+
+      try {
+          registerController.validateAttemptRecord()
+      } catch(error) {
+          expect(error.message).to.equal('[500] The rebill has already been attempted three times.');
+          done()
+      }
+
+    });
+
+    it('returns error if rebill attempt was too recent', (done) => {
+
+        let valid_rebill = getValidRebill();
+
+        let registerController = new RegisterController();
+
+        registerController.parameters.set('rebill', valid_rebill);
+
+        valid_rebill.first_attempt = Date.now();
+
+        try {
+            registerController.validateAttemptRecord()
+        } catch(error) {
+            expect(error.message).to.equal('[500] Rebill\'s first attempt is too recent.');
+            done()
+        }
+
+    });
+
   });
 
     describe('acquireRebillProperties', () => {

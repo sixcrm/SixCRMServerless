@@ -73,7 +73,7 @@ describe('lib/timestamp', () => {
         }
     });
 
-    describe('should calculate day difference', () => {
+    xdescribe('should calculate day difference', () => {
         it('for today', () => {
             expect(Timestamp.getDaysDifference(nowInSeconds())).to.equal(0);
         });
