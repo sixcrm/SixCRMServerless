@@ -160,7 +160,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
         },
         inviteresend:{
-            type: userInviteResendInputType.graphObj,
+            type: userInviteType.graphObj,
             description: 'Resend pending user invite.',
             args: {
                 userinvite: { type: userInviteResendInputType.graphObj}
