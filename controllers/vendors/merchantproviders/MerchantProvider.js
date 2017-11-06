@@ -221,6 +221,7 @@ module.exports = class MerchantProvider {
 
       let response_object = new ResponseObject(arguments[0]);
 
+      du.info(response_object);
       return response_object.getResultJSON();
 
     }

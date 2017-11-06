@@ -18,6 +18,14 @@ module.exports = class Response {
 
   }
 
+  getMerchantProviderName(){
+
+    du.debug('Set Merchant Provider Name');
+
+    return objectutilities.getClassName(this).replace('Response', '');
+
+  }
+
   handleResponse({error, response, body}){
 
     du.debug('Handle Response');
@@ -64,7 +72,7 @@ module.exports = class Response {
 
     try{
 
-      mvu.validateModel(parsed_response, global.SixCRM.routes.path('model', 'functional/'+this.merchant_provider_name+'/response.json'));
+      mvu.validateModel(parsed_response, global.SixCRM.routes.path('model', 'functional/'+this.getMerchantProviderName()+'/response.json'));
 
     }catch(error){
 

@@ -221,32 +221,6 @@ class transactionController extends entityController {
 
     }
 
-    createTransactionObject(parameters, processor_response){
-
-      du.debug('Create Transaction Object');
-
-      //Technical Debt: Why is this necessary?
-      let merchant_provider = this.getMerchantProviderID(parameters, processor_response);
-
-      var return_object = {
-          rebill: this.getID(parameters.rebill),
-          processor_response: JSON.stringify(processor_response),
-          amount: parameters.amount,
-          products: parameters.products,
-          alias: this.createAlias(),
-          merchant_provider: merchant_provider,
-          type: parameters.type,
-          result: parameters.result
-      };
-
-      if(_.has(parameters, 'associated_transaction')){
-        return_object.associated_transaction  = parameters.associated_transaction;
-      }
-
-      return return_object;
-
-    }
-
     //Technical Debt:  This seems deprecated.
     getMerchantProviderID(parameters, processor_response){
 

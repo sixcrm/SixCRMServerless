@@ -1,0 +1,149 @@
+'use strict'
+const _ = require('underscore');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+
+module.exports = class RegisterRecieptGenerator {
+
+  constructor(){
+
+    this.transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
+
+    this.parameter_definitions = {
+      issue_receipt:{
+        required:{
+          rebill:'rebill',
+          amount:'amount',
+          transactiontype:'transactiontype',
+          processorresponse:'processorresponse'
+        },
+        optional:{
+          associatedtransaction: 'associatedtransaction',
+          merchantprovider:'merchantprovider',
+          transactionproducts:'transactionproducts'
+        }
+      }
+    };
+
+    this.parameter_validation = {
+      'rebill':global.SixCRM.routes.path('model','entities/rebill.json'),
+      'amount':global.SixCRM.routes.path('model','definitions/currency.json'),
+      'transactiontype':global.SixCRM.routes.path('model','functional/register/transactiontype.json'),
+      'processorresponse':global.SixCRM.routes.path('model','functional/register/processorresponse.json'),
+      'associatedtransaction':global.SixCRM.routes.path('model','entities/transaction.json'),
+      'merchantprovider':global.SixCRM.routes.path('model','entities/merchantprovider.json'),
+      'transactionproducts':global.SixCRM.routes.path('model','functional/register/transactionproducts.json'),
+      'receipt_transaction': global.SixCRM.routes.path('model', 'entities/transaction.json')
+    };
+
+    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
+
+  }
+
+  //Entrypoint
+  issueReceipt(){
+
+    du.debug('Issue Receipt');
+
+    du.warning(arguments[0]);
+    this.parameters.setParameters({argumentation: arguments[0], action: 'issue_receipt'});
+
+    return this.createTransactionPrototype()
+    .then(() => this.transformTransactionPrototypeObject())
+    .then(() => this.createTransaction())
+    .then(() => {
+      return this.parameters.get('receipt_transaction');
+    });
+
+  }
+
+  createTransactionPrototype(){
+
+    du.debug('Create Transaction Prototype');
+
+    let rebill = this.parameters.get('rebill');
+    let amount = this.parameters.get('amount');
+    let transaction_type = this.parameters.get('transactiontype');
+    let processor_response = this.parameters.get('processorresponse');
+    let processor_response_code = this.parameters.get('processorresponse').code;
+
+    let transaction_prototype = {
+      rebill: rebill,
+      amount: amount,
+      type: transaction_type,
+      result: processor_response_code,
+      processor_response: processor_response
+    };
+
+    if(_.contains(['reverse','refund'], transaction_type)){
+      let hydrated_transaction = this.parameters.get('associatedtransaction');
+
+      transaction_prototype = objectutilities.merge(transaction_prototype, {
+        products: hydrated_transaction.products,
+        merchant_provider: hydrated_transaction.merchant_provider,
+        associated_transaction: hydrated_transaction.id
+      });
+    }
+
+    if(_.contains(['sale'], transaction_type)){
+
+      let merchant_provider = this.parameters.get('merchantprovider');
+      let transaction_products = this.parameters.get('transactionproducts');
+
+      transaction_prototype = objectutilities.merge(transaction_prototype, {
+        merchant_provider: merchant_provider.id,
+        products: transaction_products
+      });
+
+    }
+
+    this.parameters.set('transactionprototype', transaction_prototype);
+
+    return Promise.resolve(true);
+
+  }
+
+  transformTransactionPrototypeObject(){
+
+    du.debug('Transform Transaction Prototype Object');
+
+    let transaction_prototype = this.parameters.get('transactionprototype');
+
+    var transformed_transaction_prototype = {
+        rebill: transaction_prototype.rebill.id,
+        processor_response: JSON.stringify(transaction_prototype.processor_response),
+        amount: transaction_prototype.amount,
+        products: transaction_prototype.products,
+        alias: this.transactionController.createAlias(),
+        merchant_provider: transaction_prototype.merchant_provider,
+        type: transaction_prototype.type,
+        result: transaction_prototype.result
+    };
+
+    if(_.has(transaction_prototype, 'associated_transaction')){
+      transformed_transaction_prototype.associated_transaction  = transaction_prototype.associated_transaction;
+    }
+
+    this.parameters.set('transformed_transaction_prototype', transformed_transaction_prototype);
+
+  }
+
+  createTransaction(){
+
+    du.debug('Create Transaction');
+
+    let transformed_transaction_prototype = this.parameters.get('transformed_transaction_prototype');
+
+    return this.transactionController.create({entity: transformed_transaction_prototype}).then(transaction => {
+      this.parameters.set('receipt_transaction', transaction);
+    });
+
+  }
+
+}

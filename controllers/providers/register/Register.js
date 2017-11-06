@@ -11,6 +11,7 @@ const PermissionedController = global.SixCRM.routes.include('helpers', 'permissi
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
+const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
 
 //Technical Debt:  MVU does not want to load schemas from the entities directory
 module.exports = class Register extends PermissionedController {
@@ -52,10 +53,10 @@ module.exports = class Register extends PermissionedController {
     };
 
     this.parameter_validation = {
-      'processor_response': global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
+      'processorresponse': global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
       'transaction': global.SixCRM.routes.path('model', 'functional/register/transactioninput.json'),
-      'result_transaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
-      'hydrated_transaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
+      'receipttransaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
+      'associatedtransaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
       'associated_transactions':global.SixCRM.routes.path('model', 'functional/register/associatedtransactions.json'),
       'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
       'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
@@ -82,7 +83,7 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.setAmount())
     .then(() => this.validateAmount())
     .then(() => this.executeRefund())
-    .then(() => this.createTransaction())
+    .then(() => this.issueReceipt())
     .then(() => this.transformResponse());
 
   }
@@ -99,7 +100,7 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.acquireRebillSubProperties())
     .then(() => this.calculateAmount())
     .then(() => this.executeProcess())
-    .then(() => this.createTransaction())
+    .then(() => this.issueReceipt())
     .then(() => this.transformResponse());
 
   }
@@ -116,7 +117,7 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.setAmount())
     .then(() => this.validateAmount())
     .then(() => this.executeReverse())
-    .then(() => this.createTransaction())
+    .then(() => this.issueReceipt())
     .then(() => this.transformResponse());
 
   }
@@ -129,7 +130,7 @@ module.exports = class Register extends PermissionedController {
 
     return this.transactionController.get({id: transaction, fatal: true}).then(transaction => {
 
-      this.parameters.set('hydrated_transaction', transaction);
+      this.parameters.set('associatedtransaction', transaction);
 
       return transaction;
 
@@ -142,9 +143,9 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Get Associated Transactions');
 
-    let hydrated_transaction = this.parameters.get('hydrated_transaction');
+    let associated_transaction = this.parameters.get('associatedtransaction');
 
-    return this.transactionController.listByAssociatedTransaction({id: hydrated_transaction, types:['reverse','refund'], results: ['success']})
+    return this.transactionController.listByAssociatedTransaction({id: associated_transaction, types:['reverse','refund'], results: ['success']})
     .then(associated_transactions => this.transactionController.getResult(associated_transactions, 'transactions'))
     .then(associated_transactions => {
 
@@ -178,9 +179,9 @@ module.exports = class Register extends PermissionedController {
 
     if(_.isNull(amount) || _.isUndefined(amount)){
 
-      let hydrated_transaction = this.parameters.get('hydrated_transaction');
+      let associated_transaction = this.parameters.get('associatedtransaction');
 
-      this.parameters.set('amount', hydrated_transaction.amount);
+      this.parameters.set('amount', associated_transaction.amount);
 
     }
 
@@ -214,7 +215,7 @@ module.exports = class Register extends PermissionedController {
     du.debug('Validate Amount');
 
     //This is the original transaction with the maximum amount
-    let transaction = this.parameters.get('hydrated_transaction');
+    let transaction = this.parameters.get('associatedtransaction');
 
     //This is the amount that we are proposing to reverse
     let amount = this.parameters.get('amount');
@@ -244,11 +245,11 @@ module.exports = class Register extends PermissionedController {
     const RefundController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js');
     let refundController = new RefundController();
 
-    let transaction = this.parameters.get('hydrated_transaction');
+    let transaction = this.parameters.get('associatedtransaction');
     let amount = this.parameters.get('amount');
 
     return refundController.refund({transaction: transaction, amount: amount}).then(result => {
-      this.parameters.set('processor_response', result);
+      this.parameters.set('processorresponse', result);
       return true;
     });
 
@@ -261,59 +262,24 @@ module.exports = class Register extends PermissionedController {
     const ReverseController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
     let reverseController = new ReverseController();
 
-    let transaction = this.parameters.get('hydrated_transaction');
+    let transaction = this.parameters.get('associatedtransaction');
     //let amount = this.parameters.get('amount');
 
     return reverseController.reverse({transaction: transaction}).then(result => {
-      this.parameters.set('processor_response', result);
+      this.parameters.set('processorresponse', result);
       return true;
     });
 
   }
 
-  createTransaction(){
+  issueReceipt(){
 
-    du.debug('Create Transaction');
+    du.debug('Issue Transaction');
 
-    let rebill = this.parameters.get('rebill');
-    let amount = this.parameters.get('amount');
-    let transaction_type = this.parameters.get('transaction_type');
-    let processor_response = this.parameters.get('processor_response');
-    let processor_response_code = this.getProcessorResponseCode();
+    let registerReceiptController = new RegisterReceiptController();
 
-    let transaction_prototype = {
-      rebill: rebill,
-      amount: amount,
-      type: transaction_type,
-      result: processor_response_code,
-    };
-
-    if(_.contains(['reverse','refund'], transaction_type)){
-      let hydrated_transaction = this.parameters.get('hydrated_transaction');
-
-      transaction_prototype = objectutilities.merge(transaction_prototype, {
-        products: hydrated_transaction.products,
-        merchant_provider: hydrated_transaction.merchant_provider,
-        associated_transaction: hydrated_transaction.id
-      });
-    }
-
-    if(_.contains(['sale'], transaction_type)){
-
-      let merchant_provider = this.parameters.get('merchantprovider');
-      let transaction_products = this.parameters.get('transactionproducts');
-
-      transaction_prototype = objectutilities.merge(transaction_prototype, {
-        merchant_provider: merchant_provider.id,
-        products: transaction_products
-      });
-
-    }
-
-    transaction_prototype = this.transactionController.createTransactionObject(transaction_prototype, processor_response);
-
-    return this.transactionController.create({entity: transaction_prototype}).then(result_transaction => {
-      this.parameters.set('result_transaction', result_transaction);
+    return registerReceiptController.issueReceipt(this.parameters.getAll()).then(receipt_transaction => {
+      this.parameters.set('receipttransaction', receipt_transaction);
     });
 
   }
@@ -322,14 +288,14 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Transform Response');
 
-    let result_transaction = this.parameters.get('result_transaction', null, false);
+    let receipttransaction = this.parameters.get('receipttransaction', null, false);
 
-    let processor_response = this.parameters.get('processor_response');
+    let processor_response = this.parameters.get('processorresponse');
 
     let response_category = this.getProcessorResponseCategory();
 
     return Promise.resolve(new RegisterResponse({
-      transaction: result_transaction,
+      transaction: receipttransaction,
       processor_response: processor_response,
       response_type: response_category
     }));
@@ -352,7 +318,7 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Get Processor Response');
 
-    return this.parameters.get('processor_response').code;
+    return this.parameters.get('processorresponse').code;
 
   }
 
@@ -375,7 +341,7 @@ module.exports = class Register extends PermissionedController {
     let processController = new ProcessController();
 
     return processController.process(argument_object).then(result => {
-      this.parameters.set('processor_response', result);
+      this.parameters.set('processorresponse', result);
       return true;
     });
 
@@ -593,7 +559,7 @@ module.exports = class Register extends PermissionedController {
 
     this.parameters.setParameters({argumentation: argumentation, action: action});
 
-    this.parameters.set('transaction_type', action);
+    this.parameters.set('transactiontype', action);
 
     return Promise.resolve(true);
 

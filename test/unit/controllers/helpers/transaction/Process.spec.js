@@ -252,7 +252,7 @@ function getValidProductSchedule(){
 
 }
 
-describe.only('helpers/transaction/Process.spec.js', () => {
+describe('helpers/transaction/Process.spec.js', () => {
 
     before(() => {
       mockery.enable({

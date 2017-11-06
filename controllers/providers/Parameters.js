@@ -47,6 +47,14 @@ module.exports = class Parameters {
 
   }
 
+  getAll(){
+
+    du.debug('Get All');
+
+    return this.store;
+
+  }
+
   get(key, additional_parameters, fatal){
 
     du.debug('Get');

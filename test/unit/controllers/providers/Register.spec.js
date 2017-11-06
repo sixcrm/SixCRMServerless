@@ -339,9 +339,9 @@ describe('controllers/providers/Register.js', () => {
         return registerController.hydrateTransaction().then((transaction) => {
 
           let expected_transaction = getValidTransactionObject();
-          let hydrated_transaction = registerController.parameters.get('hydrated_transaction');
+          let associated_transaction = registerController.parameters.get('associatedtransaction');
 
-          expect(hydrated_transaction).to.deep.equal(expected_transaction);
+          expect(associated_transaction).to.deep.equal(expected_transaction);
 
         });
       })
@@ -366,9 +366,9 @@ describe('controllers/providers/Register.js', () => {
         return registerController.hydrateTransaction().then((transaction) => {
 
           let expected_transaction = getValidTransactionObject();
-          let hydrated_transaction = registerController.parameters.get('hydrated_transaction');
+          let associated_transaction = registerController.parameters.get('associatedtransaction');
 
-          expect(hydrated_transaction).to.deep.equal(expected_transaction);
+          expect(associated_transaction).to.deep.equal(expected_transaction);
 
         });
       })
@@ -463,7 +463,7 @@ describe('controllers/providers/Register.js', () => {
 
       let transaction_object = getValidTransactionObject();
 
-      registerController.parameters.set('hydrated_transaction', transaction_object);
+      registerController.parameters.set('associatedtransaction', transaction_object);
 
       return registerController.getAssociatedTransactions().then(() => {
         let associatedtransactions = registerController.parameters.get('associated_transactions');
@@ -492,7 +492,7 @@ describe('controllers/providers/Register.js', () => {
 
       let transaction_object = getValidTransactionObject();
 
-      registerController.parameters.set('hydrated_transaction', transaction_object);
+      registerController.parameters.set('associatedtransaction', transaction_object);
 
       return registerController.getAssociatedTransactions().then(() => {
         let associatedtransactions = registerController.parameters.get('associated_transactions');
@@ -540,7 +540,7 @@ describe('controllers/providers/Register.js', () => {
 
       let transaction_object = getValidTransactionObject();
 
-      registerController.parameters.set('hydrated_transaction', transaction_object);
+      registerController.parameters.set('associatedtransaction', transaction_object);
 
       return registerController.setAmount()
       .then(() => {
@@ -607,7 +607,7 @@ describe('controllers/providers/Register.js', () => {
 
       let transaction = getValidTransactionObject();
 
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('associatedtransaction', transaction);
 
       registerController.parameters.set('amount', transaction.amount);
 
@@ -623,7 +623,7 @@ describe('controllers/providers/Register.js', () => {
 
       let transaction = getValidTransactionObject();
 
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('associatedtransaction', transaction);
 
       registerController.parameters.set('amount', transaction.amount+0.01);
 
@@ -647,7 +647,7 @@ describe('controllers/providers/Register.js', () => {
 
       let associated_transactions = getValidAssociatedTransactions();
 
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('associatedtransaction', transaction);
 
       registerController.parameters.set('associated_transactions', associated_transactions);
 
@@ -677,7 +677,7 @@ describe('controllers/providers/Register.js', () => {
       associated_transactions[1].amount = 0.00;
       associated_transactions[0].amount = 0.00;
 
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('associatedtransaction', transaction);
 
       registerController.parameters.set('associated_transactions', associated_transactions);
 
@@ -700,7 +700,7 @@ describe('controllers/providers/Register.js', () => {
       associated_transactions[1].amount = 14.99;
       associated_transactions[0].amount = 9.99;
 
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('associatedtransaction', transaction);
 
       registerController.parameters.set('associated_transactions', associated_transactions);
 
@@ -756,13 +756,13 @@ describe('controllers/providers/Register.js', () => {
       associated_transactions[1].amount = 14.99;
       associated_transactions[0].amount = 9.99;
 
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('associatedtransaction', transaction);
 
       registerController.parameters.set('amount', 10.00);
 
       return registerController.executeRefund().then(() => {
 
-        let response = registerController.parameters.get('processor_response');
+        let response = registerController.parameters.get('processorresponse');
 
         expect(response).to.have.property('message');
         expect(response).to.have.property('code');
@@ -816,11 +816,11 @@ describe('controllers/providers/Register.js', () => {
       associated_transactions[1].amount = 14.99;
       associated_transactions[0].amount = 9.99;
 
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('associatedtransaction', transaction);
 
       return registerController.executeReverse().then(() => {
 
-        let response = registerController.parameters.get('processor_response');
+        let response = registerController.parameters.get('processorresponse');
 
         expect(response).to.have.property('message');
         expect(response).to.have.property('code');
@@ -877,7 +877,7 @@ describe('controllers/providers/Register.js', () => {
 
       return registerController.executeProcess().then(() => {
 
-        let response = registerController.parameters.get('processor_response');
+        let response = registerController.parameters.get('processorresponse');
 
         expect(response).to.have.property('message');
         expect(response).to.have.property('code');
@@ -889,9 +889,9 @@ describe('controllers/providers/Register.js', () => {
 
   });
 
-  describe('createTransaction', () => {
+  describe('issueReceipt', () => {
 
-    it('creates a transaction for successful sale', () => {
+    it('creates a transaction receipt for successful sale', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index, callback) => {
@@ -922,15 +922,15 @@ describe('controllers/providers/Register.js', () => {
       let processor_response = getProcessorResponseObject();
 
       registerController.parameters.set('rebill', getValidRebill());
-      registerController.parameters.set('transaction_type', 'sale');
+      registerController.parameters.set('transactiontype', 'sale');
       registerController.parameters.set('amount', 10.00);
-      registerController.parameters.set('processor_response', processor_response);
+      registerController.parameters.set('processorresponse', processor_response);
       registerController.parameters.set('merchantprovider', getValidMerchantProvider());
       registerController.parameters.set('transactionproducts', transaction.products);
 
-      return registerController.createTransaction().then(() => {
+      return registerController.issueReceipt().then(() => {
 
-        let result_transaction = registerController.parameters.get('result_transaction');
+        let result_transaction = registerController.parameters.get('receipttransaction');
 
         expect(result_transaction).to.have.property('id');
         expect(result_transaction).to.have.property('type');
@@ -974,16 +974,16 @@ describe('controllers/providers/Register.js', () => {
       processor_response.code = 'declined';
 
       registerController.parameters.set('rebill', getValidRebill());
-      registerController.parameters.set('transaction_type', 'sale');
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('transactiontype', 'sale');
+      registerController.parameters.set('associatedtransaction', transaction);
       registerController.parameters.set('amount', 10.00);
-      registerController.parameters.set('processor_response', processor_response);
+      registerController.parameters.set('processorresponse', processor_response);
       registerController.parameters.set('merchantprovider', getValidMerchantProvider());
       registerController.parameters.set('transactionproducts', getValidTransactionProducts());
 
-      return registerController.createTransaction().then(() => {
+      return registerController.issueReceipt().then(() => {
 
-        let result_transaction = registerController.parameters.get('result_transaction');
+        let result_transaction = registerController.parameters.get('receipttransaction');
 
         expect(result_transaction).to.have.property('id');
         expect(result_transaction).to.have.property('type');
@@ -1028,39 +1028,67 @@ describe('controllers/providers/Register.js', () => {
       processor_response.code = 'error';
 
       registerController.parameters.set('rebill', getValidRebill());
-      registerController.parameters.set('transaction_type', 'refund');
-      registerController.parameters.set('hydrated_transaction', transaction);
+      registerController.parameters.set('transactiontype', 'refund');
+      registerController.parameters.set('associatedtransaction', transaction);
       registerController.parameters.set('amount', 10.00);
-      registerController.parameters.set('processor_response', processor_response);
+      registerController.parameters.set('processorresponse', processor_response);
 
-      return registerController.createTransaction().then(() => {
+      return registerController.issueReceipt().then(() => {
 
-        let result_transaction = registerController.parameters.get('result_transaction');
+        let receipt_transaction = registerController.parameters.get('receipttransaction');
 
-        expect(result_transaction).to.have.property('id');
-        expect(result_transaction).to.have.property('associated_transaction');
-        expect(result_transaction).to.have.property('type');
-        expect(result_transaction).to.have.property('result');
-        expect(result_transaction.associated_transaction).to.equal(transaction.id);
-        expect(result_transaction.type).to.equal('refund');
-        expect(result_transaction.result).to.equal('error');
+        expect(receipt_transaction).to.have.property('id');
+        expect(receipt_transaction).to.have.property('associated_transaction');
+        expect(receipt_transaction).to.have.property('type');
+        expect(receipt_transaction).to.have.property('result');
+        expect(receipt_transaction.associated_transaction).to.equal(transaction.id);
+        expect(receipt_transaction.type).to.equal('refund');
+        expect(receipt_transaction.result).to.equal('error');
 
       });
 
     });
 
-    it('returns null when creation of transaction was unsuccessful', () => {
+    xit('returns null when creation of transaction was unsuccessful', () => {
+
+        assumePermissionedRole();
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'dynamodb-utilities.js'), {
+          queryRecords: (table, parameters, index, callback) => {
+            return Promise.resolve([]);
+          },
+          saveRecord: (tableName, entity, callback) => {
+            return new Error();
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+          createActivity: (actor, action, acted_upon, associated_with) => {
+            return true;
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+          addToSearchIndex: (entity) => {
+            return entity;
+          }
+        });
 
         let registerController = new RegisterController();
 
+        registerController.parameters.set('rebill', getValidRebill());
+        registerController.parameters.set('amount', getValidAmount());
+        registerController.parameters.set('transactiontype', 'sale');
+        registerController.parameters.set('merchantprovider', getValidMerchantProvider());
+        registerController.parameters.set('transactionproducts', getValidTransactionProducts());
+
         let processor_response = getProcessorResponseObject();
 
-        registerController.parameters.set('processor_response', processor_response);
-
         processor_response.code = 'error';
+        registerController.parameters.set('processorresponse', processor_response);
 
-        return registerController.createTransaction().then(result => {
-            expect(result).to.equal(null);
+        return registerController.issueReceipt().then(result => {
+          expect(result).to.equal(null);
         });
 
     });
@@ -1368,8 +1396,8 @@ describe('controllers/providers/Register.js', () => {
 
         let registerController = new RegisterController();
 
-        registerController.parameters.set('result_transaction', getValidTransactionObject());
-        registerController.parameters.set('processor_response', getProcessorResponseObject());
+        registerController.parameters.set('receipttransaction', getValidTransactionObject());
+        registerController.parameters.set('processorresponse', getProcessorResponseObject());
 
         return registerController.transformResponse().then(response => {
 
@@ -1394,8 +1422,8 @@ describe('controllers/providers/Register.js', () => {
 
         let registerController = new RegisterController();
 
-        registerController.parameters.set('result_transaction', declined_transaction);
-        registerController.parameters.set('processor_response', processor_response);
+        registerController.parameters.set('receipttransaction', declined_transaction);
+        registerController.parameters.set('processorresponse', processor_response);
 
         return registerController.transformResponse().then(response => {
 
@@ -1420,8 +1448,8 @@ describe('controllers/providers/Register.js', () => {
 
         let registerController = new RegisterController();
 
-        registerController.parameters.set('result_transaction', error_transaction);
-        registerController.parameters.set('processor_response', processor_response);
+        registerController.parameters.set('receipttransaction', error_transaction);
+        registerController.parameters.set('processorresponse', processor_response);
 
         return registerController.transformResponse().then(response => {
 
