@@ -377,6 +377,7 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.validateAttemptRecord())
     .then(() => this.validateSession())
     .catch((error) => {
+      du.error(error);
       return Promise.reject(error);
     });
 
@@ -435,7 +436,7 @@ module.exports = class Register extends PermissionedController {
     let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
 
     if(timestamp.getTimeDifference(bill_at_timestamp) < 0){
-      eu.throwError('server', 'Rebill is not eligible for processing at this time.');
+      eu.throwError('server', 'Rebill is not eligible for processing at this time (rebill.bill_at: '+rebill.bill_at+')');
     }
 
     return Promise.resolve(true);

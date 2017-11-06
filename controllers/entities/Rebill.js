@@ -210,6 +210,7 @@ class rebillController extends entityController {
 
     }
 
+    //Technical Debt:  This needs to go into a helper
     addRebillToQueue(rebill, queue_name){
 
         return new Promise((resolve, reject) => {

@@ -14,7 +14,7 @@ var transactionController = global.SixCRM.routes.include('controllers', 'entitie
 var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
+const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
@@ -232,34 +232,17 @@ class createOrderController extends transactionEndpointController{
 
       du.debug('Create Order');
 
-      let ph = new processHelperController();
+      let register_promises = arrayutilities.map(info.rebills, rebill => {
 
-      //Technical Debt:  Assumes a single schedule for purchase
-      let productschedule = info.productschedules_for_purchase[0];
+        let registerController = new RegisterController();
 
-      return ph.process({customer: info.customer, productschedule: productschedule, amount:info.amount}).then((result) => {
+        return registerController.processTransaction({rebill: rebill});
 
-        //Technical Debt: This is incomplete (and deprecated)
-        //Critical:  Resolve for Declines and Errors!
-        if(!_.has(result, "code") || result.code !== 'success' || !_.has(result, "result")){
+      });
 
-          eu.throwError('server', 'The processor didn\'t approve the transaction: ' + result.message);
+      return Promise.all(register_promises).then(register_promises => {
 
-        }
-
-        info.processor = result;
-
-        return transactionController.putTransaction({session: info.session, rebill: info.rebills[0], amount: info.amount, products: info.transactionProducts}, result).then((transaction) => {
-
-          //Techincal Debt: validate transaction above
-
-          info.transaction = transaction;
-
-          du.debug('Info:', info);
-
-          return info;
-
-        });
+        du.warning(register_promises); process.exit();
 
       });
 
