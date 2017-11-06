@@ -16,18 +16,6 @@ var tests = [{
 {
     name: "view",
     query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getTransaction')
-},
-{
-    name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createTransaction')
-},
-{
-    name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateTransaction')
-},
-{
-    name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteTransaction')
 }];
 
 let this_request = request(endpoint);

@@ -64,10 +64,7 @@ let shippingReceiptInputType = require('./shippingreceipt/shippingReceiptInputTy
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 
 let inviteInputType = require('./user/inviteInputType');
-
-let transactionInputType = require('./transaction/transactionInputType');
 let transactionRefundInputType = require('./transaction/transactionRefundInputType');
-let transactionType = require('./transaction/transactionType');
 
 let userACLInputType = require('./useracl/userACLInputType');
 let userACLType = require('./useracl/userACLType');
@@ -927,72 +924,6 @@ module.exports.graphObj = new GraphQLObjectType({
                 const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
                 return rebillController.delete({id:id});
-            }
-        },
-        //Note: Fix
-        createtransaction:{
-            type: transactionType.graphObj,
-            description: 'Adds a new transaction.',
-            args: {
-                transaction: { type: transactionInputType.graphObj }
-            },
-            resolve: (value, transaction) => {
-                const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-
-                return transactionController.createTransaction(transaction.transaction);
-            }
-        },
-        //Note: Fix
-        updatetransaction:{
-            type: transactionType.graphObj,
-            description: 'Updates a transaction.',
-            args: {
-                transaction: { type: transactionInputType.graphObj }
-            },
-            resolve: (value, transaction) => {
-                const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-
-                return transactionController.updateTransaction(transaction.transaction);
-            }
-        },
-        deletetransaction:{
-            type: deleteOutputType.graphObj,
-            description: 'Deletes a transaction.',
-            args: {
-                id: {
-				  description: 'id of the transaction',
-				  type: new GraphQLNonNull(GraphQLString)
-                }
-            },
-            resolve: (value, transaction) => {
-                var id = transaction.id;
-                const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-
-                return transactionController.delete({id:id});
-            }
-        },
-        //Note: Fix
-        refundtransaction:{
-            /*
-            types: transactionType.graphObj,
-            description: 'Refunds a transaction.',
-            args: {
-                refund: { type: transactionRefundInputType.graphObj }
-            },
-            resolve: (value, args) => {
-                return transactionController.refundTransaction(args);
-            }
-            */
-            type: transactionType.graphObj,
-            description: 'Refunds a transaction',
-            args: {
-                refund: { type: transactionRefundInputType.graphObj },
-                transaction:{type: new GraphQLNonNull(GraphQLString)}
-            },
-            resolve: (value, args) => {
-                const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-
-                return transactionController.refundTransaction(args);
             }
         },
         createcampaign:{
