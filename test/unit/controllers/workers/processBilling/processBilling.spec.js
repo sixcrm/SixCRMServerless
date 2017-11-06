@@ -163,7 +163,7 @@ describe('controllers/workers/processBilling', () => {
   //Technical Debt:  Incomplete
   describe('process', () => {
 
-    it('successfully processes a transaction', () => {
+    xit('successfully processes a transaction', () => {
 
       let register_mock = class Register {
         constructor(){

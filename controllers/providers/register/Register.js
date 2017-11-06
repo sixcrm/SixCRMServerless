@@ -294,19 +294,20 @@ module.exports = class Register extends PermissionedController {
       transaction_prototype = objectutilities.merge(transaction_prototype, {
         products: hydrated_transaction.products,
         merchant_provider: hydrated_transaction.merchant_provider,
-        associated_transaction: hydrated_transaction.id,
-        products: hydrated_transaction.products
+        associated_transaction: hydrated_transaction.id
       });
     }
 
     if(_.contains(['sale'], transaction_type)){
+
       let merchant_provider = this.parameters.get('merchantprovider');
-      let transaction_products = this.parameters.get('transaction_products');
+      let transaction_products = this.parameters.get('transactionproducts');
 
       transaction_prototype = objectutilities.merge(transaction_prototype, {
         merchant_provider: merchant_provider.id,
         products: transaction_products
       });
+
     }
 
     transaction_prototype = this.transactionController.createTransactionObject(transaction_prototype, processor_response);

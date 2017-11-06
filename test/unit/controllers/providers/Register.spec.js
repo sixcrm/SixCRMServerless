@@ -12,6 +12,15 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
+function getValidTransactionProducts(){
+
+  return [{
+    "product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
+    "amount":34.99
+  }];
+
+}
+
 function getValidMerchantProvider(){
 
   return {
@@ -889,7 +898,7 @@ describe('controllers/providers/Register.js', () => {
       registerController.parameters.set('amount', 10.00);
       registerController.parameters.set('processor_response', processor_response);
       registerController.parameters.set('merchantprovider', getValidMerchantProvider());
-      registerController.parameters.set('transaction_products', transaction.products);
+      registerController.parameters.set('transactionproducts', transaction.products);
 
       return registerController.createTransaction().then(() => {
 
@@ -941,16 +950,16 @@ describe('controllers/providers/Register.js', () => {
       registerController.parameters.set('hydrated_transaction', transaction);
       registerController.parameters.set('amount', 10.00);
       registerController.parameters.set('processor_response', processor_response);
+      registerController.parameters.set('merchantprovider', getValidMerchantProvider());
+      registerController.parameters.set('transactionproducts', getValidTransactionProducts());
 
       return registerController.createTransaction().then(() => {
 
         let result_transaction = registerController.parameters.get('result_transaction');
 
         expect(result_transaction).to.have.property('id');
-        expect(result_transaction).to.have.property('associated_transaction');
         expect(result_transaction).to.have.property('type');
         expect(result_transaction).to.have.property('result');
-        expect(result_transaction.associated_transaction).to.equal(transaction.id);
         expect(result_transaction.type).to.equal('sale');
         expect(result_transaction.result).to.equal('declined');
 

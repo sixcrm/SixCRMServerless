@@ -465,10 +465,10 @@ describe('workers/forwardMessage', () => {
 
         arrayutilities.map(responses, response => {
 
+          du.warning(response);
           expect(response).to.have.property('worker_response_object');
-          expect(response.worker_response_object).to.have.property('response');
-          expect(response.worker_response_object.response).to.have.property('code');
-          expect(response.worker_response_object.response.code).to.equal('success');
+          let code = response.worker_response_object.getCode();
+          expect(code).to.equal('success');
           expect(response).to.have.property('message');
           expect(response.message).to.have.property('ReceiptHandle');
 
@@ -495,9 +495,8 @@ describe('workers/forwardMessage', () => {
         arrayutilities.map(responses, response => {
 
           expect(response).to.have.property('worker_response_object');
-          expect(response.worker_response_object).to.have.property('response');
-          expect(response.worker_response_object.response).to.have.property('code');
-          expect(response.worker_response_object.response.code).to.equal('success');
+          let code = response.worker_response_object.getCode();
+          expect(code).to.equal('success');
           expect(response).to.have.property('message');
           expect(response.message).to.have.property('ReceiptHandle');
 
@@ -556,9 +555,8 @@ describe('workers/forwardMessage', () => {
         arrayutilities.map(responses, response => {
 
           expect(response).to.have.property('worker_response_object');
-          expect(response.worker_response_object).to.have.property('response');
-          expect(response.worker_response_object.response).to.have.property('code');
-          expect(response.worker_response_object.response.code).to.equal('success');
+          let code = response.worker_response_object.getCode();
+          expect(code).to.equal('success');
           expect(response).to.have.property('messages');
           expect(response.messages.length).to.equal(messages.length);
 
@@ -848,6 +846,8 @@ describe('workers/forwardMessage', () => {
     });
 
     it('successfully handles noaction', () => {
+
+        du.warning()
 
       let compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
 

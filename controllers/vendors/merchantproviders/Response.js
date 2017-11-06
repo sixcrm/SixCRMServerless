@@ -7,13 +7,12 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
+//Technical Debt:  This needs to extend the Response Provider
 module.exports = class Response {
 
   constructor(){
 
     this.allowed_codes = ['success', 'declined', 'error'];
-
-    this.setMerchantProviderName();
 
     this.handleResponse(arguments[0]);
 
@@ -154,14 +153,6 @@ module.exports = class Response {
     du.debug('Get Message');
 
     return this.message;
-
-  }
-
-  setMerchantProviderName(){
-
-    du.debug('Set Merchant Provider Name');
-
-    this.merchant_provider_name = objectutilities.getClassName(this).replace('Response', '');
 
   }
 

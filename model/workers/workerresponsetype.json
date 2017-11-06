@@ -1,0 +1,7 @@
+{
+	"title": "Worker Response Type",
+  "id":"/workerresponsetype.json",
+	"type": "string",
+	"description": "The worker response type",
+	"enum":["success","fail","error","noaction"]
+}
