@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"body":"
 	{
-		notificationlistbytypes (type:[\"alert\",\"notification\"], user: false) {
+		notificationlistbytypes (type:[\"alert\",\"notification\"], onlyUnexpired: false, user: false) {
 	    notifications {
 				id,
 		    type,

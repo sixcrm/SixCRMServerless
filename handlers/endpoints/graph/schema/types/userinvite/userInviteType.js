@@ -5,7 +5,7 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'UserInvite',
-    description: 'A user unvite.',
+    description: 'A user invite.',
     fields: () => ({
         link: {
             type: new GraphQLNonNull(GraphQLString),

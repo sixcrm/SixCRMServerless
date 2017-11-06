@@ -732,13 +732,28 @@ class userController extends entityController {
 
                 return inviteutilities.invite(invite_parameters).then((link) => {
 
-                    return notificationProvider.createNotificationsForAccount({
-                        account: global.account,
-                        type: 'notification',
-                        category: 'invitation_sent',
-                        action: link,
-                        title: 'Invitation Sent',
-                        message: `User with email ${userinvite.email} has been invited to account ${account.name}.`
+                    du.debug('Creating pending ACL object.');
+
+                    let acl_object = {
+                        user: userinvite.email,
+                        account: account.id,
+                        role: role.id,
+                        pending: 'Invite Sent'
+                    };
+
+                    du.debug('ACL object to create:', acl_object);
+
+                    return this.executeAssociatedEntityFunction('userACLController', 'create', {entity: acl_object}).then(() => {
+
+                        return notificationProvider.createNotificationsForAccount({
+                            account: global.account,
+                            type: 'notification',
+                            category: 'invitation_sent',
+                            action: link,
+                            title: 'Invitation Sent',
+                            message: `User with email ${userinvite.email} has been invited to account ${account.name}.`
+                        })
+
                     }).then(() => {
                         return resolve({link:link});
                     });
@@ -752,6 +767,41 @@ class userController extends entityController {
             });
 
         });
+
+    }
+
+    inviteResend(userinvite) {
+        du.debug('Resending Invite', userinvite);
+
+        return new Promise((resolve, reject) => {
+
+            const acl = userinvite.acl;
+
+            return this.executeAssociatedEntityFunction('userACLController', 'get', {id: acl})
+                .then((acl_entity) => {
+                    du.debug('Found User Acl', acl_entity);
+
+                    if (!acl_entity) {
+                        return reject(eu.getError('bad_request','Non Existing User ACL.'));
+                    }
+
+                    if (!acl_entity.pending) {
+                        return reject(eu.getError('bad_request','Can\'t resend invite, User ACL is not pending.'));
+                    }
+
+                    let invite_parameters = {email: acl_entity.user, account: acl_entity.account, role: acl_entity.role};
+
+                    return inviteutilities.invite(invite_parameters).then((link) => {
+                        du.debug('Invite successfully resent.');
+
+                        return resolve({link: link});
+                    })
+
+                }).catch((error) => {
+                    return reject(error);
+                });
+
+        })
 
     }
 

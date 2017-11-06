@@ -38,8 +38,12 @@ module.exports.graphObj = new GraphQLObjectType({
       	return userACLController.getRole(user_acl);
             }
         },
+        pending: {
+            type: GraphQLString,
+            description: 'User ACL pending category, if ACL is pending.',
+        },
         created_at: {
-	    type: new GraphQLNonNull(GraphQLString),
+	        type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',
         },
         updated_at: {

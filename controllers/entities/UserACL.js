@@ -117,7 +117,17 @@ class userACLController extends entityController {
           return useracl.user;
       }
 
-      return this.executeAssociatedEntityFunction('userController', 'get', {id: useracl.user});
+      return this.executeAssociatedEntityFunction('userController', 'get', {id: useracl.user}).then((user) => {
+          if (!user) {
+              const partial_user = {id: useracl.user, name: useracl.user};
+
+              du.debug('No User found for ACL, return partially hydrated user', partial_user);
+
+              return Promise.resolve(partial_user);
+          }
+
+          return Promise.resolve(user);
+      });
 
     }
 

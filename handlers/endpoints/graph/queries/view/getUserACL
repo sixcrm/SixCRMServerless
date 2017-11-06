@@ -17,6 +17,7 @@
 				id,
 				name
 			},
+			pending,
 			created_at,
 			updated_at
 		} 

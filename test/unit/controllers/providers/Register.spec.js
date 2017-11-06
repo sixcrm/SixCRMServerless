@@ -504,6 +504,34 @@ describe('controllers/providers/Register.js', () => {
 
   });
 
+  describe('validateAssociatedTransactions', () => {
+
+      it('returns error when transaction with pre-existing refunds/reversals can\'t be reversed', (done) => {
+
+          let registerController = new RegisterController();
+
+          let associated_transactions = getValidAssociatedTransactions();
+
+          registerController.parameters.set('associated_transactions', associated_transactions);
+
+          try{
+            registerController.validateAssociatedTransactions();
+          }catch(error){
+              expect(error.message).to.equal('[403] A transaction with pre-existing refunds or reversals can not be reversed.');
+              done()
+          }
+      });
+
+      it('successfully validates associated transactions', () => {
+
+          let registerController = new RegisterController();
+
+          return registerController.validateAssociatedTransactions().then((validated) => {
+                  expect(validated).to.equal(true);
+          });
+      });
+  });
+
   describe('setAmount', () => {
 
     it('successfully sets amount when amount is not set in parameters', () => {
@@ -1021,6 +1049,22 @@ describe('controllers/providers/Register.js', () => {
 
     });
 
+    it('returns null when creation of transaction was unsuccessful', () => {
+
+        let registerController = new RegisterController();
+
+        let processor_response = getProcessorResponseObject();
+
+        registerController.parameters.set('processor_response', processor_response);
+
+        processor_response.code = 'error';
+
+        return registerController.createTransaction().then(result => {
+            expect(result).to.equal(null);
+        });
+
+    });
+
   });
 
   describe('validateRebillTimestamp', () => {
@@ -1036,6 +1080,29 @@ describe('controllers/providers/Register.js', () => {
       return registerController.validateRebillTimestamp().then(result => {
         expect(result).to.equal(true);
       });
+
+    });
+
+    it('returns error if rebill is not eligible for processing at this time', (done) => {
+
+      let date = new Date();
+
+      let valid_rebill = getValidRebill();
+
+      let registerController = new RegisterController();
+
+      registerController.parameters.set('rebill', valid_rebill);
+
+      date.setDate(date.getDate() + 1); //add one day so it would be too soon for rebill processing
+
+      valid_rebill.bill_at = date;
+
+      try{
+        registerController.validateRebillTimestamp()
+      }catch (error){
+        expect(error.message).to.equal('[500] Rebill is not eligible for processing at this time.');
+        done();
+      }
 
     });
 
@@ -1151,6 +1218,30 @@ describe('controllers/providers/Register.js', () => {
           expect(result).to.equal(true);
 
         });
+
+      });
+
+      it('returns error when session has invalid day in cycle', () => {
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+            calculateDayInCycle: (session_start) => {
+                return -1; //any negative number
+            }
+        });
+
+        let parent_session = getValidParentSession();
+
+        let registerController = new RegisterController();
+
+        registerController.parameters.set('parentsession', parent_session);
+
+        registerController.setDependencies();
+
+        try{
+          registerController.validateSession()
+        }catch(error){
+            expect(error.message).to.equal('[500] Invalid day in cycle returned for session.');
+        }
 
       });
 

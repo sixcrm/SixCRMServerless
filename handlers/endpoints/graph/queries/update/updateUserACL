@@ -14,6 +14,7 @@
 			role {
 				id
 			},
+			pending,
 			created_at,
 			updated_at
 		}
