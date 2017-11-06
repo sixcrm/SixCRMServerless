@@ -777,7 +777,7 @@ class userController extends entityController {
 
             const acl = userinvite.acl;
 
-            return this.executeAssociatedEntityFunction('userACLController', 'get', {entity: acl})
+            return this.executeAssociatedEntityFunction('userACLController', 'get', {id: acl})
                 .then((acl_entity) => {
                     du.debug('Found User Acl', acl_entity);
 
@@ -789,7 +789,7 @@ class userController extends entityController {
                         return reject(eu.getError('bad_request','Can\'t resend invite, User ACL is not pending.'));
                     }
 
-                    let invite_parameters = {email: acl.user, account: acl.account, role: acl.role};
+                    let invite_parameters = {email: acl_entity.user, account: acl_entity.account, role: acl_entity.role};
 
                     return inviteutilities.invite(invite_parameters).then((link) => {
                         du.debug('Invite successfully resent.');
