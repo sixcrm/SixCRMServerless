@@ -10,6 +10,7 @@ const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js
 
 const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const termsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 
 //Technical Debt:  The list method here is tricky
 class userController extends entityController {
@@ -170,52 +171,59 @@ class userController extends entityController {
             this.createProfile(global.user).then((user) => {
 
 						//Technical Debt:  Let's make sure that it's a appropriate object before we set it as the global user here...
-                        return this.isPartiallyHydratedUser(user).then((validated) => {
+              return this.isPartiallyHydratedUser(user).then((validated) => {
 
-                            if(validated == true){
+                if(validated == true){
 
-                                this.setGlobalUser(user);
+                  this.setGlobalUser(user);
 
-                                du.debug('New Global User:', global.user);
+                    du.debug('New Global User:', global.user);
 
-                                return resolve(this.introspection());
-
-                            }else{
-
-                                return reject(eu.getError('server','User created in profile is not a partially-hydrated user.'));
-
-                            }
-
-                        });
-
-
-                    }).catch((error) => {
-
-                        return reject(error);
-
-                    });
-
-                }else if(_.has(global.user, 'id')){
-
-					//Technical Debt: need some vigorous validation here
-                    du.debug('Global User:', global.user);
-
-                    return resolve(global.user);
+                    return resolve(this.introspection());
 
                 }else{
 
-                    return reject(eu.getError('bad_request','Global User must be of type User or Email.'));
+                  return reject(eu.getError('server','User created in profile is not a partially-hydrated user.'));
 
                 }
 
-            }else{
+              });
 
-                return reject(eu.getError('bad_request','Introspection method requires a global user.'));
+            }).catch((error) => {
 
-            }
+              return reject(error);
 
-        });
+            });
 
+          } else if (_.has(global.user, 'id')) {
+
+					  //Technical Debt: need some vigorous validation here
+            du.debug('Global User:', global.user);
+
+            termsAndConditionsController.getLatestTermsAndConditions()
+              .then(terms_and_conditions => {
+
+                if (terms_and_conditions.version !== global.user.termsandconditions) {
+                  global.user.termsandconditions_outdated = true;
+                }
+
+                return resolve(global.user);
+
+              }).catch(error => reject(error));
+
+          } else {
+
+            return reject(eu.getError('bad_request','Global User must be of type User or Email.'));
+
+          }
+
+        } else {
+
+          return reject(eu.getError('bad_request','Introspection method requires a global user.'));
+
+        }
+
+      });
     }
 
     createProfile(email){

@@ -47,8 +47,12 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'Alias of the user',
         },
         termsandconditions:{
-	        type: GraphQLString,
+	          type: GraphQLString,
             description: 'The accepted Terms and Conditions version.',
+        },
+        termsandconditions_outdated:{
+            type: GraphQLString,
+            description: 'Are terms and conditions outdated, is there a newer version.',
         },
         acl:{
             type: new GraphQLList(userACLType.graphObj),
