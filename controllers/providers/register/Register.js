@@ -88,9 +88,11 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  processTransaction(){
+  processTransaction({rebill}){
 
-    du.debug('process Transaction');
+    du.debug('Process Transaction');
+
+    du.warning(rebill);
 
     return this.can({action: 'process', object: 'register', fatal: true})
     .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))

@@ -14,6 +14,7 @@ var transactionController = global.SixCRM.routes.include('controllers', 'entitie
 var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
+const RebillHelperController = global.SixCRM.routes.include('helpers', 'rebill/Rebill.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
@@ -193,38 +194,34 @@ class createOrderController extends transactionEndpointController{
 
     getTransactionInfo(info) {
 
-        du.debug('Get Transaction Info');
+      du.debug('Get Transaction Info');
 
-        var promises = [];
+      var promises = [];
 
-        var getCustomer = customerController.get({id: info.session.customer});
-        //Technical Debt:  Naming convention here could use some work
-        var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.productschedules_for_purchase);
+      var getCustomer = customerController.get({id: info.session.customer});
 
-		    // Note:  This creates the rebill for NOW such that we have a rebill to append the transaction to.
-        var getRebills = rebillController.createRebills(info.session, info.productschedules_for_purchase, 0);
+      //Technical Debt:  Naming convention here could use some work
+      var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.productschedules_for_purchase);
 
-        promises.push(getCustomer);
-        promises.push(getTransactionProducts);
-        promises.push(getRebills);
+      promises.push(getCustomer);
+      promises.push(getTransactionProducts);
 
-        return Promise.all(promises).then((promises) => {
+      return Promise.all(promises).then((promises) => {
 
-            info.customer = promises[0];
-            info.transactionProducts = promises[1];
-            info.rebills = promises[2];
+        info.customer = promises[0];
+        info.transactionProducts = promises[1];
 
-			      //more validation
-            if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
-                eu.throwError('not_found', 'Customer not found.');
-            }
+        //more validation
+        if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
+            eu.throwError('not_found', 'Customer not found.');
+        }
 
-			      //Technical Debt: refactor this to use the transaction products above....
-            info.amount = productScheduleController.productSum(0, info.productschedules_for_purchase);
+        //Technical Debt: refactor this to use the transaction products above....
+        info.amount = productScheduleController.productSum(0, info.productschedules_for_purchase);
 
-            return info;
+        return info;
 
-        });
+      });
 
     }
 
@@ -232,19 +229,23 @@ class createOrderController extends transactionEndpointController{
 
       du.debug('Create Order');
 
-      let register_promises = arrayutilities.map(info.rebills, rebill => {
+      let rebillHelper = new RebillHelperController();
+
+      //technical debt:  if they have a existing rebill with a failed transaction that needs to be resolved...
+      //technical debt:  Purchase one thing.
+      return rebillHelper.createInitialRebill(info.session, info.productschedules_for_purchase[0]).then(rebill => {
+
+        info.rebill = rebill;
 
         let registerController = new RegisterController();
 
-        return registerController.processTransaction({rebill: rebill});
+        return registerController.processTransaction({rebill: rebill}).then(() =>{
 
-      });
+          return info;
 
-      return Promise.all(register_promises).then(register_promises => {
+        });
 
-        du.warning(register_promises); process.exit();
-
-      });
+      })
 
     }
 

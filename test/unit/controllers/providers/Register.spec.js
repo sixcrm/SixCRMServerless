@@ -1128,7 +1128,7 @@ describe('controllers/providers/Register.js', () => {
       try{
         registerController.validateRebillTimestamp()
       }catch (error){
-        expect(error.message).to.equal('[500] Rebill is not eligible for processing at this time.');
+        expect(error.message).to.have.string('[500] Rebill is not eligible for processing at this time');
         done();
       }
 

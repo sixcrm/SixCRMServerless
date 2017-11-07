@@ -12,7 +12,7 @@ let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-let RebillBuilderController = global.SixCRM.routes.include('helpers', 'rebill/RebillBuilder.js');
+let RebillHelperController = global.SixCRM.routes.include('helpers', 'rebill/Rebill.js');
 
 function getValidProductSchedule(){
 
@@ -52,9 +52,9 @@ function getValidProductSchedule(){
 describe('constructor', () => {
 
   it('successfully calls the constructor', () => {
-    let rebillBuilder = new RebillBuilderController();
+    let rebillBuilder = new RebillHelperController();
 
-    expect(objectutilities.getClassName(rebillBuilder)).to.equal('RebillBuilder');
+    expect(objectutilities.getClassName(rebillBuilder)).to.equal('RebillHelper');
   });
 
 });
@@ -63,7 +63,7 @@ describe('calculateOffsetFromNow', () => {
 
   it('successfully calculates offset from now', () => {
 
-    let rebillBuilder = new RebillBuilderController();
+    let rebillBuilder = new RebillHelperController();
 
     let buildatoffsets = [-45.8,-1,0,3.9,15,30,45,90,100];
 
@@ -81,7 +81,7 @@ describe('calculateOffsetFromNow', () => {
 
   it('fails with invalid inputs', () => {
 
-    let rebillBuilder = new RebillBuilderController();
+    let rebillBuilder = new RebillHelperController();
 
     let invalid_inputs = [null, undefined, {}, [], 'asdbasd', () => {}];
 
@@ -99,13 +99,13 @@ describe('calculateOffsetFromNow', () => {
 
 });
 
-describe.only('getScheduleElementByDay', () => {
+describe('getScheduleElementByDay', () => {
 
   it('successfully returns schedule elements by day', () => {
 
     let product_schedule = getValidProductSchedule();
 
-    let rebillBuilder = new RebillBuilderController();
+    let rebillBuilder = new RebillHelperController();
 
     let cases = [
       {
@@ -147,6 +147,166 @@ describe.only('getScheduleElementByDay', () => {
       let scheduled_product = rebillBuilder.getScheduleElementByDay(product_schedule, test_case.day);
 
       expect(scheduled_product).to.equal(test_case.expect);
+
+    });
+
+  });
+
+});
+
+describe('calculateDayInCycle', () => {
+
+  it('successfully calculates the day in cycle', () => {
+
+    let rebillBuilder = new RebillHelperController();
+
+    let now = timestamp.createTimestampSeconds();
+
+    let cases = [
+      {
+        session_start: timestamp.toISO8601(now),
+        expect: 0
+      },
+      {
+        session_start: timestamp.toISO8601(now - timestamp.getDayInSeconds()),
+        expect: 1
+      },
+      {
+        session_start: timestamp.toISO8601(now - (timestamp.getDayInSeconds() * 5)),
+        expect: 5
+      },
+      {
+        session_start: timestamp.toISO8601(now - (timestamp.getDayInSeconds() * 20)),
+        expect: 20
+      },
+      {
+        session_start: timestamp.toISO8601(now - (timestamp.getDayInSeconds() * -1)),
+        expect: -1
+      },
+      {
+        session_start: timestamp.toISO8601(now),
+        expect: 0
+      }
+
+    ];
+
+    arrayutilities.map(cases, (test_case) => {
+
+      expect(rebillBuilder.calculateDayInCycle(test_case.session_start)).to.equal(test_case.expect);
+
+    });
+
+  });
+
+});
+
+describe('getCurrentRebill', () => {
+
+  xit('successfully calculates returns a proto-rebill for the current cycle', () => {
+
+    let rebillBuilder = new RebillHelperController();
+
+    let product_schedule  = getValidProductSchedule();
+
+    let cases = [
+      {
+        day: 0,
+        expect: product_schedule.schedule[0]
+      },
+      {
+        day: 1,
+        expect: product_schedule.schedule[0]
+      },
+      {
+        day:13,
+        expect: product_schedule.schedule[0]
+      },
+      {
+        day:14,
+        expect: product_schedule.schedule[1]
+      },
+      {
+        day:15,
+        expect: product_schedule.schedule[1]
+      },
+      {
+        day:27,
+        expect: product_schedule.schedule[1]
+      },
+      {
+        day:28,
+        expect: product_schedule.schedule[2]
+      },
+      {
+        day:3000,
+        expect: product_schedule.schedule[2]
+      }
+    ];
+
+    arrayutilities.map(cases, test_case => {
+
+      let current_schedule = rebillBuilder.getCurrentRebill(test_case.day, product_schedule);
+
+      expect(current_schedule.product_schedule).to.deep.equal(product_schedule);
+      expect(current_schedule.amount).to.equal(test_case.expect.price);
+      expect(current_schedule.product).to.equal(test_case.expect.product_id);
+
+    });
+
+  });
+
+});
+
+describe('getNextRebill', () => {
+
+  xit('successfully calculates returns a proto-rebill for the current cycle', () => {
+
+    let rebillBuilder = new RebillHelperController();
+
+    let product_schedule  = getValidProductSchedule();
+
+    let cases = [
+      {
+        day: 0,
+        expect: product_schedule.schedule[1]
+      },
+      {
+        day: 1,
+        expect: product_schedule.schedule[1]
+      },
+      {
+        day:13,
+        expect: product_schedule.schedule[1]
+      },
+      {
+        day:14,
+        expect: product_schedule.schedule[2]
+      },
+      {
+        day:15,
+        expect: product_schedule.schedule[2]
+      },
+      {
+        day:27,
+        expect: product_schedule.schedule[2]
+      },
+      {
+        day:28,
+        expect: product_schedule.schedule[2]
+      },
+      {
+        day:3000,
+        expect: product_schedule.schedule[2]
+      }
+    ];
+
+    arrayutilities.map(cases, test_case => {
+
+      let next_schedule = rebillBuilder.getNextRebill(test_case.day, product_schedule);
+
+      expect(next_schedule.product_schedule).to.deep.equal(product_schedule);
+      expect(next_schedule.amount).to.equal(test_case.expect.price);
+      expect(next_schedule.product).to.equal(test_case.expect.product_id);
 
     });
 
