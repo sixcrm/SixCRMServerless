@@ -1627,4 +1627,200 @@ describe('controllers/providers/Register.js', () => {
 
     });
 
+    describe('reverseTransaction', () => {
+
+      it('successfully reverses a transaction', () => {
+
+        let mock_register_response = class RegisterResponse {
+          constructor(){}
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), mock_register_response);
+
+        let mock_receipt = class {
+          constructor(){}
+          issueReceipt({argumentation}){
+            let transaction = getValidTransactionObject();
+
+            return Promise.resolve(transaction);
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
+
+        let mock_process = class {
+          constructor(){}
+          process({customer: customer, productschedule: productschedule, amount: amount}){
+            return Promise.resolve(getValidProcessResponse());
+          }
+        }
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
+          get: ({id}) => {
+            return Promise.resolve(getValidTransactionObject())
+          },
+          listByAssociatedTransaction: () => {
+            return Promise.resolve({transactions:[]});
+          },
+          getResult: (result, field) => {
+
+            du.debug('Get Result');
+
+            if(_.isUndefined(field)){
+              field = this.descriptive_name+'s';
+            }
+
+            if(_.has(result, field)){
+              return Promise.resolve(result[field]);
+            }else{
+              return Promise.resolve(null);
+            }
+
+          },
+          getMerchantProvider: (transaction) => {
+            return Promise.resolve(getValidMerchantProvider());
+          },
+          getID: (object) => {
+
+              if(_.isString(object)){
+                  return object;
+              }else if(_.isObject(object)){
+                  if(_.has(object, 'id')){
+                    return object['id'];
+                  }
+              }else if(_.isNull(object)){
+                  return null;
+              }
+
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+          createActivity: (actor, action, acted_upon, associated_with) => {
+            return true;
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+          addToSearchIndex: (entity) => {
+            return entity;
+          }
+        });
+
+        PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+        let valid_transaction = getValidTransactionObject();
+
+        let registerController = new RegisterController();
+
+        return registerController.reverseTransaction({transaction: valid_transaction}).then(result => {
+
+          expect(objectutilities.getClassName(result)).to.equal('RegisterResponse');
+
+        });
+
+      });
+
+    });
+
+    describe('refundTransaction', () => {
+
+      it('successfully reverses a transaction', () => {
+
+        let mock_register_response = class RegisterResponse {
+          constructor(){}
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), mock_register_response);
+
+        let mock_receipt = class {
+          constructor(){}
+          issueReceipt({argumentation}){
+            let transaction = getValidTransactionObject();
+
+            return Promise.resolve(transaction);
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
+
+        let mock_process = class {
+          constructor(){}
+          process({customer: customer, productschedule: productschedule, amount: amount}){
+            return Promise.resolve(getValidProcessResponse());
+          }
+        }
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
+          get: ({id}) => {
+            return Promise.resolve(getValidTransactionObject())
+          },
+          listByAssociatedTransaction: () => {
+            return Promise.resolve({transactions:[]});
+          },
+          getResult: (result, field) => {
+
+            du.debug('Get Result');
+
+            if(_.isUndefined(field)){
+              field = this.descriptive_name+'s';
+            }
+
+            if(_.has(result, field)){
+              return Promise.resolve(result[field]);
+            }else{
+              return Promise.resolve(null);
+            }
+
+          },
+          getMerchantProvider: (transaction) => {
+            return Promise.resolve(getValidMerchantProvider());
+          },
+          getID: (object) => {
+
+              if(_.isString(object)){
+                  return object;
+              }else if(_.isObject(object)){
+                  if(_.has(object, 'id')){
+                    return object['id'];
+                  }
+              }else if(_.isNull(object)){
+                  return null;
+              }
+
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+          createActivity: (actor, action, acted_upon, associated_with) => {
+            return true;
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+          addToSearchIndex: (entity) => {
+            return entity;
+          }
+        });
+
+        PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+        let valid_transaction = getValidTransactionObject();
+
+        du.warning(valid_transaction);
+
+        let valid_amount = (valid_transaction.amount - 10.00);
+
+        let registerController = new RegisterController();
+
+        return registerController.refundTransaction({transaction: valid_transaction, amount: valid_amount}).then(result => {
+
+          expect(objectutilities.getClassName(result)).to.equal('RegisterResponse');
+
+        });
+
+      });
+
+    });
+
 });
