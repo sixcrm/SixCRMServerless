@@ -234,7 +234,32 @@ describe('helpers/transaction/Reverse.js', () => {
 
       it('successfully reverses a transaction', () => {
 
-          //Test: complete
+        assumePermissionedRole()
+
+        let mock_gateway = class {
+          constructor(){}
+          reverse({argumentation}){
+            return Promise.resolve(
+              {
+                code: 200,
+                result: 'success',
+                message: 'Success'
+              }
+            );
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
+
+        let vh = new ReverseHelperController();
+
+        let transaction = getValidTransaction();
+
+        return vh.reverse({transaction:transaction}).then(result => {
+          expect(result).to.have.property('code');
+          expect(result).to.have.property('result');
+          expect(result).to.have.property('message');
+        });
 
       });
 
