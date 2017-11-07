@@ -662,7 +662,7 @@ class userController extends entityController {
 
             delete user_acl.pending;
 
-            return this.executeAssociatedEntityFunction('userACLController', 'update', user_acl);
+            return this.executeAssociatedEntityFunction('userACLController', 'update', {entity: user_acl});
 
           }).then(user_acl => {
 
