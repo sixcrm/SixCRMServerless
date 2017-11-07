@@ -75,7 +75,6 @@ module.exports = class Refund extends TransactionUtilities{
 
       let transaction = this.parameters.get('transaction');
 
-      du.warning(transaction);
       if(_.has(transaction, 'processor_response')){
 
         try{
@@ -86,10 +85,15 @@ module.exports = class Refund extends TransactionUtilities{
 
       }
 
-      //Need to add amount, where applicable
       let parameters = {
         transaction: transaction
       };
+
+      let amount = this.parameters.get('amount', null, false);
+
+      if(!_.isNull(amount)){
+        parameters.amount = amount;
+      }
 
       this.parameters.set('refund', parameters);
 

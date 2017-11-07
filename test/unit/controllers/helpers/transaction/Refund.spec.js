@@ -56,7 +56,7 @@ function getValidTransaction(){
     "alias":"T56S2HJO32",
     "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
     "rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-    "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
+    "processor_response": "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
     "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
     "products":[{
       "product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
@@ -232,7 +232,32 @@ describe('helpers/transaction/Refund.js', () => {
 
       it('successfully refunds a transaction', () => {
 
-          //Test: complete
+        assumePermissionedRole()
+
+        let mock_gateway = class {
+          constructor(){}
+          refund({argumentation}){
+            return Promise.resolve(
+              {
+                code: 200,
+                result: 'success',
+                message: 'Success'
+              }
+            );
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
+
+        let vh = new RefundHelperController();
+
+        let transaction = getValidTransaction();
+
+        return vh.refund({transaction:transaction}).then(result => {
+          expect(result).to.have.property('code');
+          expect(result).to.have.property('result');
+          expect(result).to.have.property('message');
+        });
 
       });
 
