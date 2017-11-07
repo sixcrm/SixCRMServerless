@@ -57,9 +57,9 @@ class TermsAndConditions {
 
         const terms_and_conditions = items.sort((a, b) => {
 
-          if(a < b) return -1;
+          if(a < b) return 1;
 
-          if(a > b) return 1;
+          if(a > b) return -1;
 
           return 0;
 

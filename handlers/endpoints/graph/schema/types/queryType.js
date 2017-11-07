@@ -55,6 +55,8 @@ let notificationSettingDefaultType = require('./notificationsetting/notification
 let userType = require('./user/userType');
 let userListType = require('./user/userListType');
 
+let termsAndConditionsType = require('./termsandconditions/termsAndConditionsType');
+
 let userSettingListType = require('./usersetting/userSettingListType');
 let userSettingType = require('./usersetting/userSettingType');
 
@@ -190,6 +192,15 @@ module.exports.graphObj = new GraphQLObjectType({
             return userController.introspection();
     	     }
       	},
+        latesttermsandconditions:{
+          type: termsAndConditionsType.graphObj,
+          description: 'Retrieves latest terms and conditions.',
+          resolve: function(){
+            const termsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
+
+            return termsAndConditionsController.getLatestTermsAndConditions();
+          }
+        },
         userlist: {
             type: userListType.graphObj,
             args: {
