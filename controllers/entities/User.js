@@ -600,9 +600,9 @@ class userController extends entityController {
                     let user_object = {
                         id: user_id,
                         termsandconditions: "0",
-                        active: false,
+                        active: true,
                         auth0id: "-",
-                        name: "-"
+                        name: "user_id"
                     };
 
                     user_object = this.appendAlias(user_object);
