@@ -9,6 +9,7 @@
 			auth0_id,
 			active,
 			termsandconditions,
+			termsandconditions_outdated,
 			acl {
 				account {
 					id,

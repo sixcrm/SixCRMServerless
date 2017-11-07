@@ -10,6 +10,7 @@ const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js
 
 const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const termsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 
 //Technical Debt:  The list method here is tricky
 class userController extends entityController {
@@ -170,52 +171,59 @@ class userController extends entityController {
             this.createProfile(global.user).then((user) => {
 
 						//Technical Debt:  Let's make sure that it's a appropriate object before we set it as the global user here...
-                        return this.isPartiallyHydratedUser(user).then((validated) => {
+              return this.isPartiallyHydratedUser(user).then((validated) => {
 
-                            if(validated == true){
+                if(validated == true){
 
-                                this.setGlobalUser(user);
+                  this.setGlobalUser(user);
 
-                                du.debug('New Global User:', global.user);
+                    du.debug('New Global User:', global.user);
 
-                                return resolve(this.introspection());
-
-                            }else{
-
-                                return reject(eu.getError('server','User created in profile is not a partially-hydrated user.'));
-
-                            }
-
-                        });
-
-
-                    }).catch((error) => {
-
-                        return reject(error);
-
-                    });
-
-                }else if(_.has(global.user, 'id')){
-
-					//Technical Debt: need some vigorous validation here
-                    du.debug('Global User:', global.user);
-
-                    return resolve(global.user);
+                    return resolve(this.introspection());
 
                 }else{
 
-                    return reject(eu.getError('bad_request','Global User must be of type User or Email.'));
+                  return reject(eu.getError('server','User created in profile is not a partially-hydrated user.'));
 
                 }
 
-            }else{
+              });
 
-                return reject(eu.getError('bad_request','Introspection method requires a global user.'));
+            }).catch((error) => {
 
-            }
+              return reject(error);
 
-        });
+            });
 
+          } else if (_.has(global.user, 'id')) {
+
+					  //Technical Debt: need some vigorous validation here
+            du.debug('Global User:', global.user);
+
+            termsAndConditionsController.getLatestTermsAndConditions()
+              .then(terms_and_conditions => {
+
+                if (terms_and_conditions.version !== global.user.termsandconditions) {
+                  global.user.termsandconditions_outdated = true;
+                }
+
+                return resolve(global.user);
+
+              }).catch(error => reject(error));
+
+          } else {
+
+            return reject(eu.getError('bad_request','Global User must be of type User or Email.'));
+
+          }
+
+        } else {
+
+          return reject(eu.getError('bad_request','Introspection method requires a global user.'));
+
+        }
+
+      });
     }
 
     createProfile(email){
@@ -600,9 +608,9 @@ class userController extends entityController {
                     let user_object = {
                         id: user_id,
                         termsandconditions: "0",
-                        active: false,
+                        active: true,
                         auth0id: "-",
-                        name: "-"
+                        name: "user_id"
                     };
 
                     user_object = this.appendAlias(user_object);
@@ -639,52 +647,50 @@ class userController extends entityController {
 
         return new Promise((resolve, reject) => {
 
-            return inviteutilities.decodeAndValidate(invite.token, invite.parameters).then((invite_parameters) => {
+          return inviteutilities.decodeAndValidate(invite.token, invite.parameters).then(invite_parameters => {
 
-                du.highlight('Invite Parameters', invite_parameters);
+            du.highlight('Invite Parameters', invite_parameters);
 
-                this.disableACLs();
+            this.disableACLs();
 
-                return this.assureUser(invite_parameters.email).then((user) => {
+            return this.assureUser(invite_parameters.email)
+              .then(() => invite_parameters)
 
-                    du.highlight('User to Accept Invite:', user);
+          }).then(invite_parameters => {
 
-                    let user_acl_object = {
-                        account: invite_parameters.account,
-                        role: invite_parameters.role,
-                        user: user.id
-                    }
+            return this.executeAssociatedEntityFunction('userACLController', 'get', {id: invite_parameters.acl})
 
-                    return this.executeAssociatedEntityFunction('userACLController', 'assure', user_acl_object).then((useracl) => {
+          }).then(user_acl => {
 
-                        du.highlight("Assured UserACL", useracl);
+            du.highlight('Acquired UserACL', user_acl);
 
-						//Technical Debt:  we need to return some sort of success message here and force the user to login rather than returning the user as an object.
-                        return this.getHydrated(user.id).then((user) => {
+            if (!user_acl.pending) {
+              return reject(eu.getError('bad_request', 'User ACL is not pending.'));
+            }
 
-                            return resolve(user);
+            delete user_acl.pending;
 
-                        }).catch((error) => {
+            return this.executeAssociatedEntityFunction('userACLController', 'update', {entity: user_acl});
 
-                            return reject(error);
+          }).then(user_acl => {
 
-                        });
+            du.highlight('UserACL update', user_acl);
 
-                    }).catch((error) => {
+            return this.getHydrated(user_acl.user);
 
-                        return reject(error);
+          }).then(hydrated_user => {
 
-                    });
+            du.highlight('Returning hydrated user', hydrated_user);
 
-                });
+            return resolve(hydrated_user);
 
-            }).catch((error) => {
+          }).catch((error) => {
 
-                return reject(error);
+            return reject(error);
 
-            });
+          });
 
-        });
+        }).catch(error => eu.throwError('server', error));
 
     }
 
@@ -728,45 +734,53 @@ class userController extends entityController {
 
                 }
 
-                let invite_parameters = {email:userinvite.email, account: account.id, role: role.id};
+                du.debug('Creating pending ACL object.');
 
-                return inviteutilities.invite(invite_parameters).then((link) => {
+                const acl_object = {
+                    user: userinvite.email,
+                    account: account.id,
+                    role: role.id,
+                    pending: 'Invite Sent'
+                };
 
-                    du.debug('Creating pending ACL object.');
+                du.debug('ACL object to create:', acl_object);
 
-                    let acl_object = {
-                        user: userinvite.email,
-                        account: account.id,
-                        role: role.id,
-                        pending: 'Invite Sent'
-                    };
+                return this.executeAssociatedEntityFunction('userACLController', 'create', {entity: acl_object})
+                    .then((acl) => {
 
-                    du.debug('ACL object to create:', acl_object);
+                        const invite_parameters = {email:userinvite.email, acl: acl.id};
 
-                    return this.executeAssociatedEntityFunction('userACLController', 'create', {entity: acl_object}).then(() => {
+                        du.debug('Sending invitation with parameters', invite_parameters);
 
-                        return notificationProvider.createNotificationsForAccount({
+                        return inviteutilities.invite(invite_parameters);
+
+                    }).then((link) => {
+
+                        const notification_object = {
                             account: global.account,
                             type: 'notification',
                             category: 'invitation_sent',
                             action: link,
                             title: 'Invitation Sent',
-                            message: `User with email ${userinvite.email} has been invited to account ${account.name}.`
-                        })
+                            body: `User with email ${userinvite.email} has been invited to account ${account.name}.`
+                        };
 
-                    }).then(() => {
-                        return resolve({link:link});
-                    });
+                        return notificationProvider.createNotificationsForAccount(notification_object)
+                            .then(() => link)
 
-                }).catch((error) => {
+                    }).then((link) => {
+
+                        return resolve({link: link})
+
+                    })
+
+            }).catch((error) => {
 
                     return reject(error);
 
-                });
-
             });
 
-        });
+        })
 
     }
 
@@ -789,19 +803,23 @@ class userController extends entityController {
                         return reject(eu.getError('bad_request','Can\'t resend invite, User ACL is not pending.'));
                     }
 
-                    let invite_parameters = {email: acl_entity.user, account: acl_entity.account, role: acl_entity.role};
+                    const invite_parameters = {email: userinvite.email, acl: acl.id};
 
-                    return inviteutilities.invite(invite_parameters).then((link) => {
-                        du.debug('Invite successfully resent.');
+                    return inviteutilities.invite(invite_parameters)
 
-                        return resolve({link: link});
-                    })
+                }).then((link) => {
+
+                    du.debug('Invite successfully resent.');
+
+                    return resolve({link: link});
 
                 }).catch((error) => {
+
                     return reject(error);
+
                 });
 
-        })
+        }).catch(error => eu.throwError('server', error));
 
     }
 
