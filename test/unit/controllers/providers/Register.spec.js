@@ -12,6 +12,23 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
+
+function getValidProcessReceipt(){
+
+  return {};
+
+}
+
+function getValidProcessResponse(){
+
+  return {
+    code:'success',
+    message:'Success',
+    merchant_provider: getValidMerchantProvider().id,
+    result: {}
+  };
+
+}
 function getValidTransactionProducts(){
 
   return [{
@@ -893,6 +910,15 @@ describe('controllers/providers/Register.js', () => {
 
     it('creates a transaction receipt for successful sale', () => {
 
+      let mock_receipt = class {
+        constructor(){}
+        issueReceipt({argumentation}){
+          return Promise.resolve(getValidTransactionObject());
+        }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
+
       mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index, callback) => {
           return Promise.resolve([]);
@@ -942,6 +968,18 @@ describe('controllers/providers/Register.js', () => {
     });
 
     it('creates a transaction for sale decline', () => {
+
+      let mock_receipt = class {
+        constructor(){}
+        issueReceipt({argumentation}){
+          let transaction = getValidTransactionObject();
+
+          transaction.result = 'declined';
+          return Promise.resolve(transaction);
+        }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index, callback) => {
@@ -996,6 +1034,20 @@ describe('controllers/providers/Register.js', () => {
     });
 
     it('creates a transaction for refund error', () => {
+
+      let mock_receipt = class {
+        constructor(){}
+        issueReceipt({argumentation}){
+          let transaction = getValidTransactionObject();
+
+          transaction.type = 'refund';
+          transaction.result = 'error';
+          transaction.associated_transaction = transaction.id;
+          return Promise.resolve(transaction);
+        }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index, callback) => {
@@ -1457,6 +1509,117 @@ describe('controllers/providers/Register.js', () => {
           expect(response.getCode()).to.equal('error');
           expect(response.getTransaction()).to.deep.equal(error_transaction);
           expect(response.getProcessorResponse()).to.deep.equal(processor_response);
+
+        });
+
+      });
+
+    });
+
+    describe('processTransaction', () => {
+
+      it('successfully processes a transaction', () => {
+
+        let mock_register_response = class RegisterResponse {
+          constructor(){}
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), mock_register_response);
+
+        let mock_receipt = class {
+          constructor(){}
+          issueReceipt({argumentation}){
+            let transaction = getValidTransactionObject();
+
+            return Promise.resolve(transaction);
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
+
+        let mock_process = class {
+          constructor(){}
+          process({customer: customer, productschedule: productschedule, amount: amount}){
+            return Promise.resolve(getValidProcessResponse());
+          }
+        }
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Process.js'), mock_process);
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+          listProductSchedules: (rebill) => {
+            return Promise.resolve(getValidProductSchedules());
+          },
+          getParentSession: (rebill) => {
+            return Promise.resolve(getValidParentSession())
+          },
+          calculateDayInCycle: (session_start) => {
+            return timestamp.getDaysDifference(session_start);
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), {
+          get: ({id}) => {
+            return Promise.resolve(getValidCustomer());
+          },
+          getCreditCards: () => {
+            return Promise.resolve(getValidCreditCards());
+          },
+          getID: (object) => {
+
+              if(_.isString(object)){
+                  return object;
+              }else if(_.isObject(object)){
+                  if(_.has(object, 'id')){
+                    return object['id'];
+                  }
+              }else if(_.isNull(object)){
+                  return null;
+              }
+
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
+          getTransactionProducts: (day_in_cycle, product_schedule) => {
+            return getValidTransactionProducts();
+          },
+          getID: (object) => {
+
+              if(_.isString(object)){
+                  return object;
+              }else if(_.isObject(object)){
+                  if(_.has(object, 'id')){
+                    return object['id'];
+                  }
+              }else if(_.isNull(object)){
+                  return null;
+              }
+
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+          createActivity: (actor, action, acted_upon, associated_with) => {
+            return true;
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+          addToSearchIndex: (entity) => {
+            return entity;
+          }
+        });
+
+        PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+        let valid_rebill = getValidRebill();
+
+        let registerController = new RegisterController();
+
+        return registerController.processTransaction({rebill: valid_rebill}).then(result => {
+
+          expect(objectutilities.getClassName(result)).to.equal('RegisterResponse');
 
         });
 

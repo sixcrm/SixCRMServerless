@@ -99,6 +99,7 @@ class rebillController extends entityController {
     }
 
 
+    //goes to helper
     buildRebillObject(parameters){
 
         let rebill_object = {

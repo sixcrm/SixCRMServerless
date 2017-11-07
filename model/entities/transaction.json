@@ -26,14 +26,8 @@
 		},
 		"merchant_provider":{"$ref": "../definitions/uuidv4.json"},
 		"associated_transaction":{"$ref": "../definitions/uuidv4.json"},
-		"type":{
-			"type": "string",
-			"enum":["sale", "refund", "reverse"]
-		},
-		"result":{
-			"type":"string",
-			"enum":["success","declined","error"]
-		},
+		"type":{"$ref":"../functional/register/transactiontype.json"},
+		"result":{"$ref":"../functional/register/transactionresult.json"},
 		"amount":{
 			"type": {"$ref": "../definitions/currency.json"}
 		},

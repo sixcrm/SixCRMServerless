@@ -47,12 +47,11 @@ module.exports = class RegisterRecieptGenerator {
   }
 
   //Entrypoint
-  issueReceipt(){
+  issueReceipt({argumentation}){
 
     du.debug('Issue Receipt');
 
-    du.warning(arguments[0]);
-    this.parameters.setParameters({argumentation: arguments[0], action: 'issue_receipt'});
+    this.parameters.setParameters({argumentation: argumentation, action: 'issue_receipt'});
 
     return this.createTransactionPrototype()
     .then(() => this.transformTransactionPrototypeObject())
@@ -91,7 +90,7 @@ module.exports = class RegisterRecieptGenerator {
       });
     }
 
-    if(_.contains(['sale'], transaction_type)){
+    if(_.contains(['process'], transaction_type)){
 
       let merchant_provider = this.parameters.get('merchantprovider');
       let transaction_products = this.parameters.get('transactionproducts');

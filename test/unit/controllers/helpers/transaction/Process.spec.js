@@ -11,7 +11,22 @@ let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+
 const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
+
+function assumePermissionedRole(){
+
+  let permissions = [
+    {
+      action:'*',
+      object: '*'
+    }
+  ];
+
+  PermissionTestGenerators.givenUserWithPermissionArray(permissions, 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+}
 
 function getValidAmount(){
   return 12.99;
@@ -730,41 +745,45 @@ describe('helpers/transaction/Process.spec.js', () => {
 
    it('successfully hydrates customers', () => {
 
-      let customer = getValidCustomer();
-      let productschedule = getValidProductSchedule();
-      let amount = getValidAmount();
+    assumePermissionedRole();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: (table, parameters, index) => {
-          if(parameters.expression_attribute_values[':primary_keyv'] == customer.id){
-            return Promise.resolve({Items:[customer]});
-          }else{
-            return Promise.resolve({Items:[productschedule]});
-          }
+    let customer = getValidCustomer();
+    let productschedule = getValidProductSchedule();
+    let amount = getValidAmount();
 
+    mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+      queryRecords: (table, parameters, index) => {
+        if(parameters.expression_attribute_values[':primary_keyv'] == customer.id){
+          return Promise.resolve({Items:[customer]});
+        }else{
+          return Promise.resolve({Items:[productschedule]});
         }
-      });
 
-      let ph = new processHelperController();
+      }
+    });
 
-      let parameters = {
-        customer: customer.id,
-        productschedule: productschedule.id,
-        amount: amount,
-        merchantprovider: '6c40761d-8919-4ad6-884d-6a46a776cfb9',
-      };
+    let ph = new processHelperController();
 
-      ph.setParameters(parameters);
+    let parameters = {
+      customer: customer.id,
+      productschedule: productschedule.id,
+      amount: amount,
+      merchantprovider: '6c40761d-8919-4ad6-884d-6a46a776cfb9',
+    };
 
-      return ph.hydrateParameters().then(() => {
+    ph.setParameters(parameters);
 
-        expect(ph.parameters.get('customer')).to.equal(customer);
+    return ph.hydrateParameters().then(() => {
 
-      });
+      expect(ph.parameters.get('customer')).to.equal(customer);
+
+    });
 
     });
 
    it('successfully hydrates product schedules', () => {
+
+     assumePermissionedRole();
 
       let productschedule = getValidProductSchedule();
       let customer = getValidCustomer();
@@ -823,6 +842,8 @@ describe('helpers/transaction/Process.spec.js', () => {
   });
 
   it('hydrates credit cards', () => {
+
+    assumePermissionedRole();
 
     let credit_card = getValidCreditCard();
 

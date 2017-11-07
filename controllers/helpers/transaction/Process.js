@@ -212,10 +212,8 @@ module.exports = class Process extends TransactionUtilities{
       let customer_id = this.customerController.getID(customer);
       let productschedule_id = this.productScheduleController.getID(productschedule);
 
-      this.customerController.disableACLs();
       promises.push(this.customerController.get({id: customer_id}));
       promises.push(this.productScheduleController.get({id: productschedule_id}));
-      this.customerController.enableACLs();
 
       return Promise.all(promises).then((promises) => {
 
@@ -236,13 +234,9 @@ module.exports = class Process extends TransactionUtilities{
 
       let customer = this.parameters.get('customer', ['creditcards']);
 
-      this.creditCardController.disableACLs();
       let promises = arrayutilities.map(customer.creditcards, (creditcard) => {
         return this.creditCardController.get({id: this.creditCardController.getID(creditcard)});
       });
-
-      this.creditCardController.enableACLs();
-
 
       return Promise.all(promises).then((promises) => {
 
@@ -579,9 +573,7 @@ module.exports = class Process extends TransactionUtilities{
 
       let selected_loadbalancer = this.parameters.get('selected_loadbalancer');
 
-      this.loadBalancerController.disableACLs();
       return this.loadBalancerController.getMerchantProviders(selected_loadbalancer).then((merchantproviders) => {
-        this.loadBalancerController.enableACLs();
 
         this.parameters.set('merchantproviders', merchantproviders);
 
@@ -603,9 +595,7 @@ module.exports = class Process extends TransactionUtilities{
 
       let parameters = {analyticsfilter:{merchantprovider: merchantprovider_ids}};
 
-      this.analyticsController.disableACLs();
       return this.analyticsController.getMerchantProviderSummaries(parameters).then(results => {
-        this.analyticsController.enableACLs();
 
         this.parameters.set('merchantprovider_summaries', results.merchantproviders);
 

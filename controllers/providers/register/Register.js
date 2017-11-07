@@ -11,7 +11,6 @@ const PermissionedController = global.SixCRM.routes.include('helpers', 'permissi
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
-const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
 
 //Technical Debt:  MVU does not want to load schemas from the entities directory
 module.exports = class Register extends PermissionedController {
@@ -91,8 +90,6 @@ module.exports = class Register extends PermissionedController {
   processTransaction({rebill}){
 
     du.debug('Process Transaction');
-
-    du.warning(rebill);
 
     return this.can({action: 'process', object: 'register', fatal: true})
     .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
@@ -278,6 +275,7 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Issue Transaction');
 
+    const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
     let registerReceiptController = new RegisterReceiptController();
 
     return registerReceiptController.issueReceipt(this.parameters.getAll()).then(receipt_transaction => {
@@ -329,6 +327,7 @@ module.exports = class Register extends PermissionedController {
     du.debug('Execute Process');
 
     let customer = this.parameters.get('customer');
+
     let productschedule = this.parameters.get('productschedule');
     let amount = this.parameters.get('amount');
     let merchant_provider = this.parameters.get('merchantprovider', null, false);
@@ -363,6 +362,10 @@ module.exports = class Register extends PermissionedController {
     return Promise.all(promises).then((promises) => {
 
       this.parameters.set('productschedules', promises[0]);
+
+      //Technical Debt:  Hotwired to support only one product schedule at a time
+      this.parameters.set('productschedule', promises[0].shift());
+
       this.parameters.set('parentsession', promises[1]);
 
       return true;
@@ -531,6 +534,8 @@ module.exports = class Register extends PermissionedController {
     du.debug('Calculate Amount');
 
     let transactionproducts = this.parameters.get('transactionproducts');
+
+    du.info(transactionproducts);
 
     let product_amounts = arrayutilities.map(transactionproducts, product => {
       return parseInt(product.amount);
