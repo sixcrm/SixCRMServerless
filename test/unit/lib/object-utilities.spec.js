@@ -4,6 +4,50 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 describe('lib/object-utilities', () => {
 
+  describe('has', () => {
+
+    it('should return false when it\'s not an object', () => {
+        expect(objectutilities.has()).to.equal(false);
+    });
+
+    it('should return true when object has properties', () => {
+        expect(objectutilities.has({test:{test2:'hello'}}, 'test')).to.equal(true);
+    });
+
+    it('should fail when object is missing arguments', () => {
+        try{
+            objectutilities.has({},'test', true);
+            expect.fail();
+        }catch(error){
+            expect(error.message).to.equal('[500] Object missing property "test".');
+        }
+    });
+
+    it('should fail due to non string properties', () => {
+        try{
+          //properties object with any value that is not a string
+            objectutilities.has({},[1], true);
+            expect.fail();
+        }catch(error){
+            expect(error.message).to.equal('[500] Unrecognized properties object: 1');
+        }
+    });
+
+    it('should return true when object has properties that are strings', () => {
+        expect(objectutilities.has({test:{test2:'hello'}}, ['test'])).to.equal(true);
+    });
+
+    it('should fail due to object missing property', () => {
+        try{
+            objectutilities.has({},['test'], true);
+            expect.fail();
+        }catch(error){
+            expect(error.message).to.equal('[500] Object missing property "test".');
+        }
+    });
+
+  });
+
   describe('hasRecursive', () => {
 
     it('should fail with null key argumentation', () => {
@@ -181,6 +225,17 @@ describe('lib/object-utilities', () => {
 
     });
 
+  });
+
+  describe('getClassName', () => {
+
+    it('returns class name', () => {
+        expect(objectutilities.getClassName({constructor:{name:'test'}})).to.equal('test');
+    });
+
+    it('returns null when class name is', () => {
+        expect(objectutilities.getClassName({constructor:{}})).to.equal(null);
+    });
   });
 
 });

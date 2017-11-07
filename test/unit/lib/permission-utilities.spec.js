@@ -630,4 +630,17 @@ describe('lib/permission-utilities', () => {
 
         });
     });
+
+    describe('validatePermissionsArray', () => {
+        it('successfully validates permissions', () => {
+
+            let permissions_array = [anyPermission, anotherPermission];
+
+            let user = PermissionTestGenerators.givenAnyUser();
+
+            let result = PermissionUtilities.validatePermissionsArray(permissions_array);
+
+            expect(result).to.be.defined;
+        });
+    });
 });
