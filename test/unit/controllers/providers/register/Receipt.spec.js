@@ -215,11 +215,6 @@ describe('controllers/providers/register/Receipt.js', () => {
     });
   });
 
-  describe('issueReceipt', () => {
-    it('successfully constructs', () => {
-    });
-  });
-
   describe('createTransactionPrototype', () => {
     it('successfully creates transaction prototype for process', () => {
 
@@ -248,7 +243,7 @@ describe('controllers/providers/register/Receipt.js', () => {
 
     });
 
-    it.only('successfully creates transaction prototype for refund', () => {
+    it('successfully creates transaction prototype for refund', () => {
 
       let receiptController = new ReceiptController();
 
@@ -274,7 +269,7 @@ describe('controllers/providers/register/Receipt.js', () => {
 
     });
 
-    xit('successfully creates transaction prototype for reverse', () => {
+    it('successfully creates transaction prototype for reverse', () => {
 
       let receiptController = new ReceiptController();
 
@@ -354,6 +349,51 @@ describe('controllers/providers/register/Receipt.js', () => {
 
         expect(receipt_transaction).to.have.property('id');
       });
+    });
+  });
+
+  describe('issueReceipt', () => {
+    it('successfully issues a receipt', () => {
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+        queryRecords: (table, parameters, index, callback) => {
+          return Promise.resolve([]);
+        },
+        saveRecord: (tableName, entity, callback) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+        createActivity: (actor, action, acted_upon, associated_with) => {
+          return true;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+        addToSearchIndex: (entity) => {
+          return entity;
+        }
+      });
+
+      let issue_receipt_arguments = {
+        rebill: getValidRebill(),
+        amount: getValidRebill().amount,
+        transactiontype: 'sale',
+        processorresponse: getValidProcessorResponse(),
+        merchantprovider: getValidMerchantProvider(),
+        transactionproducts: getValidTransactionProducts()
+      };
+
+      let receiptController = new ReceiptController();
+
+      return receiptController.issueReceipt({argumentation: issue_receipt_arguments}).then(() => {
+        let receipt_transaction = receiptController.parameters.get('receipt_transaction');
+
+        expect(receipt_transaction).to.have.property('id');
+      })
     });
   });
 
