@@ -65,9 +65,16 @@ module.exports = class Register extends PermissionedController {
       'productschedules':global.SixCRM.routes.path('model', 'workers/processBilling/productschedules.json'),
       'parentsession': global.SixCRM.routes.path('model', 'entities/session.json'),
       'creditcards': global.SixCRM.routes.path('model', 'workers/processBilling/creditcards.json'),
+      'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
+
+    this.action_to_transaction_type = {
+      process: 'sale',
+      refund: 'refund',
+      reverse: 'reverse'
+    }
 
   }
 
@@ -567,7 +574,7 @@ module.exports = class Register extends PermissionedController {
 
     this.parameters.setParameters({argumentation: argumentation, action: action});
 
-    this.parameters.set('transactiontype', action);
+    this.parameters.set('transactiontype', this.action_to_transaction_type[action]);
 
     return Promise.resolve(true);
 

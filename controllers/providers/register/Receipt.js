@@ -39,7 +39,9 @@ module.exports = class RegisterRecieptGenerator {
       'associatedtransaction':global.SixCRM.routes.path('model','entities/transaction.json'),
       'merchantprovider':global.SixCRM.routes.path('model','entities/merchantprovider.json'),
       'transactionproducts':global.SixCRM.routes.path('model','functional/register/transactionproducts.json'),
-      'receipt_transaction': global.SixCRM.routes.path('model', 'entities/transaction.json')
+      'receipt_transaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
+      'transactionprototype':global.SixCRM.routes.path('model', 'functional/register/transactionprototype.json'),
+      'transformed_transaction_prototype':global.SixCRM.routes.path('model', 'functional/register/transformedtransactionprototype.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
@@ -81,16 +83,16 @@ module.exports = class RegisterRecieptGenerator {
     };
 
     if(_.contains(['reverse','refund'], transaction_type)){
-      let hydrated_transaction = this.parameters.get('associatedtransaction');
+      let associated_transaction = this.parameters.get('associatedtransaction');
 
       transaction_prototype = objectutilities.merge(transaction_prototype, {
-        products: hydrated_transaction.products,
-        merchant_provider: hydrated_transaction.merchant_provider,
-        associated_transaction: hydrated_transaction.id
+        products: associated_transaction.products,
+        merchant_provider: associated_transaction.merchant_provider,
+        associated_transaction: associated_transaction.id
       });
     }
 
-    if(_.contains(['process'], transaction_type)){
+    if(_.contains(['sale'], transaction_type)){
 
       let merchant_provider = this.parameters.get('merchantprovider');
       let transaction_products = this.parameters.get('transactionproducts');

@@ -1,0 +1,20 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/transformedtransactionprototype",
+	"title": "Transformed Transaction Prototype",
+	"type":"object",
+	"properties":{
+		"rebill":{"$ref":"../../definitions/uuidv4.json"},
+    "amount":{"$ref":"../../definitions/currency.json"},
+		"type":{"$ref":"./transactiontype.json"},
+		"result":{"$ref":"./transactionresult.json"},
+    "processor_response":{
+			"type":"string"
+		},
+   	"merchant_provider":{"$ref":"../../definitions/uuidv4.json"},
+		"products":{"$ref":"./transactionproducts.json"},
+		"alias":{"$ref":"../../definitions/transactionalias.json"},
+		"associated_transaction":{"$ref":"../../definitions/uuidv4.json"}
+	},
+	"required":["rebill", "amount", "type", "result", "processor_response", "merchant_provider", "products", "alias"]
+}

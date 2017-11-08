@@ -189,7 +189,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
         entity['entity_type'] = entity_type;
 
-        du.info('Indexing:', entity);
+        //du.info('Indexing:', entity);
 
         return indexingutilities.addToSearchIndex(entity);
 

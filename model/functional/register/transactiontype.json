@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/transactiontype",
+	"id":"/transactiontype.json",
 	"title": "Transaction Type",
 	"type":"string",
   "enum":["sale","refund","reverse"]
