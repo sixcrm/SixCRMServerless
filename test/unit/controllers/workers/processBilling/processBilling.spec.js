@@ -45,6 +45,7 @@ function getValidTransaction(){
       "amount":34.99
     }],
     "type":"sale",
+    "result":"success",
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
   };
@@ -52,10 +53,15 @@ function getValidTransaction(){
 }
 
 function getValidRegisterResponse(){
-  return {
-    transaction:getValidTransaction(),
+
+  const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
+
+  return new RegisterResponse({
+    response_type: 'success',
+    transaction: getValidTransaction(),
     processor_response: getValidProcessorResponse()
-  };
+  });
+
 }
 
 function getValidMessages(){
@@ -160,10 +166,9 @@ describe('controllers/workers/processBilling', () => {
 
   });
 
-  //Technical Debt:  Incomplete
   describe('process', () => {
 
-    xit('successfully processes a transaction', () => {
+    it('successfully processes a transaction', () => {
 
       let register_mock = class Register {
         constructor(){
@@ -194,9 +199,54 @@ describe('controllers/workers/processBilling', () => {
 
   });
 
-  /*
-  Need tests:
-  acquireRebill()
-  */
+  describe('acquireRebill', () => {
+
+    it('successfully acquires a rebill', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get: ({id}) => {
+          return Promise.resolve(getValidRebill())
+        }
+      });
+
+      let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+
+      processBillingController.parameters.set('message', getValidMessages().shift());
+
+      return processBillingController.acquireRebill().then(rebill => {
+        expect(rebill).to.have.property('id');
+      });
+
+    });
+
+  });
+
+  describe('execute', () => {
+    it('successfully executes', () => {
+
+      let register_mock = class Register {
+        constructor(){
+
+        }
+        processTransaction({customer, productschedule, amount}){
+          return Promise.resolve(getValidRegisterResponse());
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), register_mock);
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get: ({id}) => {
+          return Promise.resolve(getValidRebill())
+        }
+      });
+
+      let message = getValidMessages().shift();
+      let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+
+      return processBillingController.execute(message).then(result => {
+        expect(result.getCode()).to.equal('success');
+      });
+    });
+  });
 
 });

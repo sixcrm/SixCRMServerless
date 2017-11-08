@@ -9,13 +9,13 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
 const workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
-const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 //Technical Debt:  Need to either mark the rebill with the attempt number or update the method which checks the rebill for existing failed attempts (better idea.)
 class processBillingController extends workerController {
 
   constructor(){
+
     super();
 
     this.parameter_definition = {
@@ -25,21 +25,15 @@ class processBillingController extends workerController {
         },
         optional:{}
       }
-
-    }
+    };
 
     this.parameter_validation = {
       message: global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
-      rebill: global.SixCRM.routes.path('model', 'entities/rebill.json'),
-      registerresponse: global.SixCRM.routes.path('model', 'functional/register/response.json')
-    }
+      rebill: global.SixCRM.routes.path('model', 'entities/rebill.json')
+      //registerresponse: global.SixCRM.routes.path('model', 'functional/register/response.json')
+    };
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-
-    this.parameters = new Parameters({
-      validation: this.parameter_validation,
-      definition: this.parameter_definition
-    });
+    this.instantiateParameters();
 
   }
 
@@ -50,11 +44,7 @@ class processBillingController extends workerController {
     return this.setParameters({argumentation: {message: message}, action: 'execute'})
     .then(() => this.acquireRebill())
     .then((rebill) => {
-
-      if(_.isObject(rebill)){
-        this.parameters.set('rebill', rebill);
-      }
-
+      this.parameters.set('rebill', rebill);
     })
     .then(() => this.process())
     .then(() => this.respond())
@@ -95,7 +85,7 @@ class processBillingController extends workerController {
     let registerController = new RegisterController();
 
     return registerController.processTransaction({rebill: rebill}).then(response => {
-
+      //this is a register response object.
       this.parameters.set('registerresponse', response);
 
       return Promise.resolve(true);
@@ -110,7 +100,7 @@ class processBillingController extends workerController {
 
     let register_response = this.parameters.get('registerresponse').getCode();
 
-    return super.response(register_response);
+    return super.respond(register_response);
 
   }
 

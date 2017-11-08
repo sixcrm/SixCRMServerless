@@ -7,6 +7,7 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
 
+const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
 const WorkerResponse = global.SixCRM.routes.include('controllers','workers/WorkerResponse.js');
 const WorkerRequest = global.SixCRM.routes.include('controllers','workers/WorkerRequest.js');
 
@@ -16,6 +17,17 @@ module.exports = class workerController {
 
       //Technical Debt: DANGER!
       permissionutilities.setPermissions('*',['*/*'],[])
+
+    }
+
+    instantiateParameters(){
+
+      du.debug('Instantiate Parameters');
+
+      this.parameters = new ParametersController({
+        validation: this.parameter_validation,
+        definition: this.parameter_definition
+      });
 
     }
 
