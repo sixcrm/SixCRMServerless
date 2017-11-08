@@ -216,9 +216,9 @@ class userController extends entityController {
                 acls = arrayutilities.map(acls, (acl) => {
                   if (acl.role.name === 'Owner' && acl.termsandconditions !== owner_terms_and_conditions.version) {
                     acl.termsandconditions_outdated = true;
-
-                    return acl;
                   }
+
+                  return acl;
                 });
 
                 global.user.acl = acls;
