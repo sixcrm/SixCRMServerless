@@ -64,6 +64,18 @@ class userACLController extends entityController {
 
     }
 
+    updateTermsAndConditions(useracl_terms_and_conditions) {
+
+      du.debug('UserACLController Terms And Conditions Update', useracl_terms_and_conditions);
+
+      return this.get({id: useracl_terms_and_conditions.useracl}).then((acl) => {
+        acl.termsandconditions = useracl_terms_and_conditions.version;
+
+        return super.update({entity: acl});
+      })
+
+    }
+
     delete({id, primary_key}) {
 
       return super.delete({id: id, primary_key: primary_key}).then((acl) => {

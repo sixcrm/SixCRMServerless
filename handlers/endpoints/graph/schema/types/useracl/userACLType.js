@@ -42,6 +42,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: GraphQLString,
             description: 'User ACL pending category, if ACL is pending.',
         },
+        termsandconditions_outdated: {
+          type: GraphQLString,
+          description: 'Is User ACL terms and conditions outdated.',
+        },
         created_at: {
 	        type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',

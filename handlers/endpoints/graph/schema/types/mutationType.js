@@ -67,6 +67,7 @@ let inviteInputType = require('./user/inviteInputType');
 let transactionRefundInputType = require('./transaction/transactionRefundInputType');
 
 let userACLInputType = require('./useracl/userACLInputType');
+let userACLTermsAndConditionsInputType = require('./useracl/userACLTermsAndConditionsInputType');
 let userACLType = require('./useracl/userACLType');
 let userInputType  = require('./user/userInputType');
 let userInviteInputType = require('./userinvite/userInviteInputType');
@@ -270,6 +271,18 @@ module.exports.graphObj = new GraphQLObjectType({
                 return userACLController.update({entity: useracl.useracl});
             }
         },
+        updateuseracltermsandconditions:{
+            type: userACLType.graphObj,
+            description: 'Updates user acl terms and conditions.',
+            args: {
+              useracltermsandconditions: { type: userACLTermsAndConditionsInputType.graphObj }
+            },
+            resolve: (value, input) => {
+              const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+
+              return userACLController.updateTermsAndConditions(input.useracltermsandconditions);
+            }
+          },
         deleteuseracl:{
             type: deleteOutputType.graphObj,
             description: 'Deletes a user acl.',

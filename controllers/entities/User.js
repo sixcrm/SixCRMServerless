@@ -160,7 +160,7 @@ class userController extends entityController {
 
     introspection(){
 
-      du.debug('Introspection');
+      du.debug('Introspection', global.user);
 
       return new Promise((resolve, reject) => {
 
@@ -207,9 +207,25 @@ class userController extends entityController {
                   global.user.termsandconditions_outdated = true;
                 }
 
-                return resolve(global.user);
+              })
+              .then(() => termsAndConditionsController.getLatestTermsAndConditions('owner'))
+              .then(owner_terms_and_conditions => {
 
-              }).catch(error => reject(error));
+                let acls = global.user.acl || [];
+
+                acls = arrayutilities.map(acls, (acl) => {
+                  if (acl.role.name === 'Owner' && acl.termsandconditions !== owner_terms_and_conditions.version) {
+                    acl.termsandconditions_outdated = true;
+
+                    return acl;
+                  }
+                });
+
+                global.user.acl = acls;
+
+                return resolve(global.user);
+              })
+              .catch(error => reject(error));
 
           } else {
 
