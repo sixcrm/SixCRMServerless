@@ -764,7 +764,7 @@ class userController extends entityController {
                 return this.executeAssociatedEntityFunction('userACLController', 'create', {entity: acl_object})
                     .then((acl) => {
 
-                        const invite_parameters = {email:userinvite.email, acl: acl.id};
+                        const invite_parameters = {email:userinvite.email, acl: acl.id, invitor: global.user.id, account: account.name, role: role.name};
 
                         du.debug('Sending invitation with parameters', invite_parameters);
 
