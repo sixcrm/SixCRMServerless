@@ -195,10 +195,13 @@ module.exports.graphObj = new GraphQLObjectType({
         latesttermsandconditions:{
           type: termsAndConditionsType.graphObj,
           description: 'Retrieves latest terms and conditions.',
-          resolve: function(){
+          args: {
+            role: {type: GraphQLString}
+          },
+          resolve: function(root, args){
             const termsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 
-            return termsAndConditionsController.getLatestTermsAndConditions();
+            return termsAndConditionsController.getLatestTermsAndConditions(args.role);
           }
         },
         userlist: {
