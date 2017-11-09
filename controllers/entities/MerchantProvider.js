@@ -24,13 +24,13 @@ class merchantProviderController extends entityController {
 
       let data_acquisition_promises = [
         this.executeAssociatedEntityFunction('loadBalancerController', 'listByMerchantProviderID', {id:id}),
-        this.executeAssociatedEntityFunction('transactionController', 'listByMerchantProviderID', {id:id})
+        //this.executeAssociatedEntityFunction('transactionController', 'listByMerchantProviderID', {id:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
         let loadbalancers = data_acquisition_promises[0];
-        let transactions = data_acquisition_promises[1];
+        //let transactions = data_acquisition_promises[1];
 
         if(arrayutilities.nonEmpty(loadbalancers)){
           arrayutilities.map(loadbalancers, (loadbalancer) => {
@@ -38,11 +38,13 @@ class merchantProviderController extends entityController {
           });
         }
 
+        /*
         if(_.has(transactions, 'transactions') && arrayutilities.nonEmpty(transactions.transactions)){
           arrayutilities.map(transactions.transactions, (transaction) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Transaction', object:transaction}));
           });
         }
+        */
 
         return return_array;
 

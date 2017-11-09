@@ -22,6 +22,7 @@ describe('Merchant Provider (Loadbalancer) Delete Block Test', () => {
 
 });
 
+/*
 describe('Merchant Provider (Transaction) Delete Block Test', () => {
 
   it('Should not allow the delete', () => {
@@ -37,3 +38,4 @@ describe('Merchant Provider (Transaction) Delete Block Test', () => {
   });
 
 });
+*/
