@@ -5,13 +5,9 @@
 	"type":"object",
 	"properties":{
 		"rebill":{"$ref":"../../entities/rebill.json"},
-    "amount":{"$ref":"../../definitions/currency.json"},
-		"type":{
-			"type":"string"
-		},
-		"result":{
-			"type":"string"
-		},
+    	"amount":{"$ref":"../../definitions/currency.json"},
+		"type":{"$ref":"./transactiontype.json"},
+		"result":{"$ref":"./transactionresult.json"},
     "processor_response":{"$ref":"./processorresponse.json"},
    	"merchant_provider":{"$ref":"../../definitions/uuidv4.json"},
 		"products":{"$ref":"./transactionproducts.json"},
