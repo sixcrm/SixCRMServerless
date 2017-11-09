@@ -623,10 +623,10 @@ class userController extends entityController {
 
                     let user_object = {
                         id: user_id,
-                        termsandconditions: "0",
+                        termsandconditions: "0.0",
                         active: true,
                         auth0id: "-",
-                        name: "user_id"
+                        name: user_id
                     };
 
                     user_object = this.appendAlias(user_object);
@@ -669,12 +669,15 @@ class userController extends entityController {
 
             this.disableACLs();
 
-            return this.assureUser(invite_parameters.email)
-              .then(() => invite_parameters)
-
-          }).then(invite_parameters => {
-
             return this.executeAssociatedEntityFunction('userACLController', 'get', {id: invite_parameters.acl})
+              .then((user_acl) => {
+                return { user: invite_parameters.email, user_acl: user_acl }
+              });
+
+          }).then(({user, user_acl}) => {
+
+            return this.assureUser(user)
+              .then(() => user_acl)
 
           }).then(user_acl => {
 

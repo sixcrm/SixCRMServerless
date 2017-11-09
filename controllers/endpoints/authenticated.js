@@ -108,7 +108,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
           }else if(user == false){
 
-            if(!this.isUserIntrospection(event)) {
+            if(!this.isUserIntrospection(event) && !this.isAcceptInvite(event)) {
               eu.throwError('forbidden', 'Unknown user.  Please contact the system administrator.');
             }
 
@@ -198,6 +198,18 @@ module.exports = class AuthenticatedController extends endpointController {
         }
 
         return false;
+
+    }
+
+    isAcceptInvite(event) {
+
+      du.debug('Is Accept Invite', event.body);
+
+      if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(mutation)?[\s\n\r]*{[\s\n\r]*acceptinvite[\s\n\r]/)) {
+        return true;
+      }
+
+      return false;
 
     }
 
