@@ -629,6 +629,36 @@ class userController extends entityController {
                         name: user_id
                     };
 
+                    let user_setting_object = {
+                      id: user_id,
+                      timezone: 'America/Los_Angeles',
+                      notifications: [
+                        {
+                          name: "six",
+                          receive: true
+                        },
+                        {
+                          name: "email",
+                          receive: false
+                        },
+                        {
+                          name: "sms",
+                          receive: false
+                        },
+                        {
+                          name: "slack",
+                          receive: false
+                        },
+                        {
+                          name: "skype",
+                          receive: false
+                        },
+                        {
+                          name: "ios",
+                          receive: false
+                        }]
+                    };
+
                     user_object = this.appendAlias(user_object);
 
                     du.highlight('New User', user_object);
@@ -637,7 +667,11 @@ class userController extends entityController {
 
                         if(_.has(user, 'id')){
 
-                            return resolve(user);
+                            return this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_object})
+                                .then(() => resolve(user))
+                                .catch((error) => {
+                                    return reject(eu.getError('server',error))
+                                });
 
                         }else{
 
