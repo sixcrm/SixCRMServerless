@@ -7,6 +7,11 @@ const localhost_endpoint = 'http://localhost:9324';
 
 describe('lib/sqs-utilities', () => {
 
+    beforeEach(() => {
+        // cleanup
+        delete require.cache[require.resolve(global.SixCRM.routes.path('lib', 'sqs-utilities.js'))];
+    });
+
     describe('getQueueARN', () => {
 
         it('successfully returns queue name', () => {
@@ -235,4 +240,415 @@ describe('lib/sqs-utilities', () => {
         });
     });
 
+    describe('deleteMessages', () => {
+
+        it('successfully deletes messages', () => {
+
+            process.env.stage = 'test';
+
+            let input = {
+                queue: 'example',
+                messages: [{
+                    ReceiptHandle: 'sample message',
+                    MessageId: 1
+                }]
+            };
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                deleteMessageBatch: (params, callback) => {
+                    callback(null, 'success');
+                }
+            };
+
+            return sqsutilities.deleteMessages(input).then((result) => {
+                expect(result).to.equal('success');
+            });
+        });
+
+        it('returns response from deleted message batch', () => {
+
+            process.env.stage = 'test';
+
+            let input = {
+                queue: 'example',
+                messages: [{
+                    ReceiptHandle: 'sample message',
+                    MessageId: 1
+                }]
+            };
+
+            let data = {Failed: ['failed message']};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                deleteMessageBatch: (params, callback) => {
+                    callback(null, data);
+                }
+            };
+
+            return sqsutilities.deleteMessages(input).then((result) => {
+                expect(result).to.equal(data);
+            });
+        });
+
+        it('returns error when messages haven\'t been removed', () => {
+
+            process.env.stage = 'test';
+
+            let fail = new Error('fail');
+
+            let input = {
+                queue: 'example',
+                messages: [{
+                    ReceiptHandle: 'sample message',
+                    MessageId: 1
+                }]
+            };
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                deleteMessageBatch: (params, callback) => {
+                    callback(fail, null);
+                }
+            };
+
+            return sqsutilities.deleteMessages(input).catch((error) => {
+                expect(error).to.equal(fail);
+            });
+        });
+
+        it('returns false when there aren\'t any messages to delete', () => {
+
+            process.env.stage = 'test';
+
+            let input = {queue: 'example'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            return sqsutilities.deleteMessages(input).then((result) => {
+                expect(result).to.equal(false);
+            });
+        });
+    });
+
+    describe('listQueues', () => {
+
+        it('rejects when listing queues fails', () => {
+
+            let params = 'test';
+
+            let fail = {message: 'fail'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(fail, null);
+                }
+            };
+
+            return sqsutilities.listQueues(params).catch((error) => {
+                expect(error.message).to.equal('[500] ' + fail.message);
+            });
+        });
+
+        it('returns queue list', () => {
+
+            let params = 'test';
+
+            let data = 'success';
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(null, data);
+                }
+            };
+
+            return sqsutilities.listQueues(params).then((result) => {
+                expect(result).to.equal(data);
+            });
+        });
+    });
+
+    describe('createQueue', () => {
+
+        it('returns false if queue alredy exists', () => {
+
+            let params = {QueueName: 'test'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.existing_queues = ['test', 'test2'];
+
+            return sqsutilities.createQueue(params).then((result) => {
+                expect(result).to.equal(false);
+            });
+        });
+
+        it('returns response from AWS create queue', () => {
+
+            let params = {QueueName: 'test'};
+
+            let data = 'success';
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.existing_queues = ['test2'];
+
+            sqsutilities.sqs = {
+                createQueue: (params, callback) => {
+                    callback(null, data);
+                }
+            };
+
+            return sqsutilities.createQueue(params).then((result) => {
+                expect(result).to.equal(data);
+            });
+        });
+    });
+
+    describe('setQueueAttibutes', () => {
+
+        it('returns response from AWS setQueueAttributes', () => {
+
+            let data = 'success';
+
+            let params = 'test';
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                setQueueAttributes: (params, callback) => {
+                    callback(null, data);
+                }
+            };
+
+            return sqsutilities.setQueueAttibutes(params).then((result) => {
+                expect(result).to.equal(data);
+            });
+        });
+    });
+
+    describe('deleteQueue', () => {
+
+        it('returns false if AWS reports error stating the queue does not exist', () => {
+
+            let shortname = 'test';
+
+            let data = {QueueUrls: []};
+
+            let fail = {code: 'AWS.SimpleQueueService.NonExistentQueue'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(null, data);
+                }
+            };
+
+            return sqsutilities.deleteQueue(shortname).then((result) => {
+                expect(result).to.equal(false);
+            });
+        });
+
+        it('returns false if queue already does not exist', () => {
+
+            let shortname = 'test';
+
+            let data = {QueueUrls: ['test', 'test2']};
+
+            let fail = {code: 'AWS.SimpleQueueService.NonExistentQueue'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(null, data);
+                },
+                deleteQueue: (params, callback) => {
+                    callback(fail, null);
+                }
+            };
+
+            return sqsutilities.deleteQueue(shortname).then((result) => {
+                expect(result).to.equal(false);
+            });
+        });
+
+        it('rejects with AWS response when error was unrecognized', () => {
+
+            let shortname = 'test';
+
+            let data = {QueueUrls: ['test', 'test2']};
+
+            let fail = {code: 'AWS.SimpleQueueService.SomeOtherError'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(null, data);
+                },
+                deleteQueue: (params, callback) => {
+                    callback(fail, null);
+                }
+            };
+
+            return sqsutilities.deleteQueue(shortname).catch((error) => {
+                expect(error.message).to.equal('[500] Failed to delete queue: test');
+            });
+        });
+
+        it('returns response from AWS deleteQueue when deletion was successful', () => {
+
+            let response = 'success';
+
+            let shortname = 'test';
+
+            let data = {QueueUrls: ['test', 'test2']};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(null, data);
+                },
+                deleteQueue: (params, callback) => {
+                    callback(null, response);
+                }
+            };
+
+            return sqsutilities.deleteQueue(shortname).then((result) => {
+                expect(result).to.equal('success');
+            });
+        });
+    });
+
+    describe('purgeQueue', () => {
+
+        it('returns response from AWS purgeQueue', () => {
+
+            let params = 'test';
+
+            let data ='queue purged';
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.existing_queues = ['test', 'test2'];
+
+            sqsutilities.sqs = {
+                purgeQueue: (params, callback) => {
+                    callback(null, data);
+                }
+            };
+
+            return sqsutilities.purgeQueue(params).then((result) => {
+                expect(result).to.equal(data);
+            });
+        });
+
+        it('returns false when queue doesn\'t exist', () => {
+
+            let params = 'test';
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.existing_queues = ['test2'];
+
+            return sqsutilities.purgeQueue(params).then((result) => {
+                expect(result).to.equal(false);
+            });
+        });
+
+        it('returns error when queue name is not defined in parameters', () => {
+
+            let params = {test: 'test'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.existing_queues = ['test', 'test2'];
+
+            return sqsutilities.purgeQueue(params).catch((error) => {
+                expect(error.message).to.equal('[500] Purge Queue parameters objects assumed to have QueueName property');
+            });
+        });
+    });
+
+    describe('queueExists', () => {
+
+        it('returns false when there aren\'t preexisting queues', () => {
+
+            let shortname = 'sample name';
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(null, 'no list');
+                }
+            };
+
+            return sqsutilities.queueExists(shortname).then((result) => {
+                expect(result).to.equal(false);
+            });
+        });
+
+        it('returns error when unexpected response is received from AWS ListQueues', () => {
+
+            let shortname = 'test';
+
+            let data = {QueueUrls: 'queue'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(null, data);
+                }
+            };
+
+            return sqsutilities.queueExists(shortname).catch((error) => {
+                expect(error.message).to.equal('[500] Unexpected response format from AWS ListQueues.');
+            });
+        });
+
+        it('returns true when queue exist in retrieved list', () => {
+
+            let short_name = 'test';
+
+            let data = {QueueUrls: ['test', 'test2']};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.sqs = {
+                listQueues: (params, callback) => {
+                    callback(null, data);
+                }
+            };
+
+            return sqsutilities.queueExists(short_name).then((result) => {
+                expect(result).to.equal(true);
+            });
+        });
+
+        it('returns true when queue is contained inside preexisting list', () => {
+
+            let shortname = 'test';
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.existing_queues = ['test', 'test2'];
+
+            return sqsutilities.queueExists(shortname).then((result) => {
+                expect(result).to.equal(true);
+            });
+        });
+    });
 });
