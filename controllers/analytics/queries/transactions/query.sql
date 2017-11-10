@@ -9,14 +9,14 @@ SELECT
   ft.amount,
   ft.processor_result,
   ft.account,
-  ft.transaction_type,
+  ft.type,
   ft.product_schedule,
   ft.subaffiliate_1,
   ft.subaffiliate_2,
   ft.subaffiliate_3,
   ft.subaffiliate_4,
   ft.subaffiliate_5,
-  ft.transaction_subtype
+  ft.subtype
 FROM f_transactions ft
 WHERE 1
   {{filter}}

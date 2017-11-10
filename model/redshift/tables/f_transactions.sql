@@ -35,7 +35,9 @@ CREATE TABLE IF NOT EXISTS f_transactions
     subaffiliate_3      VARCHAR(36) ENCODE ZSTD,
     subaffiliate_4      VARCHAR(36) ENCODE ZSTD,
     subaffiliate_5      VARCHAR(36) ENCODE ZSTD,
-    prepaid             BOOLEAN      ENCODE ZSTD
+    prepaid             BOOLEAN      ENCODE ZSTD,
+    result              VARCHAR(16) ENCODE ZSTD,
+    associated_transaction VARCHAR(36) ENCODE ZSTD
   )
     INTERLEAVED SORTKEY (account, datetime);
 

@@ -47,12 +47,12 @@ ____
 
 This is used as a non-paginated aggregated total query at top level of the report.
 Query returns six variables that represent :
-* `sale` is represented as processor_result = 'success' AND transaction_type = 'new'
-* `rebill` is represented as processor_result = 'success' AND transaction_type = 'rebill'
-* `refund` is represented as processor_result = 'success' AND transaction_type = 'refund'
+* `sale` is represented as processor_result = 'success' AND type = 'new'
+* `rebill` is represented as processor_result = 'success' AND type = 'rebill'
+* `refund` is represented as processor_result = 'success' AND type = 'refund'
 * `gross_revenue` is represented as "sale - refund"
 * `decline` is represented as processor_result = 'decline'
-* `chargeback` is represented as transaction_type = 'chargeback'
+* `chargeback` is represented as type = 'chargeback'
 
 
 ---

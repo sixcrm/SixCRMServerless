@@ -138,11 +138,11 @@ EVENTS_SUB5 as (SELECT subaffiliate_5 as subaffiliate,
    SELECT * FROM EVENTS_SUB4),
 TRANSACTIONS_SUB1 AS (SELECT sum(amount) sum_amount,
           sum(CASE
-                  WHEN transaction_subtype LIKE 'upsell%' THEN amount
+                  WHEN subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
           sum(CASE
-                    WHEN transaction_subtype IN ('order','main')
+                    WHEN subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
                     ELSE 0
                 END) decline_count,
@@ -158,11 +158,11 @@ TRANSACTIONS_SUB1 AS (SELECT sum(amount) sum_amount,
             DATE_TRUNC('{{period}}',datetime)),
 TRANSACTIONS_SUB2 AS (SELECT sum(amount) sum_amount,
           sum(CASE
-                  WHEN transaction_subtype LIKE 'upsell%' THEN amount
+                  WHEN subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
           sum(CASE
-                    WHEN transaction_subtype IN ('order','main')
+                    WHEN subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
                     ELSE 0
                 END) decline_count,
@@ -180,11 +180,11 @@ TRANSACTIONS_SUB2 AS (SELECT sum(amount) sum_amount,
   SELECT * FROM TRANSACTIONS_SUB1),
 TRANSACTIONS_SUB3 AS (SELECT sum(amount) sum_amount,
           sum(CASE
-                  WHEN transaction_subtype LIKE 'upsell%' THEN amount
+                  WHEN subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
           sum(CASE
-                    WHEN transaction_subtype IN ('order','main')
+                    WHEN subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
                     ELSE 0
                 END) decline_count,
@@ -202,11 +202,11 @@ TRANSACTIONS_SUB3 AS (SELECT sum(amount) sum_amount,
   SELECT * FROM TRANSACTIONS_SUB2),
 TRANSACTIONS_SUB4 AS (SELECT sum(amount) sum_amount,
           sum(CASE
-                  WHEN transaction_subtype LIKE 'upsell%' THEN amount
+                  WHEN subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
           sum(CASE
-                    WHEN transaction_subtype IN ('order','main')
+                    WHEN subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
                     ELSE 0
                 END) decline_count,
@@ -224,11 +224,11 @@ TRANSACTIONS_SUB4 AS (SELECT sum(amount) sum_amount,
   SELECT * FROM TRANSACTIONS_SUB3),
 TRANSACTIONS_SUB5 AS (SELECT sum(amount) sum_amount,
           sum(CASE
-                  WHEN transaction_subtype LIKE 'upsell%' THEN amount
+                  WHEN subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
           sum(CASE
-                    WHEN transaction_subtype IN ('order','main')
+                    WHEN subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
                     ELSE 0
                 END) decline_count,

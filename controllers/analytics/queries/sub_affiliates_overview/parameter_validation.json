@@ -115,7 +115,7 @@
         "enum": ["success", "decline", "error"]
       }
     },
-    "transaction_type": {
+    "type": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
@@ -124,7 +124,7 @@
         "enum": ["new", "rebill"]
       }
     },
-    "transaction_subtype": {
+    "subtype": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

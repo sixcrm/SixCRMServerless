@@ -21,7 +21,7 @@ module.exports = function(results, parameters){
       affiliate: result.affiliate,
       amount: result.amount,
       processor_result: result.processor_result,
-      transaction_type: result.transaction_type,
+      transaction_type: result.type,
       cycle: result.cycle,
       recycle: result.recycle,
       gateway_response: null, //what is this?
