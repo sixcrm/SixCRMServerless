@@ -142,4 +142,68 @@ describe('lib/string-utilities', () => {
 
     });
 
+    describe('isNumeric', () => {
+
+        it('throws error when value is not numeric', () => {
+            try {
+                stringutilities.isNumeric('notNumeric', true);
+            }catch(error) {
+                expect(error.message).to.equal('[500] "notNumeric" is not numeric');
+            }
+        });
+
+    });
+
+    describe('uppercaseFirst', () => {
+
+        it('returns string with uppercase first letter', () => {
+            expect(stringutilities.uppercaseFirst('any string')).to.equal('Any string');
+        });
+
+    });
+
+    describe('removeNonAlphaNumeric', () => {
+
+        it('returns only alpha numeric characters from string', () => {
+            expect(stringutilities.removeNonAlphaNumeric('te*st+1-2.3')).to.equal('test123');
+        });
+
+    });
+
+    describe('capitalize', () => {
+
+        it('returns value with uppercase first character if that character is a string', () => {
+            expect(stringutilities.capitalize('any value 123')).to.equal('Any value 123');
+        });
+
+    });
+
+    describe('toPascalCase', () => {
+
+        it('returns uppercase for first letter and after every underscore', () => {
+            expect(stringutilities.toPascalCase('any_value')).to.equal('AnyValue');
+        });
+
+    });
+
+    describe('matchAll', () => {
+
+        it('returns string that matches appointed regex', () => {
+
+            let anyValue = ['t', 's', 't']; //regex result of string 'test' without letter 'e'
+
+            let anyRegex = /[^e]/g;
+
+            expect(stringutilities.matchAll('test', anyRegex)).to.deep.equal(anyValue);
+        });
+
+        it('returns empty array if nothing matches appointed regex', () => {
+
+            let anyRegex = /[abc]/g;
+
+            expect(stringutilities.matchAll('test', anyRegex)).to.deep.equal([]);
+        });
+
+    });
+
 });
