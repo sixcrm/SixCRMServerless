@@ -39,11 +39,11 @@ FROM
 RIGHT OUTER JOIN
   (SELECT sum(amount) sum_amount,
           sum(CASE
-                  WHEN transaction_subtype LIKE 'upsell%' THEN amount
+                  WHEN subtype LIKE 'upsell%' THEN amount
                   ELSE 0
               END) sum_upsell,
           count(CASE
-                    WHEN transaction_subtype IN ('order','main')
+                    WHEN subtype IN ('order','main')
                          AND processor_result ='decline' THEN 1
                     ELSE NULL
                 END) decline_count,

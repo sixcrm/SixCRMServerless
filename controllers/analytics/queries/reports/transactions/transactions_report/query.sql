@@ -7,7 +7,7 @@ SELECT
   ft.merchant_provider,
   ft.amount,
   ft.processor_result,
-  ft.transaction_type,
+  ft.type,
   null as cycle,
   null as recycle
 FROM f_transactions ft

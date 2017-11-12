@@ -8,7 +8,7 @@ ____
 * `account` - a UUIDv4
 * `start` - a ISO-8601 datetime
 * `end` - a ISO-8601 datetime
-* `facet` - a transaction facets ["account","campaign","merchant_provider","product_schedule","transaction_type","transaction_subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3,,"subaffiliate_4","subaffiliate_5"]
+* `facet` - a transaction facets ["account","campaign","merchant_provider","product_schedule","type","subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3,,"subaffiliate_4","subaffiliate_5"]
 
 ### Optional
 * `campaign` -  a array of UUIDv4 strings
@@ -21,7 +21,7 @@ ____
 * `merchant_provider` -  a array of UUIDv4 strings
 * `product_schedule` -  a array of UUIDv4 strings
 * `processor_result` -  Any subset of the enumeration [`success`, `decline`, `error`]
-* `transaction_type` - Any subset of the enmueration [`new`, `rebill`]
+* `type` - Any subset of the enmueration [`new`, `rebill`]
 
 ---
 ### Query notes

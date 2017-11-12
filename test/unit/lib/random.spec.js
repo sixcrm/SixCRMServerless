@@ -46,6 +46,7 @@ describe('lib/random', () => {
     });
 
     describe('selectRandomFromArray', () => {
+
         it('returns error when argument is not an array', () => {
             try {
                 Random.selectRandomFromArray('test');
@@ -61,9 +62,14 @@ describe('lib/random', () => {
                 expect(error.message).to.equal('[500] List argument must be of length one or greater.');
             }
         });
+
+        it('checks if a selected random index from array is a number', () => {
+            expect(Random.selectRandomFromArray([1, 2])).to.be.a('number');
+        });
     });
 
     describe('randomInt', () => {
+
         it('returns error when first input (minimum) is not an integer', () => {
             try {
                 Random.randomInt('1',2);
@@ -79,9 +85,14 @@ describe('lib/random', () => {
                 expect(error.message).to.equal('[500] Maximum input is not an integer.');
             }
         });
+
+        it('selects random number between min and max input', () => {
+            expect(Random.randomInt(1, 2)).to.be.a('number');
+        });
     });
 
     describe('randomDouble', () => {
+
         it('returns error when first input (minimum) is not an integer', () => {
             try {
                 Random.randomDouble('1',2);
@@ -105,6 +116,10 @@ describe('lib/random', () => {
                 expect(error.message).to.equal('[500] Precision input is not an integer.');
             }
         });
+
+        it('generates random double with specified precision', () => {
+            expect(Random.randomDouble(1, 2, 1)).to.be.a('number');
+        });
     });
 
     describe('randomProbability', () => {
@@ -115,6 +130,25 @@ describe('lib/random', () => {
             }catch(error) {
                 expect(error.message).to.equal('[500] Probability must be greater than or equal to 0 and less than or equal to 1');
             }
+        });
+
+        it('returns error when probability is not a number', () => {
+            try {
+                Random.randomProbability('potato');
+            }catch(error) {
+                expect(error.message).to.equal('[500] Probability is not a number.');
+            }
+        });
+
+        it('returns random probability', () => {
+            expect(Random.randomProbability(1)).to.be.true;
+        });
+    });
+
+    describe('randomGaussian', () => {
+
+        it('generates random gaussian', () => {
+            expect(Random.randomGaussian(1, 2)).to.be.a('number');
         });
     });
 

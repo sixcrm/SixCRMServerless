@@ -13,7 +13,7 @@ function getValidCurrencyNumbers(){
 
 describe('lib/currency-utilities.js', () => {
 
-    it('toCurrency', () => {
+    it('toCurrency from number', () => {
 
       let currency_numbers = getValidCurrencyNumbers();
 
@@ -22,6 +22,31 @@ describe('lib/currency-utilities.js', () => {
         expect(currencyutilities.toCurrency(currency_number)).to.equal(currency_number.toFixed(2));
 
       });
+
+    });
+
+    it('toCurrency from string', () => {
+
+        let currency_numbers = getValidCurrencyNumbers();
+        let currency_strings = getValidCurrencyStrings();
+
+        let index = 0;
+
+        arrayutilities.map(currency_strings, currency_string => {
+
+            currency_string = currency_string.substring(1);
+
+            expect(currencyutilities.toCurrency(currency_string)).to.equal(currency_numbers[index].toFixed(2));
+            index++;
+        });
+
+    });
+
+    it('toCurrency from invalid values', () => {
+
+        let any_currency_values = [true, false]; //random values that are not string nor int
+
+        expect(currencyutilities.toCurrency(any_currency_values)).to.equal(null);
 
     });
 

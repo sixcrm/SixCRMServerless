@@ -3,7 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 
 describe('lib/signature', () => {
-    describe('signature', () => {
+    describe('createSignature', () => {
 
         it('should create a signature', () => {
             // given
@@ -74,5 +74,19 @@ describe('lib/signature', () => {
             expect(firstSignature).not.to.equal(secondSignature);
         });
 
+    });
+
+    describe('validateSignature', () => {
+
+        it('should validate a signature', () => {
+            // given
+            let aSecret = 'secret';
+            let aRequestTime = 1487780578479;
+
+            //signature that is created with secret and requested time
+            let aCreatedSignature = 'a503c6aa8055a9d1c5ea39d39b22e20459afe30c';
+
+            expect(Signature.validateSignature(aSecret, aRequestTime, aCreatedSignature)).to.be.true;
+        });
     });
 });

@@ -106,7 +106,7 @@
 				"enum": ["success", "decline","error"]
 			}
 		},
-		"transaction_type":{
+		"type":{
 			"type": "array",
 			"minItems": 1,
 			"uniqueItems": true,
@@ -117,9 +117,9 @@
 		},
 		"facet":{
 			"type": "string",
-			"enum": ["account","campaign","merchant_provider","product_schedule","transaction_type","transaction_subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
+			"enum": ["account","campaign","merchant_provider","product_schedule","type","subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
 		},
-		"transaction_subtype":{
+		"subtype":{
 			"type": "array",
 			"minItems": 1,
 			"uniqueItems": true,

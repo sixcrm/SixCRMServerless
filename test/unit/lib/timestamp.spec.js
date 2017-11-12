@@ -3,6 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 
 const frozenNow = 1487768599196;  // '2017-02-22T13:03:19.196Z';
+const frozenNowAsISO8601 = '2017-02-22T13:03:19.196Z';
 const frozenNowAsISOString = 'Wed, 22 Feb 2017 13:03:19 GMT';
 const frozenNowInSeconds = 1487768599;
 const oneDayInSeconds = 86400;
@@ -64,6 +65,53 @@ describe('lib/timestamp', () => {
 
             // then
             expect(differenceInSeconds).to.equal(expectedDifferenceInSeconds);
+        });
+
+        it('successfully retrieves format from moment', () => {
+
+            let frozenDate = new Date(frozenNowAsISO8601);
+
+            let yearFromFrozenDate = frozenDate.getFullYear();
+
+            expect(Timestamp.getFormat('YYYY')).to.equal(yearFromFrozenDate.toString());
+        });
+
+        it('returns false when appointed value is not according to ISO8601', () => {
+            let invalidDate = 'a12bc3';
+
+            expect(Timestamp.isISO8601(invalidDate)).to.be.false;
+        });
+
+        it('returns date converted to ISO8601', () => {
+            // given
+            givenTimeIsFrozen();
+
+            expect(Timestamp.convertToISO8601(frozenNow)).to.equal(frozenNowAsISO8601);
+        });
+
+        it('returns date as ISO8601', () => {
+
+            expect(Timestamp.castToISO8601(frozenNowAsISO8601)).to.equal(frozenNowAsISO8601);
+        });
+
+        it('returns validation error when date type is invalid', () => {
+
+            let invalidDate = -1;
+
+            try {
+                Timestamp.castToISO8601(invalidDate);
+            }catch(error){
+                expect(error.message).to.equal('[500] Unrecognized date type: ' + invalidDate);
+            }
+        });
+
+        it('returns error when specified time is not an natural integer', () => {
+
+            try {
+                Timestamp.delay(-1);
+            }catch(error){
+                expect(error.message).to.equal('[500] Timestamp.delay assumes time is an natural integer.');
+            }
         });
 
         function givenTimeIsFrozen() {

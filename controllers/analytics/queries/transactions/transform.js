@@ -26,14 +26,14 @@ module.exports = function(results, parameters){
                 amount: result.amount,
                 processor_result: result.processor_result,
                 account: result.account,
-                transaction_type: result.transaction_type,
+                transaction_type: result.type,
                 product_schedule: result.product_schedule,
                 subaffiliate_1: result.subaffiliate_1,
                 subaffiliate_2: result.subaffiliate_2,
                 subaffiliate_3: result.subaffiliate_3,
                 subaffiliate_4: result.subaffiliate_4,
                 subaffiliate_5: result.subaffiliate_5,
-                transaction_subtype: result.transaction_subtype
+                transaction_subtype: result.subtype
             });
 
         });

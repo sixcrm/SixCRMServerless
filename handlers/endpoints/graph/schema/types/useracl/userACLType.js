@@ -18,7 +18,7 @@ module.exports.graphObj = new GraphQLObjectType({
       description: 'The id of the role.',
   },
         user:{
-            type: new GraphQLNonNull(userType.graphObj),
+            type: userType.graphObj,
             description: 'The user related to user ACL object',
             resolve: (user_acl) => {
                 return userACLController.getUser(user_acl);

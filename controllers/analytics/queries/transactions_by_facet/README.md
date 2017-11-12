@@ -25,8 +25,8 @@ ____
 * `product_schedule` -  a array of UUIDv4 strings
 * `creditcard` -  a array of UUIDv4 strings
 * `processor_result` -  a array of UUIDv4 strings
-* `transaction_type` -  a array of UUIDv4 strings
-* `transaction_subtype` -  a array of UUIDv4 strings
+* `type` -  a array of UUIDv4 strings
+* `subtype` -  a array of UUIDv4 strings
 
 ---
 ### Query notes

@@ -1,49 +1,49 @@
 SELECT
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'success' AND transaction_type = 'new' THEN 1
+        WHEN processor_result = 'success' AND type = 'new' THEN 1
         ELSE 0
       END
   ),0) AS sale_count,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'success' AND transaction_type = 'new' THEN amount
+        WHEN processor_result = 'success' AND type = 'new' THEN amount
         ELSE 0
       END
   ),0) AS sale_revenue,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'success' AND transaction_type = 'rebill' THEN 1
+        WHEN processor_result = 'success' AND type = 'rebill' THEN 1
         ELSE 0
       END
   ),0) AS rebill_count,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'success' AND transaction_type = 'rebill' THEN amount
+        WHEN processor_result = 'success' AND type = 'rebill' THEN amount
         ELSE 0
       END
   ),0) AS rebill_revenue,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'success' AND transaction_type = 'refund' THEN amount
+        WHEN processor_result = 'success' AND type = 'refund' THEN amount
         ELSE 0
       END
   ),0) AS refund_expenses,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'success' AND transaction_type = 'refund' THEN 1
+        WHEN processor_result = 'success' AND type = 'refund' THEN 1
         ELSE 0
       END
   ),0) AS refund_count,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'success' AND transaction_type = 'new' THEN amount
+        WHEN processor_result = 'success' AND type = 'new' THEN amount
         ELSE 0
       END
   ),0) -
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'success' AND transaction_type = 'refund' THEN amount
+        WHEN processor_result = 'success' AND type = 'refund' THEN amount
         ELSE 0
       END
   ),0) gross_revenue,
@@ -61,11 +61,11 @@ SELECT
   ),0) AS declines_revenue,
   coalesce(SUM(
       CASE
-        WHEN transaction_type = 'chargeback' THEN 1
+        WHEN type = 'chargeback' THEN 1
         ELSE 0
       END
   ),0) AS chargeback_count,
-  count(distinct case when transaction_type='new' then customer else null end) as current_active_customer,
+  count(distinct case when type='new' then customer else null end) as current_active_customer,
   0 count_alert_count
 FROM f_transactions
 WHERE 1

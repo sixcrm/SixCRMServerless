@@ -6,7 +6,7 @@ SELECT
   coalesce(decline_count,0),
   coalesce(decode(decline_count,0,0, 1.0*decline_count / fe.count_click),0) declines_percent,
   fe.count_sales,
-  decode(fe.count_sales,0,0, 1.0*fe.count_sales / fe.count_click) sales_percent,  
+  decode(fe.count_sales,0,0, 1.0*fe.count_sales / fe.count_click) sales_percent,
   fe.count_upsell,
   decode(fe.count_upsell,0,0, 1.0*fe.count_upsell / fe.count_click) upsell_percent,
   sum_upsell,
@@ -26,8 +26,8 @@ where account ='d3fa3bf3-7824-49f4-8261-87674482bf1c'
 group by affiliate)  fe RIGHT OUTER JOIN
 (select
   sum(amount) sum_amount,
-  sum(case when transaction_subtype like 'upsell%' then amount else 0 end ) sum_upsell,
-  count(case when transaction_subtype in ('order','main') and processor_result ='decline' then 1 else null end ) decline_count,
+  sum(case when subtype like 'upsell%' then amount else 0 end ) sum_upsell,
+  count(case when subtype in ('order','main') and processor_result ='decline' then 1 else null end ) decline_count,
   affiliate
 from f_transactions
 where account ='d3fa3bf3-7824-49f4-8261-87674482bf1c'
@@ -36,6 +36,6 @@ group by affiliate) ft
 ON (fe.affiliate = ft.affiliate);
 
 
-select distinct transaction_subtype from f_transactions;
+select distinct subtype from f_transactions;
 
 select * from d_processor_result;

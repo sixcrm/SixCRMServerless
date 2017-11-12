@@ -70,7 +70,7 @@ redshift:
   password: 'Jagodica9'
   port: 5439
   max: 10
-  idleTimeoutMillis: 30000
+  idle_timeout: 30000
   randomdata:
     interval: 300
 
