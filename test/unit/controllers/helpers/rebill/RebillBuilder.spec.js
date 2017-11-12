@@ -7,6 +7,7 @@ const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
@@ -198,7 +199,7 @@ describe('setParameters', () => {
 
       expect(rebillBuilder.parameters.store['session']).to.equal(session);
       expect(rebillBuilder.parameters.store['day']).to.equal(day);
-      expect(rebillBuilder.parameters.store['product_schedules']).to.equal(product_schedules);
+      expect(rebillBuilder.parameters.store['productschedules']).to.equal(product_schedules);
 
     });
 
@@ -208,7 +209,61 @@ describe('setParameters', () => {
 
 describe('hydrateArguments', () => {
 
+  before(() => {
+      mockery.enable({
+          useCleanCache: true,
+          warnOnReplace: false,
+          warnOnUnregistered: false
+      });
+  });
+
+  afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+  });
+
   it('successfully hydrates the arguments from the session object', () => {
+
+    mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+      queryRecords: (table, parameters, index, callback) => {
+        return Promise.resolve({productschedules:[getValidProductSchedule()]});
+      },
+      saveRecord: (tableName, entity, callback) => {
+        return Promise.resolve(entity);
+      },
+      createINQueryParameters: (field_name, in_array) => {
+        arrayutilities.nonEmpty(in_array, true);
+        if(!arrayutilities.assureEntries(in_array, 'string')){
+          eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+        }
+        let in_object = {};
+
+        arrayutilities.map(in_array, (value) => {
+          var in_key = ":"+randomutilities.createRandomString(10);
+
+          while(_.has(in_object, in_key)){
+            in_key = ":"+randomutilities.createRandomString(10);
+          }
+          in_object[in_key.toString()] = value;
+        });
+        return {
+          filter_expression : field_name+" IN ("+Object.keys(in_object).toString()+ ")",
+          expression_attribute_values : in_object
+        };
+      }
+    });
+
+    mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+      createActivity: (actor, action, acted_upon, associated_with) => {
+        return true;
+      }
+    });
+
+    mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+      addToSearchIndex: (entity) => {
+        return entity;
+      }
+    });
 
     PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -220,7 +275,7 @@ describe('hydrateArguments', () => {
 
     return rebillBuilder.hydrateArguments().then(() => {
 
-      expect(rebillBuilder.parameters.store['product_schedules']).to.be.defined;
+      expect(rebillBuilder.parameters.store['productschedules']).to.be.defined;
       expect(rebillBuilder.parameters.store['day']).to.be.defined;
 
     });
@@ -781,6 +836,304 @@ describe('getScheduleElementsOnBillDay', () => {
         expect(result).to.deep.equal(rebill);
       });
     });
+  });
+
+  describe('acquireRebillProperties', () => {
+
+    it('Successfully acquires rebill properties', () => {
+
+      let rebillHelper = new RebillHelperController();
+
+      let session = getValidSession();
+
+      rebillHelper.parameters.set('session', session);
+      rebillHelper.parameters.set('day', -1);
+      rebillHelper.parameters.set('productschedules', [getValidProductSchedule()]);
+
+      let expected_day_number = 0;
+      let expected_schedule_elements = [getValidProductSchedule().schedule[0]];
+      let expected_transaction_products = [{
+        product:getValidProductSchedule().schedule[0].product_id,
+        amount:getValidProductSchedule().schedule[0].price
+      }];
+      let expected_amount = getValidProductSchedule().schedule[0].price;
+      let expected_billdate = '2017-04-06T18:40:41.000Z';
+
+      return rebillHelper.acquireRebillProperties().then(result => {
+
+        expect(result).to.equal(true);
+
+        let day_number = rebillHelper.parameters.get('nextproductschedulebilldaynumber');
+        let schedule_elements = rebillHelper.parameters.get('scheduleelementsonbillday');
+        let transaction_products = rebillHelper.parameters.get('transactionproducts');
+        let amount = rebillHelper.parameters.get('amount');
+        let billdate = rebillHelper.parameters.get('billdate');
+
+        expect(day_number).to.equal(expected_day_number);
+        expect(schedule_elements).to.deep.equal(expected_schedule_elements);
+        expect(transaction_products).to.deep.equal(expected_transaction_products);
+        expect(amount).to.equal(expected_amount);
+        expect(billdate).to.equal(expected_billdate);
+
+      });
+
+    });
+
+  });
+
+  describe('createRebill', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    beforeEach(() => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+        queryRecords: (table, parameters, index, callback) => {
+          return Promise.resolve([]);
+        },
+        saveRecord: (tableName, entity, callback) => {
+          return Promise.resolve(entity);
+        },
+        createINQueryParameters: (field_name, in_array) => {
+          arrayutilities.nonEmpty(in_array, true);
+          if(!arrayutilities.assureEntries(in_array, 'string')){
+            eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+          }
+          let in_object = {};
+
+          arrayutilities.map(in_array, (value) => {
+            var in_key = ":"+randomutilities.createRandomString(10);
+
+            while(_.has(in_object, in_key)){
+              in_key = ":"+randomutilities.createRandomString(10);
+            }
+            in_object[in_key.toString()] = value;
+          });
+          return {
+            filter_expression : field_name+" IN ("+Object.keys(in_object).toString()+ ")",
+            expression_attribute_values : in_object
+          };
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+        createActivity: (actor, action, acted_upon, associated_with) => {
+          return true;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+        addToSearchIndex: (entity) => {
+          return entity;
+        }
+      });
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+    });
+
+    afterEach(() => {
+      //Technical Debt:  This is causing issues when there is no network...
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
+
+    it('successfully creates a rebill for 0th day', () => {
+
+      let session = getValidSession();
+      let day = -1;
+      let product_schedules = [getValidProductSchedule()];
+
+      let expected_rebill = {
+        account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        amount: product_schedules[0].schedule[0].price,
+        bill_at: "2017-04-06T18:40:41.000Z",
+        entity_type: "rebill",
+        parentsession: session.id,
+        product_schedules: [product_schedules[0].id],
+        products: [
+          {
+            product: product_schedules[0].schedule[0].product_id,
+            amount: product_schedules[0].schedule[0].price
+          }
+        ]
+      };
+
+      let rebillHelper = new RebillHelperController();
+
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+
+        let created_at = result.created_at;
+        let updated_at = result.updated_at;
+        let id = result.id;
+
+        delete result.created_at;
+        delete result.updated_at;
+        delete result.id;
+
+        expect(result).to.deep.equal(expected_rebill);
+
+      });
+    });
+
+    it('successfully creates a rebill for 14th day', () => {
+
+      let session = getValidSession();
+      let day = 0;
+      let product_schedules = [getValidProductSchedule()];
+
+      let expected_rebill = {
+        account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        amount: product_schedules[0].schedule[1].price,
+        bill_at: "2017-04-20T18:40:41.000Z",
+        entity_type: "rebill",
+        parentsession: session.id,
+        product_schedules: [product_schedules[0].id],
+        products: [
+          {
+            product: product_schedules[0].schedule[1].product_id,
+            amount: product_schedules[0].schedule[1].price
+          }
+        ]
+      };
+
+      let rebillHelper = new RebillHelperController();
+
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+
+        let created_at = result.created_at;
+        let updated_at = result.updated_at;
+        let id = result.id;
+
+        delete result.created_at;
+        delete result.updated_at;
+        delete result.id;
+
+        expect(result).to.deep.equal(expected_rebill);
+
+      });
+    });
+
+    it('successfully creates a rebill for 28th day', () => {
+
+      let session = getValidSession();
+      let day = 14;
+      let product_schedules = [getValidProductSchedule()];
+
+      let expected_rebill = {
+        account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        amount: product_schedules[0].schedule[2].price,
+        bill_at: "2017-05-04T18:40:41.000Z",
+        entity_type: "rebill",
+        parentsession: session.id,
+        product_schedules: [product_schedules[0].id],
+        products: [
+          {
+            product: product_schedules[0].schedule[2].product_id,
+            amount: product_schedules[0].schedule[2].price
+          }
+        ]
+      };
+
+      let rebillHelper = new RebillHelperController();
+
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+
+        let created_at = result.created_at;
+        let updated_at = result.updated_at;
+        let id = result.id;
+
+        delete result.created_at;
+        delete result.updated_at;
+        delete result.id;
+
+        expect(result).to.deep.equal(expected_rebill);
+
+      });
+    });
+
+    it('successfully creates a rebill for 56th day', () => {
+
+      let session = getValidSession();
+      let day = 28;
+      let product_schedules = [getValidProductSchedule()];
+
+      let expected_rebill = {
+        account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        amount: product_schedules[0].schedule[2].price,
+        bill_at: "2017-06-01T18:40:41.000Z",
+        entity_type: "rebill",
+        parentsession: session.id,
+        product_schedules: [product_schedules[0].id],
+        products: [
+          {
+            product: product_schedules[0].schedule[2].product_id,
+            amount: product_schedules[0].schedule[2].price
+          }
+        ]
+      };
+
+      let rebillHelper = new RebillHelperController();
+
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+
+        let created_at = result.created_at;
+        let updated_at = result.updated_at;
+        let id = result.id;
+
+        delete result.created_at;
+        delete result.updated_at;
+        delete result.id;
+
+        expect(result).to.deep.equal(expected_rebill);
+
+      });
+    });
+
+    it('successfully creates a rebill for 56th day from a non-bill date', () => {
+
+      let session = getValidSession();
+      let day = 29;
+      let product_schedules = [getValidProductSchedule()];
+
+      let expected_rebill = {
+        account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        amount: product_schedules[0].schedule[2].price,
+        bill_at: "2017-06-01T18:40:41.000Z",
+        entity_type: "rebill",
+        parentsession: session.id,
+        product_schedules: [product_schedules[0].id],
+        products: [
+          {
+            product: product_schedules[0].schedule[2].product_id,
+            amount: product_schedules[0].schedule[2].price
+          }
+        ]
+      };
+
+      let rebillHelper = new RebillHelperController();
+
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+
+        let created_at = result.created_at;
+        let updated_at = result.updated_at;
+        let id = result.id;
+
+        delete result.created_at;
+        delete result.updated_at;
+        delete result.id;
+
+        expect(result).to.deep.equal(expected_rebill);
+
+      });
+    });
+
   });
 
 });
