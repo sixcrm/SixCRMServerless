@@ -17,6 +17,50 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let RebillHelperController = global.SixCRM.routes.include('helpers', 'rebill/Rebill.js');
 
+function getValidRebill(){
+
+  return {
+    parentsession: uuidV4(),
+    bill_at: '2017-04-06T18:40:41.405Z',
+    amount: 12.22,
+    product_schedules:
+     [ uuidV4(),
+       uuidV4(),
+       uuidV4() ],
+    products:
+     [ { product: uuidV4(),
+         amount: 3.22 },
+       { product: uuidV4(), amount: 9 } ],
+    id: uuidV4(),
+    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+    created_at: '2017-11-12T06:03:35.571Z',
+    updated_at: '2017-11-12T06:03:35.571Z',
+    entity_type: 'rebill'
+  };
+
+}
+
+function getValidRebillPrototype(){
+
+  return {
+    parentsession: uuidV4(),
+    bill_at: "2017-04-06T18:40:41.405Z",
+    amount: 12.22,
+    product_schedules:[uuidV4(), uuidV4(), uuidV4()],
+    products: [{
+      product:uuidV4(),
+      amount: 3.22
+    },{
+      product:uuidV4(),
+      amount: 9.00
+    }]
+  }
+
+}
+
+function getValidBillDate(){
+  return '2017-08-06T18:41:12.521Z';
+}
 
 function getValidSession(){
 
@@ -602,256 +646,141 @@ describe('getScheduleElementsOnBillDay', () => {
 
   });
 
-});
+  describe('calculateBillAt', () => {
 
-/*
-deprecated
-describe('getProductScheduleProducts', () => {
+    it('successfully sets the bill_at property', () => {
 
-  xit('successfully acquires the product schedule products', () => {
+      let session = getValidSession();
+      let test_cases = [
+        {
+          days: 14,
+          expect: '2017-04-20T18:40:41.000Z'
+        },
+        {
+          days: 365,
+          expect: '2018-04-06T18:40:41.000Z'
+        },
+        {
+          days: 28,
+          expect: '2017-05-04T18:40:41.000Z'
+        }
+      ];
 
-    let product_schedule = getValidProductSchedule();
+      return Promise.all(arrayutilities.map(test_cases, test_case => {
 
-    let rebillBuilder = new RebillHelperController();
+        let rebillHelper = new RebillHelperController();
 
-    rebillBuilder.parameters.set('productschedules', [product_schedule]);
-    rebillBuilder.parameters.set('day', 1);
+        rebillHelper.parameters.set('session', session);
+        rebillHelper.parameters.set('nextproductschedulebilldaynumber', test_case.days);
 
-    return rebillBuilder.getProductScheduleProducts().then((result) => {
+        return rebillHelper.calculateBillAt().then(result => {
+          expect(result).to.equal(true);
+          expect(rebillHelper.parameters.get('billdate', null, false)).to.equal(test_case.expect);
+        });
 
-      let scheduled_products = rebillBuilder.parameters.get('scheduledproducts');
-
-      expect(scheduled_products).to.be.defined;
-      expect(scheduled_products[0]).to.deep.equal(product_schedule.schedule[0]);
-
-    });
-
-  });
-
-  xit('successfully acquires the product schedule products', () => {
-
-    let product_schedule = getValidProductSchedule();
-
-    let rebillBuilder = new RebillHelperController();
-
-    rebillBuilder.parameters.set('productschedules', [product_schedule]);
-    rebillBuilder.parameters.set('day', -1);
-
-    return rebillBuilder.getProductScheduleProducts().then((result) => {
-
-      let scheduled_products = rebillBuilder.parameters.get('scheduledproducts', null, false);
-
-      expect(scheduled_products).to.not.be.defined;
+      }));
 
     });
 
   });
 
-});
+  describe('buildRebillPrototype', () => {
 
-describe('calculateOffsetFromNow', () => {
+    it('successfully builds a rebill prototype', () => {
 
-  it('successfully calculates offset from now', () => {
+      let rebillHelper = new RebillHelperController();
 
-    let rebillBuilder = new RebillHelperController();
+      rebillHelper.parameters.set('transactionproducts', [{
+        product: '45f025bb-a9dc-45c7-86d8-d4b7a4443426',
+        amount: 12.99
+      }]),
+      rebillHelper.parameters.set('billdate', getValidBillDate()),
+      rebillHelper.parameters.set('amount', 12.99),
+      rebillHelper.parameters.set('productschedules', getValidProductSchedules())
+      rebillHelper.parameters.set('session', getValidSession())
 
-    let buildatoffsets = [-45.8,-1,0,3.9,15,30,45,90,100];
+      rebillHelper.buildRebillPrototype().then(result => {
+        expect(result).to.equal(true);
+        let prospective_rebill_prototype = rebillHelper.parameters.get('rebillprototype');
 
-    arrayutilities.map(buildatoffsets, buildatoffset => {
+        expect(prospective_rebill_prototype).to.have.property('products');
+        expect(prospective_rebill_prototype).to.have.property('bill_at');
+        expect(prospective_rebill_prototype).to.have.property('amount');
+        expect(prospective_rebill_prototype).to.have.property('product_schedules');
+        expect(prospective_rebill_prototype).to.have.property('parentsession');
+      })
+    });
 
-      let rebilldate = rebillBuilder.calculateOffsetFromNow(buildatoffset);
-      let correct = timestamp.toISO8601(timestamp.createTimestampSeconds() + (buildatoffset * timestamp.getDayInSeconds()));
+  });
 
-      expect(timestamp.isISO8601(rebilldate)).to.be.true;
-      expect(rebilldate).to.equal(correct);
+  describe('pushRebill', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
+    it('successfully saves a rebill to the database', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+        queryRecords: (table, parameters, index, callback) => {
+          return Promise.resolve([]);
+        },
+        saveRecord: (tableName, entity, callback) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+        createActivity: (actor, action, acted_upon, associated_with) => {
+          return true;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
+        addToSearchIndex: (entity) => {
+          return entity;
+        }
+      });
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+      let rebillHelper = new RebillHelperController();
+
+      rebillHelper.parameters.set('rebillprototype', getValidRebillPrototype());
+
+      return rebillHelper.pushRebill().then(result => {
+        expect(result).to.equal(true);
+        let rebill = rebillHelper.parameters.get('rebill');
+
+        expect(rebill).to.have.property('id');
+        expect(rebill).to.have.property('created_at');
+        expect(rebill).to.have.property('updated_at');
+        expect(rebill).to.have.property('account');
+      })
 
     });
 
   });
 
-  it('fails with invalid inputs', () => {
+  describe('returnRebill', () => {
+    it('successfully returns a rebill object', () => {
+      let rebill = getValidRebill();
+      let rebillHelper = new RebillHelperController();
 
-    let rebillBuilder = new RebillHelperController();
-
-    let invalid_inputs = [null, undefined, {}, [], 'asdbasd', () => {}];
-
-    arrayutilities.map(invalid_inputs, invalid_input => {
-
-      try{
-        let rebilldate = rebillBuilder.calculateOffsetFromNow(invalid_input);
-      }catch(error){
-        expect(error).to.be.defined;
-      }
-
+      rebillHelper.parameters.set('rebill', rebill);
+      return rebillHelper.returnRebill().then(result => {
+        expect(result).to.deep.equal(rebill);
+      });
     });
-
-  });
-
-});
-
-describe('calculateDayInCycle', () => {
-
-  it('successfully calculates the day in cycle', () => {
-
-    let rebillBuilder = new RebillHelperController();
-
-    let now = timestamp.createTimestampSeconds();
-
-    let cases = [
-      {
-        session_start: timestamp.toISO8601(now),
-        expect: 0
-      },
-      {
-        session_start: timestamp.toISO8601(now - timestamp.getDayInSeconds()),
-        expect: 1
-      },
-      {
-        session_start: timestamp.toISO8601(now - (timestamp.getDayInSeconds() * 5)),
-        expect: 5
-      },
-      {
-        session_start: timestamp.toISO8601(now - (timestamp.getDayInSeconds() * 20)),
-        expect: 20
-      },
-      {
-        session_start: timestamp.toISO8601(now - (timestamp.getDayInSeconds() * -1)),
-        expect: -1
-      },
-      {
-        session_start: timestamp.toISO8601(now),
-        expect: 0
-      }
-
-    ];
-
-    let session = getValidSession();
-
-    arrayutilities.map(cases, (test_case) => {
-
-      session.created_at = test_case.session_start;
-
-      rebillBuilder.parameters.set('session', session);
-
-      rebillBuilder.calculateDayInCycle(test_case.session_start);
-      expect(rebillBuilder.parameters.store['day']).to.equal(test_case.expect);
-
-    });
-
-  });
-
-});
-
-describe('getCurrentRebill', () => {
-
-  xit('successfully calculates returns a proto-rebill for the current cycle', () => {
-
-    let rebillBuilder = new RebillHelperController();
-
-    let product_schedule  = getValidProductSchedule();
-
-    let cases = [
-      {
-        day: 0,
-        expect: product_schedule.schedule[0]
-      },
-      {
-        day: 1,
-        expect: product_schedule.schedule[0]
-      },
-      {
-        day:13,
-        expect: product_schedule.schedule[0]
-      },
-      {
-        day:14,
-        expect: product_schedule.schedule[1]
-      },
-      {
-        day:15,
-        expect: product_schedule.schedule[1]
-      },
-      {
-        day:27,
-        expect: product_schedule.schedule[1]
-      },
-      {
-        day:28,
-        expect: product_schedule.schedule[2]
-      },
-      {
-        day:3000,
-        expect: product_schedule.schedule[2]
-      }
-    ];
-
-    arrayutilities.map(cases, test_case => {
-
-      let current_schedule = rebillBuilder.getCurrentRebill(test_case.day, product_schedule);
-
-      expect(current_schedule.product_schedule).to.deep.equal(product_schedule);
-      expect(current_schedule.amount).to.equal(test_case.expect.price);
-      expect(current_schedule.product).to.equal(test_case.expect.product_id);
-
-    });
-
   });
 
 });
-
-describe('getNextRebill', () => {
-
-  xit('successfully calculates returns a proto-rebill for the current cycle', () => {
-
-    let rebillBuilder = new RebillHelperController();
-
-    let product_schedule  = getValidProductSchedule();
-
-    let cases = [
-      {
-        day: 0,
-        expect: product_schedule.schedule[1]
-      },
-      {
-        day: 1,
-        expect: product_schedule.schedule[1]
-      },
-      {
-        day:13,
-        expect: product_schedule.schedule[1]
-      },
-      {
-        day:14,
-        expect: product_schedule.schedule[2]
-      },
-      {
-        day:15,
-        expect: product_schedule.schedule[2]
-      },
-      {
-        day:27,
-        expect: product_schedule.schedule[2]
-      },
-      {
-        day:28,
-        expect: product_schedule.schedule[2]
-      },
-      {
-        day:3000,
-        expect: product_schedule.schedule[2]
-      }
-    ];
-
-    arrayutilities.map(cases, test_case => {
-
-      let next_schedule = rebillBuilder.getNextRebill(test_case.day, product_schedule);
-
-      expect(next_schedule.product_schedule).to.deep.equal(product_schedule);
-      expect(next_schedule.amount).to.equal(test_case.expect.price);
-      expect(next_schedule.product).to.equal(test_case.expect.product_id);
-
-    });
-
-  });
-*/
-//});

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/rebillprototype.json",
+	"title": "Rebill Prototype",
+  "type":"object",
+  "properties":{
+    "bill_at":{"$ref":"../../definitions/iso8601.json"},
+    "product_schedules":{
+      "type":"array",
+      "items":{"$ref":"../../definitions/uuidv4.json"}
+    },
+    "amount":{"$ref":"../../definitions/currency.json"},
+    "products":{"$ref":"./transactionproducts.json"}
+  },
+  "required":["bill_at","product_schedules","amount","products"]
+}

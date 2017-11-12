@@ -44,11 +44,14 @@ module.exports = class RebillHelper {
     this.parameter_validation = {
       'session': global.SixCRM.routes.path('model','entities/session.json'),
       'day': global.SixCRM.routes.path('model','helpers/rebill/day.json'),
+      'billdate':global.SixCRM.routes.path('model', 'definitions/iso8601.json'),
       'nextproductschedulebilldaynumber': global.SixCRM.routes.path('model','helpers/rebill/day.json'),
       'productschedules': global.SixCRM.routes.path('model','helpers/rebill/productschedules.json'),
       'scheduleelementsonbillday':global.SixCRM.routes.path('model', 'helpers/rebill/scheduledproducts.json'),
       'transactionproducts': global.SixCRM.routes.path('model', 'helpers/rebill/transactionproducts.json'),
-      'amount': global.SixCRM.routes.path('model','definitions/currency.json')
+      'amount': global.SixCRM.routes.path('model','definitions/currency.json'),
+      'rebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/rebillprototype.json'),
+      'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
@@ -61,6 +64,7 @@ module.exports = class RebillHelper {
   In general, this method always returns the next available rebill object from the date that is specified.
   */
 
+  //Technical Debt:  Test this!
   createRebill({session, day, product_schedules}){
 
     du.debug('Create Rebill');
@@ -119,6 +123,18 @@ module.exports = class RebillHelper {
 
   }
 
+  calculateDayInCycle(){
+
+    du.debug('Calculate Day In Cycle');
+
+    let session = this.parameters.get('session');
+
+    let day = timestamp.getDaysDifference(session.created_at);
+
+    this.parameters.set('day', day);
+
+  }
+
   validateArguments(){
 
     du.debug('Validate Arguments');
@@ -136,6 +152,7 @@ module.exports = class RebillHelper {
 
   }
 
+  //Technical Debt:  Test this!
   acquireRebillProperties(){
 
     du.debug('Acquire Rebill Properties');
@@ -266,48 +283,17 @@ module.exports = class RebillHelper {
 
     du.debug('Calculate Bill At');
 
-  }
+    let bill_day = this.parameters.get('nextproductschedulebilldaynumber');
 
-  /*
-  returnRebill(){
+    let session_start = parseInt(timestamp.dateToTimestamp(this.parameters.get('session').created_at));
 
-    du.debug('Return Rebill');
+    let additional_seconds = timestamp.getDayInSeconds() * bill_day;
 
-    return this.parameters.get('rebill');
+    let bill_date = timestamp.toISO8601(session_start + additional_seconds);
 
-  }
+    this.parameters.set('billdate', bill_date);
 
-  getUpcomingProductSchedulesScheduleItemProducts(){
-
-    du.debug('Get Upcoming Product Schedule Schedule Item Products');
-
-    let day = this.parameters.get('nextproductschedulebilldaynumber');
-
-    let product_schedules = this.parameters.get('productschedules');
-
-    if(!_.has(this, 'productScheduleHelper')){
-      this.productScheduleHelper = new ProductScheduleHelper();
-    }
-
-    let products = arrayutilities.map(product_schedules, product_schedule => {
-      return this.productScheduleHelper.getScheduleElementByDayInSchedule(product_schedule, day);
-    });
-
-    products = arrayutilities.filter(products, product => {
-      return objectutilities.isObject(product);
-    });
-
-    if(arrayutilities.nonEmpty(products)){
-
-      this.parameters.set('scheduledproducts', products);
-
-      return Promise.resolve(products);
-
-    }
-
-    du.warning('No products associated with product schedule for day '+day);
-
-    return Promise.resolve(null);
+    return Promise.resolve(true);
 
   }
 
@@ -315,272 +301,50 @@ module.exports = class RebillHelper {
 
     du.debug('Build Rebill Prototype');
 
+    let product_schedule_ids = arrayutilities.map(this.parameters.get('productschedules'), product_schedule => {
+      return product_schedule.id;
+    })
+
+    let rebill_prototype = {
+      parentsession: this.parameters.get('session').id,
+      products: this.parameters.get('transactionproducts'),
+      bill_at: this.parameters.get('billdate'),
+      amount: this.parameters.get('amount'),
+      product_schedules: product_schedule_ids
+    };
+
+    this.parameters.set('rebillprototype', rebill_prototype);
+
+    return Promise.resolve(true);
+
   }
 
   pushRebill(){
 
     du.debug('Push Rebill');
 
-    let rebill_prototype = this.parameters.get('rebillprototype');
-
     if(!_.has(this, 'rebillController')){
       this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
     }
 
-    return this.rebillController.create({entity: rebill_prototype}).then(result => {
+    let prototype_rebill = this.parameters.get('rebillprototype');
+
+    return this.rebillController.create({entity: prototype_rebill}).then(rebill => {
+
       this.parameters.set('rebill', rebill);
+
       return true;
-    });
-
-  }
-
-  calculateDayInCycle(){
-
-    du.debug('Calculate Day In Cycle');
-
-    let session = this.parameters.get('session');
-
-    let day = timestamp.getDaysDifference(session.created_at);
-
-    this.parameters.set('day', day);
-
-  }
-
-
-calculateOffsetFromNow(days_offset){
-
-  du.debug('Calculate Bill At');
-
-  let now_in_seconds = timestamp.createTimestampSeconds();
-
-  let seconds_offset = (days_offset * timestamp.getDayInSeconds());
-
-  return timestamp.toISO8601((now_in_seconds + seconds_offset));
-
-}
-
-
-getNextScheduleElementByDay(product_schedule, day_in_cycle){
-
-  du.debug('Get Schedule Element By Day');
-
-  let next_schedule_element = null;
-
-  arrayutilities.find(product_schedule.schedule, (scheduled_product, index, array) => {
-
-    //are we in this scheduled_product's start range?
-    if(parseInt(day_in_cycle) >= parseInt(scheduled_product.start)){
-
-      //if the current scheduled product doesn't have an end, well, boom
-      if(!_.has(scheduled_product, "end")){
-
-        next_schedule_element = scheduled_product;
-
-        return true;
-
-      //are we in this scheduled_product's end range?
-      }else if(parseInt(day_in_cycle) < parseInt(scheduled_product.end)){
-
-        //if there's a product that follows this...
-        //Technical Debt:  Note that this assumes ordered product schedules.
-        if(!_.isUndefined(product_schedule.schedule[index+1])){
-
-          next_schedule_element = product_schedule.schedule[index+1];
-
-          return true;
-
-        }
-
-      }
-
-    }
-
-    return false;
-
-  });
-
-  return next_schedule_element;
-
-}
-
-
-  getCurrentRebill(day_in_cycle, product_schedule){
-
-    let calculated_rebill = null;
-
-    let scheduled_product = this.getScheduleElementByDay(product_schedule, day_in_cycle);
-
-    if(!_.isNull(scheduled_product)){
-
-      //Technical Debt:  It would be nice if this was the beginning of the current cycle, not now.
-      let bill_at = this.calculateOffsetFromNow(0);
-
-      calculated_rebill = {
-        product: scheduled_product.product_id,
-        bill_at: bill_at,
-        amount: scheduled_product.price,
-        product_schedules: [product_schedule.id]
-      };
-
-    }
-
-    return calculated_rebill;
-
-  }
-
-  getNextRebill(day_in_cycle, product_schedule){
-
-    du.debug('Get Next Rebill');
-
-    let calculated_rebill = null;
-
-    let scheduled_product = this.getNextScheduleElementByDay(product_schedule, day_in_cycle);
-
-    if(!_.isNull(scheduled_product)){
-
-      //need this to be days until the next period...
-      let bill_at = this.calculateOffsetFromNow(scheduled_product.period);
-
-      calculated_rebill = {
-        product: scheduled_product.product_id,
-        bill_at: bill_at,
-        amount: scheduled_product.price,
-        product_schedules: [product_schedule.id]
-      };
-
-    }
-
-    return calculated_rebill;
-
-  }
-
-  createInitialRebill(session, product_schedule){
-
-    du.debug('Create Current Rebill');
-
-    let current_rebill_prototype = this.getCurrentRebill(0, product_schedule);
-
-    current_rebill_prototype.parentsession = session.id;
-
-    if(!_.has(this, 'rebillController')){
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-    }
-
-    return this.rebillController.create({entity: current_rebill_prototype}).then(rebill => {
-
-      return rebill;
 
     });
 
   }
 
+  returnRebill(){
 
+    du.debug('Return Rebill');
 
-
-
-
-  createRebills(session, product_schedules, day_in_cycle){
-
-    du.debug('Create Rebills');
-
-    if(arrayutilities.nonEmpty(product_schedules)){
-
-      let promises = arrayutilities.map(product_schedules, (schedule) => {
-        return this.createRebill(session, schedule, day_in_cycle);
-      });
-
-      return Promise.all(promises);
-
-    }else{
-
-      return null;
-
-    }
+    return Promise.resolve(this.parameters.get('rebill'));
 
   }
-
-
-
-
-
-
-
-
-
-
-
-
-//Technical Debt:  This is a mess
-//the product schedule needs to be a part of the rebill, not the product
-  createRebill(session, product_schedule, day_in_cycle){
-
-    du.debug('Create Rebill', product_schedule);
-
-    if(!_.isNumber(day_in_cycle)){
-
-      day_in_cycle = this.calculateDayInCycle(session.created);
-
-    }
-
-    var rebill_parameters = this.calculateRebill(day_in_cycle, product_schedule);
-
-    //Technical Debt:  This should use a entity method
-    var rebill_object = this.buildRebillObject({
-        parentsession: session.id,
-        bill_at: rebill_parameters.bill_at,
-        product_schedules: [product_schedule.id],
-        amount: rebill_parameters.amount
-    });
-
-    return this.create({entity: rebill_object});
-
-  }
-
-  createRebillObject(day_in_cycle, parentsession){
-
-    //look at the parent session
-    //for each product schedule
-      //get all products available for billing
-
-  }
-
-  buildRebillObject(parameters){
-
-      let rebill_object = {
-          bill_at: parameters.bill_at,
-          parentsession: parameters.parentsession,
-          product_schedules: parameters.product_schedules,
-          amount: parameters.amount
-      };
-
-      return rebill_object;
-
-  }
-
-
-    /*
-    //Technical Debt:  THis is poorly named
-    getTransactionProducts(day_in_schedule, schedules_to_purchase){
-
-      du.debug('Get Transaction Products');
-
-      let transaction_products = [];
-
-      arrayutilities.map(schedules_to_purchase, (schedule) => {
-
-        let product_for_purchase = this.getProductForPurchase(day_in_schedule, schedule.schedule);
-
-        transaction_products.push({
-          amount: parseFloat(product_for_purchase.price),
-          //Technical Debt: "product_id" is bad nomenclature
-          product: product_for_purchase.product_id
-        });
-
-      });
-
-      return transaction_products;
-
-    }
-    */
 
 }
