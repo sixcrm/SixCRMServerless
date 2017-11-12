@@ -16,7 +16,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-let RebillHelperController = global.SixCRM.routes.include('helpers', 'rebill/Rebill.js');
+let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
 function getValidRebill(){
 

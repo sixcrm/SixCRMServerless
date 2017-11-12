@@ -13,8 +13,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-let ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'productschedule/ProductSchedule.js');
-
+let ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 
 function getValidProductSchedule(){
 

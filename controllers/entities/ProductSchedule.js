@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'productschedule/ProductSchedule.js');
+const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class productScheduleController extends entityController {

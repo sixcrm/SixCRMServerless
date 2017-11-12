@@ -13,7 +13,7 @@ const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'productschedule/ProductSchedule.js');
+const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 
 module.exports = class RebillHelper {
 
