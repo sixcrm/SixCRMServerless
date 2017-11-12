@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/day.json",
+	"title": "Day",
+  "type":"integer",
+  "minimum": -1,
+  "exclusiveMinimum": false
+}

@@ -30,7 +30,7 @@ describe('controllers/workers/confirmDelivered', function () {
         modelgenerator.randomEntityWithId('shippingreceipt').then(shipping_receipt => { random_shipping_receipt = shipping_receipt}),
         modelgenerator.randomEntityWithId('transaction').then(transaction => { random_transactions = [transaction]}),
         modelgenerator.randomEntityWithId('product').then(product => { random_products = [{product: product},{product: product}]}),
-        modelgenerator.randomEntityWithId('transactionproduct').then(transaction_product => { random_transaction_product = transaction_product})
+        modelgenerator.randomEntityWithId('components/transactionproduct').then(transaction_product => { random_transaction_product = transaction_product})
     ]).then(() =>{
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
                 listTransactions: (rebill) => {

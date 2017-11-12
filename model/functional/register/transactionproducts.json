@@ -3,6 +3,6 @@
 	"id":"/transactionproducts",
 	"title": "Transaction Products",
 	"type":"array",
-	"items":{"$ref":"../../entities/transactionproduct.json"},
+	"items":{"$ref":"../../entities/components/transactionproduct.json"},
 	"minItems":1
 }

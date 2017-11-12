@@ -13,17 +13,7 @@
 		"loadbalancer":{"$ref": "../definitions/uuidv4.json"},
 		"schedule":{
 			"type":"array",
-			"items":{
-				"type":"object",
-			  "properties":{
-			    "product_id":{"$ref": "../definitions/uuidv4.json"},
-			    "price":{"$ref": "../definitions/currency.json"},
-			    "start":{"$ref": "../definitions/nonnegativeinteger.json"},
-			    "end":{"$ref": "../definitions/nonnegativeinteger.json"},
-			    "period":{"$ref": "../definitions/nonnegativeinteger.json"}
-			  },
-			  "required":["product_id", "price", "start", "period"]
-			}
+			"items":{"$ref":"./components/scheduledproduct.json"}
 		},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},

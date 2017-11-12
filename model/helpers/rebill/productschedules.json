@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/productschedules.json",
+	"title": "Product Schedules",
+  "type":"array",
+  "items":{"$ref":"../../entities/productschedule.json"}
+}

@@ -3,5 +3,13 @@
 	"id":"/transactionproducts.json",
 	"title": "Transaction Products",
   "type":"array",
-  "items":{"$ref": "../../entities/transactionproduct.json"}
+  "items":{
+    "type": "object",
+  	"description": "A connection between transaction and a product",
+  	"properties": {
+  		"product":{"$ref": "../../definitions/uuidv4.json"},
+  		"amount":{"$ref": "../../definitions/currency.json"}
+  	},
+  	"required":["product", "amount"]
+  }
 }

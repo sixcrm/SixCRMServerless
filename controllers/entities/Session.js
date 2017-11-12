@@ -253,18 +253,17 @@ class sessionController extends entityController {
 
     }
 
-    getProductSchedules(session){
+    listProductSchedules(session){
 
-      du.debug('Get Product Schedules');
+      du.debug('List Product Schedules');
 
-      if(arrayutilities.nonEmpty(session.product_schedules)){
-
-        return this.executeAssociatedEntityFunction('productScheduleController', 'listBy', {list_array: session.product_schedules})
-        .then(product_schedules => this.getResult(product_schedules, 'productschedules'));
-
+      if(!arrayutilities.nonEmpty(session.product_schedules)){
+        return Promise.resolve(null);
       }
 
-      return Promise.resolve(null);
+      let query_parameters = this.createINQueryParameters({field: 'id', list_array: session.product_schedules});
+
+      return this.executeAssociatedEntityFunction('productScheduleController', 'listByAccount', {query_parameters: query_parameters});
 
     }
 

@@ -29,7 +29,7 @@ module.exports.graphObj = new GraphQLObjectType({
         product_schedules: {
             type: new GraphQLList(productScheduleType.graphObj),
             description: 'The product schedules associated with the session',
-            resolve: session => sessionController.getProductSchedules(session),
+            resolve: session => sessionController.listProductSchedules(session).then(results => sessionController.getResult(results,'productschedules')),
         },
         rebills: {
             type: new GraphQLList(rebillType.graphObj),

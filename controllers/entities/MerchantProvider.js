@@ -52,40 +52,6 @@ class merchantProviderController extends entityController {
 
     }
 
-    //Technical Debt:  This belongs in the vendor class
-    /*
-    createRefundParameters(transaction, refund){
-
-        du.debug('Create Refund Parameters');
-
-        let refund_parameters = {
-            type: 'refund',
-            amount: encodeURIComponent(numberutilities.formatFloat(refund.amount, 2))
-        };
-
-        if(_.has(transaction, 'processor_response')){
-
-            let processor_response;
-
-            try{
-                processor_response = JSON.parse(transaction.processor_response);
-            }catch(e){
-                eu.throwError('server','Unable to parse processor response: '+transaction.processor_response);
-            }
-
-            if(!_.has(processor_response, 'results') || !_.has(processor_response.results, 'transactionid')){
-                eu.throwError('server','Unable identify the processor "transactionid" field from the processor response: '+transaction.processor_response);
-            }
-
-            refund_parameters.transactionid = processor_response.results.transactionid;
-
-        }
-
-        return refund_parameters;
-
-    }
-    */
-
 }
 
 module.exports = new merchantProviderController();

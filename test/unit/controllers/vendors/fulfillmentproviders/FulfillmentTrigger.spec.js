@@ -22,7 +22,7 @@ describe('controllers/vendors/fulfillmentprovider/FulfillmentTrigger', function 
 
     beforeEach((done) => { Promise.all([
         modelgenerator.randomEntityWithId('fulfillmentprovider').then(provider => { a_provider = provider}),
-        modelgenerator.randomEntityWithId('transactionproduct').then(transaction_product => { a_transaction_product = transaction_product}),
+        modelgenerator.randomEntityWithId('components/transactionproduct').then(transaction_product => { a_transaction_product = transaction_product}),
         modelgenerator.randomEntityWithId('product').then(product => { a_product = product}),
     ]).then(() =>{
             done();

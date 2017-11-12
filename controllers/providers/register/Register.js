@@ -478,7 +478,7 @@ module.exports = class Register extends PermissionedController {
     let parentsession = this.parameters.get('parentsession');
     let productschedules = this.parameters.get('productschedules');
 
-    //Technical Debt:  Need "ProcessUtilities" class
+    //Technical Debt:  Deprecated.  Use rebill helper class methods
     let day_in_cycle = this.rebillController.calculateDayInCycle(parentsession.created_at);
     let transaction_products = this.productScheduleController.getTransactionProducts(day_in_cycle, productschedules);
 
