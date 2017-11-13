@@ -14,7 +14,7 @@ var transactionController = global.SixCRM.routes.include('controllers', 'entitie
 var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-const RebillHelperController = global.SixCRM.routes.include('helpers', 'rebill/Rebill.js');
+const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
