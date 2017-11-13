@@ -39,7 +39,7 @@ describe('lib/sqs-utilities', () => {
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
             try{
-                sqsutilities.getQueueARN({QueueName: 1});
+                sqsutilities.getQueueARN(1);
             }catch(error){
                 expect(error.message).to.equal('[500] Improper argumentation for getQueueARN');
             }
@@ -49,7 +49,7 @@ describe('lib/sqs-utilities', () => {
 
             let queue_name = 'sampleQueueName';
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
@@ -66,7 +66,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns queue url template with appointed queue name', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let input = 'example';
 
@@ -83,7 +83,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns url template with queue name from appointed input', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let input = {queue:'example'};
 
@@ -153,7 +153,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns received message', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let params = {
                 queue:'example',
@@ -175,7 +175,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns error when message wasn\'t received', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let params = {
                 queue:'example',
@@ -200,7 +200,7 @@ describe('lib/sqs-utilities', () => {
 
         it('successfully deletes message', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let input = {queue:'example'};
 
@@ -222,7 +222,7 @@ describe('lib/sqs-utilities', () => {
 
         it('successfully sends message', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let input = {queue:'example'};
 
@@ -244,7 +244,7 @@ describe('lib/sqs-utilities', () => {
 
         it('successfully deletes messages', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let input = {
                 queue: 'example',
@@ -269,7 +269,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns response from deleted message batch', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let input = {
                 queue: 'example',
@@ -296,7 +296,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns error when messages haven\'t been removed', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let fail = new Error('fail');
 
@@ -323,7 +323,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns false when there aren\'t any messages to delete', () => {
 
-            process.env.stage = 'test';
+            process.env.stage = 'not local';
 
             let input = {queue: 'example'};
 
@@ -589,6 +589,8 @@ describe('lib/sqs-utilities', () => {
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
+            delete sqsutilities.existing_queues;
+
             sqsutilities.sqs = {
                 listQueues: (params, callback) => {
                     callback(null, 'no list');
@@ -607,6 +609,8 @@ describe('lib/sqs-utilities', () => {
             let data = {QueueUrls: 'queue'};
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            delete sqsutilities.existing_queues;
 
             sqsutilities.sqs = {
                 listQueues: (params, callback) => {
