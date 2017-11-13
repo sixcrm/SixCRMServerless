@@ -5,7 +5,7 @@
 	"type":"object",
 	"properties":{
 		"rebill":{"$ref":"../../entities/rebill.json"},
-    	"amount":{"$ref":"../../definitions/currency.json"},
+    "amount":{"$ref":"../../definitions/currency.json"},
 		"type":{"$ref":"./transactiontype.json"},
 		"result":{"$ref":"./transactionresult.json"},
     "processor_response":{"$ref":"./processorresponse.json"},
