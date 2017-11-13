@@ -95,7 +95,7 @@ describe('lib/model-validator-utilities', () => {
 
         function validateSchemasOnPath(path) {
             fs.readdirSync(path)
-                .filter((file_name) => file_name.indexOf('.json') > -1)
+                .filter((file_name) => file_name.endsWith('.json'))
                 .forEach((file_name) => {
                     let schema = path + '/' + file_name;
                     let model_name = schema.replace(global.SixCRM.routes.path('model'), '');
