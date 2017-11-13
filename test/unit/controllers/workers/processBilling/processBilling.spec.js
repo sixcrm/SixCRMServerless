@@ -211,7 +211,7 @@ describe('controllers/workers/processBilling', () => {
 
       let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
 
-      processBillingController.parameters.set('message', getValidMessages().shift());
+      processBillingController.parameters.set('message', getValidMessages()[0]);
 
       return processBillingController.acquireRebill().then(rebill => {
         expect(rebill).to.have.property('id');
@@ -240,7 +240,7 @@ describe('controllers/workers/processBilling', () => {
         }
       });
 
-      let message = getValidMessages().shift();
+      let message = getValidMessages()[0];
       let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
 
       return processBillingController.execute(message).then(result => {

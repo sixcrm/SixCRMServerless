@@ -189,7 +189,7 @@ class customerController extends entityController {
 
             });
 
-            return sorted_credit_cards.shift();
+            return sorted_credit_cards[0];
 
           }
 

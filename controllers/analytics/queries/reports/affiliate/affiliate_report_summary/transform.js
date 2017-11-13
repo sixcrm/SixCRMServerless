@@ -7,11 +7,9 @@ module.exports = function(results, parameters){
 
     du.debug('Transformation Function');
 
-    du.info(results);
-
     if(arrayutilities.nonEmpty(results) && results.length == 1){
 
-      let result = results.shift();
+      let result = results[0];
 
       return Promise.resolve({
         count_click: result.count_click,

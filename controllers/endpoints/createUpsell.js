@@ -170,26 +170,21 @@ class createUpsellController extends transactionEndpointController{
         var promises = [];
 
         var getCustomer = customerController.get({id:info.session.customer});
-        var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.productschedules_for_purchase);
         var getRebills = rebillController.createRebills(info.session, info.productschedules_for_purchase, 0);
 
         promises.push(getCustomer);
-        promises.push(getTransactionProducts);
         promises.push(getRebills);
 
         return Promise.all(promises).then((promises) => {
 
             info.customer = promises[0];
-            info.transactionProducts = promises[1];
-            info.rebills = promises[2];
+            info.rebills = promises[1];
 
 			//more validation
             if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
  			 	       eu.throwError('not_found', 'No available customer.');
             }
 
-			//Technical Debt: refactor this to use the transaction products above....
-            info.amount = productScheduleController.productSum(0, info.productschedules_for_purchase);
 
             return info;
 

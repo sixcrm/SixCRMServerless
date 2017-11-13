@@ -296,6 +296,7 @@ describe('validateArguments', () => {
 
     rebillBuilder.parameters.set('session', session);
     rebillBuilder.parameters.set('productschedules', product_schedules);
+    rebillBuilder.parameters.set('day', 1);
 
     return rebillBuilder.validateArguments().then(result => {
       expect(result).to.equal(true);
@@ -313,6 +314,7 @@ describe('validateArguments', () => {
 
     let rebillBuilder = new RebillHelperController();
 
+    rebillBuilder.parameters.set('day', 1);
     rebillBuilder.parameters.set('session', session);
     rebillBuilder.parameters.set('productschedules', product_schedules);
 

@@ -7,6 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
+const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -370,8 +371,8 @@ module.exports = class Register extends PermissionedController {
 
       this.parameters.set('productschedules', promises[0]);
 
-      //Technical Debt:  Hotwired to support only one product schedule at a time
-      this.parameters.set('productschedule', promises[0].shift());
+      //Technical Debt: Hotwired
+      this.parameters.set('productschedule', promises[0][0]);
 
       this.parameters.set('parentsession', promises[1]);
 
@@ -478,9 +479,12 @@ module.exports = class Register extends PermissionedController {
     let parentsession = this.parameters.get('parentsession');
     let productschedules = this.parameters.get('productschedules');
 
-    //Technical Debt:  Deprecated.  Use rebill helper class methods
+    du.info(productschedules);
+
+    //Technical Debt:  Deprecated.  Use helpers.
+    let productScheduleHelperController = new ProductScheduleHelperController();
     let day_in_cycle = this.rebillController.calculateDayInCycle(parentsession.created_at);
-    let transaction_products = this.productScheduleController.getTransactionProducts(day_in_cycle, productschedules);
+    let transaction_products = productScheduleHelperController.getTransactionProducts({day: day_in_cycle, product_schedules: productschedules});
 
     this.parameters.set('transactionproducts', transaction_products);
 

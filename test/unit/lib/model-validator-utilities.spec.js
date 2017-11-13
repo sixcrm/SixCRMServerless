@@ -116,10 +116,11 @@ describe('lib/model-validator-utilities', () => {
                         du.debug('Model:', invalid_model);
                         du.debug('Schema:', schema);
 
+                        //du.info(invalid_model);
                         try {
                             mvu.validateModel(invalid_model, schema);
                         } catch (e) {
-                            expect(e.message).to.have.string('[500] One or more validation errors occurred:');
+                          expect(e.message).to.have.string('[500] One or more validation errors occurred:');
                         }
                     });
 

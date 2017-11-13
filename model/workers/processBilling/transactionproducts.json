@@ -11,5 +11,6 @@
   		"amount":{"$ref": "../../definitions/currency.json"}
   	},
   	"required":["product", "amount"]
-  }
+  },
+  "minItems":1
 }

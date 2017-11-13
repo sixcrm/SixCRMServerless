@@ -22,10 +22,11 @@ module.exports.graphObj = new GraphQLObjectType({
         schedule: {
       	  type: new GraphQLList(scheduleType.graphObj),
             description:'The schedules associated with the product schedule',
-      	  resolve: (productschedule) => {
-            var productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule');
+      	  resolve: (product_schedule) => {
+            const ProductScheduleHelperController = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
+            let productScheduleHelperController = new ProductScheduleHelperController();
 
-            return productScheduleController.getSchedule(productschedule);
+            return productScheduleHelperController.getSchedule({product_schedule: product_schedule});
           }
         },
         loadbalancer:{

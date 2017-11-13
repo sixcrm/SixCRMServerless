@@ -142,11 +142,15 @@ module.exports = class RebillHelper {
     let product_schedules = this.parameters.get('productschedules');
     let session = this.parameters.get('session');
 
-    arrayutilities.map(product_schedules, (product_schedule) => {
-      if(!_.contains(session.product_schedules, product_schedule.id)){
-        eu.throwError('server', 'The specified product schedule is not contained in the session object: '+product_schedule.id);
-      }
-    });
+    if(this.parameters.get('day') < 0){
+      du.warning('Creating a rebill object without validating the presence of the product_schedules in the session.');
+    }else{
+      arrayutilities.map(product_schedules, (product_schedule) => {
+        if(!_.contains(session.product_schedules, product_schedule.id)){
+          eu.throwError('server', 'The specified product schedule is not contained in the session object: '+product_schedule.id);
+        }
+      });
+    }
 
     return Promise.resolve(true);
 
@@ -290,6 +294,8 @@ module.exports = class RebillHelper {
     let additional_seconds = timestamp.getDayInSeconds() * bill_day;
 
     let bill_date = timestamp.toISO8601(session_start + additional_seconds);
+
+    du.warning(this.parameters.get('session').created_at+' plus '+bill_day+' days should equal '+bill_date);
 
     this.parameters.set('billdate', bill_date);
 

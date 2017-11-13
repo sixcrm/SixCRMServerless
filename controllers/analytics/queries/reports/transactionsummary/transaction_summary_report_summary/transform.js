@@ -7,7 +7,7 @@ module.exports = function(results, parameters){
 
   du.debug('Transformation Function');
 
-  let result = results.shift();
+  let result = results[0];
 
   return Promise.resolve({
     period: result.period,

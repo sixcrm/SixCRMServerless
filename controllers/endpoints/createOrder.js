@@ -3,6 +3,7 @@ const _ = require("underscore");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
@@ -14,7 +15,8 @@ var transactionController = global.SixCRM.routes.include('controllers', 'entitie
 var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-const RebillHelperController = global.SixCRM.routes.include('helpers', 'rebill/Rebill.js');
+const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
@@ -89,6 +91,7 @@ class createOrderController extends transactionEndpointController{
 
         var promises = [];
 
+        //Technical Debt:  This session is enormously expired...
         var getSession = sessionController.get({id: event_body.session});
         var getProductSchedules = productScheduleController.listBy({list_array: event_body.product_schedules});
         var getCreditCard	= creditCardController.assureCreditCard(event_body.creditcard);
@@ -150,7 +153,12 @@ class createOrderController extends transactionEndpointController{
       du.debug('Validate Info');
 
       if(!_.isObject(info.session) || !_.has(info.session, 'id')){
-          eu.throwError('not_found', 'Unable to identify session.');
+        eu.throwError('not_found', 'Unable to identify session.');
+      }
+
+      //Technical Debt: need to configure session length elsewhere
+      if(info.session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - 3600)){
+        eu.throwError('bad_request', 'Session has expired.');
       }
 
       if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
@@ -191,7 +199,6 @@ class createOrderController extends transactionEndpointController{
 
     }
 
-
     getTransactionInfo(info) {
 
       du.debug('Get Transaction Info');
@@ -200,24 +207,16 @@ class createOrderController extends transactionEndpointController{
 
       var getCustomer = customerController.get({id: info.session.customer});
 
-      //Technical Debt:  Naming convention here could use some work
-      var getTransactionProducts = productScheduleController.getTransactionProducts(0, info.productschedules_for_purchase);
-
       promises.push(getCustomer);
-      promises.push(getTransactionProducts);
 
       return Promise.all(promises).then((promises) => {
 
         info.customer = promises[0];
-        info.transactionProducts = promises[1];
 
         //more validation
         if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
             eu.throwError('not_found', 'Customer not found.');
         }
-
-        //Technical Debt: refactor this to use the transaction products above....
-        info.amount = productScheduleController.productSum(0, info.productschedules_for_purchase);
 
         return info;
 
@@ -231,15 +230,21 @@ class createOrderController extends transactionEndpointController{
 
       let rebillHelper = new RebillHelperController();
 
+      //let productschedules_for_purchase_ids = arrayutilities.map(info.productschedules_for_purchase, product_schedule => { return product_schedule.id; });
+
       //technical debt:  if they have a existing rebill with a failed transaction that needs to be resolved...
       //technical debt:  Purchase one thing.
-      return rebillHelper.createInitialRebill(info.session, info.productschedules_for_purchase[0]).then(rebill => {
+      return rebillHelper.createRebill({session: info.session, product_schedules: info.productschedules_for_purchase, day: -1}).then(rebill => {
 
-        info.rebill = rebill;
+        //du.info(rebill); process.exit();
+
+        info.rebills = [rebill];
 
         let registerController = new RegisterController();
 
-        return registerController.processTransaction({rebill: rebill}).then(() =>{
+        return registerController.processTransaction({rebill: rebill}).then((result) =>{
+
+          du.warning(result); process.exit();
 
           return info;
 

@@ -157,7 +157,7 @@ module.exports = class Process extends TransactionUtilities{
 
         if(merchantproviders.length == 1){
 
-          return Promise.resolve(merchantproviders.shift());
+          return Promise.resolve(merchantproviders[0]);
 
         }else{
 

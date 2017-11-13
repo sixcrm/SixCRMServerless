@@ -289,7 +289,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
       if(arrayutilities.isArray(results, true)){
 
         if(results.length == 1){
-          return results.shift();
+          return results[0];
         }
 
         if(results.length == 0){

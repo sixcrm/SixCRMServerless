@@ -1583,9 +1583,6 @@ describe('controllers/providers/Register.js', () => {
         });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
-          getTransactionProducts: (day_in_cycle, product_schedule) => {
-            return getValidTransactionProducts();
-          },
           getID: (object) => {
 
               if(_.isString(object)){

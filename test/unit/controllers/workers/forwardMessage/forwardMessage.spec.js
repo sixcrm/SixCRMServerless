@@ -87,7 +87,7 @@ function getValidLambdaResponseError(){
 function getValidForwardMessage(){
 
   return {
-    message: getValidMessages().shift(),
+    message: getValidMessages()[0],
     response: {
       statusCode:200,
       body: JSON.stringify('some response')
@@ -468,6 +468,7 @@ describe('workers/forwardMessage', () => {
           du.warning(response);
           expect(response).to.have.property('worker_response_object');
           let code = response.worker_response_object.getCode();
+
           expect(code).to.equal('success');
           expect(response).to.have.property('message');
           expect(response.message).to.have.property('ReceiptHandle');
@@ -496,6 +497,7 @@ describe('workers/forwardMessage', () => {
 
           expect(response).to.have.property('worker_response_object');
           let code = response.worker_response_object.getCode();
+
           expect(code).to.equal('success');
           expect(response).to.have.property('message');
           expect(response.message).to.have.property('ReceiptHandle');
@@ -556,6 +558,7 @@ describe('workers/forwardMessage', () => {
 
           expect(response).to.have.property('worker_response_object');
           let code = response.worker_response_object.getCode();
+
           expect(code).to.equal('success');
           expect(response).to.have.property('messages');
           expect(response.messages.length).to.equal(messages.length);

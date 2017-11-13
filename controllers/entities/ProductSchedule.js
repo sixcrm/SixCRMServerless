@@ -165,7 +165,7 @@ class productScheduleController extends entityController {
 
           return this.getProducts(product_schedule).then((products) => {
 
-            return this.productScheduleHelper.marryProductsToSchedule(product_schedule, products);
+            return this.productScheduleHelper.marryProductsToSchedule({product_schedule: product_schedule, products: products});
 
           });
 
