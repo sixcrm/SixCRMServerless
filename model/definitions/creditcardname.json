@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/creditcardname.json",
+  "title": "CreditCardName",
+  "description": "Credit Card Name",
+  "type":"string",
+  "minLength":2
+}

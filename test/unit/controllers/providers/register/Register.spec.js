@@ -110,7 +110,7 @@ function getValidCreditCards(){
 function getValidParentSession(){
 
   return {
-    completed: 'false',
+    completed: false,
     subaffiliate_5: '45f025bb-a9dc-45c7-86d8-d4b7a4443426',
     created_at: '2017-04-06T18:40:41.405Z',
     subaffiliate_2: '22524f47-9db7-42f9-9540-d34a8909b072',

@@ -332,26 +332,6 @@ class sessionController extends entityController {
 
     }
 
-    validateProductSchedules(product_schedules, session){
-
-      du.debug('Validate Product Schedules');
-
-      if(_.has(session, 'product_schedules') && arrayutilities.nonEmpty(session.product_schedules)){
-
-        arrayutilities.map(product_schedules, (product_schedule) => {
-          arrayutilities.map(session.product_schedules, session_product_schedule => {
-            if(product_schedule.id == session_product_schedule){
-              eu.throwError('bad_request','Product schedule already belongs to this session: "'+product_schedule.id+'"');
-            }
-          });
-        });
-
-      }
-
-      return true;
-
-    }
-
     /*
     * Technical Debt Area...
     */
@@ -409,28 +389,6 @@ class sessionController extends entityController {
         }
 
       });
-
-    }
-
-
-    //Technical Debt:  Overly verbose
-    updateSessionProductSchedules(session, product_schedules){
-
-      du.debug('Update Session Product Schedules');
-
-      var session_product_schedules = session.product_schedules;
-
-      var purchased_product_schedules = [];
-
-      product_schedules.forEach((schedule) => {
-          purchased_product_schedules.push(schedule.id);
-      });
-
-      session_product_schedules = _.union(purchased_product_schedules, session_product_schedules);
-
-      session.product_schedules = session_product_schedules;
-
-      return this.update({entity: session});
 
     }
 

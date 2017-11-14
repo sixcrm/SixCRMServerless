@@ -7,12 +7,9 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+
 var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-var creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
@@ -21,321 +18,335 @@ const RegisterController = global.SixCRM.routes.include('providers', 'register/R
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
-class createOrderController extends transactionEndpointController{
+class CreateOrderController extends transactionEndpointController{
 
-    constructor(){
-        super({
-            required_permissions: [
-                'user/read',
-                'account/read',
-                'session/create',
-                'session/read',
-                'session/update',
-                'campaign/read',
-                'creditcard/create',
-                'creditcard/update',
-                'creditcard/read',
-                'productschedule/read',
-                'loadbalancer/read',
-                'rebill/read',
-                'rebill/create',
-                'rebill/update',
-                'product/read',
-                'affiliate/read',
-                'notification/create',
-                'tracker/read'
-            ],
-            notification_parameters: {
-                type: 'order',
-                action: 'added',
-                title: 'A new order',
-                body: 'A new order has been created.'
-            }
-        });
+  constructor(){
+    super({
+      required_permissions: [
+        'user/read',
+        'account/read',
+        'session/create',
+        'session/read',
+        'session/update',
+        'campaign/read',
+        'creditcard/create',
+        'creditcard/update',
+        'creditcard/read',
+        'productschedule/read',
+        'loadbalancer/read',
+        'rebill/read',
+        'rebill/create',
+        'rebill/update',
+        'product/read',
+        'affiliate/read',
+        'notification/create',
+        'tracker/read'
+      ],
+      notification_parameters: {
+        type: 'order',
+        action: 'added',
+        title: 'A new order',
+        body: 'A new order has been created.'
+      }
+    });
 
-    }
-
-    execute(event){
-
-      return this.preprocessing((event))
-  		.then(this.acquireBody)
-  		.then((event) => this.validateInput(event, this.validateEventSchema))
-  		.then(this.getOrderInfo)
-      .then(this.getOrderCampaign)
-      .then(this.validateInfo)
-  		.then(this.updateCustomer)
-  		.then(this.getTransactionInfo)
-  		.then(this.createOrder)
-      .then((info) => {
-        this.pushToRedshift(info);
-        this.handleTracking(info);
-        this.postOrderProcessing(info);
-        //this.handleNotifications(info);
-        return info;
-      });
-
-    }
-
-    validateEventSchema(event){
-
-        du.debug('Validate Event Schema');
-
-        return modelvalidationutilities.validateModel(event,  global.SixCRM.routes.path('model', 'endpoints/order.json'));
-
-    }
-
-
-    getOrderInfo(event_body) {
-
-        du.debug('Get Order Info');
-
-        var promises = [];
-
-        //Technical Debt:  This session is enormously expired...
-        var getSession = sessionController.get({id: event_body.session});
-        var getProductSchedules = productScheduleController.listBy({list_array: event_body.product_schedules});
-        var getCreditCard	= creditCardController.assureCreditCard(event_body.creditcard);
-
-        promises.push(getSession);
-        promises.push(getProductSchedules);
-        promises.push(getCreditCard);
-
-        return Promise.all(promises).then((promises) => {
-
-          //du.highlight(promises); process.exit();
-
-          var info = {
-            session: promises[0],
-            creditcard: promises[2]
-          };
-
-          if(_.has(promises[1], 'productschedules')){
-            info.productschedules_for_purchase = promises[1].productschedules;
-          }
-
-          //du.warning(info); process.exit();
-          return info;
-
-        });
-
-    }
-
-    getOrderCampaign(info){
-
-        du.debug('Get Order Campaign');
-
-        if(!_.isObject(info.session)){
-            eu.throwError('not_found', 'Unable to identify session.');
+    this.parameter_definitions = {
+      execute: {
+        required : {
+          event:'event'
         }
+      }
+    };
 
-        if(!_.has(info.session, 'campaign')){
-            eu.throwError('not_found', 'Unable to identify session campaign.');
-        }
+    this.parameter_validation = {
+      'event':global.SixCRM.routes.path('model', 'endpoints/createOrder/event.json'),
+      'session': global.SixCRM.routes.path('model', 'entities/session.json'),
+      'creditcard':global.SixCRM.routes.path('model', 'entities/creditcard.json'),
+      'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
+      'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+      'productschedules':global.SixCRM.routes.path('model','endpoints/components/productschedules.json'),
+      'rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
+      'transaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
+      'info':global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'),
+      'result':global.SixCRM.routes.path('model', 'functional/register/transactionresult.json'),
+      'processorresponse':global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
+      'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
+    };
 
-        return campaignController.getHydratedCampaign(info.session['campaign']).then((campaign) => {
+    this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+    this.creditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
+    this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+    this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+    this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
-            if(!_.isObject(campaign) || !_.has(campaign, 'id')){
+    this.initialize();
 
-                eu.throwError('not_found', 'Unable to identify session campaign.');
+  }
 
-            }
+  execute(event){
 
-            info['campaign'] = campaign;
+    du.debug('Execute');
 
-            return info;
+    return this.preprocessing((event))
+		.then((event) => this.acquireBody(event))
+    .then((event_body) => {
+      this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
+    })
+    .then(() => this.hydrateEventParameters())
+    .then(() => this.hydrateEventAssociatedParameters())
+    .then(() => this.validateEventProperties())
+    .then(() => this.updateCustomer())
+    .then(() => this.createRebill())
+    .then(() => this.processRebill())
+    .then(() => this.updateEntities())
+    .then(() => this.buildInfoObject())
+    .then(() => this.postProcessing())
+    .then(() => {
+      //Technical Debt:  We're going to want to prune this a bit...
+      return this.parameters.get('info');
 
-        });
+    });
 
+  }
+
+
+  hydrateEventParameters(event_body) {
+
+    du.debug('Get Order Info');
+
+    let event = this.parameters.get('event');
+
+    this.parameters.set('productschedules', event.product_schedules);
+
+    var promises = [
+      this.sessionController.get({id: event.session}),
+      this.creditCardController.assureCreditCard(event.creditcard)
+    ];
+
+    return Promise.all(promises).then((promises) => {
+
+      this.parameters.set('session', promises[0]);
+      this.parameters.set('creditcard', promises[1]);
+
+      return true;
+
+    });
+
+  }
+
+  hydrateEventAssociatedParameters(){
+
+    du.debug('Hydrate Event Associated Parameters');
+
+    let session = this.parameters.get('session');
+
+    return this.campaignController.get({id: session.campaign}).then(campaign => {
+
+      this.parameters.set('campaign', campaign);
+      return true;
+
+    });
+
+  }
+
+  validateEventProperties(){
+
+    du.debug('Validate Event Properties');
+
+    let session = this.parameters.get('session');
+    let campaign = this.parameters.get('campaign');
+    let product_schedules = this.parameters.get('productschedules');
+
+    //Technical Debt: need to configure session length elsewhere
+    if(session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - 3600)){
+      eu.throwError('bad_request', 'Session has expired.');
     }
 
-    validateInfo(info){
-
-      du.debug('Validate Info');
-
-      if(!_.isObject(info.session) || !_.has(info.session, 'id')){
-        eu.throwError('not_found', 'Unable to identify session.');
-      }
-
-      //Technical Debt: need to configure session length elsewhere
-      if(info.session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - 3600)){
-        eu.throwError('bad_request', 'Session has expired.');
-      }
-
-      if(!_.isObject(info.creditcard) || !_.has(info.creditcard, 'id')){
-          eu.throwError('not_found', 'Unable to identify credit card.');
-      }
-
-      if(info.session.completed == 'true'){
-          eu.throwError('bad_request', 'The specified session is already complete.');
-      }
-
-      if(!_.isArray(info.productschedules_for_purchase) || (info.productschedules_for_purchase.length < 1)){
-          eu.throwError('not_found', 'No available schedules to purchase.');
-      }
-
-      arrayutilities.map(info.productschedules_for_purchase, schedule => {
-        if(_.isUndefined(schedule) || _.isNull(schedule)){
-          eu.throwError('not_found', 'Inappropriate productschedule: '+schedule);
-        }
-      });
-
-      sessionController.validateProductSchedules(info.productschedules_for_purchase, info.session);
-
-      campaignController.validateProductSchedules(info.productschedules_for_purchase, info.campaign);
-
-      return Promise.resolve(info);
-
+    if(session.completed == true){
+      eu.throwError('bad_request', 'The session is already complete.');
     }
 
-    updateCustomer(info){
+    arrayutilities.map(product_schedules, product_schedule => {
+      if(!_.contains(campaign.productschedules, product_schedule)){
+        eu.throwError('bad_request', 'The product schedule provided is not a part of the campaign.');
+      }
+    });
 
-      du.debug('Update Customer');
+    return Promise.resolve(true);
 
-      return customerController.addCreditCard(info.session.customer, info.creditcard).then(() => {
+  }
 
-        return info;
+  updateCustomer(){
 
-      });
+    du.debug('Update Customer');
 
-    }
+    let session = this.parameters.get('session');
+    let creditcard = this.parameters.get('creditcard');
 
-    getTransactionInfo(info) {
+    return this.customerController.addCreditCard(session.customer, creditcard).then((customer) => {
 
-      du.debug('Get Transaction Info');
+      this.parameters.set('customer', customer);
 
-      var promises = [];
+      return true;
 
-      var getCustomer = customerController.get({id: info.session.customer});
+    });
 
-      promises.push(getCustomer);
+  }
 
-      return Promise.all(promises).then((promises) => {
+  createRebill() {
 
-        info.customer = promises[0];
+    du.debug('Create Rebill');
 
-        //more validation
-        if(!_.isObject(info.customer) || !_.has(info.customer, 'id')) {
-            eu.throwError('not_found', 'Customer not found.');
-        }
+    let rebillHelper = new RebillHelperController();
 
-        return info;
+    let session = this.parameters.get('session');
+    let product_schedules = this.parameters.get('productschedules');
 
-      });
+    return rebillHelper.createRebill({session: session, product_schedules: product_schedules, day: -1})
+    .then(rebill => {
 
-    }
+      this.parameters.set('rebill', rebill);
+      return true;
 
-    createOrder(info) {
+    });
 
-      du.debug('Create Order');
+  }
 
-      let rebillHelper = new RebillHelperController();
+  processRebill(){
 
-      //let productschedules_for_purchase_ids = arrayutilities.map(info.productschedules_for_purchase, product_schedule => { return product_schedule.id; });
+    du.debug('Process Rebill');
 
-      //technical debt:  if they have a existing rebill with a failed transaction that needs to be resolved...
-      //technical debt:  Purchase one thing.
-      return rebillHelper.createRebill({session: info.session, product_schedules: info.productschedules_for_purchase, day: -1}).then(rebill => {
+    let registerController = new RegisterController();
+    let rebill = this.parameters.get('rebill');
 
-        //du.info(rebill); process.exit();
+    return registerController.processTransaction({rebill: rebill}).then((register_response) =>{
 
-        info.rebills = [rebill];
+      this.parameters.set('transaction', register_response.parameters.get('transaction'));
+      this.parameters.set('result', register_response.getProcessorResponse().code);
+      this.parameters.set('processorresponse', register_response.getProcessorResponse());
+      this.parameters.set('amount', register_response.parameters.get('transaction').amount);
 
-        let registerController = new RegisterController();
+      return true;
 
-        return registerController.processTransaction({rebill: rebill}).then((result) =>{
+    });
 
-          du.warning(result); process.exit();
+  }
 
-          return info;
+  updateEntities() {
 
-        });
+    du.debug('Update Entities');
 
+    let transaction = this.parameters.get('transaction');
+    let rebill = this.parameters.get('rebill');
+    let session = this.parameters.get('session');
+    let product_schedules = this.parameters.get('productschedules');
+
+    session.product_schedules = arrayutilities.merge(session.product_schedules, product_schedules);
+    rebill.transactions = arrayutilities.merge(rebill.transactions, [transaction.id]);
+
+    let promises = [
+      this.sessionController.update({entity: session}).then(session => {
+        this.parameters.set('session', session);
+      }),
+      this.rebillController.update({entity: rebill}).then(rebill => {
+        this.parameters.set('rebill', rebill);
       })
+    ];
 
-    }
+    return Promise.all(promises).then(() => {
 
-    postOrderProcessing(info) {
+      return true;
 
-        du.debug('Post Order Processing');
+    });
 
-		//Technical Debt: this looks like a hack as well
-        var transactions = [info.transaction.id];
+  }
 
-		//Technical Debt: hack, we need to support multiple schedules in a single order
-        var rebill = info.rebills[0];
+  buildInfoObject(){
 
-        du.info(rebill);
+    du.debug('Build Info Object');
 
-        var promises = [];
-        var addRebillToQueue = rebillController.addRebillToQueue(rebill, 'hold');
-        var updateSession = sessionController.updateSessionProductSchedules(info.session, info.productschedules_for_purchase);
-        var rebillUpdates = rebillController.updateRebillTransactions(rebill, transactions);
+    //add amount,
+    //add processor_response
 
-		    //Technical Debt:  This is deprecated.  Instead, add the session id object to the rebill queue
-        //var createNextRebills = rebillController.createRebills(info.session, info.productschedules_for_purchase);
+    let info = {
+      transaction: this.parameters.get('transaction'),
+      product_schedules: this.parameters.get('productschedules'),
+      customer: this.parameters.get('customer'),
+      rebill: this.parameters.get('rebill'),
+      session: this.parameters.get('session'),
+      campaign: this.parameters.get('campaign'),
+      creditcard: this.parameters.get('creditcard'),
+      result: this.parameters.get('result')
+    };
 
-        promises.push(addRebillToQueue);
-        //promises.push(createNextRebills);
-        promises.push(updateSession);
-        promises.push(rebillUpdates);
+    this.parameters.set('info', info);
 
-        return Promise.all(promises).then(() => {
+    return Promise.resolve(true);
 
-          //Technical Debt: add some validation here...
-          //var rebills_added_to_queue = promises[0];
-          //var next_rebills = promises[1];
-          //var updated_session = promises[2];
-          //var updateRebills = promises[3];
+  }
 
-            return info.transaction;
+  postProcessing(){
 
-        });
+    du.debug('Post Processing');
 
-    }
+    let promises = [
+      this.pushEventsRecord(),
+      this.pushTransactionsRecord(),
+      this.addRebillToQueue()
+    ];
 
-    pushToRedshift(info){
+    return Promise.all(promises).then(() => {
 
-        du.debug('Push To Redshift');
+      return true;
 
-        let promises = [];
+    });
 
-        promises.push(this.pushEventsRecord(info));
-        promises.push(this.pushTransactionsRecord(info));
+  }
 
-        return Promise.all(promises).then(() => {
+  addRebillToQueue(){
 
-            return info;
+    du.debug('Add Rebill To Queue');
 
-        });
+    let rebill = this.parameters.get('rebill');
 
-    }
+    //Technical Debt:  This depends on result of the transaction...
+    //Technical Debt:  We need a queue helper...
 
-    pushEventsRecord(info){
+    return this.rebillController.addRebillToQueue(rebill, 'hold').then(() => {
+      return true;
+    });
 
-        du.debug('Push Events Record');
+  }
 
-        let product_schedule = info.productschedules_for_purchase[0].id;
+  pushEventsRecord(){
 
-        return this.pushEventToRedshift('order', info.session, product_schedule).then(() => {
+    du.debug('Push Events Record');
 
-            return info;
+    let session = this.parameters.get('session');
+    let product_schedules = this.parameters.get('productschedules');
 
-        });
+    return this.pushEventToRedshift('order', session, product_schedules).then(() => {
 
-    }
+      return true;
 
-    pushTransactionsRecord(info){
+    });
 
-        du.debug('Push Transactions Record');
+  }
 
-        return this.pushTransactionToRedshift(info).then(() => {
+  pushTransactionsRecord(){
 
-            return info;
+    du.debug('Push Transactions Record');
 
-        });
+    let info = this.parameters.get('info');
 
-    }
+    return this.pushTransactionToRedshift(info).then(() => {
+
+      return true;
+
+    });
+
+  }
 
 }
 
-module.exports = new createOrderController();
+module.exports = new CreateOrderController();

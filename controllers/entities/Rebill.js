@@ -329,22 +329,6 @@ class rebillController extends entityController {
 
     }
 
-    updateRebillTransactions(rebill, transactions){
-
-        var rebill_transactions = [];
-
-        if(_.has(rebill, "transactions") && _.isArray(rebill.transactions)){
-            rebill_transactions = rebill.transactions;
-        }
-
-        rebill_transactions = _.union(rebill.transactions, transactions);
-
-        rebill.transactions = rebill_transactions;
-
-        return this.update({entity: rebill});
-
-    }
-
 }
 
 module.exports = new rebillController();

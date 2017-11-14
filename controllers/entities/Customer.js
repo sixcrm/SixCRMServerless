@@ -93,6 +93,7 @@ class customerController extends entityController {
 
     }
 
+    //Technical Debt:  This is somewhat messy.  Maybe we need to add this to a helper
     addCreditCard(customer, creditcard){
 
       du.debug('Add Credit Card');

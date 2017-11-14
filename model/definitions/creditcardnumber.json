@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/creditcardnumber.json",
   "title": "CreditCardNumber",
-  "description": "Credit card number",
+  "description": "Credit Card Number",
   "type":"string",
   "minLength":12
 }

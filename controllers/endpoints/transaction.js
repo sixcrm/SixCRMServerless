@@ -10,7 +10,9 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 const trackerutilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
 
-const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const notificationProvider = global.SixCRM.routes.include('providers', 'notification/notification-provider');
+
 const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/authenticated.js');
 
 module.exports = class transactionEndpointController extends authenticatedController {
@@ -26,6 +28,17 @@ module.exports = class transactionEndpointController extends authenticatedContro
         this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
 
         this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+
+    }
+
+    initialize(){
+
+      du.debug('Initialize');
+
+      this.parameters = new Parameters({
+        validation: this.parameter_validation,
+        definition: this.parameter_definitions
+      });
 
     }
 
@@ -211,6 +224,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
+    //Deprecated!
     getTransactionSubType(){
 
         du.debug('Get Transaction Subtype')
@@ -231,23 +245,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
         }
 
         eu.throwError('server', 'Unrecognized Transaction Subtype');
-
-    }
-
-    //Technical Debt:  Does this go here?
-    getProcessorResult(info){
-
-        du.debug('Get Processor Result');
-
-        return info.processor.message.toLowerCase();
-    }
-
-    //Technical Debt:  Does this go here?
-    getProductSchedule(info){
-
-        du.debug('Get Product Schedule');
-
-        return info.productschedules_for_purchase[0].id;
 
     }
 
@@ -282,12 +279,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
         du.debug('Create Transaction Object');
 
-        du.warning(info);
-
-        let transaction_subtype = this.getTransactionSubType();
-        let processor_result = this.getProcessorResult(info);
-        let product_schedule = this.getProductSchedule(info);
-
         let transaction = {
             id: info.transaction.id,
             datetime: info.transaction.created_at,
@@ -296,11 +287,13 @@ module.exports = class transactionEndpointController extends authenticatedContro
             merchant_provider:info.transaction.merchant_provider,
             campaign:info.campaign.id,
             amount:info.amount,
-            processor_result:processor_result,
+            processor_result:info.result,
             account:info.transaction.account,
             transaction_type:"new",
-            transaction_subtype:transaction_subtype,
-            product_schedule:product_schedule,
+            transaction_subtype:this.getTransactionSubType(),
+            product_schedules:info.product_schedules,
+            //Technical Debt:  Resolve in the AM!
+            product_schedule:info.product_schedules[0],
         };
 
         this.affiliate_fields.forEach((optional_property) => {
@@ -331,13 +324,13 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     pushRecordToRedshift(table, object){
 
-        return kinesisfirehoseutilities.putRecord(table, object).then((result) => {
+      return kinesisfirehoseutilities.putRecord(table, object).then((result) => {
 
-            du.output('Kinesis Firehose Result', result);
+        du.output('Kinesis Firehose Result', result);
 
-            return result;
+        return result;
 
-        });
+      });
 
     }
 

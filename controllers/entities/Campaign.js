@@ -175,34 +175,6 @@ class campaignController extends entityController {
 
     }
 
-    validateProductSchedules(product_schedules, campaign){
-
-      du.debug('Validate Product Schedules');
-
-      objectutilities.has(campaign, ['productschedules'], true);
-
-      arrayutilities.nonEmpty(campaign.productschedules, true);
-
-      arrayutilities.map(product_schedules, product_schedule => {
-
-        let found = arrayutilities.find(campaign.productschedules, campaign_product_schedule => {
-
-          return (this.getID(campaign_product_schedule) == this.getID(product_schedule));
-
-        });
-
-        if(_.isUndefined(found)){
-
-          eu.throwError('server','Product schedule does not agree with campaign product schedule: '+product_schedule);
-
-        }
-
-      });
-
-      return true;
-
-    }
-
     listByAffiliateAllow({affiliate, pagination}){
 
       du.debug('List by Affiliate Allow');

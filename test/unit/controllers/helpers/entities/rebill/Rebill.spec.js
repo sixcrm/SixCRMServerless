@@ -66,7 +66,7 @@ function getValidBillDate(){
 function getValidSession(){
 
   return {
-    completed: 'false',
+    completed: false,
     subaffiliate_5: '45f025bb-a9dc-45c7-86d8-d4b7a4443426',
     created_at: '2017-04-06T18:40:41.405Z',
     subaffiliate_2: '22524f47-9db7-42f9-9540-d34a8909b072',
@@ -160,9 +160,9 @@ function getValidProductSchedule(){
 describe('constructor', () => {
 
   it('successfully calls the constructor', () => {
-    let rebillBuilder = new RebillHelperController();
+    let rebillHelper = new RebillHelperController();
 
-    expect(objectutilities.getClassName(rebillBuilder)).to.equal('RebillHelper');
+    expect(objectutilities.getClassName(rebillHelper)).to.equal('RebillHelper');
   });
 
 });
@@ -174,11 +174,11 @@ describe('setParameters', () => {
     //required
     let session = getValidSession();
 
-    let rebillBuilder = new RebillHelperController();
+    let rebillHelper = new RebillHelperController();
 
-    return rebillBuilder.setParameters({argumentation: {session: session}, action: 'createRebill'}).then(() => {
+    return rebillHelper.setParameters({argumentation: {session: session}, action: 'createRebill'}).then(() => {
 
-      expect(rebillBuilder.parameters.store['session']).to.equal(session);
+      expect(rebillHelper.parameters.store['session']).to.equal(session);
 
     });
 
@@ -193,13 +193,13 @@ describe('setParameters', () => {
 
     let product_schedules = [getValidProductSchedule()];
 
-    let rebillBuilder = new RebillHelperController();
+    let rebillHelper = new RebillHelperController();
 
-    return rebillBuilder.setParameters({argumentation: {session: session, day: day, product_schedules: product_schedules}, action: 'createRebill'}).then(() => {
+    return rebillHelper.setParameters({argumentation: {session: session, day: day, product_schedules: product_schedules}, action: 'createRebill'}).then(() => {
 
-      expect(rebillBuilder.parameters.store['session']).to.equal(session);
-      expect(rebillBuilder.parameters.store['day']).to.equal(day);
-      expect(rebillBuilder.parameters.store['productschedules']).to.equal(product_schedules);
+      expect(rebillHelper.parameters.store['session']).to.equal(session);
+      expect(rebillHelper.parameters.store['day']).to.equal(day);
+      expect(rebillHelper.parameters.store['productschedules']).to.equal(product_schedules);
 
     });
 
@@ -269,14 +269,14 @@ describe('hydrateArguments', () => {
 
     let session = getValidSession();
 
-    let rebillBuilder = new RebillHelperController();
+    let rebillHelper = new RebillHelperController();
 
-    rebillBuilder.parameters.set('session', session);
+    rebillHelper.parameters.set('session', session);
 
-    return rebillBuilder.hydrateArguments().then(() => {
+    return rebillHelper.hydrateArguments().then(() => {
 
-      expect(rebillBuilder.parameters.store['productschedules']).to.be.defined;
-      expect(rebillBuilder.parameters.store['day']).to.be.defined;
+      expect(rebillHelper.parameters.store['productschedules']).to.be.defined;
+      expect(rebillHelper.parameters.store['day']).to.be.defined;
 
     });
 
@@ -292,13 +292,13 @@ describe('validateArguments', () => {
     let session = getValidSession();
     let product_schedules = [getValidProductSchedule()];
 
-    let rebillBuilder = new RebillHelperController();
+    let rebillHelper = new RebillHelperController();
 
-    rebillBuilder.parameters.set('session', session);
-    rebillBuilder.parameters.set('productschedules', product_schedules);
-    rebillBuilder.parameters.set('day', 1);
+    rebillHelper.parameters.set('session', session);
+    rebillHelper.parameters.set('productschedules', product_schedules);
+    rebillHelper.parameters.set('day', 1);
 
-    return rebillBuilder.validateArguments().then(result => {
+    return rebillHelper.validateArguments().then(result => {
       expect(result).to.equal(true);
     })
 
@@ -312,14 +312,14 @@ describe('validateArguments', () => {
 
     let product_schedules = [getValidProductSchedule()];
 
-    let rebillBuilder = new RebillHelperController();
+    let rebillHelper = new RebillHelperController();
 
-    rebillBuilder.parameters.set('day', 1);
-    rebillBuilder.parameters.set('session', session);
-    rebillBuilder.parameters.set('productschedules', product_schedules);
+    rebillHelper.parameters.set('day', 1);
+    rebillHelper.parameters.set('session', session);
+    rebillHelper.parameters.set('productschedules', product_schedules);
 
     try{
-      rebillBuilder.validateArguments();
+      rebillHelper.validateArguments();
     }catch(error){
       expect(error.message).to.have.string('The specified product schedule is not contained in the session object');
     }

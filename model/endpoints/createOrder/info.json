@@ -1,0 +1,15 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/event",
+	"title": "Event",
+	"type":"object",
+	"properties": {
+		"session":{"$ref":"../../entities/session.json"},
+		"product_schedules":{"$ref": "../components/productschedules.json"},
+		"customer":{"$ref": "../../entities/customer.json"},
+		"transaction":{"$ref":"../../entities/transaction.json"},
+		"rebill":{"$ref":"../../entities/rebill.json"},
+		"campaign":{"$ref":"../../entities/campaign.json"}
+	},
+	"required":["customer", "session", "product_schedules", "transaction", "rebill", "campaign"]
+}

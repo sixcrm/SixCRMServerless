@@ -179,6 +179,16 @@ class productScheduleController extends entityController {
 
     }
 
+    listProductSchedulesByList({product_schedules}){
+
+      du.debug('List Product Schedules By List');
+
+      let query_parameters = this.createINQueryParameters({list_array: product_schedules});
+
+      return this.listByAccount({query_parameters: query_parameters});
+
+    }
+
     listByLoadBalancer({loadbalancer, pagination}){
 
       du.debug('List By Load Balancer');
