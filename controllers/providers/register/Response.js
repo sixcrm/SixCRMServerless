@@ -13,6 +13,7 @@ module.exports = class RegisterResponse extends Response {
     this.parameter_validation = {
       'transaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
       'processorresponse': global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
+      'creditcard':global.SixCRM.routes.path('model', 'entities/creditcard.json')
     };
 
     this.parameter_definition = {
@@ -21,7 +22,8 @@ module.exports = class RegisterResponse extends Response {
         optional:{
           response_type:'response_type',
           transaction:'transaction',
-          processorresponse:'processor_response'
+          processorresponse:'processor_response',
+          creditcard:'creditcard'
         }
       }
     }
@@ -34,6 +36,18 @@ module.exports = class RegisterResponse extends Response {
 
   }
 
+  setCreditCard(creditcard){
+
+    this.parameters.set('creditcard', creditcard);
+
+  }
+
+  getCreditCard(){
+
+    return this.parameters.get('creditcard', null, false);
+
+  }
+
   setTransaction(transaction){
 
     this.parameters.set('transaction', transaction);
@@ -42,7 +56,7 @@ module.exports = class RegisterResponse extends Response {
 
   getTransaction(){
 
-    return this.parameters.get('transaction', false);
+    return this.parameters.get('transaction', null, false);
 
   }
 
@@ -54,7 +68,7 @@ module.exports = class RegisterResponse extends Response {
 
   getProcessorResponse(){
 
-    return this.parameters.get('processorresponse', false);
+    return this.parameters.get('processorresponse', null, false);
 
   }
 

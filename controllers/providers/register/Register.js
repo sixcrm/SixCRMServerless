@@ -13,7 +13,6 @@ const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
 
-//Technical Debt:  MVU does not want to load schemas from the entities directory
 module.exports = class Register extends PermissionedController {
 
   constructor(){
@@ -297,16 +296,30 @@ module.exports = class Register extends PermissionedController {
     du.debug('Transform Response');
 
     let receipttransaction = this.parameters.get('receipttransaction', null, false);
-
     let processor_response = this.parameters.get('processorresponse');
-
     let response_category = this.getProcessorResponseCategory();
 
-    return Promise.resolve(new RegisterResponse({
-      transaction: receipttransaction,
-      processor_response: processor_response,
-      response_type: response_category
-    }));
+    let merge_object = {};
+
+    if(_.has(processor_response, 'creditcard')){
+
+      merge_object = {creditcard: processor_response.creditcard};
+      delete processor_response.creditcard;
+
+    }
+
+    let response_prototype = objectutilities.merge(
+      {
+        transaction: receipttransaction,
+        processor_response: processor_response,
+        response_type: response_category
+      },
+      merge_object
+    );
+
+    let register_response = new RegisterResponse(response_prototype);
+
+    return Promise.resolve(register_response);
 
   }
 
@@ -468,7 +481,7 @@ module.exports = class Register extends PermissionedController {
 
     return Promise.all(promises)
     .then(() => this.acquireCustomerCreditCards())
-    .then(() => Promise.resolve(true));
+    .then(() => { return true; });
 
   }
 

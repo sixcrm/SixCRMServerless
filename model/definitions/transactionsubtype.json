@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/transactionsubtype.json",
+  "title": "Transaction Subtype",
+  "description": "A transaction subtype",
+  "type":"string",
+  "enum":["main","upsell1","upsell2"]
+}

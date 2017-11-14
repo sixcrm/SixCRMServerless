@@ -10,5 +10,5 @@
 		"product_schedules":{"$ref": "../components/productschedules.json"},
 		"creditcard":{"$ref": "../components/creditcard.json"}
 	},
-	"required":["creditcard", "session", "product_schedules"]
+	"required":["session", "product_schedules"]
 }

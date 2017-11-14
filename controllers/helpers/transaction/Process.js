@@ -191,9 +191,12 @@ module.exports = class Process extends TransactionUtilities{
       })
       .then(response => {
 
-        let selected_merchantprovider = this.parameters.get('selected_merchantprovider')
+        let selected_merchantprovider = this.parameters.get('selected_merchantprovider');
+        let selected_creditcard = this.parameters.get('selected_creditcard');
 
         response.merchant_provider = selected_merchantprovider.id;
+        response.creditcard = selected_creditcard;
+
         return response;
 
       });

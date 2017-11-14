@@ -1,7 +1,0 @@
-{
-	"message": "[500] One or more validation errors occurred.",
-	"issues": [
-		"requires property \"campaign\"",
-    "requires property \"customer\""
-	]
-}

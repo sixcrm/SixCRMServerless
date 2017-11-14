@@ -1,6 +1,0 @@
-{
-	"message": "One or more validation errors occurred.",
-	"issues": [
-		"requires property \"campaign\""
-	]
-}

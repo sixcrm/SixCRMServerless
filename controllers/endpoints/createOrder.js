@@ -66,6 +66,7 @@ class CreateOrderController extends transactionEndpointController{
       'result':global.SixCRM.routes.path('model', 'functional/register/transactionresult.json'),
       'processorresponse':global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
       'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
+      'transactionsubtype':global.SixCRM.routes.path('model', 'definitions/transactionsubtype.json'),
     };
 
     this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
@@ -87,10 +88,10 @@ class CreateOrderController extends transactionEndpointController{
     .then((event_body) => {
       this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
     })
-    .then(() => this.hydrateEventParameters())
+    .then(() => this.hydrateSession())
     .then(() => this.hydrateEventAssociatedParameters())
+    .then(() => this.setCustomer())
     .then(() => this.validateEventProperties())
-    .then(() => this.updateCustomer())
     .then(() => this.createRebill())
     .then(() => this.processRebill())
     .then(() => this.updateEntities())
@@ -104,27 +105,15 @@ class CreateOrderController extends transactionEndpointController{
 
   }
 
+  hydrateSession(){
 
-  hydrateEventParameters(event_body) {
-
-    du.debug('Get Order Info');
+    du.debug('Set Session');
 
     let event = this.parameters.get('event');
 
-    this.parameters.set('productschedules', event.product_schedules);
-
-    var promises = [
-      this.sessionController.get({id: event.session}),
-      this.creditCardController.assureCreditCard(event.creditcard)
-    ];
-
-    return Promise.all(promises).then((promises) => {
-
-      this.parameters.set('session', promises[0]);
-      this.parameters.set('creditcard', promises[1]);
-
+    return this.sessionController.get({id: event.session}).then(session => {
+      this.parameters.set('session', session);
       return true;
-
     });
 
   }
@@ -133,7 +122,53 @@ class CreateOrderController extends transactionEndpointController{
 
     du.debug('Hydrate Event Associated Parameters');
 
-    let session = this.parameters.get('session');
+    let promises = [
+      this.setProductSchedules(),
+      this.setTransactionSubType(),
+      this.setCreditCard(),
+      this.setCampaign()
+    ];
+
+    return Promise.all(promises).then(() => {
+      return true;
+    });
+
+  }
+
+  setProductSchedules(){
+
+    du.debug('Set Product Schedules');
+
+    let event = this.parameters.get('event');
+
+    this.parameters.set('productschedules', event.product_schedules);
+
+    return Promise.resolve(true);
+
+  }
+
+
+  setTransactionSubType(){
+
+    du.debug('Set Transaction Subtype');
+
+    let event = this.parameters.get('event');
+
+    if(_.has(event, 'transaction_subtype')){
+      this.parameters.set('transactionsubtype', event.transaction_subtype);
+    }else{
+      this.parameters.set('transactionsubtype', 'main');
+    }
+
+    return Promise.resolve(true);
+
+  }
+
+  setCampaign(){
+
+    du.debug('Set Campaign');
+
+    let session =  this.parameters.get('session');
 
     return this.campaignController.get({id: session.campaign}).then(campaign => {
 
@@ -141,6 +176,67 @@ class CreateOrderController extends transactionEndpointController{
       return true;
 
     });
+
+  }
+
+  setCreditCard(){
+
+    du.debug('Set Credit Card');
+
+    let event = this.parameters.get('event');
+
+    if(_.has(event, 'creditcard')){
+
+      return this.creditCardController.assureCreditCard(event.creditcard)
+      .then(creditcard => {
+        this.parameters.set('creditcard', creditcard);
+      })
+      .then(() => this.addCreditCardToCustomer());
+
+    }
+
+    return Promise.resolve(true);
+
+  }
+
+  addCreditCardToCustomer(){
+
+    du.debug('Add Credit Card to Customer');
+
+    let session = this.parameters.get('session');
+    let creditcard = this.parameters.get('creditcard');
+
+    return this.customerController.addCreditCard(session.customer, creditcard).then((customer) => {
+
+      this.parameters.set('customer', customer);
+
+      return true;
+
+    });
+
+  }
+
+  setCustomer(){
+
+    du.debug('Set Customer');
+
+    let customer = this.parameters.get('customer', null, false);
+
+    if(_.isNull(customer)){
+
+      let session = this.parameters.get('session');
+
+      return this.customerController.get({id: session.customer}).then(customer => {
+
+        this.parameters.set('customer', customer);
+
+        return true;
+
+      });
+
+    }
+
+    return Promise.resolve(true);
 
   }
 
@@ -168,23 +264,6 @@ class CreateOrderController extends transactionEndpointController{
     });
 
     return Promise.resolve(true);
-
-  }
-
-  updateCustomer(){
-
-    du.debug('Update Customer');
-
-    let session = this.parameters.get('session');
-    let creditcard = this.parameters.get('creditcard');
-
-    return this.customerController.addCreditCard(session.customer, creditcard).then((customer) => {
-
-      this.parameters.set('customer', customer);
-
-      return true;
-
-    });
 
   }
 
@@ -216,6 +295,7 @@ class CreateOrderController extends transactionEndpointController{
 
     return registerController.processTransaction({rebill: rebill}).then((register_response) =>{
 
+      this.parameters.set('creditcard', register_response.getCreditCard());
       this.parameters.set('transaction', register_response.parameters.get('transaction'));
       this.parameters.set('result', register_response.getProcessorResponse().code);
       this.parameters.set('processorresponse', register_response.getProcessorResponse());
@@ -259,9 +339,6 @@ class CreateOrderController extends transactionEndpointController{
   buildInfoObject(){
 
     du.debug('Build Info Object');
-
-    //add amount,
-    //add processor_response
 
     let info = {
       transaction: this.parameters.get('transaction'),

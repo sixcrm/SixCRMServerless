@@ -290,7 +290,8 @@ function getValidEventBody(){
   return {
     session: getValidSession().id,
     product_schedules: getValidProductScheduleIDs(),
-    creditcard: getValidCreditCardPrototype()
+    creditcard: getValidCreditCardPrototype(),
+    transaction_subtype:'main'
   };
 
 }
@@ -385,6 +386,9 @@ describe('createOrder', function () {
         addCreditCard: (a_customer, a_creditcard) => {
           customer.creditcards.push(creditcard.id);
           return Promise.resolve(customer);
+        },
+        get:({id}) => {
+          return Promise.resolve(customer);
         }
       });
 
@@ -412,7 +416,140 @@ describe('createOrder', function () {
 
         processTransaction({rebill: rebill}){
           const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
-          let register_response = new RegisterResponse({transaction: transaction, processor_response: processor_response, response_type: response_type});
+          let register_response = new RegisterResponse({
+            transaction: transaction,
+            processor_response: processor_response,
+            response_type: response_type,
+            creditcard: creditcard
+          });
+
+          return Promise.resolve(register_response);
+        }
+
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), mock_register);
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
+          return Promise.resolve(true);
+        }
+      });
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      return createOrderController.execute(event).then(result => {
+        let info = createOrderController.parameters.get('info');
+
+        expect(mvu.validateModel(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
+      });
+    });
+
+    it('successfully runs execute method in the absence of a event creditcard (upsell)', () => {
+
+      let event = getValidEvent();
+      delete event.creditcard;
+      event.transaction_subtype = 'upsell';
+      let session = getValidSession();
+      let campaign = getValidCampaign();
+
+      campaign.productschedules = arrayutilities.merge(campaign.productschedules, JSON.parse(event.body).product_schedules);
+      let customer = getValidCustomer();
+      let creditcard = getValidCreditCard();
+      let rebill = getValidRebill();
+      let transaction = getValidTransaction();
+      let processor_response = getValidProcessorResponse();
+      let response_type = 'success';
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
+        get:({id}) => {
+          return Promise.resolve(session)
+        },
+        isEmail: (user_string) => {
+          return true;
+        },
+        getUserStrict: (user_string) => {
+          return Promise.resolve({});
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        },
+        get:({id}) => {
+          return Promise.resolve(session)
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        },
+        addRebillToQueue:(rebill, queue_name) => {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
+        assureCreditCard: (creditcard) => {
+          return Promise.resolve(objectutilities.merge(creditcard, {
+            id: uuidV4(),
+            created_at: timestamp.getISO8601(),
+            updated_at: timestamp.getISO8601(),
+            account: global.account
+          }));
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
+        get: ({id}) => {
+          return Promise.resolve(campaign)
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
+        addCreditCard: (a_customer, a_creditcard) => {
+          customer.creditcards.push(creditcard.id);
+          return Promise.resolve(customer);
+        },
+        get:({id}) => {
+          return Promise.resolve(customer);
+        }
+      });
+
+      let mock_rebill_helper = class {
+
+        constructor(){
+
+        }
+
+        createRebill({session, product_schedules, day}){
+          rebill.product_schedules = product_schedules;
+          rebill.parentsession = session.id
+          return Promise.resolve(rebill);
+        }
+
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
+
+      let mock_register = class {
+
+        constructor(){
+
+        }
+
+        processTransaction({rebill: rebill}){
+          const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
+          let register_response = new RegisterResponse({
+            transaction: transaction,
+            processor_response: processor_response,
+            response_type: response_type,
+            creditcard: creditcard
+          });
 
           return Promise.resolve(register_response);
         }
@@ -440,7 +577,7 @@ describe('createOrder', function () {
 
   });
 
-  describe('hydrateEventParameters', () => {
+  describe('hydrateSession', () => {
 
     before(() => {
         mockery.enable({
@@ -455,7 +592,7 @@ describe('createOrder', function () {
         mockery.deregisterAll();
     });
 
-    it('successfully gets event properties', () => {
+    it('successfully gets event session property', () => {
 
       let session = getValidSession();
       let event = getValidEventBody();
@@ -468,37 +605,19 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
-        assureCreditCard: (creditcard) => {
-          return Promise.resolve(objectutilities.merge(creditcard, {
-            id: uuidV4(),
-            created_at: timestamp.getISO8601(),
-            updated_at: timestamp.getISO8601(),
-            account: global.account
-          }));
-        }
-      });
-
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
       createOrderController.parameters.set('event', event);
 
-      return createOrderController.hydrateEventParameters().then(result => {
+      return createOrderController.hydrateSession().then(result => {
         expect(result).to.equal(true);
         expect(createOrderController.parameters.store['session']).to.deep.equal(session);
-        let stored_credit_card = createOrderController.parameters.store['creditcard'];
-
-        delete stored_credit_card.id;
-        delete stored_credit_card.created_at;
-        delete stored_credit_card.updated_at;
-        delete stored_credit_card.account;
-        expect(stored_credit_card).to.deep.equal(event.creditcard)
-        expect(createOrderController.parameters.store['productschedules']).to.deep.equal(event.product_schedules);
       });
 
     });
+
   });
 
   describe('hydrateEventAssociatedParameters', () => {
@@ -519,6 +638,10 @@ describe('createOrder', function () {
     it('successfully gets associated event properties', () => {
 
       let campaign = getValidCampaign();
+      let event = getValidEventBody();
+      let creditcard = getValidCreditCard();
+      let customer = getValidCustomer();
+      let session = getValidSession();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
         get: ({id}) => {
@@ -526,17 +649,49 @@ describe('createOrder', function () {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
+        assureCreditCard: (creditcard) => {
+          return Promise.resolve(objectutilities.merge(creditcard, {
+            id: uuidV4(),
+            created_at: timestamp.getISO8601(),
+            updated_at: timestamp.getISO8601(),
+            account: global.account
+          }));
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
+        addCreditCard: (a_customer, a_creditcard) => {
+          customer.creditcards.push(creditcard.id);
+          return Promise.resolve(customer);
+        }
+      });
+
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
-      createOrderController.parameters.set('session', getValidSession());
+      createOrderController.parameters.set('event', event);
+      createOrderController.parameters.set('session', session);
 
       return createOrderController.hydrateEventAssociatedParameters().then((result) => {
+
         expect(result).to.equal(true);
+
         let hydrated_campaign = createOrderController.parameters.store['campaign'];
 
+        let stored_credit_card = createOrderController.parameters.store['creditcard'];
+        delete stored_credit_card.id;
+        delete stored_credit_card.created_at;
+        delete stored_credit_card.updated_at;
+        delete stored_credit_card.account;
+        expect(stored_credit_card).to.deep.equal(event.creditcard)
+
         expect(hydrated_campaign).to.deep.equal(campaign);
+
+        expect(createOrderController.parameters.store['productschedules']).to.deep.equal(event.product_schedules);
+
+        expect(createOrderController.parameters.store['transactionsubtype']).to.deep.equal(event.transaction_subtype);
 
       });
 
@@ -616,7 +771,7 @@ describe('createOrder', function () {
 
   });
 
-  describe('updateCustomer', () => {
+  describe('addCreditCardToCustomer', () => {
 
     before(() => {
       mockery.enable({
@@ -636,7 +791,7 @@ describe('createOrder', function () {
         mockery.deregisterAll();
     });
 
-    it('successfully updates the customer', () => {
+    it('successfully adds the credit card to the customer', () => {
 
       let customer = getValidCustomer();
       let session = getValidSession();
@@ -654,7 +809,7 @@ describe('createOrder', function () {
       createOrderController.parameters.set('session', session);
       createOrderController.parameters.set('creditcard', creditcard);
 
-      return createOrderController.updateCustomer().then(result => {
+      return createOrderController.addCreditCardToCustomer().then(result => {
         expect(result).to.equal(true);
         let updated_customer = createOrderController.parameters.store['customer'];
 
@@ -747,9 +902,15 @@ describe('createOrder', function () {
       let transaction = getValidTransaction();
       let processor_response = getValidProcessorResponse();
       let response_type = getValidResponseType();
+      let creditcard = getValidCreditCard();
 
       const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
-      let register_response = new RegisterResponse({transaction: transaction, processor_response: processor_response, response_type: response_type});
+      let register_response = new RegisterResponse({
+        transaction: transaction,
+        processor_response: processor_response,
+        response_type: response_type,
+        creditcard: creditcard
+      });
 
       let mock_register = class {
 
@@ -1056,4 +1217,226 @@ describe('createOrder', function () {
 
   });
 
+  describe('setProductSchedules', () => {
+
+    it('successfully sets product schedules', () => {
+
+      let event = getValidEventBody();
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      createOrderController.parameters.set('event', event);
+
+      return createOrderController.setProductSchedules().then(result => {
+        expect(result).to.equal(true);
+        expect(createOrderController.parameters.store['productschedules']).to.equal(event.product_schedules);
+      });
+    });
+  });
+
+  describe('setTransactionSubType', () => {
+
+    it('successfully sets the transaction subtype', () => {
+
+      let event = getValidEventBody();
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      createOrderController.parameters.set('event', event);
+
+      return createOrderController.setTransactionSubType().then(result => {
+        expect(result).to.equal(true);
+        expect(createOrderController.parameters.store['transactionsubtype']).to.equal(event.transaction_subtype);
+      });
+
+    });
+  });
+
+  describe('setCreditCard', () => {
+
+    before(() => {
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
+    it('successfully sets a creditcard', () => {
+
+      let event = getValidEventBody();
+      let customer = getValidCustomer();
+      let session = getValidSession();
+
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
+        assureCreditCard: (creditcard) => {
+          return Promise.resolve(objectutilities.merge(creditcard, {
+            id: uuidV4(),
+            created_at: timestamp.getISO8601(),
+            updated_at: timestamp.getISO8601(),
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
+          }));
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
+        addCreditCard: (a_customer, a_creditcard) => {
+          customer.creditcards.push(a_creditcard.id);
+          return Promise.resolve(customer);
+        }
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      createOrderController.parameters.set('event', event);
+      createOrderController.parameters.set('session', session);
+
+      return createOrderController.setCreditCard().then(result => {
+        expect(result).to.equal(true);
+        let set_creditcard = createOrderController.parameters.store['creditcard'];
+        delete set_creditcard.id;
+        delete set_creditcard.created_at;
+        delete set_creditcard.updated_at;
+        delete set_creditcard.account;
+        expect(set_creditcard).to.deep.equal(event.creditcard);
+      })
+
+    });
+
+    it('successfully skips when creditcard is not set', () => {
+
+      let event = getValidEventBody();
+      delete event.creditcard;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
+        assureCreditCard: (creditcard) => {
+          throw new Error();
+        }
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      createOrderController.parameters.set('event', event);
+
+      return createOrderController.setCreditCard().then(result => {
+        expect(result).to.equal(true);
+        expect(createOrderController.parameters.store['creditcard']).to.be.undefined;
+      });
+
+    });
+  });
+
+  describe('setCampaign', () => {
+
+    before(() => {
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
+    it('successfully sets the campaign', () => {
+
+      let campaign = getValidCampaign();
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
+        get: ({id}) => {
+          return Promise.resolve(campaign)
+        }
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      createOrderController.parameters.set('session', getValidSession());
+
+      return createOrderController.setCampaign().then(result => {
+        expect(result).to.equal(true);
+        expect(createOrderController.parameters.store['campaign']).to.deep.equal(campaign);
+      });
+
+    });
+
+  });
+
+  describe('setCustomer', () => {
+
+    before(() => {
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
+    it('successfully sets a customer', () => {
+
+      let customer = getValidCustomer();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
+        get:({id}) => {
+          return Promise.resolve(customer);
+        }
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      createOrderController.parameters.set('session', getValidSession());
+
+      return createOrderController.setCustomer().then(result => {
+        expect(result).to.equal(true);
+        expect(createOrderController.parameters.store['customer']).to.deep.equal(customer);
+      });
+
+    });
+
+    it('successfully skips method when the customer is already set', () => {
+
+      let customer = getValidCustomer();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
+        get:({id}) => {
+          throw new Error();
+        }
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      createOrderController.parameters.set('session', getValidSession());
+      createOrderController.parameters.set('customer', customer);
+
+      return createOrderController.setCustomer().then(result => {
+        expect(result).to.equal(true);
+        expect(createOrderController.parameters.store['customer']).to.deep.equal(customer);
+      });
+
+    });
+  });
 });

@@ -331,18 +331,6 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
-  createupsell:
-    handler: handlers/endpoints/createupsell/handler.createupsell
-    events:
-      - http:
-         path: upsell/create/{account}
-         method: post
-         cors: true
-         authorizer:
-           name: verifytransactionjwt
-           resultTtlInSeconds: 0
-           identitySource: method.request.header.Authorization
-
   confirmorder:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
     events:

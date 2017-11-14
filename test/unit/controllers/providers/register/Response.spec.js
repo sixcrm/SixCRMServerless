@@ -68,7 +68,8 @@ describe('controllers/providers/register/Response.js', () => {
       expect(registerResponseController.merged_parameter_definition['constructor'].optional).to.deep.equal({
         response_type:'response_type',
         transaction:'transaction',
-        processorresponse:'processor_response'
+        processorresponse:'processor_response',
+        creditcard:'creditcard'
       });
 
     });
@@ -90,7 +91,8 @@ describe('controllers/providers/register/Response.js', () => {
       expect(registerResponseController.merged_parameter_definition['constructor'].optional).to.deep.equal({
         response_type:'response_type',
         transaction:'transaction',
-        processorresponse:'processor_response'
+        processorresponse:'processor_response',
+        creditcard:'creditcard'
       });
 
       expect(registerResponseController.parameters.store.processorresponse).to.deep.equal(processor_response);
