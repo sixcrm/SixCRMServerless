@@ -1,5 +1,4 @@
 'use strict';
-const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
@@ -54,6 +53,18 @@ module.exports = class redshiftHelperController {
         du.debug('Push Transactions to Redshift');
 
         return this.pushRecordToRedshift('transactions', object).then(() => {
+
+            return object;
+
+        });
+
+    }
+
+    pushQueueToRedshift(object){
+
+        du.debug('Push Transactions to Redshift');
+
+        return this.pushRecordToRedshift('queue', object).then(() => {
 
             return object;
 

@@ -12,10 +12,10 @@
     "Bucket": "kinesis-sessions"
   },
   {
-    "Bucket": "kinesis-merchant-processor"
+    "Bucket": "kinesis-transactions"
   },
   {
-    "Bucket": "kinesis-transactions"
+    "Bucket": "kinesis-queue"
   },
   {
     "Bucket": "manual-upload"

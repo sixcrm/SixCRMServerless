@@ -12,6 +12,7 @@ ____
 * `f_activity` - fact table of activities
 * `f_sessions` - fact table of sessions
 * `f_product_schedules` - fact table of product schedules
+* `f_queue_count` - fact table of queue counts 
 
 
 Transactional tables are defined with the distribution key based on the account.
