@@ -7,11 +7,6 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-
-var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
