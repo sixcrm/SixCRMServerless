@@ -1,6 +1,12 @@
 const chai = require('chai');
 const expect = chai.expect;
 
+function getValidBucketObjects() {
+    return {
+        Contents: [{Key: 'a_key'}]
+    }
+}
+
 describe('lib/s3-utilities', () => {
 
     beforeEach(() => {
@@ -14,9 +20,9 @@ describe('lib/s3-utilities', () => {
 
             const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
-            s3utilities.bucketExists = () => Promise.resolve(false);
+            s3utilities.bucket_list = ['a_bucket', 'a_bucket2'];
 
-            return s3utilities.assureDelete('a_bucket').then((deleted) => {
+            return s3utilities.assureDelete('non-existing_bucket').then((deleted) => {
                 return expect(deleted).to.be.false;
             });
 
@@ -26,8 +32,19 @@ describe('lib/s3-utilities', () => {
 
             const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
-            s3utilities.bucketExists = () => Promise.resolve(true);
-            s3utilities.deleteBucket = () => Promise.resolve(true);
+            s3utilities.bucket_list = ['a_bucket', 'a_bucket2'];
+
+            s3utilities.s3 = {
+                listObjectsV2: (params, callback) => {
+                    callback(null, getValidBucketObjects());
+                },
+                deleteObjects: (params, callback) => {
+                    callback(null, 'success');
+                },
+                deleteBucket: (params, callback) => {
+                    callback(null, 'success');
+                }
+            };
 
             return s3utilities.assureDelete('a_bucket').then((deleted) => {
                 return expect(deleted).to.be.true;
@@ -35,15 +52,26 @@ describe('lib/s3-utilities', () => {
 
         });
 
-        it('catch error', () => {
+        it('throws error when bucket with specified name wasn\'t deleted', () => {
 
             const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
-            s3utilities.bucketExists = () => Promise.resolve(true);
-            s3utilities.deleteBucket = () => Promise.reject('S3 Error');
+            s3utilities.bucket_list = ['a_bucket', 'a_bucket2'];
+
+            s3utilities.s3 = {
+                listObjectsV2: (params, callback) => {
+                    callback(null, getValidBucketObjects());
+                },
+                deleteObjects: (params, callback) => {
+                    callback(null, 'success');
+                },
+                deleteBucket: (params, callback) => {
+                    callback('S3 Error', null);
+                }
+            };
 
             return s3utilities.assureDelete('a_bucket').catch((error) => {
-                return expect(error).to.equal('S3 Error');
+                return expect(error.message).to.equal('[500] Internal Server Error');
             });
 
         });
@@ -112,13 +140,12 @@ describe('lib/s3-utilities', () => {
 
             s3utilities.s3 = {
                 listObjectsV2: (params, callback) => {
-                    callback(null, {
-                        Contents: ['a_content', 'a_content2']
-                    });
+                    callback(null, getValidBucketObjects());
+                },
+                deleteObjects: (params, callback) => {
+                    callback(null, 'success');
                 }
             };
-
-            s3utilities.batchDeleteObjects = () => Promise.resolve(true);
 
             return s3utilities.deleteBucketObjects('a_bucket').then((result) => {
                 return expect(result).to.be.true;
@@ -198,12 +225,37 @@ describe('lib/s3-utilities', () => {
             });
         });
 
-        xit('returns false when bucket objects array is empty', () => {
+        it('returns false when bucket objects array is empty', () => {
 
             const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
             return s3utilities.batchDeleteObjects('a_bucket', []).then((result) => {
                 return expect(result).to.be.false;
+            });
+        });
+
+    });
+
+    describe('deleteBucket', () => {
+
+        it('successfully deletes bucket', () => {
+
+            const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+
+            s3utilities.s3 = {
+                listObjectsV2: (params, callback) => {
+                    callback(null, getValidBucketObjects());
+                },
+                deleteObjects: (params, callback) => {
+                    callback(null, 'success');
+                },
+                deleteBucket: (params, callback) => {
+                    callback(null, 'success');
+                }
+            };
+
+            return s3utilities.deleteBucket('a_bucket').then((result) => {
+                return expect(result).to.equal('success');
             });
         });
 
@@ -582,7 +634,7 @@ describe('lib/s3-utilities', () => {
             });
         });
 
-        xit('returns false if bucket does not exist', () => {
+        it('returns false if bucket does not exist', () => {
 
             const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
