@@ -107,7 +107,7 @@ module.exports = class AffiliateTest extends IntegrationTest {
 
     du.output('Create Session');
 
-    let session_create_query = `mutation { createsession ( session: { id: "`+session_id+`", customer: "24f7c851-29d4-4af9-87c5-0298fa74c689", affiliate: "`+affiliate_id+`", campaign:"70a6689a-5814-438b-b9fd-dd484d0812f9", product_schedules:["12529a17-ac32-4e46-b05b-83862843055d"], completed: "false" } ) { id } }`;
+    let session_create_query = `mutation { createsession ( session: { id: "`+session_id+`", customer: "24f7c851-29d4-4af9-87c5-0298fa74c689", affiliate: "`+affiliate_id+`", campaign:"70a6689a-5814-438b-b9fd-dd484d0812f9", product_schedules:["12529a17-ac32-4e46-b05b-83862843055d"], completed: false } ) { id } }`;
 
     return this.executeQuery(session_create_query);
 

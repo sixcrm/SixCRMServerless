@@ -1,6 +1,7 @@
 'use strict';
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
@@ -95,8 +96,8 @@ module.exports.graphObj = new GraphQLObjectType({
             }
         },
         completed: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'A boolean string denoting that that session has otherwise been completed or expired.',
+            type: new GraphQLNonNull(GraphQLBoolean),
+            description: 'A boolean denoting that that session has otherwise been completed or expired.',
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),

@@ -273,7 +273,7 @@ class sessionController extends entityController {
       du.debug('Create Session Object');
 
       let session = {
-        completed: 'false'
+        completed: false
       };
 
       let session_template = {
@@ -327,7 +327,7 @@ class sessionController extends entityController {
 
       du.debug('Close Session');
 
-      session.completed = 'true';
+      session.completed = true;
 
       return this.update({entity: session});
 
@@ -350,7 +350,7 @@ class sessionController extends entityController {
 
           let session_found = arrayutilities.find(sessions, (session) => {
 
-            if(_.has(session, 'completed') && session.completed == 'false' && _.has(session, 'created_at')){
+            if(_.has(session, 'completed') && session.completed == false && _.has(session, 'created_at')){
 
               let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);
 

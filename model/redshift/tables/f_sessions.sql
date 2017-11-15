@@ -11,7 +11,9 @@ DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_sessions';
 INSERT INTO sys_sixcrm.sys_table_version
      SELECT 'f_sessions',1,getdate();
 
-
+/*
+Technical Debt:  completed is now a boolean
+*/
 CREATE TABLE IF NOT EXISTS f_sessions
 (
   id             VARCHAR(36) NOT NULL,
