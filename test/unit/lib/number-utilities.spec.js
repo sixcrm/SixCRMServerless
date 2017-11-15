@@ -93,7 +93,7 @@ describe('lib/number-utilities', () => {
 
     describe('isNatural', () => {
 
-        it('', () => {
+        it('throws error when number is not natural', () => {
 
             let value = -1;
 
