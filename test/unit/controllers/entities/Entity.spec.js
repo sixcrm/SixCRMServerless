@@ -4,7 +4,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 let EntityController = global.SixCRM.routes.include('controllers','entities/Entity');
-let PermissionTestGenerators = require('../../unit/lib/permission-test-generators');
+let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
