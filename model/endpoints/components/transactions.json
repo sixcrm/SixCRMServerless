@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/transactions.json",
+	"title": "Transactions",
+	"type":"array",
+	"items":{"$ref":"../../entities/transaction.json"},
+	"minItems":1
+}

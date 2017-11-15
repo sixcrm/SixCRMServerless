@@ -3,118 +3,206 @@ const _ = require("underscore");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
-var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
+class ConfirmOrderController extends transactionEndpointController{
 
-class confirmOrderController extends transactionEndpointController{
+  constructor(){
+    super({
+      required_permissions: [
+        'user/read',
+        'account/read',
+        'session/create',
+        'session/read',
+        'session/update',
+        'campaign/read',
+        'creditcard/create',
+        'creditcard/update',
+        'creditcard/read',
+        'productschedule/read',
+        'loadbalancer/read',
+        'product/read',
+        'affiliate/read',
+        'transaction/read',
+        'rebill/read',
+        'notifications/create',
+        'tracker/read'
+      ],
+      notification_parameters: {
+        type: 'session',
+        action: 'closed',
+        title: 'Completed Session',
+        body: 'A customer has completed a session.'
+      }
+    });
 
-    constructor(){
-        super({
-            required_permissions: [
-                'user/read',
-                'account/read',
-                'session/create',
-                'session/read',
-                'session/update',
-                'campaign/read',
-                'creditcard/create',
-                'creditcard/update',
-                'creditcard/read',
-                'productschedule/read',
-                'loadbalancer/read',
-                'product/read',
-                'affiliate/read',
-                'transaction/read',
-                'rebill/read',
-                'notifications/create',
-                'tracker/read'
-            ],
-            notification_parameters: {
-                type: 'session',
-                action: 'closed',
-                title: 'Completed Session',
-                body: 'A customer has completed a session.'
-            }
-        });
+    this.parameter_definitions = {
+      execute: {
+        required : {
+          event:'event'
+        }
+      }
+    };
 
+    this.parameter_validation = {
+      'event':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/event.json'),
+      'session':global.SixCRM.routes.path('model', 'entities/session.json'),
+      'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+      'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
+      'products':global.SixCRM.routes.path('model', 'endpoints/components/transactionproducts.json'),
+      'transactions':global.SixCRM.routes.path('model', 'endpoints/components/transactions.json'),
+      'response':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
+    };
+
+    this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+
+    this.initialize();
+
+  }
+
+  execute(event){
+
+    return this.preprocessing(event)
+    .then((event) => this.acquireQuerystring(event))
+    .then((event) => {
+
+      this.parameters.setParameters({argumentation:{event: event}, action: 'execute'});
+
+    })
+    .then(() => this.hydrateSession())
+    .then(() => this.validateSession())
+    .then(() => this.hydrateSessionProperties())
+    .then(() => this.confirmOrder())
+    .then(() => this.buildResponse())
+    .then(result_object => {
+
+      this.postProcessing();
+
+      return this.parameters.get('response');
+
+    });
+
+  }
+
+  hydrateSession(){
+
+    du.debug('Hydrate Session');
+
+    let event = this.parameters.get('event');
+
+    return this.sessionController.get({id: event.session}).then(session => {
+
+      this.parameters.set('session', session);
+      return true;
+
+    });
+
+  }
+
+  validateSession(){
+
+    du.debug('Validate Session');
+
+    let session = this.parameters.get('session');
+
+    if(session.completed == true){
+      eu.throwError('bad_request', 'The specified session is already complete.');
     }
 
-    execute(event){
+    return Promise.resolve(true);
 
-      return this.preprocessing(event)
-  			.then((event) => this.acquireQuerystring(event))
-  			.then(() => this.validateInput(this.queryString, this.validateEventSchema))
-  			.then(this.confirmOrder)
-        .then(result_object => {
-          this.pushToRedshift(result_object)
-          //this.handleNotifications(result_object);
-          return result_object;
-        });
+  }
 
-    }
+  hydrateSessionProperties(){
 
-    validateEventSchema(querystring){
+    du.debug('Hydrate Session Properties');
 
-        du.debug('Validate Event Schema');
+    let session = this.parameters.get('session');
 
-        return modelvalidationutilities.validateModel(querystring,  global.SixCRM.routes.path('model', 'endpoints/confirmorder.json'));
+    let promises = [
+      this.sessionController.getCustomer(session),
+      this.sessionController.listTransactions(session),
+      this.sessionController.listProducts(session)
+    ];
 
-    }
+    return Promise.all(promises).then(promises => {
 
-    confirmOrder (querystring) {
+      this.parameters.set('customer', promises[0]);
+      this.parameters.set('transactions', promises[1]);
+      this.parameters.set('products', promises[2]);
 
-        du.debug('Confirm Order');
+      return true;
 
-        var promises = [];
+    });
 
-        return sessionController.get({id: querystring['session']}).then((session) => {
+  }
 
-            if(_.isNull(session)){ eu.throwError('not_found','Unable to identify session.'); }
-            if(session.completed == 'true'){ eu.throwError('bad_request','The specified session is already complete.'); }
+  confirmOrder(){
 
-            var getCustomer = sessionController.getCustomer(session);
-            var listTransactions = sessionController.listTransactions(session);
-            var listSessionProducts = sessionController.listProducts(session);
+    du.debug('Confirm Order');
 
-            promises.push(getCustomer);
-            promises.push(listTransactions);
-            promises.push(listSessionProducts);
+    let session = this.parameters.get('session');
 
-            return Promise.all(promises).then((promises) => {
+    return this.sessionController.closeSession(session).then(() => {
 
-              var customer = promises[0];
-              var transactions = promises[1];
-              var session_transaction_products = promises[2];
+      return true;
 
-              return sessionController.closeSession(session).then(() => {
+    });
 
-                var results = {session: session, customer: customer, transactions: transactions, transaction_products: session_transaction_products};
+  }
 
-                return results;
+  buildResponse(){
 
-              });
+    du.debug('Build Response');
 
-            });
+    let session = this.parameters.get('session');
+    let customer = this.parameters.get('customer');
+    let transactions = this.parameters.get('transactions');
+    let products = this.parameters.get('products');
 
-        });
+    this.parameters.set('response', {
+      session:session,
+      customer: customer,
+      transactions: transactions,
+      transaction_products: products
+    });
 
-    }
+    return Promise.resolve(true);
 
-    pushToRedshift(results){
+  }
 
-      du.debug('Push To Redshift');
+  postProcessing(){
 
-      return this.pushEventToRedshift('confirm', results.session).then((result) => {
+    du.debug('Post Processing');
 
-          return results;
+    let promises = [
+      this.pushToRedshift()
+      //this.handleNotifications();
+    ];
 
-      });
+    return Promise.all(promises).then(promises => {
 
-    }
+      return true;
+
+    });
+
+  }
+
+  pushToRedshift(results){
+
+    du.debug('Push To Redshift');
+
+    let session = this.parameters.get('session');
+
+    return this.pushEventToRedshift('confirm', session).then((result) => {
+
+      return true;
+
+    });
+
+  }
 
 }
 
-module.exports = new confirmOrderController();
+module.exports = new ConfirmOrderController();

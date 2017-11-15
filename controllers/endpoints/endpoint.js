@@ -60,40 +60,43 @@ module.exports = class EndpointController {
 
     acquireQuerystring(event){
 
-        du.debug('Acquire Querystring');
+      du.debug('Acquire Querystring');
 
-        if(_.has(event, 'queryStringParameters') && !_.isNull(event.queryStringParameters)){
+      if(_.has(event, 'queryStringParameters') && !_.isNull(event.queryStringParameters)){
 
-            let duplicate_querystring = event.queryStringParameters;
+        let duplicate_querystring = event.queryStringParameters;
 
-            if(!_.isObject(duplicate_querystring) && !_.isString(duplicate_querystring)){
+        if(!_.isObject(duplicate_querystring) && !_.isString(duplicate_querystring)){
 
-                return Promise.reject(eu.getError('bad_request','Request querystring is an unexpected format.'));
-
-            }
-
-            if(_.isString(duplicate_querystring)){
-
-                try {
-
-                    duplicate_querystring = querystring.parse(duplicate_querystring);
-
-                }catch(error){
-
-                    du.warning(error);
-                    return Promise.reject(error);
-
-                }
-
-            }
-
-            this.queryString = duplicate_querystring;
-
-            du.info('Request Query String:', this.queryString);
+          return Promise.reject(eu.getError('bad_request','Request querystring is an unexpected format.'));
 
         }
 
-        return Promise.resolve(event);
+        if(_.isString(duplicate_querystring)){
+
+          try {
+
+            duplicate_querystring = querystring.parse(duplicate_querystring);
+
+          }catch(error){
+
+            du.error(error);
+
+            return Promise.reject(error);
+
+          }
+
+        }
+
+        this.queryString = duplicate_querystring;
+
+        du.info('Request Query String:', this.queryString);
+
+        return Promise.resolve(duplicate_querystring);
+
+      }
+
+      return Promise.resolve(event);
 
     }
 

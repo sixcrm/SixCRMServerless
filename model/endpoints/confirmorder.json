@@ -1,8 +1,0 @@
-{
-	"title": "ConfirmOrder",
-	"type": "object",
-	"properties": {
-		"session":{"$ref": "../definitions/uuidv4.json"}
-	},
-	"required":["session"]
-}
