@@ -1,9 +1,20 @@
-let chai = require('chai');
-let expect = chai.expect;
+'use strict'
+
+const _ = require('underscore');
 const mockery = require('mockery');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+let chai = require('chai');
+const uuidV4 = require('uuid/v4');
+
+const expect = chai.expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const PermissionTestGenerators = require('../lib/permission-test-generators');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 
 function getValidAffiliateIDsArray(){
   return ['F4ZT4TDRYC'];
@@ -13,32 +24,29 @@ function getValidAffiliateObject(){
   return {id: 'f5e9e1c5-4989-460e-8014-17a0682ffb41', affiliate_id: 'F4ZT4TDRYC'};
 }
 
-describe('controllers/entities/Affiliate.js', () => {
+describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
-  before(() => {
-      mockery.enable({
-          useCleanCache: true,
-          warnOnReplace: false,
-          warnOnUnregistered: false
-      });
+  beforeEach(() => {
+    mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+    });
   });
 
   afterEach(() => {
-      mockery.resetCache();
-  });
-
-  after(() => {
-      mockery.deregisterAll();
+    mockery.resetCache();
+    mockery.deregisterAll();
   });
 
   describe('Validate Assured Affiliates', () => {
 
-    let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+    let affiliateHelperController = new AffiliateHelperController();
 
     it('fails when no arguments are provided', () => {
 
       try{
-        affiliateController.validateAssuredAffiliates();
+        affiliateHelperController.validateAssuredAffiliates();
       }catch(error){
         //Technical Debt:  This needs to be handled
         expect(error.message).to.equal('Cannot match against \'undefined\' or \'null\'.')
@@ -53,7 +61,7 @@ describe('controllers/entities/Affiliate.js', () => {
       arrayutilities.map(bad_arguments, bad_argument_1 => {
         arrayutilities.map(bad_arguments, bad_argument_2 => {
           try{
-            affiliateController.validateAssuredAffiliates({affiliate_ids: bad_argument_1, assured_affiliates: bad_argument_2});
+            affiliateHelperController.validateAssuredAffiliates({affiliate_ids: bad_argument_1, assured_affiliates: bad_argument_2});
           }catch(error){
             expect(error.message).to.be.defined;
           }
@@ -67,7 +75,7 @@ describe('controllers/entities/Affiliate.js', () => {
       let valid_affiliate_ids_array  = getValidAffiliateIDsArray();
       let valid_affiliate_object = getValidAffiliateObject();
 
-      let assured_affiliates = affiliateController.validateAssuredAffiliates({
+      let assured_affiliates = affiliateHelperController.validateAssuredAffiliates({
         affiliate_ids: valid_affiliate_ids_array,
         assured_affiliates: [valid_affiliate_object]
       });
@@ -82,10 +90,10 @@ describe('controllers/entities/Affiliate.js', () => {
 
     it('fails with no argumentation', () => {
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       try{
-        affiliateController.assureAffiliatesArrayTransform();
+        affiliateHelperController.assureAffiliatesArrayTransform();
       }catch(error){
         expect(error.message).to.equal('Cannot match against \'undefined\' or \'null\'.');
       }
@@ -94,14 +102,14 @@ describe('controllers/entities/Affiliate.js', () => {
 
     it('fails with bad argumentation', () => {
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       let bad_arguments = [null, 'a', undefined, null, {}, () => {}];
 
       arrayutilities.map(bad_arguments, bad_argument_1 => {
         arrayutilities.map(bad_arguments, bad_argument_2 => {
           try{
-            affiliateController.assureAffiliatesArrayTransform({affiliate_ids: bad_argument_1, affiliates: bad_argument_2});
+            affiliateHelperController.assureAffiliatesArrayTransform({affiliate_ids: bad_argument_1, affiliates: bad_argument_2});
           }catch(error){
             expect(error.message).to.be.defined;
           }
@@ -135,11 +143,11 @@ describe('controllers/entities/Affiliate.js', () => {
           }
       });
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       let valid_affiliate_ids_array = getValidAffiliateIDsArray();
 
-      affiliateController.assureAffiliatesArrayTransform({
+      affiliateHelperController.assureAffiliatesArrayTransform({
         affiliate_ids: valid_affiliate_ids_array,
         affiliates: []
       }).then(assured_affiliates => {
@@ -151,12 +159,12 @@ describe('controllers/entities/Affiliate.js', () => {
 
     it('succeeds when able to match affiliates', () => {
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       let valid_affiliate_ids_array = getValidAffiliateIDsArray();
       let valid_affiliate_object = getValidAffiliateObject();
 
-      affiliateController.assureAffiliatesArrayTransform({affiliate_ids: valid_affiliate_ids_array, affiliates: [valid_affiliate_object]}).then(assured_affiliates => {
+      affiliateHelperController.assureAffiliatesArrayTransform({affiliate_ids: valid_affiliate_ids_array, affiliates: [valid_affiliate_object]}).then(assured_affiliates => {
         expect(assured_affiliates).to.deep.equal([valid_affiliate_object]);
       });
 
@@ -168,10 +176,10 @@ describe('controllers/entities/Affiliate.js', () => {
 
     it('fails when affiliate array is not provided', () => {
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       try{
-        affiliateController.validateAssureAffiliatesArray();
+        affiliateHelperController.validateAssureAffiliatesArray();
       }catch(error){
         expect(error.message).to.equal('[500] ArrayUtilities.isArray thing argument is not an array.');
       }
@@ -180,10 +188,10 @@ describe('controllers/entities/Affiliate.js', () => {
 
     it('fails when affiliate array is null', () => {
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       try{
-        affiliateController.validateAssureAffiliatesArray(null);
+        affiliateHelperController.validateAssureAffiliatesArray(null);
       }catch(error){
         expect(error.message).to.equal('[500] ArrayUtilities.isArray thing argument is not an array.');
       }
@@ -192,10 +200,10 @@ describe('controllers/entities/Affiliate.js', () => {
 
     it('fails when affiliate array is an empty object', () => {
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       try{
-        affiliateController.validateAssureAffiliatesArray({});
+        affiliateHelperController.validateAssureAffiliatesArray({});
       }catch(error){
         expect(error.message).to.equal('[500] ArrayUtilities.isArray thing argument is not an array.');
       }
@@ -204,10 +212,10 @@ describe('controllers/entities/Affiliate.js', () => {
 
     it('fails when affiliate array is empty', () => {
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       try{
-        affiliateController.validateAssureAffiliatesArray([]);
+        affiliateHelperController.validateAssureAffiliatesArray([]);
       }catch(error){
         expect(error.message).to.equal('[500] Array is empty.');
       }
@@ -227,14 +235,14 @@ describe('controllers/entities/Affiliate.js', () => {
         ['abc', undefined]
       ];
 
-      let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate');
+      let affiliateHelperController = new AffiliateHelperController();
 
       arrayutilities.map(bad_arrays, bad_array => {
 
         try{
-          affiliateController.validateAssureAffiliatesArray(bad_array);
+          affiliateHelperController.validateAssureAffiliatesArray(bad_array);
         }catch(error){
-          expect(error.message).to.equal('[500] affiliateController.assureAffiliates assumes all affiliate ID\'s are strings.');
+          expect(error.message).to.equal('[500] affiliateHelperController.assureAffiliates assumes all affiliate ID\'s are strings.');
         }
 
       });

@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/event",
+	"title": "Event",
+	"type":"object",
+	"properties": {
+		"campaign": {"$ref":"../../definitions/uuidv4.json"},
+		"affiliates": {"$ref":"../components/affiliatesprototype.json"},
+		"customer":{"$ref":"../components/customerprototype.json"}
+	},
+	"required":["campaign", "customer"]
+}

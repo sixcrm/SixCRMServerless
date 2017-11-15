@@ -4,44 +4,65 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-var customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
-var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
-var sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
-class createLeadController extends transactionEndpointController{
+class CreateLeadController extends transactionEndpointController{
 
     constructor(){
-        super({
-            required_permissions: [
-              'user/read',
-              'usersetting/read',
-              'account/read',
-              'customer/read',
-              'customer/create',
-              'customer/update',
-              'session/create',
-              'session/update',
-              'session/read',
-              'campaign/read',
-              'affiliate/read',
-              'affiliate/create',
-              'notification/create',
-              'notificationsetting/read',
-              'tracker/read',
-              'emailtemplate/read',
-              'smtpprovider/read'
-            ],
-            notification_parameters: {
-              type: 'lead',
-              action: 'created',
-              title:  'New Lead',
-              body: 'A new lead has been created.'
-            }
-        });
+      super({
+        required_permissions: [
+          'user/read',
+          'usersetting/read',
+          'account/read',
+          'customer/read',
+          'customer/create',
+          'customer/update',
+          'session/create',
+          'session/update',
+          'session/read',
+          'campaign/read',
+          'affiliate/read',
+          'affiliate/create',
+          'notification/create',
+          'notificationsetting/read',
+          'tracker/read',
+          'emailtemplate/read',
+          'smtpprovider/read'
+        ],
+        notification_parameters: {
+          type: 'lead',
+          action: 'created',
+          title:  'New Lead',
+          body: 'A new lead has been created.'
+        }
+      });
+
+      this.parameter_definitions = {
+        execute: {
+          required : {
+            event:'event'
+          }
+        }
+      };
+
+      this.parameter_validation = {
+        'event':global.SixCRM.routes.path('model', 'endpoints/createLead/event.json'),
+        'customer': global.SixCRM.routes.path('model', 'entities/customer.json'),
+        'affiliates':global.SixCRM.routes.path('model', 'endpoints/components/affiliates.json'),
+        'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
+        'session_prototype':global.SixCRM.routes.path('model', 'endpoints/createLead/sessionprototype.json'),
+        'session':global.SixCRM.routes.path('model', 'entities/session.json'),
+      };
+
+      this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+      this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+      this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+
+      this.initialize();
 
     }
 
@@ -49,119 +70,207 @@ class createLeadController extends transactionEndpointController{
 
       du.debug('Execute');
 
-      return this.preprocessing((event))
-			.then((event) => this.acquireBody(event))
-			.then((event) => this.validateInput(event, this.validateEventSchema))
-			.then((event) => this.assureCustomer(event))
-      .then((event) => this.handleAffiliateInformation(event))
-			.then((event) => this.createSessionObject(event))
-			.then((session_object) => this.persistSession(session_object))
-      .then((session_object) => {
+      return this.preprocessing(event)
+  		.then((event) => this.acquireBody(event))
+      .then((event_body) => {
+        this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
+      })
+      .then(() => this.assureLeadProperties())
+      .then(() => this.createSessionPrototype())
+			.then(() => this.assureSession())
+      .then(() => {
 
-        this.handleLeadTracking(session_object, event);
-        this.pushToRedshift(session_object);
-        //this.handleNotifications(session_object);
-        this.sendEmails('lead', session_object);
+        this.postProcessing();
 
-        return session_object;
+        return this.parameters.get('session');
 
       });
 
     }
 
-    validateEventSchema(event){
+    assureLeadProperties(){
 
-      du.debug('Validate Event Schema');
+      du.debug('Assure Lead Properties');
 
-      return modelvalidationutilities.validateModel(event,  global.SixCRM.routes.path('model', 'endpoints/lead.json'));
+      let promises = [
+        this.assureCustomer(),
+        this.assureAffiliates(),
+        this.setCampaign()
+      ];
+
+      return Promise.all(promises).then(result => {
+        return true;
+      });
 
     }
 
-    assureCustomer(event){
+    setCampaign(){
 
-      return customerController.getCustomerByEmail(event.customer.email).then((customer) => {
+      du.debug('Set Campaign');
+
+      let event = this.parameters.get('event');
+
+      return this.campaignController.get({id: event.campaign}).then(campaign => {
+
+        this.parameters.set('campaign', campaign);
+
+        return true;
+
+      });
+
+    }
+
+    assureAffiliates(){
+
+      du.debug('Assure Affiliates');
+
+      let event = this.parameters.get('event');
+
+      return this.affiliateHelperController.handleAffiliateInformation(event).then(result => {
+
+        if(_.has(result, 'affiliates')){
+          this.parameters.set('affiliates', result.affiliates);
+        }
+
+        return true;
+
+      });
+
+    }
+
+    assureCustomer(){
+
+      du.debug('Assure Customer');
+
+      let event = this.parameters.get('event');
+
+      return this.customerController.getCustomerByEmail(event.customer.email).then((customer) => {
 
         if(_.has(customer, 'id')){
-          return customer;
+          this.parameters.set('customer', customer);
+          return true;
         }
 
-        return customerController.create({entity: event.customer});
-
-      }).then((customer) => {
-
-        this.session_customer = customer;
-
-        return event;
+        return this.customerController.create({entity: event.customer}).then(customer => {
+          this.parameters.set('customer', customer);
+          return true;
+        });
 
       });
 
     }
 
-    createSessionObject(event){
+    //Technical Debt:  Session Helper!
+    createSessionPrototype(){
 
-      du.debug('Create Session Object');
+      du.debug('Create Session Prototype');
 
-      var promises = [];
+      let customer = this.parameters.get('customer');
+      let campaign = this.parameters.get('campaign');
+      let affiliates = this.parameters.get('affiliates', null, false);
 
-      return campaignController.get({id: event.campaign}).then(campaign => {
+      let session_prototype = {
+        customer: customer.id,
+        campaign: campaign.id,
+        completed: false
+      };
 
-        let protosession = {
-          customer: this.session_customer,
-          campaign: campaign,
-        };
+      if(!_.isNull(affiliates)){
+        session_prototype = objectutilities.merge(session_prototype, affiliates);
+      }
 
-        if(_.has(event, 'affiliates')){
+      this.parameters.set('session_prototype', session_prototype);
 
-          arrayutilities.map(this.affiliate_fields, (affiliate_field) => {
+      return Promise.resolve(true);
 
-            if(_.has(event.affiliates, affiliate_field) && !_.isNull(event.affiliates[affiliate_field])){
+    }
 
-              protosession[affiliate_field] = event.affiliates[affiliate_field];
+    assureSession(){
 
-            }
+      du.debug('Assure Session');
 
-          });
+      let session_prototype = this.parameters.get('session_prototype');
 
-        }
+      //Technical Debt: test this 100%
+      return this.sessionController.assureSession(session_prototype).then(session => {
+        this.parameters.set('session', session);
+        return true;
+      });
 
-        return sessionController.createSessionObject(protosession);
+    }
+
+    postProcessing(){
+
+      du.debug('Post Processing');
+
+      let promises = [
+        this.handleLeadTracking(),
+        this.pushToRedshift(),
+        this.handleEmails(),
+        this.handleLeadNotifications()
+      ]
+
+      return Promise.all(promises).then(promises => {
+        return true;
+      });
+
+    }
+
+    handleLeadNotifications(){
+
+      du.debug('Handle Lead Notifications');
+
+      let session = this.parameters.get('session');
+
+      return this.handleNotifications(session).then(result => {
+
+        return true;
 
       });
 
     }
 
-    persistSession(session_object){
+    handleEmails(){
 
-      du.debug('Persist Session');
+      du.debug('Handle Emails');
 
-      return sessionController.assureSession(session_object);
+      let session = this.parameters.get('session');
 
-    }
-
-    handleLeadTracking(session, event){
-
-        du.debug('Handle Lead Tracking');
-
-        return this.handleTracking({session: session}, event).then(() => {
-
-            return session;
-
-        });
+      return this.sendEmails('lead', session).then(result => {
+        return true;
+      });
 
     }
 
-    pushToRedshift(session){
+    handleLeadTracking(){
 
-        du.debug('Push To Redshift');
+      du.debug('Handle Lead Tracking');
 
-        return this.pushEventToRedshift('lead', session).then(() => {
+      let session = this.parameters.get('session');
+      let event = this.parameters.get('event');
 
-            return session;
+      return this.handleTracking({session: session}, event).then(() => {
 
-        });
+        return true;
+
+      });
+
+    }
+
+    pushToRedshift(){
+
+      du.debug('Push To Redshift');
+
+      let session = this.parameters.get('session');
+
+      return this.pushEventToRedshift('lead', session).then(() => {
+
+        return true;
+
+      });
 
     }
 
 }
 
-module.exports = new createLeadController();
+module.exports = new CreateLeadController();

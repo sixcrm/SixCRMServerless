@@ -267,6 +267,7 @@ class sessionController extends entityController {
 
     }
 
+    //Technical Debt:  This needs to go to a helper...
     createSessionObject(parameters){
 
       du.debug('Create Session Object');
