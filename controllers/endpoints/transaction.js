@@ -155,51 +155,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    //Technical Debt:  Does this go here?
-    createEventObject(event){
-
-      du.debug('Create Event Object');
-
-      let event_object = {
-          session: '',
-          type : 'click',
-          datetime: timestamp.getISO8601(),
-          account: global.account,
-          campaign: event.campaign,
-          product_schedule: ''
-      };
-
-      return this.affiliateHelperController.transcribeAffiliates(event_object, event);
-
-    }
-
-    //Technical Debt:  Does this go here?
-    //clearly no.
-    createTransactionObject(info){
-
-      du.debug('Create Transaction Object');
-
-      let transaction = {
-        id: info.transaction.id,
-        datetime: info.transaction.created_at,
-        customer: info.customer.id,
-        creditcard: info.creditcard.id,
-        merchant_provider:info.transaction.merchant_provider,
-        campaign:info.campaign.id,
-        amount:info.amount,
-        processor_result:info.result,
-        account:info.transaction.account,
-        transaction_type:"new",
-        transaction_subtype:this.getTransactionSubType(),
-        product_schedules:info.product_schedules,
-        //Technical Debt:  Resolve in the AM!
-        product_schedule:info.product_schedules[0],
-      };
-
-      return this.affiliateHelperController.transcribeAffiliates(info.session, transaction);
-
-    }
-
     pushTransactionToRedshift(info){
 
       du.debug('Push Transaction to Redshift');
@@ -281,6 +236,50 @@ module.exports = class transactionEndpointController extends authenticatedContro
         return Promise.resolve(info);
 
       });
+
+    }
+
+    //Technical Debt:  This needs to be in a helper...
+    createEventObject(event, event_type){
+
+      du.debug('Create Event Object');
+
+      let event_object = {
+        session: '',
+        type : event_type,
+        datetime: timestamp.getISO8601(),
+        account: global.account,
+        campaign: event.campaign,
+        product_schedule: ''
+      };
+
+      return this.affiliateHelperController.transcribeAffiliates(event.affiliates, event_object);
+
+    }
+
+    //Technical Debt:  This needs to be in a helper...
+    createTransactionObject(info){
+
+      du.debug('Create Transaction Object');
+
+      let transaction = {
+        id: info.transaction.id,
+        datetime: info.transaction.created_at,
+        customer: info.customer.id,
+        creditcard: info.creditcard.id,
+        merchant_provider:info.transaction.merchant_provider,
+        campaign:info.campaign.id,
+        amount:info.amount,
+        processor_result:info.result,
+        account:info.transaction.account,
+        transaction_type:"new",
+        transaction_subtype:this.getTransactionSubType(),
+        product_schedules:info.product_schedules,
+        //Technical Debt:  Resolve in the AM!
+        product_schedule:info.product_schedules[0],
+      };
+
+      return this.affiliateHelperController.transcribeAffiliates(info.session, transaction);
 
     }
 

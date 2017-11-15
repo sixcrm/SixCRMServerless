@@ -4,26 +4,45 @@ const _ = require("underscore");
 const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
-class acquireTokenController extends transactionEndpointController {
+class AcquireTokenController extends transactionEndpointController {
 
     constructor(){
 
-        super({
-            required_permissions: [
-                'user/read',
-                'account/read',
-                'campaign/read',
-                'affiliate/read',
-                'affiliate/create',
-                'tracker/read'
-            ]
-        });
+      super({
+        required_permissions: [
+          'user/read',
+          'account/read',
+          'campaign/read',
+          'affiliate/read',
+          'affiliate/create',
+          'tracker/read'
+        ]
+      });
 
-        this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign');
+      this.parameter_definitions = {
+        execute: {
+          required : {
+            event:'event'
+          }
+        }
+      };
+
+      this.parameter_validation = {
+        'updatedevent':global.SixCRM.routes.path('model', 'endpoints/acquireToken/updatedevent.json'),
+        'event':global.SixCRM.routes.path('model', 'endpoints/acquireToken/event.json'),
+        'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
+        'transactionjwt':global.SixCRM.routes.path('model', 'definitions/jwt.json'),
+        'redshifteventobject':global.SixCRM.routes.path('model', 'kinesisfirehose/events.json')
+      };
+
+      this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+
+      this.initialize();
 
     }
 
@@ -33,48 +52,36 @@ class acquireTokenController extends transactionEndpointController {
 
       return this.preprocessing(event)
       .then((event) => this.acquireBody(event))
-      .then((event) => this.validateInput(event, this.validateEventSchema))
-      .then((event) => this.validateCampaign(event))
-      .then((event) => this.handleAffiliateInformation(event))
-      .then((event) => this.acquireToken())
+      .then((event_body) => {
+        this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
+      })
+      .then(() => this.validateCampaign())
+      .then(() => this.acquireToken())
       .then((token) => {
-        this.pushToRedshift(event);
-        return token;
+
+        this.postProcessing();
+
+        return this.parameters.get('transactionjwt');
+
       });
 
     }
 
-    validateEventSchema(parameters){
-
-      du.debug('Validate Event Schema');
-
-      return modelvalidationutilities.validateModel(parameters,  global.SixCRM.routes.path('model', 'endpoints/token.json'));
-
-    }
-
-    validateCampaign(event){
+    validateCampaign(){
 
       du.debug('Validate Campaign');
 
+      let event = this.parameters.get('event');
+
       return this.campaignController.get({id: event.campaign}).then((campaign) => {
 
-          if(!_.has(campaign, 'id')){ eu.throwError('bad_request','Invalid Campaign ID: '+event.campaign); }
+        if(!_.has(campaign, 'id')){
+          eu.throwError('bad_request','Invalid Campaign ID: '+event.campaign);
+        }
 
-          return event;
+        this.parameters.set('campaign', campaign);
 
-      });
-
-    }
-
-    pushToRedshift(event){
-
-      du.debug('Push To Redshift');
-
-      let event_object = this.createEventObject(event);
-
-      return this.pushRecordToRedshift('events', event_object).then(() => {
-
-          return event;
+        return true;
 
       });
 
@@ -84,12 +91,75 @@ class acquireTokenController extends transactionEndpointController {
 
       du.debug('Acquire Token');
 
-      let transaction_jwt = jwtutilities.getJWT({user:{user_alias: global.user.alias}}, 'transaction');
+      let jwt_prototype = {
+        user:{
+          user_alias: global.user.alias
+        }
+      };
 
-      return Promise.resolve(transaction_jwt);
+      let transaction_jwt = jwtutilities.getJWT(jwt_prototype, 'transaction');
+
+      this.parameters.set('transactionjwt', transaction_jwt);
+
+      return Promise.resolve(true);
+
+    }
+
+    postProcessing(){
+
+      du.debug('Post Processing');
+
+      return this.updateEventObjectWithAffiliateInformation()
+      .then(() => this.createEventPrototype())
+      .then(() => this.pushToRedshift());
+
+    }
+
+    createEventPrototype(){
+
+      du.debug('Create Event Prototype');
+
+      let updated_event = this.parameters.get('updatedevent');
+
+      let event_prototype = this.createEventObject(updated_event, 'click');
+
+      this.parameters.set('redshifteventobject', event_prototype);
+
+      return Promise.resolve(true);
+
+    }
+
+    updateEventObjectWithAffiliateInformation(){
+
+      du.debug('Update Event Object With Affiliate Information');
+
+      let event = this.parameters.get('event');
+
+      return this.affiliateHelperController.handleAffiliateInformation(event)
+      .then(updated_event => {
+
+        this.parameters.set('updatedevent', updated_event);
+
+        return true;
+
+      });
+
+    }
+
+    pushToRedshift(){
+
+      du.debug('Push To Redshift');
+
+      let redshifteventobject = this.parameters.get('redshifteventobject');
+
+      return this.pushRecordToRedshift('events', redshifteventobject).then(() => {
+
+        return true;
+
+      });
 
     }
 
 }
 
-module.exports = new acquireTokenController();
+module.exports = new AcquireTokenController();
