@@ -856,7 +856,7 @@ class userController extends entityController {
                         return reject(eu.getError('bad_request','Can\'t resend invite, User ACL is not pending.'));
                     }
 
-                    const invite_parameters = {email: userinvite.email, acl: acl.id};
+                    const invite_parameters = {email: acl_entity.user, acl: acl_entity.id};
 
                     return inviteutilities.invite(invite_parameters)
 
