@@ -429,14 +429,11 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Update');
 
-      return this.can({action: 'update', object: this.descriptive_name, fatal: true})
-      .then(() => {
+      if(!_.has(entity, this.primary_key)){
+        eu.throwError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
+      }
 
-        if(!_.has(entity, this.primary_key)){
-          eu.throwError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
-        }
-
-      })
+      return this.can({action: 'update', object: this.descriptive_name, id: entity[this.primary_key], fatal: true})
       .then(() => {
         entity = this.assignAccount(entity);
       })

@@ -941,6 +941,18 @@ class userController extends entityController {
 
     }
 
+  can({account, object, action, id, fatal}){
+
+    if (action === 'update' && global.user.id === id) {
+      du.debug('User updating himself', global.user.id);
+
+      return Promise.resolve(true);
+    }
+
+    return super.can({account: account, object: object, action: action, id: id, fatal: fatal})
+
+  }
+
 }
 
 module.exports = new userController();
