@@ -146,7 +146,7 @@ function getValidSession(){
 
 }
 
-describe('createOrder', function () {
+describe('confirmOrder', function () {
 
   describe('constructor', () => {
     it('successfully constructs', () => {

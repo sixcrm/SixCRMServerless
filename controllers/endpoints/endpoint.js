@@ -4,178 +4,172 @@ const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 module.exports = class EndpointController {
 
-    constructor(){
+  constructor(){
 
-        this.clearState();
+      this.clearState();
 
+  }
+
+  clearState(){
+
+      du.debug('Clear State');
+
+      this.pathParameters = undefined;
+      this.queryString = undefined;
+
+  }
+
+  acquireBody(event){
+
+    du.debug('Acquire Body');
+
+    if(!_.has(event, 'body')){
+      this.throwUnexpectedEventStructureError();
     }
 
-    clearState(){
+    let duplicate_body;
 
-        du.debug('Clear State');
+    try {
+        duplicate_body = JSON.parse(event.body);
+    } catch (e) {
+        duplicate_body = event.body;
+    }
+
+    return Promise.resolve(duplicate_body);
+
+  }
+
+  acquirePathParameters(event){
+
+    du.debug('Acquire Path Parameters');
+
+    if(_.has(event, 'pathParameters')){
+
+        this.pathParameters = event.pathParameters;
+
+        return Promise.resolve(event);
+
+    }else{
 
         this.pathParameters = undefined;
-        this.queryString = undefined;
 
     }
 
-    acquireBody(event){
+    this.throwUnexpectedEventStructureError();
 
-        du.debug('Acquire Body');
+  }
 
-        var duplicate_body;
+  validateEvent(event){
 
-        try {
-            duplicate_body = JSON.parse(event['body']);
-        } catch (e) {
-            duplicate_body = event.body;
-        }
+    du.debug('Validate Event');
 
-        return Promise.resolve(duplicate_body);
-
+    if(!mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'), null, false)){
+      this.throwUnexpectedEventStructureError();
     }
 
-    acquirePathParameters(event){
+    return Promise.resolve(event);
 
-        du.debug('Acquire Path Parameters');
+  }
 
-        if(_.has(event, 'pathParameters')){
 
-            this.pathParameters = event.pathParameters;
+  parseEvent(event){
 
-            return Promise.resolve(event);
+    du.debug('Parse Event');
 
-        }else{
+    if(!_.isObject(event)){
 
-            this.pathParameters = null;
+      try{
 
-        }
+        event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
 
-        return Promise.reject(eu.getError('bad_request','Event does not have path parameters'));
+        return this.parseEvent(event);
 
-    }
+      }catch(error){
 
-    acquireQuerystring(event){
+        du.error(error);
 
-      du.debug('Acquire Querystring');
-
-      if(_.has(event, 'queryStringParameters') && !_.isNull(event.queryStringParameters)){
-
-        let duplicate_querystring = event.queryStringParameters;
-
-        if(!_.isObject(duplicate_querystring) && !_.isString(duplicate_querystring)){
-
-          return Promise.reject(eu.getError('bad_request','Request querystring is an unexpected format.'));
-
-        }
-
-        if(_.isString(duplicate_querystring)){
-
-          try {
-
-            duplicate_querystring = querystring.parse(duplicate_querystring);
-
-          }catch(error){
-
-            du.error(error);
-
-            return Promise.reject(error);
-
-          }
-
-        }
-
-        this.queryString = duplicate_querystring;
-
-        du.info('Request Query String:', this.queryString);
-
-        return Promise.resolve(duplicate_querystring);
+        this.throwUnexpectedEventStructureError();
 
       }
 
-      return Promise.resolve(event);
+    }
+
+    if(!_.isObject(event.requestContext)){
+
+      try{
+
+        event.requestContext = JSON.parse(event.requestContext);
+
+        return this.parseEvent(event);
+
+      }catch(error){
+
+        du.error(error);
+
+        this.throwUnexpectedEventStructureError();
+
+      }
 
     }
 
-    validateEvent(event){
+    if(!_.isObject(event.pathParameters)){
 
-        du.debug('Validate Event');
+      try{
 
-        return new Promise((resolve, reject) => {
+        event.pathParameters = JSON.parse(event.pathParameters);
 
-            du.highlight('Event:', event);
+        return this.parseEvent(event);
 
-            if(!_.has(event, 'requestContext')){
-                return reject(eu.getError('bad_request','Missing requestContext'));
-            }
+      }catch(error){
 
-            if(!_.has(event, 'pathParameters')){
-                return reject(eu.getError('bad_request','Missing pathParameters'));
-            }
+        du.error(error);
 
-            return resolve(event);
+        this.throwUnexpectedEventStructureError();
 
-        });
+      }
 
     }
 
-    parseEvent(event){
+    return Promise.resolve(event);
 
-        du.debug('Parse Event');
+  }
 
+  parseEventQueryString(event){
 
-        return new Promise((resolve, reject) => {
+    du.debug('Parse Event Query String');
 
-            if(!_.isObject(event)){
+    if(_.has(event, 'queryStringParameters') && !_.isObject(event.queryStringParameters)){
 
-                try{
+      try{
 
-                    event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
+        event.queryStringParameters = querystring.parse(event.queryStringParameters);
 
-                }catch(error){
+        return this.parseEventQueryString(event);
 
-                    du.warning(error);
-                    return reject(error);
+      }catch(error){
 
-                }
+        du.error(error);
 
-            }
+        this.throwUnexpectedEventStructureError();
 
-            if(!_.isObject(event.requestContext)){
-
-                try{
-
-                    event.requestContext = JSON.parse(event.requestContext);
-
-                }catch(error){
-
-                    return reject(error);
-
-                }
-
-            }
-
-            if(!_.isObject(event.pathParameters)){
-
-                try{
-
-                    event.pathParameters = JSON.parse(event.pathParameters);
-
-                }catch(error){
-
-                    return reject(error);
-
-                }
-
-            }
-
-            return resolve(event);
-
-        });
+      }
 
     }
+
+    return Promise.resolve(event);
+
+  }
+
+  throwUnexpectedEventStructureError(){
+
+    du.debug('Throw Unexpected Event Structure Error');
+
+    eu.throwError('bad_request', 'Unexpected event structure.');
+
+  }
 
 }

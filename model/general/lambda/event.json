@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"title": "Lambda Event",
+  "id":"/general/lambda/event.json",
+	"type": "object",
+	"properties":{
+		"requestContext":{
+			"type":"string"
+		},
+		"pathParameters":{
+			"type":"string"
+		},
+		"body":{
+			"type":"string"
+		},
+		"Authorization":{
+			"type":"string"
+		}
+	},
+	"required":["requestContext","pathParameters"]
+}

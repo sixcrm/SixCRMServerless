@@ -66,10 +66,10 @@ class ConfirmOrderController extends transactionEndpointController{
   execute(event){
 
     return this.preprocessing(event)
-    .then((event) => this.acquireQuerystring(event))
+    .then((event) => this.parseEventQueryString(event))
     .then((event) => {
 
-      this.parameters.setParameters({argumentation:{event: event}, action: 'execute'});
+      this.parameters.setParameters({argumentation:{event: event.queryStringParameters}, action: 'execute'});
 
     })
     .then(() => this.hydrateSession())

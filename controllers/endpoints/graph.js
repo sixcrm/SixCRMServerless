@@ -27,13 +27,29 @@ module.exports = class graphController extends authenticatedController {
       return this.parseEvent(event)
 			.then((event) => this.acquireAccount(event))
       .then((event) => this.acquireUser(event))
-      .then((event) => this.acquireQuerystring(event))
+      .then((event) => this.parseEventQueryString(event))
       .then((event) => this.acquireQuery(event))
       .then((event) => this.acquireQueryParameters(event))
       .then((event) => this.acquireOutputParameters(event))
       .then((event) => this.setCacheParameters(event))
 			.then((event) => this.graphQuery(event))
       .then((response) => this.handleGraphErrors(response));
+
+    }
+
+    parseEventQueryString(event){
+
+      du.debug('Parse Event Query String');
+
+      return super.parseEventQueryString(event).then(event => {
+
+        if(_.has(event, 'queryStringParameters')){
+          this.queryString = event.queryStringParameters;
+        }
+
+        return event;
+
+      });
 
     }
 

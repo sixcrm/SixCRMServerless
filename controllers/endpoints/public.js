@@ -20,7 +20,23 @@ module.exports = class PublicController extends endpointController {
         return this.validateEvent(event)
       .then((event) => this.parseEvent(event))
       .then((event) => this.acquirePathParameters(event))
-      .then((event) => this.acquireQuerystring(event));
+      .then((event) => this.parseEventQueryString(event));
+    }
+
+    parseEventQueryString(event){
+
+      du.debug('Parse Event Query String');
+
+      return super.parseEventQueryString(event).then(event => {
+
+        if(_.has(event, 'queryStringParameters')){
+          this.queryString = event.queryStringParameters;
+        }
+
+        return event;
+
+      });
+
     }
 
     routeRequest(){
