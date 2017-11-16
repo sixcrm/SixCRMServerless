@@ -856,9 +856,26 @@ class userController extends entityController {
                         return reject(eu.getError('bad_request','Can\'t resend invite, User ACL is not pending.'));
                     }
 
-                    const invite_parameters = {email: userinvite.email, acl: acl.id};
+                    let promises = [];
 
-                    return inviteutilities.invite(invite_parameters)
+                    promises.push(this.executeAssociatedEntityFunction('accountController', 'get', {id: acl_entity.account}));
+                    promises.push(this.executeAssociatedEntityFunction('roleController', 'get', {id: acl_entity.role}));
+
+                    return Promise.all(promises).then((promises) => {
+
+                      const account = promises[0];
+                      const role = promises[1];
+
+                      const invite_parameters = {
+                        email: acl_entity.user,
+                        acl: acl_entity.id,
+                        invitor: global.user.id,
+                        account: account.name,
+                        role: role.name
+                      };
+
+                      return inviteutilities.invite(invite_parameters)
+                    });
 
                 }).then((link) => {
 
@@ -940,6 +957,18 @@ class userController extends entityController {
       }
 
     }
+
+  can({account, object, action, id, fatal}){
+
+    if (action === 'update' && global.user.id === id) {
+      du.debug('User updating himself', global.user.id);
+
+      return Promise.resolve(true);
+    }
+
+    return super.can({account: account, object: object, action: action, id: id, fatal: fatal})
+
+  }
 
 }
 

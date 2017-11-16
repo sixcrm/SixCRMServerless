@@ -180,7 +180,7 @@ describe('controllers/Entity.js', () => {
           let entityController = new EC('entity');
 
           try {
-            entityController.update({entity: {}})
+            entityController.update({entity: {id: 'dummy-id'}})
           }catch(error){
             expect(error.message).to.equal('[500] Global is missing the user property.');
           }
