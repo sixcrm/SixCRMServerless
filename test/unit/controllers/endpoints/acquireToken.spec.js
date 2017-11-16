@@ -280,6 +280,29 @@ describe('acquireToken', () => {
 
     });
 
+    it('throws an error when the campaign does not validate', () => {
+
+        let campaign = getValidCampaign();
+        let event = getValidEventBody();
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
+          get:({id}) => {
+            return Promise.resolve(null);
+          }
+        });
+
+        let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+
+        acquireTokenController.parameters.set('event', event);
+
+        try{
+          acquireTokenController.validateCampaign();
+        }catch(error){
+          expect(error.message).to.have.string('Invalid Campaign ID:');
+        }
+
+    });
+
   });
 
   describe('acquireToken', () => {
@@ -379,7 +402,7 @@ describe('acquireToken', () => {
       mockery.deregisterAll();
     });
 
-    xit('successfully creates a event prototype', () => {
+    it('successfully creates a event prototype', () => {
 
       //Technical Debt:  This needs refactoring
       let event = getValidEventBody();
@@ -418,7 +441,7 @@ describe('acquireToken', () => {
       mockery.deregisterAll();
     });
 
-    xit('successfully pushes the event prototype to redshift', () => {
+    it('successfully pushes the event prototype to redshift', () => {
 
       //Technical Debt:  Needs Refactoring
 

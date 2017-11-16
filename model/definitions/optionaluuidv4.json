@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "./definitions/optionaluuidv4.json",
+  "id": "/definitions/optionaluuidv4.json",
   "title": "Optional uuidV4",
   "type":"string",
   "anyOf":[

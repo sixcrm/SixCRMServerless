@@ -3,7 +3,7 @@
 	"id":"/RedshiftEventsFirehoseObject",
 	"type": "object",
 	"properties": {
-		"session":{"$ref": "../definitions/uuidv4.json"},
+		"session":{"$ref": "../definitions/optionaluuidv4.json"},
 		"campaign":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"product_schedules":{"$ref": "../general/uuidv4list.json"},
