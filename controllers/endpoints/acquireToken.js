@@ -110,8 +110,8 @@ class AcquireTokenController extends transactionEndpointController {
       du.debug('Post Processing');
 
       return this.updateEventObjectWithAffiliateInformation()
-      .then(() => this.createEventPrototype())
-      .then(() => this.pushToRedshift());
+      //.then(() => this.createEventPrototype())
+      //.then(() => this.pushToRedshift());
 
     }
 

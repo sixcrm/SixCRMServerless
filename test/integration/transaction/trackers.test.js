@@ -63,7 +63,7 @@ describe('Tracking Test', () => {
     let post_body = getValidAcquireTokenPostBody();
     //du.debug('Post data', post_body);
 
-    //du.warning('token/acquire/'+account, authorization_string, post_body);
+    du.warning('token/acquire/'+account, authorization_string, post_body);
 
     request(endpoint).post('token/acquire/'+account)
     .send(post_body)

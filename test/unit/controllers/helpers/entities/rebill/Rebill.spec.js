@@ -895,6 +895,8 @@ describe('getScheduleElementsOnBillDay', () => {
 
     beforeEach(() => {
 
+      let product_schedules = [getValidProductSchedule()];
+
       mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
         queryRecords: (table, parameters, index, callback) => {
           return Promise.resolve([]);
@@ -921,6 +923,15 @@ describe('getScheduleElementsOnBillDay', () => {
             filter_expression : field_name+" IN ("+Object.keys(in_object).toString()+ ")",
             expression_attribute_values : in_object
           };
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        listProductSchedules:(session) => {
+          return Promise.resolve({productschedules:product_schedules});
+        },
+        getResult: (object, field) => {
+          return product_schedules;
         }
       });
 

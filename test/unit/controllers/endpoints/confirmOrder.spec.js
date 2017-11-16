@@ -260,11 +260,17 @@ describe('createOrder', function () {
         },
         listTransactions:(session) => {
           return Promise.resolve(transactions);
-        },
-        listProducts:(session) => {
-          return Promise.resolve(products);
         }
       });
+
+      let mock_transaction_helper_controller = class {
+        constructor(){}
+        getTransactionProducts(transactions){
+          return products;
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -276,7 +282,7 @@ describe('createOrder', function () {
         expect(result).to.equal(true);
         expect(confirmOrderController.parameters.store['customer']).to.deep.equal(customer);
         expect(confirmOrderController.parameters.store['transactions']).to.deep.equal(transactions);
-        expect(confirmOrderController.parameters.store['products']).to.deep.equal(products);
+        expect(confirmOrderController.parameters.store['transactionproducts']).to.deep.equal(products);
       });
 
     });
@@ -350,7 +356,7 @@ describe('createOrder', function () {
 
       confirmOrderController.parameters.set('session', session);
       confirmOrderController.parameters.set('transactions', transactions);
-      confirmOrderController.parameters.set('products', products);
+      confirmOrderController.parameters.set('transactionproducts', products);
       confirmOrderController.parameters.set('customer', customer);
 
       return confirmOrderController.buildResponse().then(result => {
@@ -456,6 +462,18 @@ describe('createOrder', function () {
       let products = getValidTransactionProducts();
       let customer = getValidCustomer();
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
+        get:({id}) => {
+          return Promise.resolve(session)
+        },
+        isEmail: (user_string) => {
+          return true;
+        },
+        getUserStrict: (user_string) => {
+          return Promise.resolve({});
+        }
+      });
+
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
         putRecord: (table, object) => {
           return Promise.resolve({});
@@ -472,13 +490,19 @@ describe('createOrder', function () {
         listTransactions:(session) => {
           return Promise.resolve(transactions);
         },
-        listProducts:(session) => {
-          return Promise.resolve(products);
-        },
         closeSession:(session) => {
           return Promise.resolve(true);
         }
       });
+
+      let mock_transaction_helper_controller = class {
+        constructor(){}
+        getTransactionProducts(transactions){
+          return products;
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 

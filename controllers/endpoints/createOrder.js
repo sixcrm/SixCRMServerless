@@ -67,6 +67,7 @@ class CreateOrderController extends transactionEndpointController{
       'processorresponse':global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
       'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
       'transactionsubtype':global.SixCRM.routes.path('model', 'definitions/transactionsubtype.json'),
+      'sessionlength':global.SixCRM.routes.path('model', 'definitions/nonnegativeinteger.json')
     };
 
     this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
@@ -75,7 +76,9 @@ class CreateOrderController extends transactionEndpointController{
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
-    this.initialize();
+    this.initialize(() => {
+      this.parameters.set('sessionlength', global.SixCRM.configuration.site_config.jwt.transaction.expiration);
+    });
 
   }
 
@@ -87,6 +90,7 @@ class CreateOrderController extends transactionEndpointController{
 		.then((event) => this.acquireBody(event))
     .then((event_body) => {
       this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
+      //this.parameters.set('sessionlength', global.SixCRM.configuration.site_config.jwt.transaction.expiration);
     })
     .then(() => this.hydrateSession())
     .then(() => this.hydrateEventAssociatedParameters())
@@ -244,18 +248,20 @@ class CreateOrderController extends transactionEndpointController{
 
     du.debug('Validate Event Properties');
 
-    let session = this.parameters.get('session');
+    this.isCurrentSession();
+    this.isCompleteSession();
+    this.hasCampaignProductScheduleParity();
+
+    return Promise.resolve(true);
+
+  }
+
+  hasCampaignProductScheduleParity(){
+
+    du.debug('Has Campaign ProductSchedule Parity');
+
     let campaign = this.parameters.get('campaign');
     let product_schedules = this.parameters.get('productschedules');
-
-    //Technical Debt: need to configure session length elsewhere
-    if(session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - 3600)){
-      eu.throwError('bad_request', 'Session has expired.');
-    }
-
-    if(session.completed == true){
-      eu.throwError('bad_request', 'The session is already complete.');
-    }
 
     arrayutilities.map(product_schedules, product_schedule => {
       if(!_.contains(campaign.productschedules, product_schedule)){
@@ -263,7 +269,41 @@ class CreateOrderController extends transactionEndpointController{
       }
     });
 
-    return Promise.resolve(true);
+    return true;
+
+  }
+
+  //Technical Debt:  Session Helper
+  isCompleteSession(){
+
+    du.debug('Is Complete Session');
+
+    let session = this.parameters.get('session');
+
+    if(session.completed == true){
+      eu.throwError('bad_request', 'The session is already complete.');
+    }
+
+    return true;
+
+  }
+
+  //Technical Debt: Session Helper
+  isCurrentSession(){
+
+    du.debug('Is Current Session');
+
+    let session = this.parameters.get('session');
+
+    let session_length = this.parameters.get('sessionlength');
+
+    let expired = session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - session_length);
+
+    if(expired){
+      eu.throwError('bad_request', 'Session has expired.');
+    }
+
+    return true;
 
   }
 
@@ -317,7 +357,12 @@ class CreateOrderController extends transactionEndpointController{
     let product_schedules = this.parameters.get('productschedules');
 
     session.product_schedules = arrayutilities.merge(session.product_schedules, product_schedules);
-    rebill.transactions = arrayutilities.merge(rebill.transactions, [transaction.id]);
+
+    if(_.has(rebill, 'transactions') && arrayutilities.nonEmpty(rebill.transactions)){
+      rebill.transactions = arrayutilities.merge(rebill.transactions, [transaction.id]);
+    }else{
+      rebill.transactions = [transaction.id];
+    }
 
     let promises = [
       this.sessionController.update({entity: session}).then(session => {
@@ -341,6 +386,7 @@ class CreateOrderController extends transactionEndpointController{
     du.debug('Build Info Object');
 
     let info = {
+      amount: this.parameters.get('amount'),
       transaction: this.parameters.get('transaction'),
       product_schedules: this.parameters.get('productschedules'),
       customer: this.parameters.get('customer'),
@@ -397,7 +443,7 @@ class CreateOrderController extends transactionEndpointController{
     let session = this.parameters.get('session');
     let product_schedules = this.parameters.get('productschedules');
 
-    return this.pushEventToRedshift('order', session, product_schedules).then(() => {
+    return this.pushEventToRedshift({event_type: 'order', session: session, product_schedules: product_schedules}).then(() => {
 
       return true;
 

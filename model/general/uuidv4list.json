@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/uuidv4list.json",
+	"title": "UUIDv4 list",
+	"description": "A list of uuidV4s",
+	"type": "array",
+	"items":{"$ref": "../definitions/uuidv4.json"}
+}

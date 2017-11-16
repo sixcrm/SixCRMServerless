@@ -1,0 +1,7 @@
+{
+	"title": "Transaction Sub-Type",
+  "id":"/transactionsubtype.json",
+	"type": "string",
+	"description": "The transaction sub-type",
+	"enum":["main","upsell", "upsell1", "upsell2"]
+}

@@ -2,38 +2,19 @@
 	"$schema": "http://json-schema.org/schema#",
 	"id":"/RedshiftEventsFirehoseObject",
 	"type": "object",
-	"definitions": {
-		"UUIDv4": {
-			"type": "string",
-			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
-		},
-		"ISO8601": {
-			"type": "string",
-			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
-		},
-		"OptionalUUIDv4":{
-			"anyOf":[
-				{"type":"string", "enum":[""]},
-				{"$ref": "#/definitions/UUIDv4"}
-			]
-		}
-	},
 	"properties": {
-		"session":{"$ref": "#/definitions/OptionalUUIDv4"},
-		"campaign":{"$ref": "#/definitions/UUIDv4"},
-		"account":{"$ref": "#/definitions/UUIDv4"},
-		"product_schedule":{"$ref": "#/definitions/OptionalUUIDv4"},
-		"affiliate":{"$ref": "#/definitions/OptionalUUIDv4"},
-		"subaffiliate_1":{"$ref": "#/definitions/OptionalUUIDv4"},
-		"subaffiliate_2":{"$ref": "#/definitions/OptionalUUIDv4"},
-		"subaffiliate_3":{"$ref": "#/definitions/OptionalUUIDv4"},
-		"subaffiliate_4":{"$ref": "#/definitions/OptionalUUIDv4"},
-		"subaffiliate_5":{"$ref": "#/definitions/OptionalUUIDv4"},
-		"datetime": {"$ref": "#/definitions/ISO8601"},
-		"type":{
-			"type":"string",
-			"enum": ["click","lead","order","upsell","confirm"]
-		}
+		"session":{"$ref": "../definitions/uuidv4.json"},
+		"campaign":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+		"product_schedules":{"$ref": "../general/uuidv4list.json"},
+		"affiliate":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_1":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_2":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_3":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_4":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_5":{"$ref": "../definitions/uuidv4.json"},
+		"datetime": {"$ref": "../definitions/iso8601.json"},
+		"type":{"$ref": "../definitions/eventtype.json"}
 	},
-	"required":["session","campaign","account","product_schedule","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5","datetime","type"]
+	"required":["session","campaign","account","datetime","type"]
 }

@@ -26,6 +26,7 @@ module.exports = class Register extends PermissionedController {
     };
 
     this.transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+    this.merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
     this.parameter_definitions = {
       refund: {
@@ -65,7 +66,8 @@ module.exports = class Register extends PermissionedController {
       'productschedules':global.SixCRM.routes.path('model', 'workers/processBilling/productschedules.json'),
       'parentsession': global.SixCRM.routes.path('model', 'entities/session.json'),
       'creditcards': global.SixCRM.routes.path('model', 'workers/processBilling/creditcards.json'),
-      'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json')
+      'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json'),
+      'merchantprovider':global.SixCRM.routes.path('model', 'entities/merchantprovider.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
@@ -106,6 +108,7 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.acquireRebillSubProperties())
     .then(() => this.calculateAmount())
     .then(() => this.executeProcess())
+    .then(() => this.executePostProcess())
     .then(() => this.issueReceipt())
     .then(() => this.transformResponse());
 
@@ -280,12 +283,12 @@ module.exports = class Register extends PermissionedController {
 
   issueReceipt(){
 
-    du.debug('Issue Transaction');
+    du.debug('Issue Receipt');
 
     const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
     let registerReceiptController = new RegisterReceiptController();
 
-    return registerReceiptController.issueReceipt(this.parameters.getAll()).then(receipt_transaction => {
+    return registerReceiptController.issueReceipt({argumentation: this.parameters.getAll()}).then(receipt_transaction => {
       this.parameters.set('receipttransaction', receipt_transaction);
     });
 
@@ -366,6 +369,31 @@ module.exports = class Register extends PermissionedController {
       this.parameters.set('processorresponse', result);
       return true;
     });
+
+  }
+
+  executePostProcess(){
+
+    du.debug('Execute Post Process');
+
+    this.validateProcessorResponse();
+
+    let processor_response = this.parameters.get('processorresponse');
+
+    return this.merchantProviderController.get({id: processor_response.merchant_provider}).then(merchant_provider => {
+
+      this.parameters.set('merchantprovider', merchant_provider);
+
+      return true;
+
+    });
+
+  }
+
+  validateProcessorResponse(){
+
+    du.debug('Validate Processor Response');
+    //Technical Debt:  Flesh me out, possible JSON schema embellishment?
 
   }
 

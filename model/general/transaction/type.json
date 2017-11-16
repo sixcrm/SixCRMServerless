@@ -1,0 +1,7 @@
+{
+	"title": "Transaction Type",
+  "id":"/transactiontype.json",
+	"type": "string",
+	"description": "The transaction type",
+	"enum":["new","rebill"]
+}

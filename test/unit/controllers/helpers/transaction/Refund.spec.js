@@ -178,6 +178,18 @@ describe('helpers/transaction/Refund.js', () => {
 
         assumePermissionedRole();
 
+        let merchant_provider = getTransactionMerchantProvider();
+        let transaction = getValidTransaction();
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+          getMerchantProvider:(transaction) => {
+            return Promise.resolve(merchant_provider);
+          },
+          get:({id}) => {
+            return Promise.resolve(transaction);
+          }
+        });
+
         let vh = new RefundHelperController();
 
         let valid_parameters = getValidParameters();
@@ -234,6 +246,18 @@ describe('helpers/transaction/Refund.js', () => {
 
         assumePermissionedRole()
 
+        let merchant_provider = getTransactionMerchantProvider();
+        let transaction = getValidTransaction();
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+          getMerchantProvider:(transaction) => {
+            return Promise.resolve(merchant_provider);
+          },
+          get:({id}) => {
+            return Promise.resolve(transaction);
+          }
+        });
+
         let mock_gateway = class {
           constructor(){}
           refund({argumentation}){
@@ -250,8 +274,6 @@ describe('helpers/transaction/Refund.js', () => {
         mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
 
         let vh = new RefundHelperController();
-
-        let transaction = getValidTransaction();
 
         return vh.refund({transaction:transaction}).then(result => {
           expect(result).to.have.property('code');

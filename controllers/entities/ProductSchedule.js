@@ -183,7 +183,7 @@ class productScheduleController extends entityController {
 
       du.debug('List Product Schedules By List');
 
-      let query_parameters = this.createINQueryParameters({list_array: product_schedules});
+      let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_schedules});
 
       return this.listByAccount({query_parameters: query_parameters});
 

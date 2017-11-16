@@ -100,12 +100,16 @@ describe('lib/kinesis-firehose-utilities', () => {
 
     describe('validateStreamRecord', () => {
 
-        it('validates stream record', () => {
+        it('fails due to missing object', () => {
 
             const kinesisFirehoseUtilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities.js');
 
-            //valid stream model
-            expect(kinesisFirehoseUtilities.validateStreamRecord('activity')).to.be.true;
+            try{
+              kinesisFirehoseUtilities.validateStreamRecord('activity');
+            }catch(error){
+              expect(error.message).to.equal('[500] Validation object must be defined.')
+            }
+
         });
 
         it('returns validation error', () => {
@@ -114,10 +118,9 @@ describe('lib/kinesis-firehose-utilities', () => {
 
             //valid stream model, invalid object
             try {
-                kinesisFirehoseUtilities.validateStreamRecord('activity', {an_object: 'an_object_data'})
+              kinesisFirehoseUtilities.validateStreamRecord('activity', {an_object: 'an_object_data'})
             } catch (error) {
-                expect(error.message).to.equal('[500] One or more validation errors occurred: requires property ' +
-                    '"datetime",requires property "actor",requires property "actor_type",requires property "action"');
+              expect(error.message).to.have.string('[500] One or more validation errors occurred:');
             }
         });
     });

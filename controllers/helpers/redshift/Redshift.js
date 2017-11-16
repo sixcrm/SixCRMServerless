@@ -38,13 +38,13 @@ module.exports = class redshiftHelperController {
 
     pushEventToRedshift(object){
 
-        du.debug('Push Event to Redshift');
+      du.debug('Push Event to Redshift');
 
-        return this.pushRecordToRedshift('events', object).then(() => {
+      return this.pushRecordToRedshift('events', object).then(() => {
 
-            return object;
+          return object;
 
-        });
+      });
 
     }
 

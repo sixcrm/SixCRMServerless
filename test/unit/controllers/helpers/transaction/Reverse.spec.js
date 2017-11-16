@@ -180,6 +180,18 @@ describe('helpers/transaction/Reverse.js', () => {
 
         assumePermissionedRole();
 
+        let merchant_provider = getTransactionMerchantProvider();
+        let transaction = getValidTransaction();
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+          getMerchantProvider:(transaction) => {
+            return Promise.resolve(merchant_provider);
+          },
+          get:({id}) => {
+            return Promise.resolve(transaction);
+          }
+        });
+
         let vh = new ReverseHelperController();
 
         let valid_parameters = getValidParameters();
@@ -236,6 +248,18 @@ describe('helpers/transaction/Reverse.js', () => {
 
         assumePermissionedRole()
 
+        let merchant_provider = getTransactionMerchantProvider();
+        let transaction = getValidTransaction();
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+          getMerchantProvider:(transaction) => {
+            return Promise.resolve(merchant_provider);
+          },
+          get:({id}) => {
+            return Promise.resolve(transaction);
+          }
+        });
+
         let mock_gateway = class {
           constructor(){}
           reverse({argumentation}){
@@ -252,8 +276,6 @@ describe('helpers/transaction/Reverse.js', () => {
         mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
 
         let vh = new ReverseHelperController();
-
-        let transaction = getValidTransaction();
 
         return vh.reverse({transaction:transaction}).then(result => {
           expect(result).to.have.property('code');

@@ -4,6 +4,7 @@
 	"title": "Event",
 	"type":"object",
 	"properties": {
+		"amount":{"$ref":"../../definitions/currency.json"},
 		"session":{"$ref":"../../entities/session.json"},
 		"product_schedules":{"$ref": "../components/productschedules.json"},
 		"customer":{"$ref": "../../entities/customer.json"},
@@ -11,5 +12,5 @@
 		"rebill":{"$ref":"../../entities/rebill.json"},
 		"campaign":{"$ref":"../../entities/campaign.json"}
 	},
-	"required":["customer", "session", "product_schedules", "transaction", "rebill", "campaign"]
+	"required":["customer", "session", "product_schedules", "transaction", "rebill", "campaign", "amount"]
 }

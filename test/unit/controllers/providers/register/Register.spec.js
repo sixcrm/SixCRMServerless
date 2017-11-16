@@ -1610,6 +1610,12 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProvider.js'), {
+          get: ({id}) => {
+            return Promise.resolve(getValidMerchantProvider());
+          }
+        });
+
         PermissionTestGenerators.givenUserWithAllowed('*', '*');
 
         let valid_rebill = getValidRebill();

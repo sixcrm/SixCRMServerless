@@ -117,14 +117,14 @@ module.exports = class RegisterRecieptGenerator {
     let transaction_prototype = this.parameters.get('transactionprototype');
 
     var transformed_transaction_prototype = {
-        rebill: transaction_prototype.rebill.id,
-        processor_response: JSON.stringify(transaction_prototype.processor_response),
-        amount: transaction_prototype.amount,
-        products: transaction_prototype.products,
-        alias: this.transactionController.createAlias(),
-        merchant_provider: transaction_prototype.merchant_provider,
-        type: transaction_prototype.type,
-        result: transaction_prototype.result
+      rebill: transaction_prototype.rebill.id,
+      processor_response: JSON.stringify(transaction_prototype.processor_response),
+      amount: transaction_prototype.amount,
+      products: transaction_prototype.products,
+      alias: this.transactionController.createAlias(),
+      merchant_provider: transaction_prototype.merchant_provider,
+      type: transaction_prototype.type,
+      result: transaction_prototype.result
     };
 
     if(_.has(transaction_prototype, 'associated_transaction')){

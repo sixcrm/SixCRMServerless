@@ -33,7 +33,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    initialize(){
+    initialize(callback){
 
       du.debug('Initialize');
 
@@ -41,6 +41,12 @@ module.exports = class transactionEndpointController extends authenticatedContro
         validation: this.parameter_validation,
         definition: this.parameter_definitions
       });
+
+      if(_.isFunction(callback)){
+        return callback();
+      }
+
+      return true;
 
     }
 
@@ -104,26 +110,25 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    pushEventToRedshift(event_type, session, product_schedule){
+    pushEventToRedshift({event_type, session, product_schedules}){
 
       du.debug('Push Event to Redshift');
 
-      if(_.isUndefined(product_schedule)){
-          product_schedule = '';
-      }
-
-      let event = {
-          session: session.id,
-          type : event_type,
-          datetime: session.created_at,
-          account: session.account,
-          campaign: session.campaign,
-          product_schedule: product_schedule
+      let event_object = {
+        session: session.id,
+        type : event_type,
+        datetime: session.created_at,
+        account: session.account,
+        campaign: session.campaign
       };
 
-      event = this.affiliateHelperController.transcribeAffiliates(session, event);
+      if(!_.isUndefined(product_schedules)){
+        event_object.product_schedules = product_schedules;
+      }
 
-      return this.pushRecordToRedshift('events', event).then(() => {
+      event_object = this.affiliateHelperController.transcribeAffiliates(session, event_object);
+
+      return this.pushRecordToRedshift('events', event_object).then(() => {
 
           return session;
 
@@ -197,7 +202,10 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       du.debug('Handle Email');
 
-      return Promise.resolve(pass_through);
+      return Promise.resolve(true);
+
+      //Technical Debt: Disabled
+      //return Promise.resolve(pass_through);
 
     }
 
@@ -205,7 +213,10 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       du.debug('Handle Notifications');
 
-      return this.issueNotifications(this.notification_parameters).then(() => pass_through);
+      return Promise.resolve(true);
+
+      //Technical Debt: Disabled
+      //return this.issueNotifications(this.notification_parameters).then(() => pass_through);
 
     }
 
@@ -250,7 +261,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
         datetime: timestamp.getISO8601(),
         account: global.account,
         campaign: event.campaign,
-        product_schedule: ''
+        product_schedule: '' //what is this?
       };
 
       return this.affiliateHelperController.transcribeAffiliates(event.affiliates, event_object);
@@ -262,7 +273,9 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       du.debug('Create Transaction Object');
 
-      let transaction = {
+      du.info(info);
+
+      let transaction_object = {
         id: info.transaction.id,
         datetime: info.transaction.created_at,
         customer: info.customer.id,
@@ -272,14 +285,12 @@ module.exports = class transactionEndpointController extends authenticatedContro
         amount:info.amount,
         processor_result:info.result,
         account:info.transaction.account,
-        transaction_type:"new",
-        transaction_subtype:this.getTransactionSubType(),
-        product_schedules:info.product_schedules,
-        //Technical Debt:  Resolve in the AM!
-        product_schedule:info.product_schedules[0],
+        type:"new",
+        subtype:this.getTransactionSubType(),
+        product_schedules:info.product_schedules
       };
 
-      return this.affiliateHelperController.transcribeAffiliates(info.session, transaction);
+      return this.affiliateHelperController.transcribeAffiliates(info.session, transaction_object);
 
     }
 

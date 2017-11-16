@@ -4,6 +4,7 @@ const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
+const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
 
 class ConfirmOrderController extends transactionEndpointController{
@@ -50,11 +51,12 @@ class ConfirmOrderController extends transactionEndpointController{
       'session':global.SixCRM.routes.path('model', 'entities/session.json'),
       'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
       'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
-      'products':global.SixCRM.routes.path('model', 'endpoints/components/transactionproducts.json'),
+      'transactionproducts':global.SixCRM.routes.path('model', 'endpoints/components/transactionproducts.json'),
       'transactions':global.SixCRM.routes.path('model', 'endpoints/components/transactions.json'),
       'response':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
     };
 
+    this.transactionHelperController = new TransactionHelperController();
     this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
     this.initialize();
@@ -106,6 +108,7 @@ class ConfirmOrderController extends transactionEndpointController{
 
     let session = this.parameters.get('session');
 
+    //Technical Debt:  Session Helper
     if(session.completed == true){
       eu.throwError('bad_request', 'The specified session is already complete.');
     }
@@ -123,20 +126,34 @@ class ConfirmOrderController extends transactionEndpointController{
     let promises = [
       this.sessionController.getCustomer(session),
       this.sessionController.listTransactions(session),
-      this.sessionController.listProducts(session)
     ];
 
     return Promise.all(promises).then(promises => {
 
       this.parameters.set('customer', promises[0]);
       this.parameters.set('transactions', promises[1]);
-      this.parameters.set('products', promises[2]);
 
       return true;
 
-    });
+    })
+    .then(() => this.setTransactionProducts());
 
   }
+
+  setTransactionProducts(){
+
+    du.debug('Set Transaction Products');
+
+    let transactions = this.parameters.get('transactions');
+
+    let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
+
+    this.parameters.set('transactionproducts', transaction_products);
+
+    return Promise.resolve(true);
+
+  }
+
 
   confirmOrder(){
 
@@ -159,13 +176,13 @@ class ConfirmOrderController extends transactionEndpointController{
     let session = this.parameters.get('session');
     let customer = this.parameters.get('customer');
     let transactions = this.parameters.get('transactions');
-    let products = this.parameters.get('products');
+    let transaction_products = this.parameters.get('transactionproducts');
 
     this.parameters.set('response', {
       session:session,
       customer: customer,
       transactions: transactions,
-      transaction_products: products
+      transaction_products: transaction_products
     });
 
     return Promise.resolve(true);
@@ -195,7 +212,7 @@ class ConfirmOrderController extends transactionEndpointController{
 
     let session = this.parameters.get('session');
 
-    return this.pushEventToRedshift('confirm', session).then((result) => {
+    return this.pushEventToRedshift({event_type:'confirm', session: session}).then((result) => {
 
       return true;
 

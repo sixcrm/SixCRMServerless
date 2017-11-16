@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/eventtype.json",
+  "title": "Event Type",
+  "description": "A event type",
+  "type":"string",
+  "enum": ["click","lead","order","upsell","confirm"]
+}

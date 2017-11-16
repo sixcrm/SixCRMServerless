@@ -46,6 +46,7 @@ module.exports = class RebillHelper {
       'day': global.SixCRM.routes.path('model','helpers/rebill/day.json'),
       'billdate':global.SixCRM.routes.path('model', 'definitions/iso8601.json'),
       'nextproductschedulebilldaynumber': global.SixCRM.routes.path('model','helpers/rebill/day.json'),
+      'productscheduleids': global.SixCRM.routes.path('model','general/uuidv4list.json'),
       'productschedules': global.SixCRM.routes.path('model','helpers/rebill/productschedules.json'),
       'scheduleelementsonbillday':global.SixCRM.routes.path('model', 'helpers/rebill/scheduledproducts.json'),
       'transactionproducts': global.SixCRM.routes.path('model', 'helpers/rebill/transactionproducts.json'),
@@ -83,32 +84,38 @@ module.exports = class RebillHelper {
 
     du.debug('Set Parameters');
 
+    du.info(argumentation);
+
     this.parameters.setParameters({argumentation: argumentation, action: action});
 
     return Promise.resolve(true);
 
   }
 
+  //Technical Debt:  Break this function down.
   hydrateArguments(){
 
     du.debug('Hydrate Arguments');
 
     let session = this.parameters.get('session');
     let day = this.parameters.get('day', null, false);
-    let product_schedules = this.parameters.get('productschedules', null, false);
+    let product_schedule_ids = this.parameters.get('productscheduleids', null, false);
 
     if(_.isNull(day)){
       this.calculateDayInCycle(session.created_at);
     }
 
-    if(_.isNull(product_schedules)){
+    if(_.isNull(product_schedule_ids)){
 
       if(!_.has(this, 'sessionController')){
         this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
       }
 
       return this.sessionController.listProductSchedules(session)
-      .then(results => this.sessionController.getResult(results, 'productschedules'))
+      .then(results => {
+        du.info(results);
+        return this.sessionController.getResult(results, 'productschedules')
+      })
       .then(product_schedules => {
         if(!_.isNull(product_schedules)){
           this.parameters.set('productschedules', product_schedules);
@@ -117,9 +124,23 @@ module.exports = class RebillHelper {
         eu.throwError('server', 'Session does not have product schedules.');
       });
 
-    }
+    }else{
 
-    return Promise.resolve(true);
+      if(!_.has(this, 'productScheduleController')){
+        this.productScheduleController = global.SixCRM.routes.include('entities', 'ProductSchedule.js');
+      }
+
+      return this.productScheduleController.listProductSchedulesByList({product_schedules: product_schedule_ids})
+      .then((product_schedules) => this.productScheduleController.getResult(product_schedules, 'productschedules'))
+      .then(product_schedules => {
+        //validate that we have them all...
+        this.parameters.set('productschedules', product_schedules);
+
+        return true;
+
+      });
+
+    }
 
   }
 

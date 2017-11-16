@@ -47,6 +47,7 @@ function getValidProcessorResponse(){
 function getValidInfo(){
 
   return {
+    amount: 12.99,
     transaction: getValidTransaction(),
     product_schedules: getValidProductScheduleIDs(),
     customer: getValidCustomer(),
@@ -450,6 +451,7 @@ describe('createOrder', function () {
     it('successfully runs execute method in the absence of a event creditcard (upsell)', () => {
 
       let event = getValidEvent();
+
       delete event.creditcard;
       event.transaction_subtype = 'upsell';
       let session = getValidSession();
@@ -681,6 +683,7 @@ describe('createOrder', function () {
         let hydrated_campaign = createOrderController.parameters.store['campaign'];
 
         let stored_credit_card = createOrderController.parameters.store['creditcard'];
+
         delete stored_credit_card.id;
         delete stored_credit_card.created_at;
         delete stored_credit_card.updated_at;
@@ -714,6 +717,7 @@ describe('createOrder', function () {
       createOrderController.parameters.set('session', session);
       createOrderController.parameters.set('campaign', campaign);
       createOrderController.parameters.set('productschedules', product_schedule_ids);
+      createOrderController.parameters.set('sessionlength', 3600);
 
       return createOrderController.validateEventProperties().then(result => {
         expect(result).to.equal(true);
@@ -1011,6 +1015,7 @@ describe('createOrder', function () {
 
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
+      createOrderController.parameters.set('amount', 12.99);
       createOrderController.parameters.set('rebill', getValidRebill());
       createOrderController.parameters.set('transaction', getValidTransaction());
       createOrderController.parameters.set('session', getValidSession());
@@ -1305,6 +1310,7 @@ describe('createOrder', function () {
       return createOrderController.setCreditCard().then(result => {
         expect(result).to.equal(true);
         let set_creditcard = createOrderController.parameters.store['creditcard'];
+
         delete set_creditcard.id;
         delete set_creditcard.created_at;
         delete set_creditcard.updated_at;
@@ -1317,6 +1323,7 @@ describe('createOrder', function () {
     it('successfully skips when creditcard is not set', () => {
 
       let event = getValidEventBody();
+
       delete event.creditcard;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
@@ -1360,6 +1367,7 @@ describe('createOrder', function () {
     it('successfully sets the campaign', () => {
 
       let campaign = getValidCampaign();
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
         get: ({id}) => {
           return Promise.resolve(campaign)
@@ -1367,6 +1375,7 @@ describe('createOrder', function () {
       });
 
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
       createOrderController.parameters.set('session', getValidSession());
 
       return createOrderController.setCampaign().then(result => {
@@ -1409,6 +1418,7 @@ describe('createOrder', function () {
       });
 
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
       createOrderController.parameters.set('session', getValidSession());
 
       return createOrderController.setCustomer().then(result => {
@@ -1429,6 +1439,7 @@ describe('createOrder', function () {
       });
 
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
       createOrderController.parameters.set('session', getValidSession());
       createOrderController.parameters.set('customer', customer);
 

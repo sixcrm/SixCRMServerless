@@ -258,7 +258,7 @@ class CreateLeadController extends transactionEndpointController{
 
       let session = this.parameters.get('session');
 
-      return this.pushEventToRedshift('lead', session).then(() => {
+      return this.pushEventToRedshift({event_type: 'lead', session: session}).then(() => {
 
         return true;
 
