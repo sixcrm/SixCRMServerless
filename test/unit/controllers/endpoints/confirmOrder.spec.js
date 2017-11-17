@@ -130,7 +130,9 @@ function getValidEvent(){
       'X-Forwarded-Port': '443',
       'X-Forwarded-Proto': 'https'
     },
-    queryStringParameters: 'session=668ad918-0d09-4116-a6fe-0e8a9eda36f7',
+    queryStringParameters: {
+      session: '668ad918-0d09-4116-a6fe-0e8a9eda36f7'
+    },
     pathParameters: { account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c' },
     stageVariables: null,
     requestContext:{

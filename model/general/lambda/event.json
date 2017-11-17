@@ -21,7 +21,7 @@
 		},
 		"queryStringParameters":{
 			"anyOf":[
-				{"type":"string"},
+				{"type":"object"},
 				{"type":"null"}
 			]
 		}
