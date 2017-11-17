@@ -153,7 +153,8 @@ describe('Transaction Round Trip Test',() => {
                   "zip":"97213",
                   "country":"USA"
                 }
-              }
+              },
+              "transaction_subtype":"main"
             };
 
             du.debug('Order Create JSON', order_create);
@@ -189,7 +190,7 @@ describe('Transaction Round Trip Test',() => {
               var upsell_create = {
                 "session": session_id,
                 "product_schedules": upsell_product_schedules,
-                "transaction_subtype":"upsell1"
+                "transaction_subtype":"upsell"
               };
 
               du.debug('Upsell Post Data:', upsell_create);

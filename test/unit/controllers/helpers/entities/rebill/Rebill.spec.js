@@ -151,6 +151,14 @@ function getValidProductSchedules(){
   ]
 }
 
+function getValidProductScheduleIDs(){
+
+  return arrayutilities.map(getValidProductSchedules(), product_schedule => {
+    return product_schedule.id;
+  });
+
+}
+
 function getValidProductSchedule(){
 
   return getValidProductSchedules()[0];
@@ -191,7 +199,7 @@ describe('setParameters', () => {
 
     let day = 2;
 
-    let product_schedules = [getValidProductSchedule()];
+    let product_schedules = getValidProductScheduleIDs();
 
     let rebillHelper = new RebillHelperController();
 
@@ -199,7 +207,7 @@ describe('setParameters', () => {
 
       expect(rebillHelper.parameters.store['session']).to.equal(session);
       expect(rebillHelper.parameters.store['day']).to.equal(day);
-      expect(rebillHelper.parameters.store['productschedules']).to.equal(product_schedules);
+      expect(rebillHelper.parameters.store['productscheduleids']).to.equal(product_schedules);
 
     });
 
@@ -935,6 +943,15 @@ describe('getScheduleElementsOnBillDay', () => {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
+        listProductSchedulesByList:({product_schedules}) => {
+          return Promise.resolve({productschedules:product_schedules});
+        },
+        getResult: (object, field) => {
+          return product_schedules;
+        }
+      });
+
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
         createActivity: (actor, action, acted_upon, associated_with) => {
           return true;
@@ -962,6 +979,7 @@ describe('getScheduleElementsOnBillDay', () => {
       let session = getValidSession();
       let day = -1;
       let product_schedules = [getValidProductSchedule()];
+      let product_schedule_ids = [product_schedules[0].id];
 
       let expected_rebill = {
         account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
@@ -969,7 +987,7 @@ describe('getScheduleElementsOnBillDay', () => {
         bill_at: "2017-04-06T18:40:41.000Z",
         entity_type: "rebill",
         parentsession: session.id,
-        product_schedules: [product_schedules[0].id],
+        product_schedules: product_schedule_ids,
         products: [
           {
             product: product_schedules[0].schedule[0].product_id,
@@ -980,7 +998,7 @@ describe('getScheduleElementsOnBillDay', () => {
 
       let rebillHelper = new RebillHelperController();
 
-      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedule_ids}).then(result => {
 
         let created_at = result.created_at;
         let updated_at = result.updated_at;
@@ -1018,7 +1036,7 @@ describe('getScheduleElementsOnBillDay', () => {
 
       let rebillHelper = new RebillHelperController();
 
-      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: [product_schedules[0].id]}).then(result => {
 
         let created_at = result.created_at;
         let updated_at = result.updated_at;
@@ -1056,7 +1074,7 @@ describe('getScheduleElementsOnBillDay', () => {
 
       let rebillHelper = new RebillHelperController();
 
-      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: [product_schedules[0].id]}).then(result => {
 
         let created_at = result.created_at;
         let updated_at = result.updated_at;
@@ -1094,7 +1112,7 @@ describe('getScheduleElementsOnBillDay', () => {
 
       let rebillHelper = new RebillHelperController();
 
-      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: [product_schedules[0].id]}).then(result => {
 
         let created_at = result.created_at;
         let updated_at = result.updated_at;
@@ -1132,7 +1150,7 @@ describe('getScheduleElementsOnBillDay', () => {
 
       let rebillHelper = new RebillHelperController();
 
-      return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+      return rebillHelper.createRebill({session: session, day: day, product_schedules: [product_schedules[0].id]}).then(result => {
 
         let created_at = result.created_at;
         let updated_at = result.updated_at;

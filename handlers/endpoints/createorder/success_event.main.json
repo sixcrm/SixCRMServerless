@@ -3,7 +3,7 @@
 	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
 	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts",
 	"body":{
-		"session": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
+		"session": "27c40115-f318-45a2-a13e-623023eac8a3",
 		"product_schedules": [ "12529a17-ac32-4e46-b05b-83862843055d" ],
 		"creditcard":{
 			"number": "4111111111111111",

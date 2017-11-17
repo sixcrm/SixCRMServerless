@@ -36,7 +36,7 @@ module.exports = class RebillHelper {
         },
         optional:{
           day:'day',
-          productschedules: 'product_schedules'
+          productscheduleids: 'product_schedules'
         }
       }
     };
