@@ -110,7 +110,7 @@ function getValidEvent(){
   return {
     resource: '/token/acquire/{account}',
     path: '/token/acquire/d3fa3bf3-7824-49f4-8261-87674482bf1c',
-    httpMethod: 'POST',
+    httpMethod: 'GET',
     headers: {
       'Accept-Encoding': 'gzip, deflate',
       Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts',
@@ -157,8 +157,8 @@ function getValidEvent(){
         userAgent: 'node-superagent/2.3.0',
         user: null
       },
-      resourcePath: '/token/acquire/{account}',
-      httpMethod: 'POST',
+      resourcePath: '/order/confirm/{account}',
+      httpMethod: 'GET',
       apiId: '8jmwnwcaic'
     },
     body: null,

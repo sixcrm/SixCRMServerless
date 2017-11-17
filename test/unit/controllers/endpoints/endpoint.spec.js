@@ -99,6 +99,7 @@ function getValidGETEvent(){
 
   event.queryStringParameters = 'session=668ad918-0d09-4116-a6fe-0e8a9eda36f7';
   event.httpMethod = 'GET'
+  delete event.body;
   return event;
 
 }
@@ -237,6 +238,17 @@ describe('controllers/endpoints/endpoint.js', () => {
     it('validates a good event', () => {
 
       let event = getValidPOSTEvent();
+      let endpointController = new EndpointController();
+
+      return endpointController.validateEvent(event).then(result => {
+        expect(result).to.deep.equal(event);
+      });
+
+    });
+
+    it('validates a good event', () => {
+
+      let event = getValidGETEvent();
       let endpointController = new EndpointController();
 
       return endpointController.validateEvent(event).then(result => {
