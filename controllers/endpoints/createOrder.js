@@ -302,7 +302,7 @@ class CreateOrderController extends transactionEndpointController{
     let expired = session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - session_length);
 
     if(expired){
-      eu.throwError('bad_request', 'Session has expired.');
+      //eu.throwError('bad_request', 'Session has expired.');
     }
 
     return true;
@@ -358,7 +358,11 @@ class CreateOrderController extends transactionEndpointController{
     let session = this.parameters.get('session');
     let product_schedules = this.parameters.get('productschedules');
 
-    session.product_schedules = arrayutilities.merge(session.product_schedules, product_schedules);
+    if(_.has(session, 'product_schedules')){
+      session.product_schedules = arrayutilities.merge(session.product_schedules, product_schedules);
+    }else{
+      session.product_schedules = product_schedules;
+    }
 
     if(_.has(rebill, 'transactions') && arrayutilities.nonEmpty(rebill.transactions)){
       rebill.transactions = arrayutilities.merge(rebill.transactions, [transaction.id]);

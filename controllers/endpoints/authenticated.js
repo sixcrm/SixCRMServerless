@@ -27,7 +27,11 @@ module.exports = class AuthenticatedController extends endpointController {
       .then((event) => this.validateEvent(event))
 			.then((event) => this.acquireAccount(event))
 			.then((event) => this.acquireUser(event))
-			.then((event) => this.validateRequiredPermissions(event));
+			.then((event) => this.validateRequiredPermissions(event))
+      .then((event) => {
+        //du.info(event); process.exit();
+        return event;
+      });
 
     }
 
@@ -128,29 +132,33 @@ module.exports = class AuthenticatedController extends endpointController {
 
       du.debug('Validate Required Permissions');
 
-      let validated_permissions = arrayutilities.map(this.required_permissions, required_permission => {
+      if(_.has(this, 'required_permissions')){
 
-        let permission_array = required_permission.split('/');
+        let validated_permissions = arrayutilities.map(this.required_permissions, required_permission => {
 
-        let permission_utilities_state = JSON.stringify(permissionutilities.getState());
+          let permission_array = required_permission.split('/');
 
-        let question = permission_utilities_state+permissionutilities.buildPermissionString(permission_array[1], permission_array[0]);
+          let permission_utilities_state = JSON.stringify(permissionutilities.getState());
 
-        let answer_function = () => {
+          let question = permission_utilities_state+permissionutilities.buildPermissionString(permission_array[1], permission_array[0]);
 
-          let permission = permissionutilities.validatePermissions(permission_array[1], permission_array[0]);
+          let answer_function = () => {
 
-          return permission;
+            let permission = permissionutilities.validatePermissions(permission_array[1], permission_array[0]);
+
+            return permission;
+
+          }
+
+          return global.SixCRM.localcache.resolveQuestion(question, answer_function);
+
+        });
+
+        if(_.contains(validated_permissions, false)){
+
+          eu.throwError('fobidden', 'Unable to execute action.  User lacks permission.');
 
         }
-
-        return global.SixCRM.localcache.resolveQuestion(question, answer_function);
-
-      });
-
-      if(_.contains(validated_permissions, false)){
-
-        eu.throwError('fobidden', 'Unable to execute action.  User lacks permission.');
 
       }
 
