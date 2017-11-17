@@ -14,13 +14,29 @@ module.exports = class EndpointController {
 
   }
 
+  normalizeEvent(event){
+
+    du.debug('Normalize Event');
+
+    let normalized = event;
+
+    try{
+      normalized = JSON.parse(event);
+    }catch(error){
+      //do nothing
+    }
+
+    return Promise.resolve(normalized);
+
+  }
+
   //Technical Debt:  This is gross.  Refactor!
   clearState(){
 
-      du.debug('Clear State');
+    du.debug('Clear State');
 
-      this.pathParameters = undefined;
-      this.queryString = undefined;
+    this.pathParameters = undefined;
+    this.queryString = undefined;
 
   }
 
@@ -70,69 +86,6 @@ module.exports = class EndpointController {
 
     if(!mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'), null, false)){
       this.throwUnexpectedEventStructureError(event);
-    }
-
-    return Promise.resolve(event);
-
-  }
-
-
-  parseEvent(event){
-
-    du.debug('Parse Event');
-
-    if(!_.isObject(event)){
-
-      try{
-
-        event = JSON.parse(event.replace(/[\n\r\t]+/g, ''));
-
-        return this.parseEvent(event);
-
-      }catch(error){
-
-        du.error(error);
-
-        this.throwUnexpectedEventStructureError(event);
-
-      }
-
-    }
-
-    if(!_.isObject(event.requestContext)){
-
-      try{
-
-        event.requestContext = JSON.parse(event.requestContext);
-
-        return this.parseEvent(event);
-
-      }catch(error){
-
-        du.error(error);
-
-        this.throwUnexpectedEventStructureError(event);
-
-      }
-
-    }
-
-    if(!_.isObject(event.pathParameters)){
-
-      try{
-
-        event.pathParameters = JSON.parse(event.pathParameters);
-
-        return this.parseEvent(event);
-
-      }catch(error){
-
-        du.error(error);
-
-        this.throwUnexpectedEventStructureError(event);
-
-      }
-
     }
 
     return Promise.resolve(event);

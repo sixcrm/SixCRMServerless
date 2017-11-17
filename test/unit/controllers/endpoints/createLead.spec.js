@@ -31,10 +31,61 @@ function getValidCustomer(){
 function getValidEvent(){
 
   return {
-  	"requestContext":"{\"authorizer\":{\"user\":\"4ee23a8f5c8661612075a89e72a56a3c6d00df90\"}}",
-  	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
-  	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts",
-  	"body":JSON.stringify(getValidEventBody())
+    resource: '/token/acquire/{account}',
+    path: '/token/acquire/d3fa3bf3-7824-49f4-8261-87674482bf1c',
+    httpMethod: 'POST',
+    headers: {
+      'Accept-Encoding': 'gzip, deflate',
+      Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts',
+      'CloudFront-Forwarded-Proto': 'https',
+      'CloudFront-Is-Desktop-Viewer': 'true',
+      'CloudFront-Is-Mobile-Viewer': 'false',
+      'CloudFront-Is-SmartTV-Viewer': 'false',
+      'CloudFront-Is-Tablet-Viewer': 'false',
+      'CloudFront-Viewer-Country': 'US',
+      'Content-Type': 'application/json',
+      Host: 'development-api.sixcrm.com',
+      'User-Agent': 'node-superagent/2.3.0',
+      Via: '1.1 e1fff2dee56e3b55796cc594a92413c0.cloudfront.net (CloudFront)',
+      'X-Amz-Cf-Id': 'auxn3Iv21qv3qMmcsVjlQxF86zRvidB4jV2XkHx3rdJ94iRatjLc_A==',
+      'X-Amzn-Trace-Id': 'Root=1-5a0e3ea9-151c05ec1d5ebffe14d11acf',
+      'X-Forwarded-For': '71.193.160.163, 52.46.16.55',
+      'X-Forwarded-Port': '443',
+      'X-Forwarded-Proto': 'https'
+    },
+    queryStringParameters: null,
+    pathParameters: { account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c' },
+    stageVariables: null,
+    requestContext:{
+      path: '/lead/create/d3fa3bf3-7824-49f4-8261-87674482bf1c',
+      accountId: '068070110666',
+      resourceId: '7s02w8',
+      stage: 'development',
+      authorizer: {
+        principalId: 'user',
+        user: '4ee23a8f5c8661612075a89e72a56a3c6d00df90'
+      },
+      requestId: 'a837419c-cb38-11e7-ad83-af785c8f6952',
+      identity:{
+        cognitoIdentityPoolId: null,
+        accountId: null,
+        cognitoIdentityId: null,
+        caller: null,
+        apiKey: '',
+        sourceIp: '71.193.160.163',
+        accessKey: null,
+        cognitoAuthenticationType: null,
+        cognitoAuthenticationProvider: null,
+        userArn: null,
+        userAgent: 'node-superagent/2.3.0',
+        user: null
+      },
+      resourcePath: '/token/acquire/{account}',
+      httpMethod: 'POST',
+      apiId: '8jmwnwcaic'
+    },
+    body: JSON.stringify(getValidEventBody()),
+    isBase64Encoded: false
   };
 
 }
@@ -231,11 +282,13 @@ describe('createLead', function () {
   describe('execute', () => {
 
     before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+      mockery.resetCache();
+      mockery.deregisterAll();
+      mockery.enable({
+          useCleanCache: true,
+          warnOnReplace: false,
+          warnOnUnregistered: false
+      });
     });
 
     afterEach(() => {

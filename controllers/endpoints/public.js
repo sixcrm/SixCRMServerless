@@ -16,9 +16,11 @@ module.exports = class PublicController extends endpointController {
     }
 
     preprocessing(event){
-        du.debug('Preprocessing');
-        return this.validateEvent(event)
-      .then((event) => this.parseEvent(event))
+
+      du.debug('Preprocessing');
+
+      return this.normalizeEvent(event)
+      .then((event) => this.validateEvent(event))
       .then((event) => this.acquirePathParameters(event))
       .then((event) => this.parseEventQueryString(event));
     }

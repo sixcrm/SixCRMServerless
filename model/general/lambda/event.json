@@ -5,19 +5,25 @@
 	"type": "object",
 	"properties":{
 		"requestContext":{
-			"type":"string"
+			"type":"object"
 		},
 		"pathParameters":{
-			"type":"string"
+			"type":"object"
 		},
 		"Authorization":{
 			"type":"string"
 		},
 		"body":{
-			"type":"string"
+			"anyOf":[
+				{"type":"string"},
+				{"type":"null"}
+			]
 		},
 		"queryStringParameters":{
-			"type":"string"
+			"anyOf":[
+				{"type":"string"},
+				{"type":"null"}
+			]
 		}
 	},
 	"required":["requestContext","pathParameters"]

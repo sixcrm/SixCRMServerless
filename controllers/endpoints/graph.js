@@ -24,7 +24,7 @@ module.exports = class graphController extends authenticatedController {
 
       du.debug('Execute');
 
-      return this.parseEvent(event)
+      return this.preprocessing(event)
 			.then((event) => this.acquireAccount(event))
       .then((event) => this.acquireUser(event))
       .then((event) => this.parseEventQueryString(event))

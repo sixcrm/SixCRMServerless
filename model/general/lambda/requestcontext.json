@@ -1,0 +1,18 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"title": "Lambda Request Context",
+  "id":"/general/lambda/requestcontext.json",
+	"type": "object",
+	"properties":{
+    "authorizer": {
+			"type":"object",
+			"properties":{
+				"user": {
+					"type":"string"
+				}
+			},
+			"required":["user"]
+    }
+	},
+	"required":["authorizer"]
+}

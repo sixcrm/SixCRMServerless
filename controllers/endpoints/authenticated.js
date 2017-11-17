@@ -15,73 +15,41 @@ module.exports = class AuthenticatedController extends endpointController {
 
       super();
 
-      if(_.has(parameters, 'required_permissions')){
-
-        //Technical Debt: totally unnecessary, refactor.
-        this.required_permissions = parameters.required_permissions;
-
-      }
-
       this.userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
     }
 
     preprocessing(event){
 
-        du.debug('Preprocessing');
+      du.debug('Preprocessing');
 
-        return this.validateEvent(event)
-  			.then((event) => this.parseEvent(event))
-  			.then((event) => this.acquireAccount(event))
-  			.then((event) => this.acquireUser(event))
-  			.then((event) => this.validateRequiredPermissions(event));
+      return this.normalizeEvent(event)
+      .then((event) => this.validateEvent(event))
+			.then((event) => this.acquireAccount(event))
+			.then((event) => this.acquireUser(event))
+			.then((event) => this.validateRequiredPermissions(event));
 
     }
 
     acquireAccount(event){
 
-        du.debug('Acquire Account');
+      du.debug('Acquire Account');
 
-        return new Promise((resolve, reject) => {
+      if(objectutilities.hasRecursive(event, 'pathParameters.account')){
 
-            let pathParameters;
-            let account;
+        let account = event.pathParameters.account;
 
-            if(_.has(event, "pathParameters")){
+        permissionutilities.setGlobalAccount(account);
 
-                pathParameters = event.pathParameters;
+        return Promise.resolve(event);
 
-            }else{
+      }
 
-                return reject(eu.getError('bad_request','Unset pathParameters in the event.'));
-
-            }
-
-            if(_.has(pathParameters, 'account')){
-
-                account = pathParameters.account;
-
-            }else{
-
-                return reject(eu.getError('bad_request', 'Unable to identify account in pathParameters.'));
-
-            }
-
-            if(!_.isString(account)){
-
-                return reject(eu.getError('bad_request', 'Unrecognized account format.'));
-
-            }
-
-            permissionutilities.setGlobalAccount(account);
-
-            return resolve(event);
-
-        });
+      eu.throwError('bad_request', 'Account missing in path parameter.');
 
     }
 
-    //Technical Debt:  This is wrought with redundancies....
+     //Technical Debt:  This is wrought with redundancies....
     acquireUser(event){
 
       du.debug('Acquire User');
