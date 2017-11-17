@@ -28,6 +28,12 @@ function getValidCustomer(){
 
 }
 
+function getLocalEvent(){
+
+  return JSON.stringify(getValidEvent());
+
+}
+
 function getValidEvent(){
 
   return {
@@ -299,6 +305,102 @@ describe('createLead', function () {
     it('successfully executes', () => {
 
       let event = getValidEvent();
+      let customer = getValidCustomer();
+      let affiliates = getValidAffiliates();
+      let campaign = getValidCampaign();
+      let session = getValidSession();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
+        get:({id}) => {
+          return Promise.resolve(session)
+        },
+        isEmail: (user_string) => {
+          return true;
+        },
+        getUserStrict: (user_string) => {
+          return Promise.resolve({});
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
+        getCustomerByEmail: (email) => {
+          return Promise.resolve(null);
+        },
+        create:({entity}) => {
+          return Promise.resolve(customer);
+        }
+      });
+
+      let affiliates_helper_mock = class {
+        constructor(){}
+        handleAffiliateInformation(a_event){
+          let cloned_event = objectutilities.clone(a_event);
+
+          cloned_event.affiliates = affiliates;
+          return Promise.resolve(cloned_event);
+        }
+        transcribeAffiliates(source_object, destination_object){
+          return {};
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
+        get:({id}) => {
+          return Promise.resolve(campaign);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
+          return Promise.resolve({});
+        }
+      });
+
+      let mock_tracker_helper_controller = class {
+        constructor(){ }
+        handleTracking(id, info){
+          return Promise.resolve(info);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), mock_tracker_helper_controller);
+
+      let mock_email_helper = class {
+        constructor(){}
+        sendEmail(a_event, info){
+          return Promise.resolve(true);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
+        createNotificationsForAccount: (parameters) => {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        assureSession:(parameters) => {
+          return Promise.resolve(session);
+        }
+      });
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+      let createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+
+      return createLeadController.execute(event).then(result => {
+        expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'entities/session.json'))).to.equal(true);
+      });
+
+    });
+
+    it('successfully executes with local event', () => {
+
+      let event = getLocalEvent();
       let customer = getValidCustomer();
       let affiliates = getValidAffiliates();
       let campaign = getValidCampaign();

@@ -76,6 +76,7 @@ class CreateLeadController extends transactionEndpointController{
 			.then(() => this.assureSession())
       .then(() => {
 
+        //du.warning('here');
         this.postProcessing();
 
         return this.parameters.get('session');

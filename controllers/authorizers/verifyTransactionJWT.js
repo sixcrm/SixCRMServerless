@@ -9,19 +9,19 @@ class verifyTransactionJWTController {
 
     constructor(){
 
-        this.messages = {
-            bypass: 'BYPASS'
-        }
+      this.messages = {
+          bypass: 'BYPASS'
+      }
 
-        jwtutilities.setJWTType('transaction');
+      jwtutilities.setJWTType('transaction');
 
     }
 
     execute(event){
 
-        this.assureResources();
+      this.assureResources();
 
-        return Promise.resolve(this.verifyJWT(this.acquireToken(event)));
+      return Promise.resolve(this.verifyJWT(this.acquireToken(event)));
 
     }
 
@@ -55,13 +55,6 @@ class verifyTransactionJWTController {
 
       du.debug('Verify JWT');
 
-      if(this.developmentBypass(token)){
-
-          return this.messages.bypass;
-
-      }
-
-      du.info(token);
       let decoded_token = this.validateToken(token);
 
       du.debug('Decoded Token: ', decoded_token);

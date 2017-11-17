@@ -1,37 +1,59 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"4ee23a8f5c8661612075a89e72a56a3c6d00df90\"}}",
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
-	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2RldmVsb3BtZW50LWFwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNTEwNzcwMjEwLCJleHAiOjE1MTA3NzM4MTAsInVzZXJfYWxpYXMiOiI0ZWUyM2E4ZjVjODY2MTYxMjA3NWE4OWU3MmE1NmEzYzZkMDBkZjkwIn0.Jfe8_lGGJlYbB7HeTOQXXB0fRtEWyRNFmbsLIdRqrsM",
-	"body": {
-		"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
-		"affiliates": {
-			"affiliate":"abc123",
-			"subaffiliate_1":"Howdy",
-			"subaffiliate_2":"Doodie",
-			"subaffiliate_4":"Pant",
-			"subaffiliate_5":"Suit",
-			"cid":"dingdong"
+	"resource":"/token/acquire/{account}",
+	"path":"/token/acquire/d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"httpMethod":"POST",
+	"headers":{
+		"Accept-Encoding":"gzip, deflate",
+		"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts",
+		"CloudFront-Forwarded-Proto":"https",
+		"CloudFront-Is-Desktop-Viewer":"true",
+		"CloudFront-Is-Mobile-Viewer":"false",
+		"CloudFront-Is-SmartTV-Viewer":"false",
+		"CloudFront-Is-Tablet-Viewer":"false",
+		"CloudFront-Viewer-Country":"US",
+		"Content-Type":"application/json",
+		"Host":"development-api.sixcrm.com",
+		"User-Agent":"node-superagent/2.3.0",
+		"Via":"1.1 e1fff2dee56e3b55796cc594a92413c0.cloudfront.net (CloudFront)",
+		"X-Amz-Cf-Id":"auxn3Iv21qv3qMmcsVjlQxF86zRvidB4jV2XkHx3rdJ94iRatjLc_A==",
+		"X-Amzn-Trace-Id":"Root=1-5a0e3ea9-151c05ec1d5ebffe14d11acf",
+		"X-Forwarded-For":"71.193.160.163, 52.46.16.55",
+		"X-Forwarded-Port":"443",
+		"X-Forwarded-Proto":"https"
+	},
+	"queryStringParameters":null,
+	"pathParameters":{
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c"
+	},
+	"stageVariables":null,
+	"requestContext":{
+		"path":"/lead/create/d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"accountId":"068070110666",
+		"resourceId":"7s02w8",
+		"stage":"development",
+		"authorizer":{
+			"principalId":"user",
+			"user":"4ee23a8f5c8661612075a89e72a56a3c6d00df90"
 		},
-		"customer":{
-			"firstname": "Rama",
-			"lastname": "Damunaste",
-			"email": "rama@damunaste.com",
-			"phone": "1234567890",
-			"billing": {
-				"line1": "10 Downing St.",
-				"city": "Detroit",
-				"state": "Michigan",
-				"zip": "12345",
-				"country": "US"
-			},
-			"address": {
-				"line1": "334 Lombard St.",
-				"line2": "Apartment 2",
-				"city": "Portland",
-				"state": "Oregon",
-				"zip": "97203",
-				"country": "US"
-			}
-		}
-	}
+		"requestId":"a837419c-cb38-11e7-ad83-af785c8f6952",
+		"identity":{
+			"cognitoIdentityPoolId":null,
+			"accountId":null,
+			"cognitoIdentityId":null,
+			"caller":null,
+			"apiKey":"",
+			"sourceIp":"71.193.160.163",
+			"accessKey":null,
+			"cognitoAuthenticationType":null,
+			"cognitoAuthenticationProvider":null,
+			"userArn":null,
+			"userAgent":"node-superagent/2.3.0",
+			"user":null
+		},
+		"resourcePath":"/lead/create/{account}",
+		"httpMethod":"POST",
+		"apiId":"8jmwnwcaic"
+	},
+	"body":"{\"customer\":{\"email\":\"rama@damunaste.org\",\"firstname\":\"Rama\",\"lastname\":\"Damunaste\",\"phone\":\"1234567890\",\"address\":{\"line1\":\"10 Downing St.\",\"city\":\"London\",\"state\":\"Oregon\",\"zip\":\"97213\",\"country\":\"US\"}},\"affiliates\":{\"affiliate\":\"QQM7EP1V2CY1YBUWAHAD\",\"subaffiliate_1\":\"G2Q1U92Z2JKW11TKD78C\",\"subaffiliate_2\":\"6QG1MQZVKGQVWYN661J5\",\"subaffiliate_3\":\"DP9B54VRZLEECY7V1JQ8\",\"subaffiliate_4\":\"JF1FZRMH6CQB1LX5DDPR\",\"subaffiliate_5\":\"5KYZQETVNWB61GZG6PV7\",\"cid\":\"D1H2YXZZVEC87PG37Z4P\"},\"campaign\":\"70a6689a-5814-438b-b9fd-dd484d0812f9\"}",
+	"isBase64Encoded":false
 }
