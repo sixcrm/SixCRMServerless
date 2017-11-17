@@ -1,7 +1,124 @@
 const chai = require('chai');
 const expect = chai.expect;
+const mockery = require('mockery');
 
 describe('lib/cloudsearch-utilities', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    after(() => {
+        mockery.deregisterAll();
+    });
+
+    describe('defineIndexField', () => {
+
+        it('successfully creates index', () => {
+            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            cloudsearchutilities.cs = {
+                defineIndexField: () => {
+                       return {
+                           on: (parameters, response) => {
+                               response('success');
+                           },
+                           send: () => {}
+                       }
+                }
+            };
+
+            return cloudsearchutilities.defineIndexField().then((result) => {
+                expect(result).to.equal('success');
+            });
+        });
+
+        it('throws error when index creation failed', () => {
+            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            cloudsearchutilities.cs = {
+                defineIndexField: () => {
+                       return {
+                           on: () => {
+                               return {
+                                   on: (parameters, response) => {
+                                       response('error');
+                                   }
+                               }
+                           },
+                           send: () => {}
+                       }
+                }
+            };
+
+            return cloudsearchutilities.defineIndexField().catch((error) => {
+                expect(error.message).to.equal('[500] error');
+            });
+        });
+    });
+
+    describe('createDomain', () => {
+
+        it('successfully creates domain', () => {
+            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            cloudsearchutilities.cs = {
+                createDomain: () => {
+                       return {
+                           on: (parameters, response) => {
+                               response('success');
+                           },
+                           send: () => {}
+                       }
+                }
+            };
+
+            return cloudsearchutilities.createDomain().then((result) => {
+                expect(result).to.equal('success');
+            });
+        });
+
+        it('throws error when domain creation failed', () => {
+            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            cloudsearchutilities.cs = {
+                createDomain: () => {
+                       return {
+                           on: () => {
+                               return {
+                                   on: (parameters, response) => {
+                                       response('error');
+                                   }
+                               }
+                           },
+                           send: () => {}
+                       }
+                }
+            };
+
+            return cloudsearchutilities.createDomain().catch((error) => {
+                expect(error.message).to.equal('[500] error');
+            });
+        });
+    });
+
+    describe('instantiateCSD', () => {
+
+        it('successfully instantiates CSD', () => {
+
+            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            expect(cloudsearchutilities.instantiateCSD('an_endpoint')).to.equal('an_endpoint');
+        });
+    });
 
     describe('describeDomains', () => {
 
@@ -301,6 +418,12 @@ describe('lib/cloudsearch-utilities', () => {
 
         it('wait for CSD connection', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            cloudsearchutilities.csd = {
+                search: function(parameters, callback) {
+                    callback(null, 'success')
+                }
+            };
 
             //when count number is less than 50
             return cloudsearchutilities.waitForCSD(49).then((result) => {
