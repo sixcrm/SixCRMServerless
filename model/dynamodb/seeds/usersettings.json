@@ -106,6 +106,41 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
     },
     {
+      "id": "e2e-test-user@sixcrm.com",
+      "work_phone": "+38121000000",
+      "cell_phone": "+381630000000",
+      "timezone": "Europe/Belgrade",
+      "notifications": [
+        {
+          "name": "six",
+          "receive": true
+        },
+        {
+          "name": "email",
+          "receive": false,
+          "data": "e2e-test-user@sixcrm.com"
+        },
+        {
+          "name": "sms",
+          "receive": false
+        },
+        {
+          "name": "skype",
+          "receive": false
+        },
+        {
+          "name": "slack",
+          "receive": false
+        },
+        {
+          "name": "ios",
+          "receive": false
+        }
+      ],
+      "created_at":"2017-04-06T18:40:41.405Z",
+      "updated_at":"2017-04-06T18:41:12.521Z"
+    },
+    {
       "id": "timothy.dalbey@sixcrm.com",
       "timezone:": "America/Los_Angeles",
       "notifications": [
