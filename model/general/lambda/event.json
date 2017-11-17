@@ -10,10 +10,13 @@
 		"pathParameters":{
 			"type":"string"
 		},
+		"Authorization":{
+			"type":"string"
+		},
 		"body":{
 			"type":"string"
 		},
-		"Authorization":{
+		"queryStringParameters":{
 			"type":"string"
 		}
 	},

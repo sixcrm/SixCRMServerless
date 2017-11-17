@@ -1,0 +1,6 @@
+{
+	"Authorization":"1ud98uhc9h989811ud01yd81u2d1289duu1du1a0d9uula:1510878810909:e4f90b1121a4446c26a07d8679e8e5c5b0493a45",
+	"requestContext":"{\"authorizer\":{\"user\":\"4ee23a8f5c8661612075a89e72a56a3c6d00df90\"}}",
+	"pathParameters":"{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
+	"body": "{\"campaign\": \"70a6689a-5814-438b-b9fd-dd484d0812f9\",\"affiliates\":{\"affiliate\": \"9577X23DGX\",\"subaffiliate_1\": \"AGLPB9FLPA\",\"subaffiliate_2\": \"RCF2PFE74V\",\"subaffiliate_3\": \"D82HM7P4LJ\",\"subaffiliate_4\": \"FCLN8Z5XKP\",\"subaffiliate_5\": \"37Q1YH1LEM\",\"cid\": \"3ABBQ7XRMF\"}}"
+}

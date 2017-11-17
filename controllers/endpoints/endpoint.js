@@ -14,6 +14,7 @@ module.exports = class EndpointController {
 
   }
 
+  //Technical Debt:  This is gross.  Refactor!
   clearState(){
 
       du.debug('Clear State');
@@ -28,7 +29,7 @@ module.exports = class EndpointController {
     du.debug('Acquire Body');
 
     if(!_.has(event, 'body')){
-      this.throwUnexpectedEventStructureError();
+      this.throwUnexpectedEventStructureError(event);
     }
 
     let duplicate_body;
@@ -59,7 +60,7 @@ module.exports = class EndpointController {
 
     }
 
-    this.throwUnexpectedEventStructureError();
+    this.throwUnexpectedEventStructureError(event);
 
   }
 
@@ -68,7 +69,7 @@ module.exports = class EndpointController {
     du.debug('Validate Event');
 
     if(!mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'), null, false)){
-      this.throwUnexpectedEventStructureError();
+      this.throwUnexpectedEventStructureError(event);
     }
 
     return Promise.resolve(event);
@@ -92,7 +93,7 @@ module.exports = class EndpointController {
 
         du.error(error);
 
-        this.throwUnexpectedEventStructureError();
+        this.throwUnexpectedEventStructureError(event);
 
       }
 
@@ -110,7 +111,7 @@ module.exports = class EndpointController {
 
         du.error(error);
 
-        this.throwUnexpectedEventStructureError();
+        this.throwUnexpectedEventStructureError(event);
 
       }
 
@@ -128,7 +129,7 @@ module.exports = class EndpointController {
 
         du.error(error);
 
-        this.throwUnexpectedEventStructureError();
+        this.throwUnexpectedEventStructureError(event);
 
       }
 
@@ -154,7 +155,7 @@ module.exports = class EndpointController {
 
         du.error(error);
 
-        this.throwUnexpectedEventStructureError();
+        this.throwUnexpectedEventStructureError(event);
 
       }
 
@@ -164,9 +165,11 @@ module.exports = class EndpointController {
 
   }
 
-  throwUnexpectedEventStructureError(){
+  throwUnexpectedEventStructureError(event){
 
     du.debug('Throw Unexpected Event Structure Error');
+
+    du.warning(event);
 
     eu.throwError('bad_request', 'Unexpected event structure.');
 

@@ -13,15 +13,16 @@ module.exports = class AuthenticatedController extends endpointController {
 
     constructor(parameters){
 
-        super(parameters);
+      super();
 
-        if(_.has(parameters, 'required_permissions')){
+      if(_.has(parameters, 'required_permissions')){
 
-            this.required_permissions = parameters.required_permissions;
+        //Technical Debt: totally unnecessary, refactor.
+        this.required_permissions = parameters.required_permissions;
 
-        }
+      }
 
-        this.userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+      this.userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
     }
 
