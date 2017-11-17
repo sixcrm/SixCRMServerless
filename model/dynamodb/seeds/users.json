@@ -26,7 +26,7 @@
   "name":"E2ETestAdmin",
   "first_name": "E2ETest",
   "last_name": "Admin",
-  "auth0_id":"e2etestadmin123",
+  "auth0_id":"e2etestadmin1234",
   "id":"e2e-test-admin@sixcrm.com",
   "active":true,
   "termsandconditions":"0.1",
