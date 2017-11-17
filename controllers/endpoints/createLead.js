@@ -8,33 +8,34 @@ const transactionEndpointController = global.SixCRM.routes.include('controllers'
 class CreateLeadController extends transactionEndpointController{
 
     constructor(){
-      super({
-        required_permissions: [
-          'user/read',
-          'usersetting/read',
-          'account/read',
-          'customer/read',
-          'customer/create',
-          'customer/update',
-          'session/create',
-          'session/update',
-          'session/read',
-          'campaign/read',
-          'affiliate/read',
-          'affiliate/create',
-          'notification/create',
-          'notificationsetting/read',
-          'tracker/read',
-          'emailtemplate/read',
-          'smtpprovider/read'
-        ],
-        notification_parameters: {
-          type: 'lead',
-          action: 'created',
-          title:  'New Lead',
-          body: 'A new lead has been created.'
-        }
-      });
+      super();
+
+      this.required_permissions = [
+        'user/read',
+        'usersetting/read',
+        'account/read',
+        'customer/read',
+        'customer/create',
+        'customer/update',
+        'session/create',
+        'session/update',
+        'session/read',
+        'campaign/read',
+        'affiliate/read',
+        'affiliate/create',
+        'notification/create',
+        'notificationsetting/read',
+        'tracker/read',
+        'emailtemplate/read',
+        'smtpprovider/read'
+      ];
+
+      this.notification_parameters = {
+        type: 'lead',
+        action: 'created',
+        title:  'New Lead',
+        body: 'A new lead has been created.'
+      };
 
       this.parameter_definitions = {
         execute: {

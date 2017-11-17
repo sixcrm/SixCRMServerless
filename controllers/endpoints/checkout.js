@@ -13,16 +13,7 @@ const confirmOrderController = global.SixCRM.routes.include('controllers', 'endp
 class checkoutController extends transactionEndpointController{
 
     constructor(){
-        super({
-           //Technical Debt:  Somehow this is required... remove.
-            notification_parameters: {
-                type: 'order',
-                action: 'added',
-                title: 'A new order',
-                body: 'A new order has been created.'
-            }
-        });
-
+      super();
     }
 
     execute(event){

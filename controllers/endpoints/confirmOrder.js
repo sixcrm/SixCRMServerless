@@ -10,33 +10,35 @@ const transactionEndpointController = global.SixCRM.routes.include('controllers'
 class ConfirmOrderController extends transactionEndpointController{
 
   constructor(){
-    super({
-      required_permissions: [
-        'user/read',
-        'account/read',
-        'session/create',
-        'session/read',
-        'session/update',
-        'campaign/read',
-        'creditcard/create',
-        'creditcard/update',
-        'creditcard/read',
-        'productschedule/read',
-        'loadbalancer/read',
-        'product/read',
-        'affiliate/read',
-        'transaction/read',
-        'rebill/read',
-        'notifications/create',
-        'tracker/read'
-      ],
-      notification_parameters: {
-        type: 'session',
-        action: 'closed',
-        title: 'Completed Session',
-        body: 'A customer has completed a session.'
-      }
-    });
+
+    super();
+
+    this.required_permissions = [
+      'user/read',
+      'account/read',
+      'session/create',
+      'session/read',
+      'session/update',
+      'campaign/read',
+      'creditcard/create',
+      'creditcard/update',
+      'creditcard/read',
+      'productschedule/read',
+      'loadbalancer/read',
+      'product/read',
+      'affiliate/read',
+      'transaction/read',
+      'rebill/read',
+      'notifications/create',
+      'tracker/read'
+    ];
+
+    this.notification_parameters = {
+      type: 'session',
+      action: 'closed',
+      title: 'Completed Session',
+      body: 'A customer has completed a session.'
+    };
 
     this.parameter_definitions = {
       execute: {

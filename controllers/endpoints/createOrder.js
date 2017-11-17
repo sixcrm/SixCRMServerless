@@ -16,34 +16,36 @@ const transactionEndpointController = global.SixCRM.routes.include('controllers'
 class CreateOrderController extends transactionEndpointController{
 
   constructor(){
-    super({
-      required_permissions: [
-        'user/read',
-        'account/read',
-        'session/create',
-        'session/read',
-        'session/update',
-        'campaign/read',
-        'creditcard/create',
-        'creditcard/update',
-        'creditcard/read',
-        'productschedule/read',
-        'loadbalancer/read',
-        'rebill/read',
-        'rebill/create',
-        'rebill/update',
-        'product/read',
-        'affiliate/read',
-        'notification/create',
-        'tracker/read'
-      ],
-      notification_parameters: {
-        type: 'order',
-        action: 'added',
-        title: 'A new order',
-        body: 'A new order has been created.'
-      }
-    });
+
+    super();
+
+    this.required_permissions = [
+      'user/read',
+      'account/read',
+      'session/create',
+      'session/read',
+      'session/update',
+      'campaign/read',
+      'creditcard/create',
+      'creditcard/update',
+      'creditcard/read',
+      'productschedule/read',
+      'loadbalancer/read',
+      'rebill/read',
+      'rebill/create',
+      'rebill/update',
+      'product/read',
+      'affiliate/read',
+      'notification/create',
+      'tracker/read'
+    ];
+
+    this.notification_parameters = {
+      type: 'order',
+      action: 'added',
+      title: 'A new order',
+      body: 'A new order has been created.'
+    };
 
     this.parameter_definitions = {
       execute: {

@@ -1,8 +1,9 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
+const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
 
-describe('lib/tracker-utilities', () => {
+describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
     before(() => {
         mockery.enable({
@@ -28,9 +29,9 @@ describe('lib/tracker-utilities', () => {
 
             let data = 'Some sample data';
 
-            const trackerUtilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
+            const trackerHelperController = new TrackerHelperController();
 
-            return trackerUtilities.executeAffiliatesTracking(affiliate_ids, data).then((result) => {
+            return trackerHelperController.executeAffiliatesTracking(affiliate_ids, data).then((result) => {
                 expect(result).to.equal(null);
             });
 
@@ -51,9 +52,9 @@ describe('lib/tracker-utilities', () => {
                 }
             });
 
-            const trackerUtilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
+            const trackerHelperController = new TrackerHelperController();
 
-            return trackerUtilities.executeAffiliatesTracking(affiliate_ids, data).then((result) => {
+            return trackerHelperController.executeAffiliatesTracking(affiliate_ids, data).then((result) => {
                 expect(result).to.deep.equal([['sample transaction execution']]);
             });
         });
@@ -73,9 +74,9 @@ describe('lib/tracker-utilities', () => {
                 }
             });
 
-            const trackerUtilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
+            const trackerHelperController = new TrackerHelperController();
 
-            return trackerUtilities.executeAffiliateTrackers(affiliate_id, data).then((result) => {
+            return trackerHelperController.executeAffiliateTrackers(affiliate_id, data).then((result) => {
                 expect(result).to.equal(null);
             });
         });
@@ -95,9 +96,9 @@ describe('lib/tracker-utilities', () => {
                 }
             });
 
-            const trackerUtilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
+            const trackerHelperController = new TrackerHelperController();
 
-            return trackerUtilities.executeAffiliateTrackers(affiliate_id, data).then((result) => {
+            return trackerHelperController.executeAffiliateTrackers(affiliate_id, data).then((result) => {
                 expect(result).to.deep.equal(['sample transaction execution']);
             });
         });
@@ -117,9 +118,9 @@ describe('lib/tracker-utilities', () => {
                 }
             });
 
-            const trackerUtilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
+            const trackerHelperController = new TrackerHelperController();
 
-            return trackerUtilities.executeTracker(tracker, data).then((result) => {
+            return trackerHelperController.executeTracker(tracker, data).then((result) => {
                 expect(result).to.equal('sample transaction execution');
             });
         });
@@ -130,9 +131,9 @@ describe('lib/tracker-utilities', () => {
 
             let data = 'Some sample data';
 
-            const trackerUtilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
+            const trackerHelperController = new TrackerHelperController();
 
-            return trackerUtilities.executeTracker(tracker, data).then((result) => {
+            return trackerHelperController.executeTracker(tracker, data).then((result) => {
                 expect(result).to.equal(null);
             });
         });
@@ -143,9 +144,9 @@ describe('lib/tracker-utilities', () => {
 
             let data = 'Some sample data';
 
-            const trackerUtilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
+            const trackerHelperController = new TrackerHelperController();
 
-            return trackerUtilities.executeTracker(tracker, data)
+            return trackerHelperController.executeTracker(tracker, data)
                 .catch(error => expect(error.message).to.equal('[500] Unrecognized Tracker type: unexpected type'));
         });
     });

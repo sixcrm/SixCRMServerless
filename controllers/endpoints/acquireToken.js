@@ -13,16 +13,16 @@ class AcquireTokenController extends transactionEndpointController {
 
     constructor(){
 
-      super({
-        required_permissions: [
-          'user/read',
-          'account/read',
-          'campaign/read',
-          'affiliate/read',
-          'affiliate/create',
-          'tracker/read'
-        ]
-      });
+      super();
+
+      this.required_permissions = [
+        'user/read',
+        'account/read',
+        'campaign/read',
+        'affiliate/read',
+        'affiliate/create',
+        'tracker/read'
+      ];
 
       this.parameter_definitions = {
         execute: {

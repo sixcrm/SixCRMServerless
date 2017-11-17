@@ -8,7 +8,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
-const trackerutilities = global.SixCRM.routes.include('lib', 'tracker-utilities.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const notificationProvider = global.SixCRM.routes.include('providers', 'notification/notification-provider');
@@ -21,7 +20,9 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       super(parameters);
 
-      this.setLocalParameters(parameters);
+      const TrackerHelperController = global.SixCRM.routes.include('helpers','entities/tracker/Tracker.js');
+
+      this.trackerHelperController = new TrackerHelperController();
 
       const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
 
@@ -50,17 +51,15 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    setLocalParameters(parameters){
+    handleTracking(info){
 
-        ['notification_parameters'].forEach((local_parameter) => {
+      du.debug('Handle Tracking');
 
-            if(_.has(parameters, local_parameter)){
+      return this.trackerHelperController.handleTracking(info.session.id, info).then(() => {
 
-                this[local_parameter] = parameters[local_parameter];
+        return info;
 
-            }
-
-        });
+      });
 
     }
 
@@ -181,18 +180,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
         du.output('Kinesis Firehose Result', result);
 
         return result;
-
-      });
-
-    }
-
-    handleTracking(info){
-
-      du.debug('Handle Tracking');
-
-      return trackerutilities.handleTracking(info.session.id, info).then(() => {
-
-        return info;
 
       });
 

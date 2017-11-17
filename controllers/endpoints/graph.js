@@ -12,11 +12,11 @@ module.exports = class graphController extends authenticatedController {
 
     constructor(){
 
-        super();
+      super();
 
-        this.sixSchema = global.SixCRM.routes.include('handlers', 'endpoints/graph/schema');
+      this.sixSchema = global.SixCRM.routes.include('handlers', 'endpoints/graph/schema');
 
-        this.resolveController = new resolveController();
+      this.resolveController = new resolveController();
 
     }
 

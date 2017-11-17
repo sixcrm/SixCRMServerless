@@ -12,11 +12,12 @@ const affiliateController = global.SixCRM.routes.include('controllers', 'entitie
 class trackingController extends transactionEndpointController{
 
     constructor(){
-        super({
-            required_permissions: [
-              'tracker/read'
-            ]
-        });
+
+      super();
+
+      this.required_permissions = [
+        'tracker/read'
+      ];
 
     }
 

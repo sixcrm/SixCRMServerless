@@ -4,14 +4,9 @@ const _ =  require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
-const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+module.exports = class TrackerHelperController{
 
-class TrackerUtilities {
-
-    constructor(){
-
-    }
+    constructor(){}
 
     handleTracking(session, data){
 
@@ -27,9 +22,13 @@ class TrackerUtilities {
 
     getAffiliateIDsFromSession(session){
 
-        du.debug('Get Affiliate IDs From Session');
+      du.debug('Get Affiliate IDs From Session');
 
-        return sessionController.getAffiliateIDs(session);
+      if(!_.has(this, 'sessionController')){
+        this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+      }
+
+      return this.sessionController.getAffiliateIDs(session);
 
     }
 
@@ -66,7 +65,11 @@ class TrackerUtilities {
 
         du.debug('Execute Affiliate Trackers');
 
-        return trackerController.listByAffiliate({affiliate: affiliate_id}).then((trackers) => {
+        if(!_.has(this, 'trackerController')){
+          this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+        }
+
+        return this.trackerController.listByAffiliate({affiliate: affiliate_id}).then((trackers) => {
 
             if(!_.isArray(trackers)){
 
@@ -100,21 +103,25 @@ class TrackerUtilities {
 
             case 'postback':
 
-                return trackerController.executePostback(tracker, data).then((result) => {
+              if(!_.has(this, 'trackerController')){
+                this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+              }
 
-                    return resolve(result);
+              return this.trackerController.executePostback(tracker, data).then((result) => {
 
-                });
+                return resolve(result);
+
+              });
 
             case 'html':
 
-                du.debug('Tracker has HTML type, skipping.');
+              du.debug('Tracker has HTML type, skipping.');
 
-                return resolve(null);
+              return resolve(null);
 
             default:
 
-                return reject(eu.getError('validation','Unrecognized Tracker type: '+tracker.type));
+              return reject(eu.getError('validation','Unrecognized Tracker type: '+tracker.type));
 
             }
 
@@ -123,7 +130,3 @@ class TrackerUtilities {
     }
 
 }
-
-var tu = new TrackerUtilities();
-
-module.exports = tu;

@@ -218,7 +218,7 @@ function getValidAffiliatesPrototype(){
 
 }
 
-describe('createOrder', function () {
+describe('createLead', function () {
 
   describe('constructor', () => {
     it('successfully constructs', () => {
@@ -299,11 +299,14 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'tracker-utilities.js'), {
-        handleTracking:(id, info) => {
+      let mock_tracker_helper_controller = class {
+        constructor(){ }
+        handleTracking(id, info){
           return Promise.resolve(info);
         }
-      });
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), mock_tracker_helper_controller);
 
       let mock_email_helper = class {
         constructor(){}
