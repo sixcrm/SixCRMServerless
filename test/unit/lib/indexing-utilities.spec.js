@@ -4,7 +4,6 @@ let expect = chai.expect;
 const mockery = require('mockery');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-
 describe('lib/indexing-utilities', () => {
 
     before(() => {
@@ -231,6 +230,19 @@ describe('lib/indexing-utilities', () => {
             return IndexingUtilities.addToSearchIndex(entity).then((response) => {
                 expect(response).to.be.true;
                 expect(entity.index_action).to.equal('add');
+            });
+        });
+
+        it('throws undefined entity_type validation error', () => {
+            // given
+            let entity = {
+                id: '668ad918-0d09-4116-a6fe-0e8a9eda36f7'
+            };
+
+            let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
+
+            return IndexingUtilities.addToSearchIndex(entity).catch((error) => {
+                expect(error.message).to.equal('[500] Undefined "entity_type" field on entity indexing record.');
             });
         });
     });
@@ -462,6 +474,119 @@ describe('lib/indexing-utilities', () => {
                 '{"id":1,"fields":{"foo":"bar","firstname":"Gilford","lastname":"Twatson","suggestion_field_1":"Gilford Twatson"},"type":"add"},' +
                 '{"id":2,"fields":{"foo":"baz","name":"Bob","suggestion_field_1":"Bob"},"type":"delete"}' +
                 ']');
+        });
+    });
+
+    describe('updateSearchIndex', () => {
+
+        it('resolves to true when search index is updated', () => {
+            // given
+            let entity = {};
+
+            // then
+            return IndexingUtilities.updateSearchIndex(entity).then((response) => {
+                expect(response).to.be.true;
+            });
+        });
+    });
+
+    describe('validateEntity', () => {
+
+        it('returns error when entity is missing "id" and "index_action" property', () => {
+            // given
+            let entity = {};
+
+            // then
+            return IndexingUtilities.validateEntity(entity).then((response) => {
+                expect(response).to.deep.equal({
+                    valid: false,
+                    errors: ['Entity is missing the "id" property.',
+                            'Entity is missing "index_action" property.'
+                    ]});
+            });
+        });
+
+        it('returns error when entity is "id" is not UUIDV4 and "index_action" is unrecognized', () => {
+            // given
+            let entity = {
+                id: 'id',
+                index_action: 'index_action'
+            };
+
+            // then
+            return IndexingUtilities.validateEntity(entity).then((response) => {
+                expect(response).to.deep.equal({
+                    valid: false,
+                    errors: ['Entity "id" is not of type UUIDV4.',
+                        'Entity "index_action" property is unrecognized'
+                    ]});
+            });
+        });
+
+        it('resolves to true is entity is valid', () => {
+            //entity with valid data and sample id
+            let entity = {
+                id: '9s7978fr-50zr-4624-9998-7f3mn4b71ar9',
+                index_action: 'add',
+                entity_type: 'user'
+            };
+
+            // then
+            return IndexingUtilities.validateEntity(entity).then((response) => {
+                expect(response).to.be.true
+            });
+        });
+    });
+
+    describe('deserializeAddress', () => {
+        it('returns deserialized document with address data', () => {
+            // valid structure with sample data
+            let processed_document = {
+                fields: {
+                    address: {
+                        line1: 'a_line1',
+                        line2: 'a_line2',
+                        city: 'a_city',
+                        state: 'a_state',
+                        zip: 'a_zip',
+                        country: 'a_country'
+                    }
+                }
+            };
+
+            expect(IndexingUtilities.deserializeAddress(processed_document)).to.deep.equal({
+                fields: {
+                    address: {
+                        line1: 'a_line1',
+                        line2: 'a_line2',
+                        city: 'a_city',
+                        state: 'a_state',
+                        zip: 'a_zip',
+                        country: 'a_country'
+                    },
+                    address_line_1: 'a_line1',
+                    address_line_2: 'a_line2',
+                    city: 'a_city',
+                    state: 'a_state',
+                    zip: 'a_zip',
+                    country: 'a_country'
+                }
+            });
+        });
+
+        it('returns deserialized document', () => {
+            // valid structure with sample address data
+            let processed_document = {
+                fields: {
+                    address: {"a_key":"a_value"}
+                }
+            };
+
+            expect(IndexingUtilities.deserializeAddress(processed_document)).to.deep.equal({
+                fields: {
+                    address: {a_key: "a_value"}
+                }
+            });
         });
     });
 

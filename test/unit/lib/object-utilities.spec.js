@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const chai = require('chai');
 const expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -235,6 +236,95 @@ describe('lib/object-utilities', () => {
 
     it('returns null when class name is', () => {
         expect(objectutilities.getClassName({constructor:{}})).to.equal(null);
+    });
+  });
+
+  describe('nonEmpty', () => {
+
+    it('returns false if parameter is not an object', () => {
+        expect(objectutilities.nonEmpty('test')).to.be.false
+    });
+
+    it('throws error if fatal is true', () => {
+        try{
+          objectutilities.nonEmpty({}, true)
+        }catch(error){
+            expect(error.message).to.equal('[500] Object is empty.');
+        }
+    });
+  });
+
+  describe('recurseByDepth', () => {
+
+    it('returns result if sent function was successful', () => {
+      //send any function
+        expect(objectutilities.recurseByDepth(
+            {'a_key': 'a_value'},
+            function(){
+                return true;
+            }
+        )).to.equal('a_value');
+    });
+  });
+
+  describe('recurseAll', () => {
+
+    it('throws error if fatal is true', () => {
+        try{
+          objectutilities.recurseAll({}, 'not_a_function')
+        }catch(error){
+            expect(error.message).to.equal('[500] Match function must be a function.');
+        }
+    });
+  });
+
+  describe('orderedRecursion', () => {
+
+    it('returns value from object', () => {
+        //send any function
+        expect(objectutilities.orderedRecursion(
+            {'a_key': 'a_value'},
+            function(){
+                return true;
+            }
+        )).to.equal('a_value');
+    });
+
+    it('returns null when there is no recursion result', () => {
+        //send any function
+        expect(objectutilities.orderedRecursion(
+            {'a_key': ['a_value']},
+            function(){
+                return false;
+            }
+        )).to.equal(null);
+    });
+  });
+
+  describe('getObjectType', () => {
+
+    it('returns array', () => {
+        expect(objectutilities.getObjectType(['an_array'])).to.equal('array');
+    });
+
+    it('returns string', () => {
+        expect(objectutilities.getObjectType('a_string')).to.equal('string');
+    });
+
+    it('returns number', () => {
+        expect(objectutilities.getObjectType(1)).to.equal('number');
+    });
+
+    it('returns boolean', () => {
+        expect(objectutilities.getObjectType(true)).to.equal('boolean');
+    });
+
+    it('returns object', () => {
+        expect(objectutilities.getObjectType({'a_key': 'a_value'})).to.equal('object');
+    });
+
+    it('returns null', () => {
+        expect(objectutilities.getObjectType(null)).to.equal(null);
     });
   });
 
