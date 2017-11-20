@@ -41,7 +41,7 @@ describe('lib/error-utilities', () => {
 
     describe('getSlackErrorChannelWebhook', () => {
 
-        it('returns only alpha numeric characters from string', () => {
+        it('returns slack error channel webhook url', () => {
 
             const errorutilities = global.SixCRM.routes.include('lib', 'error-utilities.js');
 

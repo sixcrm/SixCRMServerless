@@ -123,8 +123,6 @@ describe('lib/test-utilities', () => {
 
         it('creates test auth with valid user data', () => {
 
-            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
-
             mockery.registerMock('jsonwebtoken', {
                 sign: () => {
                     return getValidJWT();
@@ -133,6 +131,8 @@ describe('lib/test-utilities', () => {
                     return true;
                 }
             });
+
+            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
             //send valid user
             expect(testutilities.createTestAuth0JWT('super.user@test.com', 'a_secret_key')).to.equal(getValidJWT());
@@ -140,8 +140,6 @@ describe('lib/test-utilities', () => {
 
         it('throws unidentified user type error', () => {
 
-            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
-
             mockery.registerMock('jsonwebtoken', {
                 sign: () => {
                     return getValidJWT();
@@ -150,6 +148,8 @@ describe('lib/test-utilities', () => {
                     return true;
                 }
             });
+
+            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
             //send invalid user
             try {
@@ -163,13 +163,14 @@ describe('lib/test-utilities', () => {
     describe('createTestTransactionJWT', () => {
 
         it('creates test transaction JWT', () => {
-            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
             mockery.registerMock('jsonwebtoken', {
                 sign: () => {
                     return getValidJWT();
                 }
             });
+
+            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
             expect(testutilities.createTestTransactionJWT()).to.equal(getValidJWT());
         });
