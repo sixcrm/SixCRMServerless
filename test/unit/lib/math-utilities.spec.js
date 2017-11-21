@@ -94,4 +94,19 @@ describe('lib/math-utilities', () => {
             }
         });
     });
+
+    describe('signIdempotentModulus', () => {
+
+        it('returns NaN when base is 0', () => {
+            expect(mathUtilities.signIdempotentModulus(1, 0, false)).to.be.NaN;
+        });
+
+        it('throws error when base is 0 and fatal value is set to true', () => {
+            try{
+                mathUtilities.signIdempotentModulus(1, 0, true);
+            }catch(error){
+                expect(error.message).to.equal('[500] You cannot perform modulus counting when the base is 0');
+            }
+        });
+    });
 });

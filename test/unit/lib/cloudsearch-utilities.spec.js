@@ -1,24 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
-const mockery = require('mockery');
 
 describe('lib/cloudsearch-utilities', () => {
-
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-    });
-
-    after(() => {
-        mockery.deregisterAll();
-    });
 
     describe('defineIndexField', () => {
 
@@ -288,10 +271,13 @@ describe('lib/cloudsearch-utilities', () => {
 
     describe('uploadDocuments', () => {
 
-        xit('uploads documents', () => {
+        it('uploads documents', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.csd = {
+                search: function(parameters, callback) {
+                    callback(null, 'success')
+                },
                 uploadDocuments: function(parameters, callback) {
                     callback(null, 'success')
                 }
@@ -302,10 +288,13 @@ describe('lib/cloudsearch-utilities', () => {
             });
         });
 
-        xit('throws error from csd uploadDocuments', () => {
+        it('throws error from csd uploadDocuments', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.csd = {
+                search: function(parameters, callback) {
+                    callback(null, 'success')
+                },
                 uploadDocuments: function(parameters, callback) {
                     callback('fail', null)
                 }

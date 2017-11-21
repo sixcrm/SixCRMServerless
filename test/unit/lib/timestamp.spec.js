@@ -94,6 +94,13 @@ describe('lib/timestamp', () => {
             expect(Timestamp.castToISO8601(frozenNowAsISO8601)).to.equal(frozenNowAsISO8601);
         });
 
+        it('returns date converted to ISO8601 from appointed string', () => {
+
+            let convertedDate = '2017-02-22T13:03:19.000Z';
+
+            expect(Timestamp.castToISO8601(frozenNowAsISOString)).to.equal(convertedDate);
+        });
+
         it('returns validation error when date type is invalid', () => {
 
             let invalidDate = -1;

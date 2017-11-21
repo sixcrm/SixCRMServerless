@@ -51,6 +51,12 @@ describe('lib/model-builder-utilities', () => {
             expect(hydrated_model.properties.id.anyOf[0].id).to.equal('/' + path_to_subreference);
         });
 
+        it('returns empty object when maximum depth reached', () => {
+
+            //any number higher than 20 (maximum depth limit)
+            expect(mbu.build('a_model', 21)).to.deep.equal({});
+        });
+
     });
 
     describe('getSubmodels', () => {

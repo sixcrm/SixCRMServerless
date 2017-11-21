@@ -147,6 +147,13 @@ describe('lib/sqs-utilities', () => {
 
             expect(sqsutilities.ensureString(123)).to.equal('123');
         });
+
+        it('returns unchanged value when value is string', () => {
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            expect(sqsutilities.ensureString('any_string_value')).to.equal('any_string_value');
+        });
     });
 
     describe('receiveMessages', () => {
@@ -551,6 +558,19 @@ describe('lib/sqs-utilities', () => {
 
             return sqsutilities.purgeQueue(params).then((result) => {
                 expect(result).to.equal(data);
+            });
+        });
+
+        it('returns false when appointed value is object with non-existing queue name', () => {
+
+            let params = {QueueName: 'a_name'};
+
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+            sqsutilities.existing_queues = ['test2'];
+
+            return sqsutilities.purgeQueue(params).then((result) => {
+                expect(result).to.equal(false);
             });
         });
 

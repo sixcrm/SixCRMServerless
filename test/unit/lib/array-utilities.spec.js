@@ -236,4 +236,15 @@ describe('lib/array-utilities', () => {
         expect(arrayutilities.last([1, 2, 3])).to.equal(3);
     });
 
+    it('sort', () => {
+        try {
+            arrayutilities.sort([1, 2], 'not a function');
+            expect.fail();
+        } catch (error) {
+            expect(error.message).to.equal('[500] ArrayUtilities.sort sort_function argument is not a function.');
+        }
+
+        expect(arrayutilities.sort([2, 3, 1])).to.deep.equal([1, 2, 3]);
+    });
+
 });

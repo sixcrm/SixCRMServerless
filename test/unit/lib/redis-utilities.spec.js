@@ -15,6 +15,19 @@ describe('lib/redis-utilities', () => {
                 expect(error.message).to.equal('[500] closeConnection assumes "this.redis_client" property to be set.');
             }
         });
+
+        it('throws error when redis client does not have the quit function', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            redisutilities.redis_client = {'foo': 'bar'};
+
+            try{
+                redisutilities.closeConnection()
+            }catch(error){
+                expect(error.message).to.equal('[500] Redis client does not have the quit function.');
+            }
+        });
     });
 
     describe('getEndpoint', () => {
