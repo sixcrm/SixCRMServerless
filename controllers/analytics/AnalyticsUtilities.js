@@ -445,6 +445,16 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
     }
 
+    appendQueueName(parameters, queue_name){
+
+        du.debug('Append Queue Name');
+
+        parameters['queuename'] = queue_name;
+
+        return parameters;
+
+    }
+
     disableACLs(){
 
       du.debug('Disable ACLs');

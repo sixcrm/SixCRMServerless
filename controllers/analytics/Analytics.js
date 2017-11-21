@@ -206,6 +206,16 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    getQueueSummary(parameters){
+
+      du.debug('Get Queue Summary');
+
+      parameters = this.appendQueueName(parameters.analyticsfilter, parameters.queuename)
+
+      return this.getResults('order_engine/queue_pagination', parameters, this.default_query_filters);
+
+    }
+
     /* Report Pages */
 
     getAffiliateReportSubaffiliates(parameters){
