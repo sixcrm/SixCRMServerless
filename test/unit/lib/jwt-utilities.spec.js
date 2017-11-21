@@ -90,7 +90,7 @@ describe('lib/jwt-utilities', () => {
             }
         });
 
-        it('throws error when transaction JWT secret key is not defined', () => {
+        it('throws error when site JST secret key is not defined', () => {
 
             const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 
