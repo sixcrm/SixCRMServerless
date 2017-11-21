@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/lastname.json",
+  "title": "Last Name",
+  "type":"string",
+  "minLength":1
+}

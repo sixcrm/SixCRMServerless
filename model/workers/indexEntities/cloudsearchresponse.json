@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/indexelements.json",
+	"title": "Cloudsearch Response",
+	"type": "object",
+  "properties":{
+    "status":{
+      "type":"string"
+    },
+    "adds":{"$ref":"../../definitions/nonnegativeinteger.json"},
+    "deletes":{"$ref":"../../definitions/nonnegativeinteger.json"}
+  },
+  "required":["status","adds","deletes"]
+}

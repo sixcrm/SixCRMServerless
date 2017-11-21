@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/active.json",
+  "title": "active",
+  "type":"boolean"
+}

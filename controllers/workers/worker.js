@@ -31,6 +31,16 @@ module.exports = class workerController {
 
     }
 
+    setParameters(parameters_object){
+
+      du.debug('Set Parameters');
+
+      this.parameters.setParameters(parameters_object);
+
+      return Promise.resolve(true);
+
+    }
+
     parseMessageBody(message, response_field){
 
       du.debug('Parse Input Message');

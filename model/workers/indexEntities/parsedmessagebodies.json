@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/indexelements.json",
+	"title": "Index Elements",
+	"type": "array",
+  "items":{"$ref":"../../helpers/indexing/indexelement.json"}
+}

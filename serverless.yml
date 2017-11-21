@@ -234,10 +234,12 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      bulk: true
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_indextoarchive}
+      name: 'indextoarchive'
       origin_queue: 'search_indexing'
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.indextoarchive}
+      failure_queue: 'search_indexing_failed'
+      workerfunction: 'indexEntities.js'
+      error_queue: 'some_queue'
+      bulk: true
       archivefilter: 'ALL'
 
   sendnotificationstoarchive:

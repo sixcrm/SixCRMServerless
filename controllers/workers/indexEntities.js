@@ -1,53 +1,160 @@
 'use strict';
-var _ = require("underscore");
-
-const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
-const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
-const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
-const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
-class indexEntitiesController extends workerController {
+class IndexEntitiesController extends workerController {
 
     constructor(){
-        super();
-        this.messages = {
-            success:'SUCCESS',
-            successnoaction:'SUCCESSNOACTION',
-            failure:'FAIL'
+
+      super();
+
+      this.parameter_definition = {
+        execute: {
+          required: {
+            messages: 'messages'
+          },
+          optional:{}
         }
+      };
+
+      this.parameter_validation = {
+        'messages':global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
+        'parsedmessagebodies': global.SixCRM.routes.path('model', 'workers/indexEntities/parsedmessagebodies.json'),
+        'indexingdocument': global.SixCRM.routes.path('model','workers/indexEntities/indexingdocument.json'),
+        'cloudsearchresponse': global.SixCRM.routes.path('model','workers/indexEntities/cloudsearchresponse.json'),
+        'responsecode': global.SixCRM.routes.path('model','workers/workerresponsetype.json')
+      };
+
+      const IndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/Indexing.js');
+
+      this.indexingHelperController = new IndexingHelperController();
+
+      this.cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+      this.instantiateParameters();
+
     }
 
-    execute(event){
+    execute(messages){
 
-        du.debug('Executing Entity Index', event);
+      du.debug('Execute');
 
-        return new Promise((resolve, reject) => {
+      return this.setParameters({argumentation: {messages: messages}, action: 'execute'})
+      .then(() => this.preprocessing())
+      .then(() => this.createIndexingDocument())
+      .then(() => this.pushDocumentToCloudsearch())
+      .then(() => this.setResponseCode())
+      .then(() => this.respond());
 
-            let processed_documents = indexingutilities.createIndexingDocument(event);
+    }
 
-            du.debug('Documents ready for indexing.', processed_documents);
+    preprocessing(){
 
-            cloudsearchutilities.uploadDocuments(processed_documents).then((response) => {
+      du.debug('Preprocessing');
 
-                du.debug('Cloudsearch indexing response: ', response);
+      return this.parseMessages();
 
-                if(_.has(response, 'status') && response.status == 'success'){
-                    return resolve(this.messages.success);
-                }else{
-                    return resolve(this.messages.successnoaction);
-                }
+    }
 
-            }).catch(() => {
-                return reject(this.messages.failure);
-            });
+    parseMessages(){
 
-        });
+      du.debug('Parse Messages');
+
+      let messages = this.parameters.get('messages');
+
+      let message_bodies = arrayutilities.map(messages, (message) => {
+
+        try{
+
+          return JSON.parse(message.Body);
+
+        }catch(error){
+
+          //send the message to the failure queue??
+          du.error(error);
+          return false;
+
+        }
+
+      });
+
+      let parsed_message_bodies = arrayutilities.filter(message_bodies, (message_body) => {
+        return objectutilities.isObject(message_body);
+      });
+
+      this.parameters.set('parsedmessagebodies', parsed_message_bodies);
+
+      return Promise.resolve(true);
+
+    }
+
+    createIndexingDocument(){
+
+      du.debug('Create Indexing Document');
+
+      let parsedmessagebodies = this.parameters.get('parsedmessagebodies');
+
+      return this.indexingHelperController.createIndexingDocument(parsedmessagebodies).then(result => {
+        this.parameters.set('indexingdocument', result);
+        return true;
+      });
+
+    }
+
+    pushDocumentToCloudsearch(){
+
+      du.debug('Push Document To Cloudsearch');
+
+      let index_document = this.parameters.get('indexingdocument');
+
+      return this.cloudsearchutilities.uploadDocuments(index_document)
+      .then((response) => {
+
+        this.parameters.set('cloudsearchresponse', response);
+        return true;
+
+      }).catch(error => {
+        //Technical Debt: Refactor!
+        //this.parameters.set('cloudsearchresponse', {status: 'error', adds: 0, deletes: 0});
+        du.error(error);
+        eu.throwError(error);
+
+      });
+
+    }
+
+    setResponseCode(){
+
+      du.debug('Set Response Code');
+
+      let cloudsearch_response = this.parameters.get('cloudsearchresponse', null, false);
+
+      if(cloudsearch_response.status == 'success'){
+        this.parameters.set('responsecode', 'success');
+      }else{
+        //do we have an error?  Otherwise, it's a fail.
+        this.parameters.set('responsecode', 'fail');
+      }
+
+      return Promise.resolve(true);
+
+    }
+
+    respond(){
+
+      du.debug('Respond');
+
+      let response_code = this.parameters.get('responsecode');
+
+      return super.respond(response_code);
 
     }
 
 }
 
-module.exports = new indexEntitiesController();
+module.exports = new IndexEntitiesController();

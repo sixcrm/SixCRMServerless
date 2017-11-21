@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/sku.json",
+  "title": "SKU",
+  "description": "A product SKU",
+  "type":"string"
+}

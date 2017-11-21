@@ -64,16 +64,6 @@ class processBillingController extends workerController {
 
   }
 
-  setParameters(parameters_object){
-
-    du.debug('Set Parameters');
-
-    this.parameters.setParameters(parameters_object);
-
-    return Promise.resolve(true);
-
-  }
-
   //Technical Debt:  Merchant Provider is necessary in the context of a rebill
   process(){
 
