@@ -13,7 +13,7 @@
 		}
 	},
 	"properties": {
-		"queue":{"type":"string"},
+		"queuename":{"type":"string","enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed"]},
 		"account":{"$ref": "#/definitions/UUIDv4"},
 		"count":{"type":"number"},
 		"datetime": {"$ref": "#/definitions/ISO8601"}

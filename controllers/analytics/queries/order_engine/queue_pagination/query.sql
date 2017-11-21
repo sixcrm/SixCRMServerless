@@ -1,5 +1,5 @@
 SELECT
-  fq.queue,
+  fq.queuename,
   fq.account,
   fq.count,
   fq.datetime
