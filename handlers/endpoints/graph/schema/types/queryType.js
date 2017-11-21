@@ -138,6 +138,8 @@ let analyticsBINFilterInputType = require('./analytics/BINFilterInputType');
 let paginationInputType = require('./pagination/paginationInputType');
 let cacheInputType = require('./cache/cacheInputType');
 
+let listQueueMessageType = require('./queue/listQueueMessageType');
+
 let list_fatal = true;
 let get_fatal = true;
 
@@ -718,6 +720,20 @@ module.exports.graphObj = new GraphQLObjectType({
                 const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
                 return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
+            }
+        },
+        listqueuemessage: {
+            type: listQueueMessageType.graphObj,
+            args: {
+                queuename: {
+                  description: 'Name of a queue',
+                  type: new GraphQLNonNull(GraphQLString)
+                },
+            },
+            resolve: function(root, args){
+                const queueController = global.SixCRM.routes.include('controllers', 'helpers/queue/Queue.js');
+
+                return queueController.listMessages(args.queuename);
             }
         },
 
