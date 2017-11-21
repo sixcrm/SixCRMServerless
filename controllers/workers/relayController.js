@@ -120,6 +120,7 @@ module.exports = class relayController {
         return message.ReceiptHandle;
       }
 
+      du.error(message);
       eu.throwError('server', 'Message does not have a receipt handle.');
 
     }
