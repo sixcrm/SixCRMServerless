@@ -143,29 +143,34 @@ describe('controllers/workers/indexEntities', () => {
 
   describe('pushDocumentToCloudSearch', () => {
 
-    let indexing_document = getValidIndexingDocument();
-    let cloudsearch_response = getValidCloudsearchDomainResponse();
+    beforeEach(() => {
 
-    let mock_indexing_helper_controller = class {
-      constructor(){
+        let cloudsearch_response = getValidCloudsearchDomainResponse();
 
-      }
-      createIndexingDocument(parsedmessagebodies){
-        return Promise.resolve(indexing_document);
-      }
-    };
+        let indexing_document = getValidIndexingDocument();
 
-    mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
+        let mock_indexing_helper_controller = class {
+            constructor(){
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'cloudsearch-utilities.js'), {
-      uploadDocuments:(index_document) => {
-        return Promise.resolve(cloudsearch_response);
-      }
+            }
+            createIndexingDocument(parsedmessagebodies){
+                return Promise.resolve(indexing_document);
+            }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'cloudsearch-utilities.js'), {
+            uploadDocuments:(index_document) => {
+                return Promise.resolve(cloudsearch_response);
+            }
+        });
     });
 
     it('successfully pushes a document to Cloudsearch', () => {
 
-      let indexing_document =  getValidIndexingDocument();
+      let indexing_document = getValidIndexingDocument();
+
       let indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
 
       indexEntitiesController.parameters.set('indexingdocument', indexing_document);
