@@ -1061,9 +1061,12 @@ describe('workers/forwardMessage', () => {
 
   });
 
-  describe.only('deleteMessages', () => {
+  describe('deleteMessages', () => {
 
     before(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+
       mockery.enable({
         useCleanCache: true,
         warnOnReplace: false,
@@ -1084,7 +1087,6 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
         deleteMessage: ({queue, receipt_handle}) => {
-          du.warning('mock delete executed');
           return Promise.resolve(true);
         }
       });
