@@ -587,10 +587,8 @@ module.exports = class Register extends PermissionedController {
 
     let transactionproducts = this.parameters.get('transactionproducts');
 
-    du.info(transactionproducts);
-
     let product_amounts = arrayutilities.map(transactionproducts, product => {
-      return parseInt(product.amount);
+      return parseFloat(product.amount);
     })
 
     let amount = mathutilities.sum(product_amounts);

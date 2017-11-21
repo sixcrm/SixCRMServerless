@@ -220,18 +220,24 @@ describe('controllers/providers/register/Receipt.js', () => {
 
       let receiptController = new ReceiptController();
 
-      receiptController.parameters.set('rebill', getValidRebill());
-      receiptController.parameters.set('amount', getValidRebill().amount);
+      let valid_rebill = getValidRebill();
+      let valid_processor_response = getValidProcessorResponse();
+      let merchant_provider = getValidMerchantProvider();
+      let transaction_products = getValidTransactionProducts();
+
+      receiptController.parameters.set('rebill', valid_rebill);
+      receiptController.parameters.set('amount', valid_rebill.amount);
       receiptController.parameters.set('transactiontype', 'sale');
-      receiptController.parameters.set('processorresponse', getValidProcessorResponse());
-      receiptController.parameters.set('merchantprovider', getValidMerchantProvider());
-      receiptController.parameters.set('transactionproducts', getValidTransactionProducts());
+      receiptController.parameters.set('processorresponse', valid_processor_response);
+      receiptController.parameters.set('merchantprovider', merchant_provider);
+      receiptController.parameters.set('transactionproducts', transaction_products);
 
       return receiptController.createTransactionPrototype().then((response) => {
+
         expect(response).to.equal(true);
+
         let transaction_prototype = receiptController.parameters.get('transactionprototype');
 
-        du.info(transaction_prototype);
         expect(transaction_prototype).to.have.property('rebill');
         expect(transaction_prototype).to.have.property('amount');
         expect(transaction_prototype).to.have.property('processor_response');
@@ -239,6 +245,13 @@ describe('controllers/providers/register/Receipt.js', () => {
         expect(transaction_prototype).to.have.property('result');
         expect(transaction_prototype).to.have.property('merchant_provider');
         expect(transaction_prototype).to.have.property('products');
+
+        expect(transaction_prototype.amount).to.equal(valid_rebill.amount);
+        expect(transaction_prototype.rebill).to.deep.equal(valid_rebill);
+        expect(transaction_prototype.processor_response).to.deep.equal(valid_processor_response);
+        expect(transaction_prototype.merchant_provider).to.equal(merchant_provider.id);
+        expect(transaction_prototype.products).to.deep.equal(transaction_products);
+
       });
 
     });
@@ -298,9 +311,12 @@ describe('controllers/providers/register/Receipt.js', () => {
 
   describe('transformTransactionPrototypeObject', () => {
     it('successfully transforms transaction prototype', () => {
+
       let receiptController = new ReceiptController();
 
-      receiptController.parameters.set('transactionprototype', getValidTransactionPrototype());
+      let valid_transaction_prototype = getValidTransactionPrototype();
+
+      receiptController.parameters.set('transactionprototype', valid_transaction_prototype);
       receiptController.transformTransactionPrototypeObject();
       let transformed_transaction_prototype = receiptController.parameters.get('transformed_transaction_prototype');
 
@@ -312,6 +328,16 @@ describe('controllers/providers/register/Receipt.js', () => {
       expect(transformed_transaction_prototype).to.have.property('merchant_provider');
       expect(transformed_transaction_prototype).to.have.property('type');
       expect(transformed_transaction_prototype).to.have.property('result');
+
+      expect(transformed_transaction_prototype.rebill).to.deep.equal(valid_transaction_prototype.rebill.id);
+      expect(transformed_transaction_prototype.processor_response).to.deep.equal(JSON.stringify(valid_transaction_prototype.processor_response));
+      expect(transformed_transaction_prototype.amount).to.deep.equal(valid_transaction_prototype.amount);
+      expect(transformed_transaction_prototype.products).to.deep.equal(valid_transaction_prototype.products);
+      expect(typeof transformed_transaction_prototype.alias).to.equal('string');
+      expect(transformed_transaction_prototype.merchant_provider).to.equal(valid_transaction_prototype.merchant_provider);
+      expect(transformed_transaction_prototype.type).to.equal(valid_transaction_prototype.type);
+      expect(transformed_transaction_prototype.result).to.equal(valid_transaction_prototype.result);
+
     });
   });
 
@@ -342,12 +368,23 @@ describe('controllers/providers/register/Receipt.js', () => {
       });
 
       let receiptController = new ReceiptController();
+      let transformed_transaction_prototype = getValidTransformedTransactionPrototype();
 
-      receiptController.parameters.set('transformed_transaction_prototype', getValidTransformedTransactionPrototype());
+      receiptController.parameters.set('transformed_transaction_prototype', transformed_transaction_prototype);
       return receiptController.createTransaction().then(() => {
         let receipt_transaction = receiptController.parameters.get('receipt_transaction');
 
         expect(receipt_transaction).to.have.property('id');
+        expect(receipt_transaction).to.have.property('created_at');
+        expect(receipt_transaction).to.have.property('updated_at');
+        expect(receipt_transaction).to.have.property('account');
+        expect(receipt_transaction.processor_response).to.equal(transformed_transaction_prototype.processor_response);
+        expect(receipt_transaction.amount).to.equal(transformed_transaction_prototype.amount);
+        expect(receipt_transaction.merchant_provider).to.equal(transformed_transaction_prototype.merchant_provider);
+        expect(receipt_transaction.type).to.equal(transformed_transaction_prototype.type);
+        expect(receipt_transaction.result).to.equal(transformed_transaction_prototype.result);
+        expect(receipt_transaction.products).to.equal(transformed_transaction_prototype.products);
+        expect(receipt_transaction.rebill).to.equal(transformed_transaction_prototype.rebill);
       });
     });
   });

@@ -3,11 +3,13 @@ const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
+const uuidV4 = require('uuid/v4');
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
@@ -1823,6 +1825,54 @@ describe('controllers/providers/Register.js', () => {
           expect(objectutilities.getClassName(result)).to.equal('RegisterResponse');
 
         });
+
+      });
+
+    });
+
+    describe('calculateAmount', () => {
+
+      it('correctly calculates the amount', () => {
+
+        let test_cases = [
+          {
+            a: 3.99,
+            b: 0.14
+          },
+          {
+            a: 3.99,
+            b: 0.00
+          },
+          {
+            a: 39239238923.99,
+            b: 123.00
+          }
+        ];
+
+        let sum_promises = arrayutilities.map(test_cases, test_case => {
+          let transaction_products = [
+            {
+              "product":uuidV4(),
+              "amount":test_case.a
+            },
+            {
+              "product":uuidV4(),
+              "amount":test_case.b
+            }
+          ];
+          let registerController = new RegisterController();
+
+          registerController.parameters.set('transactionproducts', transaction_products);
+          return registerController.calculateAmount().then(result => {
+            expect(result).to.equal(true);
+            expect(registerController.parameters.store['amount']).to.be.defined;
+            let amount = registerController.parameters.get('amount');
+
+            expect(amount).to.equal(mathutilities.sum([test_case.a, test_case.b]));
+          })
+        });
+
+        return Promise.all(sum_promises).then(() => { return true; });
 
       });
 
