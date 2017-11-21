@@ -14,7 +14,7 @@ const kinesisfirehoseutilities = require('../lib/kinesis-firehose-utilities');
 function createRandomKinesisQueueRecord(){
 
     let spoofed_record = {
-        queue : random.selectRandomFromArray(['text 1', 'text 2', 'text 3','text 4','text 5']),
+        queuename : random.selectRandomFromArray(["bill", "hold", "pending", "shipped", "delivered", "recover", "failed"]),
         account: uuidV4(),
         count:    random.randomInt(1, 2000),
         datetime: timestamp.getISO8601()
