@@ -231,12 +231,14 @@ class forwardMessageController extends relayController {
       du.debug('Handle Delete');
 
       if(_.contains(['success', 'fail', 'error'], compound_worker_response_object.worker_response_object.getCode())){
-        return this.deleteMessage({
-          queue: process.env.origin_queue,
-          receipt_handle: this.getReceiptHandle(compound_worker_response_object.message)
-        }).then(() => {
+
+        let messages = this.getCompoundWorkerResponseMessages(compound_worker_response_object);
+
+        return this.deleteMessages(messages)
+        .then((result) => {
           return compound_worker_response_object;
         });
+
       }else{
 
         du.debug('Non-delete type: '+compound_worker_response_object.worker_response_object.getCode());
@@ -244,6 +246,47 @@ class forwardMessageController extends relayController {
       }
 
       return Promise.resolve(compound_worker_response_object);
+
+    }
+
+    deleteMessages(messages){
+
+      du.debug('Delete Messages');
+
+      mvu.validateModel(messages, global.SixCRM.routes.path('model','workers/sqsmessages.json'));
+
+      let message_delete_promises = arrayutilities.map(messages, message => {
+        du.info(message);
+        return this.deleteMessage({
+          queue: process.env.origin_queue,
+          receipt_handle: this.getReceiptHandle(message)
+        });
+      });
+
+      return Promise.all(message_delete_promises).then(message_delete_promises => {
+        return true;
+      });
+
+    }
+
+    //Technical Debt:  Does this belong here?
+    getCompoundWorkerResponseMessages(compound_worker_response_object){
+
+      let return_array = [];
+
+      if(_.has(compound_worker_response_object, 'message')){
+
+        return_array.push(compound_worker_response_object.message);
+
+      }else if(_.has(compound_worker_response_object, 'messages')){
+
+        arrayutilities.map(compound_worker_response_object.messages, message => {
+          return_array.push(message);
+        });
+
+      }
+
+      return return_array;
 
     }
 

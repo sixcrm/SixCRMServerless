@@ -11,9 +11,21 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const WorkerResponse = global.SixCRM.routes.include('workers', 'WorkerResponse.js');
 
+function getValidCompoundWorkerResponseMultipleMessages(response, messages){
+
+  return {
+    worker_response_object: getValidWorkerResponse(response),
+    messages: messages
+  };
+
+}
+
 function getValidCompoundWorkerResponse(response, message){
 
-  return {worker_response_object: getValidWorkerResponse(response), message: message};
+  return {
+    worker_response_object: getValidWorkerResponse(response),
+    message: message
+  };
 
 }
 
@@ -950,6 +962,158 @@ describe('workers/forwardMessage', () => {
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('successfully deletes success type with multiple messages', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.warning('mock delete executed');
+          return Promise.resolve(true);
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponseMultipleMessages('success', getValidMessages());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
+        expect(returned).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('successfully deletes fail type with multiple messages', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.warning('mock delete executed');
+          return Promise.resolve(true);
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponseMultipleMessages('fail', getValidMessages());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
+        expect(returned).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('successfully deletes error type with multiple messages', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.warning('mock delete executed');
+          return Promise.resolve(true);
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponseMultipleMessages('error', getValidMessages());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
+        expect(returned).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+    it('successfully skips deletes for noaction type with multiple messages', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.warning('mock delete executed');
+          return Promise.resolve(true);
+        }
+      });
+
+      let compoundWorkerResponse = getValidCompoundWorkerResponseMultipleMessages('noaction', getValidMessages());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
+        expect(returned).to.deep.equal(compoundWorkerResponse);
+      });
+
+    });
+
+
+  });
+
+  describe('getCompoundWorkerResponseMessages', () => {
+
+    it('retrieves messages for single message response', () => {
+      let compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+      let retrieved_messages = forwardMessageController.getCompoundWorkerResponseMessages(compoundWorkerResponse);
+
+      expect(retrieved_messages).to.deep.equal([compoundWorkerResponse.message]);
+    });
+
+    it('retrieves messages for multi-message response', () => {
+      let compoundWorkerResponse = getValidCompoundWorkerResponseMultipleMessages('success', getValidMessages());
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+      let retrieved_messages = forwardMessageController.getCompoundWorkerResponseMessages(compoundWorkerResponse);
+
+      expect(retrieved_messages).to.deep.equal(compoundWorkerResponse.messages);
+    });
+
+  });
+
+  describe('deleteMessages', () => {
+
+    before(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      global.SixCRM.localcache.clear('all');
+    });
+
+    afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
+
+    it('successfully deletes single message arrays', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          return Promise.resolve(true);
+        }
+      });
+
+      let messages = [getValidMessage()];
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.deleteMessages(messages).then(result => {
+        expect(result).to.equal(true);
+      });
+
+    });
+
+    it('successfully deletes multiple message arrays', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.warning('mock delete executed');
+          return Promise.resolve(true);
+        }
+      });
+
+      let messages = getValidMessages();
+      let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+      return forwardMessageController.deleteMessages(messages).then(result => {
+        expect(result).to.equal(true);
       });
 
     });
