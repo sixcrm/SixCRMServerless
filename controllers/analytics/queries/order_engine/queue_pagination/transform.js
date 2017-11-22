@@ -13,9 +13,7 @@ module.exports = function(results, parameters){
   arrayutilities.map(results, (result) => {
 
     result_array.push({
-      queue: result.queue,
       datetime: result.datetime,
-      account: result.account,
       count: result.count
     });
 
@@ -25,7 +23,7 @@ module.exports = function(results, parameters){
 
   let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
 
-  let return_object = {transactions:result_array, pagination: pagination_object};
+  let return_object = {summary:result_array, pagination: pagination_object};
 
   return Promise.resolve(return_object);
 

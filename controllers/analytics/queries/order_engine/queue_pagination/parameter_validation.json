@@ -25,6 +25,10 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
+		"queuename:":{
+			"type": "array",
+		  "enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed"]
+		},
 		"limit":{
 			"type": ["integer"],
 			"minimum": 0,

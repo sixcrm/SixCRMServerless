@@ -1,12 +1,11 @@
 SELECT
-  fq.queuename,
-  fq.account,
-  fq.count,
-  fq.datetime
+  DATE_TRUNC('day',DATETIME) AS datetime,
+  SUM(fq.count) AS count
 FROM f_queue_count fq
 WHERE 1
-  {{filter}}
-  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-ORDER BY DATETIME {{order}}
+ {{filter}}
+ AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
+GROUP BY DATE_TRUNC('day',DATETIME)
+ORDER BY DATE_TRUNC('day',DATETIME) {{order}}
 LIMIT {{limit}}
 OFFSET {{offset}};
