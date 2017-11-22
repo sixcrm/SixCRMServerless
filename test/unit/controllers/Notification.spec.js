@@ -45,11 +45,21 @@ describe('controllers/Notification.js', () => {
                 }
 
             });
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-                addToSearchIndex: () => {
-                    return Promise.resolve(true);
-                }
-            });
+
+            let mock_preindexing_helper = class {
+              constructor(){
+
+              }
+              addToSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
             mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
                 putRecord: () => {
                     return Promise.resolve();

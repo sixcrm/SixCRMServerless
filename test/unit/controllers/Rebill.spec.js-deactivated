@@ -202,13 +202,20 @@ describe('controllers/Rebill.js', () => {
                     return Promise.resolve(entity)
                 }
             });
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-                addToSearchIndex: (entity, entity_type) => {
-                    return new Promise((resolve) => {
-                        resolve(true);
-                    });
-                }
-            });
+
+            let mock_preindexing_helper = class {
+              constructor(){
+
+              }
+              addToSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
             let rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
@@ -240,11 +247,20 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-                addToSearchIndex: (entity, entity_type) => {
-                    return Promise.resolve(true);
-                }
-            });
+            let mock_preindexing_helper = class {
+              constructor(){
+
+              }
+              addToSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
                  createActivity: () => {
                     return Promise.resolve();
@@ -354,11 +370,19 @@ describe('controllers/Rebill.js', () => {
                     }
                 });
 
-                mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-                    addToSearchIndex: () => {
-                        return Promise.resolve();
-                    }
-                });
+                let mock_preindexing_helper = class {
+                  constructor(){
+
+                  }
+                  addToSearchIndex(entity){
+                    return Promise.resolve(true);
+                  }
+                  removeFromSearchIndex(entity){
+                    return Promise.resolve(true);
+                  }
+                }
+
+                mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
                 mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
                     putRecord: () => {
@@ -461,11 +485,19 @@ describe('controllers/Rebill.js', () => {
                     }
                 });
 
-                mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-                    addToSearchIndex: () => {
-                        return Promise.resolve();
-                    }
-                });
+                let mock_preindexing_helper = class {
+                  constructor(){
+
+                  }
+                  addToSearchIndex(entity){
+                    return Promise.resolve(true);
+                  }
+                  removeFromSearchIndex(entity){
+                    return Promise.resolve(true);
+                  }
+                }
+
+                mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
                 mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
                     putRecord: () => {

@@ -10,7 +10,6 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 module.exports = class PermissionedController {

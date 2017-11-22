@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/entitytype.json",
+	"title": "Entity Type",
+	"type": "string",
+  "enum":["campaign","credit_card","merchant_provider","product_schedule","product","shipping_receipt","customer","transaction","affiliate"]
+}

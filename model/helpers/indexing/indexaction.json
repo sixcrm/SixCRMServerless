@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/indexaction.json",
+	"title": "Index Action",
+	"type": "string",
+  "enum":["add","delete"]
+}

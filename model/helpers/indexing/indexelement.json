@@ -4,26 +4,14 @@
 	"title": "Indexed Element",
 	"type": "object",
   "properties":{
-    "index_action":{
-      "entity_type":"string",
-      "enum":["add", "delete"]
-    },
-    "entity_type":{
-      "type": "string",
-      "enum":["campaign","credit_card","merchant_provider","product_schedule","product","shipping_receipt","customer","transaction","affiliate"]
-    },
+    "index_action":{"$ref":"/indexaction.json"},
+    "entity_type":{"$ref":"/entitytype.json"},
     "id":{"$ref":"../../definitions/sixcrmidentifier.json"},
     "active":{"$ref":"../../definitions/active.json"},
-    "email":{
-      "type":"string",
-      "format":"email"
-    },
+    "email":{"$ref":"../../definitions/email.json"},
     "firstname":{"$ref":"../../definitions/firstname.json"},
     "lastname":{"$ref":"../../definitions/firstname.json"},
-    "name":{
-      "type":"string",
-      "minLength":1
-    },
+    "name":{"$ref":"../../definitions/name.json"},
     "phone":{"$ref":"../../definitions/phone.json"},
     "sku": {"$ref":"../../definitions/sku.json"},
     "tracking_number": {"$ref":"../../definitions/trackingnumber.json"},
@@ -51,5 +39,6 @@
       "type":"string"
     }
   },
-  "required":["index_action","entity_type"]
+  "required":["id","index_action","entity_type"],
+  "additionalProperties": false
 }

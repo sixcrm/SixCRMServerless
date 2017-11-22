@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/indexedelements.json",
+	"title": "Indexed Element",
+	"type": "object",
+  "properties":{
+    "index_action":{"$ref":"./indexaction.json"},
+    "entity_type":{"type":"string", "minLength":1},
+    "id":{"$ref":"../../definitions/sixcrmidentifier.json"}
+  },
+  "required":["id","index_action","entity_type"]
+}

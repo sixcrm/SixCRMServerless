@@ -132,11 +132,20 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
           }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-          addToSearchIndex: (entity, entity_type) => {
-              return Promise.resolve(true);
-          }
-      });
+      let mock_preindexing_helper = class {
+        constructor(){
+
+        }
+        addToSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+        removeFromSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
            createActivity: () => {
               return Promise.resolve();

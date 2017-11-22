@@ -361,11 +361,19 @@ describe('controllers/providers/register/Receipt.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-        addToSearchIndex: (entity) => {
-          return entity;
+      let mock_preindexing_helper = class {
+        constructor(){
+
         }
-      });
+        addToSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+        removeFromSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
       let receiptController = new ReceiptController();
       let transformed_transaction_prototype = getValidTransformedTransactionPrototype();
@@ -409,11 +417,19 @@ describe('controllers/providers/register/Receipt.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-        addToSearchIndex: (entity) => {
-          return entity;
+      let mock_preindexing_helper = class {
+        constructor(){
+
         }
-      });
+        addToSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+        removeFromSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
       let issue_receipt_arguments = {
         rebill: getValidRebill(),

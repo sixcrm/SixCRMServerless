@@ -25,6 +25,22 @@ module.exports = class IndexingHelperController {
 
   }
 
+  //Entrypoint
+  createIndexingDocument(index_elements){
+
+    du.debug('Creating Indexing Document');
+
+    this.validateIndexElements(index_elements);
+
+    let indexing_document_elements = arrayutilities.map(index_elements, (index_element) => {
+      return this.createIndexDocument(index_element);
+    });
+
+    return Promise.all(indexing_document_elements)
+    .then((indexing_document_elements) => this.packageDocument(indexing_document_elements));
+
+  }
+
   setOptionalFields(){
 
     du.debug('Set Optional Fields');
@@ -74,21 +90,6 @@ module.exports = class IndexingHelperController {
     .then((index_element) => this.transcribeDocument(index_element))
     .then((transcribed_document) => this.assureSuggesterFields(transcribed_document))
     .then((processed_document) => this.deserializeAddress(processed_document));
-
-  }
-
-  createIndexingDocument(index_elements){
-
-    du.debug('Creating Indexing Document');
-
-    this.validateIndexElements(index_elements);
-
-    let indexing_document_elements = arrayutilities.map(index_elements, (index_element) => {
-      return this.createIndexDocument(index_element);
-    });
-
-    return Promise.all(indexing_document_elements)
-    .then((indexing_document_elements) => this.packageDocument(indexing_document_elements));
 
   }
 

@@ -10,7 +10,6 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const indexingutilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
@@ -26,6 +25,10 @@ module.exports = class entityUtilitiesController extends PermissionedController 
     constructor(){
 
       super();
+
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
+
+      this.preIndexingHelperController = new PreIndexingHelperController();
 
     }
 
@@ -171,27 +174,23 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     }
 
-    //Technical Debt:  This belongs in a helper
     removeFromSearchIndex(id, entity_type){
 
       du.debug('Remove From Search Index');
 
       let entity = {id:id, entity_type: entity_type};
 
-      return indexingutilities.removeFromSearchIndex(entity);
+      return this.preIndexingHelperController.removeFromSearchIndex(entity);
 
     }
 
-    //Technical Debt:  This belongs in a helper
     addToSearchIndex(entity, entity_type){
 
-        du.debug('Add To Search Index');
+      du.debug('Add To Search Index');
 
-        entity['entity_type'] = entity_type;
+      entity.entity_type = entity_type;
 
-        //du.info('Indexing:', entity);
-
-        return indexingutilities.addToSearchIndex(entity);
+      return this.preIndexingHelperController.addToSearchIndex(entity);
 
     }
 

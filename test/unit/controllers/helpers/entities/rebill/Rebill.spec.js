@@ -267,11 +267,19 @@ describe('hydrateArguments', () => {
       }
     });
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-      addToSearchIndex: (entity) => {
-        return entity;
+    let mock_preindexing_helper = class {
+      constructor(){
+
       }
-    });
+      addToSearchIndex(entity){
+        return Promise.resolve(true);
+      }
+      removeFromSearchIndex(entity){
+        return Promise.resolve(true);
+      }
+    }
+
+    mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
     PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -810,11 +818,19 @@ describe('getScheduleElementsOnBillDay', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-        addToSearchIndex: (entity) => {
-          return entity;
+      let mock_preindexing_helper = class {
+        constructor(){
+
         }
-      });
+        addToSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+        removeFromSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -958,11 +974,19 @@ describe('getScheduleElementsOnBillDay', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'indexing-utilities.js'), {
-        addToSearchIndex: (entity) => {
-          return entity;
+      let mock_preindexing_helper = class {
+        constructor(){
+
         }
-      });
+        addToSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+        removeFromSearchIndex(entity){
+          return Promise.resolve(true);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
