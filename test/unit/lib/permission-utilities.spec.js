@@ -643,4 +643,13 @@ describe('lib/permission-utilities', () => {
             expect(result).to.be.defined;
         });
     });
+
+    describe('areACLsDisabled', () => {
+        it('returns true when action checks and account filter are disabled', () => {
+            global.disableactionchecks = true;
+            global.disableaccountfilter = true;
+
+            expect(PermissionUtilities.areACLsDisabled()).to.be.true;
+        });
+    });
 });

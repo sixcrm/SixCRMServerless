@@ -138,6 +138,57 @@ describe('lib/test-utilities', () => {
             expect(testutilities.createTestAuth0JWT('super.user@test.com', 'a_secret_key')).to.equal(getValidJWT());
         });
 
+        it('creates test auth with valid admin data', () => {
+
+            mockery.registerMock('jsonwebtoken', {
+                sign: () => {
+                    return getValidJWT();
+                },
+                verify: () => {
+                    return true;
+                }
+            });
+
+            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
+
+            //send valid user
+            expect(testutilities.createTestAuth0JWT('admin.user@test.com', 'a_secret_key')).to.equal(getValidJWT());
+        });
+
+        it('creates test auth with valid customer service data', () => {
+
+            mockery.registerMock('jsonwebtoken', {
+                sign: () => {
+                    return getValidJWT();
+                },
+                verify: () => {
+                    return true;
+                }
+            });
+
+            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
+
+            //send valid user
+            expect(testutilities.createTestAuth0JWT('customerservice.user@test.com', 'a_secret_key')).to.equal(getValidJWT());
+        });
+
+        it('creates test auth with \'unknown\' type', () => {
+
+            mockery.registerMock('jsonwebtoken', {
+                sign: () => {
+                    return getValidJWT();
+                },
+                verify: () => {
+                    return true;
+                }
+            });
+
+            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
+
+            //send valid user
+            expect(testutilities.createTestAuth0JWT('unknown.user@test.com', 'a_secret_key')).to.equal(getValidJWT());
+        });
+
         it('throws unidentified user type error', () => {
 
             mockery.registerMock('jsonwebtoken', {
@@ -209,6 +260,45 @@ describe('lib/test-utilities', () => {
             const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
             expect(testutilities.getQuery('a_path')).to.equal('Example data');
+        });
+    });
+
+    describe('generateJWT', () => {
+
+        it('throws error when token is invalid', () => {
+
+            mockery.registerMock('jsonwebtoken', {
+                sign: () => {
+                    return 'an_invalid_token';
+                },
+                verify: () => {
+                    return false;
+                }
+            });
+
+            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
+
+            try {
+                testutilities.generateJWT('a_body', 'a_secret')
+            } catch (error) {
+                expect(error.message).to.equal('[500] created invalid token');
+            }
+        });
+    });
+
+    describe('validateGraphResponse', () => {
+
+        it('validates graph response', () => {
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'model-validator-utilities.js'), {
+                validateModel: () => {
+                    return true;
+                }
+            });
+
+            const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
+
+            expect(testutilities.validateGraphResponse('a_response', 'a_graph_model_name')).to.be.true;
         });
     });
 

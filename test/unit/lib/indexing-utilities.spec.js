@@ -85,22 +85,12 @@ describe('lib/indexing-utilities', () => {
     });
 
     describe('pushToIndexingBucket', () => {
-        it('should throw an error when environment variables are not set', () => {
-            // given
-            let entity = {};
-
-            // then
-            return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
-
-                expect(error.message).to.equal('[500] Missing search_indexing_queue_url definition in the process.env object.');
-
-            });
-
-        });
 
         it('should throw an error when entity does not have "index_action"', () => {
             // given
-            let entity = {};
+            let entity = {entity_type: 'product'};
+
+            let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
 
             // then
             return IndexingUtilities.pushToIndexingBucket(entity).catch((error) => {
@@ -111,6 +101,7 @@ describe('lib/indexing-utilities', () => {
         it('should throw an error when entity has wrong value for "index_action"', () => {
             // given
             let entity = {
+                entity_type: 'product',
                 index_action: 'fail'
             };
 
@@ -365,6 +356,21 @@ describe('lib/indexing-utilities', () => {
             // then
             expect(document.fields.suggestion_field_1).to.equal('alias');
         });
+
+        it('inserts affiliate id into suggestion field of processed document', () => {
+            // given
+            let document = {
+                fields: {
+                    affiliate_id: '123'
+                }
+            };
+
+            // when
+            IndexingUtilities.assureSuggesterFields(document);
+
+            // then
+            expect(document.fields.suggestion_field_1).to.equal('123');
+        });
     });
 
     describe('createIndexingDocument', () => {
@@ -586,6 +592,38 @@ describe('lib/indexing-utilities', () => {
                 fields: {
                     address: {a_key: "a_value"}
                 }
+            });
+        });
+
+        it('returns processed document', () => {
+            // valid structure with sample address data
+            let processed_document = {
+                fields: {
+                    address: '{"a_key":"a_value"}'
+                }
+            };
+
+            let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
+
+            expect(IndexingUtilities.deserializeAddress(processed_document)).to.deep.equal({
+                fields: {
+                    address: '{"a_key":"a_value"}'
+                }
+            });
+        });
+    });
+
+    describe('indexEntity', () => {
+
+        it('resolves to true when search index is updated', () => {
+
+            //expected validation errors when entity is an empty object
+            let validation_errors = 'Entity is missing the "id" property., Entity is missing "index_action" property.';
+
+            let IndexingUtilities = global.SixCRM.routes.include('lib', 'indexing-utilities.js');
+
+            return IndexingUtilities.indexEntity({}).catch((error) => {
+                expect(error.message).to.deep.equal('[500] Entity failed validation: ' + validation_errors);
             });
         });
     });

@@ -447,4 +447,30 @@ describe('lib/ec2-utilities', () => {
             });
         });
     });
+
+    describe('destroySecurityGroup', () => {
+
+        it('destroys security group if that group exists', () => {
+            const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
+            const ec2utilities = new EC2Utilities();
+
+            ec2utilities.ec2 = {
+                describeSecurityGroups: function(params, callback) {
+                    callback(null, {SecurityGroups: [{GroupName: 'any_group_name'}]})
+                },
+                deleteSecurityGroup: () => {
+                    return {
+                        on: (parameters, response) => {
+                            response('success');
+                        },
+                        send: () => {}
+                    }
+                }
+            };
+
+            return ec2utilities.destroySecurityGroup({GroupName: 'any_group_name'}).then((result) => {
+                expect(result).to.equal('success');
+            });
+        });
+    });
 });
