@@ -76,4 +76,24 @@ describe('lib/pagination-utilities', () => {
             });
         });
     });
+
+    describe('createSQLPaginationObject', () => {
+
+        it('returns SQL pagination object', () => {
+            //parameter with any values
+            let parameter = {
+                order: 'an_order',
+                limit: '1',
+                offset: '1',
+                count: '1'
+            };
+
+            expect(paginationutilities.createSQLPaginationObject(parameter)).to.deep.equal({
+                order: 'an_order',
+                limit: 1,
+                offset: 1,
+                count: 1
+            });
+        });
+    });
 });

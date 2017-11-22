@@ -11,11 +11,15 @@ describe('lib/object-utilities', () => {
         expect(objectutilities.has()).to.equal(false);
     });
 
+    it('should return false when object is missing specified property', () => {
+        expect(objectutilities.has({}, 'test', false)).to.equal(false);
+    });
+
     it('should return true when object has properties', () => {
         expect(objectutilities.has({test:{test2:'hello'}}, 'test')).to.equal(true);
     });
 
-    it('should fail when object is missing arguments', () => {
+    it('should fail when object is missing specified property and fatal is set to true', () => {
         try{
             objectutilities.has({},'test', true);
             expect.fail();
@@ -24,7 +28,7 @@ describe('lib/object-utilities', () => {
         }
     });
 
-    it('should fail due to non string properties', () => {
+    it('should fail due to non string properties and fatal is set to true', () => {
         try{
           //properties object with any value that is not a string
             objectutilities.has({},[1], true);
@@ -34,17 +38,26 @@ describe('lib/object-utilities', () => {
         }
     });
 
+    it('returns false when object has non string properties', () => {
+        //properties object with any value that is not a string
+        expect(objectutilities.has({},[1], false)).to.equal(false);
+    });
+
     it('should return true when object has properties that are strings', () => {
         expect(objectutilities.has({test:{test2:'hello'}}, ['test'])).to.equal(true);
     });
 
-    it('should fail due to object missing property', () => {
+    it('should fail due to object missing property with fatal set to true', () => {
         try{
             objectutilities.has({},['test'], true);
             expect.fail();
         }catch(error){
             expect(error.message).to.equal('[500] Object missing property "test".');
         }
+    });
+
+    it('should fail due to object missing property', () => {
+        expect(objectutilities.has({},['test'], false)).to.equal(false);
     });
 
   });

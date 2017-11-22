@@ -40,6 +40,23 @@ describe('lib/postback-utilities', () => {
                 expect(result).to.equal(response);
             });
         });
+
+        it('throws error when request is unsuccessfully executed', () => {
+
+            let url = 'test';
+
+            mockery.registerMock('request', {
+                get: (request_options, callback) => {
+                    callback('fail', null);
+                }
+            });
+
+            const postbackutilities = global.SixCRM.routes.include('lib', 'postback-utilities.js');
+
+            return postbackutilities.executeRequest(url).catch((error) => {
+                expect(error).to.equal('fail');
+            });
+        });
     });
 
     describe('executePostback', () => {

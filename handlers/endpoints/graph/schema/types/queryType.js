@@ -48,7 +48,6 @@ let notificationTestType = require('./notification/notificationTestType');
 let alertTestType = require('./notification/alertTestType');
 let notificationType = require('./notification/notificationType');
 
-let notificationSettingListType = require('./notificationsetting/notificationSettingListType');
 let notificationSettingType = require('./notificationsetting/notificationSettingType');
 let notificationSettingDefaultType = require('./notificationsetting/notificationSettingDefaultType');
 
@@ -57,7 +56,6 @@ let userListType = require('./user/userListType');
 
 let termsAndConditionsType = require('./termsandconditions/termsAndConditionsType');
 
-let userSettingListType = require('./usersetting/userSettingListType');
 let userSettingType = require('./usersetting/userSettingType');
 
 let userSigningStringListType = require('./usersigningstring/userSigningStringListType');
@@ -135,10 +133,14 @@ let analyticsPaginationInputType = require('./analytics/paginationInputType');
 let analyticsActivityFilterInputType = require('./analytics/activityFilterInputType');
 let analyticsBINFilterInputType = require('./analytics/BINFilterInputType');
 
-let queueSummaryType = require('./queue/queueSummaryType');
-
 let paginationInputType = require('./pagination/paginationInputType');
 let cacheInputType = require('./cache/cacheInputType');
+
+/* Start state machine */
+
+let queueSummaryType = require('./analytics/order_engine/queuesummary/queueSummaryType');
+
+/* End State machine */
 
 let listQueueMessageType = require('./queue/listQueueMessageType');
 
@@ -490,6 +492,7 @@ module.exports.graphObj = new GraphQLObjectType({
           type: queueSummaryType.graphObj,
           args: {
             analyticsfilter: { type: analyticsFilterInputType.graphObj },
+            pagination: {type: analyticsPaginationInputType.graphObj},
             queuename: {
               description: 'Name of a queue',
               type: new GraphQLNonNull(GraphQLString)
@@ -750,7 +753,9 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 const queueController = global.SixCRM.routes.include('controllers', 'helpers/queue/Queue.js');
 
-                return queueController.listMessages(args.queuename);
+                return queueController.listMessages(args.queuename).then(messages => {
+                  return Promise.resolve({queuemessages: messages})
+                });
             }
         },
 

@@ -2,7 +2,6 @@
 const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 
@@ -50,6 +49,11 @@ class AnalyticsController extends AnalyticsUtilities{
           'country3_iso',
           'webpage',
           'phone'
+        ];
+
+        this.default_queue_filters = [
+          'queuename',
+          'account'
         ];
 
     }
@@ -210,9 +214,13 @@ class AnalyticsController extends AnalyticsUtilities{
 
       du.debug('Get Queue Summary');
 
-      parameters = this.appendQueueName(parameters.analyticsfilter, parameters.queuename)
+      const queue_name = parameters.queuename;
 
-      return this.getResults('order_engine/queue_pagination', parameters, this.default_query_filters);
+      parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      parameters = this.appendQueueName(parameters, queue_name);
+
+      return this.getResults('order_engine/queue_pagination', parameters, this.default_queue_filters);
 
     }
 
