@@ -750,7 +750,9 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 const queueController = global.SixCRM.routes.include('controllers', 'helpers/queue/Queue.js');
 
-                return queueController.listMessages(args.queuename);
+                return queueController.listMessages(args.queuename).then(messages => {
+                  return Promise.resolve({queuemessages: messages})
+                });
             }
         },
 
