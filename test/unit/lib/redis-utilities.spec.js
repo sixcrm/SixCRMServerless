@@ -39,6 +39,15 @@ describe('lib/redis-utilities', () => {
             expect(redisutilities.getEndpoint()).to.equal(global.SixCRM.configuration.site_config.elasticache.endpoint);
 
         });
+
+        it('returns null when endpoint is not set properly', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            delete redisutilities.endpoint;
+
+            expect(redisutilities.getEndpoint()).to.equal(null);
+        });
     });
 
     describe('createClient', () => {
@@ -46,6 +55,7 @@ describe('lib/redis-utilities', () => {
         it('returns true when client has been created', () => {
 
             const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+            redisutilities.endpoint = 'an_endpoint';
 
             redisutilities.redis = {
                 createClient: () => {
@@ -59,6 +69,19 @@ describe('lib/redis-utilities', () => {
 
             expect(redisutilities.createClient()).to.be.true;
 
+        });
+
+        it('throws error when endpoint is not set', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            delete redisutilities.endpoint;
+
+            try {
+                redisutilities.createClient()
+            }catch(error){
+                expect(error.message).to.equal('[500] Unset Redis endpoint');
+            }
         });
     });
 
@@ -78,6 +101,7 @@ describe('lib/redis-utilities', () => {
 
             const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
 
+            redisutilities.endpoint = 'an_endpoint';
             redisutilities.redis_client.ready = true;
 
             //any number less than 4
@@ -107,6 +131,19 @@ describe('lib/redis-utilities', () => {
                 expect(result).to.be.true;
             });
         });
+
+        it('returns null when client is not created and therefor not ready', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            //setting values this way will result in create client method to return null
+            redisutilities.redis_client.ready = false;
+            global.SixCRM.configuration.site_config.cache.usecache = 0;
+
+            return redisutilities.prepare().catch((error) => {
+                expect(error).to.equal(null);
+            });
+        });
     });
 
     describe('waitForClientReady', () => {
@@ -120,6 +157,31 @@ describe('lib/redis-utilities', () => {
             return redisutilities.waitForClientReady().then((result) => {
                 expect(result).to.be.true;
             });
+        });
+
+        it('returns false when client is not ready and attempts exceeded maximum', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            redisutilities.redis_client.ready = false;
+
+            //any number less than 21
+            return redisutilities.waitForClientReady(20).catch((error) => {
+                expect(error).to.equal(false);
+            });
+        });
+
+        it('throws error when redis client is not set', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            delete redisutilities.redis_client;
+
+            try {
+                redisutilities.waitForClientReady()
+            }catch(error){
+                expect(error.message).to.equal('[500] waitForClientReady assumes that the redis_client property is set.');
+            }
         });
     });
 

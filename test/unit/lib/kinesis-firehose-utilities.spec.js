@@ -1,7 +1,23 @@
 const chai = require('chai');
 const expect = chai.expect;
+const mockery = require('mockery');
 
 describe('lib/kinesis-firehose-utilities', () => {
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    after(() => {
+        mockery.deregisterAll();
+    });
 
     describe('sanitizeRecord', () => {
 
@@ -235,6 +251,63 @@ describe('lib/kinesis-firehose-utilities', () => {
             //max attempt count is 200, it will increase until it reaches that number and throw error afterwards
             return kinesisFirehoseUtilities.waitForStream('a_stream_name', 'a_state', 199).catch((error) => {
                 expect(error.message).to.equal('[500] waitForStream attempt_count_max exceeded.');
+            });
+        });
+    });
+
+    describe('putRecord', () => {
+
+        afterEach(() => {
+            process.env.stage = 'local';
+        });
+
+        it('sends record to kinesis', () => {
+
+            process.env.stage = 'development';
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'model-validator-utilities.js'), {
+                validateModel: () => {
+                    return true;
+                }
+            });
+
+            const kinesisFirehoseUtilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities.js');
+
+            kinesisFirehoseUtilities.configured_streams = {a_stream: 'a_stream_name'};
+
+            kinesisFirehoseUtilities.firehose = {
+                putRecord: (params, callback) => {
+                    callback(null, 'success');
+                }
+            };
+
+            return kinesisFirehoseUtilities.putRecord('a_stream', ['a_record1', 'a_record2']).then((result) => {
+                expect(result).to.equal('success');
+            });
+        });
+
+        it('disallows contacting kinesis when running locally', () => {
+
+            process.env.stage = 'local';
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'model-validator-utilities.js'), {
+                validateModel: () => {
+                    return true;
+                }
+            });
+
+            const kinesisFirehoseUtilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities.js');
+
+            kinesisFirehoseUtilities.configured_streams = {a_stream: 'a_stream_name'};
+
+            kinesisFirehoseUtilities.firehose = {
+                putRecord: (params, callback) => {
+                    callback(null, 'success');
+                }
+            };
+
+            return kinesisFirehoseUtilities.putRecord('a_stream', ['a_record1', 'a_record2']).then((result) => {
+                expect(result).to.equal('Kinesis streams disabled.');
             });
         });
     });
