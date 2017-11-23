@@ -3,6 +3,8 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+
+//Technical Debt:  This should be a function of the Tracker Helper
 const postbackutilities = global.SixCRM.routes.include('lib', 'postback-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -37,6 +39,7 @@ class trackerController extends entityController {
         query_parameters.expression_attribute_names['#f3'] = 'type';
       }
 
+      //Technical Debt:  Update to use account query
       return this.scanByParameters({parameters: query_parameters, pagination: pagination});
 
     }

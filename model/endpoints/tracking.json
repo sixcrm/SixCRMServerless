@@ -1,9 +1,0 @@
-{
-	"title": "Tracking",
-	"type": "object",
-	"properties": {
-		"campaign":{"$ref": "../definitions/uuidv4.json"},
-		"affiliate_id":{"$ref": "../definitions/sixcrmaffiliate_id.json"}
-	},
-	"required":["campaign", "affiliate_id"]
-}

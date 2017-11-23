@@ -3,13 +3,10 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
-const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
-const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
-class trackingController extends transactionEndpointController{
+class TrackingController extends transactionEndpointController{
 
     constructor(){
 
@@ -19,54 +16,119 @@ class trackingController extends transactionEndpointController{
         'tracker/read'
       ];
 
+      this.parameter_definitions = {
+        execute: {
+          required : {
+            event:'event'
+          }
+        }
+      };
+
+      this.parameter_validation = {
+        'event':global.SixCRM.routes.path('model', 'endpoints/tracking/event.json'),
+        'affiliate':global.SixCRM.routes.path('model', 'entities/affiliate.json'),
+        'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
+        'trackers':global.SixCRM.routes.path('model', 'endpoints/tracking/trackers.json')
+      };
+
+      this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+      this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+      this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+
+      this.initialize();
+
     }
 
     execute(event){
 
       du.debug('Execute');
 
-      return this.preprocessing((event))
-			.then((event) => this.acquireBody(event))
-			.then((event) => this.validateInput(event, this.validateEventSchema))
-      .then((event) => this.acquireAffiliate(event))
-			.then((affiliate) => this.acquireTrackers(affiliate, event));
+      return this.preprocessing(event)
+  		.then((event) => this.acquireBody(event))
+      .then((event_body) => {
+        this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
+      })
+      .then(() => this.acquireEventProperties())
+			.then(() => this.acquireTrackers())
+      //Note: filtering or validation here?
+      .then(() => this.respond());
 
     }
 
-    validateEventSchema(event){
+    acquireEventProperties(){
 
-      du.debug('Validate Event Schema');
+      du.debug('Acquire Event Properties');
 
-      return modelvalidationutilities.validateModel(event,  global.SixCRM.routes.path('model', 'endpoints/tracking.json'));
+      let promises = [
+        this.acquireAffiliate(),
+        this.acquireCampaign()
+      ];
+
+      return Promise.all(promises).then(promises => {
+        return true;
+      });
 
     }
 
-    acquireAffiliate(event){
+    acquireAffiliate(){
 
       du.debug('Acquire Affiliate');
 
-      return affiliateController.getByAffiliateID(event.affiliate_id).then(affiliate => {
+      let event = this.parameters.get('event');
 
-        if(_.has(affiliate, 'id')){
-          this.affiliate = affiliate;
-        }else{
-          this.affiliate = null;
-        }
+      return this.affiliateController.getByAffiliateID(event.affiliate_id).then(affiliate => {
 
-        return event;
+        this.parameters.set('affiliate', affiliate);
+
+        return true;
 
       });
 
     }
 
-    acquireTrackers(event){
+    acquireCampaign(){
+
+      du.debug('Acquire Campaign');
+
+      let event = this.parameters.get('event');
+
+      return this.campaignController.get({id: event.campaign}).then(campaign => {
+
+        this.parameters.set('campaign', campaign);
+
+        return true;
+
+      });
+
+    }
+
+    acquireTrackers(){
 
       du.debug('Acquire Trackers');
 
-      return trackerController.listByCampaignAndAffiliate({campaign: event.campaign, affiliate: this.affiliate, type:'html'});
+      let campaign = this.parameters.get('campaign');
+      let affiliate = this.parameters.get('affiliate');
+
+      return this.trackerController.listByCampaignAndAffiliate({campaign: campaign.id, affiliate: affiliate.id, type: 'html'}).then(trackers => {
+
+        this.parameters.set('trackers', trackers);
+
+        return true;
+
+      });
+
+    }
+
+    respond(){
+
+      du.debug('Respond');
+
+      let trackers = this.parameters.get('trackers');
+
+      return Promise.resolve(trackers);
 
     }
 
 }
 
-module.exports = new trackingController();
+module.exports = new TrackingController();

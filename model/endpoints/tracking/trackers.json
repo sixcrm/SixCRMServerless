@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/trackers.json",
+	"title": "Trackers",
+	"type": "array",
+	"items":{"$ref":"../../entities/tracker.json"}
+}
