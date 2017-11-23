@@ -1,7 +1,24 @@
 const chai = require('chai');
 const expect = chai.expect;
+const mockery = require('mockery');
 
 describe('lib/jwt-utilities', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    after(() => {
+        mockery.deregisterAll();
+    });
 
     describe('createJWTContents', () => {
 
@@ -103,6 +120,56 @@ describe('lib/jwt-utilities', () => {
                 expect(error.message).to.equal('[500] Site JST secret key is not defined.');
             }
         });
+
+        it('throws error when JWT type is not valid', () => {
+
+            const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+
+            jwtutilities.jwt_type = 'unrecognized_type'; //invalid jwt type
+
+            try{
+                jwtutilities.getSigningKey()
+            }catch(error){
+                expect(error.message).to.equal('[500] Unrecognized JWT Type.');
+            }
+        });
+    });
+
+    describe('setJWTType', () => {
+
+        it('throws error when jwt type is invalid', () => {
+
+            const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+
+            jwtutilities.jwt_type = 'unrecognized_type'; //invalid jwt type
+
+            try{
+                jwtutilities.setJWTType('unrecognized_type')
+            }catch(error){
+                expect(error.message).to.equal('[500] Unrecognized JWT Type.');
+            }
+        });
+    });
+
+    describe('signJWT', () => {
+
+        it('returns response from jwt sign', () => {
+
+            mockery.registerMock('jsonwebtoken', {
+                sign: () => {
+                    return 'a_jwt';
+                }
+            });
+
+            const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+
+            jwtutilities.jwt_type = 'site'; //valid value
+
+            //secret key with example value
+            jwtutilities.jwt_parameters = {site_jwt_secret_key: 'a_key'};
+
+            expect(jwtutilities.signJWT('a_body')).to.equal('a_jwt');
+        });
     });
 
     describe('getUserAlias', () => {
@@ -112,6 +179,32 @@ describe('lib/jwt-utilities', () => {
             const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 
             expect(jwtutilities.getUserAlias({user_alias: 'an_alias'})).to.equal('an_alias');
+        });
+
+        it('returns user alias based on user id', () => {
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'munge-utilities.js'), {
+                munge: () => {
+                    return 'a_munge_string'
+                }
+            });
+
+            const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+
+            expect(jwtutilities.getUserAlias({id: 'an_id'})).to.equal('a_munge_string');
+        });
+
+        it('returns user alias based on user email', () => {
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'munge-utilities.js'), {
+                munge: () => {
+                    return 'a_munge_string'
+                }
+            });
+
+            const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+
+            expect(jwtutilities.getUserAlias({email: 'an_email'})).to.equal('a_munge_string');
         });
 
         it('returns null when user alias, id and email are not defined', () => {

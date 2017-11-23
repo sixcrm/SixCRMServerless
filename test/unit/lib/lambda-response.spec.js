@@ -57,6 +57,23 @@ describe('lib/lambda-response', () => {
             });
         });
 
+        it('should issue a response with a body', (done) => {
+            // given
+            let aCode = anyCode;
+            let aBody = 'a_body';
+            let expectedResponse = aResponseWithDefaultBody();
+
+            expectedResponse.body = aBody;
+
+            // when
+            new LambdaResponse().issueResponse(aCode, aBody, (first, second) => {
+                let response = second;
+
+                expect(response).to.deep.equal(expectedResponse);
+                done();
+            });
+        });
+
         it('should issue an error', (done) => {
             // given
             let anEvent = anyEvent;
