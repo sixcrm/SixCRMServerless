@@ -4,16 +4,19 @@ let expect = chai.expect;
 
 let anyItem = { property: 'value' };
 let anyTableName = 'tableName';
+let serverError = '[500] An error occurred.';
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 describe('lib/dynamodb-utilities', () => {
-    describe('dynamodb-utilities', () => {
 
-        xit('should save a record', (done) => {
+    describe('saveRecord', () => {
+
+        it('should save a record', () => {
             // given
             let anItem = anyItem;
             let aTableName = anyTableName;
+            let anyResults = { TableName: 'tableName', Item: { property: 'value' } };
 
             DynamoDBUtilities.dynamodb =  {
                 put: (params, callback) => {
@@ -21,18 +24,12 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.saveRecord(aTableName, anItem, (err, data) => {
-                // then
-                expect(data).to.deep.equal({
-                    TableName: aTableName,
-                    Item: anItem
-                });
-                done();
+            return DynamoDBUtilities.saveRecord(aTableName, anItem).then((result) => {
+                expect(result).to.deep.equal(anyResults);
             });
         });
 
-        xit('should throw an error if saving fails', (done) => {
+        it('should throw an error if saving fails', () => {
             // given
             let anItem = anyItem;
             let aTableName = anyTableName;
@@ -43,15 +40,35 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.saveRecord(aTableName, anItem, (err, data) => {
-                // then
-                expect(err).to.be.an('Error');
-                done();
+            return DynamoDBUtilities.saveRecord(aTableName, anItem).catch((error) => {
+                expect(error.message).to.equal(serverError);
             });
         });
+    });
 
-        xit('should scan records', (done) => {
+    describe('retrieveRecord', () => {
+
+        it('should retrieve a record', () => {
+            // given
+            let anyKey = '1';
+            let aTableName = anyTableName;
+            let anyResults = { TableName: 'tableName', Key: '1' };
+
+            DynamoDBUtilities.dynamodb =  {
+                get: (params, callback) => {
+                    callback(null, params);
+                }
+            };
+
+            return DynamoDBUtilities.get(aTableName, anyKey).then((result) => {
+                expect(result).to.deep.equal(anyResults);
+            });
+        });
+    });
+
+    describe('scanRecord', () => {
+
+        it('should scan records', () => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Items: [{ a: 'b' }, { c: 'd' }]};
@@ -63,19 +80,12 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.scanRecords(aTableName, anyParams, (err, data) => {
-                // then
-                expect(data).to.deep.equal(anyResults.Items);
-
-                DynamoDBUtilities.scanRecordsFull(aTableName, anyParams, (err, data) => {
-                    expect(data).to.deep.equal(anyResults);
-                    done();
-                });
+            return DynamoDBUtilities.scanRecords(aTableName, anyParams).then((result) => {
+                expect(result).to.deep.equal(anyResults);
             });
         });
 
-        xit('should return empty results when no records', (done) => {
+        it('should return empty results when no records', () => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Items: [] };
@@ -87,15 +97,12 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.scanRecords(aTableName, anyParams, (err, data) => {
-                // then
-                expect(data).to.deep.equal(anyResults.Items);
-                done();
+            return DynamoDBUtilities.scanRecords(aTableName, anyParams).then((result) => {
+                expect(result).to.deep.equal(anyResults);
             });
         });
 
-        xit('should retain limits when scanning records', (done) => {
+        it('should retain limits when scanning records', () => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Items: [{ a: 'b' }, { c: 'd' }]};
@@ -108,15 +115,12 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.scanRecords(aTableName, paramsWithLimit, (err, data) => {
-                // then
-                expect(data).to.deep.equal(anyResults.Items);
-                done();
+            return DynamoDBUtilities.scanRecords(aTableName, paramsWithLimit).then((result) => {
+                expect(result).to.deep.equal(anyResults);
             });
         });
 
-        xit('should throw an error if scanning fails', (done) => {
+        it('should throw an error if scanning fails', () => {
             // given
             let anItem = anyItem;
             let aTableName = anyTableName;
@@ -127,20 +131,19 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.scanRecords(aTableName, anItem, (err, data) => {
-                // then
-                expect(err).to.be.an('Error');
-                done();
+            return DynamoDBUtilities.scanRecords(aTableName, anItem).catch((error) => {
+                expect(error.message).to.equal(serverError);
             });
         });
+    });
 
-        xit('should query records', (done) => {
+    describe('queryRecord', () => {
+
+        it('should query records', () => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Items: [{ a: 'b' }, { c: 'd' }]};
             let anyParams = {};
-            let anyConditionExpression = '';
             let anyIndex = 0;
 
             DynamoDBUtilities.dynamodb = {
@@ -149,20 +152,19 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.queryRecords(aTableName, anyParams, anyIndex = 0, (err, data) => {
-                // then
-                expect(data).to.deep.equal(anyResults.Items);
-                done();
+            return DynamoDBUtilities.queryRecords(aTableName, anyParams, anyIndex).then((result) => {
+                expect(result).to.deep.equal(anyResults);
             });
         });
+    });
 
-        xit('should count records', (done) => {
+    describe('countRecord', () => {
+
+        it('should count records', () => {
             // given
             let aTableName = anyTableName;
             let anyResults = { Count: 2};
             let anyParams = {};
-            let anyConditionExpression = '';
             let anyIndex = 0;
 
             DynamoDBUtilities.dynamodb = {
@@ -171,20 +173,27 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            //Technical Debt:  Fix!
-            DynamoDBUtilities.countRecords(aTableName, anyParams, anyIndex, (err, data) => {
-                // then
-                expect(data).to.deep.equal(anyResults.Count);
-                done();
+            return DynamoDBUtilities.countRecords(aTableName, anyParams, anyIndex).then((result) => {
+                expect(result).to.deep.equal(anyResults);
             });
         });
+        });
 
-        xit('should update records', (done) => {
+    describe('updateRecord', () => {
+
+        it('should update records', () => {
             // given
             let aTableName = anyTableName;
             let anyParams = {};
             let anyKey = '1';
             let anyExpression = '';
+            let anyResult = {
+                TableName: 'tableName',
+                Key: '1',
+                UpdateExpression: '',
+                ExpressionAttributeValues: {},
+                ReturnValues: 'UPDATED_NEW' //default value
+            };
 
             DynamoDBUtilities.dynamodb = {
                 update: (params, callback) => {
@@ -192,26 +201,25 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.updateRecord(aTableName, anyKey, anyExpression, anyParams, (err, data) => {
-                // then
-                expect(data).to.deep.equal({
-                    ExpressionAttributeValues: {},
-                    Key: anyKey,
-                    ReturnValues: 'UPDATED_NEW',
-                    TableName: aTableName,
-                    UpdateExpression: ''
-                });
-                done();
+            return DynamoDBUtilities.updateRecord(aTableName, anyKey, anyExpression, anyParams).then((result) => {
+                expect(result).to.deep.equal(anyResult);
             });
         });
+    });
 
-        xit('should delete a record', (done) => {
+    describe('deleteRecord', () => {
+        it('should delete a record', () => {
             // given
             let aTableName = anyTableName;
             let anyParams = {};
             let anyKey = '1';
             let anyExpression = '';
+            let anyResults = {
+                TableName: 'tableName',
+                Key: '1',
+                ConditionExpression: '',
+                ExpressionAttributeValues: {}
+            };
 
             DynamoDBUtilities.dynamodb = {
                 delete: (params, callback) => {
@@ -219,19 +227,166 @@ describe('lib/dynamodb-utilities', () => {
                 }
             };
 
-            // when
-            DynamoDBUtilities.deleteRecord(aTableName, anyKey, anyExpression, anyParams, (err, data) => {
-                // then
-                expect(data).to.deep.equal({
-                    TableName: aTableName,
-                    Key: anyKey,
-                    ConditionExpression: anyExpression,
-                    ExpressionAttributeValues: {}
-                });
-                done();
+            return DynamoDBUtilities.deleteRecord(aTableName, anyKey, anyExpression, anyParams).then((result) => {
+                expect(result).to.deep.equal(anyResults);
+            });
+        });
+    });
+
+    describe('createTable', () => {
+
+        it('should create a table', () => {
+            // given
+            let anyParams = {};
+            let anyResults = 'success';
+
+            DynamoDBUtilities.dynamoraw =  {
+                createTable: (params, callback) => {
+                    callback(null, anyResults);
+                }
+            };
+
+            return DynamoDBUtilities.createTable(anyParams).then((result) => {
+                expect(result).to.equal(anyResults);
+            });
+        });
+    });
+
+    describe('updateTable', () => {
+
+        it('should update a table', () => {
+            // given
+            let anyParams = {};
+            let anyResults = 'success';
+
+            DynamoDBUtilities.dynamoraw =  {
+                updateTable: (params, callback) => {
+                    callback(null, anyResults);
+                }
+            };
+
+            return DynamoDBUtilities.updateTable(anyParams).then((result) => {
+                expect(result).to.equal(anyResults);
+            });
+        });
+    });
+
+    describe('describeTable', () => {
+
+        it('should describe a table', () => {
+            // given
+            let aTableName = anyTableName;
+            let anyResults = { TableName: 'tableName' };
+
+            DynamoDBUtilities.dynamoraw =  {
+                describeTable: (params, callback) => {
+                    callback(null, params);
+                }
+            };
+
+            return DynamoDBUtilities.describeTable(aTableName).then((result) => {
+                expect(result).to.deep.equal(anyResults);
+            });
+        });
+    });
+
+    describe('deleteTable', () => {
+
+        it('should delete a table', () => {
+            // given
+            let aTableName = anyTableName;
+            let anyResults = { TableName: 'tableName' };
+
+            DynamoDBUtilities.dynamoraw =  {
+                deleteTable: (params, callback) => {
+                    callback(null, params);
+                }
+            };
+
+            return DynamoDBUtilities.deleteTable(aTableName).then((result) => {
+                expect(result).to.deep.equal(anyResults);
             });
         });
 
+        it('throws error when table is not removed', () => {
+            // given
+            let aTableName = anyTableName;
+
+            DynamoDBUtilities.dynamoraw =  {
+                deleteTable: (params, callback) => {
+                    callback(new Error('fail'), null);
+                }
+            };
+
+            return DynamoDBUtilities.deleteTable(aTableName).catch((error) => {
+                expect(error.message).to.deep.equal('[500] fail');
+            });
+        });
+        });
+
+    describe('waitFor', () => {
+
+        it('should wait', () => {
+            // given
+            let aTableName = anyTableName;
+            let anyResults = { TableName: 'tableName' };
+            let anyStatus = 'anyStatus';
+
+            DynamoDBUtilities.dynamoraw =  {
+                waitFor: (status, params, callback) => {
+                    callback(null, params);
+                }
+            };
+
+            return DynamoDBUtilities.waitFor(aTableName, anyStatus).then((result) => {
+                expect(result).to.deep.equal(anyResults);
+            });
+        });
+
+        it('throws error from dynamoraw waitFor', () => {
+            // given
+            let aTableName = anyTableName;
+            let anyStatus = 'anyStatus';
+
+            DynamoDBUtilities.dynamoraw =  {
+                waitFor: (status, params, callback) => {
+                    callback(new Error('fail'), null);
+                }
+            };
+
+            return DynamoDBUtilities.waitFor(aTableName, anyStatus).catch((error) => {
+                expect(error.message).to.equal('[500] fail');
+            });
+        });
+    });
+
+    describe('createINQueryParameters', () => {
+
+        it('throws error when array entry is not a string', () => {
+            // given
+            let anyFieldName = 'aFieldName';
+            let anyArray = [1]; //array with a value that is not a string
+
+            try {
+                DynamoDBUtilities.createINQueryParameters(anyFieldName, anyArray)
+            }catch(error) {
+                expect(error.message).to.equal('[500] All entries in the "in_array" must be of type string.');
+            }
+        });
+
+        it('should create object with filter expression and attribute values', () => {
+            // given
+            let anyFieldName = 'aFieldName';
+            let anyArray = ['a', 'b'];
+
+            let inqueryParams = DynamoDBUtilities.createINQueryParameters(anyFieldName, anyArray);
+
+            expect(inqueryParams).to.have.property('filter_expression');
+            expect(inqueryParams).to.have.property('expression_attribute_values');
+        });
+    });
+
+    describe('appendDisjunctionQueryParameters', () => {
         it('should create disjunction parameters when existing parameters are undefined', () => {
             const result = DynamoDBUtilities.appendDisjunctionQueryParameters(undefined, 'type', ['type1', 'type2']);
 
