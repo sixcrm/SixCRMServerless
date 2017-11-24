@@ -4,7 +4,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Rebill State History Item',
+    name: 'RebillStateHistoryItem',
     description: 'A details about a state rebill was once in.',
     fields: () => ({
         state: {
