@@ -52,25 +52,6 @@ describe('lib/redis-utilities', () => {
 
     describe('createClient', () => {
 
-        it('returns true when client has been created', () => {
-
-            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
-            redisutilities.endpoint = 'an_endpoint';
-
-            redisutilities.redis = {
-                createClient: () => {
-                    return {
-                        on: (parameters, response) => {
-                            response('connect');
-                        }
-                    }
-                }
-            };
-
-            expect(redisutilities.createClient()).to.be.true;
-
-        });
-
         it('throws error when endpoint is not set', () => {
 
             const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
@@ -101,30 +82,8 @@ describe('lib/redis-utilities', () => {
 
             const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
 
-            redisutilities.endpoint = 'an_endpoint';
+            redisutilities.endpoint = global.SixCRM.configuration.site_config.elasticache.endpoint;
             redisutilities.redis_client.ready = true;
-
-            //any number less than 4
-            return redisutilities.prepare(3).then((result) => {
-                expect(result).to.be.true;
-            });
-        });
-
-        it('returns true when redis client is created', () => {
-
-            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
-
-            redisutilities.redis_client.ready = false;  //set to false and then create client
-
-            redisutilities.redis = {
-                createClient: () => {
-                    return {
-                        on: (parameters, response) => {
-                            response('connect');
-                        }
-                    }
-                }
-            };
 
             //any number less than 4
             return redisutilities.prepare(3).then((result) => {
@@ -247,6 +206,104 @@ describe('lib/redis-utilities', () => {
 
             //random object value
             expect(redisutilities.prepareValue({'test': 'sample_data'})).to.deep.equal('{"test":"sample_data"}');
+        });
+    });
+
+    describe('flushAll', () => {
+
+        it('returns success when db has been cleared', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            redisutilities.redis_client = {
+                ready: true,
+                flushdb: (callback) => {
+                    callback(null, 'success');
+                },
+                quit: () => {}
+            };
+
+            return redisutilities.flushAll().then((result) => {
+                expect(result).to.equal('success');
+            });
+        });
+    });
+
+    describe('get', () => {
+
+        it('returns reply from redis get', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            redisutilities.redis_client = {
+                ready: true,
+                get: (key, callback) => {
+                    callback(null, '{ "anyResult": "aResult"}');
+                },
+                quit: () => {}
+            };
+
+            return redisutilities.get('anyKey').then((result) => {
+                expect(result).to.deep.equal({anyResult: 'aResult'});
+            });
+        });
+
+        it('throws error from redis when data retrieval was unsuccessful', () => {
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            redisutilities.redis_client = {
+                ready: true,
+                get: (key, callback) => {
+                    callback('fail', null);
+                },
+                quit: () => {}
+            };
+
+            return redisutilities.get('anyKey').catch((error) => {
+                expect(error).to.equal('fail');
+            });
+        });
+    });
+
+    describe('set', () => {
+
+        it('returns reply from redis set', () => {
+
+            let anyResult = {anyResult: 'aResult'};
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            redisutilities.redis_client = {
+                ready: true,
+                set: (key, value, ex, expiration, callback) => {
+                    callback(null, '{"anyResult": "aResult"}');
+                },
+                quit: () => {}
+            };
+
+            return redisutilities.set('anyKey', anyResult).then((result) => {
+                expect(result).to.deep.equal(anyResult);
+            });
+        });
+
+        it('throws error from redis when set was unsuccessful', () => {
+
+            let anyResult = {anyResult: 'aResult'};
+
+            const redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+
+            redisutilities.redis_client = {
+                ready: true,
+                set: (key, value, ex, expiration, callback) => {
+                    callback('fail', null);
+                },
+                quit: () => {}
+            };
+
+            return redisutilities.set('anyKey', anyResult).catch((error) => {
+                expect(error).to.equal('fail');
+            });
         });
     });
 });
