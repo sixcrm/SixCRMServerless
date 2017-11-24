@@ -7,6 +7,7 @@ const GraphQLString = require('graphql').GraphQLString;
 let transactionType = require('../transaction/transactionType');
 let productScheduleType = require('../productschedule/productScheduleType');
 let sessionType = require('../session/sessionType');
+let rebillStateHistoryItem = require('./rebillStateHistoryItemType');
 
 const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
@@ -38,18 +39,34 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: rebill => rebillController.listProductSchedules(rebill),
         },
         transactions: {
-	  type: new GraphQLList(transactionType.graphObj),
+	          type: new GraphQLList(transactionType.graphObj),
             description: 'The transactions associated with the rebill',
             resolve: rebill => rebillController.listTransactions(rebill),
         },
         created_at: {
-	  type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was created.',
         },
         updated_at: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'ISO8601 datetime when the entity was updated.',
-        }
+        },
+        state: {
+            type: GraphQLString,
+            description: 'State rebill is currently in.',
+        },
+        previous_state: {
+            type: GraphQLString,
+            description: 'State rebill is currently in.',
+        },
+        state_changed_at: {
+            type: GraphQLString,
+            description: 'ISO8601 datetime when the state of the rebill was changed.',
+        },
+        history: {
+            type: new GraphQLList(rebillStateHistoryItem.graphObj),
+            description: 'State history of the rebill',
+        },
     }),
     interfaces: []
 });

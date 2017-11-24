@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/rebillstatehistoryitem.json",
+  "title": "Rebill State History Item",
+  "type":"object",
+  "properties": {
+    "state":{
+      "type":"string"
+    },
+    "error_message":{
+      "type":"string"
+    },
+    "entered_at":{
+      "type":{"$ref": "./iso8601.json"}
+    },
+    "exited_at":{
+      "type":{"$ref": "./iso8601.json"}
+    }
+  },
+  "required":["state", "entered_at"]
+}

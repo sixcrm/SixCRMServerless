@@ -36,7 +36,21 @@ function getValidRebill(){
     account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
     created_at: '2017-11-12T06:03:35.571Z',
     updated_at: '2017-11-12T06:03:35.571Z',
-    entity_type: 'rebill'
+    entity_type: 'rebill',
+    state: 'hold',
+    previous_state: 'bill',
+    state_changed_at: '2017-11-12T06:05:35.571Z',
+    history: [
+      {
+        state: 'bill',
+        entered_at: '2017-11-12T06:03:35.571Z',
+        exited_at: '2017-11-12T06:05:35.571Z',
+      },
+      {
+        state: 'hold',
+        entered_at: '2017-11-12T06:05:35.571Z',
+      }
+    ]
   };
 
 }

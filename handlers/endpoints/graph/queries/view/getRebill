@@ -40,7 +40,16 @@
 				processor_response
 			},
 			created_at,
-			updated_at
+			updated_at,
+			state,
+            previous_state,
+            state_changed_at,
+            history {
+                state,
+                entered_at,
+                exited_at,
+                error_message
+            }
 		}
 	}"
 }
