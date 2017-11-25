@@ -1,0 +1,14 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/event",
+	"title": "Event",
+	"type":"object",
+	"properties": {
+		"campaign": {"$ref":"../../definitions/uuidv4.json"},
+		"affiliates": {"$ref":"../components/affiliatesprototype.json"},
+		"customer":{"$ref":"../components/customerprototype.json"},
+		"product_schedules":{"$ref": "../components/productschedules.json"},
+		"creditcard":{"$ref": "../components/creditcard.json"}
+	},
+	"required":["campaign", "customer", "product_schedules", "creditcard"]
+}

@@ -58,7 +58,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
       return this.preprocessing(event)
   		.then((event) => this.acquireRequestProperties(event))
       .then((event_body) => {
-        du.info(event_body);
         this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
       });
 
@@ -272,8 +271,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
     createTransactionObject(info){
 
       du.debug('Create Transaction Object');
-
-      du.info(info);
 
       let transaction_object = {
         id: info.transaction.id,

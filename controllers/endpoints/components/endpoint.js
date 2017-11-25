@@ -65,8 +65,6 @@ module.exports = class EndpointController {
 
     if(_.has(event, 'body')){
 
-      du.info(event.body);
-      
       if(objectutilities.isObject(event.body)){
 
         return_object = event.body;
@@ -97,8 +95,6 @@ module.exports = class EndpointController {
     du.debug('Acquire Path Parameters');
 
     let return_object = {};
-
-    du.info(event.pathParameters);
 
     if(_.has(event, 'pathParameters') && objectutilities.isObject(event.pathParameters)){
       return_object = event.pathParameters;

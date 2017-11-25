@@ -42,12 +42,17 @@ class checkoutController extends transactionEndpointController{
     };
 
     this.parameter_validation = {
-      'event':global.SixCRM.routes.path('model', 'endpoints/checkout/event.json')
+      'event':global.SixCRM.routes.path('model', 'endpoints/checkout/event.json'),
+      'session':global.SixCRM.routes.path('model', 'entities/session.json'),
+      'order':global.SixCRM.routes.path('model', 'endpoints/checkout/order.json'),
+      'confirmation':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
     };
 
     this.createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
     this.createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
     this.confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+
+    this.initialize();
 
   }
 
@@ -68,7 +73,7 @@ class checkoutController extends transactionEndpointController{
 
     du.debug('Set Session');
 
-    let session = this.createLeadController.parameters.get('session');
+    let session = this.parameters.get('session');
 
     let event = this.parameters.get('event');
 
@@ -88,7 +93,10 @@ class checkoutController extends transactionEndpointController{
 
     this.confirmOrderController.parameters.set('event', event);
 
-    return this.confirmOrderController.confirmOrder();
+    return this.confirmOrderController.confirmOrder().then(result => {
+      this.parameters.set('confirmation', result);
+      return Promise.resolve(true);
+    });
 
   }
 
@@ -100,7 +108,10 @@ class checkoutController extends transactionEndpointController{
 
     this.createOrderController.parameters.set('event', event);
 
-    return this.createOrderController.createOrder();
+    return this.createOrderController.createOrder().then(result => {
+      this.parameters.set('order', result);
+      return Promise.resolve(true);
+    });
 
   }
 
@@ -112,7 +123,10 @@ class checkoutController extends transactionEndpointController{
 
     this.createLeadController.parameters.set('event', event);
 
-    return this.createLeadController.createLead();
+    return this.createLeadController.createLead().then(result => {
+      this.parameters.set('session', result);
+      return Promise.resolve(true);
+    });
 
   }
 
@@ -120,7 +134,7 @@ class checkoutController extends transactionEndpointController{
 
     du.debug('Post Processing');
 
-    let info = this.confirmOrderController.parameters.get('response');
+    let info = this.parameters.get('confirmation');
 
     return info;
 
