@@ -3,82 +3,128 @@ const _ = require("underscore");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
-const createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
-const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-const confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class checkoutController extends transactionEndpointController{
 
-    constructor(){
-      super();
-    }
+  constructor(){
 
-    execute(event){
+    super();
 
-      du.debug('Execute');
+    this.required_permissions = [
+      'user/read',
+      'account/read',
+      'session/create',
+      'session/read',
+      'session/update',
+      'campaign/read',
+      'creditcard/create',
+      'creditcard/update',
+      'creditcard/read',
+      'productschedule/read',
+      'loadbalancer/read',
+      'rebill/read',
+      'rebill/create',
+      'rebill/update',
+      'product/read',
+      'affiliate/read',
+      'notification/create',
+      'tracker/read'
+    ];
 
-      return this.acquireBody(event)
-  		.then((body) => this.validateInput(body, this.validateEventSchema))
-      .then(() => this.createLead(event))
-      .then((lead_response) => {
-
-        if(!_.has(lead_response, 'id')){
-          eu.throwError('server', 'Unable to establish session ID.');
+    this.parameter_definitions = {
+      execute: {
+        required : {
+          event:'event'
         }
+      }
+    };
 
-        event['queryStringParameters'] = 'session='+lead_response.id;
+    this.parameter_validation = {
+      'event':global.SixCRM.routes.path('model', 'endpoints/checkout/event.json')
+    };
 
-        if(_.isString(event.body)){
-          event.body = JSON.parse(event.body);
-        }
+    this.createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+    this.createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+    this.confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 
-        event.body['session'] = lead_response.id;
+  }
 
-      })
-      .then(() => this.createOrder(event))
-      .then(() => this.confirmOrder(event))
-  		.then((pass_through) => this.handleNotifications(pass_through))
-  		.catch((error) => {
-        du.error(error);
-        throw error;
-      });
+  execute(event){
 
-    }
+    du.debug('Execute');
 
-    confirmOrder(event){
+    return this.preamble(event)
+    .then(() => this.createLead())
+    .then(() => this.setSession())
+    .then(() => this.createOrder())
+    .then(() => this.confirmOrder())
+    .then(() => this.postProcessing());
 
-      du.debug('Confirm Order');
+  }
 
-      return confirmOrderController.execute(event);
+  setSession(){
 
-    }
+    du.debug('Set Session');
 
-    createOrder(event){
+    let session = this.createLeadController.parameters.get('session');
 
-      du.debug('Create Order');
+    let event = this.parameters.get('event');
 
-      return createOrderController.execute(event);
+    event.session = session.id;
 
-    }
+    this.parameters.set('event', event);
 
-    createLead(event){
+    return Promise.resolve(true);
 
-      du.debug('Create Lead');
+  }
 
-      return createLeadController.execute(event);
+  confirmOrder(){
 
-    }
+    du.debug('Confirm Order');
 
-    validateEventSchema(event){
+    let event = this.parameters.get('event');
 
-        du.debug('Validate Event Schema');
+    this.confirmOrderController.parameters.set('event', event);
 
-        return modelvalidationutilities.validateModel(event,  global.SixCRM.routes.path('model', 'endpoints/checkout.json'));
+    return this.confirmOrderController.confirmOrder();
 
-    }
+  }
+
+  createOrder(){
+
+    du.debug('Create Order');
+
+    let event = this.parameters.get('event');
+
+    this.createOrderController.parameters.set('event', event);
+
+    return this.createOrderController.createOrder();
+
+  }
+
+  createLead(){
+
+    du.debug('Create Lead');
+
+    let event = this.parameters.get('event');
+
+    this.createLeadController.parameters.set('event', event);
+
+    return this.createLeadController.createLead();
+
+  }
+
+  postProcessing(){
+
+    du.debug('Post Processing');
+
+    let info = this.confirmOrderController.parameters.get('response');
+
+    return info;
+
+  }
 
 }
 

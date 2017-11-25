@@ -17,7 +17,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const EndpointController = global.SixCRM.routes.include('controllers', 'endpoints/endpoint.js');
+const EndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/endpoint.js');
 
 function getValidLambdaPOSTEvent(){
 
@@ -185,9 +185,9 @@ describe('controllers/endpoints/endpoint.js', () => {
 
       let event = getValidPOSTEvent();
 
-      return endpointController.acquireBody(event).then(result => {
-        expect(result).to.deep.equal(JSON.parse(event.body));
-      });
+      let result = endpointController.acquireBody(event)
+
+      expect(result).to.deep.equal(JSON.parse(event.body));
 
     });
 
@@ -199,9 +199,10 @@ describe('controllers/endpoints/endpoint.js', () => {
 
       event.body = JSON.parse(event.body);
 
-      return endpointController.acquireBody(event).then(result => {
-        expect(result).to.deep.equal(event.body);
-      });
+      let result = endpointController.acquireBody(event)
+
+      expect(result).to.deep.equal(event.body);
+
 
     });
 
@@ -213,11 +214,9 @@ describe('controllers/endpoints/endpoint.js', () => {
 
       event.body = 'blarg';
 
-      try{
-        endpointController.acquireBody({});
-      }catch(error){
-        expect(error.message).to.equal('[400] Unexpected event structure.');
-      }
+      let result = endpointController.acquireBody(event.body);
+
+      expect(result).to.deep.equal({});
 
     });
 
@@ -231,10 +230,9 @@ describe('controllers/endpoints/endpoint.js', () => {
 
       let endpointController = new EndpointController();
 
-      return endpointController.acquirePathParameters(event).then(result => {
-        expect(result).to.deep.equal(event);
-        expect(endpointController.pathParameters).to.deep.equal(event.pathParameters);
-      });
+      let result = endpointController.acquirePathParameters(event);
+
+      expect(result).to.deep.equal(event.pathParameters);
 
     });
 
@@ -248,12 +246,9 @@ describe('controllers/endpoints/endpoint.js', () => {
 
       endpointController.pathParameters = 'something';
 
-      try{
-        endpointController.acquirePathParameters(event);
-      }catch(error){
-        expect(error.message).to.equal('[400] Unexpected event structure.');
-        expect(endpointController.pathParameters).to.equal(undefined);
-      }
+      let result = endpointController.acquirePathParameters(event);
+
+      expect(result).to.deep.equal({});
 
     });
 

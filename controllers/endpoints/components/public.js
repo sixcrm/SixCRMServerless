@@ -3,7 +3,7 @@ let _ = require('underscore');
 let encodeutilities = global.SixCRM.routes.include('lib', 'encode.js');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities');
 let eu = global.SixCRM.routes.include('lib', 'error-utilities');
-const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/endpoint.js');
+const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/endpoint.js');
 
 module.exports = class PublicController extends endpointController {
 
@@ -25,6 +25,7 @@ module.exports = class PublicController extends endpointController {
       .then((event) => this.parseEventQueryString(event));
     }
 
+    //Technical Debt:  Redundant?
     parseEventQueryString(event){
 
       du.debug('Parse Event Query String');

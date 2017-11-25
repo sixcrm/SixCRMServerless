@@ -2,6 +2,7 @@ const _ = require('underscore');
 const chai = require('chai');
 const expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 describe('lib/object-utilities', () => {
 
@@ -339,6 +340,56 @@ describe('lib/object-utilities', () => {
     it('returns null', () => {
         expect(objectutilities.getObjectType(null)).to.equal(null);
     });
+  });
+
+  describe('isObject', () => {
+
+    it('should return true for valid objects',  () => {
+
+      let valid_objects = [{}, {hello:'world'}];
+
+      arrayutilities.map(valid_objects, valid_object => {
+        expect(objectutilities.isObject(valid_object)).to.equal(true);
+      });
+
+    });
+
+    it('should return false for invalid objects', () => {
+
+      let invalid_objects = [123, 'abc', null, undefined, JSON.stringify({}), JSON.stringify({hello: 'world'})];
+
+      arrayutilities.map(invalid_objects, invalid_object => {
+        expect(objectutilities.isObject(invalid_object)).to.equal(false);
+      });
+
+    });
+
+    it('should return true for valid objects when fatal is true',  () => {
+
+      let valid_objects = [{}, {hello:'world'}];
+
+      arrayutilities.map(valid_objects, valid_object => {
+        expect(objectutilities.isObject(valid_object), true).to.equal(true);
+      });
+
+    });
+
+    it('should throw an error for invalid objects when fatal is true',  () => {
+
+      let invalid_objects = [123, 'abc', null, undefined, JSON.stringify({}), JSON.stringify({hello: 'world'})];
+
+      arrayutilities.map(invalid_objects, invalid_object => {
+
+        try {
+          objectutilities.isObject(invalid_object, true);
+        }catch(error){
+          expect(error.message).to.equal('[500] Thing is not an object.');
+        }
+
+      });
+
+    });
+
   });
 
 });

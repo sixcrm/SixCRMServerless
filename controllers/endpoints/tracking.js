@@ -4,7 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class TrackingController extends transactionEndpointController{
 
@@ -43,11 +43,7 @@ class TrackingController extends transactionEndpointController{
 
       du.debug('Execute');
 
-      return this.preprocessing(event)
-  		.then((event) => this.acquireBody(event))
-      .then((event_body) => {
-        this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
-      })
+      return this.preamble(event)
       .then(() => this.acquireEventProperties())
 			.then(() => this.acquireTrackers())
       //Note: filtering or validation here?

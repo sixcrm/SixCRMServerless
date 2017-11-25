@@ -5,13 +5,12 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
-const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class CreateOrderController extends transactionEndpointController{
 
@@ -88,13 +87,16 @@ class CreateOrderController extends transactionEndpointController{
 
     du.debug('Execute');
 
-    return this.preprocessing((event))
-		.then((event) => this.acquireBody(event))
-    .then((event_body) => {
-      this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
-      //this.parameters.set('sessionlength', global.SixCRM.configuration.site_config.jwt.transaction.expiration);
-    })
-    .then(() => this.hydrateSession())
+    return this.preamble(event)
+    .then(() => this.createOrder());
+
+  }
+
+  createOrder(){
+
+    du.debug('Create Order');
+
+    return this.hydrateSession()
     .then(() => this.hydrateEventAssociatedParameters())
     .then(() => this.setCustomer())
     .then(() => this.validateEventProperties())

@@ -12,7 +12,7 @@ const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-fi
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const notificationProvider = global.SixCRM.routes.include('providers', 'notification/notification-provider');
 
-const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/authenticated.js');
+const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
 
 module.exports = class transactionEndpointController extends authenticatedController {
 
@@ -48,6 +48,19 @@ module.exports = class transactionEndpointController extends authenticatedContro
       }
 
       return true;
+
+    }
+
+    preamble(event){
+
+      du.debug('Preamble');
+
+      return this.preprocessing(event)
+  		.then((event) => this.acquireRequestProperties(event))
+      .then((event_body) => {
+        du.info(event_body);
+        this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
+      });
 
     }
 

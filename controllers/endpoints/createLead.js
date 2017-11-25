@@ -3,7 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class CreateLeadController extends transactionEndpointController{
 
@@ -66,17 +66,20 @@ class CreateLeadController extends transactionEndpointController{
 
       du.debug('Execute');
 
-      return this.preprocessing(event)
-  		.then((event) => this.acquireBody(event))
-      .then((event_body) => {
-        this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
-      })
-      .then(() => this.assureLeadProperties())
+      return this.preamble(event)
+      .then(() => this.createLead());
+
+    }
+
+    createLead(){
+
+      du.debug('Create Lead');
+
+      return this.assureLeadProperties()
       .then(() => this.createSessionPrototype())
 			.then(() => this.assureSession())
       .then(() => {
 
-        //du.warning('here');
         this.postProcessing();
 
         return this.parameters.get('session');

@@ -4,10 +4,8 @@ const _ = require("underscore");
 const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const modelvalidationutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class AcquireTokenController extends transactionEndpointController {
 
@@ -50,11 +48,7 @@ class AcquireTokenController extends transactionEndpointController {
 
       du.debug('Execute');
 
-      return this.preprocessing(event)
-      .then((event) => this.acquireBody(event))
-      .then((event_body) => {
-        this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
-      })
+      return this.preamble(event)
       .then(() => this.validateCampaign())
       .then(() => this.acquireToken())
       .then((token) => {

@@ -7,7 +7,7 @@ const permissionutilities = global.SixCRM.routes.include('lib', 'permission-util
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/endpoint.js');
+const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/endpoint.js');
 
 module.exports = class AuthenticatedController extends endpointController {
 

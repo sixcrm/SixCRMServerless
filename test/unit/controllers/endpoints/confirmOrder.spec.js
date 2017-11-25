@@ -108,8 +108,8 @@ function getValidTransactions(){
 function getValidEvent(){
 
   return {
-    resource: '/token/acquire/{account}',
-    path: '/token/acquire/d3fa3bf3-7824-49f4-8261-87674482bf1c',
+    resource: '/order/confirm/{account}',
+    path: '/order/confirm/d3fa3bf3-7824-49f4-8261-87674482bf1c',
     httpMethod: 'GET',
     headers: {
       'Accept-Encoding': 'gzip, deflate',
@@ -375,7 +375,7 @@ describe('confirmOrder', function () {
 
       confirmOrderController.parameters.set('session', session);
 
-      return confirmOrderController.confirmOrder().then(result => {
+      return confirmOrderController.closeSession().then(result => {
         expect(result).to.equal(true);
       });
 
@@ -564,6 +564,92 @@ describe('confirmOrder', function () {
       let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 
       return confirmOrderController.execute(event).then(result => {
+        expect(result).to.have.property('transactions');
+        expect(result).to.have.property('customer');
+        expect(result).to.have.property('session');
+        expect(result).to.have.property('transaction_products');
+        expect(result.transactions).to.deep.equal(transactions);
+        expect(result.customer).to.deep.equal(customer);
+        expect(result.session).to.deep.equal(session);
+        expect(result.transaction_products).to.deep.equal(products);
+      });
+
+    });
+
+  });
+
+  describe('confirmOrder', () => {
+
+    before(() => {
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
+    });
+
+    afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
+
+    it('successfully executes', () => {
+
+      let event = getValidEventBody();
+      let session = getValidSession();
+      let transactions = getValidTransactions();
+      let products = getValidTransactionProducts();
+      let customer = getValidCustomer();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
+        get:({id}) => {
+          return Promise.resolve(session)
+        },
+        isEmail: (user_string) => {
+          return true;
+        },
+        getUserStrict: (user_string) => {
+          return Promise.resolve({});
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
+          return Promise.resolve({});
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        get:({id}) => {
+          return Promise.resolve(session);
+        },
+        getCustomer:(session) => {
+          return Promise.resolve(customer);
+        },
+        listTransactions:(session) => {
+          return Promise.resolve(transactions);
+        },
+        closeSession:(session) => {
+          return Promise.resolve(true);
+        }
+      });
+
+      let mock_transaction_helper_controller = class {
+        constructor(){}
+        getTransactionProducts(transactions){
+          return products;
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+
+      confirmOrderController.parameters.set('event', event);
+
+      return confirmOrderController.confirmOrder(event).then(result => {
         expect(result).to.have.property('transactions');
         expect(result).to.have.property('customer');
         expect(result).to.have.property('session');

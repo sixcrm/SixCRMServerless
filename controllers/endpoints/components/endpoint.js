@@ -6,6 +6,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class EndpointController {
 
@@ -41,23 +42,53 @@ module.exports = class EndpointController {
 
   }
 
+  acquireRequestProperties(event){
+
+    du.debug('Acquire Request Properties');
+
+    let path_parameters = this.acquirePathParameters(event);
+    let body = this.acquireBody(event);
+    let querystring_parameters = this.acquireQueryStringParameters(event);
+
+    //Technical Debt:  What happens if there is namespace collision?
+    let merged_properties = objectutilities.merge(path_parameters, body, querystring_parameters);
+
+    return merged_properties;
+
+  }
+
   acquireBody(event){
 
     du.debug('Acquire Body');
 
-    if(!_.has(event, 'body')){
-      this.throwUnexpectedEventStructureError(event);
+    let return_object = {};
+
+    if(_.has(event, 'body')){
+
+      du.info(event.body);
+      
+      if(objectutilities.isObject(event.body)){
+
+        return_object = event.body;
+
+      }else if(stringutilities.isString(event.body)){
+
+        try {
+
+          return_object = stringutilities.parseJSONString(event.body, true);
+
+        }catch(e) {
+
+          du.error(e);
+          //Thing is not a sting or does not parse...
+
+        }
+
+      }
+
     }
 
-    let duplicate_body;
-
-    try {
-        duplicate_body = JSON.parse(event.body);
-    } catch (e) {
-        duplicate_body = event.body;
-    }
-
-    return Promise.resolve(duplicate_body);
+    return return_object;
 
   }
 
@@ -65,21 +96,51 @@ module.exports = class EndpointController {
 
     du.debug('Acquire Path Parameters');
 
-    if(_.has(event, 'pathParameters')){
+    let return_object = {};
 
-        this.pathParameters = event.pathParameters;
+    du.info(event.pathParameters);
 
-        return Promise.resolve(event);
+    if(_.has(event, 'pathParameters') && objectutilities.isObject(event.pathParameters)){
+      return_object = event.pathParameters;
+    }
 
-    }else{
+    return return_object;
 
-        this.pathParameters = undefined;
+  }
+
+  acquireQueryStringParameters(event){
+
+    du.debug('Acquire Query String');
+
+    let return_object = {};
+
+    if(_.has(event, 'queryStringParameters')){
+
+      if(_.isObject(event.queryStringParameters)){
+
+        return_object = event.queryStringParameters;
+
+      }else{
+
+        try{
+
+          return_object = querystring.parse(event.queryStringParameters);
+
+        }catch(error){
+
+          //du.error(error);
+          //this.throwUnexpectedEventStructureError(event);
+
+        }
+
+      }
 
     }
 
-    this.throwUnexpectedEventStructureError(event);
+    return return_object;
 
   }
+
 
   validateEvent(event){
 

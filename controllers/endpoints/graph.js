@@ -5,7 +5,7 @@ const graphql =  require('graphql').graphql;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-let authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/authenticated.js');
+let authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
 
 module.exports = class graphController extends authenticatedController {
@@ -24,6 +24,7 @@ module.exports = class graphController extends authenticatedController {
 
       du.debug('Execute');
 
+      //Technical Debt:  Alter to use preamble
       return this.preprocessing(event)
 			.then((event) => this.acquireAccount(event))
       .then((event) => this.acquireUser(event))

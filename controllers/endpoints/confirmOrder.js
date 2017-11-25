@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
-const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/transaction.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class ConfirmOrderController extends transactionEndpointController{
 
@@ -67,17 +67,21 @@ class ConfirmOrderController extends transactionEndpointController{
 
   execute(event){
 
-    return this.preprocessing(event)
-    .then((event) => this.parseEventQueryString(event))
-    .then((event) => {
+    du.debug('Execute');
 
-      this.parameters.setParameters({argumentation:{event: event.queryStringParameters}, action: 'execute'});
+    return this.preamble(event)
+    .then(() => this.confirmOrder());
 
-    })
-    .then(() => this.hydrateSession())
+  }
+
+  confirmOrder(){
+
+    du.debug('Confirm Order');
+
+    return this.hydrateSession()
     .then(() => this.validateSession())
     .then(() => this.hydrateSessionProperties())
-    .then(() => this.confirmOrder())
+    .then(() => this.closeSession())
     .then(() => this.buildResponse())
     .then(result_object => {
 
@@ -157,7 +161,7 @@ class ConfirmOrderController extends transactionEndpointController{
   }
 
 
-  confirmOrder(){
+  closeSession(){
 
     du.debug('Confirm Order');
 
