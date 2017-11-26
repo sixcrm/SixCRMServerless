@@ -33,7 +33,7 @@ class processBillingController extends workerController {
       //registerresponse: global.SixCRM.routes.path('model', 'functional/register/response.json')
     };
 
-    this.instantiateParameters();
+    this.augmentParameters();
 
   }
 
@@ -43,9 +43,6 @@ class processBillingController extends workerController {
 
     return this.setParameters({argumentation: {message: message}, action: 'execute'})
     .then(() => this.acquireRebill())
-    .then((rebill) => {
-      this.parameters.set('rebill', rebill);
-    })
     .then(() => this.process())
     .then(() => this.respond())
     .catch((error) => {

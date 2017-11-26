@@ -23,7 +23,6 @@ class IndexEntitiesController extends workerController {
       };
 
       this.parameter_validation = {
-        'messages':global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
         'parsedmessagebodies': global.SixCRM.routes.path('model', 'workers/indexEntities/parsedmessagebodies.json'),
         'indexingdocument': global.SixCRM.routes.path('model','workers/indexEntities/indexingdocument.json'),
         'cloudsearchresponse': global.SixCRM.routes.path('model','workers/indexEntities/cloudsearchresponse.json'),
@@ -36,7 +35,7 @@ class IndexEntitiesController extends workerController {
 
       this.cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
-      this.instantiateParameters();
+      this.augmentParameters();
 
     }
 

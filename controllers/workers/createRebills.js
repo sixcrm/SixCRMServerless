@@ -28,7 +28,7 @@ class createRebillsController extends workerController {
 
       this.rebillHelperController = new RebillHelperController();
 
-      this.instantiateParameters();
+      this.augmentParameters();
 
     }
 
@@ -52,13 +52,7 @@ class createRebillsController extends workerController {
 
       let message = this.parameters.get('message');
 
-      return super.acquireSession(message).then(session => {
-
-        this.parameters.set('session', session);
-
-        return true;
-
-      });
+      return super.acquireSession(message);
 
     }
 

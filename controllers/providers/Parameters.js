@@ -23,7 +23,15 @@ module.exports = class Parameters {
 
     du.debug('Set Parameter Validation');
 
-    this.parameter_validation = parameter_validation;
+    parameter_validation = _.isUndefined(parameter_validation)?{}:parameter_validation;
+
+    if(!_.has(this, 'parameter_validation')){
+      this.parameter_validation = {};
+    }
+
+    this.parameter_validation = objectutilities.merge(this.parameter_validation, parameter_validation);
+
+    return true;
 
   }
 
@@ -31,7 +39,15 @@ module.exports = class Parameters {
 
     du.debug('Set Parameter Definition');
 
-    this.parameter_definition = parameter_definition;
+    parameter_definition = _.isUndefined(parameter_definition)?{}:parameter_definition;
+
+    if(!_.has(this, 'parameter_definition')){
+      this.parameter_definition = {};
+    }
+
+    this.parameter_definition = objectutilities.merge(this.parameter_definition, parameter_definition);
+
+    return true;
 
   }
 
@@ -44,6 +60,8 @@ module.exports = class Parameters {
       this.store[key] = value;
 
     }
+
+    return true;
 
   }
 

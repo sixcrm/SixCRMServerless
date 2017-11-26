@@ -1,125 +1,164 @@
 'use strict';
-var _ = require("underscore");
-
-var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-var shippingStatusController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/ShippingStatus.js');
-var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
+const _ = require("underscore");
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 class confirmDeliveredController extends workerController {
 
     constructor(){
-        super();
-        this.messages = {
-            delivered: 'DELIVERED'
-        };
+
+      super();
+
+      this.parameter_definition = {
+        execute: {
+          required: {
+            message: 'message'
+          },
+          optional:{}
+        }
+      };
+
+      this.parameter_validation = {
+        'transactions':global.SixCRM.routes.path('model', 'entities/components/transactions.json'),
+        //Technical Debt:  We need a schema that enforces the transaction product having a shipping receipt...
+        'transactionproducts':global.SixCRM.routes.path('model', 'entities/components/transactionproducts.json'),
+        'shippingreceipts':global.SixCRM.routes.path('model', 'entities/components/shippingreceipts.json')
+        //'deliveredstatus'
+        //'shippingproviderstati':global.SixCRM.routes.path('model', 'workers/')
+      };
+
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entitites/transaction/Transaction.js');
+
+      this.transactionHelperController = new TransactionHelperController();
+
+      this.shippingStatusController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/ShippingStatus.js');
+
+      this.augmentParameters();
+
     }
 
     execute(event){
 
-        return new Promise((resolve, reject) => {
-            this.acquireRebill(event).then((rebill) => {
-                this.confirmDelivered(rebill).then((delivered) => {
-                    resolve(delivered);
-                });
-            }).catch(error => {
-                reject(error);
-            });
+      du.debug('Execute');
 
-        });
+      this.preamble()
+      .then(() => this.acquireTransaction())
+      .then(() => this.acquireTransactionProducts())
+      .then(() => this.acquireShippingReceipts())
+      .then(() => this.acquireShippingStati())
+      .then(() => this.confirmDelivered())
+      .then(() => this.respond())
+      .catch(error => {
+        return super.respond('error', error.message);
+      });
 
     }
 
-	//Technical Debt:  Review this logic
-	//Technical Debt:  Confirm after the tracking number goes to "delivered"
-	//Technical Debt:  This should only execute AFTER the shipping receipt is three days old
-    confirmDelivered(rebill) {
+    acquireTransactions(){
 
-        var promises = [rebillController.listTransactions(rebill)];
+      du.debug('Acquire Transactions');
 
-        var delivered = {
-            message:this.messages.delivered
-        };
+      let rebill = this.parameters.get('rebill');
 
-        return Promise.all(promises).then((promises) => {
-            var transactions = promises[0];
+      return this.rebillController.listTransactions(rebill).then(transactions => {
 
-            var transaction_products = [];
+        this.parameters.set('transactions', transactions);
 
-            transactions.map((transaction) => {
+        return true;
 
-                if(_.has(transaction, 'products')){
+      });
 
-                    transaction.products.map((transaction_product) => {
+    }
 
-                        var getTransactionProduct = transactionController.getTransactionProduct(transaction_product);
+    acquireTransactionProducts(){
 
-                        transaction_products.push(getTransactionProduct);
+      du.debug('Acquire Transaction Products');
 
-                    });
+      let transactions = this.parameters.get('transactions');
 
-                }
+      let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
 
-            });
+      this.parameters.set('transactionproducts', transaction_products);
 
-            return Promise.all(transaction_products).then((transaction_products) => {
+      return Promise.resolve(true);
 
-                var shipping_provider_stati = [];
+    }
 
-                transaction_products.map((transaction_product) => {
+    acquireShippingReceipts(){
 
-                    if(_.has(transaction_product, "shippingreceipt") && _.has(transaction_product.shippingreceipt, "trackingnumber")){
+      du.debug('Acquire Shipping Receipts');
 
-						//Technical Debt:  This is hard-coded to USPS, that may need to change
-                        var getShippingProviderStatus = shippingStatusController.getStatus('usps', transaction_product.shippingreceipt.trackingnumber);
+      let transaction_products = this.parameters.get('transactionproducts');
 
-                        shipping_provider_stati.push(getShippingProviderStatus);
+      let shipping_receipt_promises = arrayutilities.map(transaction_products, transaction_product => {
+        return this.shippingReceiptController.get({id:transaction_product.shippingreceipt});
+      });
 
-                    }
+      return Promise.all(shipping_receipt_promises).then(shipping_receipts => {
 
-                });
+        this.parameters.set('shippingreceipts', shipping_receipts);
 
-                return Promise.all(shipping_provider_stati).then((shipping_provider_stati) => {
+        return true;
 
-                    shipping_provider_stati.map((shipping_provider_status) => {
+      });
 
-                        if(_.has(shipping_provider_status, "parsed_status")){
+    }
 
-                            if(shipping_provider_status.parsed_status !== this.messages.delivered){
+    //Note:  Good place to update the shipping status and history on the receipt.
+    acquireShippingStati(){
 
-                                delivered.message = shipping_provider_status.parsed_status;
+      du.debug('Acquire Shipping Stati');
 
-                                return;
+      let shipping_receipts = this.parameters.get('shippingreceipts');
 
-                            }
+      let shipping_provider_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
 
-                        }
+        return this.shippingStatusController.getStatus('usps', shipping_receipt.trackingnumber);
 
-                    });
+      });
 
-                });
+      return Promise.all(shipping_provider_stati).then((shipping_provider_stati) => {
 
-            }).then(() => {
+        this.parameters.set('shippingproviderstati', shipping_provider_stati);
 
-				/*
-				if(delivered.message == this.messages.delivered){
-					delivered.forward = {id:rebill.id};
-				}
+        return true;
 
-				return delivered;
-				*/
+      });
 
-            });
+    }
 
-        }).then(() => {
+    setDeliveredStatus() {
 
-            if(delivered.message == this.messages.delivered){
-                delivered.forward = {id:rebill.id};
-            }
+      du.debug('Confirm Delivered');
 
-            return delivered;
+      let shipping_provider_stati = this.parameters.get('shippingproviderstati');
 
-        });
+      let delivered = arrayutilities.every(shipping_provider_stati, (shipping_provider_status) => {
+
+        //Technical Debt:  Configure
+        return (shipping_provider_status.parsed_status == 'DELIVERED');
+
+      });
+
+      this.parameters.set('deliveredstatus', delivered);
+
+      return Promise.resolve(true);
+
+    }
+
+    respond(){
+
+      du.debug('Respond');
+
+      let delivered = this.parameters.get('deliveredstatus');
+
+      let response_code = (delivered == true)?'success':'noaction';
+
+      return super.respond(response_code);
 
     }
 

@@ -203,9 +203,11 @@ describe('controllers/workers/processBilling', () => {
 
     it('successfully acquires a rebill', () => {
 
+      let rebill = getValidRebill();
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         get: ({id}) => {
-          return Promise.resolve(getValidRebill())
+          return Promise.resolve(rebill);
         }
       });
 
@@ -213,8 +215,9 @@ describe('controllers/workers/processBilling', () => {
 
       processBillingController.parameters.set('message', getValidMessages()[0]);
 
-      return processBillingController.acquireRebill().then(rebill => {
-        expect(rebill).to.have.property('id');
+      return processBillingController.acquireRebill().then(result => {
+        expect(result).to.equal(true);
+        expect(processBillingController.parameters.store['rebill']).to.deep.equal(rebill);
       });
 
     });
@@ -223,6 +226,8 @@ describe('controllers/workers/processBilling', () => {
 
   describe('execute', () => {
     it('successfully executes', () => {
+
+      let rebill = getValidRebill();
 
       let register_mock = class Register {
         constructor(){
@@ -236,7 +241,7 @@ describe('controllers/workers/processBilling', () => {
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), register_mock);
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         get: ({id}) => {
-          return Promise.resolve(getValidRebill())
+          return Promise.resolve(rebill)
         }
       });
 
