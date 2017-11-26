@@ -109,7 +109,7 @@ deployment:
       - node ./deployment/dynamodb/deploy_seeds.js
       ###########
 
-      #- export SIX_VERBOSE=0 && npm run test-transactions
+      - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
       - export SIX_VERBOSE=0 && npm run test-analytics
 
@@ -179,7 +179,7 @@ deployment:
       - node ./deployment/dynamodb/deploy_seeds.js
       ###########
 
-      #- export SIX_VERBOSE=0 && npm run test-transactions
+      - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
       - export SIX_VERBOSE=0 && npm run test-analytics
 
@@ -248,7 +248,7 @@ deployment:
       - node ./deployment/dynamodb/deploy_seeds.js
       ###########
 
-      #- export SIX_VERBOSE=0 && npm run test-transactions
+      - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
       - export SIX_VERBOSE=0 && npm run test-analytics
 
