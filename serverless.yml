@@ -357,14 +357,6 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
-  #publichtml:
-  #  handler: handlers/endpoints/publichtml/handler.publichtml
-  #  events:
-  #    - http:
-  #       path: publichtml/{encoded}
-  #       method: get
-  #       cors: true
-
   checkout:
     handler: handlers/endpoints/checkout/handler.checkout
     events:

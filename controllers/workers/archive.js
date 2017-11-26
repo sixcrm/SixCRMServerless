@@ -7,6 +7,7 @@ var transactionController = global.SixCRM.routes.include('controllers', 'entitie
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
+//Technical Debt:  What the hell is this?!
 class archiveController extends workerController {
 
     constructor(){

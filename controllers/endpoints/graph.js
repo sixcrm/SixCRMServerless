@@ -26,11 +26,8 @@ module.exports = class graphController extends authenticatedController {
 
       //Technical Debt:  Alter to use preamble
       return this.preprocessing(event)
-			.then((event) => this.acquireAccount(event))
-      .then((event) => this.acquireUser(event))
       .then((event) => this.parseEventQueryString(event))
       .then((event) => this.acquireQuery(event))
-      .then((event) => this.acquireQueryParameters(event))
       .then((event) => this.acquireOutputParameters(event))
       .then((event) => this.setCacheParameters(event))
 			.then((event) => this.graphQuery(event))
@@ -100,16 +97,6 @@ module.exports = class graphController extends authenticatedController {
       du.info(query);
 
       return query.replace(/[\n\r\t]+/g, '');
-
-    }
-
-    acquireQueryParameters(event){
-
-        du.debug('Acquire Query Parameters');
-
-        this.query_parameters = {};
-
-        return Promise.resolve(event);
 
     }
 
