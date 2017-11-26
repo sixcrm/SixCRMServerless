@@ -105,7 +105,9 @@ class TrackingController extends transactionEndpointController{
       let campaign = this.parameters.get('campaign');
       let affiliate = this.parameters.get('affiliate');
 
-      return this.trackerController.listByCampaignAndAffiliate({campaign: campaign.id, affiliate: affiliate.id, type: 'html'}).then(trackers => {
+      return this.trackerController.listByCampaignAndAffiliate({campaign: campaign.id, affiliate: affiliate.id, type: 'html'})
+      .then(result => this.trackerController.getResult(result, 'trackers'))
+      .then(trackers => {
 
         this.parameters.set('trackers', trackers);
 

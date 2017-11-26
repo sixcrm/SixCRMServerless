@@ -213,6 +213,9 @@ describe('tracking', () => {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
         listByCampaignAndAffiliate: ({campaign, affiliate, type}) => {
           return Promise.resolve(trackers)
+        },
+        getResult:(object, field) => {
+          return trackers;
         }
       });
 
@@ -264,6 +267,9 @@ describe('tracking', () => {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
         listByCampaignAndAffiliate: ({campaign, affiliate, type}) => {
           return Promise.resolve(trackers)
+        },
+        getResult:(object, field) => {
+          return trackers;
         }
       });
 

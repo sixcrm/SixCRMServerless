@@ -28,8 +28,8 @@ function getValidAcquireTokenPostBody(){
 function getValidTrackerPostBody(){
 
   return {
-    'campaign':'70a6689a-5814-438b-b9fd-dd484d0812f9',
-    'affiliate_id':'whatever'
+    campaign:'70a6689a-5814-438b-b9fd-dd484d0812f9',
+    affiliate_id:'whatever'
   };
 
 }
