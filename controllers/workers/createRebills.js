@@ -1,7 +1,7 @@
 'use strict';
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 class createRebillsController extends workerController {
 

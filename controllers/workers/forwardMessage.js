@@ -6,7 +6,7 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-var relayController = global.SixCRM.routes.include('controllers', 'workers/relayController.js');
+var relayController = global.SixCRM.routes.include('controllers', 'workers/components/relayController.js');
 
 class forwardMessageController extends relayController {
 

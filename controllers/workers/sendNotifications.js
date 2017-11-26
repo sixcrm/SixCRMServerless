@@ -10,7 +10,7 @@ const notificationProvider = global.SixCRM.routes.include('controllers', 'provid
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities.js');
 
 
-var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 class sendNotificationsController extends workerController {
 

@@ -7,7 +7,7 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-const RelayResponse = global.SixCRM.routes.include('controllers','workers/RelayResponse.js');
+const RelayResponse = global.SixCRM.routes.include('controllers','workers/components/RelayResponse.js');
 
 //Technical Debt:  Test this!
 module.exports = class relayController {

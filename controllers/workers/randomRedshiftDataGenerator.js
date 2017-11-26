@@ -9,7 +9,7 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
-const workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 //Fix Product Schedule.
 //Test!

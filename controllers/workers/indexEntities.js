@@ -5,7 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 class IndexEntitiesController extends workerController {
 

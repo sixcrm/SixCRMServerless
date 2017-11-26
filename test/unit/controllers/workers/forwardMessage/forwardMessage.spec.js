@@ -9,7 +9,7 @@ const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const WorkerResponse = global.SixCRM.routes.include('workers', 'WorkerResponse.js');
+const WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
 
 function getValidCompoundWorkerResponseMultipleMessages(response, messages){
 
@@ -43,7 +43,7 @@ function getValidWorkerResponse(response){
 
 function getValidMockWorker(){
 
-  let WorkerResponse = global.SixCRM.routes.include('workers', 'WorkerResponse.js');
+  let WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
 
   class aWorker {
     constructor(){
@@ -594,7 +594,7 @@ describe('workers/forwardMessage', () => {
 
       let forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
-      let RelayResponse = global.SixCRM.routes.include('workers', 'RelayResponse.js');
+      let RelayResponse = global.SixCRM.routes.include('workers', 'components/RelayResponse.js');
       let relay_response = new RelayResponse('success');
 
       let response = forwardMessageController.respond('success');

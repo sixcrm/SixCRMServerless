@@ -8,8 +8,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
 
 const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
-const WorkerResponse = global.SixCRM.routes.include('controllers','workers/WorkerResponse.js');
-const WorkerRequest = global.SixCRM.routes.include('controllers','workers/WorkerRequest.js');
+const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
 
 module.exports = class workerController {
 

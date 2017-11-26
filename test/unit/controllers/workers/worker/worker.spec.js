@@ -2,7 +2,7 @@ const fs = require('fs');
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
-const workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const modelgenerator = global.SixCRM.routes.include('test', 'model-generator.js');
 
 require('../../../../bootstrap.test');

@@ -7,7 +7,7 @@ var rebillController = global.SixCRM.routes.include('controllers', 'entities/Reb
 var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 var shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
 var fulfillmentTriggerController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js');
-var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 class shipProductController extends workerController {
 

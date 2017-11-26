@@ -4,7 +4,7 @@ var _ = require("underscore");
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 var shippingStatusController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/ShippingStatus.js');
-var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 class confirmDeliveredController extends workerController {
 

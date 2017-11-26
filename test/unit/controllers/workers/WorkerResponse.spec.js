@@ -5,9 +5,9 @@ const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
 
-let WorkerResponseController = global.SixCRM.routes.include('controllers', 'workers/WorkerResponse.js');
+let WorkerResponseController = global.SixCRM.routes.include('controllers', 'workers/components/WorkerResponse.js');
 
-describe('controllers/workers/WorkerResponse.js', () => {
+describe('controllers/workers/components/WorkerResponse.js', () => {
 
   describe('constructor', () => {
     it('successfully executes the constructor', () => {

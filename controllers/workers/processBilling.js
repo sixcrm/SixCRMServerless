@@ -8,7 +8,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
-const workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 //Technical Debt:  Need to either mark the rebill with the attempt number or update the method which checks the rebill for existing failed attempts (better idea.)

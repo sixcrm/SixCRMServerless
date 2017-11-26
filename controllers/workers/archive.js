@@ -5,7 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 class archiveController extends workerController {
 
