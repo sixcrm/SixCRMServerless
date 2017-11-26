@@ -1,59 +1,98 @@
 'use strict';
-var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
+const _ = require('underscore');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 class createRebillsController extends workerController {
 
     constructor(){
-        super();
-        this.messages = {
-            success:'SUCCESS',
-            successnoaction:'SUCCESSNOACTION',
-            failure:'FAIL'
+
+      super();
+
+      this.parameter_definition = {
+        execute: {
+          required: {
+            message: 'message'
+          },
+          optional:{}
         }
+      };
+
+      this.parameter_validation = {
+        message: global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
+        session: global.SixCRM.routes.path('model', 'entities/session.json'),
+        rebill: global.SixCRM.routes.path('model', 'entities/rebill.json')
+      };
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+
+      this.rebillHelperController = new RebillHelperController();
+
+      this.instantiateParameters();
+
     }
 
-    execute(event){
+    execute(message){
 
-        return this.acquireSession(event).then((session) => this.createRebills(session));
+      du.debug('Execute');
+
+      return this.setParameters({argumentation: {message: message}, action: 'execute'})
+      .then(() => this.acquireSession())
+      .then(() => this.createRebills())
+      .then(() => this.respond())
+      .catch(error => {
+        return super.respond('error', error.message);
+      });
 
     }
 
-    createForwardMessage(event){
+    acquireSession(){
 
-        return Promise.resolve({message: "Rebills created.  Archive."});
+      du.debug('Acquire Session');
+
+      let message = this.parameters.get('message');
+
+      return super.acquireSession(message).then(session => {
+
+        this.parameters.set('session', session);
+
+        return true;
+
+      });
 
     }
 
-    createRebills(session){
+    createRebills(){
 
-        return new Promise((resolve, reject) => {
+      du.debug('Create Rebills');
 
-            productScheduleController.getProductSchedules(session.product_schedules).then((schedules_to_purchase) => {
+      let session = this.parameters.get('session');
 
-                rebillController.createRebills(session, schedules_to_purchase).then((rebills) => {
+      return this.rebillHelperController.createRebills(session).then(rebill => {
 
-                    if(rebills.length > 0){
+        this.parameters.set('rebill', rebill);
 
-                        return resolve(this.messages.success);
+        return true;
 
-                    }else{
+      });
 
-                        return resolve(this.messages.successnoaction);
+    }
 
-                    }
+    respond(){
 
-                }).catch((error) => {
-                    reject(error);
-                });
+      du.debug('Respond');
 
-            }).catch((error) => {
-                reject(error);
-            });
+      let rebill = this.parameters.get('rebill', null, false);
 
+      let response_code = 'fail';
 
-        });
+      if(!_.isNull(rebill)){
+
+        response_code = 'success';
+
+      }
+
+      return super.respond(response_code);
 
     }
 
