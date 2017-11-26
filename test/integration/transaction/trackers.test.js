@@ -97,7 +97,6 @@ describe('Tracking Test', () => {
 			.end((err, response) => {
 
         du.debug('Tracking Response', response.body);
-        tu.assertSuccessfulResponse(response.body, 'graph');
         assert.property(response.body.response, "trackers");
         done();
 

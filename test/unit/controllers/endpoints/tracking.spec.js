@@ -230,7 +230,7 @@ describe('tracking', () => {
       let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
 
       return trackingController.execute(event).then(result => {
-        expect(result).to.deep.equal(trackers);
+        expect(result).to.deep.equal({trackers: trackers});
       });
 
     });
@@ -248,7 +248,7 @@ describe('tracking', () => {
       trackingController.parameters.set('trackers', trackers);
 
       return trackingController.respond().then(result => {
-        expect(result).to.deep.equal(trackers);
+        expect(result).to.deep.equal({trackers: trackers});
       });
 
     });
@@ -281,6 +281,34 @@ describe('tracking', () => {
       return trackingController.acquireTrackers().then(result => {
         expect(result).to.equal(true);
         expect(trackingController.parameters.store['trackers']).to.deep.equal(trackers);
+      });
+
+    });
+
+    it('successfully returns no trackers', () => {
+
+      let campaign = getValidCampaign();
+      let affiliate = getValidAffiliate();
+
+      let trackers = [];
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
+        listByCampaignAndAffiliate: ({campaign, affiliate, type}) => {
+          return Promise.resolve(trackers)
+        },
+        getResult:(object, field) => {
+          return trackers;
+        }
+      });
+
+      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+
+      trackingController.parameters.set('campaign', campaign);
+      trackingController.parameters.set('affiliate', affiliate);
+
+      return trackingController.acquireTrackers().then(result => {
+        expect(result).to.equal(true);
+        expect(trackingController.parameters.store['trackers']).to.deep.equal([]);
       });
 
     });

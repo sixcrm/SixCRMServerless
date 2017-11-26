@@ -123,7 +123,7 @@ class TrackingController extends transactionEndpointController{
 
       let trackers = this.parameters.get('trackers');
 
-      return Promise.resolve(trackers);
+      return Promise.resolve({trackers: trackers});
 
     }
 
