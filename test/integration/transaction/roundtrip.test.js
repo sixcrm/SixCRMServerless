@@ -22,7 +22,7 @@ var appropriate_spacing = '        ';
 
 describe('Transaction Round Trip Test',() => {
   describe('Confirms a sales funnel purchase with partial and multiple upsells.', () => {
-    it.only('Returns a confirmed sale', (done) => {
+    it('Returns a confirmed sale', (done) => {
 
       let request_time = new Date().getTime();
       let secret_key = config.access_keys.super_user.secret_key;

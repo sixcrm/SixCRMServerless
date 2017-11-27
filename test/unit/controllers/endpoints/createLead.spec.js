@@ -605,7 +605,7 @@ describe('createLead', function () {
 
     });
 
-    it.only('does not update parameter affiliates if not needed', () => {
+    it('does not update parameter affiliates if not needed', () => {
 
       let event = getValidEventBody();
 
