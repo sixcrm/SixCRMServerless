@@ -22,7 +22,7 @@ var appropriate_spacing = '        ';
 
 describe('Transaction Round Trip Test',() => {
   describe('Confirms a sales funnel purchase with partial and multiple upsells.', () => {
-    it('Returns a confirmed sale', (done) => {
+    it.only('Returns a confirmed sale', (done) => {
 
       let request_time = new Date().getTime();
       let secret_key = config.access_keys.super_user.secret_key;
@@ -132,10 +132,16 @@ describe('Transaction Round Trip Test',() => {
             tu.assertSuccessfulResponse(response.body, 'graph');
             assert.property(response.body.response, "id");
             assert.property(response.body.response, "customer");
-						//Technical Debt:  Let's dig in here a little further.  This is pretty light testing.
+            assert.equal(response.body.response.campaign, campaign_id, 'Campaign');
+            assert.property(response.body.response, "affiliate");
+            assert.property(response.body.response, "subaffiliate_1");
+            assert.property(response.body.response, "subaffiliate_2");
+            assert.property(response.body.response, "subaffiliate_3");
+            assert.property(response.body.response, "subaffiliate_4");
+            assert.property(response.body.response, "subaffiliate_5");
 
             var session_id = response.body.response.id;
-					  var product_schedules = ["12529a17-ac32-4e46-b05b-83862843055d"]
+					  var product_schedules = ["12529a17-ac32-4e46-b05b-83862843055d"];
 
 					  var order_create = {
               "session":session_id,
@@ -260,6 +266,127 @@ describe('Transaction Round Trip Test',() => {
 
           }, done);
 
+        }, done);
+
+      });
+
+  });
+  describe('Tests failure ceses.', () => {
+    it('Returns an error when invalid campaign id is sent', (done) => {
+
+      let request_time = new Date().getTime();
+      let secret_key = config.access_keys.super_user.secret_key;
+      let access_key = config.access_keys.super_user.access_key;
+      let account = config.account;
+      var campaign_id = 'not-a-uuid';
+
+      let signature = signatureutilities.createSignature(secret_key, request_time);
+      let authorization_string = access_key+':'+request_time+':'+signature;
+      let this_request = request(endpoint);
+
+      du.highlight('Request Time: ', request_time);
+      du.highlight('Signature: ', signature);
+      du.highlight('Authorization String: ', authorization_string);
+      du.output(appropriate_spacing+'Acquiring Token');
+
+      let affiliate_id = random.createRandomString(10);
+      let subaffiliate_1_id = random.createRandomString(10);
+      let subaffiliate_2_id = random.createRandomString(10);
+      let subaffiliate_3_id = random.createRandomString(10);
+      let subaffiliate_4_id = random.createRandomString(10);
+      let subaffiliate_5_id = random.createRandomString(10);
+      let cid = random.createRandomString(10);
+
+      var post_body = {
+          "campaign":campaign_id,
+          "affiliates":{
+              "affiliate":affiliate_id,
+              "subaffiliate_1":subaffiliate_1_id,
+              "subaffiliate_2":subaffiliate_2_id,
+              "subaffiliate_3":subaffiliate_3_id,
+              "subaffiliate_4":subaffiliate_4_id,
+              "subaffiliate_5":subaffiliate_5_id,
+              "cid":cid
+          }
+      };
+
+      du.debug('Post data', post_body);
+      du.warning('token/acquire/'+account, authorization_string, post_body)
+    	this_request.post('token/acquire/'+account)
+      .send(post_body)
+			.set('Content-Type', 'application/json')
+			.set('Authorization', authorization_string)
+			.expect(200)
+			.expect('Content-Type', 'application/json')
+			.expect('Access-Control-Allow-Origin','*')
+			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
+			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
+			.end((err, response) => {
+        du.debug(response.body);
+
+        tu.assertUnsuccessfulResponse(response.body, 'graph');
+
+        done();
+        }, done);
+
+      });
+    it('Returns an error when wrong campaign id is sent', (done) => {
+
+      let request_time = new Date().getTime();
+      let secret_key = config.access_keys.super_user.secret_key;
+      let access_key = config.access_keys.super_user.access_key;
+      let account = config.account;
+      var campaign_id = '9e43883f-7dcc-4d7a-8767-9d688c9401b8'; // wrong id, we dont have such campaign
+
+      let signature = signatureutilities.createSignature(secret_key, request_time);
+      let authorization_string = access_key+':'+request_time+':'+signature;
+      let this_request = request(endpoint);
+
+      du.highlight('Request Time: ', request_time);
+      du.highlight('Signature: ', signature);
+      du.highlight('Authorization String: ', authorization_string);
+      du.output(appropriate_spacing+'Acquiring Token');
+
+      let affiliate_id = random.createRandomString(10);
+      let subaffiliate_1_id = random.createRandomString(10);
+      let subaffiliate_2_id = random.createRandomString(10);
+      let subaffiliate_3_id = random.createRandomString(10);
+      let subaffiliate_4_id = random.createRandomString(10);
+      let subaffiliate_5_id = random.createRandomString(10);
+      let cid = random.createRandomString(10);
+
+      var post_body = {
+          "campaign":campaign_id,
+          "affiliates":{
+              "affiliate":affiliate_id,
+              "subaffiliate_1":subaffiliate_1_id,
+              "subaffiliate_2":subaffiliate_2_id,
+              "subaffiliate_3":subaffiliate_3_id,
+              "subaffiliate_4":subaffiliate_4_id,
+              "subaffiliate_5":subaffiliate_5_id,
+              "cid":cid
+          }
+      };
+
+      du.debug('Post data', post_body);
+      du.warning('token/acquire/'+account, authorization_string, post_body)
+    	this_request.post('token/acquire/'+account)
+      .send(post_body)
+			.set('Content-Type', 'application/json')
+			.set('Authorization', authorization_string)
+			.expect(200)
+			.expect('Content-Type', 'application/json')
+			.expect('Access-Control-Allow-Origin','*')
+			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
+			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
+			.end((err, response) => {
+        du.debug(response.body);
+
+        tu.assertUnsuccessfulResponse(response.body, 'graph');
+
+        assert.equal(response.body.message, '[400] Invalid Campaign ID: ' + campaign_id);
+
+        done();
         }, done);
 
       });
