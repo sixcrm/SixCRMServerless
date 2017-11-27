@@ -177,6 +177,23 @@ describe('controllers/endpoints/endpoint.js', () => {
     });
   });
 
+  describe('acquireRequestProperties', () => {
+
+    it('successfully acquires request properties', () => {
+
+        let endpointController = new EndpointController();
+
+        let event = getValidPOSTEvent();
+
+        let result = endpointController.acquireRequestProperties(event);
+
+        expect(result.account).to.deep.equal(event.pathParameters.account);
+        expect(result.campaign).to.deep.equal(JSON.parse(event.body).campaign);
+        expect(result.affiliates).to.deep.equal(JSON.parse(event.body).affiliates);
+
+    });
+  });
+
   describe('acquireBody', () => {
 
     it('successfully acquires a JSON string body', () => {
