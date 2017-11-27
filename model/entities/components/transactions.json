@@ -4,5 +4,5 @@
 	"title": "Transactions",
 	"description": "A array of transactions",
 	"type":"array",
-	"items":{"$ref":"../transaction.js"}
+	"items":{"$ref":"../transaction.json"}
 }

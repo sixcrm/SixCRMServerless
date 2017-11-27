@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/shippedtransactionproducts.json",
+	"title": "Shipped Transaction Products",
+	"description": "A array of shipped transaction products",
+	"type":"array",
+	"items":{"$ref":"./shippedtransactionproduct.json"}
+}

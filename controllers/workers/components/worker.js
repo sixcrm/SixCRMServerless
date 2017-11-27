@@ -30,7 +30,8 @@ module.exports = class workerController {
       let parameter_validation = {
         'message': global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
         'messages':global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
-        'parsedmessagebody': global.SixCRM.routes.path('model', 'workers/parsedmessagebody.json')
+        'parsedmessagebody': global.SixCRM.routes.path('model', 'workers/parsedmessagebody.json'),
+        'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json')
       }
 
       let parameter_definition = {};
@@ -60,7 +61,7 @@ module.exports = class workerController {
       du.debug('Preamble');
 
       return this.setParameters({argumentation: {message: message}, action: 'execute'})
-      .this(() => this.parseMessageBody())
+      .then(() => this.parseMessageBody())
       .then(() => this.acquireRebill());
 
     }

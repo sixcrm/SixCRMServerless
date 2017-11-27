@@ -23,15 +23,16 @@ class confirmDeliveredController extends workerController {
       this.parameter_validation = {
         'transactions':global.SixCRM.routes.path('model', 'entities/components/transactions.json'),
         //Technical Debt:  We need a schema that enforces the transaction product having a shipping receipt...
-        'transactionproducts':global.SixCRM.routes.path('model', 'entities/components/transactionproducts.json'),
+        'transactionproducts':global.SixCRM.routes.path('model', 'workers/confirmDelivered/shippedtransactionproducts.json'),
         'shippingreceipts':global.SixCRM.routes.path('model', 'entities/components/shippingreceipts.json')
         //'deliveredstatus'
         //'shippingproviderstati':global.SixCRM.routes.path('model', 'workers/')
       };
 
       this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+      this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 
-      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entitites/transaction/Transaction.js');
+      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 
       this.transactionHelperController = new TransactionHelperController();
 
@@ -41,18 +42,19 @@ class confirmDeliveredController extends workerController {
 
     }
 
-    execute(event){
+    execute(message){
 
       du.debug('Execute');
 
-      this.preamble()
-      .then(() => this.acquireTransaction())
+      return this.preamble(message)
+      .then(() => this.acquireTransactions())
       .then(() => this.acquireTransactionProducts())
       .then(() => this.acquireShippingReceipts())
       .then(() => this.acquireShippingStati())
-      .then(() => this.confirmDelivered())
+      .then(() => this.setDeliveredStatus())
       .then(() => this.respond())
       .catch(error => {
+        du.error(error);
         return super.respond('error', error.message);
       });
 
@@ -64,7 +66,9 @@ class confirmDeliveredController extends workerController {
 
       let rebill = this.parameters.get('rebill');
 
-      return this.rebillController.listTransactions(rebill).then(transactions => {
+      return this.rebillController.listTransactions(rebill)
+      .then((result) => this.rebillController.getResult(result, 'transactions'))
+      .then(transactions => {
 
         this.parameters.set('transactions', transactions);
 
@@ -117,7 +121,7 @@ class confirmDeliveredController extends workerController {
 
       let shipping_provider_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
 
-        return this.shippingStatusController.getStatus('usps', shipping_receipt.trackingnumber);
+        return this.shippingStatusController.isDelivered('usps', shipping_receipt.trackingnumber);
 
       });
 
@@ -138,10 +142,7 @@ class confirmDeliveredController extends workerController {
       let shipping_provider_stati = this.parameters.get('shippingproviderstati');
 
       let delivered = arrayutilities.every(shipping_provider_stati, (shipping_provider_status) => {
-
-        //Technical Debt:  Configure
-        return (shipping_provider_status.parsed_status == 'DELIVERED');
-
+        return shipping_provider_status;
       });
 
       this.parameters.set('deliveredstatus', delivered);

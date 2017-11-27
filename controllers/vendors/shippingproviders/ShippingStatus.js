@@ -23,7 +23,9 @@ class shippingStatusController {
             });
 
         default:
-            return Promise.reject(eu.getError('not_implemented','Unknown shipping provider: '+provider));
+
+            eu.throwError('server','Unknown shipping provider: '+provider);
+
         }
 
     }

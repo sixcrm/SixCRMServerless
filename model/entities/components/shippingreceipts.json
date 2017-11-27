@@ -4,5 +4,5 @@
 	"title": "Shipping Receipts",
 	"description": "A array of shipping receipts",
 	"type":"array",
-	"items":{"$ref":"../shippingreceipt.js"}
+	"items":{"$ref":"../shippingreceipt.json"}
 }
