@@ -603,6 +603,33 @@ describe('createLead', function () {
         expect(createLeadController.parameters.store['affiliates']).to.deep.equal(affiliates);
       });
 
+    });
+
+    it('does not update parameter affiliates if not needed', () => {
+
+      let event = getValidEventBody();
+
+      let affiliates_helper_mock = class {
+        constructor(){}
+        handleAffiliateInformation(event){
+            let cloned_event = objectutilities.clone(event);
+
+            delete cloned_event.affiliates;
+            return Promise.resolve(cloned_event);
+        }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+      let createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+
+      createLeadController.parameters.set('event', event);
+      return createLeadController.assureAffiliates().then(() => {
+        expect(createLeadController.parameters.affiliates).to.equal(undefined);
+      });
+
     })
   });
 
@@ -749,6 +776,27 @@ describe('createLead', function () {
         expect(result).to.equal(true);
         expect(createLeadController.parameters.store['session_prototype']).to.deep.equal(session_prototype);
 
+      });
+    });
+
+    it('creates a session prototype even without affiliate parameter', () => {
+
+      let customer = getValidCustomer();
+      let campaign = getValidCampaign();
+      let session_prototype = {
+        customer: customer.id,
+        campaign: campaign.id,
+        completed: false
+      };
+
+      let createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+
+      createLeadController.parameters.set('customer', customer);
+      createLeadController.parameters.set('campaign', campaign);
+
+      return createLeadController.createSessionPrototype().then(result => {
+        expect(result).to.equal(true);
+        expect(createLeadController.parameters.store['session_prototype']).to.deep.equal(session_prototype);
       });
     });
 

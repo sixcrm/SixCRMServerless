@@ -1061,6 +1061,86 @@ describe('createOrder', function () {
 
     });
 
+    it('updates entities associated with a transaction when session doesn\'t contain product schedules', () => {
+
+      let transaction = getValidTransaction();
+      let rebill = getValidRebill();
+      let session = getValidSession();
+      let product_schedules = getValidProductScheduleIDs();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      delete session.product_schedules;
+      createOrderController.parameters.set('rebill', rebill);
+      createOrderController.parameters.set('transaction', transaction);
+      createOrderController.parameters.set('session', session);
+      createOrderController.parameters.set('productschedules', product_schedules);
+
+      rebill.transactions = arrayutilities.merge(rebill.transactions, [transaction.id]);
+
+      return createOrderController.updateEntities().then(result => {
+        expect(result).to.equal(true);
+        let updated_session = createOrderController.parameters.store['session'];
+        let updated_rebill = createOrderController.parameters.store['rebill'];
+
+        expect(updated_rebill).to.deep.equal(rebill);
+        expect(updated_session).to.deep.equal(session);
+      });
+
+    });
+
+    it('updates entities associated with a transaction when rebill doesn\'t contain transactions', () => {
+
+      let transaction = getValidTransaction();
+      let rebill = getValidRebill();
+      let session = getValidSession();
+      let product_schedules = getValidProductScheduleIDs();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      delete rebill.transactions;
+      createOrderController.parameters.set('rebill', rebill);
+      createOrderController.parameters.set('transaction', transaction);
+      createOrderController.parameters.set('session', session);
+      createOrderController.parameters.set('productschedules', product_schedules);
+
+      session.product_schedules = arrayutilities.merge(session.product_schedules, product_schedules);
+
+      return createOrderController.updateEntities().then(result => {
+        expect(result).to.equal(true);
+        let updated_session = createOrderController.parameters.store['session'];
+        let updated_rebill = createOrderController.parameters.store['rebill'];
+
+        expect(updated_rebill).to.deep.equal(rebill);
+        expect(updated_session).to.deep.equal(session);
+      });
+
+    });
+
   });
 
   describe('buildInfoObject', () => {
@@ -1306,6 +1386,22 @@ describe('createOrder', function () {
       return createOrderController.setTransactionSubType().then(result => {
         expect(result).to.equal(true);
         expect(createOrderController.parameters.store['transactionsubtype']).to.equal(event.transaction_subtype);
+      });
+
+    });
+
+    it('returns "main" when event doesn\'t have a transaction subtype', () => {
+
+      let event = getValidEventBody();
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      delete event.transaction_subtype;
+      createOrderController.parameters.set('event', event);
+
+      return createOrderController.setTransactionSubType().then(result => {
+        expect(result).to.equal(true);
+        expect(createOrderController.parameters.store['transactionsubtype']).to.equal('main');
       });
 
     });
@@ -1639,5 +1735,57 @@ describe('createOrder', function () {
     });
 
   });
+
+  describe('hasCampaignProductScheduleParity', () => {
+
+        before(() => {
+            mockery.enable({
+                useCleanCache: true,
+                warnOnReplace: false,
+                warnOnUnregistered: false
+            });
+        });
+
+        beforeEach(() => {
+            mockery.resetCache();
+            mockery.deregisterAll();
+        });
+
+        afterEach(() => {
+            mockery.resetCache();
+            mockery.deregisterAll();
+        });
+
+        it('throws error when provided product schedule is not a part of the campaign', () => {
+
+            let campaign = getValidCampaign();
+            let product_schedules = getValidProductScheduleIDs();
+
+            let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+            createOrderController.parameters.set('campaign', campaign);
+            createOrderController.parameters.set('productschedules', product_schedules);
+
+            try{
+              createOrderController.hasCampaignProductScheduleParity()
+            }catch(error) {
+              expect(error.message).to.equal('[400] The product schedule provided is not a part of the campaign.');
+            }
+        });
+
+        it('returns true when product schedule is part of the campaign', () => {
+
+            let campaign = getValidCampaign();
+            let product_schedules = getValidProductScheduleIDs();
+
+            let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+            campaign.productschedules = product_schedules; //ensure that product schedule is part of the campaign
+            createOrderController.parameters.set('campaign', campaign);
+            createOrderController.parameters.set('productschedules', product_schedules);
+
+            expect(createOrderController.hasCampaignProductScheduleParity()).to.be.true;
+        });
+    });
 
 });
