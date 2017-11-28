@@ -168,12 +168,6 @@ module.exports = class EndpointController {
 
         event.queryStringParameters = querystring.parse(event.queryStringParameters);
 
-        if (Object.keys(event.queryStringParameters).length === 0) {
-
-            this.throwUnexpectedEventStructureError(event);
-
-        }
-
         return this.parseEventQueryString(event);
 
       }catch(error){
