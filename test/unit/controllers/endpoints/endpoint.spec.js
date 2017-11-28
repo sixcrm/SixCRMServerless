@@ -231,7 +231,35 @@ describe('controllers/endpoints/endpoint.js', () => {
 
       event.body = 'blarg';
 
-      let result = endpointController.acquireBody(event.body);
+      let result = endpointController.acquireBody(event);
+
+      expect(result).to.deep.equal({});
+
+    });
+
+    it('returns no data if event body is not a string', () => {
+
+      let endpointController = new EndpointController();
+
+      let event = getValidPOSTEvent();
+
+      event.body = 123; //anything that is not a string
+
+      let result = endpointController.acquireBody(event);
+
+      expect(result).to.deep.equal({});
+
+    });
+
+    it('returns no data when there is no event body', () => {
+
+      let endpointController = new EndpointController();
+
+      let event = getValidPOSTEvent();
+
+      delete event.body;
+
+      let result = endpointController.acquireBody(event);
 
       expect(result).to.deep.equal({});
 
@@ -264,6 +292,52 @@ describe('controllers/endpoints/endpoint.js', () => {
       endpointController.pathParameters = 'something';
 
       let result = endpointController.acquirePathParameters(event);
+
+      expect(result).to.deep.equal({});
+
+    });
+
+  });
+
+  describe('acquireQueryStringParameters', () => {
+
+    it('acquires query string parameters', () => {
+
+      let event = getValidPOSTEvent();
+
+      event.queryStringParameters = {anyQueryString: 'aQueryString'};
+
+      let endpointController = new EndpointController();
+
+      let result = endpointController.acquireQueryStringParameters(event);
+
+      expect(result).to.deep.equal(event.queryStringParameters);
+
+    });
+
+    it('returns parsed query string parameters', () => {
+
+      let event = getValidPOSTEvent();
+
+      event.queryStringParameters = 'anyQueryString=aQueryString';
+
+      let endpointController = new EndpointController();
+
+      let result = endpointController.acquireQueryStringParameters(event);
+
+      expect(result).to.deep.equal({anyQueryString: 'aQueryString'});
+
+    });
+
+    it('return empty object when query string parameters can\'t be acquired', () => {
+
+      let event = getValidPOSTEvent();
+
+      delete event.queryStringParameters;
+
+      let endpointController = new EndpointController();
+
+      let result = endpointController.acquireQueryStringParameters(event);
 
       expect(result).to.deep.equal({});
 
@@ -337,13 +411,13 @@ describe('controllers/endpoints/endpoint.js', () => {
     it('throws error when path parameter is incorrect type', () => {
 
       let endpointController = new EndpointController();
-      let bad_types = [123, null, {}, () => {}, 3.2];
+      let bad_types = [123, null, () => {}, 3.2];
 
       arrayutilities.map(bad_types, bad_type => {
 
         let event = getValidPOSTEvent();
 
-        event.pathParameters = bad_types;
+        event.pathParameters = bad_type;
 
         try{
           endpointController.validateEvent(event);
@@ -359,7 +433,7 @@ describe('controllers/endpoints/endpoint.js', () => {
 
       let event = getValidPOSTEvent();
 
-      delete event.reequestContext;
+      delete event.requestContext;
 
       let endpointController = new EndpointController();
 
@@ -374,13 +448,13 @@ describe('controllers/endpoints/endpoint.js', () => {
     it('throws error when requestContext is incorrect type', () => {
 
       let endpointController = new EndpointController();
-      let bad_types = [123, null, {}, () => {}, 3.2];
+      let bad_types = [123, null, () => {}, 3.2];
 
       arrayutilities.map(bad_types, bad_type => {
 
         let event = getValidPOSTEvent();
 
-        event.requestContext = bad_types;
+        event.requestContext = bad_type;
 
         try{
           endpointController.validateEvent(event);
@@ -389,120 +463,6 @@ describe('controllers/endpoints/endpoint.js', () => {
         }
 
       });
-
-    });
-
-  });
-
-  xdescribe('parseEvent',   () => {
-
-    it('successfully parses a good event', () => {
-
-      let endpointController = new EndpointController();
-      let event = getValidPOSTEvent();
-
-      return endpointController.parseEvent(event).then(result => {
-        expect(result).to.have.property('requestContext');
-        expect(result).to.have.property('pathParameters');
-      });
-
-    });
-
-    it('successfully parses a good encoded event', () => {
-
-      let endpointController = new EndpointController();
-      let event = getValidPOSTEvent();
-
-      event = JSON.stringify(event);
-
-      return endpointController.parseEvent(event).then(result => {
-        expect(result).to.have.property('requestContext');
-        expect(result).to.have.property('pathParameters');
-      });
-
-    });
-
-    it('successfully parses a good event where requestContext is a object', () => {
-
-      let endpointController = new EndpointController();
-      let event = getValidPOSTEvent();
-
-      return endpointController.parseEvent(event).then(result => {
-        expect(result).to.have.property('requestContext');
-        expect(result).to.have.property('pathParameters');
-      });
-
-    });
-
-    it('successfully parses a good event where pathParameters is a object', () => {
-
-      let endpointController = new EndpointController();
-      let event = getValidPOSTEvent();
-
-      event.pathParameters = JSON.parse(event.pathParameters);
-
-      return endpointController.parseEvent(event).then(result => {
-        expect(result).to.have.property('requestContext');
-        expect(result).to.have.property('pathParameters');
-      });
-
-    });
-
-    it('successfully parses a good event where pathParameters and requestObject are both objects', () => {
-
-      let endpointController = new EndpointController();
-      let event = getValidPOSTEvent();
-
-      event.pathParameters = JSON.parse(event.pathParameters);
-      event.requestContext = JSON.parse(event.requestContext);
-
-      return endpointController.parseEvent(event).then(result => {
-        expect(result).to.have.property('requestContext');
-        expect(result).to.have.property('pathParameters');
-      });
-
-    });
-
-    it('fails where event is not a parseable object', () => {
-
-      let endpointController = new EndpointController();
-      let event = 'blerg';
-
-      try{
-        endpointController.parseEvent(event);
-      }catch(error){
-        expect(error.message).to.equal('[400] Unexpected event structure.');
-      }
-
-    });
-
-    it('fails where event.requestContext is not a parseable object', () => {
-
-      let endpointController = new EndpointController();
-      let event = getValidPOSTEvent();
-
-      event.requestContext = 'blerg';
-
-      try{
-        endpointController.parseEvent(event);
-      }catch(error){
-        expect(error.message).to.equal('[400] Unexpected event structure.');
-      }
-
-    });
-
-    it('fails where event.pathParameters is not a parseable object', () => {
-
-      let endpointController = new EndpointController();
-      let event = getValidPOSTEvent();
-
-      event.pathParameters = 'blerg';
-
-      try{
-        endpointController.parseEvent(event);
-      }catch(error){
-        expect(error.message).to.equal('[400] Unexpected event structure.');
-      }
 
     });
 
@@ -560,9 +520,11 @@ describe('controllers/endpoints/endpoint.js', () => {
 
       let endpointController = new EndpointController();
       let event = getValidGETEvent();
-      let bad_types = [123, null, {}, () => {}, 3.2, 'somerandostring'];
+      let bad_types = [123, null, {}, () => {}, 3.2, 'somerandomstring'];
 
       arrayutilities.map(bad_types, bad_type => {
+
+        event.queryStringParameters = bad_type;
 
         try{
           endpointController.parseEventQueryString(event);
