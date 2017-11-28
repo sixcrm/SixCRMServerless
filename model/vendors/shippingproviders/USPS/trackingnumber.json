@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/trackingnumber.json",
+  "title":"Tracking Number",
+  "type":"string"
+}

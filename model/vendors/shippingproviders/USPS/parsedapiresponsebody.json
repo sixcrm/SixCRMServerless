@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/parsedapiresponsebody.json",
+  "title":"Parsed API Response Body",
+  "type":"object",
+  "properties":{
+    "TrackResponse": {
+      "type":"object",
+      "properties":{
+        "TrackInfo": {
+          "type": "array",
+          "items":[
+            {
+              "type":"object",
+              "properties": {
+                "$": {
+                  "type":"object",
+                  "properties":{
+                    "ID":{
+                      "type":"string"
+                    }
+                  },
+                  "required":["ID"]
+                },
+                "TrackSummary":{
+                  "type":"array",
+                  "items":{
+                    "type":"string"
+                  }
+                },
+                "TrackDetail":{
+                  "type":"array",
+                  "items":{
+                    "type":"string"
+                  }
+                }
+              },
+              "required":["$", "TrackSummary","TrackDetail"]
+            }
+          ]
+        }
+      },
+      "required":["TrackInfo"]
+    }
+  },
+  "required":["TrackResponse"]
+}

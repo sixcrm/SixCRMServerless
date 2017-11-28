@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/requesturi.json",
+  "title":"Request URI",
+  "type":"string",
+  "format":"uri"
+}

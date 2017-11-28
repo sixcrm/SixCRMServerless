@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/constructor.json",
+  "title":"Shipping Provider Response Constructor",
+  "type":"object",
+  "properties":{
+    "result":{"$ref":"./result.json"},
+    "shortname":{"$ref":"./shortname.json"},
+    "parameters":{"$ref":"./parameters.json"}
+  },
+  "required":["result","shortname","parameters"]
+}

@@ -210,7 +210,7 @@ describe('controllers/workers/confirmDelivered', () => {
       return confirmedDeliveredController.acquireTransactionProducts().then(result => {
 
         expect(result).to.equal(true);
-        expect(confirmedDeliveredController.parameters.store['transactionproducts']).to.deep.equal(transaction_products);
+        expect(confirmedDeliveredController.parameters.store['shippedtransactionproducts']).to.deep.equal(transaction_products);
 
       });
 
@@ -232,7 +232,7 @@ describe('controllers/workers/confirmDelivered', () => {
 
       let confirmedDeliveredController = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
 
-      confirmedDeliveredController.parameters.set('transactionproducts', transaction_products);
+      confirmedDeliveredController.parameters.set('shippedtransactionproducts', transaction_products);
 
       return confirmedDeliveredController.acquireShippingReceipts().then(result => {
 
@@ -245,7 +245,7 @@ describe('controllers/workers/confirmDelivered', () => {
 
   });
 
-  describe('acquireShippingStati', () => {
+  describe('acquireProductDeliveredStati', () => {
 
     it('successfully acquires shipping stati', () => {
 
@@ -262,10 +262,10 @@ describe('controllers/workers/confirmDelivered', () => {
 
       confirmedDeliveredController.parameters.set('shippingreceipts', shipping_receipts);
 
-      return confirmedDeliveredController.acquireShippingStati().then(result => {
+      return confirmedDeliveredController.acquireProductDeliveredStati().then(result => {
 
         expect(result).to.equal(true);
-        expect(confirmedDeliveredController.parameters.store['shippingproviderstati']).to.be.defined;
+        expect(confirmedDeliveredController.parameters.store['productdeliveredstati']).to.be.defined;
 
       });
 
@@ -277,17 +277,17 @@ describe('controllers/workers/confirmDelivered', () => {
 
     it('successfully sets delivered status', () => {
 
-      let shipping_stati = [true, true, true];
+      let product_delivered_stati = [true, true, true];
 
       let confirmedDeliveredController = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
 
-      confirmedDeliveredController.parameters.set('shippingproviderstati', shipping_stati);
+      confirmedDeliveredController.parameters.set('productdeliveredstati', product_delivered_stati);
 
       return confirmedDeliveredController.setDeliveredStatus().then(result => {
 
         expect(result).to.equal(true);
-        expect(confirmedDeliveredController.parameters.store['deliveredstatus']).to.be.defined;
-        expect(confirmedDeliveredController.parameters.store['deliveredstatus']).to.equal(true);
+        expect(confirmedDeliveredController.parameters.store['rebilldeliveredstatus']).to.be.defined;
+        expect(confirmedDeliveredController.parameters.store['rebilldeliveredstatus']).to.equal(true);
 
       });
 
@@ -295,17 +295,17 @@ describe('controllers/workers/confirmDelivered', () => {
 
     it('successfully sets delivered status to false', () => {
 
-      let shipping_stati = [true, true, false];
+      let product_delivered_stati = [true, true, false];
 
       let confirmedDeliveredController = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
 
-      confirmedDeliveredController.parameters.set('shippingproviderstati', shipping_stati);
+      confirmedDeliveredController.parameters.set('productdeliveredstati', product_delivered_stati);
 
       return confirmedDeliveredController.setDeliveredStatus().then(result => {
 
         expect(result).to.equal(true);
-        expect(confirmedDeliveredController.parameters.store['deliveredstatus']).to.be.defined;
-        expect(confirmedDeliveredController.parameters.store['deliveredstatus']).to.equal(false);
+        expect(confirmedDeliveredController.parameters.store['rebilldeliveredstatus']).to.be.defined;
+        expect(confirmedDeliveredController.parameters.store['rebilldeliveredstatus']).to.equal(false);
 
       });
 
@@ -317,11 +317,11 @@ describe('controllers/workers/confirmDelivered', () => {
 
     it('successfully responds', () => {
 
-      let delivered_status = true;
+      let rebill_delivered_status = true;
 
       let confirmedDeliveredController = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
 
-      confirmedDeliveredController.parameters.set('deliveredstatus', delivered_status);
+      confirmedDeliveredController.parameters.set('rebilldeliveredstatus', rebill_delivered_status);
 
       let response = confirmedDeliveredController.respond();
 
@@ -332,11 +332,11 @@ describe('controllers/workers/confirmDelivered', () => {
 
     it('successfully responds', () => {
 
-      let delivered_status = false;
+      let rebill_delivered_status = false;
 
       let confirmedDeliveredController = global.SixCRM.routes.include('controllers', 'workers/confirmDelivered.js');
 
-      confirmedDeliveredController.parameters.set('deliveredstatus', delivered_status);
+      confirmedDeliveredController.parameters.set('rebilldeliveredstatus', rebill_delivered_status);
 
       let response = confirmedDeliveredController.respond();
 

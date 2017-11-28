@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"title": "Request response",
+  "id":"/general/request/response.json",
+	"type": "object",
+  "properties":{
+    "statusCode":{"$ref":"../../definitions/nonnegativeinteger.json"},
+    "body":{
+      "type":"string"
+    }
+  },
+  "required":["statusCode","body"]
+}

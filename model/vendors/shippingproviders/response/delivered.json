@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/delivered.json",
+  "title":"Shipping Provider Response Delivered",
+  "type":"boolean"
+}

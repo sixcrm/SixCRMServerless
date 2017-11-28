@@ -2,7 +2,7 @@
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var USPSController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/USPS.js');
+var USPSController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/USPS/handler.js');
 
 class shippingStatusController {
 

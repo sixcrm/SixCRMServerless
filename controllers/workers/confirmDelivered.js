@@ -21,12 +21,11 @@ class confirmDeliveredController extends workerController {
       };
 
       this.parameter_validation = {
-        'transactions':global.SixCRM.routes.path('model', 'entities/components/transactions.json'),
-        //Technical Debt:  We need a schema that enforces the transaction product having a shipping receipt...
-        'transactionproducts':global.SixCRM.routes.path('model', 'workers/confirmDelivered/shippedtransactionproducts.json'),
-        'shippingreceipts':global.SixCRM.routes.path('model', 'entities/components/shippingreceipts.json')
-        //'deliveredstatus'
-        //'shippingproviderstati':global.SixCRM.routes.path('model', 'workers/')
+        'transactions': global.SixCRM.routes.path('model', 'entities/components/transactions.json'),
+        'shippedtransactionproducts': global.SixCRM.routes.path('model', 'workers/confirmDelivered/shippedtransactionproducts.json'),
+        'shippingreceipts': global.SixCRM.routes.path('model', 'entities/components/shippingreceipts.json'),
+        'productdeliveredstati':global.SixCRM.routes.path('model', 'workers/confirmDelivered/productdeliveredstati.json'),
+        'rebilldeliveredstatus':global.SixCRM.routes.path('model', 'workers/confirmDelivered/rebilldeliveredstatus.json')
       };
 
       this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -50,7 +49,7 @@ class confirmDeliveredController extends workerController {
       .then(() => this.acquireTransactions())
       .then(() => this.acquireTransactionProducts())
       .then(() => this.acquireShippingReceipts())
-      .then(() => this.acquireShippingStati())
+      .then(() => this.acquireProductDeliveredStati())
       .then(() => this.setDeliveredStatus())
       .then(() => this.respond())
       .catch(error => {
@@ -86,7 +85,7 @@ class confirmDeliveredController extends workerController {
 
       let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
 
-      this.parameters.set('transactionproducts', transaction_products);
+      this.parameters.set('shippedtransactionproducts', transaction_products);
 
       return Promise.resolve(true);
 
@@ -96,7 +95,7 @@ class confirmDeliveredController extends workerController {
 
       du.debug('Acquire Shipping Receipts');
 
-      let transaction_products = this.parameters.get('transactionproducts');
+      let transaction_products = this.parameters.get('shippedtransactionproducts');
 
       let shipping_receipt_promises = arrayutilities.map(transaction_products, transaction_product => {
         return this.shippingReceiptController.get({id:transaction_product.shippingreceipt});
@@ -113,21 +112,21 @@ class confirmDeliveredController extends workerController {
     }
 
     //Note:  Good place to update the shipping status and history on the receipt.
-    acquireShippingStati(){
+    acquireProductDeliveredStati(){
 
-      du.debug('Acquire Shipping Stati');
+      du.debug('Acquire Product Delivered Stati');
 
       let shipping_receipts = this.parameters.get('shippingreceipts');
 
-      let shipping_provider_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
+      let delivered_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
 
         return this.shippingStatusController.isDelivered('usps', shipping_receipt.trackingnumber);
 
       });
 
-      return Promise.all(shipping_provider_stati).then((shipping_provider_stati) => {
+      return Promise.all(delivered_stati).then(delivered_stati => {
 
-        this.parameters.set('shippingproviderstati', shipping_provider_stati);
+        this.parameters.set('productdeliveredstati', delivered_stati);
 
         return true;
 
@@ -139,13 +138,13 @@ class confirmDeliveredController extends workerController {
 
       du.debug('Confirm Delivered');
 
-      let shipping_provider_stati = this.parameters.get('shippingproviderstati');
+      let delivered_stati = this.parameters.get('productdeliveredstati');
 
-      let delivered = arrayutilities.every(shipping_provider_stati, (shipping_provider_status) => {
-        return shipping_provider_status;
+      let delivered = arrayutilities.every(delivered_stati, (delivered_status) => {
+        return delivered_status;
       });
 
-      this.parameters.set('deliveredstatus', delivered);
+      this.parameters.set('rebilldeliveredstatus', delivered);
 
       return Promise.resolve(true);
 
@@ -155,7 +154,7 @@ class confirmDeliveredController extends workerController {
 
       du.debug('Respond');
 
-      let delivered = this.parameters.get('deliveredstatus');
+      let delivered = this.parameters.get('rebilldeliveredstatus');
 
       let response_code = (delivered == true)?'success':'noaction';
 

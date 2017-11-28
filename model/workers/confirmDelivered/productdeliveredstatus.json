@@ -1,0 +1,6 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/productdeliveredstatus",
+	"title": "Product Delivery Status",
+	"type": "boolean"
+}
