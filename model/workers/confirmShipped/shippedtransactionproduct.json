@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/shippedtransactionproduct",
+	"title": "Transaction Product",
+	"type": "object",
+	"description": "A shipped transaction product",
+  "allOf":[
+    {"$ref":"../../entities/components/transactionproduct.json"},
+    {
+      "properties":{
+        "shippingreceipt":{"$ref":"../../definitions/uuidv4.json"}
+      },
+      "required":["shippingreceipt"]
+    }
+  ]
+}

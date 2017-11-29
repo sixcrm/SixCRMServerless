@@ -1,0 +1,6 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/rebillshippedstatus",
+	"title": "Rebill Shipped Status",
+	"type": "boolean"
+}

@@ -128,7 +128,7 @@ class confirmDeliveredController extends workerController {
 
       let delivered_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
 
-        return this.shippingStatusController.isDelivered('usps', shipping_receipt);
+        return this.shippingStatusController.isDelivered({shipping_provider: 'usps', shipping_receipt: shipping_receipt});
 
       });
 

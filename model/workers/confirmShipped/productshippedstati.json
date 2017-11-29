@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/productshippedstati",
+	"array": "Product Shipped Stati",
+	"type":"array",
+	"items":{"$ref":"./productshippedstatus.json"}
+}
