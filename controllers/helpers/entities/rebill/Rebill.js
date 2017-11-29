@@ -408,7 +408,12 @@ module.exports = class RebillHelper {
 
     rebill['history'].push(newHistoryItem);
 
-    return Promise.resolve(rebill);
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    }
+
+    return this.rebillController.update({entity: rebill})
+      .then((rebill) => Promise.resolve(rebill));
   }
 
 };

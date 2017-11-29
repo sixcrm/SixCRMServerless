@@ -11,12 +11,14 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-const rebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
 class rebillController extends entityController {
 
     constructor(){
         super('rebill');
+
+        this.rebillHelperController = new RebillHelperController();
     }
 
     //Technical Debt: finish!
@@ -254,8 +256,7 @@ class rebillController extends entityController {
 
         rebill.processing = "true";
 
-        return rebillHelperController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState})
-          .then((rebill) => this.update({entity: rebill}));
+        return this.rebillHelperController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState});
 
     }
 
@@ -329,11 +330,6 @@ class rebillController extends entityController {
 
         });
 
-    }
-
-    updateRebillState({rebill, newState, previousState, errorMessage}) {
-      return rebillHelperController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState, errorMessage: errorMessage})
-        .then((rebill) => Promise.resolve(rebill));
     }
 
 }

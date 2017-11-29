@@ -12,10 +12,12 @@ const RelayResponse = global.SixCRM.routes.include('controllers','workers/compon
 //Technical Debt:  Test this!
 module.exports = class relayController {
 
-    constructor(){
+    constructor(params){
 
       this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
       this.lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+
+      this.params = params;
 
     }
 
@@ -28,7 +30,7 @@ module.exports = class relayController {
         du.warning('Invoking additional lambda');
 
         return this.lambdautilities.invokeFunction({
-          function_name: this.lambdautilities.buildLambdaName(process.env.name),
+          function_name: this.lambdautilities.buildLambdaName(this.params.name),
           payload: JSON.stringify({}),
           invocation_type: 'Event' //Asynchronous execution
         }).then(() => {
@@ -57,7 +59,7 @@ module.exports = class relayController {
 
       du.debug('Get Messages');
 
-      return this.sqsutilities.receiveMessages({queue: process.env.origin_queue, limit: this.message_limit}).then(results => {
+      return this.sqsutilities.receiveMessages({queue: this.params.origin_queue, limit: this.message_limit}).then(results => {
         return results;
       });
 
@@ -67,7 +69,7 @@ module.exports = class relayController {
 
       du.debug('Validate Request');
 
-      mvu.validateModel(process.env, global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json'));
+      mvu.validateModel(this.params, global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json'));
 
       return Promise.resolve(true);
 
@@ -145,9 +147,7 @@ module.exports = class relayController {
         message_body.additional_information = additional_information;
       }
 
-      objectutilities.hasRecursive(process, 'env.workerfunction', true);
-
-      message_body.referring_workerfunction = global.SixCRM.routes.path('workers',process.env.workerfunction);
+      message_body.referring_workerfunction = global.SixCRM.routes.path('workers', this.params.workerfunction);
 
       return JSON.stringify(message_body);
 

@@ -105,153 +105,99 @@ functions:
 # Relays (forwardmessage)
 
   billtohold:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.billtohold
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
-    environment:
-      name: 'billtohold'
-      origin_queue: 'bill'
-      destination_queue: 'hold'
-      failure_queue: 'bill_failed'
-      workerfunction: 'processBilling.js'
-      error_queue: 'some_queue'
 
   recovertohold:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.recovertohold
     events:
       - schedule:
           rate: cron(0 1 ? * FRI *)
           enabled: true
-    environment:
-      name: 'recovertohold'
-      origin_queue: 'recover'
-      destination_queue: 'hold'
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertohold}
 
   holdtopending:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.holdtopending
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
-    environment:
-      name: 'holdtopending'
-      origin_queue: 'hold'
-      destination_queue: 'pending'
-      failure_queue: 'pending_failed'
-      workerfunction: 'shipProduct.js'
 
   pendingfailedtopending:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.pendingfailedtopending
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
-    environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingfailedtopending}
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingfailedtopending}
-      origin_queue: 'pending_failed'
-      destination_queue: 'pending'
 
   pendingtoshipped:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.pendingtoshipped
     events:
       - schedule:
         rate: rate(1 minute)
         enabled: true
-    environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_pendingtoshipped}
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.pendingtoshipped}
-      origin_queue: 'pending'
-      destination_queue: 'shipped'
 
   shippedtodelivered:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.shippedtodelivered
     events:
       - schedule:
         rate: rate(1 minute)
         enabled: true
-    environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_shippedtodelivered}
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.shippedtodelivered}
-      origin_queue: 'shipped'
-      destination_queue: 'delivered'
 
   deliveredtoarchive:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.deliveredtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_deliveredtoarchive}
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.deliveredtoarchive}
-      origin_queue: 'delivered'
       archivefilter: 'ALL'
 
   holdtoarchive:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.holdtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_holdtoarchive}
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.holdtoarchive}
-      origin_queue: 'hold'
       archivefilter: 'NOSHIP'
 
   rebilltoarchive:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.rebilltoarchive
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_createrebillstoarchive}
-      origin_queue: 'rebill'
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.createrebillstoarchive}
       archivefilter: 'ALL'
 
   recovertoarchive:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.recovertoarchive
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_recovertoarchive}
-      origin_queue: 'recover'
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.recovertoarchive}
       archivefilter: 'TWOATTEMPTS'
 
   indextoarchive:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.indextoarchive
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
     environment:
-      name: 'indextoarchive'
-      origin_queue: 'search_indexing'
-      failure_queue: 'search_indexing_failed'
-      workerfunction: 'indexEntities.js'
-      error_queue: 'some_queue'
-      bulk: true
       archivefilter: 'ALL'
 
   sendnotificationstoarchive:
-    handler: handlers/workers/forwardmessage/handler.forwardmessage
+    handler: handlers/workers/forwardmessage/handler.sendnotificationstoarchive
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: false
     environment:
-      name: ${file(./config/${opt:stage}/site.yml):lambda.function_names.forwardmessage_sendnotificationstoarchive}
-      origin_queue: 'send_notification'
-      workerfunction: ${file(./config/${opt:stage}/site.yml):lambda.function_names.sendnotificationstoarchive}
       archivefilter: 'ALL'
 
 # Workers

@@ -20,7 +20,7 @@
       "type":"string"
     },
     "bulk":{
-      "type":"string"
+      "type":"boolean"
     }
   },
   "required":["origin_queue", "name", "workerfunction"]

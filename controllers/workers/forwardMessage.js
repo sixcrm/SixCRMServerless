@@ -8,11 +8,11 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 var relayController = global.SixCRM.routes.include('controllers', 'workers/components/relayController.js');
 
-class forwardMessageController extends relayController {
+module.exports = class forwardMessageController extends relayController {
 
-    constructor(){
+    constructor(params){
 
-      super();
+      super(params);
 
       this.message_limit = 10;
 
@@ -21,7 +21,7 @@ class forwardMessageController extends relayController {
     //Technical Debt: Test this
     execute(){
 
-      return this.validateEnvironment() //Make sure that process.env has all necessary parameters
+      return this.validateEnvironment() //Make sure that parameters (params) are successfully set
       .then(() => this.getMessages()) //Get messages from origin queue
       .then((messages) => this.validateMessages(messages)) //validate all messages that are returned from the origin queue (What happens if we fail validation?)
       .then((messages) => {
@@ -54,7 +54,7 @@ class forwardMessageController extends relayController {
 
       let worker_promises = [];
 
-      if(_.has(process.env, 'bulk') && process.env.bulk == 'true'){
+      if(this.params.bulk){
 
         worker_promises.push(this.invokeWorker(messages));
 
@@ -76,11 +76,11 @@ class forwardMessageController extends relayController {
 
       du.debug('invokeWorker');
 
-      let WorkerController = global.SixCRM.routes.include('workers', process.env.workerfunction);
+      let WorkerController = global.SixCRM.routes.include('workers', this.params.workerfunction);
 
       return WorkerController.execute(message).then(response => {
 
-        if(_.has(process.env, 'bulk') && process.env.bulk == 'true'){
+        if(this.params.bulk){
           return {worker_response_object: response, messages: message};
         }
 
@@ -89,7 +89,6 @@ class forwardMessageController extends relayController {
       });
 
     }
-
 
     handleWorkerResponseObjects(worker_response_objects){
 
@@ -115,8 +114,7 @@ class forwardMessageController extends relayController {
       .then((worker_response_object) => this.handleFailure(worker_response_object))
       .then((worker_response_object) => this.handleSuccess(worker_response_object))
       .then((worker_response_object) => this.handleNoAction(worker_response_object))
-      .then((worker_response_object) => this.handleDelete(worker_response_object))
-      .then((worker_response_object) => this.updateRebillState(worker_response_object));
+      .then((worker_response_object) => this.handleDelete(worker_response_object));
 
     }
 
@@ -160,7 +158,7 @@ class forwardMessageController extends relayController {
 
       du.highlight('Is fail.');
 
-      if(!_.has(process.env, 'failure_queue')){
+      if(!this.params.failure_queue) {
 
         du.warning('Fail Queue Not Configured');
 
@@ -172,7 +170,7 @@ class forwardMessageController extends relayController {
 
       du.info("Updated Message Body: "+body);
 
-      return this.pushMessagetoQueue({body: body, queue: process.env.failure_queue})
+      return this.pushMessagetoQueue({body: body, queue: this.params.failure_queue})
       .then(() => { return compound_worker_response_object; });
 
     }
@@ -187,7 +185,7 @@ class forwardMessageController extends relayController {
 
       du.highlight('Is error.');
 
-      if(!_.has(process.env, 'error_queue')){
+      if(!this.params.error_queue) {
 
         du.warning('Error Queue Not Configured');
 
@@ -199,7 +197,7 @@ class forwardMessageController extends relayController {
 
       du.info("Updated Message Body: "+body);
 
-      return this.pushMessagetoQueue({body: body, queue: process.env.error_queue})
+      return this.pushMessagetoQueue({body: body, queue: this.params.error_queue})
       .then(() => { return compound_worker_response_object; });
 
     }
@@ -214,7 +212,7 @@ class forwardMessageController extends relayController {
 
       du.info('Is success.');
 
-      if(!_.has(process.env, 'destination_queue')){
+      if(!this.params.destination_queue){
 
         du.warning('Error Queue Not Configured');
 
@@ -222,7 +220,7 @@ class forwardMessageController extends relayController {
 
       }
 
-      return this.pushMessagetoQueue({body: compound_worker_response_object.message.Body, queue: process.env.destination_queue})
+      return this.pushMessagetoQueue({body: compound_worker_response_object.message.Body, queue: this.params.destination_queue})
       .then(() => { return compound_worker_response_object; });
 
     }
@@ -236,7 +234,7 @@ class forwardMessageController extends relayController {
         let messages = this.getCompoundWorkerResponseMessages(compound_worker_response_object);
 
         return this.deleteMessages(messages)
-        .then((result) => {
+        .then(() => {
           return compound_worker_response_object;
         });
 
@@ -250,27 +248,6 @@ class forwardMessageController extends relayController {
 
     }
 
-    updateRebillState(compound_worker_response_object) {
-      du.debug('Update Rebill State');
-
-      const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-      const rebill = JSON.parse(compound_worker_response_object.message.Body);
-
-      const previousState = process.env.origin_queue;
-      let newState  = process.env.destination_queue;
-      let errorMessage;
-
-      if (compound_worker_response_object.worker_response_object.getCode() === 'fail') {
-        newState = process.env.failure_queue;
-      }
-
-      if (compound_worker_response_object.worker_response_object.getCode() === 'error') {
-        newState = process.env.error_queue;
-      }
-
-      return rebillController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState, errorMessage: errorMessage});
-    }
-
     deleteMessages(messages){
 
       du.debug('Delete Messages');
@@ -280,7 +257,7 @@ class forwardMessageController extends relayController {
       let message_delete_promises = arrayutilities.map(messages, message => {
         du.info(message);
         return this.deleteMessage({
-          queue: process.env.origin_queue,
+          queue: this.params.origin_queue,
           receipt_handle: this.getReceiptHandle(message)
         });
       });
@@ -312,6 +289,4 @@ class forwardMessageController extends relayController {
 
     }
 
-}
-
-module.exports = new forwardMessageController();
+};
