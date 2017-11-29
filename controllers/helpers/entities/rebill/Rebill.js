@@ -38,6 +38,23 @@ module.exports = class RebillHelper {
           day:'day',
           productscheduleids: 'product_schedules'
         }
+      },
+      updateRebillState: {
+        required: {
+          rebill: 'rebill',
+          newstate:'new_state',
+          previousstate:'previous_state'
+        },
+        optional:{
+          errormessage:'error_message'
+        }
+      },
+      markRebillProcessing:{
+        required: {
+          rebill:'rebill',
+          processing: 'processing'
+        },
+        optional:{}
       }
     };
 
@@ -374,46 +391,208 @@ module.exports = class RebillHelper {
 
   }
 
-  updateRebillState({rebill, newState, oldState, errorMessage}) {
+  /* Nikola, please see below! */
+
+  updateRebillProcessing({rebill, processing}){
+
+    du.debug('Mark Rebill Processing');
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'markRebillProcessing'}))
+    .then(() => this.acquireRebill())
+    .then(() => this.setRebillProcessing())
+    .then(() => this.updateRebill());
+
+  }
+
+  acquireRebill(){
+
+    du.debug('Acquire Rebill');
+
+    let rebill = this.parameters.get('rebill');
+
+    return this.rebillController.get({id: rebill.id}).then(rebill => {
+      this.parameters.set('rebill', rebill);
+      return true;
+    });
+
+  }
+
+  setRebillProcessing(){
+
+    du.debug('Set Rebill Processing');
+
+    let rebill = this.parameters.get('rebill');
+    let processing = this.parameters.get('processing');
+
+    rebill.processing = processing;
+
+    this.parameters.set('rebill', rebill);
+
+    return true;
+
+  }
+
+  updateRebill(){
+
+    du.debug('Update Rebill');
+
+    let rebill = this.parameters.get('rebill');
+
+    return this.rebillController.update({entity: rebill}).then(rebill => {
+
+      this.parameters.set('rebill', rebill);
+
+      return true;
+
+    });
+
+  }
+
+  updateRebillState({rebill, new_state, previous_state, error_message}){
+
     du.debug('Updating Rebill State');
 
-    if (!newState) {
-      return Promise.resolve(rebill)
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateRebillState'}))
+    .then(() => this.acquireRebill())
+    .then(() => this.setConditionalProperties())
+    .then(() => this.thisBuildUpdatedRebillPrototype())
+    .then(() => this.updateRebillFromUpdatedRebillPrototype());
+
+  }
+
+  setConditionalProperties(){
+
+    du.debug('Set Conditional Properties');
+
+    if(!this.parameters.isSet('newstate')){
+      return true;
     }
 
-    const previousState = rebill.state || oldState;
-    const stateChangedAt = timestamp.getISO8601();
+    let rebill = this.parameters.get('rebill');
+    let new_state = this.parameters.get('newstate', null, false);
 
-    rebill['state'] = newState;
-    rebill['previous_state'] = previousState;
-    rebill['state_changed_at'] = stateChangedAt;
+    let previous_state;
+    if(this.parameters.isSet('previousstate')){
+      previous_state = this.parameters.get('previousstate', null, false);
+    }else{
+      this.parameters.set('previousstate', rebill.state);
+    }
 
-    if (rebill['history']) {
-      for (let i = 0; i < rebill['history'].length; i++) {
-        if (rebill['history'][i].state === previousState) {
-          rebill['history'][i]['exited_at'] = stateChangedAt;
+    return true;
 
-          break;
-        }
+  }
+
+  buildUpdatedRebillPrototype(){
+
+    du.debug('Build Updated Rebill Prototype');
+
+    let rebill = this.parameters.get('rebill');
+    this.parameters.set('statechangedat', timestamp.getISO8601())
+
+    rebill.state = this.parameters.get('newstate');
+    rebill.previous_state = this.parameters.get('previousstate')
+    rebill.state_changed_at = this.parameters.get('statechangedat');
+    rebill.history = this.createUpdatedHistoryObjectPrototype();
+
+    this.parameters.set('updatedrebillprototype', rebill);
+
+  }
+
+  createUpdatedHistoryObjectPrototype(){
+
+    du.debug('Create Updated History Object Prototype');
+
+    let rebill = this.parameters.get('rebill');
+    let previous_state = this.parameters.get('previousstate');
+    let state_changed_at = this.parameters.get('statechangedat');
+
+
+    if(_.has(rebill, 'history') && arrayutilities.nonEmpty(rebill.history)){
+
+      rebill.history = this.updateHistoryWithNewExit();
+
+    }else{
+
+      rebill.history = [];
+
+    }
+
+    let new_history_element = this.createHistoryElementPrototype();
+
+    rebill.history.push(new_history_element);
+
+    return rebill.history;
+
+  }
+
+  updateHistoryWithNewExit(){
+
+    du.debug('Update History With New Exit');
+
+    let rebill = this.parameters.get('rebill');
+
+    let matching_states = arrayutilities.filter(rebill.history, (history_element) => {
+      return (history_element.state == previous_state)
+    });
+
+    if(!arrayutilities.nonEmpty(matching_states)){
+      eu.throwError('server', 'Rebill does not have a history of being in previous state: '+previous_state);
+    }
+
+    matching_states = arrayutilities.sort(matching_states, (a, b) => {
+      return (a.entered_at - b.entered_at);
+    });
+
+    let last_matching_state = matching_states[matching_states.length - 1];
+
+    last_matching_state.exited_at = state_changed_at;
+
+    arrayutilities.find(rebill.history, (history_element, index) => {
+      if((history_element.state == last_matching_state.state) && (history_element.entered_at == last_matching_state.entered_at)){
+        rebill.history[index] = last_matching_state;
       }
-    } else {
-      rebill['history'] = [];
+    });
+
+    return rebill.history;
+
+  }
+
+  createHistoryElementPrototype(){
+
+    du.debug('Create Rebill History Element Prototype');
+
+    let new_history_element = {
+      entered_at: this.parameters.get('statechangedat')
+    };
+
+    if(this.parameters.isSet('errormessage')){
+      new_history_element.error_message = this.parameters.get('errormessage');
     }
 
-    const newHistoryItem = {state: newState, entered_at: stateChangedAt};
-
-    if (errorMessage) {
-      newHistoryItem['error_message'] = errorMessage;
+    if(this.parameters.isSet('newstate')){
+      new_history_element.state = this.parameters.get('newstate');
     }
 
-    rebill['history'].push(newHistoryItem);
+    return new_history_element;
 
-    if(!_.has(this, 'rebillController')){
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-    }
+  }
 
-    return this.rebillController.update({entity: rebill})
-      .then((rebill) => Promise.resolve(rebill));
+  updateRebillFromUpdatedRebillPrototype(){
+
+    du.debug('Update Rebill');
+
+    let updated_rebill_prototype = this.parameters.get('updatedrebillprototype');
+
+    return this.rebillController.update({entity: updated_rebill_prototype}).then(updated_rebill => {
+
+      this.parameters.set('rebill', updated_rebill);
+
+      return true;
+
+    });
+
   }
 
 };

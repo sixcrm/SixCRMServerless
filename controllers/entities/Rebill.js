@@ -214,6 +214,7 @@ class rebillController extends entityController {
 
     }
 
+    /*
     //Technical Debt:  This needs to go into a helper
     addRebillToQueue(rebill, queue_name){
 
@@ -259,6 +260,7 @@ class rebillController extends entityController {
         return this.rebillHelperController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState});
 
     }
+    */
 
 	//Technical Debt:  This shouldn't go here...
     getRebillsAfterTimestamp(a_timestamp, cursor, limit){
@@ -308,6 +310,7 @@ class rebillController extends entityController {
 
     }
 
+    /*
     sendMessageAndMarkRebill(rebill){
 
         du.debug('Send Message And Mark Rebill');
@@ -331,7 +334,7 @@ class rebillController extends entityController {
         });
 
     }
-
+    */
 }
 
 module.exports = new rebillController();

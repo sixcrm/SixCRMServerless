@@ -24,13 +24,13 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
     }
 
     updateRebillState(compound_worker_response_object) {
+
       du.debug('Update Rebill State');
 
       const rebill = JSON.parse(compound_worker_response_object.message.Body);
 
-      const previousState = this.params.origin_queue;
-      let newState  = this.params.destination_queue;
-      let errorMessage;
+      const previous_state = this.params.origin_queue;
+      let new_state  = this.params.destination_queue;
 
       if (compound_worker_response_object.worker_response_object.getCode() === 'fail') {
         newState = this.params.failure_queue;
@@ -40,9 +40,10 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
         newState = this.params.error_queue;
       }
 
-      return this.rebillHelperController
-        .updateRebillState({rebill: rebill, newState: newState, previousState: previousState, errorMessage: errorMessage})
-        .then(() => Promise.resolve(compound_worker_response_object));
+      this.rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state});
+
+      return Promise.resolve(compound_worker_response_object);
+
     }
 
 };

@@ -158,5 +158,12 @@ module.exports = class Parameters {
 
   }
 
+  isSet(key){
+
+    du.debug('Is Set');
+
+    return (_.has(this.store, key));
+
+  }
 
 }
