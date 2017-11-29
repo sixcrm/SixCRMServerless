@@ -391,7 +391,7 @@ module.exports = class RebillHelper {
     if (rebill['history']) {
       for (let i = 0; i < rebill['history'].length; i++) {
         if (rebill['history'][i].state === previousState) {
-          rebill['history'][i]['exited_at'] = timestamp;
+          rebill['history'][i]['exited_at'] = stateChangedAt;
 
           break;
         }
@@ -400,7 +400,7 @@ module.exports = class RebillHelper {
       rebill['history'] = [];
     }
 
-    const newHistoryItem = {state: newState, entered_at: timestamp};
+    const newHistoryItem = {state: newState, entered_at: stateChangedAt};
 
     if (errorMessage) {
       newHistoryItem['error_message'] = errorMessage;
