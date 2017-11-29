@@ -115,7 +115,8 @@ class forwardMessageController extends relayController {
       .then((worker_response_object) => this.handleFailure(worker_response_object))
       .then((worker_response_object) => this.handleSuccess(worker_response_object))
       .then((worker_response_object) => this.handleNoAction(worker_response_object))
-      .then((worker_response_object) => this.handleDelete(worker_response_object));
+      .then((worker_response_object) => this.handleDelete(worker_response_object))
+      .then((worker_response_object) => this.updateRebillState(worker_response_object));
 
     }
 
@@ -247,6 +248,27 @@ class forwardMessageController extends relayController {
 
       return Promise.resolve(compound_worker_response_object);
 
+    }
+
+    updateRebillState(compound_worker_response_object) {
+      du.debug('Update Rebill State');
+
+      const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+      const rebill = JSON.parse(compound_worker_response_object.message.Body);
+
+      const previousState = process.env.origin_queue;
+      let newState  = process.env.destination_queue;
+      let errorMessage;
+
+      if (compound_worker_response_object.worker_response_object.getCode() === 'fail') {
+        newState = process.env.failure_queue;
+      }
+
+      if (compound_worker_response_object.worker_response_object.getCode() === 'error') {
+        newState = process.env.error_queue;
+      }
+
+      return rebillController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState, errorMessage: errorMessage});
     }
 
     deleteMessages(messages){

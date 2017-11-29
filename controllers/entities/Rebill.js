@@ -10,7 +10,8 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const rebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
 class rebillController extends entityController {
 
@@ -237,7 +238,7 @@ class rebillController extends entityController {
 
             return sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: queue_shortname}).then(() => {
 
-                return this.markRebillProcessing(rebill).then((rebill) => {
+                return this.markRebillProcessing({rebill: rebill, newState: queue_shortname}).then((rebill) => {
 
                     return resolve(rebill);
 
@@ -249,11 +250,12 @@ class rebillController extends entityController {
 
     }
 
-    markRebillProcessing(rebill){
+    markRebillProcessing({rebill, previousState, newState}){
 
         rebill.processing = "true";
 
-        return this.update({entity: rebill});
+        return rebillHelperController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState})
+          .then((rebill) => this.update({entity: rebill}));
 
     }
 
@@ -313,7 +315,7 @@ class rebillController extends entityController {
 
           sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: process.env.bill_queue}).then(() => {
 
-            this.markRebillProcessing(rebill).then((rebill) => {
+            this.markRebillProcessing({rebill: rebill, newState: process.env.bill_queue}).then((rebill) => {
 
               return resolve(rebill);
 
@@ -327,6 +329,11 @@ class rebillController extends entityController {
 
         });
 
+    }
+
+    updateRebillState({rebill, newState, previousState, errorMessage}) {
+      return rebillHelperController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState, errorMessage: errorMessage})
+        .then((rebill) => Promise.resolve(rebill));
     }
 
 }

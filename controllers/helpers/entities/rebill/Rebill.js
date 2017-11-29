@@ -374,4 +374,41 @@ module.exports = class RebillHelper {
 
   }
 
-}
+  updateRebillState({rebill, newState, oldState, errorMessage}) {
+    du.debug('Updating Rebill State');
+
+    if (!newState) {
+      return Promise.resolve(rebill)
+    }
+
+    const previousState = rebill.state || oldState;
+    const stateChangedAt = timestamp.getISO8601();
+
+    rebill['state'] = newState;
+    rebill['previous_state'] = previousState;
+    rebill['state_changed_at'] = stateChangedAt;
+
+    if (rebill['history']) {
+      for (let i = 0; i < rebill['history'].length; i++) {
+        if (rebill['history'][i].state === previousState) {
+          rebill['history'][i]['exited_at'] = timestamp;
+
+          break;
+        }
+      }
+    } else {
+      rebill['history'] = [];
+    }
+
+    const newHistoryItem = {state: newState, entered_at: timestamp};
+
+    if (errorMessage) {
+      newHistoryItem['error_message'] = errorMessage;
+    }
+
+    rebill['history'].push(newHistoryItem);
+
+    return Promise.resolve(rebill);
+  }
+
+};
