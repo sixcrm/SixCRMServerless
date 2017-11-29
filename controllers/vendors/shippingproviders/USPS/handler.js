@@ -22,12 +22,6 @@ class USPSController extends shippingProviderController {
             trackingnumber: 'trackingnumber'
           },
           optional:{}
-        },
-        isDelivered: {
-          required: {
-            trackingnumber: 'trackingnumber'
-          },
-          optional:{}
         }
       };
 

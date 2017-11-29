@@ -28,15 +28,6 @@ class confirmDeliveredController extends workerController {
         'rebilldeliveredstatus':global.SixCRM.routes.path('model', 'workers/confirmDelivered/rebilldeliveredstatus.json')
       };
 
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-      this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
-
-      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
-
-      this.transactionHelperController = new TransactionHelperController();
-
-      this.shippingStatusController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/ShippingStatus.js');
-
       this.augmentParameters();
 
     }
@@ -65,6 +56,10 @@ class confirmDeliveredController extends workerController {
 
       let rebill = this.parameters.get('rebill');
 
+      if(!_.has(this, 'rebillController')){
+        this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+      }
+
       return this.rebillController.listTransactions(rebill)
       .then((result) => this.rebillController.getResult(result, 'transactions'))
       .then(transactions => {
@@ -83,6 +78,12 @@ class confirmDeliveredController extends workerController {
 
       let transactions = this.parameters.get('transactions');
 
+      if(!_.has(this, 'transactionHelperController')){
+        const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+
+        this.transactionHelperController = new TransactionHelperController();
+      }
+
       let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
 
       this.parameters.set('shippedtransactionproducts', transaction_products);
@@ -96,6 +97,10 @@ class confirmDeliveredController extends workerController {
       du.debug('Acquire Shipping Receipts');
 
       let transaction_products = this.parameters.get('shippedtransactionproducts');
+
+      if(!_.has(this, 'shippingReceiptController')){
+        this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+      }
 
       let shipping_receipt_promises = arrayutilities.map(transaction_products, transaction_product => {
         return this.shippingReceiptController.get({id:transaction_product.shippingreceipt});
@@ -111,16 +116,19 @@ class confirmDeliveredController extends workerController {
 
     }
 
-    //Note:  Good place to update the shipping status and history on the receipt.
     acquireProductDeliveredStati(){
 
       du.debug('Acquire Product Delivered Stati');
 
       let shipping_receipts = this.parameters.get('shippingreceipts');
 
+      if(!_.has(this, 'shippingStatusController')){
+        this.shippingStatusController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/ShippingStatus.js');
+      }
+
       let delivered_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
 
-        return this.shippingStatusController.isDelivered('usps', shipping_receipt.trackingnumber);
+        return this.shippingStatusController.isDelivered('usps', shipping_receipt);
 
       });
 
