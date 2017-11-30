@@ -47,14 +47,14 @@ class pickRebillController extends workerController {
 
     let rebills = this.parameters.get('rebills');
 
-    if(!_.has(this, 'rebillController')){
-      let this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-    }
+    let rebill_marked_promises = arrayutilities.map(rebills => {
 
-    return this.rebillController.markRebillAsProcessing({rebill: rebill, new_state: this.destination_queue}).then(rebill => {
+      return this.rebillHelperController.updateRebillProcessing({rebill: rebill, processing: true});
 
+    });
+
+    return Promise.all(rebill_marked_promises).then(() => {
       return true;
-
     });
 
   }
@@ -62,9 +62,7 @@ class pickRebillController extends workerController {
 
   pickRebill(){
 
-
-
-    .then(() => this.markRebillsAsProcessing())
+      .then(() => this.markRebillsAsProcessing())
     .then(() => this.respond());
     return this.rebillController.getRebillsAfterTimestamp(now)
     .then(() => {
