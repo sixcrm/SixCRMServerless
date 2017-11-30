@@ -10,9 +10,9 @@ var relayController = global.SixCRM.routes.include('controllers', 'workers/compo
 
 module.exports = class forwardMessageController extends relayController {
 
-    constructor(params){
+    constructor(){
 
-      super(params);
+      super();
 
       this.message_limit = 10;
 
@@ -52,9 +52,11 @@ module.exports = class forwardMessageController extends relayController {
 
       du.debug('Forward Messages To Workers');
 
+      let params = this.parameters.get('params');
+
       let worker_promises = [];
 
-      if(this.params.bulk){
+      if(params.bulk){
 
         worker_promises.push(this.invokeWorker(messages));
 
@@ -76,11 +78,13 @@ module.exports = class forwardMessageController extends relayController {
 
       du.debug('invokeWorker');
 
-      let WorkerController = global.SixCRM.routes.include('workers', this.params.workerfunction);
+      let params = this.parameters.get('params');
+
+      let WorkerController = global.SixCRM.routes.include('workers', params.workerfunction);
 
       return WorkerController.execute(message).then(response => {
 
-        if(this.params.bulk){
+        if(params.bulk){
           return {worker_response_object: response, messages: message};
         }
 
@@ -152,13 +156,15 @@ module.exports = class forwardMessageController extends relayController {
 
       du.debug('Handle Failure');
 
+      let params = this.parameters.get('params');
+
       if(compound_worker_response_object.worker_response_object.getCode() !== 'fail'){
         return Promise.resolve(compound_worker_response_object);
       }
 
       du.highlight('Is fail.');
 
-      if(!this.params.failure_queue) {
+      if(!params.failure_queue) {
 
         du.warning('Fail Queue Not Configured');
 
@@ -170,7 +176,7 @@ module.exports = class forwardMessageController extends relayController {
 
       du.info("Updated Message Body: "+body);
 
-      return this.pushMessagetoQueue({body: body, queue: this.params.failure_queue})
+      return this.pushMessagetoQueue({body: body, queue: params.failure_queue})
       .then(() => { return compound_worker_response_object; });
 
     }
@@ -179,13 +185,15 @@ module.exports = class forwardMessageController extends relayController {
 
       du.debug('Handle Error');
 
+      let params = this.parameters.get('params');
+
       if(compound_worker_response_object.worker_response_object.getCode() !== 'error'){
         return Promise.resolve(compound_worker_response_object);
       }
 
       du.highlight('Is error.');
 
-      if(!this.params.error_queue) {
+      if(!params.error_queue) {
 
         du.warning('Error Queue Not Configured');
 
@@ -197,7 +205,7 @@ module.exports = class forwardMessageController extends relayController {
 
       du.info("Updated Message Body: "+body);
 
-      return this.pushMessagetoQueue({body: body, queue: this.params.error_queue})
+      return this.pushMessagetoQueue({body: body, queue: params.error_queue})
       .then(() => { return compound_worker_response_object; });
 
     }
@@ -206,13 +214,15 @@ module.exports = class forwardMessageController extends relayController {
 
       du.debug('Handle Success');
 
+      let params = this.parameters.get('params');
+
       if(compound_worker_response_object.worker_response_object.getCode() !== 'success'){
         return Promise.resolve(compound_worker_response_object);
       }
 
       du.info('Is success.');
 
-      if(!this.params.destination_queue){
+      if(!params.destination_queue){
 
         du.warning('Error Queue Not Configured');
 
@@ -220,7 +230,7 @@ module.exports = class forwardMessageController extends relayController {
 
       }
 
-      return this.pushMessagetoQueue({body: compound_worker_response_object.message.Body, queue: this.params.destination_queue})
+      return this.pushMessagetoQueue({body: compound_worker_response_object.message.Body, queue: params.destination_queue})
       .then(() => { return compound_worker_response_object; });
 
     }
@@ -228,6 +238,8 @@ module.exports = class forwardMessageController extends relayController {
     handleDelete(compound_worker_response_object){
 
       du.debug('Handle Delete');
+
+      let params = this.parameters.get('params');
 
       if(_.contains(['success', 'fail', 'error'], compound_worker_response_object.worker_response_object.getCode())){
 
@@ -252,12 +264,14 @@ module.exports = class forwardMessageController extends relayController {
 
       du.debug('Delete Messages');
 
+      let params = this.parameters.get('params');
+
       mvu.validateModel(messages, global.SixCRM.routes.path('model','workers/sqsmessages.json'));
 
       let message_delete_promises = arrayutilities.map(messages, message => {
         du.info(message);
         return this.deleteMessage({
-          queue: this.params.origin_queue,
+          queue: params.origin_queue,
           receipt_handle: this.getReceiptHandle(message)
         });
       });

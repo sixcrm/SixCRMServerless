@@ -9,28 +9,35 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 const RelayResponse = global.SixCRM.routes.include('controllers','workers/components/RelayResponse.js');
 
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+
 //Technical Debt:  Test this!
 module.exports = class relayController {
 
-    constructor(params){
+    constructor(){
 
       this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
       this.lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 
-      this.params = params;
+      this.parameter_validation = {
+        'params': global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json')
+      };
 
+      this.parameters = new Parameters({validation: this.parameter_validation});
     }
 
     invokeAdditionalLambdas(messages){
 
       du.debug('Invoke Additional Lambdas');
 
+      let params = this.parameters.get('params');
+
       if(arrayutilities.nonEmpty(messages) && messages.length >= this.message_limit){
 
         du.warning('Invoking additional lambda');
 
         return this.lambdautilities.invokeFunction({
-          function_name: this.lambdautilities.buildLambdaName(this.params.name),
+          function_name: this.lambdautilities.buildLambdaName(params.name),
           payload: JSON.stringify({}),
           invocation_type: 'Event' //Asynchronous execution
         }).then(() => {
@@ -59,7 +66,9 @@ module.exports = class relayController {
 
       du.debug('Get Messages');
 
-      return this.sqsutilities.receiveMessages({queue: this.params.origin_queue, limit: this.message_limit}).then(results => {
+      let params = this.parameters.get('params');
+
+      return this.sqsutilities.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then(results => {
         return results;
       });
 
@@ -67,9 +76,11 @@ module.exports = class relayController {
 
     validateEnvironment(){
 
-      du.debug('Validate Request');
+      du.debug('Validate Parameters');
 
-      mvu.validateModel(this.params, global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json'));
+      if(!this.parameters.isSet('params')){
+        eu.throwError('server', 'Parameters are not set correctly.');
+      }
 
       return Promise.resolve(true);
 
@@ -131,6 +142,8 @@ module.exports = class relayController {
 
       du.debug('Append Diagnostic Information');
 
+      let params = this.parameters.get('params');
+
       objectutilities.hasRecursive(compound_worker_response_object, 'message.Body', true);
 
       let message_body = compound_worker_response_object.message.Body;
@@ -147,7 +160,7 @@ module.exports = class relayController {
         message_body.additional_information = additional_information;
       }
 
-      message_body.referring_workerfunction = global.SixCRM.routes.path('workers', this.params.workerfunction);
+      message_body.referring_workerfunction = global.SixCRM.routes.path('workers', params.workerfunction);
 
       return JSON.stringify(message_body);
 

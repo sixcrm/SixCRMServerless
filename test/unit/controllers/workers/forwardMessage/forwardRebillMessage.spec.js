@@ -56,14 +56,16 @@ describe('workers/forwardRebillMessage', () => {
       const compound_worker_response_object = getRebillResponseObject('success');
 
       const ForwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
-      const forwardRebillMessageController = new ForwardRebillMessageController(
-        {
-          origin_queue: 'some_origin_queue',
-          destination_queue: 'some_destination_queue',
-          failure_queue: 'some_fail_queue',
-          error_queue: 'some_error_queue'
-        }
-      );
+      const forwardRebillMessageController = new ForwardRebillMessageController();
+
+      forwardRebillMessageController.parameters.set('params', {
+        name: 'some_queue_name',
+        workerfunction: 'some_workerfunction',
+        origin_queue: 'some_origin_queue',
+        destination_queue: 'some_destination_queue',
+        failure_queue: 'some_fail_queue',
+        error_queue: 'some_error_queue'
+      });
 
       return forwardRebillMessageController.updateRebillState(compound_worker_response_object).then((response) => {
         expect(response).to.deep.equal(compound_worker_response_object);
@@ -90,14 +92,16 @@ describe('workers/forwardRebillMessage', () => {
       const compound_worker_response_object = getRebillResponseObject('fail');
 
       const ForwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
-      const forwardRebillMessageController = new ForwardRebillMessageController(
-        {
-          origin_queue: 'some_origin_queue',
-          destination_queue: 'some_destination_queue',
-          failure_queue: 'some_fail_queue',
-          error_queue: 'some_error_queue'
-        }
-      );
+      const forwardRebillMessageController = new ForwardRebillMessageController();
+
+      forwardRebillMessageController.parameters.set('params', {
+        name: 'some_queue_name',
+        workerfunction: 'some_workerfunction',
+        origin_queue: 'some_origin_queue',
+        destination_queue: 'some_destination_queue',
+        failure_queue: 'some_fail_queue',
+        error_queue: 'some_error_queue'
+      });
 
       return forwardRebillMessageController.updateRebillState(compound_worker_response_object).then((response) => {
         expect(response).to.deep.equal(compound_worker_response_object);
@@ -124,14 +128,16 @@ describe('workers/forwardRebillMessage', () => {
       const compound_worker_response_object = getRebillResponseObject('error');
 
       const ForwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
-      const forwardRebillMessageController = new ForwardRebillMessageController(
-        {
-          origin_queue: 'some_origin_queue',
-          destination_queue: 'some_destination_queue',
-          failure_queue: 'some_fail_queue',
-          error_queue: 'some_error_queue'
-        }
-      );
+      const forwardRebillMessageController = new ForwardRebillMessageController();
+
+      forwardRebillMessageController.parameters.set('params', {
+        name: 'some_queue_name',
+        workerfunction: 'some_workerfunction',
+        origin_queue: 'some_origin_queue',
+        destination_queue: 'some_destination_queue',
+        failure_queue: 'some_fail_queue',
+        error_queue: 'some_error_queue'
+      });
 
       return forwardRebillMessageController.updateRebillState(compound_worker_response_object).then((response) => {
         expect(response).to.deep.equal(compound_worker_response_object);
