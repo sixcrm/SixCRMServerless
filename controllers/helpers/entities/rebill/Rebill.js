@@ -42,14 +42,14 @@ module.exports = class RebillHelper {
       updateRebillState: {
         required: {
           rebill: 'rebill',
-          newstate:'new_state',
-          previousstate:'previous_state'
+          newstate:'new_state'
         },
         optional:{
-          errormessage:'error_message'
+          errormessage:'error_message',
+          previousstate:'previous_state'
         }
       },
-      markRebillProcessing:{
+      updateRebillProcessing:{
         required: {
           rebill:'rebill',
           processing: 'processing'
@@ -69,7 +69,9 @@ module.exports = class RebillHelper {
       'transactionproducts': global.SixCRM.routes.path('model', 'helpers/rebill/transactionproducts.json'),
       'amount': global.SixCRM.routes.path('model','definitions/currency.json'),
       'rebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/rebillprototype.json'),
-      'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json')
+      'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
+      'billablerebills':global.SixCRM.routes.path('model', 'helpers/rebill/billablerebills.json'),
+      'spoofedrebillmessages': global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessages.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
@@ -398,7 +400,7 @@ module.exports = class RebillHelper {
     du.debug('Mark Rebill Processing');
 
     return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'markRebillProcessing'}))
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateRebillProcessing'}))
     .then(() => this.acquireRebill())
     .then(() => this.setRebillProcessing())
     .then(() => this.updateRebill());
@@ -410,6 +412,10 @@ module.exports = class RebillHelper {
     du.debug('Acquire Rebill');
 
     let rebill = this.parameters.get('rebill');
+
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    }
 
     return this.rebillController.get({id: rebill.id}).then(rebill => {
       this.parameters.set('rebill', rebill);
@@ -439,6 +445,10 @@ module.exports = class RebillHelper {
 
     let rebill = this.parameters.get('rebill');
 
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    }
+
     return this.rebillController.update({entity: rebill}).then(rebill => {
 
       this.parameters.set('rebill', rebill);
@@ -457,7 +467,7 @@ module.exports = class RebillHelper {
     .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateRebillState'}))
     .then(() => this.acquireRebill())
     .then(() => this.setConditionalProperties())
-    .then(() => this.thisBuildUpdatedRebillPrototype())
+    .then(() => this.buildUpdatedRebillPrototype())
     .then(() => this.updateRebillFromUpdatedRebillPrototype());
 
   }
@@ -471,12 +481,8 @@ module.exports = class RebillHelper {
     }
 
     let rebill = this.parameters.get('rebill');
-    let new_state = this.parameters.get('newstate', null, false);
 
-    let previous_state;
-    if(this.parameters.isSet('previousstate')){
-      previous_state = this.parameters.get('previousstate', null, false);
-    }else{
+    if(!this.parameters.isSet('previousstate')){
       this.parameters.set('previousstate', rebill.state);
     }
 
@@ -489,10 +495,11 @@ module.exports = class RebillHelper {
     du.debug('Build Updated Rebill Prototype');
 
     let rebill = this.parameters.get('rebill');
-    this.parameters.set('statechangedat', timestamp.getISO8601())
+
+    this.parameters.set('statechangedat', timestamp.getISO8601());
 
     rebill.state = this.parameters.get('newstate');
-    rebill.previous_state = this.parameters.get('previousstate')
+    rebill.previous_state = this.parameters.get('previousstate');
     rebill.state_changed_at = this.parameters.get('statechangedat');
     rebill.history = this.createUpdatedHistoryObjectPrototype();
 
@@ -505,9 +512,6 @@ module.exports = class RebillHelper {
     du.debug('Create Updated History Object Prototype');
 
     let rebill = this.parameters.get('rebill');
-    let previous_state = this.parameters.get('previousstate');
-    let state_changed_at = this.parameters.get('statechangedat');
-
 
     if(_.has(rebill, 'history') && arrayutilities.nonEmpty(rebill.history)){
 
@@ -532,6 +536,8 @@ module.exports = class RebillHelper {
     du.debug('Update History With New Exit');
 
     let rebill = this.parameters.get('rebill');
+    let previous_state = this.parameters.get('previousstate');
+    let state_changed_at = this.parameters.get('statechangedat');
 
     let matching_states = arrayutilities.filter(rebill.history, (history_element) => {
       return (history_element.state == previous_state)
@@ -585,9 +591,89 @@ module.exports = class RebillHelper {
 
     let updated_rebill_prototype = this.parameters.get('updatedrebillprototype');
 
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    }
+
     return this.rebillController.update({entity: updated_rebill_prototype}).then(updated_rebill => {
 
       this.parameters.set('rebill', updated_rebill);
+
+      return updated_rebill;
+
+    });
+
+  }
+
+  getAvailableRebillsAsMessages(){
+
+    du.debug('Get Available Rebills As Messages');
+
+    return this.getBillableRebills()
+    .then(() => this.spoofRebillMessages())
+    .then(() => {
+      return this.parameters.get('spoofedrebillmessages');
+    })
+
+  }
+
+  spoofRebillMessages(){
+
+    du.debug('Spoof Rebill Messages');
+
+    let billable_rebills = this.parameters.get('billablerebills');
+
+    let spoofed_rebill_messages = [];
+
+    if(arrayutilities.nonEmpty(billable_rebills)){
+
+      spoofed_rebill_messages = arrayutilities.map(billable_rebills, rebill => {
+
+        return this.createRebillMessageSpoof(rebill);
+
+      });
+
+    }
+
+    this.parameters.set('spoofedrebillmessages', spoofed_rebill_messages);
+
+    return true;
+
+  }
+
+  createRebillMessageSpoof(rebill){
+
+    du.debug('Create Rebill Message Spoof');
+
+    let body = JSON.stringify({id: rebill.id});
+
+    return {
+      Body: body,
+      spoof: true
+    };
+
+  }
+
+  getBillableRebills(){
+
+    du.debug('Get Billable Rebills');
+
+    let now = timestamp.createTimestampSeconds();
+
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+    }
+
+    return this.rebillController.getRebillsAfterTimestamp(now).then(rebills => {
+
+      let billable_rebills = arrayutilities.filter(rebills, (rebill) => {
+        if(!_.has(rebill, 'processing') || rebill.processing !== true){
+          return true;
+        }
+        return false;
+      })
+
+      this.parameters.set('billablerebills', billable_rebills);
 
       return true;
 

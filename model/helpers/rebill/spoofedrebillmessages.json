@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/spoofedrebillmessages.json",
+	"title": "Spoofed Rebill Messages",
+  "type":"array",
+  "items":{"$ref":"./spoofedrebillmessage.json"}
+}

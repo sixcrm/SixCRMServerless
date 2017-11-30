@@ -23,5 +23,5 @@
       "type":"boolean"
     }
   },
-  "required":["origin_queue", "name", "workerfunction"]
+  "required":["name", "workerfunction"]
 }

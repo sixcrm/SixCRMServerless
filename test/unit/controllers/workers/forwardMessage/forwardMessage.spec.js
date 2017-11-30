@@ -60,16 +60,16 @@ function getValidMockWorker(){
 function getValidMessages(){
   return [
     {
-      "MessageId": "f0b56385-ff0d-46d9-8faa-328c0f65ad1a",
-      "ReceiptHandle": "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
-      "MD5OfBody": "d9e803e2c0e1752dcf57050a2b94f5d9",
-      "Body": JSON.stringify({id: uuidV4()})
+      MessageId: "f0b56385-ff0d-46d9-8faa-328c0f65ad1a",
+      ReceiptHandle: "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
+      MD5OfBody: "d9e803e2c0e1752dcf57050a2b94f5d9",
+      Body: JSON.stringify({id: uuidV4()})
     },
     {
-      "MessageId": "fa969951-ae5f-4ff9-8b1b-1085a407f0cd",
-      "ReceiptHandle": "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
-      "MD5OfBody": "d9e803e2c0e1752dcf57050a2b94f5d9",
-      "Body": JSON.stringify({id: uuidV4()})
+      MessageId: "fa969951-ae5f-4ff9-8b1b-1085a407f0cd",
+      ReceiptHandle: "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
+      MD5OfBody: "d9e803e2c0e1752dcf57050a2b94f5d9",
+      Body: JSON.stringify({id: uuidV4()})
     }
   ];
 }
@@ -84,13 +84,13 @@ describe('workers/forwardMessage', () => {
 
       let forwardMessageController = new ForwardMessageController();
 
-      try{
+      try {
 
-        forwardMessageController.validateEnvironment()
+        return forwardMessageController.validateEnvironment()
 
-      }catch(error){
+      } catch (error) {
 
-        expect(error.message).to.have.string('[500] Validation object must be defined.');
+        expect(error.message).to.equal('[500] Invalid Forward Message Configuration.');
 
       }
 
@@ -98,15 +98,15 @@ describe('workers/forwardMessage', () => {
 
     it('fails when origin queue is not set.', () => {
 
-      let forwardMessageController = new ForwardMessageController({name: 'dummy_name', workerfunction: 'dummy_function'});
+      let forwardMessageController = new ForwardMessageController();
 
       try{
 
-        forwardMessageController.validateEnvironment()
+        forwardMessageController.parameters.set('params', {name: 'dummy_name', workerfunction: 'dummy_function'});
 
       }catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+        expect(error.message).to.have.string('[500] One or more validation errors occurred: Process Env instance requires property "origin_queue"');
 
       }
 
@@ -114,15 +114,15 @@ describe('workers/forwardMessage', () => {
 
     it('fails when name is not set.', () => {
 
-      let forwardMessageController = new ForwardMessageController({origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
+      let forwardMessageController = new ForwardMessageController();
 
       try{
 
-        forwardMessageController.validateEnvironment()
+        forwardMessageController.parameters.set('params', {origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
 
       }catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+        expect(error.message).to.have.string('[500] One or more validation errors occurred: Process Env instance requires property "name"');
 
       }
 
@@ -130,15 +130,15 @@ describe('workers/forwardMessage', () => {
 
     it('fails when workerfunction is not set.', () => {
 
-      let forwardMessageController = new ForwardMessageController({name: 'dummy_name', origin_queue: 'dummy_queue'});
+      let forwardMessageController = new ForwardMessageController();
 
       try{
 
-        forwardMessageController.validateEnvironment()
+        forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue'});
 
       }catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+        expect(error.message).to.have.string('[500] One or more validation errors occurred: Process Env instance requires property "workerfunction"');
 
       }
 
@@ -146,9 +146,9 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds when params are proper.', () => {
 
-      let forwardMessageController = new ForwardMessageController(
-        {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'}
-      );
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
 
       return forwardMessageController.validateEnvironment().then(response => {
         expect(response).to.equal(true)
@@ -189,7 +189,9 @@ describe('workers/forwardMessage', () => {
         }
       });
 
-      let forwardMessageController = new ForwardMessageController({origin_queue: 'dummy_queue'});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
 
       return forwardMessageController.getMessages().then((messages) => {
         expect(messages).to.deep.equal(valid_messages);
@@ -205,7 +207,7 @@ describe('workers/forwardMessage', () => {
 
       let invalids = [{}, '', null, undefined, 123, new Error(), false, true];
 
-      let forwardMessageController = new ForwardMessageController({});
+      let forwardMessageController = new ForwardMessageController();
 
       arrayutilities.map(invalids, (invalid) => {
 
@@ -251,7 +253,7 @@ describe('workers/forwardMessage', () => {
         }
       ];
 
-      let forwardMessageController = new ForwardMessageController({origin_queue: 'dummy_queue'});
+      let forwardMessageController = new ForwardMessageController();
 
       arrayutilities.map(invalids, (invalid) => {
 
@@ -275,7 +277,7 @@ describe('workers/forwardMessage', () => {
 
       let valids = [getValidMessages(), []];
 
-      let forwardMessageController = new ForwardMessageController({});
+      let forwardMessageController = new ForwardMessageController();
 
       arrayutilities.map(valids, valid => {
 
@@ -316,7 +318,9 @@ describe('workers/forwardMessage', () => {
         }
       });
 
-      let forwardMessageController = new ForwardMessageController({});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
 
       let valid_messages = getValidMessages();
 
@@ -334,7 +338,9 @@ describe('workers/forwardMessage', () => {
         }
       });
 
-      let forwardMessageController = new ForwardMessageController({});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
 
       let messages = [];
 
@@ -352,7 +358,9 @@ describe('workers/forwardMessage', () => {
         }
       });
 
-      let forwardMessageController = new ForwardMessageController({});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
 
       let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
 
@@ -373,7 +381,9 @@ describe('workers/forwardMessage', () => {
         }
       });
 
-      let forwardMessageController = new ForwardMessageController({});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
 
       return forwardMessageController.invokeAdditionalLambdas([]).catch(error => {
         expect(error.message).to.equal('Testing Error.');
@@ -408,7 +418,9 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
-      let forwardMessageController = new ForwardMessageController({workerfunction: 'aWorker.js'});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
 
       let messages = [];
 
@@ -424,7 +436,9 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
-      let forwardMessageController = new ForwardMessageController({workerfunction: 'aWorker.js'});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
 
       let messages = getValidMessages();
 
@@ -454,7 +468,9 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
-      let forwardMessageController = new ForwardMessageController({workerfunction: 'aWorker.js'});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
 
       let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
 
@@ -510,7 +526,9 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
-      let forwardMessageController = new ForwardMessageController({workerfunction: 'aWorker.js', bulk: true});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js', bulk: true});
 
       let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
 
@@ -544,7 +562,7 @@ describe('workers/forwardMessage', () => {
     //make sure the response has the original message in the body
     it('responds correctly when there are no messages', () => {
 
-      let forwardMessageController = new ForwardMessageController({});
+      let forwardMessageController = new ForwardMessageController();
 
       let RelayResponse = global.SixCRM.routes.include('workers', 'components/RelayResponse.js');
       let relay_response = new RelayResponse('success');
@@ -586,7 +604,9 @@ describe('workers/forwardMessage', () => {
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
-      const forwardMessageController = new ForwardMessageController({});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleFailure(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -604,7 +624,9 @@ describe('workers/forwardMessage', () => {
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
 
-      const forwardMessageController = new ForwardMessageController({});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleFailure(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -630,7 +652,9 @@ describe('workers/forwardMessage', () => {
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
 
-      let forwardMessageController = new ForwardMessageController({failure_queue: 'some_queue', workerfunction: 'wf.js'});
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', failure_queue: 'some_queue', workerfunction: 'wf.js'});
 
       return forwardMessageController.handleFailure(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -669,7 +693,9 @@ describe('workers/forwardMessage', () => {
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
 
-      const forwardMessageController = new ForwardMessageController({});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', destination_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleSuccess(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -687,7 +713,9 @@ describe('workers/forwardMessage', () => {
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
-      const forwardMessageController = new ForwardMessageController({});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleSuccess(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -708,7 +736,9 @@ describe('workers/forwardMessage', () => {
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', validMessage);
 
-      const forwardMessageController = new ForwardMessageController({destination_queue: 'some_success_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', destination_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleSuccess(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -747,7 +777,9 @@ describe('workers/forwardMessage', () => {
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
-      const forwardMessageController = new ForwardMessageController({});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', error_queue: 'some_error_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleError(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -755,7 +787,7 @@ describe('workers/forwardMessage', () => {
 
     });
 
-    it('does not forward when process.env.error_queue property is not set', () => {
+    it('does not forward when error_queue property is not set', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
         sendMessage: ({message_body, queue}, callback) => {
@@ -766,6 +798,8 @@ describe('workers/forwardMessage', () => {
       const compoundWorkerResponse = getValidCompoundWorkerResponse('error', getValidMessage());
 
       const forwardMessageController = new ForwardMessageController({});
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleError(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -791,7 +825,9 @@ describe('workers/forwardMessage', () => {
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('error', validMessage);
 
-      const forwardMessageController = new ForwardMessageController({error_queue: 'some_error_queue', workerfunction: 'wf.js'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', error_queue: 'some_error_queue', workerfunction: 'wf.js'});
 
       return forwardMessageController.handleError(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -814,7 +850,9 @@ describe('workers/forwardMessage', () => {
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
-      const forwardMessageController = new ForwardMessageController({});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleNoAction(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -826,7 +864,9 @@ describe('workers/forwardMessage', () => {
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
 
-      const forwardMessageController = new ForwardMessageController({});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleNoAction(compoundWorkerResponse).then(response_object => {
         expect(response_object).to.deep.equal(compoundWorkerResponse);
@@ -864,7 +904,9 @@ describe('workers/forwardMessage', () => {
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
-      const forwardMessageController = new ForwardMessageController({});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
@@ -885,7 +927,10 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_delete_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_delete_queue', workerfunction: 'dummy_worker'});
+
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
@@ -906,7 +951,9 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', validMessage);
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_success_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
@@ -927,7 +974,9 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('error', validMessage);
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_error_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_error_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
@@ -948,7 +997,9 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', validMessage);
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_success_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
@@ -969,7 +1020,9 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_fail_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_fail_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
@@ -990,7 +1043,9 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('error', validMessage);
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_error_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_error_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
@@ -1007,7 +1062,9 @@ describe('workers/forwardMessage', () => {
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_noaction_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_noaction_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.handleDelete(compoundWorkerResponse).then(returned => {
         expect(returned).to.deep.equal(compoundWorkerResponse);
@@ -1071,7 +1128,9 @@ describe('workers/forwardMessage', () => {
       });
 
       const messages = [getValidMessage()];
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_success_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.deleteMessages(messages).then(result => {
         expect(result).to.equal(true);
@@ -1090,7 +1149,9 @@ describe('workers/forwardMessage', () => {
       });
 
       const messages = getValidMessages();
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_success_queue'});
+      const forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
 
       return forwardMessageController.deleteMessages(messages).then(result => {
         expect(result).to.equal(true);
@@ -1131,9 +1192,11 @@ describe('workers/forwardMessage', () => {
         }
       });
 
-      const forwardMessageController = new ForwardMessageController({origin_queue: 'some_queue'});
+      const forwardMessageController = new ForwardMessageController();
 
-      forwardMessageController.handleWorkerResponseObject(compound_worker_response_object).then(result => {
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
+
+      return forwardMessageController.handleWorkerResponseObject(compound_worker_response_object).then(result => {
 
         expect(result).to.equal(compound_worker_response_object);
 

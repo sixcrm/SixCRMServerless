@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/rebills",
+	"title": "Rebills",
+	"description": "A array of rebills",
+	"type":"array",
+	"items":{"$ref":"../rebill.json"}
+}

@@ -214,54 +214,6 @@ class rebillController extends entityController {
 
     }
 
-    /*
-    //Technical Debt:  This needs to go into a helper
-    addRebillToQueue(rebill, queue_name){
-
-        return new Promise((resolve, reject) => {
-
-            var queue_shortname = '';
-
-            switch(queue_name){
-
-            case 'bill':
-                queue_shortname = process.env.bill_queue;
-                break;
-            case 'billfailure':
-                queue_shortname = process.env.bill_failed_queue;
-                break;
-            case 'hold':
-                queue_shortname = process.env.hold_queue;
-                break;
-            default:
-                reject(eu.getError('server','Bad queue name.'));
-                break;
-
-            }
-
-            return sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: queue_shortname}).then(() => {
-
-                return this.markRebillProcessing({rebill: rebill, newState: queue_shortname}).then((rebill) => {
-
-                    return resolve(rebill);
-
-                });
-
-            });
-
-        });
-
-    }
-
-    markRebillProcessing({rebill, previousState, newState}){
-
-        rebill.processing = "true";
-
-        return this.rebillHelperController.updateRebillState({rebill: rebill, newState: newState, previousState: previousState});
-
-    }
-    */
-
 	//Technical Debt:  This shouldn't go here...
     getRebillsAfterTimestamp(a_timestamp, cursor, limit){
 
@@ -310,31 +262,6 @@ class rebillController extends entityController {
 
     }
 
-    /*
-    sendMessageAndMarkRebill(rebill){
-
-        du.debug('Send Message And Mark Rebill');
-
-        return new Promise((resolve, reject) => {
-
-          sqsutilities.sendMessage({message_body: JSON.stringify(rebill), queue: process.env.bill_queue}).then(() => {
-
-            this.markRebillProcessing({rebill: rebill, newState: process.env.bill_queue}).then((rebill) => {
-
-              return resolve(rebill);
-
-            });
-
-          }).catch(error => {
-
-              return reject(reject(eu.getError('server', 'Sending message failed - ' + error.message + '.')));
-
-          });
-
-        });
-
-    }
-    */
 }
 
 module.exports = new rebillController();

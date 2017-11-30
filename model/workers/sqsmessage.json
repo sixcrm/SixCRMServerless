@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema#",
 	"id":"/sqsmessage.json",
-	"title": "SQS Messages",
+	"title": "SQS Message",
 	"type": "object",
   "properties":{
     "MessageId":{

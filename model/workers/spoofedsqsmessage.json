@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/spoofedsqsmessage.json",
+	"title": "Spoofed SQS Message",
+	"type": "object",
+  "properties":{
+    "Body":{"$ref": "./sqsmessagebody.json"},
+    "spoofed":{
+      "type":"boolean"
+    }
+  },
+  "required":["Body", "spoofed"]
+}

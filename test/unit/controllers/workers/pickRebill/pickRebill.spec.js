@@ -1,11 +1,39 @@
+'use strict'
+
 const fs = require('fs');
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
+const uuidV4 = require('uuid/v4');
 
-require('../../../../bootstrap.test');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-describe('controllers/workers/pickRebill', function () {
+function getValidSpoofedRebillMessage(){
+
+  return {
+    Body: JSON.stringify({id:uuidV4()}),
+    spoofed:true
+  }
+
+}
+
+function getValidRebill(){
+
+  return {
+    id: uuidV4(),
+    bill_at: "2017-04-06T18:40:41.405Z",
+    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    parentsession: uuidV4(),
+    product_schedules: [uuidV4()],
+    amount: 79.99,
+    created_at:"2017-04-06T18:40:41.405Z",
+    updated_at:"2017-04-06T18:41:12.521Z"
+  };
+
+}
+
+describe('controllers/workers/pickRebills.js', function () {
 
     before(() => {
         mockery.enable({
@@ -15,55 +43,92 @@ describe('controllers/workers/pickRebill', function () {
         });
     });
 
-	describe('pickRebill', function () {
+	describe('execute', function () {
 
-        afterEach(() => {
-            mockery.resetCache();
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    after(() => {
+        mockery.deregisterAll();
+    });
+
+    describe('constructor', () => {
+
+      it('successfully constructs',  () => {
+
+        let pickRebillsController = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+
+        expect(objectutilities.getClassName(pickRebillsController)).to.equal('PickRebillsController');
+
+      });
+
+    });
+
+    describe('execute', () => {
+
+      it('successfully executes when no rebills are available', () => {
+
+        let rebill = getValidRebill();
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+          get:({id}) => {
+            return Promise.resolve(rebill);
+          }
         });
 
-        after(() => {
-            mockery.deregisterAll();
+        let rebill_helper_mock = class {
+          constructor(){
+
+          }
+          updateRebillProcessing(){
+            return Promise.resolve(true);
+          }
+        }
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), rebill_helper_mock);
+
+        let message = getValidSpoofedRebillMessage();
+        let pickRebills = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+
+        return pickRebills.execute(message).then(result => {
+          expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+          expect(result.getCode()).to.equal('success');
         });
 
-	    it('returns true', () => {
+      });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-                getRebillsAfterTimestamp: (time) => {
-                    return Promise.resolve([]);
-                },
-                sendMessageAndMarkRebill: (rebill) => {
-                    return Promise.resolve();
-                }
-            });
+    });
 
-			let pickRebill = global.SixCRM.routes.include('controllers', 'workers/pickRebill.js');
-
-			return pickRebill.pickRebill().then(response => expect(response).to.be.true);
-		});
-
-        it('passes correct date to rebill controller', (done) => {
-
-            // given
-            const now = 1487768599196;
-
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'timestamp.js'), {
-                createTimestampSeconds: () => {
-                    return now
-                }
-            });
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-                getRebillsAfterTimestamp: (time) => {
-                    // then
-                    expect(time).to.equal(now);
-                    done();
-                }
-            });
-
-            let pickRebill = global.SixCRM.routes.include('controllers', 'workers/pickRebill.js');
-
-            // when
-            pickRebill.pickRebill();
-        });
 	});
+
+  describe('markRebillAsProcessing', () => {
+
+    it('successfully marks a rebill as processing', () => {
+
+      let rebill = getValidRebill();
+
+      let rebill_helper_mock = class {
+        constructor(){
+
+        }
+        updateRebillProcessing(){
+          return Promise.resolve(true);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), rebill_helper_mock);
+
+      let pickRebillsController = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+
+      pickRebillsController.parameters.set('rebill', rebill);
+
+      return pickRebillsController.markRebillAsProcessing().then(result => {
+        expect(result).to.equal(true);
+      });
+
+    });
+
+  });
+
 });

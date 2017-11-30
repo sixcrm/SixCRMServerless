@@ -1,16 +1,14 @@
 'use strict';
+const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
 module.exports = class forwardRebillMessageController extends forwardMessageController {
 
-    constructor(params){
+    constructor(){
 
-      super(params);
-
-      this.rebillHelperController = new RebillHelperController();
+      super();
 
     }
 
@@ -27,22 +25,29 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
 
       du.debug('Update Rebill State');
 
+      let params = this.parameters.get('params');
+
       const rebill = JSON.parse(compound_worker_response_object.message.Body);
 
-      const previous_state = this.params.origin_queue;
-      let new_state  = this.params.destination_queue;
+      const previous_state = params.origin_queue;
+      let new_state  = params.destination_queue;
 
       if (compound_worker_response_object.worker_response_object.getCode() === 'fail') {
-        newState = this.params.failure_queue;
+        new_state = params.failure_queue;
       }
 
       if (compound_worker_response_object.worker_response_object.getCode() === 'error') {
-        newState = this.params.error_queue;
+        new_state = params.error_queue;
       }
 
-      this.rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state});
+      if(!_.has(this, 'rebillHelperController')){
+        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
-      return Promise.resolve(compound_worker_response_object);
+        this.rebillHelperController = new RebillHelperController();
+      }
+
+      return this.rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state})
+        .then(() => Promise.resolve(compound_worker_response_object));
 
     }
 
