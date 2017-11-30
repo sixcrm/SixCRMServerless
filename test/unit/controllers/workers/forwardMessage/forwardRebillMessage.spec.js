@@ -41,11 +41,11 @@ describe('workers/forwardRebillMessage', () => {
       let mock_rebill_helper = class {
         constructor(){}
 
-        updateRebillState({rebill, newState, previousState, errorMessage}) {
+        updateRebillState({rebill, new_state, previous_state, error_message}) {
           expect(rebill).to.deep.equal(getRebill());
-          expect(previousState).to.equal('some_origin_queue');
-          expect(newState).to.equal('some_destination_queue');
-          expect(errorMessage).to.equal(undefined);
+          expect(previous_state).to.equal('some_origin_queue');
+          expect(new_state).to.equal('some_destination_queue');
+          expect(error_message).to.equal(undefined);
 
           return Promise.resolve(rebill);
         }
@@ -75,11 +75,11 @@ describe('workers/forwardRebillMessage', () => {
       let mock_rebill_helper = class {
         constructor(){}
 
-        updateRebillState({rebill, newState, previousState, errorMessage}) {
+        updateRebillState({rebill, new_state, previous_state, error_message}) {
           expect(rebill).to.deep.equal(getRebill());
-          expect(previousState).to.equal('some_origin_queue');
-          expect(newState).to.equal('some_fail_queue');
-          expect(errorMessage).to.equal(undefined);
+          expect(new_state).to.equal('some_fail_queue');
+          expect(previous_state).to.equal('some_origin_queue');
+          expect(error_message).to.equal(undefined);
 
           return Promise.resolve(rebill);
         }
@@ -109,11 +109,11 @@ describe('workers/forwardRebillMessage', () => {
       let mock_rebill_helper = class {
         constructor(){}
 
-        updateRebillState({rebill, newState, previousState, errorMessage}) {
+        updateRebillState({rebill, new_state, previous_state, error_message}) {
           expect(rebill).to.deep.equal(getRebill());
-          expect(previousState).to.equal('some_origin_queue');
-          expect(newState).to.equal('some_error_queue');
-          expect(errorMessage).to.equal(undefined);
+          expect(new_state).to.equal('some_error_queue');
+          expect(previous_state).to.equal('some_origin_queue');
+          expect(error_message).to.equal(undefined);
 
           return Promise.resolve(rebill);
         }

@@ -33,11 +33,11 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
       let new_state  = this.params.destination_queue;
 
       if (compound_worker_response_object.worker_response_object.getCode() === 'fail') {
-        newState = this.params.failure_queue;
+        new_state = this.params.failure_queue;
       }
 
       if (compound_worker_response_object.worker_response_object.getCode() === 'error') {
-        newState = this.params.error_queue;
+        new_state = this.params.error_queue;
       }
 
       this.rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state});

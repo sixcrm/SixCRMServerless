@@ -42,11 +42,11 @@ module.exports = class RebillHelper {
       updateRebillState: {
         required: {
           rebill: 'rebill',
-          newstate:'new_state',
-          previousstate:'previous_state'
+          newstate:'new_state'
         },
         optional:{
-          errormessage:'error_message'
+          errormessage:'error_message',
+          previousstate:'previous_state'
         }
       },
       markRebillProcessing:{
@@ -411,6 +411,10 @@ module.exports = class RebillHelper {
 
     let rebill = this.parameters.get('rebill');
 
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    }
+
     return this.rebillController.get({id: rebill.id}).then(rebill => {
       this.parameters.set('rebill', rebill);
       return true;
@@ -439,6 +443,10 @@ module.exports = class RebillHelper {
 
     let rebill = this.parameters.get('rebill');
 
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    }
+
     return this.rebillController.update({entity: rebill}).then(rebill => {
 
       this.parameters.set('rebill', rebill);
@@ -457,7 +465,7 @@ module.exports = class RebillHelper {
     .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateRebillState'}))
     .then(() => this.acquireRebill())
     .then(() => this.setConditionalProperties())
-    .then(() => this.thisBuildUpdatedRebillPrototype())
+    .then(() => this.buildUpdatedRebillPrototype())
     .then(() => this.updateRebillFromUpdatedRebillPrototype());
 
   }
@@ -471,12 +479,8 @@ module.exports = class RebillHelper {
     }
 
     let rebill = this.parameters.get('rebill');
-    let new_state = this.parameters.get('newstate', null, false);
 
-    let previous_state;
-    if(this.parameters.isSet('previousstate')){
-      previous_state = this.parameters.get('previousstate', null, false);
-    }else{
+    if(!this.parameters.isSet('previousstate')){
       this.parameters.set('previousstate', rebill.state);
     }
 
@@ -489,10 +493,10 @@ module.exports = class RebillHelper {
     du.debug('Build Updated Rebill Prototype');
 
     let rebill = this.parameters.get('rebill');
-    this.parameters.set('statechangedat', timestamp.getISO8601())
+    this.parameters.set('statechangedat', timestamp.getISO8601());
 
     rebill.state = this.parameters.get('newstate');
-    rebill.previous_state = this.parameters.get('previousstate')
+    rebill.previous_state = this.parameters.get('previousstate');
     rebill.state_changed_at = this.parameters.get('statechangedat');
     rebill.history = this.createUpdatedHistoryObjectPrototype();
 
@@ -505,9 +509,6 @@ module.exports = class RebillHelper {
     du.debug('Create Updated History Object Prototype');
 
     let rebill = this.parameters.get('rebill');
-    let previous_state = this.parameters.get('previousstate');
-    let state_changed_at = this.parameters.get('statechangedat');
-
 
     if(_.has(rebill, 'history') && arrayutilities.nonEmpty(rebill.history)){
 
@@ -532,6 +533,8 @@ module.exports = class RebillHelper {
     du.debug('Update History With New Exit');
 
     let rebill = this.parameters.get('rebill');
+    let previous_state = this.parameters.get('previousstate');
+    let state_changed_at = this.parameters.get('statechangedat');
 
     let matching_states = arrayutilities.filter(rebill.history, (history_element) => {
       return (history_element.state == previous_state)
@@ -585,11 +588,15 @@ module.exports = class RebillHelper {
 
     let updated_rebill_prototype = this.parameters.get('updatedrebillprototype');
 
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    }
+
     return this.rebillController.update({entity: updated_rebill_prototype}).then(updated_rebill => {
 
       this.parameters.set('rebill', updated_rebill);
 
-      return true;
+      return updated_rebill;
 
     });
 

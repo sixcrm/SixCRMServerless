@@ -1205,190 +1205,158 @@ describe('getScheduleElementsOnBillDay', () => {
 
   });
 
-  describe('updateRebillState', () => {
+});
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
+describe('updateRebillState', () => {
+
+  before(() => {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnReplace: false,
+      warnOnUnregistered: false
+    });
+  });
+
+  beforeEach(() => {
+    global.SixCRM.localcache.clear('all');
+  });
+
+  afterEach(() => {
+    mockery.resetCache();
+    mockery.deregisterAll();
+  });
+
+  it('throws an error when new state is not defined', () => {
+    mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+      update: ({entity}) => {
+        expect.fail();
+      }
     });
 
-    beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+    const rebillHelper = new RebillHelperController();
+    const rebill = {id: 'SOME_REBILL_ID', some_other_field: 'SOME_OTHER_FIELD'};
+
+    return rebillHelper.updateRebillState({rebill: rebill, previous_state: 'old_state'})
+      .catch((error) => expect(error.message).to.have.string('[500] Missing source object field: "new_state".'))
+  });
+
+  it('throws an error when updating with previous state and no history', () => {
+    mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+      update: ({entity}) => {
+        return Promise.resolve(entity);
+      },
+      get: ({id}) => {
+        return Promise.resolve(rebill);
+      }
     });
 
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
+    const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+    const rebillHelper = new RebillHelper();
+    const rebill = getValidRebill();
+
+    return rebillHelper.updateRebillState({rebill: rebill, new_state: 'new_state', previous_state: 'old_state'})
+      .catch((error) => expect(error.message).to.have.string('[500] Rebill does not have a history of being in previous state: old_state'))
+  });
+
+  it('throws an error when updating with previous state and no matching history', () => {
+    mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+      update: ({entity}) => {
+        return Promise.resolve(entity);
+      },
+      get: ({id}) => {
+        return Promise.resolve(rebill);
+      }
     });
 
-    it('does nothing if new state is not defined', () => {
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: ({entity}) => {
-          expect.fail();
-        }
-      });
+    const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+    const rebillHelper = new RebillHelper();
+    const rebill = getValidRebill();
+    rebill.state = 'old_state';
+    rebill.previous_state = 'old_old_state';
+    rebill.state_changed_at = '2017-11-12T07:03:35.571Z';
+    rebill.history =  [
+      {state: 'old_old_state', entered_at: '2017-11-12T06:03:35.571Z', exited_at: '2017-11-12T07:03:35.571Z'},
+      {state: 'old_state', entered_at: '2017-11-12T07:03:35.571Z'}
+    ];
 
-      const rebillHelper = new RebillHelperController();
-      const rebill = {id: 'SOME_REBILL_ID', some_other_field: 'SOME_OTHER_FIELD'};
-
-      return rebillHelper.updateRebillState({rebill: rebill, oldState: 'old_state'})
-        .then((rebill) => {
-          expect(rebill).to.deep.equal({id: 'SOME_REBILL_ID', some_other_field: 'SOME_OTHER_FIELD'});
-        })
-    });
-
-    it('updates rebill state and history when rebill has no state', () => {
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: ({entity}) => {
-          return Promise.resolve(entity);
-        }
-      });
-
-      const rebillHelper = new RebillHelperController();
-      const rebill = {id: 'SOME_REBILL_ID'};
-
-      return rebillHelper.updateRebillState({rebill: rebill, newState: 'new_state', oldState: 'old_state'})
-        .then((rebill) => {
-          expect(rebill.id).to.equal('SOME_REBILL_ID');
-          expect(rebill.previous_state).to.equal('old_state');
-          expect(rebill.state).to.equal('new_state');
-          expect(rebill.history.length).to.equal(1);
-          expect(rebill.history[0].state).to.equal('new_state');
-          expect(rebill.history[0].entered_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[0].exited_at).to.equal(undefined);
-        })
-    });
-
-    it('updates rebill state and history when update params have no old state details', () => {
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: ({entity}) => {
-          return Promise.resolve(entity);
-        }
-      });
-
-      const rebillHelper = new RebillHelperController();
-      const rebill = {
-        id: 'SOME_REBILL_ID',
-        state: 'old_state',
-        previous_state: 'old_old_state',
-        state_changed_at: 'changed_at_time'
-      };
-
-      return rebillHelper.updateRebillState({rebill: rebill, newState: 'new_state'})
-        .then((rebill) => {
-          expect(rebill.id).to.equal('SOME_REBILL_ID');
-          expect(rebill.previous_state).to.equal('old_state');
-          expect(rebill.state).to.equal('new_state');
-          expect(rebill.history.length).to.equal(1);
-          expect(rebill.history[0].state).to.equal('new_state');
-          expect(rebill.history[0].entered_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[0].exited_at).to.equal(undefined);
-        })
-    });
-
-    it('updates rebill state and history when rebill has no history', () => {
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: ({entity}) => {
-          return Promise.resolve(entity);
-        }
-      });
-
-      const rebillHelper = new RebillHelperController();
-      const rebill = {
-        id: 'SOME_REBILL_ID',
-        state: 'old_state',
-        previous_state: 'old_old_state',
-        state_changed_at: 'changed_at_time'
-      };
-
-      return rebillHelper.updateRebillState({rebill: rebill, newState: 'new_state', oldState: 'old_state'})
-        .then((rebill) => {
-          expect(rebill.id).to.equal('SOME_REBILL_ID');
-          expect(rebill.previous_state).to.equal('old_state');
-          expect(rebill.state).to.equal('new_state');
-          expect(rebill.history.length).to.equal(1);
-          expect(rebill.history[0].state).to.equal('new_state');
-          expect(rebill.history[0].entered_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[0].exited_at).to.equal(undefined);
-        })
-    });
-
-    it('updates rebill state and history when rebill has history', () => {
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: ({entity}) => {
-          return Promise.resolve(entity);
-        }
-      });
-
-      const rebillHelper = new RebillHelperController();
-      const rebill = {
-        id: 'SOME_REBILL_ID',
-        state: 'old_state',
-        previous_state: 'old_old_state',
-        state_changed_at: 'changed_at_time',
-        history: [
-          {state: 'old_state', entered_at: 'entered_at_time'}
-        ]
-      };
-
-      return rebillHelper.updateRebillState({rebill: rebill, newState: 'new_state', oldState: 'old_state', errorMessage: 'errorMessage'})
-        .then((rebill) => {
-          expect(rebill.id).to.equal('SOME_REBILL_ID');
-          expect(rebill.previous_state).to.equal('old_state');
-          expect(rebill.state).to.equal('new_state');
-          expect(rebill.history.length).to.equal(2);
-          expect(rebill.history[0].state).to.equal('old_state');
-          expect(rebill.history[0].entered_at).to.equal('entered_at_time');
-          expect(rebill.history[0].exited_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[1].state).to.equal('new_state');
-          expect(rebill.history[1].entered_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[1].exited_at).to.equal(undefined);
-          expect(rebill.history[1].error_message).to.equal('errorMessage');
-        })
-    });
-
-    it('updates rebill state and history when rebill has more items in history', () => {
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: ({entity}) => {
-          return Promise.resolve(entity);
-        }
-      });
-
-      const rebillHelper = new RebillHelperController();
-      const rebill = {
-        id: 'SOME_REBILL_ID',
-        state: 'old_state',
-        previous_state: 'old_old_state',
-        state_changed_at: 'changed_at_time',
-        history: [
-          {state: 'old_old_state', entered_at: 'entered_at_time', exited_at: 'exited_at_time'},
-          {state: 'old_state', entered_at: 'entered_at_time'}
-        ]
-      };
-
-      return rebillHelper.updateRebillState({rebill: rebill, newState: 'new_state', oldState: 'old_state', errorMessage: 'errorMessage'})
-        .then((rebill) => {
-          expect(rebill.id).to.equal('SOME_REBILL_ID');
-          expect(rebill.previous_state).to.equal('old_state');
-          expect(rebill.state).to.equal('new_state');
-          expect(rebill.history.length).to.equal(3);
-          expect(rebill.history[0].state).to.equal('old_old_state');
-          expect(rebill.history[0].entered_at).to.equal('entered_at_time');
-          expect(rebill.history[0].exited_at).to.equal('exited_at_time');
-          expect(rebill.history[1].state).to.equal('old_state');
-          expect(rebill.history[1].entered_at).to.equal('entered_at_time');
-          expect(rebill.history[1].exited_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[2].state).to.equal('new_state');
-          expect(rebill.history[2].entered_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[2].exited_at).to.equal(undefined);
-          expect(rebill.history[2].error_message).to.equal('errorMessage');
-        })
-    });
-
+    return rebillHelper.updateRebillState({rebill: rebill, new_state: 'new_state', previous_state: 'old_state_unknown'})
+      .catch((error) => expect(error.message).to.have.string('[500] Rebill does not have a history of being in previous state: old_state'))
   });
 
 
+  it('updates rebill state and history when rebill has history', () => {
+    mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+      update: ({entity}) => {
+        return Promise.resolve(entity);
+      },
+      get: ({id}) => {
+        return Promise.resolve(rebill);
+      }
+    });
+
+    const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+    const rebillHelper = new RebillHelper();
+    const rebill = getValidRebill();
+    rebill.state = 'old_state';
+    rebill.previous_state = 'old_old_state';
+    rebill.state_changed_at = '2017-11-12T06:03:35.571Z';
+    rebill.history =  [
+      {state: 'old_state', entered_at: '2017-11-12T06:03:35.571Z'}
+    ];
+
+    return rebillHelper.updateRebillState({rebill: rebill, new_state: 'new_state', previous_state: 'old_state', error_message: 'errorMessage'})
+      .then((rebill) => {
+        expect(rebill.previous_state).to.equal('old_state');
+        expect(rebill.state).to.equal('new_state');
+        expect(rebill.history.length).to.equal(2);
+        expect(rebill.history[0].state).to.equal('old_state');
+        expect(rebill.history[0].entered_at).to.equal('2017-11-12T06:03:35.571Z');
+        expect(rebill.history[0].exited_at).to.equal(rebill.state_changed_at);
+        expect(rebill.history[1].state).to.equal('new_state');
+        expect(rebill.history[1].entered_at).to.equal(rebill.state_changed_at);
+        expect(rebill.history[1].exited_at).to.equal(undefined);
+        expect(rebill.history[1].error_message).to.equal('errorMessage');
+      })
+  });
+
+  it('updates rebill state and history when rebill has more items in history', () => {
+    mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+      update: ({entity}) => {
+        return Promise.resolve(entity);
+      },
+      get: ({id}) => {
+        return Promise.resolve(rebill);
+      }
+    });
+
+    const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+    const rebillHelper = new RebillHelper();
+    const rebill = getValidRebill();
+    rebill.state = 'old_state';
+    rebill.previous_state = 'old_old_state';
+    rebill.state_changed_at = '2017-11-12T07:03:35.571Z';
+    rebill.history =  [
+      {state: 'old_old_state', entered_at: '2017-11-12T06:03:35.571Z', exited_at: '2017-11-12T07:03:35.571Z'},
+      {state: 'old_state', entered_at: '2017-11-12T07:03:35.571Z'},
+    ];
+
+    return rebillHelper.updateRebillState({rebill: rebill, new_state: 'new_state', previous_state: 'old_state', error_message: 'errorMessage'})
+      .then((rebill) => {
+        expect(rebill.previous_state).to.equal('old_state');
+        expect(rebill.state).to.equal('new_state');
+        expect(rebill.history.length).to.equal(3);
+        expect(rebill.history[0].state).to.equal('old_old_state');
+        expect(rebill.history[0].entered_at).to.equal('2017-11-12T06:03:35.571Z');
+        expect(rebill.history[0].exited_at).to.equal('2017-11-12T07:03:35.571Z');
+        expect(rebill.history[1].state).to.equal('old_state');
+        expect(rebill.history[1].entered_at).to.equal('2017-11-12T07:03:35.571Z');
+        expect(rebill.history[1].exited_at).to.equal(rebill.state_changed_at);
+        expect(rebill.history[2].state).to.equal('new_state');
+        expect(rebill.history[2].entered_at).to.equal(rebill.state_changed_at);
+        expect(rebill.history[2].exited_at).to.equal(undefined);
+        expect(rebill.history[2].error_message).to.equal('errorMessage');
+      })
+  });
+
 });
+
