@@ -4,6 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const forwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class PickRebillsToBillController extends forwardRebillMessageController {
 
@@ -17,6 +18,8 @@ module.exports = class PickRebillsToBillController extends forwardRebillMessageC
         workerfunction: 'pickRebills.js'
       });
 
+      this.updateParameters();
+
       const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
       this.rebillHelperController = new RebillHelperController();
@@ -25,24 +28,19 @@ module.exports = class PickRebillsToBillController extends forwardRebillMessageC
 
     }
 
-    invokeAdditionalLambdas(messages){
+    updateParameters() {
+      this.parameter_validation['messages'] = global.SixCRM.routes.path('model', 'workers/pickRebills/messages.json');
+
+      this.parameters = new Parameters({validation: this.parameter_validation});
+    }
+
+    invokeAdditionalLambdas(){
 
       du.debug('Invoke Additional Lambdas');
       du.warning('This method is overwritten.');
       du.output('No additional lambda required');
 
-      return Promise.resolve(messages);
-
-    }
-
-    validateMessages(messages){
-
-      du.debug('Validate Messages');
-      du.warning('This method is overwritten.');
-
-      mvu.validateModel(messages, global.SixCRM.routes.path('model', 'workers/pickRebills/messages.json'));
-
-      return Promise.resolve(messages);
+      return Promise.resolve(true);
 
     }
 

@@ -119,8 +119,8 @@ describe('controllers/workers/components/relay.js', function () {
 
       relayController.parameters.set('params', params);
 
-
-      return relayController.getMessages().then(results => {
+      return relayController.getMessages().then(() => {
+        let results = relayController.parameters.get('messages');
 
         expect(results).to.deep.equal(messages);
 

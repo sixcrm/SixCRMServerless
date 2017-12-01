@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/compoundworkerresponseobjects.json",
+  "title": "Compound Worker Response Objects",
+  "type": "array",
+  "items":{"$ref": "./compoundworkerresponseobject.json"}
+}

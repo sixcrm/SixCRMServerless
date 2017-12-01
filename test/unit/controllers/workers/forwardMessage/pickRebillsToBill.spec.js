@@ -44,7 +44,11 @@ describe('workers/forwardMessage/pickRebillsToBillController', () => {
       const PickRebillsToBillController = global.SixCRM.routes.include('workers', 'forwardMessage/pickRebillsToBill.js');
       let pickRebillsToBillController = new PickRebillsToBillController();
 
-      return pickRebillsToBillController.invokeAdditionalLambdas(messages).then(result => {
+      pickRebillsToBillController.parameters.set('messages', messages);
+
+      return pickRebillsToBillController.invokeAdditionalLambdas().then(() => {
+        let result = pickRebillsToBillController.parameters.get('messages');
+
         expect(result).to.deep.equal(messages);
       });
 
@@ -61,7 +65,11 @@ describe('workers/forwardMessage/pickRebillsToBillController', () => {
       const PickRebillsToBillController = global.SixCRM.routes.include('workers', 'forwardMessage/pickRebillsToBill.js');
       let pickRebillsToBillController = new PickRebillsToBillController();
 
-      return pickRebillsToBillController.validateMessages(messages).then(result => {
+      pickRebillsToBillController.parameters.set('messages', messages);
+
+      return pickRebillsToBillController.validateMessages(messages).then(() => {
+        let result = pickRebillsToBillController.parameters.get('messages');
+
         expect(result).to.deep.equal(messages);
       });
 

@@ -6,9 +6,9 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-var relayController = global.SixCRM.routes.include('controllers', 'workers/components/relay.js');
+const RelayController = global.SixCRM.routes.include('controllers', 'workers/components/relay.js');
 
-module.exports = class forwardMessageController extends relayController {
+module.exports = class forwardMessageController extends RelayController {
 
     constructor(){
 
@@ -21,25 +21,11 @@ module.exports = class forwardMessageController extends relayController {
     //Technical Debt: Test this
     execute(){
 
-      return this.validateEnvironment() //Make sure that parameters (params) are successfully set
-      .then(() => this.getMessages()) //Get messages from origin queue
-      .then((messages) => this.validateMessages(messages)) //validate all messages that are returned from the origin queue (What happens if we fail validation?)
-      .then((messages) => {
-
-        if(arrayutilities.nonEmpty(messages)){
-
-          return this.invokeAdditionalLambdas(messages) //Trigger another instance of this to handle additional messages
-          .then((messages) => this.forwardMessagesToWorkers(messages)) //Send messages to configured worker function
-
-        }else{
-
-          du.highlight('No messages in queue!');
-          return [];
-
-        }
-
-      })
-      .then((worker_response_objects) => this.handleWorkerResponseObjects(worker_response_objects))
+      return this.validateEnvironment()
+      .then(() => this.getMessages())
+      .then(() => this.invokeAdditionalLambdas())
+      .then(() => this.forwardMessagesToWorkers())
+      .then(() => this.handleWorkerResponseObjects())
       .then(() => this.respond('success'))
       .catch((error) => {
         du.error(error);
@@ -48,11 +34,18 @@ module.exports = class forwardMessageController extends relayController {
 
     }
 
-    forwardMessagesToWorkers(messages){
+    forwardMessagesToWorkers(){
 
       du.debug('Forward Messages To Workers');
 
       let params = this.parameters.get('params');
+      let messages = this.parameters.get('messages');
+
+      if (!arrayutilities.nonEmpty(messages)) {
+        this.parameters.set('workerresponses', []);
+
+        return Promise.resolve(true);
+      }
 
       let worker_promises = [];
 
@@ -69,7 +62,9 @@ module.exports = class forwardMessageController extends relayController {
       }
 
       return Promise.all(worker_promises).then((worker_promises) => {
-        return worker_promises;
+        this.parameters.set('workerresponses', worker_promises);
+
+        return true;
       });
 
     }
@@ -94,9 +89,11 @@ module.exports = class forwardMessageController extends relayController {
 
     }
 
-    handleWorkerResponseObjects(worker_response_objects){
+    handleWorkerResponseObjects(){
 
       du.debug('Handle Worker Response Objects');
+
+      let worker_response_objects = this.parameters.get('workerresponses');
 
       let handle_worker_response_object_promises = arrayutilities.map(worker_response_objects, worker_response_object => {
         return this.handleWorkerResponseObject(worker_response_object);

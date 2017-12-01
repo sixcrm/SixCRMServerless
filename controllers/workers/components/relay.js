@@ -20,17 +20,20 @@ module.exports = class RelayController {
       this.lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 
       this.parameter_validation = {
-        'params': global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json')
+        'params': global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json'),
+        'messages': global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
+        'workerresponses': global.SixCRM.routes.path('model', 'workers/forwardmessage/compoundworkerresponseobjects.json')
       };
 
       this.parameters = new Parameters({validation: this.parameter_validation});
     }
 
-    invokeAdditionalLambdas(messages){
+    invokeAdditionalLambdas(){
 
       du.debug('Invoke Additional Lambdas');
 
       let params = this.parameters.get('params');
+      let messages = this.parameters.get('messages');
 
       if(arrayutilities.nonEmpty(messages) && messages.length >= this.message_limit){
 
@@ -41,24 +44,28 @@ module.exports = class RelayController {
           payload: JSON.stringify({}),
           invocation_type: 'Event' //Asynchronous execution
         }).then(() => {
-          return messages;
+
+          return true;
+
         });
 
       }
 
-      du.output('No additional lambda required')
+      du.output('No additional lambda required');
 
-      return Promise.resolve(messages);
+      return Promise.resolve(true);
 
     }
 
-    validateMessages(messages){
+    validateMessages(){
 
       du.debug('Validate Messages');
 
-      mvu.validateModel(messages, global.SixCRM.routes.path('model', 'workers/sqsmessages.json'));
+      if(!this.parameters.isSet('messages')){
+        eu.throwError('server', 'Messages are not set correctly.');
+      }
 
-      return Promise.resolve(messages);
+      return Promise.resolve(true);
 
     }
 
@@ -70,8 +77,10 @@ module.exports = class RelayController {
 
         let params = this.parameters.get('params');
 
-        return this.sqsutilities.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then(results => {
-          return results;
+        return this.sqsutilities.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then((messages) => {
+          this.parameters.set('messages', messages);
+
+          return true;
         });
 
       }else{

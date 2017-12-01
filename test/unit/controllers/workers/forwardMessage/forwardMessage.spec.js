@@ -9,6 +9,7 @@ const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
+const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
 function getValidCompoundWorkerResponseMultipleMessages(response, messages){
 
@@ -26,6 +27,21 @@ function getValidCompoundWorkerResponse(response, message){
     message: message
   };
 
+}
+
+function getMultipleValidMessages(count) {
+  let array = [];
+
+  for (let i = 0; i < count || 0; i++) {
+    array.push({
+      MessageId: "f0b56385-ff0d-46d9-8faa-328c0f65ad1a",
+      ReceiptHandle: "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
+      MD5OfBody: "d9e803e2c0e1752dcf57050a2b94f5d9",
+      Body: JSON.stringify({id: uuidV4()})
+    });
+  }
+
+  return array;
 }
 
 function getValidMessage(){
@@ -75,8 +91,6 @@ function getValidMessages(){
 }
 
 describe('workers/forwardMessage', () => {
-
-  const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
   describe('validateEnvironment', () => {
 
@@ -177,7 +191,7 @@ describe('workers/forwardMessage', () => {
       mockery.deregisterAll();
     });
 
-    it('successfully retrieves messages from correct queue', () => {
+    it('successfully retrieves and sets messages from correct queue', () => {
 
       let valid_messages = getValidMessages();
 
@@ -193,8 +207,11 @@ describe('workers/forwardMessage', () => {
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
 
-      return forwardMessageController.getMessages().then((messages) => {
+      return forwardMessageController.getMessages().then(() => {
+        let messages = forwardMessageController.parameters.get('messages');
+
         expect(messages).to.deep.equal(valid_messages);
+        expect(forwardMessageController.parameters.get('messages')).to.deep.equal(valid_messages);
       });
 
     });
@@ -275,17 +292,16 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages', () => {
 
-      let valids = [getValidMessages(), []];
+      let valids = getValidMessages();
 
       let forwardMessageController = new ForwardMessageController();
 
-      arrayutilities.map(valids, valid => {
+      forwardMessageController.parameters.set('messages', valids);
 
-        forwardMessageController.validateMessages(valid).then(validated_messages => {
-          expect(validated_messages).to.deep.equal(valid);
-        })
+      forwardMessageController.validateMessages().then(response => {
+        expect(response).to.equal(true);
+      })
 
-      });
 
     });
 
@@ -310,6 +326,26 @@ describe('workers/forwardMessage', () => {
       mockery.deregisterAll();
     });
 
+    it('fails when messages parameters is not set', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
+        invokeFunction: () => {
+          return true;
+        }
+      });
+
+      let forwardMessageController = new ForwardMessageController();
+
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
+
+      try {
+        forwardMessageController.invokeAdditionalLambdas()
+      } catch (error) {
+        expect(error.message).to.have.string('[500] "messages" property is not set.');
+      }
+
+    });
+
     it('succeeds for valid messages of length less than limit', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
@@ -319,12 +355,14 @@ describe('workers/forwardMessage', () => {
       });
 
       let forwardMessageController = new ForwardMessageController();
-
-      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
-
       let valid_messages = getValidMessages();
 
-      return forwardMessageController.invokeAdditionalLambdas(valid_messages).then((messages) => {
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
+      forwardMessageController.parameters.set('messages', valid_messages);
+
+      return forwardMessageController.invokeAdditionalLambdas().then(() => {
+        let messages = forwardMessageController.parameters.get('messages');
+
         expect(messages).to.deep.equal(valid_messages);
       });
 
@@ -334,17 +372,18 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
         invokeFunction: () => {
-          return true;
+          expect.fail();
         }
       });
 
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
+      forwardMessageController.parameters.set('messages', []);
 
-      let messages = [];
+      return forwardMessageController.invokeAdditionalLambdas().then(() => {
+        let messages = forwardMessageController.parameters.get('messages');
 
-      return forwardMessageController.invokeAdditionalLambdas(messages).then((messages) => {
         expect(messages).to.deep.equal([]);
       });
 
@@ -353,18 +392,28 @@ describe('workers/forwardMessage', () => {
     it('succeeds for valid messages of length 10', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: () => {
-          return true;
+        invokeFunction: ( {function_name, payload, invocation_type} ) => {
+          expect(function_name).to.equal('lambda-name');
+          expect(JSON.parse(payload)).to.deep.equal({});
+          expect(invocation_type).to.equal('Event');
+
+          return Promise.resolve(true);
+        },
+
+        buildLambdaName: () => {
+          return 'lambda-name';
         }
       });
 
       let forwardMessageController = new ForwardMessageController();
+      let messages = getMultipleValidMessages(10);
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
+      forwardMessageController.parameters.set('messages', messages);
 
-      let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
+      return forwardMessageController.invokeAdditionalLambdas().then(() => {
+        let messages = forwardMessageController.parameters.get('messages');
 
-      return forwardMessageController.invokeAdditionalLambdas(messages).then((messages) => {
         expect(messages).to.deep.equal(messages);
       });
 
@@ -384,8 +433,9 @@ describe('workers/forwardMessage', () => {
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
+      forwardMessageController.parameters.set('messages', []);
 
-      return forwardMessageController.invokeAdditionalLambdas([]).catch(error => {
+      return forwardMessageController.invokeAdditionalLambdas().catch(error => {
         expect(error.message).to.equal('Testing Error.');
       });
 
@@ -420,12 +470,15 @@ describe('workers/forwardMessage', () => {
 
       let forwardMessageController = new ForwardMessageController();
 
-      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
-
       let messages = [];
 
-      return forwardMessageController.forwardMessagesToWorkers(messages).then(messages => {
-        expect(messages).to.deep.equal([]);
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
+      forwardMessageController.parameters.set('messages', messages);
+
+      return forwardMessageController.forwardMessagesToWorkers().then(() => {
+        let responses = forwardMessageController.parameters.get('workerresponses');
+
+        expect(responses).to.deep.equal([]);
       });
 
     });
@@ -438,11 +491,13 @@ describe('workers/forwardMessage', () => {
 
       let forwardMessageController = new ForwardMessageController();
 
-      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
-
       let messages = getValidMessages();
 
-      return forwardMessageController.forwardMessagesToWorkers(messages).then(responses => {
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
+      forwardMessageController.parameters.set('messages', messages);
+
+      return forwardMessageController.forwardMessagesToWorkers().then(() => {
+        let responses = forwardMessageController.parameters.get('workerresponses');
 
         expect(responses.length).to.equal(messages.length);
 
@@ -470,11 +525,13 @@ describe('workers/forwardMessage', () => {
 
       let forwardMessageController = new ForwardMessageController();
 
-      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
-
       let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
 
-      return forwardMessageController.forwardMessagesToWorkers(messages).then(responses => {
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js'});
+      forwardMessageController.parameters.set('messages', messages);
+
+      return forwardMessageController.forwardMessagesToWorkers().then(() => {
+        let responses = forwardMessageController.parameters.get('workerresponses');
 
         expect(responses.length).to.equal(messages.length);
         arrayutilities.map(responses, response => {
@@ -528,11 +585,13 @@ describe('workers/forwardMessage', () => {
 
       let forwardMessageController = new ForwardMessageController();
 
-      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js', bulk: true});
-
       let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
 
-      return forwardMessageController.forwardMessagesToWorkers(messages).then(responses => {
+      forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'aWorker.js', bulk: true});
+      forwardMessageController.parameters.set('messages', messages);
+
+      return forwardMessageController.forwardMessagesToWorkers().then(() => {
+        let responses = forwardMessageController.parameters.get('workerresponses');
 
         expect(responses.length).to.equal(1);
 
