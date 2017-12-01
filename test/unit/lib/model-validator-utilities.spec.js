@@ -100,16 +100,6 @@ describe('lib/model-validator-utilities', () => {
                     let schema = path + '/' + file_name;
                     let model_name = schema.replace(global.SixCRM.routes.path('model'), '');
 
-                    xit('validates valid ' + model_name, () => {
-
-                        return modelgenerator.random(model_name).then((valid_model) => {
-                            du.debug('Model:', valid_model);
-                            du.debug('Schema:', schema);
-                            return expect(mvu.validateModel(valid_model, schema)).to.be.true;
-                        });
-
-                    });
-
                     it('validates invalid ' + model_name, () => {
                         let invalid_model = {};
 
