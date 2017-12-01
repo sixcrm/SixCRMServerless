@@ -1711,9 +1711,10 @@ describe('helpers/transaction/Process.spec.js', () => {
         }
       }
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/NMI.js'), mock_nmi_class);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/NMI/handler.js'), mock_nmi_class);
 
-      let ph = new processHelperController();
+      const ProcessHelper = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
+      let ph = new ProcessHelper();
 
       return ph.process(parameters).then((response) => {
 
