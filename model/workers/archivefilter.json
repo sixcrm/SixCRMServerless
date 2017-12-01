@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/archivefilter.json",
+	"title": "Archive Filter",
+  "type":"string",
+  "enum":["all", "noship", "twoattempts"]
+}

@@ -39,7 +39,9 @@ module.exports = class PickRebillsToBillController extends forwardRebillMessageC
 
       du.debug('Validate Messages');
       du.warning('This method is overwritten.');
-      mvu.validateModel(messages, global.SixCRM.routes.path('model', 'workers/pickrebills/messages.json'));
+
+      mvu.validateModel(messages, global.SixCRM.routes.path('model', 'workers/pickRebills/messages.json'));
+
       return Promise.resolve(messages);
 
     }

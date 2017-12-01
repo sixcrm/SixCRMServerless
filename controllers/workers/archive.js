@@ -1,151 +1,200 @@
 'use strict';
-var _ = require("underscore");
+const _ = require("underscore");
 
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-var transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-var rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
-//Technical Debt:  What the hell is this?!
 class archiveController extends workerController {
 
-    constructor(){
-        super();
-        this.messages = {
-            success: 'ARCHIVED',
-            skip:'SKIP'
-        };
-        this.archivefilters = {
-            all:'ALL',
-            noship:'NOSHIP',
-            twoattempts:'TWOATTEMPTS'
-        }
+  constructor(){
 
+    super();
+
+    this.parameter_validation = {
+      'archivefilter':global.SixCRM.routes.path('model', 'workers/archivefilter.json'),
+      'transactions':global.SixCRM.routes.path('model', 'entities/components/transactions.json'),
+      'products':global.SixCRM.routes.path('model', 'entities/components/products.json')
+    };
+
+    this.parameter_definition = {
+      execute: {
+        required: {
+          message: 'message'
+        },
+        optional:{}
+      }
+    };
+
+    this.archive_configuration = {
+      all: () => {
+        this.parameters.set('responsecode', 'success');
+        return Promise.resolve(true);
+      },
+      noship: () => this.confirmNoShip(),
+      twoattempts: () => this.confirmSecondAttempt()
+    };
+
+    this.transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+    this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+    this.augmentParameters();
+
+  }
+
+  execute(message){
+
+    du.debug('Execute');
+
+    return this.preamble(message)
+    .then(() => this.setArchiveFilter())
+    .then(() => this.archive())
+    .then(() => this.respond())
+
+  }
+
+  setArchiveFilter(){
+
+    du.debug('Set Archive Filter');
+
+    if(_.has(process.env, "archivefilter")){
+      this.parameters.set('archivefilter', process.env.archivefilter);
     }
 
-    execute(event){
+    return true;
 
-        return this.acquireRebill(event).then((rebill) => this.archive(rebill));
+  }
 
+  confirmSecondAttempt() {
+
+    du.debug('Confirm Second Attempt');
+
+    let rebill = this.parameters.get('rebill');
+
+    let response_code = 'noaction';
+
+    if(_.has(rebill, 'second_attempt')){
+      response_code = 'success';
     }
 
-    confirmSecondAttempt(rebill) {
+    this.parameters.set('responsecode', response_code);
 
-        return Promise.resolve(_.has(rebill, 'second_attempt'));
+    return Promise.resolve(true);
 
-    }
+  }
 
-    confirmNoShip(rebill){
+  getRebillTransactions(){
 
-        var confirmed = true;
+    du.debug('Get Rebill Transactions');
 
-        return new Promise((resolve, reject) => {
+    let rebill = this.parameters.get('rebill');
 
-            rebillController.listTransactions(rebill).then((transactions) => {
+    return this.rebillController.listTransactions(rebill).then((transactions) => {
 
-                var transaction_products = [];
+      this.parameters.set('transactions', transactions);
 
-                transactions.forEach((transaction) => {
+      return true;
 
-                    transaction_products.push(transactionController.getProducts(transaction));
+    });
 
-                });
+  }
 
-                return Promise.all(transaction_products).then((transaction_products) => { // eslint-disable-line promise/always-return
+  getTransactionProducts(){
 
-                    transaction_products.forEach((transaction_product_collection) => {
+    du.debug('Get Transaction Products');
 
-                        transaction_product_collection.forEach((a_transaction_product) => {
+    let transactions = this.parameters.get('transactions');
 
-                            if(this.isProductShip(a_transaction_product.product)){
+    let product_promises = arrayutilities.map(transactions, transaction => {
+      return this.transactionController.getProducts(transaction);
+    });
 
-                                confirmed = false;
+    return Promise.all(product_promises).then(product_promises => {
 
-                                return;
+      let products = [];
 
-                            }
-
-                        });
-
-                    });
-
-                }).then(() => {
-
-                    return resolve(confirmed);
-
-                });
-
-            }).catch((error) => {
-                return reject(error);
-            });
-
+      arrayutilities.map(product_promises, product_promise => {
+        arrayutilities.map(product_promise, product => {
+          products.push(product);
         });
+      });
+
+      //Technical Debt: I don't trust this...
+      products = arrayutilities.unique(products);
+
+      this.parameters.set('products', products);
+
+      return true;
+
+    });
+
+  }
+
+  areProductsNoShip(){
+
+    du.debug('Are Products No Ship');
+
+    let products = this.parameters.get('products');
+
+    return arrayutilities.every(products, (product) => {
+      return (product.ship == false);
+    });
+
+  }
+
+  confirmNoShip(){
+
+    du.debug('Confirm No Ship');
+
+    let rebill = this.parameters.get('rebill');
+
+    return this.getRebillTransactions()
+    .then(() => this.getTransactionProducts())
+    .then(() => this.areProductsNoShip())
+    .then((result) => {
+
+      let response_code = 'noaction';
+
+      if(result == true){
+        response_code = 'success';
+      }
+
+      this.parameters.set('responsecode', response_code);
+
+      return true;
+
+    });
+
+  }
+
+  archive(){
+
+    du.debug('Archive');
+
+    let archive_filter = this.parameters.get('archivefilter', null, false);
+
+    if(_.isNull(archive_filter)){
+
+      this.parameters.set('responsecode', 'success');
+      return true;
 
     }
 
-    isProductShip(product) {
-        return product.ship === 'true' || product.ship === true;
-    }
+    return this.archive_configuration[archive_filter]();
 
-    archive(rebill){
+  }
 
-        return new Promise((resolve, reject) => {
+  respond(){
 
-            if(_.has(process.env, "archivefilter")){
+    du.debug('Respond');
 
-                switch(process.env.archivefilter){
+    let response_code = this.parameters.get('responsecode');
 
-                case this.archivefilters.all:
+    return super.respond(response_code);
 
-                    return resolve(this.messages.success);
-
-                case this.archivefilters.noship:
-
-                    return this.confirmNoShip(rebill).then((confirmed) => {
-
-                        if(confirmed === true){
-                            return resolve(this.messages.success);
-                        }else{
-                            return resolve(this.messages.skip);
-                        }
-
-                    })
-
-                case this.archivefilters.twoattempts:
-
-                    return this.confirmSecondAttempt(rebill).then((confirmed) => {
-
-                        if(confirmed === true){
-                            return resolve(this.messages.success);
-                        }else{
-                            return resolve(this.messages.skip);
-                        }
-
-                    });
-
-                default:
-
-                    return reject(eu.getError('not_implemented','Unrecognized archive filter: '+process.env.archivefilter));
-
-                }
-
-            }else{
-
-                return resolve(this.messages.success);
-
-            }
-
-
-        });
-
-    }
-
-    createForwardObject() {
-
-        return Promise.resolve({forward: true});
-
-    }
+  }
 
 }
 

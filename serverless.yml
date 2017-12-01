@@ -153,7 +153,7 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      archivefilter: 'ALL'
+      archivefilter: 'all'
 
   holdtoarchive:
     handler: handlers/workers/forwardmessage/handler.holdtoarchive
@@ -162,7 +162,7 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      archivefilter: 'NOSHIP'
+      archivefilter: 'noship'
 
   rebilltoarchive:
     handler: handlers/workers/forwardmessage/handler.rebilltoarchive
@@ -171,7 +171,7 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      archivefilter: 'ALL'
+      archivefilter: 'all'
 
   recovertoarchive:
     handler: handlers/workers/forwardmessage/handler.recovertoarchive
@@ -180,7 +180,7 @@ functions:
           rate: rate(6 hours)
           enabled: true
     environment:
-      archivefilter: 'TWOATTEMPTS'
+      archivefilter: 'twoattempts'
 
   indextoarchive:
     handler: handlers/workers/forwardmessage/handler.indextoarchive
@@ -189,7 +189,7 @@ functions:
           rate: rate(1 minute)
           enabled: true
     environment:
-      archivefilter: 'ALL'
+      archivefilter: 'all'
 
   sendnotificationstoarchive:
     handler: handlers/workers/forwardmessage/handler.sendnotificationstoarchive
@@ -198,7 +198,7 @@ functions:
           rate: rate(1 minute)
           enabled: false
     environment:
-      archivefilter: 'ALL'
+      archivefilter: 'all'
 
   pickrebillstobill:
     handler: handlers/workers/forwardmessage/handler.pickrebillstobill

@@ -31,7 +31,8 @@ module.exports = class workerController {
         'message': global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
         'messages':global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
         'parsedmessagebody': global.SixCRM.routes.path('model', 'workers/parsedmessagebody.json'),
-        'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json')
+        'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
+        'responsecode': global.SixCRM.routes.path('model', 'workers/workerresponsetype.json')
       }
 
       let parameter_definition = {};

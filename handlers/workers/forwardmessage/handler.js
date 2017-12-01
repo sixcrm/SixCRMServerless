@@ -8,7 +8,7 @@ const HoldToPendingForwardMessageController = global.SixCRM.routes.include('cont
 const PendingFailedToPendingForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pendingFailedToPendingForwardMessage.js');
 const PendingToShippedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pendingToShippedForwardMessage.js');
 const ShippedToDeliveredForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/shippedToDeliveredForwardMessage.js');
-const DeliveredToArchivedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchivedForwardMessage.js');
+const DeliveredToArchiveForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
 const HoldToArchivedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/holdToArchivedForwardMessage.js');
 const RebillToArchivedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/rebillToArchivedForwardMessage.js');
 const RecoverToArchivedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToArchivedForwardMessage.js');
@@ -74,7 +74,7 @@ module.exports.shippedtodelivered = (event, context, callback) => {
 
 module.exports.deliveredtoarchive = (event, context, callback) => {
 
-  const controller = new DeliveredToArchivedForwardMessageController();
+  const controller = new DeliveredToArchiveForwardMessageController();
 
   return executeForwardMessageController(controller, event, callback);
 
