@@ -310,7 +310,7 @@ describe('acquireToken', () => {
         mockery.deregisterAll();
     });
 
-    it('successfully validates the campaign', () => {
+    xit('successfully validates the campaign', () => {
 
       let campaign = getValidCampaign();
       let event = getValidEventBody();
