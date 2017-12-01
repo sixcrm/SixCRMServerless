@@ -2,10 +2,20 @@ const fs = require('fs');
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
+const uuidV4 = require('uuid/v4');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const modelgenerator = global.SixCRM.routes.include('test', 'model-generator.js');
 
 require('../../../../bootstrap.test');
+
+function getValidMessage(){
+    return {
+        MessageId: "f0b56385-ff0d-46d9-8faa-328c0f65ad1a",
+        ReceiptHandle: "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
+        MD5OfBody: "d9e803e2c0e1752dcf57050a2b94f5d9",
+        Body: JSON.stringify({id: uuidV4()})
+    }
+}
 
 describe('controllers/workers/worker', function () {
 
@@ -35,7 +45,7 @@ describe('controllers/workers/worker', function () {
             mockery.deregisterAll();
         });
 
-        xit('returns rebill', () => {
+        it('returns rebill', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
                 get: (id) => {
@@ -44,12 +54,16 @@ describe('controllers/workers/worker', function () {
             });
 
             let createRebills = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+
             let event = {id: an_id};
 
-            return createRebills.acquireRebill(event)
-                .then(message => expect(message).to.deep.equal(random_rebill));
-        });
+            createRebills.parameters.set('message', getValidMessage());
 
+            return createRebills.acquireRebill(event).then(result => {
+                expect(createRebills.parameters.store['rebill']).to.deep.equal(random_rebill);
+                expect(result).to.be.true
+            });
+        });
     });
 
     describe('acquireSession', () => {
@@ -68,7 +82,7 @@ describe('controllers/workers/worker', function () {
             mockery.deregisterAll();
         });
 
-        xit('returns session', () => {
+        it('returns session', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), {
                 get: (id) => {
@@ -77,10 +91,17 @@ describe('controllers/workers/worker', function () {
             });
 
             let createSessions = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+
             let event = {id: an_id};
 
-            return createSessions.acquireSession(event)
-                .then(message => expect(message).to.deep.equal(random_session));
+            let message = getValidMessage();
+
+            createSessions.parameters.set('message', message);
+
+            return createSessions.acquireSession(event).then(result => {
+                expect(createSessions.parameters.store['session']).to.deep.equal(random_session);
+                expect(result).to.be.true
+            });
         });
 
     });

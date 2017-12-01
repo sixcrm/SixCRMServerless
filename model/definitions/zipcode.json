@@ -6,11 +6,11 @@
   "anyOf":[
     {
       "type":"string",
-      "format":"^[0-9]{5}$"
+      "pattern":"^[0-9]{5}$"
     },
     {
       "type":"string",
-      "format":"^[0-9]{5}-[0-9]{4}$"
+      "pattern":"^[0-9]{5}-[0-9]{4}$"
     },
     {
       "type":"number",
