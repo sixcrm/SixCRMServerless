@@ -1,13 +1,12 @@
 'use strict'
 
-const fs = require('fs');
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
+const WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
 const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
 
 function getValidParams(){
@@ -37,6 +36,21 @@ function getValidMessages(){
   ];
 }
 
+function getValidWorkerResponse(response){
+
+    return new WorkerResponse(response);
+
+}
+
+function getValidCompoundWorkerResponse(response, message){
+
+    return {
+        worker_response_object: getValidWorkerResponse(response),
+        message: message
+    };
+
+}
+
 describe('controllers/workers/components/relay.js', function () {
 
   before(() => {
@@ -56,6 +70,35 @@ describe('controllers/workers/components/relay.js', function () {
       expect(objectutilities.getClassName(relayController)).to.equal('RelayController');
 
     });
+
+  });
+
+  describe('validateEnvironment', () => {
+
+      it('throws error when forward message configuration is invalid', () => {
+
+          let relayController = new RelayController();
+
+          try {
+              relayController.validateEnvironment();
+          }catch(error) {
+              expect(error.message).to.equal('[500] Invalid Forward Message Configuration.');
+          }
+
+      });
+
+      it('checks whether required params are successfully set', () => {
+
+          let params = getValidParams();
+
+          let relayController = new RelayController();
+
+          relayController.parameters.set('params', params);
+
+          return relayController.validateEnvironment().then((results) => {
+              expect(results).to.be.true;
+          });
+      });
 
   });
 
@@ -99,6 +142,213 @@ describe('controllers/workers/components/relay.js', function () {
           expect(results).to.deep.equal(messages);
 
         });
+
+    });
+
+  });
+
+  describe('getReceiptHandle', () => {
+
+    it('returns receipt handle when such exists in message', () => {
+
+      let messages = getValidMessages();
+
+      let relayController = new RelayController();
+
+        expect(relayController.getReceiptHandle(messages[0])).to.equal(messages[0].ReceiptHandle);
+
+    });
+
+    it('throws error when message does not have a receipt handle', () => {
+
+      let messages = getValidMessages();
+
+      delete messages[0].ReceiptHandle;
+
+      let relayController = new RelayController();
+
+        try{
+          relayController.getReceiptHandle(messages[0]);
+        }catch(error){
+          expect(error.message).to.equal('[500] Message does not have a receipt handle.');
+        }
+
+    });
+
+  });
+
+  describe('validateMessages', () => {
+
+    it('successfully validates messages', () => {
+
+      let messages = getValidMessages();
+
+      let relayController = new RelayController();
+
+        return relayController.validateMessages(messages).then((results) => {
+
+            expect(results).to.equal(messages);
+
+        });
+    });
+
+  });
+
+  describe('invokeAdditionalLambdas', () => {
+
+    it('returns unchanged messages when additional lambda is not required', () => {
+
+      let messages = getValidMessages();
+      let params = getValidParams();
+
+      let relayController = new RelayController();
+
+      relayController.parameters.set('params', params);
+
+        return relayController.invokeAdditionalLambdas(messages).then((results) => {
+
+            expect(results).to.equal(messages);
+
+        });
+    });
+
+  });
+
+  describe('respond', () => {
+
+    it('returns valid relay response', () => {
+
+      let relayResponse = getValidWorkerResponse('noaction');
+
+      let relayController = new RelayController();
+
+      // send valid response type;
+      let result = relayController.respond('noaction');
+
+      expect(result.response_types).to.deep.equal(relayResponse.merged_response_types);
+      expect(result.response).to.deep.equal(relayResponse.response_types.noaction);
+    });
+
+    it('throws error when response type does not exist', () => {
+
+      let relayController = new RelayController();
+
+      // send non existing response type;
+      try{
+          relayController.respond('invalid response type');
+      }catch (error) {
+        expect(error.message).to.equal('[500] Unexpected Response Type: "invalid response type".');
+      }
+    });
+
+  });
+
+  describe('pushMessagetoQueue', () => {
+
+    it('successfully pushes message to queue', () => {
+
+      let messages = getValidMessages();
+
+      let params = {body: messages[0].Body, queue: 'a_queue'};
+
+      let relayController = new RelayController();
+
+        relayController.sqsutilities = {
+            sendMessage: function({message_body: body, queue: queue}, callback) {
+                expect(body).to.deep.equal(params.body);
+                expect(queue).to.equal(params.queue);
+
+                callback(null, 'success');
+            }
+        };
+
+        return relayController.pushMessagetoQueue(params).then((results) => {
+            expect(results).to.equal(null);
+        });
+    });
+
+    it('throws error when message sending failed', () => {
+
+      let relayController = new RelayController();
+
+        relayController.sqsutilities = {
+            sendMessage: function({message_body: body, queue: queue}, callback) {
+                expect(body).to.equal(undefined);
+                expect(queue).to.equal(undefined);
+                callback(new Error('fail'), null);
+            }
+        };
+
+        //send without parameters
+        return relayController.pushMessagetoQueue({}).catch((error) => {
+            expect(error.message).to.equal('fail');
+        });
+    });
+
+  });
+
+  describe('deleteMessage', () => {
+
+    it('successfully deletes message', () => {
+
+      let messages = getValidMessages();
+
+      let params = {queue: 'a_queue', receipt_handle: messages[0].ReceiptHandle};
+
+      let relayController = new RelayController();
+
+        relayController.sqsutilities = {
+            deleteMessage: function({queue: queue, receipt_handle: receipt_handle}) {
+                expect(queue).to.equal(params.queue);
+                expect(receipt_handle).to.equal(params.receipt_handle);
+
+                return 'message deleted';
+            }
+        };
+
+        expect(relayController.deleteMessage(params)).to.equal('message deleted');
+    });
+
+    it('throws error when message is not removed', () => {
+
+        let relayController = new RelayController();
+
+        relayController.sqsutilities = {
+            deleteMessage: function({queue: queue, receipt_handle: receipt_handle}) {
+                expect(receipt_handle).to.equal(undefined);
+                expect(queue).to.equal(undefined);
+
+                throw new Error('fail');
+            }
+        };
+
+        try {
+            relayController.deleteMessage({})
+        } catch (error) {
+            expect(error.message).to.equal('fail');
+        }
+    });
+
+  });
+
+  describe('createDiagnosticMessageBody', () => {
+
+    it('creates diagnostic message body', () => {
+
+        let messages = getValidMessages();
+
+        let compound_worker = getValidCompoundWorkerResponse('success', messages[0]);
+
+        let params = getValidParams();
+
+        let relayController = new RelayController();
+
+        relayController.parameters.set('params', params);
+
+        let response = relayController.createDiagnosticMessageBody(compound_worker);
+
+        expect(JSON.parse(response).id).to.deep.equal(JSON.parse(messages[0].Body).id);
+        expect(JSON.parse(response).referring_workerfunction).to.defined;
 
     });
 
