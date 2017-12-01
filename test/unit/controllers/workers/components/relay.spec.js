@@ -185,18 +185,25 @@ describe('controllers/workers/components/relay.js', function () {
 
       let relayController = new RelayController();
 
-        return relayController.validateMessages(messages).then((results) => {
+      relayController.parameters.set('messages', messages);
 
-            expect(results).to.equal(messages);
+      return relayController.validateMessages().then(() => {
+        let results = relayController.parameters.get('messages');
 
-        });
+        expect(results).to.equal(messages);
+      });
     });
 
   });
 
   describe('invokeAdditionalLambdas', () => {
 
-    it('returns unchanged messages when additional lambda is not required', () => {
+    it('does not invoke additional lambda when not required', () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
+        invokeFunction: () => {
+          expect.fail();
+        }
+      });
 
       let messages = getValidMessages();
       let params = getValidParams();
@@ -204,12 +211,13 @@ describe('controllers/workers/components/relay.js', function () {
       let relayController = new RelayController();
 
       relayController.parameters.set('params', params);
+      relayController.parameters.set('messages', messages);
 
-        return relayController.invokeAdditionalLambdas(messages).then((results) => {
+      return relayController.invokeAdditionalLambdas().then(() => {
+        let results = relayController.parameters.get('messages');
 
-            expect(results).to.equal(messages);
-
-        });
+        expect(results).to.deep.equal(messages);
+      });
     });
 
   });
