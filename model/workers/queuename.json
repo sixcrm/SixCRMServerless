@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/queuename.json",
+	"title": "Queue Name",
+  "type":"string",
+  "enum":["bill", "bill_failed", "recover", "recover_failed", "hold", "hold_failed", "pending", "pending_failed", "shipped", "shipped_failed", "delivered", "delivered_failed", "search_indexing", "search_indexing_failed"]
+}

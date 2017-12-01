@@ -6,7 +6,6 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
@@ -76,6 +75,10 @@ class CreateOrderController extends transactionEndpointController{
     this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+    const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+
+    this.rebillHelperController = new RebillHelperController();
 
     this.initialize(() => {
       this.parameters.set('sessionlength', global.SixCRM.configuration.site_config.jwt.transaction.expiration);
@@ -315,12 +318,10 @@ class CreateOrderController extends transactionEndpointController{
 
     du.debug('Create Rebill');
 
-    let rebillHelper = new RebillHelperController();
-
     let session = this.parameters.get('session');
     let product_schedules = this.parameters.get('productschedules');
 
-    return rebillHelper.createRebill({session: session, product_schedules: product_schedules, day: -1})
+    return this.rebillHelperController.createRebill({session: session, product_schedules: product_schedules, day: -1})
     .then(rebill => {
 
       this.parameters.set('rebill', rebill);
@@ -436,9 +437,8 @@ class CreateOrderController extends transactionEndpointController{
     let rebill = this.parameters.get('rebill');
 
     //Technical Debt:  This depends on result of the transaction...
-    //Technical Debt:  We need a queue helper...
 
-    return this.rebillController.addRebillToQueue(rebill, 'hold').then(() => {
+    return this.rebillHelperController.addRebillToQueue({rebill: rebill, queue_name: 'hold'}).then(() => {
       return true;
     });
 

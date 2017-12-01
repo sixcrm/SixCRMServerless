@@ -55,6 +55,13 @@ module.exports = class RebillHelper {
           processing: 'processing'
         },
         optional:{}
+      },
+      addRebillToQueue:{
+        required:{
+          rebill:'rebill',
+          queuename:'queue_name'
+        },
+        optional:{}
       }
     };
 
@@ -71,7 +78,14 @@ module.exports = class RebillHelper {
       'rebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/rebillprototype.json'),
       'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
       'billablerebills':global.SixCRM.routes.path('model', 'helpers/rebill/billablerebills.json'),
-      'spoofedrebillmessages': global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessages.json')
+      'spoofedrebillmessages': global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessages.json'),
+      'queuename': global.SixCRM.routes.path('model', 'workers/queuename.json'),
+      'queuemessagebodyprototype': global.SixCRM.routes.path('model','definitions/stringifiedjson.json'),
+      'statechangedat': global.SixCRM.routes.path('model','definitions/iso8601.json'),
+      'updatedrebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/updatedrebillprototype.json'),
+      'newstate': global.SixCRM.routes.path('model', 'workers/queuename.json'),
+      'previousstate': global.SixCRM.routes.path('model', 'workers/queuename.json'),
+      'errormessage': global.SixCRM.routes.path('model', 'helpers/rebill/errormessage.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
@@ -499,11 +513,15 @@ module.exports = class RebillHelper {
     this.parameters.set('statechangedat', timestamp.getISO8601());
 
     rebill.state = this.parameters.get('newstate');
-    rebill.previous_state = this.parameters.get('previousstate');
     rebill.state_changed_at = this.parameters.get('statechangedat');
     rebill.history = this.createUpdatedHistoryObjectPrototype();
 
+    //Technical Debt: note that this doesn't appear to be set every time!
+    rebill.previous_state = this.parameters.get('previousstate');
+
     this.parameters.set('updatedrebillprototype', rebill);
+
+    return true;
 
   }
 
@@ -647,10 +665,12 @@ module.exports = class RebillHelper {
 
     let body = JSON.stringify({id: rebill.id});
 
-    return {
+    let spoofed_message = {
       Body: body,
       spoof: true
     };
+
+    return spoofed_message;
 
   }
 
@@ -678,6 +698,50 @@ module.exports = class RebillHelper {
       return true;
 
     });
+
+  }
+
+  addRebillToQueue({rebill, queue_name}){
+
+    du.debug('Add Rebill To Queue');
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'addRebillToQueue'}))
+    .then(() => this.acquireRebill())
+    .then(() => this.createQueueMessageBodyPrototype())
+    .then(() => this.addQueueMessageToQueue());
+
+  }
+
+  addQueueMessageToQueue(){
+
+    du.debug('Add Queue Message To Queue');
+
+    let message_body = this.parameters.get('queuemessagebodyprototype');
+    let queue_name = this.parameters.get('queuename');
+
+    this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+    return this.sqsutilities.sendMessage({message_body: message_body, queue: queue_name}).then(() => {
+
+        return true;
+
+    });
+
+  }
+
+  createQueueMessageBodyPrototype(){
+
+    du.debug('Create Queue Message Body Prototype');
+
+    let rebill = this.parameters.get('rebill');
+
+    let queue_message_body_prototype = JSON.stringify({
+      id: rebill.id
+    });
+
+    this.parameters.set('queuemessagebodyprototype', queue_message_body_prototype);
+
+    return true;
 
   }
 

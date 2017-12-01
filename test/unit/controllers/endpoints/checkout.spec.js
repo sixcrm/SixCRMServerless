@@ -581,9 +581,6 @@ describe('checkout', function () {
         update:({entity}) => {
           return Promise.resolve(entity);
         },
-        addRebillToQueue:(rebill, queue_name) => {
-          return Promise.resolve(true);
-        }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
@@ -623,6 +620,10 @@ describe('checkout', function () {
           rebill.product_schedules = product_schedules;
           rebill.parentsession = session.id
           return Promise.resolve(rebill);
+        }
+
+        addRebillToQueue({rebill, queue_name}){
+          return Promise.resolve(true);
         }
 
       }
@@ -900,9 +901,6 @@ describe('checkout', function () {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         update:({entity}) => {
           return Promise.resolve(entity);
-        },
-        addRebillToQueue:(rebill, queue_name) => {
-          return Promise.resolve(true);
         }
       });
 
@@ -949,6 +947,10 @@ describe('checkout', function () {
           rebill.product_schedules = product_schedules;
           rebill.parentsession = session.id
           return Promise.resolve(rebill);
+        }
+
+        addRebillToQueue({rebill, queue_name}){
+          return Promise.resolve(true);
         }
 
       }
