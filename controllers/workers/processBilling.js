@@ -28,9 +28,7 @@ class processBillingController extends workerController {
     };
 
     this.parameter_validation = {
-      message: global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
-      rebill: global.SixCRM.routes.path('model', 'entities/rebill.json')
-      //registerresponse: global.SixCRM.routes.path('model', 'functional/register/response.json')
+      registerresponsecode: global.SixCRM.routes.path('model', 'general/response/responsetype.json')
     };
 
     this.augmentParameters();
@@ -41,23 +39,12 @@ class processBillingController extends workerController {
 
     du.debug('Execute');
 
-    return this.setParameters({argumentation: {message: message}, action: 'execute'})
-    .then(() => this.acquireRebill())
+    return this.preamble(message)
     .then(() => this.process())
     .then(() => this.respond())
     .catch((error) => {
       return super.respond('error', error.message);
     })
-
-  }
-
-  acquireRebill(){
-
-    du.debug('Acquire Rebill');
-
-    let message = this.parameters.get('message');
-
-    return super.acquireRebill(message);
 
   }
 
@@ -72,8 +59,8 @@ class processBillingController extends workerController {
     let registerController = new RegisterController();
 
     return registerController.processTransaction({rebill: rebill}).then(response => {
-      //this is a register response object.
-      this.parameters.set('registerresponse', response);
+
+      this.parameters.set('registerresponsecode', response.getCode());
 
       return Promise.resolve(true);
 
@@ -85,9 +72,9 @@ class processBillingController extends workerController {
 
     du.debug('Respond');
 
-    let register_response = this.parameters.get('registerresponse').getCode();
+    let register_response_code = this.parameters.get('registerresponsecode');
 
-    return super.respond(register_response);
+    return super.respond(register_response_code);
 
   }
 

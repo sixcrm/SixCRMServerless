@@ -103,14 +103,14 @@ function getValidEvents(){
 function getValidRebill(){
 
   return {
-    "bill_at": "2017-04-06T18:40:41.405Z",
-    "id": "70de203e-f2fd-45d3-918b-460570338c9b",
-    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    "parentsession": "1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d",
-    "product_schedules": ["2200669e-5e49-4335-9995-9c02f041d91b"],
-    "amount": 79.99,
-    "created_at":"2017-04-06T18:40:41.405Z",
-    "updated_at":"2017-04-06T18:41:12.521Z"
+    bill_at: "2017-04-06T18:40:41.405Z",
+    id: "70de203e-f2fd-45d3-918b-460570338c9b",
+    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    parentsession: "1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d",
+    product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+    amount: 79.99,
+    created_at:"2017-04-06T18:40:41.405Z",
+    updated_at:"2017-04-06T18:41:12.521Z"
   };
 
 }
@@ -146,29 +146,12 @@ describe('controllers/workers/processBilling', () => {
 
   });
 
-  describe('setParameters', () => {
-
-    it('successfully sets parameters', () => {
-
-      let valid_message = getValidMessages().pop();
-
-      let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
-
-      return processBillingController.setParameters({argumentation: {message: valid_message}, action: 'execute'}).then(() => {
-
-        let the_message = processBillingController.parameters.get('message');
-
-        expect(the_message).to.equal(valid_message);
-
-      });
-
-    });
-
-  });
-
   describe('process', () => {
 
     it('successfully processes a transaction', () => {
+
+      let rebill = getValidRebill();
+      let response_code = 'success';
 
       let register_mock = class Register {
         constructor(){
@@ -183,41 +166,13 @@ describe('controllers/workers/processBilling', () => {
 
       let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
 
-      processBillingController.parameters.set('rebill', getValidRebill());
+      processBillingController.parameters.set('rebill', rebill);
 
       return processBillingController.process().then(result => {
 
         expect(result).to.equal(true);
+        expect(processBillingController.parameters.store['registerresponsecode']).to.equal(response_code);
 
-        let register_response = processBillingController.parameters.get('registerresponse');
-
-        expect(register_response).to.deep.equal(getValidRegisterResponse())
-
-      });
-
-    });
-
-  });
-
-  describe('acquireRebill', () => {
-
-    it('successfully acquires a rebill', () => {
-
-      let rebill = getValidRebill();
-
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get: ({id}) => {
-          return Promise.resolve(rebill);
-        }
-      });
-
-      let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
-
-      processBillingController.parameters.set('message', getValidMessages()[0]);
-
-      return processBillingController.acquireRebill().then(result => {
-        expect(result).to.equal(true);
-        expect(processBillingController.parameters.store['rebill']).to.deep.equal(rebill);
       });
 
     });
@@ -225,16 +180,19 @@ describe('controllers/workers/processBilling', () => {
   });
 
   describe('execute', () => {
+
     it('successfully executes', () => {
 
       let rebill = getValidRebill();
+      let register_response = getValidRegisterResponse();
+      let response_code = 'success';
 
       let register_mock = class Register {
         constructor(){
 
         }
         processTransaction({customer, productschedule, amount}){
-          return Promise.resolve(getValidRegisterResponse());
+          return Promise.resolve(register_response);
         }
       }
 
@@ -249,6 +207,8 @@ describe('controllers/workers/processBilling', () => {
       let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
 
       return processBillingController.execute(message).then(result => {
+        expect(processBillingController.parameters.store['registerresponsecode']).to.equal(response_code);
+        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
         expect(result.getCode()).to.equal('success');
       });
     });

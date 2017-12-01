@@ -1,8 +1,8 @@
 'use strict';
 require('../../../SixCRM.js');
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const pickRebillsToBillForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pickRebillsToBill.js');
-const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHoldForwardMessage.js');
+const PickRebillsToBillForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pickRebillsToBill.js');
+const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
 const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHoldForwardMessage.js');
 const HoldToPendingForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/holdToPendingForwardMessage.js');
 const PendingFailedToPendingForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pendingFailedToPendingForwardMessage.js');
@@ -18,7 +18,7 @@ const SendNotificationsToArchivedForwardMessageController = global.SixCRM.routes
 /* eslint-disable promise/always-return, promise/catch-or-return */
 module.exports.pickrebillstobill = (event, context, callback) => {
 
-  const controller = new pickRebillsToBillForwardMessageController();
+  const controller = new PickRebillsToBillForwardMessageController();
 
   return executeForwardMessageController(controller, event, callback);
 

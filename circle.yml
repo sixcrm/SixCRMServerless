@@ -16,7 +16,7 @@ machine:
   node:
     version: 7.6.0
   environment:
-    SIX_VERBOSE: '2'
+    #SIX_VERBOSE: '2'
 
   services:
     #- redis

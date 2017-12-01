@@ -200,6 +200,13 @@ functions:
     environment:
       archivefilter: 'ALL'
 
+  pickrebillstobill:
+    handler: handlers/workers/forwardmessage/handler.pickrebillstobill
+    events:
+      - schedule:
+          rate: rate(10 minutes)
+          enabled: true
+
 # Workers
 #These do not use the forwardMessage controller because thier datasources are not SQS
   randomredshiftdata:
@@ -209,12 +216,7 @@ functions:
           rate: rate(5 minutes)
           enabled: true
 
-  pickrebill:
-    handler: handlers/workers/pickrebill/handler.pickrebill
-    events:
-      - schedule:
-          rate: rate(2 hours)
-          enabled: true
+
 
   #sesnotifications:
   #  handler: handlers/workers/sesnotifications/handler.sesnotifications
