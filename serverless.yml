@@ -216,7 +216,13 @@ functions:
           rate: rate(5 minutes)
           enabled: true
 
-
+#execute on fifth minute of every hour
+  rebillstatetoredshift:
+    handler: handlers/workers/rebillstatetoredshift/handler.rebillstatetoredshift
+    events:
+      - schedule:
+          rate: cron(5 * * * ? *)
+          enabled: true
 
   #sesnotifications:
   #  handler: handlers/workers/sesnotifications/handler.sesnotifications
