@@ -1,0 +1,11 @@
+{
+	"requestContext":{
+		"authorizer":{
+			"user": "owner.user@test.com"
+		}
+	},
+	"pathParameters": {
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+	},
+	"body":"{transactionlist (pagination:{limit: \"10\"}, search: { updated_at: { before: \"2017-12-04T19:28:17.896Z\" } } ){ transactions { id, alias, amount, created_at, updated_at, processor_response }, pagination { count, end_cursor, has_next_page } } }"
+}

@@ -190,7 +190,7 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //NOTE:  Cheap!  Complete!
-    listByUser({query_parameters, user, pagination, reverse_order, fatal}){
+    listByUser({query_parameters, user, pagination, reverse_order, fatal, search}){
 
       du.debug('List By User');
 
@@ -205,6 +205,10 @@ module.exports = class entityController extends entityUtilitiesController {
             query_parameters['scan_index_forward'] = false;
         }
 
+        if(search){
+          query_parameters = this.appendSearchConditions({query_parameters: query_parameters, search: search});
+        }
+
         return query_parameters;
 
       })
@@ -215,7 +219,7 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //NOTE:  Cheap!  Complete!
-    listByAccount({query_parameters, account, pagination, reverse_order, fatal}){
+    listByAccount({query_parameters, account, pagination, reverse_order, fatal, search}){
 
       du.debug('List By Account');
 
@@ -232,6 +236,10 @@ module.exports = class entityController extends entityUtilitiesController {
 
         if (reverse_order) {
             query_parameters['scan_index_forward'] = false;
+        }
+
+        if(search){
+          query_parameters = this.appendSearchConditions({query_parameters: query_parameters, search: search});
         }
 
         return query_parameters;

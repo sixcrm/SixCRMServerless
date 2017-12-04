@@ -129,8 +129,9 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       let transactionHelperController = new TransactionHelperController();
 
       return transactionHelperController.markTransactionChargeback({transactionid: transaction.id, chargeback_status: true}).then(result => {
-        //expect(result).to.deep.equal(true);
+
         expect(transactionHelperController.parameters.store['transaction'].chargeback).to.equal(true);
+
       })
 
     });
@@ -157,8 +158,9 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       let transactionHelperController = new TransactionHelperController();
 
       return transactionHelperController.markTransactionChargeback({transactionid: transaction.id, chargeback_status: false}).then(result => {
-        //expect(result).to.deep.equal(true);
+
         expect(transactionHelperController.parameters.store['transaction'].chargeback).to.equal(false);
+
       });
 
     });

@@ -73,7 +73,30 @@ class transactionController extends entityController {
 
     }
 
+    listByState({state, state_changed_after, pagination}){
+
+      du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}'`);
+
+      let query_parameters = {};
+
+      if (state) {
+        query_parameters = this.appendFilterExpression(query_parameters, '#state = :statev');
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#state', 'state');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statev', state);
+      }
+
+      if (state_changed_after) {
+        query_parameters = this.appendFilterExpression(query_parameters, '#statechangedat > :statechangedatv');
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#statechangedat', 'state_changed_at');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statechangedatv', state_changed_after);
+      }
+
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
+
+    }
+
     //Technical Debt:  Refactor name
+    //Technical Debt:  This is in the helper...
     getTransactionProducts(transaction){
 
       du.debug('Get Transaction Products');

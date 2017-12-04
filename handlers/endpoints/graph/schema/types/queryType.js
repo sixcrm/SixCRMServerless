@@ -133,6 +133,7 @@ let analyticsPaginationInputType = require('./analytics/paginationInputType');
 let analyticsActivityFilterInputType = require('./analytics/activityFilterInputType');
 let analyticsBINFilterInputType = require('./analytics/BINFilterInputType');
 
+let entitySearchInputType = require('./entity/searchInputType');
 let paginationInputType = require('./pagination/paginationInputType');
 let cacheInputType = require('./cache/cacheInputType');
 
@@ -213,12 +214,13 @@ module.exports.graphObj = new GraphQLObjectType({
         userlist: {
             type: userListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, users){
               const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
-              return userController.getUsersByAccount({pagination: users.pagination, fatal: list_fatal});
+              return userController.getUsersByAccount({pagination: users.pagination, fatal: list_fatal, search: users.search});
             }
         },
         trackerlistbyaffiliate: {
@@ -409,12 +411,13 @@ module.exports.graphObj = new GraphQLObjectType({
         notificationlist: {
             type: notificationListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, notification) {
                 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-                return notificationController.listByUser({pagination: notification.pagination, reverse_order: true, fatal: list_fatal});
+                return notificationController.listByUser({pagination: notification.pagination, reverse_order: true, fatal: list_fatal, search: notification.search});
             }
         },
         notificationsettingdefault: {
@@ -913,132 +916,144 @@ module.exports.graphObj = new GraphQLObjectType({
         emailtemplatelist: {
             type: emailTemplateListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, emailtemplates){
                 const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 
-                return emailTemplateController.listByAccount({pagination: emailtemplates.pagination, fatal:list_fatal});
+                return emailTemplateController.listByAccount({pagination: emailtemplates.pagination, fatal:list_fatal, search: emailtemplates.search});
             }
         },
         smtpproviderlist: {
             type: SMTPProviderListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, smtpproviders){
                 const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
 
-                return SMTPProviderController.listByAccount({pagination: smtpproviders.pagination, fatal:list_fatal});
+                return SMTPProviderController.listByAccount({pagination: smtpproviders.pagination, fatal:list_fatal, search: smtpproviders.search});
             }
         },
         productlist: {
             type: productListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, products){
                 const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 
-                return productController.listByAccount({pagination: products.pagination, fatal:list_fatal});
+                return productController.listByAccount({pagination: products.pagination, fatal:list_fatal, search: products.search});
             }
         },
         useracllist: {
             type: userACLListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, useracl){
                 const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
-                return userACLController.listByAccount({pagination: useracl.pagination, fatal:list_fatal});
+                return userACLController.listByAccount({pagination: useracl.pagination, fatal:list_fatal, search: useracl.search});
             }
         },
         rebilllist: {
             type: rebillListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, rebill){
                 const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-      	       return rebillController.listByAccount({pagination: rebill.pagination, fatal:list_fatal});
+      	       return rebillController.listByAccount({pagination: rebill.pagination, fatal:list_fatal, search: rebill.search});
             }
         },
         shippingreceiptlist: {
             type: shippingReceiptListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, shippingreceipt){
                 const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
 
-                return shippingReceiptController.listByAccount({pagination: shippingreceipt.pagination, fatal:list_fatal}); }
+                return shippingReceiptController.listByAccount({pagination: shippingreceipt.pagination, fatal:list_fatal, search: shippingreceipt.search}); }
         },
         affiliatelist: {
             type: affiliateListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, affiliate){
               const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
-              return affiliateController.listByAccount({pagination: affiliate.pagination, fatal:list_fatal});
+              return affiliateController.listByAccount({pagination: affiliate.pagination, fatal:list_fatal, search: affiliate.search});
             }
         },
         trackerlist: {
             type: trackerListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, tracker){
                 const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-                return trackerController.listByAccount({pagination: tracker.pagination, fatal:list_fatal});
+                return trackerController.listByAccount({pagination: tracker.pagination, fatal:list_fatal, search: tracker.search});
             }
         },
         creditcardlist: {
             type: creditCardListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, creditcard){
                 const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 
-                return creditCardController.listByAccount({pagination: creditcard.pagination, fatal:list_fatal});
+                return creditCardController.listByAccount({pagination: creditcard.pagination, fatal:list_fatal, search: creditcard.search});
             }
         },
         merchantproviderlist: {
             type: merchantProviderListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, merchantprovider){
                 const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
-      	       return merchantProviderController.listByAccount({pagination: merchantprovider.pagination, fatal:list_fatal});
+      	       return merchantProviderController.listByAccount({pagination: merchantprovider.pagination, fatal:list_fatal, search: merchantprovider.search});
             }
         },
         fulfillmentproviderlist: {
             type: fulfillmentProviderListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, fulfillmentprovider){
                 const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 
-      	       return fulfillmentProviderController.listByAccount({pagination: fulfillmentprovider.pagination, fatal:list_fatal});
+      	       return fulfillmentProviderController.listByAccount({pagination: fulfillmentprovider.pagination, fatal:list_fatal, search: fulfillmentprovider.search});
             }
         },
         accesskeylist: {
           type: accessKeyListType.graphObj,
           args: {
-              pagination: {type: paginationInputType.graphObj}
+              pagination: {type: paginationInputType.graphObj},
+              search: {type: entitySearchInputType.graphObj}
           },
           resolve: function(root, accesskey){
             const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
-    	      return accessKeyController.listByAccount({pagination: accesskey.pagination, fatal:list_fatal});
+    	      return accessKeyController.listByAccount({pagination: accesskey.pagination, fatal:list_fatal, search: accesskey.search});
           }
         },
         accountlist: {
@@ -1067,79 +1082,88 @@ module.exports.graphObj = new GraphQLObjectType({
         customerlist: {
             type: customerListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, customer){
                 const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
-      	       return customerController.listByAccount({pagination: customer.pagination, fatal:list_fatal});
+      	       return customerController.listByAccount({pagination: customer.pagination, fatal:list_fatal, search: customer.search});
             }
         },
         customernotelist: {
             type: customerNoteListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, customernote){
                 const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
 
-                return customerNoteController.listByAccount({pagination: customernote.pagination, fatal:list_fatal});
+                return customerNoteController.listByAccount({pagination: customernote.pagination, fatal:list_fatal, search: customernote.search});
             }
         },
         loadbalancerlist: {
             type: loadBalancerListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+              pagination: {type: paginationInputType.graphObj},
+              search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, loadbalancer){
                 const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
 
-      	       return loadBalancerController.listByAccount({pagination: loadbalancer.pagination, fatal:list_fatal});
+      	       return loadBalancerController.listByAccount({pagination: loadbalancer.pagination, fatal:list_fatal, search: loadbalancer.search});
             }
         },
         productschedulelist: {
             type: productScheduleListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+              pagination: {type: paginationInputType.graphObj},
+              search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, productschedule){
 
                 const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
-      	       return productScheduleController.listByAccount({pagination: productschedule.pagination, fatal:list_fatal});
+      	       return productScheduleController.listByAccount({pagination: productschedule.pagination, fatal:list_fatal, search: productschedule.search});
             }
         },
         transactionlist: {
             type: transactionListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+              pagination: {type: paginationInputType.graphObj},
+              search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, transaction){
-                const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 
-      	       return transactionController.listByAccount({pagination: transaction.pagination, fatal:list_fatal});
+              const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+
+              return transactionController.listByAccount({pagination: transaction.pagination, fatal:list_fatal, search: transaction.search});
+
             }
         },
         campaignlist: {
             type: campaignListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, campaign){
                 const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-                return campaignController.listByAccount({pagination: campaign.pagination, fatal:list_fatal});
+                return campaignController.listByAccount({pagination: campaign.pagination, fatal:list_fatal, search: campaign.search});
             }
         },
         sessionlist: {
             type: sessionListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+              pagination: {type: paginationInputType.graphObj},
+              search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, session){
-                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+              const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
-                return sessionController.listByAccount({pagination: session.pagination, fatal:list_fatal});
+              return sessionController.listByAccount({pagination: session.pagination, fatal:list_fatal, search: session.search});
             }
         },
         productschedule: {
@@ -1391,12 +1415,13 @@ module.exports.graphObj = new GraphQLObjectType({
         usersigningstringlist: {
             type: userSigningStringListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, user_signing_strings) {
               const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
-              return userSigningStringController.listByUser({pagination: user_signing_strings.pagination, fatal:list_fatal});
+              return userSigningStringController.listByUser({pagination: user_signing_strings.pagination, fatal:list_fatal, search: user_signing_strings.search});
             }
         },
         notification: {
@@ -1461,13 +1486,14 @@ module.exports.graphObj = new GraphQLObjectType({
         userdevicetokenlist: {
             type: userDeviceTokenListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, user_device_token) {
 
               const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 
-              return userDeviceTokenController.listByUser({pagination: user_device_token.pagination, fatal:list_fatal});
+              return userDeviceTokenController.listByUser({pagination: user_device_token.pagination, fatal:list_fatal, search: user_device_token.search});
 
             }
         },

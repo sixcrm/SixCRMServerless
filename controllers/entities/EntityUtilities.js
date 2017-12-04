@@ -378,6 +378,28 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     }
 
+    appendSearchConditions({query_parameters, search}){
+
+      du.debug('Append Updated At Condition');
+
+      //validate...
+
+      if(objectutilities.hasRecursive(search, 'updated_at.after')){
+        query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_after_k > :updated_at_after_v');
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#updated_at_after_k', 'updated_at');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':updated_at_after_v', search.updated_at.after);
+      }
+
+      if(objectutilities.hasRecursive(search, 'updated_at.before')){
+        query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_before_k < :updated_at_before_v');
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#updated_at_before_k', 'updated_at');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':updated_at_before_v', search.updated_at.before);
+      }
+
+      return query_parameters;
+
+    }
+
     appendAccountCondition({query_parameters, account}){
 
       du.debug('Append Account Condition');
