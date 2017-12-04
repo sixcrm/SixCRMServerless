@@ -262,6 +262,24 @@ class rebillController extends entityController {
 
     }
 
+    listByState({state, pagination}){
+
+      du.debug('List By State');
+
+      let query_parameters = {
+        filter_expression: '#state = :statev',
+        expression_attribute_names: {
+          '#state': 'state'
+        },
+        expression_attribute_values: {
+          ':statev': state
+        }
+      };
+
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
+
+    }
+
 }
 
 module.exports = new rebillController();

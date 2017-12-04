@@ -337,6 +337,23 @@ module.exports.graphObj = new GraphQLObjectType({
                 return customerController.listCustomerRebills({customer: rebill.customer, pagination: rebill.pagination, fatal: list_fatal});
             }
         },
+      rebilllistbystate: {
+            type: rebillListType.graphObj,
+            args: {
+                state: {
+                    description: 'The state Rebill is currently at',
+                    type: new GraphQLNonNull(GraphQLString)
+                },
+                pagination: {
+                    type: paginationInputType.graphObj
+                }
+            },
+            resolve: function(root, args){
+                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+                return rebillController.listByState({state: args.state, pagination: args.pagination});
+            }
+        },
         campaignlistbyproductschedule: {
             type: campaignListType.graphObj,
             args: {
