@@ -168,24 +168,13 @@ describe('controllers/workers/shipProduct', function () {
                 .then(result => expect(result).to.equal(shipProduct.messages.failed));
         });
 
-        /*
-        1) controllers/workers/shipProduct processTransaction returns unchanged response from fulfillment provider if it was not recognized:
-
-        AssertionError: expected 'NOSHIP' to equal 'unexpected response'
-        + expected - actual
-
-        -NOSHIP
-        +unexpected response
-
-        at shipProduct.processTransaction.then.result (test/unit/workers/shipProduct/shipProduct.spec.js:274:51)
-        at process._tickDomainCallback (internal/process/next_tick.js:129:7)
-        */
-        xit('returns unchanged response from fulfillment provider if it was not recognized', () => {
+        it('returns unchanged response from fulfillment provider if it was not recognized', () => {
 
             let transaction_product = random_transaction_product;
 
             transaction_product.product = random_products[0];
             transaction_product.product.ship = 'true';
+            delete transaction_product.shippingreceipt;
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
                 triggerFulfillment: (transaction_product) => {
@@ -268,11 +257,14 @@ describe('controllers/workers/shipProduct', function () {
                 .then(result => expect(result).to.equal(shipProduct.messages.noship));
         });
 
-        xit('returns unchanged response from fulfillment provider if it was not recognized', () => {
+        it('returns unchanged response from fulfillment provider if it was not recognized', () => {
 
             let transaction = random_transactions[0];
 
-            random_transaction_product.product = random_products[0];
+            let transaction_product = random_transaction_product;
+
+            transaction_product.product = random_products[0];
+            transaction_product.product.ship = 'true';
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
                 triggerFulfillment: (transaction_product) => {
