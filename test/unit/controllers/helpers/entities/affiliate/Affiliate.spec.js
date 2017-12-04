@@ -156,12 +156,12 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
       let valid_affiliate_ids_array = getValidAffiliateIDsArray();
 
-      affiliateHelperController.assureAffiliatesArrayTransform({
+      return affiliateHelperController.assureAffiliatesArrayTransform({
         affiliate_ids: valid_affiliate_ids_array,
         affiliates: []
       }).then(assured_affiliates => {
         expect(assured_affiliates.length).to.equal(1);
-        expect(assured_affiliates[0].affiliate_id).to.equal(valid_affiliate_ids_array.shift);
+        expect(assured_affiliates[0].affiliate_id).to.equal(valid_affiliate_ids_array.shift());
       });
 
     });
@@ -173,7 +173,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
       let valid_affiliate_ids_array = getValidAffiliateIDsArray();
       let valid_affiliate_object = getValidAffiliateObject();
 
-      affiliateHelperController.assureAffiliatesArrayTransform({affiliate_ids: valid_affiliate_ids_array, affiliates: [valid_affiliate_object]}).then(assured_affiliates => {
+      return affiliateHelperController.assureAffiliatesArrayTransform({affiliate_ids: valid_affiliate_ids_array, affiliates: [valid_affiliate_object]}).then(assured_affiliates => {
         expect(assured_affiliates).to.deep.equal([valid_affiliate_object]);
       });
 

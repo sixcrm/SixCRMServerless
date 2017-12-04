@@ -131,7 +131,16 @@ module.exports = class Configuration extends ConfigurationUtilities {
     regeneration_functions[this.mandatory_config_names.redshift_host] = () => this.regenerateRedshiftConfiguration();
     regeneration_functions[this.mandatory_config_names.cloudsearch_domainendpoint] = () => this.regenerateCloudsearchConfiguration();
 
-    return regeneration_functions[key]();
+    if (key && _.isFunction(regeneration_functions[key])) {
+
+        return regeneration_functions[key]();
+
+    } else {
+
+      du.warning(regeneration_functions[key] + ' is not a function.');
+
+    }
+
   }
 
   regenerateRedshiftConfiguration() {

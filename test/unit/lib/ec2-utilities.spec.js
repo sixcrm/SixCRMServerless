@@ -454,22 +454,65 @@ describe('lib/ec2-utilities', () => {
             const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
             const ec2utilities = new EC2Utilities();
 
+            let functions = {};
+
             ec2utilities.ec2 = {
                 describeSecurityGroups: function(params, callback) {
                     callback(null, {SecurityGroups: [{GroupName: 'any_group_name'}]})
                 },
                 deleteSecurityGroup: () => {
                     return {
-                        on: (parameters, response) => {
-                            response('success');
+                        on: (event_name, fn) => {
+                            functions[event_name] = fn;
+
+                            return {
+                                on: (event_name, fn) => {
+                                    functions[event_name] = fn;
+                                }
+                            }
                         },
-                        send: () => {}
+                        send: () => {
+                            return functions['success']('Execution result');
+                        }
                     }
                 }
             };
 
             return ec2utilities.destroySecurityGroup({GroupName: 'any_group_name'}).then((result) => {
-                expect(result).to.equal('success');
+                expect(result).to.equal('Execution result');
+            });
+        });
+
+        it('throws server error when security group is not destroyed', () => {
+            const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
+            const ec2utilities = new EC2Utilities();
+
+            let functions = {};
+
+            ec2utilities.ec2 = {
+                describeSecurityGroups: function(params, callback) {
+                    callback(null, {SecurityGroups: [{GroupName: 'any_group_name'}]})
+                },
+                deleteSecurityGroup: () => {
+                    return {
+                        on: (event_name, fn) => {
+                            functions[event_name] = fn;
+
+                            return {
+                                on: (event_name, fn) => {
+                                    functions[event_name] = fn;
+                                }
+                            }
+                        },
+                        send: () => {
+                            return functions['error']('Execution error');
+                        }
+                    }
+                }
+            };
+
+            return ec2utilities.destroySecurityGroup({GroupName: 'any_group_name'}).catch((error) => {
+                expect(error.message).to.equal('[500] Execution error');
             });
         });
     });

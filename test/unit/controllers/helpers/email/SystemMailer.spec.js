@@ -15,8 +15,8 @@ function createValidEmailParameters(){
     sender_name:'Test Email at SixCRM',
     subject:'This is a test email',
     body:'This email was sent as a part of a SixCRM unit test.',
-    recepient_emails:['test2@sixcrm.com'],
-    recepient_name:'Test Email 2 at SixCRM'
+    recipient_emails:['test2@sixcrm.com'],
+    recipient_name:'Test Email 2 at SixCRM'
   };
 
 }
@@ -47,13 +47,13 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
     });
 
-    it('fails validation test email due to missing recepient emails', () => {
+    it('fails validation test email due to missing recipient emails', () => {
 
       const systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 
       let parameters = createValidEmailParameters();
 
-      delete parameters.recepient_emails;
+      delete parameters.recipient_emails;
 
       try{
 
@@ -67,13 +67,13 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
     });
 
-    it('fails validation test email due to missing recepient name', () => {
+    it('fails validation test email due to missing recipient name', () => {
 
       const systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 
       let parameters = createValidEmailParameters();
 
-      delete parameters.recepient_name;
+      delete parameters.recipient_name;
 
       try{
 
@@ -87,13 +87,13 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
     });
 
-    it('fails validation test email due to recepient email formatting', () => {
+    it('fails validation test email due to recipient email formatting', () => {
 
       const systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 
       let parameters = createValidEmailParameters();
 
-      parameters.recepient_name = {};
+      parameters.recipient_name = {};
 
       try{
 
@@ -105,7 +105,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       }
 
-      parameters.recepient_name = [];
+      parameters.recipient_name = [];
 
       try{
 
@@ -117,7 +117,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       }
 
-      parameters.recepient_name = ['Blerf'];
+      parameters.recipient_name = ['Blerf'];
 
       try{
 
@@ -129,7 +129,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       }
 
-      parameters.recepient_name = '';
+      parameters.recipient_name = '';
 
       try{
 
@@ -141,7 +141,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       }
 
-      parameters.recepient_name = 'x';
+      parameters.recipient_name = 'x';
 
       try{
 
@@ -155,13 +155,13 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
     });
 
-    it('fails validation test email due to recepient email formatting', () => {
+    it('fails validation test email due to recipient email formatting', () => {
 
       const systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 
       let parameters = createValidEmailParameters();
 
-      parameters.recepient_emails = {};
+      parameters.recipient_emails = {};
 
       try{
 
@@ -175,7 +175,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       parameters = createValidEmailParameters();
 
-      parameters.recepient_emails = [];
+      parameters.recipient_emails = [];
 
       try{
 
@@ -189,7 +189,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       parameters = createValidEmailParameters();
 
-      parameters.recepient_emails = 'email@email.com';
+      parameters.recipient_emails = 'email@email.com';
 
       try{
 
@@ -203,7 +203,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       parameters = createValidEmailParameters();
 
-      parameters.recepient_emails = [''];
+      parameters.recipient_emails = [''];
 
       try{
 
@@ -217,7 +217,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       parameters = createValidEmailParameters();
 
-      parameters.recepient_emails = ['sdqdwqwdqowdoqwidoqa'];
+      parameters.recipient_emails = ['sdqdwqwdqowdoqwidoqa'];
 
       try{
 
@@ -231,7 +231,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       parameters = createValidEmailParameters();
 
-      parameters.recepient_emails = ['test@test'];
+      parameters.recipient_emails = ['test@test'];
 
       try{
 
@@ -245,7 +245,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
       parameters = createValidEmailParameters();
 
-      parameters.recepient_emails = ['test@test.com','adwwadawdad'];
+      parameters.recipient_emails = ['test@test.com','adwwadawdad'];
 
       try{
 
@@ -259,13 +259,13 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
     });
 
-    it('fails validation test email due to missing recepient emails', () => {
+    it('fails validation test email due to missing recipient emails', () => {
 
       const systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 
       let parameters = createValidEmailParameters();
 
-      delete parameters.recepient_name;
+      delete parameters.recipient_name;
 
       try{
 

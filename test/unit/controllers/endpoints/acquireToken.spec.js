@@ -310,7 +310,7 @@ describe('acquireToken', () => {
         mockery.deregisterAll();
     });
 
-    xit('successfully validates the campaign', () => {
+    it('successfully validates the campaign', () => {
 
       let campaign = getValidCampaign();
       let event = getValidEventBody();
@@ -333,7 +333,6 @@ describe('acquireToken', () => {
 
     it('throws an error when the campaign does not validate', () => {
 
-        let campaign = getValidCampaign();
         let event = getValidEventBody();
 
         mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
@@ -346,12 +345,9 @@ describe('acquireToken', () => {
 
         acquireTokenController.parameters.set('event', event);
 
-        try{
-          acquireTokenController.validateCampaign();
-        }catch(error){
-          expect(error.message).to.have.string('Invalid Campaign ID:');
-        }
-
+        return acquireTokenController.validateCampaign().catch((error) => {
+            expect(error.message).to.have.string('Invalid Campaign ID:');
+        });
     });
 
   });
