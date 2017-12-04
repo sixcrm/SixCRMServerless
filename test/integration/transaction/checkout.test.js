@@ -104,7 +104,7 @@ describe('Checkout Test', function() {
               "line1":"334 Lombard St.",
               "line2":"Apartment 2",
               "city":"Portland",
-              "state":"Oregon",
+              "state":"OR",
               "zip":"97203",
               "country":"US"
             }
@@ -118,7 +118,7 @@ describe('Checkout Test', function() {
       				"line1": "10 Different Skid Rw.",
       				"line2": "Suite 101",
       				"city": "Portland",
-      				"state": "Oregon",
+      				"state": "OR",
       				"zip": "97203",
       			 	"country": "US"
       			}

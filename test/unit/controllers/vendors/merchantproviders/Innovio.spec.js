@@ -71,7 +71,7 @@ function getValidRequestParametersObject(){
       address: {
         line1:'123 Main Street Apt. 1',
         city:'Los Angeles',
-        state:'California',
+        state:'CA',
         zip:'90066',
         country: 'US'
       }
@@ -227,7 +227,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
       cust_email: 'user5@example.com',
       bill_addr: '123 Main Street Apt. 1',
       bill_addr_city: 'Los Angeles',
-      bill_addr_state: 'California',
+      bill_addr_state: 'CA',
       bill_addr_zip: '90066',
       bill_addr_country: 'US',
       xtl_order_id: 'ABC123',

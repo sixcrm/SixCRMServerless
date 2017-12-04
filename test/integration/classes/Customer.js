@@ -59,7 +59,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
     du.output('Create Customer');
 
-    let customer_create_query = `mutation { createcustomer ( customer: {id: "`+customer_id+`", email: "test@test.com", firstname: "Test_b5803b28-c584-4bb3-8fac-3315b91686b3", lastname: "Test", phone: "1234567890", address: { line1: "123 Test St.", line2: "Apartment 3", city: "Portland", state: "Oregon", zip: "97213", country: "USA" }, creditcards:[] } ) { id } }`;
+    let customer_create_query = `mutation { createcustomer ( customer: {id: "`+customer_id+`", email: "test@test.com", firstname: "Test_b5803b28-c584-4bb3-8fac-3315b91686b3", lastname: "Test", phone: "1234567890", address: { line1: "123 Test St.", line2: "Apartment 3", city: "Portland", state: "OR", zip: "97213", country: "US" }, creditcards:[] } ) { id } }`;
 
     return this.executeQuery(customer_create_query);
 

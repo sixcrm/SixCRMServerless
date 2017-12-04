@@ -65,7 +65,7 @@ function getValidProcessRequestParametersObject(){
         line1:"10 Skid Rw.",
         line2:"Suite 100",
         city:"Portland",
-        state:"Oregon",
+        state:"OR",
         zip:"97213",
         country:"USA"
       }

@@ -105,7 +105,7 @@ describe('Transaction Round Trip Test',() => {
               "line1":"334 Lombard St.",
               "line2":"Apartment 2",
               "city":"Portland",
-              "state":"Oregon",
+              "state":"OR",
               "zip":"97203",
               "country":"US"
             }
@@ -155,9 +155,9 @@ describe('Transaction Round Trip Test',() => {
                   "line1":"10 Skid Rw.",
                   "line2":"Suite 100",
                   "city":"Portland",
-                  "state":"Oregon",
+                  "state":"OR",
                   "zip":"97213",
-                  "country":"USA"
+                  "country":"US"
                 }
               },
               "transaction_subtype":"main"

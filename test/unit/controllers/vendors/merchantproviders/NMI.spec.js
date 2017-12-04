@@ -109,7 +109,7 @@ function getValidRequestParametersObject(){
       address: {
         line1:'123 Main Street Apt. 1',
         city:'Los Angeles',
-        state:'California',
+        state:'CA',
         zip:'90066',
         country: 'US'
       }
@@ -123,7 +123,7 @@ function getValidRequestParametersObject(){
         line1: '456 Another St.',
         line2: 'Apartment 2',
         city: 'Anaheim',
-        state: 'California',
+        state: 'CA',
         zip: '90067',
         country: 'US'
       }
@@ -279,13 +279,13 @@ describe('vendors/merchantproviders/NMI.js', () => {
       lastname: 'Doe',
       address1: '123 Main Street Apt. 1',
       city: 'Los Angeles',
-      state: 'California',
+      state: 'CA',
       zip: '90066',
       country: 'US',
       shipping_address1: '456 Another St.',
       shipping_address2: 'Apartment 2',
       shipping_city: 'Anaheim',
-      shipping_state: 'California',
+      shipping_state: 'CA',
       shipping_zip: '90067',
       shipping_country: 'US'
     };

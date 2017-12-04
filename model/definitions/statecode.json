@@ -4,5 +4,5 @@
   "title": "State Code",
   "description": "A state code",
   "type":"string",
-  "pattern":"^([A-Z]{2})|([a-zA-Z]+)$"
+  "pattern":"^[A-Z]{2}$"
 }

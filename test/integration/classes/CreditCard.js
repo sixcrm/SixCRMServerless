@@ -39,7 +39,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
     du.output('Create Credit Card');
 
-    let creditcard_create_query = `mutation { createcreditcard (creditcard: { number: "3111111111111111", expiration: "1025", ccv: "999", name: "Rama2 Damunaste", address: { line1: "102 Skid Rw.", line2: "Suite 100", city: "Portland", state: "Oregon", zip: "97213", country: "USA" }, id: "`+creditcard_id+`" }) { id } }`;
+    let creditcard_create_query = `mutation { createcreditcard (creditcard: { number: "3111111111111111", expiration: "1025", ccv: "999", name: "Rama2 Damunaste", address: { line1: "102 Skid Rw.", line2: "Suite 100", city: "Portland", state: "OR", zip: "97213", country: "US" }, id: "`+creditcard_id+`" }) { id } }`;
 
     return this.executeQuery(creditcard_create_query);
 
@@ -49,7 +49,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
     du.output('Create Customer');
 
-    let customer_create_query = `mutation { createcustomer ( customer: {id: "`+customer_id+`", email: "test@test.com", firstname: "Test_b5803b28-c584-4bb3-8fac-3315b91686b3", lastname: "Test", phone: "1234567890", address: { line1: "123 Test St.", line2: "Apartment 3", city: "Portland", state: "Oregon", zip: "97213", country: "USA" }, creditcards:["`+creditcard_id+`"]} ) { id } }`;
+    let customer_create_query = `mutation { createcustomer ( customer: {id: "`+customer_id+`", email: "test@test.com", firstname: "Test_b5803b28-c584-4bb3-8fac-3315b91686b3", lastname: "Test", phone: "1234567890", address: { line1: "123 Test St.", line2: "Apartment 3", city: "Portland", state: "OR", zip: "97213", country: "US" }, creditcards:["`+creditcard_id+`"]} ) { id } }`;
 
     return this.executeQuery(customer_create_query);
 

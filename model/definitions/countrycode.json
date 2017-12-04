@@ -4,5 +4,5 @@
   "title": "Country Code",
   "description": "A country code",
   "type":"string",
-  "pattern":"^([A-Z]{2})|([a-zA-Z]+)$"
+  "pattern":"^[A-Z]{2}$"
 }

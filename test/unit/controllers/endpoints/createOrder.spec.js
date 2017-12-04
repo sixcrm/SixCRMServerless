@@ -116,7 +116,7 @@ function getValidCustomer(){
 		address:{
 			"line1":"10 Downing St.",
 			"city":"London",
-			"state":"Oregon",
+			"state":"OR",
 			"zip":"97213",
 			"country":"US"
 		},
@@ -268,9 +268,9 @@ function getValidCreditCardPrototype(){
       "line1": "10 Skid Rw.",
       "line2": "Suite 100",
       "city": "Portland",
-      "state": "Oregon",
+      "state": "OR",
       "zip": "97213",
-      "country": "USA"
+      "country": "US"
     }
   };
 

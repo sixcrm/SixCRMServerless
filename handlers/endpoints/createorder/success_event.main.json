@@ -8,5 +8,5 @@
 		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
 	},
 	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts",
-	"body":"{\"session\":\"1adf2fde-0494-4045-b081-afb14173739b\",\"product_schedules\":[\"12529a17-ac32-4e46-b05b-83862843055d\"],\"creditcard\":{\"number\":\"4111111111111111\",\"expiration\":\"1025\",\"ccv\":\"999\",\"name\":\"RamaDamunaste\",\"address\":{\"line1\":\"10SkidRw.\",\"line2\":\"Suite100\",\"city\":\"Portland\",\"state\":\"Oregon\",\"zip\":\"97213\",\"country\":\"USA\"}},\"transaction_subtype\":\"main\"}"
+	"body":"{\"session\":\"1adf2fde-0494-4045-b081-afb14173739b\",\"product_schedules\":[\"12529a17-ac32-4e46-b05b-83862843055d\"],\"creditcard\":{\"number\":\"4111111111111111\",\"expiration\":\"1025\",\"ccv\":\"999\",\"name\":\"RamaDamunaste\",\"address\":{\"line1\":\"10SkidRw.\",\"line2\":\"Suite100\",\"city\":\"Portland\",\"state\":\"OR\",\"zip\":\"97213\",\"country\":\"US\"}},\"transaction_subtype\":\"main\"}"
 }

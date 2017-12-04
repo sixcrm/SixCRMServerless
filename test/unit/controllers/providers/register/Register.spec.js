@@ -87,10 +87,10 @@ function getValidCreditCard(){
     "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
     "address": {
       "city": "Portland",
-      "country": "USA",
+      "country": "US",
       "line1": "102 Skid Rw.",
       "line2": "Suite 100",
-      "state": "Oregon",
+      "state": "OR",
       "zip": "97213"
     },
     "ccv": "999",
@@ -184,7 +184,7 @@ function getValidCustomer(){
     address:{
       zip: '97213',
       country: 'US',
-      state: 'Oregon',
+      state: 'OR',
       city: 'London',
       line1: '10 Downing St.'
     },

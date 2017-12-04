@@ -54,6 +54,6 @@
 		"httpMethod":"POST",
 		"apiId":"8jmwnwcaic"
 	},
-	"body":"{\"customer\":{\"email\":\"rama@damunaste.org\",\"firstname\":\"Rama\",\"lastname\":\"Damunaste\",\"phone\":\"1234567890\",\"address\":{\"line1\":\"10 Downing St.\",\"city\":\"London\",\"state\":\"Oregon\",\"zip\":\"97213\",\"country\":\"US\"}},\"affiliates\":{\"affiliate\":\"QQM7EP1V2CY1YBUWAHAD\",\"subaffiliate_1\":\"G2Q1U92Z2JKW11TKD78C\",\"subaffiliate_2\":\"6QG1MQZVKGQVWYN661J5\",\"subaffiliate_3\":\"DP9B54VRZLEECY7V1JQ8\",\"subaffiliate_4\":\"JF1FZRMH6CQB1LX5DDPR\",\"subaffiliate_5\":\"5KYZQETVNWB61GZG6PV7\",\"cid\":\"D1H2YXZZVEC87PG37Z4P\"},\"campaign\":\"70a6689a-5814-438b-b9fd-dd484d0812f9\"}",
+	"body":"{\"customer\":{\"email\":\"rama@damunaste.org\",\"firstname\":\"Rama\",\"lastname\":\"Damunaste\",\"phone\":\"1234567890\",\"address\":{\"line1\":\"10 Downing St.\",\"city\":\"London\",\"state\":\"OR\",\"zip\":\"97213\",\"country\":\"US\"}},\"affiliates\":{\"affiliate\":\"QQM7EP1V2CY1YBUWAHAD\",\"subaffiliate_1\":\"G2Q1U92Z2JKW11TKD78C\",\"subaffiliate_2\":\"6QG1MQZVKGQVWYN661J5\",\"subaffiliate_3\":\"DP9B54VRZLEECY7V1JQ8\",\"subaffiliate_4\":\"JF1FZRMH6CQB1LX5DDPR\",\"subaffiliate_5\":\"5KYZQETVNWB61GZG6PV7\",\"cid\":\"D1H2YXZZVEC87PG37Z4P\"},\"campaign\":\"70a6689a-5814-438b-b9fd-dd484d0812f9\"}",
 	"isBase64Encoded":false
 }

@@ -27,7 +27,7 @@ function getValidRequestParametersObject(){
       address: {
         line1:'123 Main Street Apt. 1',
         city:'Los Angeles',
-        state:'California',
+        state:'CA',
         zip:'90066',
         country: 'US'
       }

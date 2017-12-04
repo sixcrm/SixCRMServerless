@@ -161,7 +161,7 @@ function getValidCreditCardProperties(){
     bank: 'Some Bank',
     type: 'Classic',
     level: 'level',
-    country: 'USA',
+    country: 'US',
     info: '',
     country_iso: 'USA',
     country2_iso: 'USA',
@@ -200,10 +200,10 @@ function getValidCreditCard(){
     	account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
     	address: {
     		city: "Portland",
-    		country: "USA",
+    		country: "US",
     		line1: "10 Skid Rw.",
     		line2: "Suite 100",
-    	  state: "Oregon",
+    	  state: "OR",
     		zip: "97213"
     	},
     	number: "4111111111111111",
@@ -228,7 +228,7 @@ function getValidCustomer(){
       address:{
         line1:"10 Downing St.",
         city:"London",
-        state:"Oregon",
+        state:"OR",
         zip:"97213",
         country:"US"
       },

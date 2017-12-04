@@ -251,7 +251,7 @@ function getValidCustomerPrototype(){
 		address:{
 			"line1":"10 Downing St.",
 			"city":"London",
-			"state":"Oregon",
+			"state":"OR",
 			"zip":"97213",
 			"country":"US"
 		}
