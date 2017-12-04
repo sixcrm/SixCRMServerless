@@ -159,7 +159,7 @@ module.exports = class entityController extends entityUtilitiesController {
     //Technical Debt:  This does not necessarily return results of size "limit".  Next page can be true...
     //Technical Debt:  This needs to iterate until pagination specs are satisfied...
     //NOTE: Expensive!
-    list({query_parameters, pagination, reverse_order, account, fatal}){
+    list({query_parameters, pagination, reverse_order, account, fatal, search}){
 
       du.debug('List');
 
@@ -178,6 +178,10 @@ module.exports = class entityController extends entityUtilitiesController {
 
         if (reverse_order) {
             query_parameters['scan_index_forward'] = false;
+        }
+
+        if(search){
+          query_parameters = this.appendSearchConditions({query_parameters: query_parameters, search: search});
         }
 
         return query_parameters;

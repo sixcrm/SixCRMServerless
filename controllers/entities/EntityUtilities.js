@@ -382,7 +382,18 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       du.debug('Append Updated At Condition');
 
+      /*
       //validate...
+      if(objectutilities.hasRecursive(search, 'name')){
+
+
+      }
+
+      if(objectutilities.hasRecursive(search, 'active')){
+
+
+      }
+      */
 
       if(objectutilities.hasRecursive(search, 'updated_at.after')){
         query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_after_k > :updated_at_after_v');
@@ -394,6 +405,18 @@ module.exports = class entityUtilitiesController extends PermissionedController 
         query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_before_k < :updated_at_before_v');
         query_parameters = this.appendExpressionAttributeNames(query_parameters, '#updated_at_before_k', 'updated_at');
         query_parameters = this.appendExpressionAttributeValues(query_parameters, ':updated_at_before_v', search.updated_at.before);
+      }
+
+      if(objectutilities.hasRecursive(search, 'created_at.after')){
+        query_parameters = this.appendFilterExpression(query_parameters, '#created_at_after_k > :created_at_after_v');
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#created_at_after_k', 'created_at');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':created_at_after_v', search.created_at.after);
+      }
+
+      if(objectutilities.hasRecursive(search, 'created_at.before')){
+        query_parameters = this.appendFilterExpression(query_parameters, '#created_at_before_k < :created_at_before_v');
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#created_at_before_k', 'created_at');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':created_at_before_v', search.created_at.before);
       }
 
       return query_parameters;

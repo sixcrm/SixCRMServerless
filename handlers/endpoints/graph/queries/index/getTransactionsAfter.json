@@ -1,11 +1,11 @@
 {
 	"requestContext":{
 		"authorizer":{
-			"user": "owner.user@test.com"
+			"user": "super.user@test.com"
 		}
 	},
 	"pathParameters": {
-		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+		"account": "*"
 	},
-	"body":"{transactionlist (pagination:{limit: \"10\"}, search: { updated_at: { before: \"2017-12-04T19:28:17.896Z\" } } ){ transactions { id, alias, amount, created_at, updated_at, processor_response }, pagination { count, end_cursor, has_next_page } } }"
+	"body":"{ transactionlist ( pagination: {  limit:\"10\"  cursor:\"a280f848-4de4-478f-8ccb-3cbfdd2d7bcd\"  }, search:{ updated_at:{ before: \"2017-11-27T11:34:46.099Z\" } }  ) { transactions { id amount alias created_at processor_response } pagination { count end_cursor has_next_page last_evaluated } } }"
 }
