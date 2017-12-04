@@ -66,6 +66,9 @@ let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 let inviteInputType = require('./user/inviteInputType');
 let transactionRefundInputType = require('./transaction/transactionRefundInputType');
 
+let transactionChargebackInputType = require('./transaction/transactionChargebackInputType');
+let transactionType = require('./transaction/transactionType');
+
 let userACLInputType = require('./useracl/userACLInputType');
 let userACLTermsAndConditionsInputType = require('./useracl/userACLTermsAndConditionsInputType');
 let userACLType = require('./useracl/userACLType');
@@ -103,6 +106,23 @@ const GraphQLString = require('graphql').GraphQLString;
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
+    markchargeback:{
+      type: transactionType.graphObj,
+      description: 'Sets the chargeback status of a customer transaction record.',
+      args:{
+        chargeback: {
+          type: transactionChargebackInputType.graphObj
+        }
+      },
+      resolve: (value, args) => {
+
+        let TransactionHelperController = global.SixCRM.routes.include('helpers','entities/transaction/Transaction.js');
+        let transactionHelperController = new TransactionHelperController();
+
+        return transactionHelperController.markTransactionChargeback({transactionid: args.chargeback.transaction, chargeback_status: args.chargeback.chargeback_status});
+
+      }
+    },
     refund:{
       type: refundType.graphObj,
       description: 'Refunds a customer funds based on pre-existing customer transaction.',

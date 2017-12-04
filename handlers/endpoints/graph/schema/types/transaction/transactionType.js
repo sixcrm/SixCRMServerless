@@ -1,6 +1,7 @@
 'use strict';
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
@@ -52,6 +53,10 @@ module.exports.graphObj = new GraphQLObjectType({
                     return null;
                 }
             }
+        },
+        chargeback: {
+          type: GraphQLBoolean,
+          description: 'Chargeback flag'
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),
