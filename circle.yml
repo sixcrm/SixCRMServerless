@@ -230,6 +230,11 @@ deployment:
       ###########
 
       ###########
+      #IAM roles
+      - node ./deployment/iam/deploy_roles.js
+      ###########
+
+      ###########
       #Redshift
       - node ./deployment/redshift/deploy_cluster.js
       - node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240
