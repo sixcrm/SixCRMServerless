@@ -30,6 +30,9 @@
 		"history":{
 			"type":"array",
 			"items":{"$ref": "../definitions/rebillstatehistoryitem.json"}
+		},
+		"second_attempt":{
+			"type":"boolean"
 		}
 	},
 	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession", "product_schedules"]
