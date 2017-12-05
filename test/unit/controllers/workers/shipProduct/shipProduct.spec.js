@@ -1,292 +1,174 @@
-const fs = require('fs');
+'use strict'
+const _ = require('underscore');
 const chai = require("chai");
+const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const modelgenerator = global.SixCRM.routes.include('test', 'model-generator.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-require('../../../../bootstrap.test');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+
+function getValidMessage(){
+
+  return {
+    MessageId:"someMessageID",
+    ReceiptHandle:"SomeReceiptHandle",
+    Body: JSON.stringify({id:uuidV4()}),
+    MD5OfBody:"SomeMD5"
+  };
+
+}
+
+function getValidRebill(){
+
+  return {
+    bill_at: timestamp.getISO8601(),
+    id: uuidV4(),
+    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    parentsession: uuidV4(),
+    product_schedules: [uuidV4(), uuidV4()],
+    amount: 79.99,
+    created_at:timestamp.getISO8601(),
+    updated_at:timestamp.getISO8601()
+  };
+
+}
+
+function getValidTerminalResponse(){
+
+  const TerminalResponse = global.SixCRM.routes.include('providers', 'shipping/Response.js');
+
+  return new TerminalResponse({
+    response_type: 'success',
+    rebill: getValidRebill(),
+    provider_response: getValidProviderResponse()
+  });
+
+}
+
+function getValidProviderResponse(){
+  return '';
+}
 
 describe('controllers/workers/shipProduct', function () {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+  before(() => {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnReplace: false,
+      warnOnUnregistered: false
+    });
+  });
+
+  beforeEach(() => {
+    global.SixCRM.localcache.clear('all');
+  });
+
+  afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+  });
+
+  describe('constructor', () => {
+
+    it('successfully constructs', () => {
+
+      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+      expect(objectutilities.getClassName(shipProductController)).to.equal('shipProductController');
+
     });
 
-    let random_rebill;
-    let random_transactions;
-    let random_products;
-    let random_transaction_product;
-    let random_shipping_receipt;
+  });
 
-    beforeEach((done) => { Promise.all([
-        modelgenerator.randomEntityWithId('rebill').then(rebill => { random_rebill = rebill}),
-        modelgenerator.randomEntityWithId('shippingreceipt').then(shipping_receipt => { random_shipping_receipt = shipping_receipt}),
-        modelgenerator.randomEntityWithId('transaction').then(transaction => { random_transactions = [transaction]}),
-        modelgenerator.randomEntityWithId('product').then(product => { random_products = [product, product]}),
-        modelgenerator.randomEntityWithId('components/transactionproduct').then(transaction_product => { random_transaction_product = transaction_product})
-    ]).then(() =>{
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-                listTransactions: (rebill) => {
-                    return Promise.resolve(random_transactions);
-                }
-            });
+  describe('ship', () => {
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-                getTransactionProduct: (transaction) => {
-                    return Promise.resolve(random_transaction_product);
-                },
-                get: (id) => {
-                    return Promise.resolve(random_transactions[0]);
-                },
-                update: (entity) => {
-                    return Promise.resolve(random_transactions[0]);
-                }
-            });
+    it('successfully executes a rebill ship via shipping terminal', () => {
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ShippingReceipt.js'), {
-                create: (input) => {
-                    return Promise.resolve(input);
-                },
-                createShippingReceiptObject: (input) => {
-                    let example_shipping_receipt = {
-                        created: 1487768599196, // any timestamp
-                        status: input.status
-                    };
+      let rebill = getValidRebill();
 
-                    return Promise.resolve(example_shipping_receipt);
-                }
-            });
+      let terminal_mock = class Terminal {
+        constructor(){
 
-            done();
         }
-    )});
+        shipRebill({rebill}){
+          return Promise.resolve(getValidTerminalResponse());
+        }
+      }
 
-    afterEach(() => {
-        mockery.resetCache();
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'shipping/Terminal.js'), terminal_mock);
+
+      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+      shipProductController.parameters.set('rebill', rebill);
+
+      return shipProductController.ship().then(result => {
+        expect(result).to.equal(true);
+        expect(shipProductController.parameters.store['terminalresponsecode']).to.equal('success');
+      });
+
     });
 
-    after(() => {
-        mockery.deregisterAll();
+  });
+
+  describe('respond', () => {
+
+    it('successfully responds', () => {
+
+      let terminal_response_code = 'success';
+
+      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+
+      shipProductController.parameters.set('terminalresponsecode', terminal_response_code);
+
+      let response = shipProductController.respond();
+
+      expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
+      expect(response.getCode()).to.equal('success');
+
     });
 
-    describe('issueShippingReceipt', () => {
+  });
 
-        it('updates transaction with new shipping receipt', () => {
-            let fulfillment_response = { message: 'example_response' };
+  describe('execute', () => {
 
-            let transaction_product = random_transaction_product;
+    it('successfully executes', () => {
 
-            transaction_product.product = random_products[0];
+      let rebill = getValidRebill();
 
-            random_transactions[0].products[0].product = transaction_product.product.id;
-            random_transactions[0].products[0].amount = transaction_product.amount;
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
 
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      let terminal_mock = class Terminal {
+        constructor(){
 
-            return shipProduct.issueShippingReceipt(fulfillment_response, transaction_product, random_transactions[0])
-                .then(result => expect(result).to.equal(random_transactions[0]));
-        });
+        }
+        shipRebill({rebill}){
+          return Promise.resolve(getValidTerminalResponse());
+        }
+      }
 
-        it('throws error if transaction already has shipping receipt', () => {
-            let fulfillment_response = { message: 'example_response' };
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'shipping/Terminal.js'), terminal_mock);
 
-            random_transactions[0].products[0].shippingreceipt = random_shipping_receipt;
+      let message = getValidMessage();
 
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
-            return shipProduct.issueShippingReceipt(fulfillment_response, random_transaction_product, random_transactions[0])
-                .catch(error => expect(error.message).to.equal('[404] Unable to re-acquire transaction'));
-        });
+      return shipProductController.execute(message).then(result => {
+        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+        expect(shipProductController.parameters.store['terminalresponsecode']).to.equal('success');
+        expect(result.getCode()).to.equal('success');
+      });
 
-        it('throws error if transaction with specific product doesn\'t exist in transaction list', () => {
-            let fulfillment_response = { message: 'example_response' };
-
-            // Prepare transaction_product
-            let transaction_product = random_transaction_product;
-
-            transaction_product.product = random_products[0]; // hydrate
-
-            // Prepare transaction with different products than on transaction_product
-            let unrelated_transaction = random_transactions[0];
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.issueShippingReceipt(fulfillment_response, transaction_product, unrelated_transaction)
-                .catch(error => expect(error.message).to.equal('[404] Unable to re-acquire transaction'));
-        });
     });
 
-    describe('executeFulfillment', () => {
+  });
 
-        it('returns `noship` when product should not be shipped', () => {
-
-            let transaction_product = random_transaction_product;
-
-            random_transaction_product.product = random_products[0];
-            random_transaction_product.product.ship = 'false';
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
-                .then(result => expect(result).to.equal(shipProduct.messages.noship));
-        });
-
-        it('returns `notified` when transaction already has a shipping receipt', () => {
-
-            let transaction_product = random_transaction_product;
-
-            transaction_product.product = random_products[0];
-            transaction_product.product.ship = 'true';
-            transaction_product.shippingreceipt = random_shipping_receipt;
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
-                .then(result => expect(result).to.equal(shipProduct.messages.notified));
-        });
-
-        it('returns `failed` when shipping receipt hasn\'t been successfully fulfilled', () => {
-
-            let transaction_product = random_transaction_product;
-
-            transaction_product.product = random_products[0];
-            transaction_product.product.ship = 'true';
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
-                triggerFulfillment: (transaction_product) => {
-                    return Promise.resolve('FAILED');
-                }
-            });
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
-                .then(result => expect(result).to.equal(shipProduct.messages.failed));
-        });
-
-        it('returns unchanged response from fulfillment provider if it was not recognized', () => {
-
-            let transaction_product = random_transaction_product;
-
-            transaction_product.product = random_products[0];
-            transaction_product.product.ship = 'true';
-            delete transaction_product.shippingreceipt;
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
-                triggerFulfillment: (transaction_product) => {
-                    return Promise.resolve('unexpected response');
-                }
-            });
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.executeFulfillment(transaction_product, random_transactions[0])
-                .then(result => expect(result).to.equal('unexpected response'));
-        });
-
-        it('returns `notified` when shipping receipt has been successfully fulfilled', () => {
-
-            let transaction_product = random_transaction_product;
-
-            let transaction = random_transactions[0];
-
-            transaction_product.product = random_products[0];
-            transaction_product.product.ship = 'true';
-
-            //Prepare transaction_product for issuing shipping receipt
-            transaction.products[0].product = transaction_product.product.id;
-            transaction.products[0].amount = transaction_product.amount;
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
-                triggerFulfillment: (transaction_product) => {
-                    return Promise.resolve('NOTIFIED');
-                }
-            });
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.executeFulfillment(transaction_product, transaction)
-                .then(result => expect(result).to.equal(shipProduct.messages.notified));
-        });
-    });
-
-    describe('processTransaction', () => {
-
-        it('returns `notified` when product should be shipped and fulfillment response was ok', () => {
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            let transaction = random_transactions[0];
-
-            let transaction_product = random_transaction_product;
-
-            transaction_product.product = random_products[0];
-            transaction_product.product.ship = 'true';
-            transaction_product.shippingreceipt = random_shipping_receipt;
-
-            return shipProduct.processTransaction(transaction)
-                .then(result => expect(result).to.equal(shipProduct.messages.notified));
-        });
-
-        it('throws error when transaction has no products', () => {
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            delete random_transactions[0].products;
-
-            return shipProduct.processTransaction(random_transactions[0])
-                .catch(error => expect(error.message).to.equal('[500] No product in transaction?'));
-        });
-
-        it('returns `noship` when product should not be shipped', () => {
-
-            let transaction = random_transactions[0];
-
-            let transaction_product = random_transaction_product;
-
-            transaction_product.product = random_products[0];
-            transaction_product.product.ship = 'false';
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.processTransaction(transaction)
-                .then(result => expect(result).to.equal(shipProduct.messages.noship));
-        });
-
-        it('returns unchanged response from fulfillment provider if it was not recognized', () => {
-
-            let transaction = random_transactions[0];
-
-            let transaction_product = random_transaction_product;
-
-            transaction_product.product = random_products[0];
-            transaction_product.product.ship = 'true';
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js'), {
-                triggerFulfillment: (transaction_product) => {
-                    return Promise.resolve('unexpected response');
-                }
-            });
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.processTransaction(transaction)
-                .then(result => expect(result).to.equal('unexpected response'));
-        });
-    });
-
-    describe('shipProducts', () => {
-
-        it('returns noship message when product should not be shipped', () => {
-
-            const shipProduct = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-            return shipProduct.shipProducts(random_rebill)
-                .then(result => expect(result).to.equal(shipProduct.messages.noship));
-        });
-    });
 });
