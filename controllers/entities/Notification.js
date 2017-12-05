@@ -37,13 +37,13 @@ class notificationController extends entityController {
       .then(query_parameters => this.queryByParameters({parameters: query_parameters, index: 'user-index'}))
       .then(data => {
 
-        if(objectutilities.has(data, 'Count', true)){
+        if(objectutilities.has(data.pagination, 'count', true)){
 
-          return {count: parseInt(data.Count)};
+          return {count: parseInt(data.pagination.count)};
 
         }
 
-        eu.throwError('server', 'Response data is missing the "Count" field.');
+        eu.throwError('server', 'Response data is missing the "count" field.');
 
       });
 

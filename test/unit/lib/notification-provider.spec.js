@@ -181,7 +181,7 @@ describe('lib/notification-provider', () => {
             body: 'any'
         };
 
-        xit('should not create notifications when the user is not defined', () => {
+        it('should not create notifications when the user is not defined', () => {
             // given
             let notification_object = Object.assign({}, valid_object);
 
@@ -194,10 +194,12 @@ describe('lib/notification-provider', () => {
             // when
             delete notification_object.user;
 
-            return NotificationProvider.createNotificationForAccountAndUser(notification_object).catch((error) => {
+            try {
+                NotificationProvider.createNotificationForAccountAndUser(notification_object)
+            } catch(error) {
                 // then
                 return expect(error.message).to.equal('[500] User is mandatory.');
-            });
+            }
         });
 
         xit('should create notification when the object is valid', (done) => {
@@ -215,6 +217,7 @@ describe('lib/notification-provider', () => {
                     done();
                 }
             });
+
             let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
 
             NotificationProvider.createNotificationForAccountAndUser(valid_object);
