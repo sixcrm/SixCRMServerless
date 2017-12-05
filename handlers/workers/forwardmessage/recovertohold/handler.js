@@ -1,8 +1,8 @@
 'use strict';
-require('../../../SixCRM.js');
+require('../../../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHoldForwardMessage.js');
+const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
 const executor = global.SixCRM.routes.include('handlers', 'workers/forwardmessage/forwardMessageExecutor.js');
 
 module.exports = (event, context, callback) => {

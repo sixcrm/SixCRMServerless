@@ -1,5 +1,5 @@
 'use strict';
-require('../../../SixCRM.js');
+require('../../../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const PendingFailedToPendingForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pendingFailedToPendingForwardMessage.js');
