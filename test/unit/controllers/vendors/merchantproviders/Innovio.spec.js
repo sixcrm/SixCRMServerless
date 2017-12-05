@@ -268,21 +268,16 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
   it('Should process a transaction', () => {
 
-    /*
     let mocked_callback = {
       API_RESPONSE: 600,
       TRANS_STATUS_NAME: 'Declined'
     };
-    */
 
-    /*
     mockery.registerMock('request', {
       post: (request_options, callback) => {
         callback(null, null, JSON.stringify(mocked_callback));
       }
     });
-
-    */
 
     let merchant_provider_configuration = getValidMerchantProviderConfiguation();
 
@@ -309,13 +304,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
       TRANS_STATUS_NAME: 'Declined'
     };
 
-    /*
     mockery.registerMock('request', {
       post: (request_options, callback) => {
         callback(null, null, JSON.stringify(mocked_callback));
       }
     });
-    */
 
     let merchant_provider_configuration = getValidMerchantProviderConfiguation();
 
