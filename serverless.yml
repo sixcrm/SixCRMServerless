@@ -105,49 +105,49 @@ functions:
 # Relays (forwardmessage)
 
   billtohold:
-    handler: handlers/workers/forwardmessage/billtohold/handler
+    handler: handlers/workers/forwardmessage/billtohold/handler.billtohold
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   recovertohold:
-    handler: handlers/workers/forwardmessage/recovertohold/handler
+    handler: handlers/workers/forwardmessage/recovertohold/handler.recovertohold
     events:
       - schedule:
           rate: cron(0 1 ? * FRI *)
           enabled: true
 
   holdtopending:
-    handler: handlers/workers/forwardmessage/holdtopending/handler
+    handler: handlers/workers/forwardmessage/holdtopending/handler.holdtopending
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   pendingfailedtopending:
-    handler: handlers/workers/forwardmessage/pendingfailedtopending/handler
+    handler: handlers/workers/forwardmessage/pendingfailedtopending/handler.pendingfailedtopending
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
 
   pendingtoshipped:
-    handler: handlers/workers/forwardmessage/pendingtoshipped/handler
+    handler: handlers/workers/forwardmessage/pendingtoshipped/handler.pendingtoshipped
     events:
       - schedule:
         rate: rate(1 minute)
         enabled: true
 
   shippedtodelivered:
-    handler: handlers/workers/forwardmessage/shippedtodelivered/handler
+    handler: handlers/workers/forwardmessage/shippedtodelivered/handler.shippedtodelivered
     events:
       - schedule:
         rate: rate(1 minute)
         enabled: true
 
   deliveredtoarchive:
-    handler: handlers/workers/forwardmessage/deliveredtoarchive/handler
+    handler: handlers/workers/forwardmessage/deliveredtoarchive/handler.deliveredtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -156,7 +156,7 @@ functions:
       archivefilter: 'all'
 
   holdtoarchive:
-    handler: handlers/workers/forwardmessage/holdtoarchive/handler
+    handler: handlers/workers/forwardmessage/holdtoarchive/handler.holdtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -165,7 +165,7 @@ functions:
       archivefilter: 'noship'
 
   rebilltoarchive:
-    handler: handlers/workers/forwardmessage/rebilltoarchive/handler
+    handler: handlers/workers/forwardmessage/rebilltoarchive/handler.rebilltoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -174,7 +174,7 @@ functions:
       archivefilter: 'all'
 
   recovertoarchive:
-    handler: handlers/workers/forwardmessage/recovertoarchive/handler
+    handler: handlers/workers/forwardmessage/recovertoarchive/handler.recovertoarchive
     events:
       - schedule:
           rate: rate(6 hours)
@@ -183,7 +183,7 @@ functions:
       archivefilter: 'twoattempts'
 
   indextoarchive:
-    handler: handlers/workers/forwardmessage/indextoarchive/handler
+    handler: handlers/workers/forwardmessage/indextoarchive/handler.indextoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -192,7 +192,7 @@ functions:
       archivefilter: 'all'
 
   sendnotificationstoarchive:
-    handler: handlers/workers/forwardmessage/sendnotificationstoarchive/handler
+    handler: handlers/workers/forwardmessage/sendnotificationstoarchive/handler.sendnotificationstoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -201,7 +201,7 @@ functions:
       archivefilter: 'all'
 
   pickrebillstobill:
-    handler: handlers/workers/forwardmessage/pickrebillstobill/handler
+    handler: handlers/workers/forwardmessage/pickrebillstobill/handler.pickrebillstobill
     events:
       - schedule:
           rate: rate(10 minutes)

@@ -12,19 +12,19 @@ module.exports = class PickRebillsToBillController extends forwardRebillMessageC
 
       super();
 
-      this.parameters.set('params', {
-        name: 'pickrebillstobill',
-        destination_queue: 'bill',
-        workerfunction: 'pickRebills.js'
-      });
-
       this.updateParameters();
+
+      this.parameters.set('params', {
+          name: 'pickrebillstobill',
+          destination_queue: 'bill',
+          workerfunction: 'pickRebills.js'
+      });
 
       const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
       this.rebillHelperController = new RebillHelperController();
 
-      this.message_acquisition_function = this.rebillHelperController.getAvailableRebillsAsMessages;
+      this.message_acquisition_function = this.rebillHelperController.getAvailableRebillsAsMessages.bind(this.rebillHelperController);
 
     }
 

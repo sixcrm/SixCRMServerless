@@ -1762,6 +1762,35 @@ describe('controllers/providers/Register.js', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
+        let fake = class Reverse {
+
+            constructor(){
+
+            }
+
+            reverse(){
+
+                return Promise.resolve({
+                    code: 'error',
+                    result:
+                        { response: '3',
+                            responsetext: 'Reverse amount may not exceed the transaction balance REFID:3220888806',
+                            authcode: '',
+                            transactionid: '',
+                            avsresponse: '',
+                            cvvresponse: '',
+                            orderid: '',
+                            type: 'refund',
+                            response_code: '300' },
+                    message: 'Reverse amount may not exceed the transaction balance REFID:3220888806'
+                });
+
+            }
+
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Reverse.js'), fake);
+
         PermissionTestGenerators.givenUserWithAllowed('*', '*');
 
         let valid_transaction = getValidTransactionObject();
@@ -1865,6 +1894,35 @@ describe('controllers/providers/Register.js', () => {
         }
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+        let fake = class Refund {
+
+            constructor(){
+
+            }
+
+            refund(){
+
+                return Promise.resolve({
+                    code: 'error',
+                    result:
+                        { response: '3',
+                            responsetext: 'Refund amount may not exceed the transaction balance REFID:3220888806',
+                            authcode: '',
+                            transactionid: '',
+                            avsresponse: '',
+                            cvvresponse: '',
+                            orderid: '',
+                            type: 'refund',
+                            response_code: '300' },
+                    message: 'Refund amount may not exceed the transaction balance REFID:3220888806'
+                });
+
+            }
+
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Refund.js'), fake);
 
         PermissionTestGenerators.givenUserWithAllowed('*', '*');
 
