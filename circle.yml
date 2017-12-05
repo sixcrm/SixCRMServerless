@@ -231,6 +231,7 @@ deployment:
 
       ###########
       #IAM roles
+      - node ./deployment/iam/destroy_roles.js
       - node ./deployment/iam/deploy_roles.js
       ###########
 
