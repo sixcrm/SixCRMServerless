@@ -239,7 +239,7 @@ class rebillController extends entityController {
               pagination.limit = limit;
             }
 
-            this.scanByParameters({query_parameters: query_parameters, pagination: pagination})
+            this.scanByParameters({parameters: query_parameters, pagination: pagination})
             .then((data) => {
               //Technical Debt:  This is probably broken
               du.warning(`
