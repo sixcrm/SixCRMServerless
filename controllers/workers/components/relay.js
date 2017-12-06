@@ -126,19 +126,7 @@ module.exports = class RelayController {
 
       du.debug('Push Message To Queue');
 
-      return new Promise((resolve, reject) => {
-
-        this.sqsutilities.sendMessage({message_body: body, queue: queue}, (error, data) => {
-
-          if(_.isError(error)){
-            return reject(error);
-          }
-
-          return resolve(null);
-
-        });
-
-      });
+      return this.sqsutilities.sendMessage({message_body: body, queue: queue});
 
     }
 
