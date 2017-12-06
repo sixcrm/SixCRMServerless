@@ -38,7 +38,7 @@ describe('controllers/Notification.js', () => {
                   })
                 },
                 queryRecords: (table, parameters, index) => {
-                    return Promise.resolve({ Items: [], Count: 2})
+                    return Promise.resolve({ Count: 2})
                 },
                 saveRecord: (table, item) => {
                     return Promise.resolve({});
