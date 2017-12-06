@@ -1327,7 +1327,7 @@ describe('updateRebillState', () => {
       })
   });
 
-  xit('updates rebill state and history when rebill has more items in history', () => {
+  it('updates rebill state and history when rebill has more items in history', () => {
     mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
       update: ({entity}) => {
         return Promise.resolve(entity);
@@ -1341,25 +1341,28 @@ describe('updateRebillState', () => {
     const rebillHelper = new RebillHelper();
     const rebill = getValidRebill();
 
-    rebill.state = 'pending';
+    rebill.state = 'search_indexing';
     rebill.previous_state = 'hold';
     rebill.state_changed_at = '2017-11-12T07:03:35.571Z';
     rebill.history =  [
       {state: 'hold', entered_at: '2017-11-12T06:03:35.571Z', exited_at: '2017-11-12T07:03:35.571Z'},
-      {state: 'pending', entered_at: '2017-11-12T07:03:35.571Z'},
+      {state: 'search_indexing', entered_at: '2017-11-12T07:03:35.571Z'}
     ];
 
-    return rebillHelper.updateRebillState({rebill: rebill, new_state: 'pending', previous_state: 'hold', error_message: 'errorMessage'})
+    return rebillHelper.updateRebillState({rebill: rebill, new_state: 'pending', previous_state: 'search_indexing', error_message: 'errorMessage'})
       .then((rebill) => {
-        expect(rebill.previous_state).to.equal('hold');
+        expect(rebill.previous_state).to.equal('search_indexing');
         expect(rebill.state).to.equal('pending');
         expect(rebill.history.length).to.equal(3);
+
         expect(rebill.history[0].state).to.equal('hold');
         expect(rebill.history[0].entered_at).to.equal('2017-11-12T06:03:35.571Z');
         expect(rebill.history[0].exited_at).to.equal('2017-11-12T07:03:35.571Z');
-        expect(rebill.history[1].state).to.equal('hold');
+
+        expect(rebill.history[1].state).to.equal('search_indexing');
         expect(rebill.history[1].entered_at).to.equal('2017-11-12T07:03:35.571Z');
         expect(rebill.history[1].exited_at).to.equal(rebill.state_changed_at);
+
         expect(rebill.history[2].state).to.equal('pending');
         expect(rebill.history[2].entered_at).to.equal(rebill.state_changed_at);
         expect(rebill.history[2].exited_at).to.equal(undefined);

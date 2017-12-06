@@ -3,6 +3,43 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
+function getValidNotificationSettings(){
+
+    return {
+        settings:
+            {
+                notification_groups: [{
+                    notifications: [{
+                        default: 'any_default',
+                        key: 'a_type_of_notification'
+                    }]
+                }]
+            }
+    }
+}
+function getValidUserSettings(){
+
+    return {
+        notifications: [{
+                "name": "six",
+                "receive": true
+            },
+            {
+                "name": "email",
+                "receive": true,
+                "data": "user@example.com"
+            },
+            {
+                "name": "sms",
+                "receive": false
+            },
+            {
+                "name": "slack",
+                "receive": false
+            }]
+    }
+}
+
 describe('lib/notification-provider', () => {
 
     before(() => {
@@ -10,6 +47,38 @@ describe('lib/notification-provider', () => {
             useCleanCache: true,
             warnOnReplace: false,
             warnOnUnregistered: false
+        });
+    });
+
+    beforeEach(() => {
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/NotificationSetting'), {
+            get: ({id: user}) => {
+                expect(user).to.be.defined;
+
+                let notification_settings = getValidNotificationSettings();
+
+                notification_settings.settings = JSON.stringify(notification_settings.settings);
+                return Promise.resolve(notification_settings);
+            },
+            getDefaultProfile: () => {
+                return Promise.resolve('a_default_profile');
+            }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserSetting'), {
+            get: ({id: user}) => {
+                expect(user).to.be.defined;
+                return Promise.resolve(getValidUserSettings());
+            }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers','providers/notification/email-notification-provider'), {
+            sendNotificationViaEmail: (notification_object, email_address) => {
+                expect(email_address).to.equal('user@example.com');
+                expect(notification_object.type).to.equal('alert');
+                return Promise.resolve('successfully sent');
+            }
         });
     });
 
@@ -117,11 +186,11 @@ describe('lib/notification-provider', () => {
     describe('createNotificationsForAccount', () => {
         let valid_object = {
             account: '*',
-            type: 'any',
-            category: 'any',
-            action: 'any',
-            title: 'any',
-            body: 'any'
+            type: 'any_type',
+            category: 'any_category',
+            action: 'any_action',
+            title: 'any_title',
+            body: 'any_body'
         };
 
         it('should not create notifications when the account is not defined', () => {
@@ -145,26 +214,39 @@ describe('lib/notification-provider', () => {
             }
         });
 
-        xit('should create notifications when the object is valid', (done) => {
+        it('should create notifications when the object is valid', () => {
             // given
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
-                create: (notification_object) => {
-                    expect(notification_object).to.be.defined;
-                    expect(notification_object.user).to.equal('user@example.com');
-                    done();
+            let notification = {
+                type: 'alert'
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL'), {
+                queryBySecondaryIndex: () => {
+                    return Promise.resolve({
+                        useracls: [{
+                            user: 'user@example.com'
+                        }]
+                    });
                 }
             });
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
-                queryBySecondaryIndex: () => {
-                    return Promise.resolve([{
-                        user: 'user@example.com'
-                    }]);
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification'), {
+                create: ({entity: notification_object}) => {
+                    expect(notification_object).to.be.defined;
+                    expect(notification_object.user).to.equal('user@example.com');
+                    expect(notification_object.account).to.equal(valid_object.account);
+                    expect(notification_object.type).to.equal(valid_object.type);
+                    expect(notification_object.category).to.equal(valid_object.category);
+                    expect(notification_object.action).to.equal(valid_object.action);
+                    expect(notification_object.title).to.equal(valid_object.title);
+                    expect(notification_object.body).to.equal(valid_object.body);
+                    return Promise.resolve(notification);
                 }
             });
             let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
 
-            NotificationProvider.createNotificationsForAccount(valid_object).catch((error) => {
-                done(error);
+            return NotificationProvider.createNotificationsForAccount(valid_object).then((result) => {
+                expect(result).to.deep.equal([notification]);
             });
         });
 
@@ -174,11 +256,11 @@ describe('lib/notification-provider', () => {
         let valid_object = {
             account: '*',
             user: 'user@example.com',
-            type: 'any',
-            category: 'any',
-            action: 'any',
-            title: 'any',
-            body: 'any'
+            type: 'any_type',
+            category: 'any_category',
+            action: 'any_action',
+            title: 'any_title',
+            body: 'any_body'
         };
 
         it('should not create notifications when the user is not defined', () => {
@@ -202,10 +284,14 @@ describe('lib/notification-provider', () => {
             }
         });
 
-        xit('should create notification when the object is valid', (done) => {
+        it('should create notification when the object is valid', () => {
             // given
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
-                create: (notification_object) => {
+            let notification = {
+                type: 'alert'
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification'), {
+                create: ({entity: notification_object}) => {
                     expect(notification_object).to.be.defined;
                     expect(notification_object.id).to.be.defined;
                     expect(notification_object.user).to.equal(valid_object.user);
@@ -213,14 +299,17 @@ describe('lib/notification-provider', () => {
                     expect(notification_object.type).to.equal(valid_object.type);
                     expect(notification_object.category).to.equal(valid_object.category);
                     expect(notification_object.action).to.equal(valid_object.action);
+                    expect(notification_object.title).to.equal(valid_object.title);
                     expect(notification_object.body).to.equal(valid_object.body);
-                    done();
+                    return Promise.resolve(notification);
                 }
             });
 
             let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
 
-            NotificationProvider.createNotificationForAccountAndUser(valid_object);
+            return NotificationProvider.createNotificationForAccountAndUser(valid_object).then((result) => {
+                expect(result).to.deep.equal(notification);
+            });
         });
 
     });

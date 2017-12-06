@@ -59,26 +59,27 @@ describe('lib/notification-provider', () => {
             }
         });
 
-        xit('should attempt to send a message when the object is valid', (done) => {
+        it('should attempt to send a message when the object is valid', () => {
             // given
             let email_address = 'user@test.com';
-            let recepient_name = 'Big Feller'
+            let recepient_name = 'Big Feller';
 
-            //Technical Debt:  This should probably mock the SystemMailer
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-                send: (message) => {
-                  expect(message).to.be.defined;
-                  done();
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), {
+                sendEmail: (email) => {
+                    expect(email).to.be.defined;
+                    expect(email.recepient_emails).to.deep.equal([email_address]);
+                    expect(email.recepient_name).to.equal(recepient_name);
+                    expect(email.subject).to.equal(valid_notification_object.title);
+                    expect(email.body).to.contain(valid_notification_object.body);
+                    return true;
                 }
             });
 
             let EmailNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/email-notification-provider.js');
 
-            EmailNotificationProvider.sendNotificationViaEmail(valid_notification_object, email_address, recepient_name)
-                .catch((error) => {
-                    console.log(error.message);
-                    done(error.message);
-                });
+            return EmailNotificationProvider.sendNotificationViaEmail(valid_notification_object, email_address, recepient_name).then((result) => {
+                expect(result).to.equal(true);
+            });
         });
 
     });
