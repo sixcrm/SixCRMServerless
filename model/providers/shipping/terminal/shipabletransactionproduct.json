@@ -1,0 +1,29 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/augmentedtransactionproduct.json",
+	"title": "Augmented Transaction Product",
+	"allOf":[
+		{"$ref": "../../../entities/components/transactionproduct.json"},
+		{
+			"type":"object",
+			"properties":{
+				"transaction":{"$ref":"../../../entities/transaction.json"}
+			},
+			"required":["transaction"]
+		},
+		{
+			"type":"object",
+			"properties":{
+				"no_ship":{
+					"not":{
+						"type":"boolean",
+						"enum":[true]
+					}
+				},
+				"shipping_receipt":{
+					"not":{"$ref":"../../../definitions/uuidv4.json"}
+				}
+			}
+		}
+	]
+}

@@ -6,7 +6,12 @@
 	"description": "A connection between transaction and a product",
 	"properties": {
 		"product":{"$ref": "../../definitions/uuidv4.json"},
-		"amount":{"$ref": "../../definitions/currency.json"}
+		"amount":{"$ref": "../../definitions/currency.json"},
+		"shipping_receipt":{"$ref": "../../definitions/uuidv4.json"},
+		"no_ship":{
+			"type":"boolean",
+			"enum":[true]
+		}
 	},
 	"required":["product", "amount"]
 }

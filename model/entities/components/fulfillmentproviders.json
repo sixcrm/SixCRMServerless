@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/fulfillmentproviders",
+	"title": "Fulfillment Providers",
+	"description": "A array of fulfillment providers",
+	"type":"array",
+	"items":{"$ref":"../fulfillmentprovider.json"}
+}
