@@ -18,6 +18,9 @@
     "Bucket": "kinesis-queue"
   },
   {
+    "Bucket": "kinesis-rebills"
+  },
+  {
     "Bucket": "manual-upload"
   },
   {
