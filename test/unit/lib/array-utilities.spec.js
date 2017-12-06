@@ -4,6 +4,11 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 describe('lib/array-utilities', () => {
 
+  it('flatten', () => {
+    expect(arrayutilities.flatten(['a', ['b','c']])).to.deep.equal(['a','b','c']);
+    expect(arrayutilities.flatten(['a', ['b','c',['d','e']]])).to.deep.equal(['a','b','c','d','e']);
+  });
+
     it('isArray', () => {
         expect(arrayutilities.isArray([])).to.be.true;
         expect(arrayutilities.isArray(['1', '2'])).to.be.true;

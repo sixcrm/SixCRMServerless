@@ -1,0 +1,15 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/augmentedtransactionproduct.json",
+	"title": "Augmented Transaction Product",
+	"allOf":[
+		{"$ref": "../../../entities/components/transactionproduct.json"},
+		{
+			"type":"object",
+			"properties":{
+				"transaction":{"$ref":"../../../entities/transaction.json"}
+			},
+			"required":["transaction"]
+		}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/shipabletransactionproductgroup.json",
+	"title": "Shipable Transaction Product Group",
+	"type":"array",
+	"items": {"$ref": "./shipabletransactionproduct.json"}
+}

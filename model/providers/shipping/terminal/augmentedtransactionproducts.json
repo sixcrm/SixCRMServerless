@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/augmentedtransactionproducts.json",
+	"title": "Augmented Transaction Products",
+	"type":"array",
+	"items": {"$ref": "./augmentedtransactionproduct.json"}
+}

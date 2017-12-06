@@ -1,0 +1,10 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/groupedshipabletransactionproducts.json",
+	"title": "Grouped Shipable Transaction Products",
+	"type":"object",
+	"patternProperties": {
+    "^.*$": {"$ref": "./augmentedtransactionproducts.json"}
+  },
+  "additionalProperties": false
+}
