@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
 const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js');
 
@@ -960,9 +961,8 @@ class userController extends entityController {
 
   can({account, object, action, id, fatal}){
 
-    if (action === 'update' && global.user.id === id) {
+    if (action === 'update' && objectutilities.hasRecursive(global, 'user.id') && global.user.id === id) {
       du.debug('User updating himself', global.user.id);
-
       return Promise.resolve(true);
     }
 

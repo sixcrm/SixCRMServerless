@@ -1,19 +1,32 @@
 'use strict';
-const SoapUtilities = global.SixCRM.routes.include('lib', 'soap-utilities.js');
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider');
 
 class HashtagController extends fulfillmentProviderController {
 
-    constructor(){
+  constructor({fulfillment_provider}){
 
-        super();
+    super(arguments[0]);
 
-        // Technical Debt: Read this from config.
-        this.wsdl = 'https://secure-wms.com/webserviceexternal/contracts.asmx?wsdl';
-        this.soap = new SoapUtilities({wsdl: this.wsdl});
-    }
+    this.parameter_validation = {
+
+    };
+
+    this.parameter_definition = {
+
+    };
+
+    // Technical Debt: Read this from config.
+    this.wsdl = 'https://secure-wms.com/webserviceexternal/contracts.asmx?wsdl';
+
+    const SoapUtilities = global.SixCRM.routes.include('lib', 'soap-utilities.js');
+    this.soaputilities = new SoapUtilities({wsdl: this.wsdl});
+
+  }
+
+  fulfill()
 
     triggerFulfillment(){
 
@@ -28,7 +41,7 @@ class HashtagController extends fulfillmentProviderController {
 
         du.debug('Test connection.');
 
-        return this.soap.executeMethod({
+        return this.soaputilities.executeMethod({
             name: 'FindOrders',
             parameters: {
                 ThreePLID: threepl_id,

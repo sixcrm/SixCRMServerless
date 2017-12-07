@@ -37,7 +37,7 @@ describe('controllers/vendors/fulfillmentprovider/FulfillmentTrigger', function 
         mockery.deregisterAll();
     });
 
-    describe('getControllerInstance', () => {
+    xdescribe('getControllerInstance', () => {
 
         it('returns hashtag when needed', () => {
 
@@ -68,7 +68,7 @@ describe('controllers/vendors/fulfillmentprovider/FulfillmentTrigger', function 
 
     });
 
-    describe('validateProvider', () => {
+    xdescribe('validateProvider', () => {
 
         it('calls the `testConnection` method from provider', () => {
 
@@ -96,7 +96,7 @@ describe('controllers/vendors/fulfillmentprovider/FulfillmentTrigger', function 
 
     });
 
-    describe('executeFulfillment', () => {
+    xdescribe('executeFulfillment', () => {
 
         it('calls the `triggerFulfillment` method from provider', () => {
 
@@ -160,7 +160,7 @@ describe('controllers/vendors/fulfillmentprovider/FulfillmentTrigger', function 
 
     });
 
-    describe('triggerFulfillment', () => {
+    xdescribe('triggerFulfillment', () => {
 
         it('hydrates the provider and calls the `triggerFulfillment`', () => {
 

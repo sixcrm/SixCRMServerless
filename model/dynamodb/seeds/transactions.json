@@ -11,6 +11,8 @@
         "product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
         "amount":34.99
       }],
+      "type":"sale",
+      "result":"success",
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"
     },
@@ -27,6 +29,8 @@
         "product":"616cc994-9480-4640-b26c-03810a679fe3",
         "amount":4.99
       }],
+      "type":"sale",
+      "result":"success",
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"
     },
@@ -43,6 +47,8 @@
         "product":"8a8a5e96-60df-4551-8eb2-1b77c769e5fb",
         "amount":124.99
       }],
+      "type":"sale",
+      "result":"success",
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"
     },
@@ -59,6 +65,8 @@
         "product":"d29950cc-1a4d-4e6e-90a5-c7fdf24b95ac",
         "amount":139.99
       }],
+      "type":"sale",
+      "result":"success",
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"
     }

@@ -97,7 +97,7 @@ describe('Transaction Round Trip Test',() => {
             "billing":{
               "line1":"10 Downing St.",
               "city":"Detroit",
-              "state":"Michigan",
+              "state":"MI",
               "zip":"12345",
               "country":"US"
             },

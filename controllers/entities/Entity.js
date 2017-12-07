@@ -222,6 +222,8 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Technical Debt: getList
+
     //NOTE:  Cheap!  Complete!
     listByAccount({query_parameters, account, pagination, reverse_order, fatal, search}){
 

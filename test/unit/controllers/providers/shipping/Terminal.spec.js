@@ -610,32 +610,6 @@ describe('controllers/workers/shipProduct', function () {
 
   });
 
-  describe('hydrateFulfillmentProviders', () => {
-
-    it('successfully hydrates fulfillment providers', () => {
-
-      let products = getValidProducts();
-      let fulfillment_providers = getValidFulfillmentProviders();
-
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        list:({list}) => {
-          return Promise.resolve(fulfillment_providers);
-        }
-      });
-
-      let terminalController = new TerminalController();
-
-      terminalController.parameters.set('products', products);
-
-      return terminalController.hydrateFulfillmentProviders().then(result => {
-        expect(result).to.equal(true);
-        expect(terminalController.parameters.store['fulfillmentproviders'], fulfillment_providers);
-      });
-
-    });
-
-  });
-
   /*
   hydrateFulfillmentProviders(){
 

@@ -7,6 +7,8 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
+const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
+const TerminalResponse = global.SixCRM.routes.include('providers', 'shipping/Response.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class TerminalController extends PermissionedController  {
@@ -21,6 +23,15 @@ module.exports = class TerminalController extends PermissionedController  {
           rebill: 'rebill'
         },
         optional:{}
+      },
+      fulfill:{
+        required: {
+          selecedfulfillmentproviderid:'fulfillment_provider_id',
+          selectedaugmentedtransactionproducts:'augmented_transaction_products'
+        },
+        optional:{
+
+        }
       }
     };
 
@@ -33,6 +44,9 @@ module.exports = class TerminalController extends PermissionedController  {
       shipabletransactionproductgroup: global.SixCRM.routes.path('model', 'providers/shipping/terminal/shipabletransactionproductgroup.json'),
       groupedshipabletransactionproducts: global.SixCRM.routes.path('model', 'providers/shipping/terminal/groupedshipabletransactionproducts.json'),
       fulfillmentproviders: global.SixCRM.routes.path('model', 'entities/components/fulfillmentproviders.json'),
+      selectedfulfillmentproviderid: global.SixCRM.routes.path('model', 'definitions/uuidv4.json'),
+      selectedfulfillmentprovider: global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
+      instantiatedfulfillmentprovider: global.SixCRM.routes.path('model', 'providers/shipping/terminal/instantiatedfulfillmentprovider.json')
     };
 
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -61,9 +75,7 @@ module.exports = class TerminalController extends PermissionedController  {
     .then(() => this.createShipableTransactionProductGroup())
     .then(() => this.groupShipableTransactionProductGroupByFulfillmentProvider())
     .then(() => this.hydrateFulfillmentProviders())
-    //here...
-    .then(() => this.ship())
-    .then(() => this.updateTransactions())
+    .then(() => this.executeFulfillment())
     .then(() => this.respond());
 
   }
@@ -183,8 +195,6 @@ module.exports = class TerminalController extends PermissionedController  {
 
     });
 
-
-
     this.parameters.set('shipabletransactionproductgroup', shipable_transaction_product_group);
 
     return true;
@@ -218,40 +228,23 @@ module.exports = class TerminalController extends PermissionedController  {
 
   }
 
-  hydrateFulfillmentProviders(){
+  //Tested To Here...
+  executeFulfillment(){
 
-    du.debug('Hydrate Fulfilment Providers');
+    du.debug('Execute Fulfillment');
 
-    let products = this.parameters.get('products');
-
-    let fulfillment_provider_ids = arrayutilities.map(products, product => product.fulfillment_provider);
-
-    fulfillment_provider_ids = arrayutilities.unique(fulfillment_provider_ids);
-
-    return this.fulfillmentProviderController.list(fulfillment_provider_ids).then(fulfillment_providers => {
-
-      this.parameters.set('fulfillmentproviders', fulfillment_providers);
-
-      return true;
-
-    });
-
-  }
-
-  ship(){
-
-    du.debug('Ship');
-
+    let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
     let grouped_shipable_transaction_products = this.parameters.get('groupedshipabletransactionproducts');
 
     let fulfillment_promises = objectutilities.map(grouped_shipable_transaction_products, fulfillment_provider => {
 
-      let fulfillmentProviderClass = this.instantiateFulfillmentProviderClass(fulfillment_provider);
+      let fulfillmentController = new FulfillmentController();
 
-      return fulfillmentProviderClass.fulfill(grouped_shipable_transaction_products[fulfillment_provider]);
+      return fulfillmentController.execute({fulfillment_provider_id: fulfillment_provider_id, augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider_id]});
 
     });
 
+    //Technical Debt:  These need to execute serially
     return Promise.all(fulfillment_promises).then(fulfillment_promises => {
 
       this.parameters.set('fulfillmentresponses', fulfillment_promises);
@@ -262,199 +255,44 @@ module.exports = class TerminalController extends PermissionedController  {
 
   }
 
-  /*
-  hydrateRebillProperties(){
+  transformFulfillmentResponse(){
 
-    du.debug('Hydrate Rebill Properties');
+    du.debug('Transform Fulfillment Response');
 
-    let rebill = this.parameters.get('rebill');
+    let fulfillment_responses = this.parameters.get('fulfillmentresponses');
 
-    return this.rebillController.listTransactions(rebill).then((transactions) => {
-      this.parameters.set('transactions', transactions);
-      return true;
-    });
+    let response = 'fail';
 
-  }
+    let is_success = arrayutilities.every(fulfillment_responses, fulfillment_response => (fulfillment_response.getCode() == 'success'));
 
-  processTransactions(){
-
-    du.debug('Process Transactions');
-
-    let transactions = this.parameters.get('transactions');
-
-    let transaction_processing_promises = arrayutilities.map(transactions, (transaction) => {
-
-      return this.processTransaction(transaction);
-
-    });
-
-    return Promise.all(transaction_processing_promises).then(transaction_processing_promises => {
-
-      let response = 'success';
-
-      arrayutilities.map(transaction_processing_promises,(processed_transaction) => {
-        if(processed_transaction.getCode() != 'success'){
-          response = processed_transaction;
-        }
-      });
-
-      return response;
-
-    });
-
-  }
-
-  processTransaction(transaction){
-
-    du.debug('Process Transaction');
-
-    let transaction_products = this.transactionHelperController.getTransactionProducts([transaction]);
-
-    let fulfillment_promises = arrayutilities.map(transaction_products, transaction_product => {
-      if(this.shouldShip(transaction_product)){
-        return this.executeFulfillment(transaction_product, transaction);
-      }
-    });
-
-    fulfillment_promises = arrayutilities.filter(fulfillment_promises, fulfillment_promise => {
-      return (!_.isNull(fulfillment_promise));
-    });
-
-    if(fulfillment_triggers.length > 0){
-
-      return Promise.all(fulfillment_promises).then((fulfillment_promises) => {
-
-      });
-
+    if(is_success){
+      response = 'success'
     }
 
-    return Promise.all(fulfillment_promises)
-    .then((fulfillment_promises) => {
+    let is_error = arrayutilities.find(fulfillment_responses, fulfillment_response => (fulfillment_response.getCode() == 'error'));
 
-      let all_shipped = arrayutilities.every(fulfillment_promises, fulfillment_promise => {
-        return (fullfillment_promise.getCode() == 'success');
-      });
+    if(is_error){
+      response = 'error';
+    }
 
-      if(all_shipped){
-        return 'success;'
-      }
+    this.parameters.set('responsecode', response);
 
-      return 'fail';
-
-    });
+    return true;
 
   }
 
+  respond(){
 
-  // Technical Debt: Unused fulfillment response. I assume it's to be used in the receipt.
-  issueShippingReceipt(fulfillment_response, transaction_product, transaction){
-      return new Promise((resolve, reject) => {
+    du.debug('Respond');
 
-          var promises = []
+    let responsecode = this.parameters.get('responsecode');
 
-          promises.push(transactionController.get({id: transaction.id}));
-          promises.push(shippingReceiptController.create({entity: shippingReceiptController.createShippingReceiptObject({status:'pending'})}));
+    let response_prototype = {}
 
-          Promise.all(promises).then((promises) => {
+    let terminal_response = new TerminalResponse(response_prototype);
 
-              var raw_transaction = promises[0];
-              var new_shipping_receipt = promises[1];
-
-              var found = false;
-
-              for(var i=0; i< raw_transaction.products.length; i++){
-
-                  if(!_.has(raw_transaction.products[i], 'shippingreceipt')){
-
-                      if(raw_transaction.products[i].product == transaction_product.product.id && raw_transaction.products[i].amount == transaction_product.amount){
-
-                          found = true;
-
-                          raw_transaction.products[i].shippingreceipt = new_shipping_receipt.id;
-
-                          return transactionController.update({entity: raw_transaction}).then((updated_transaction) => {
-
-                              return updated_transaction
-
-                          });
-
-                      }
-
-                  }
-
-              }
-
-              if(found == false){
-                  eu.throwError('not_found','Unable to re-acquire transaction');
-              }
-
-          }).then((updated_transaction) => {
-              resolve(updated_transaction);
-          }).catch((error) => {
-              reject(error);
-          });
-
-      });
+    return Promise.resolve(terminal_response);
 
   }
-
-  executeFulfillment(transaction_product, transaction){
-
-      return new Promise((resolve, reject) => {
-
-          if(this.shouldShip(transaction_product)){
-
-              if(!_.has(transaction_product, 'shippingreceipt')){
-
-                  fulfillmentTriggerController.triggerFulfillment(transaction_product).then((fulfillment_response) => {
-
-                      switch(fulfillment_response){
-
-                      case this.messages.notified:
-
-                          this.issueShippingReceipt(fulfillment_response, transaction_product, transaction).then(() => {
-
-                              resolve(this.messages.notified);
-
-                          });
-
-                          break;
-
-                      case this.messages.failed:
-
-                          resolve(this.messages.failed);
-                          break;
-
-                      default:
-
-                          resolve(fulfillment_response);
-                          break;
-
-                      }
-
-                  });
-
-              }else{
-
-                  resolve(this.messages.notified);
-
-              }
-
-          }else{
-
-              resolve(this.messages.noship);
-
-          }
-
-      });
-
-  }
-
-  shouldShip(transaction_product) {
-
-    return transaction_product.product.ship === 'true' || transaction_product.product.ship === true;
-
-  }
-  */
 
 }

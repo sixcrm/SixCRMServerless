@@ -5,8 +5,9 @@
   "type":"string",
   "anyOf":[
     {"$ref": "uuidv4.json"},
-    {"type":"string","enum":["*"]},
-    {"type":"string","format":"email"}
+    {"type": "string","enum":["*"]},
+    {"type": "string","format":"email"},
+    {"$ref": "devicetoken.json"}
   ]
 
 }

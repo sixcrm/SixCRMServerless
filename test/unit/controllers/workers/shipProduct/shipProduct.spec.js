@@ -90,13 +90,14 @@ describe('controllers/workers/shipProduct', function () {
     it('successfully executes a rebill ship via shipping terminal', () => {
 
       let rebill = getValidRebill();
+      let terminal_response = getValidTerminalResponse();
 
       let terminal_mock = class Terminal {
         constructor(){
 
         }
         shipRebill({rebill}){
-          return Promise.resolve(getValidTerminalResponse());
+          return Promise.resolve(terminal_response);
         }
       }
 
@@ -108,7 +109,7 @@ describe('controllers/workers/shipProduct', function () {
 
       return shipProductController.ship().then(result => {
         expect(result).to.equal(true);
-        expect(shipProductController.parameters.store['terminalresponsecode']).to.equal('success');
+        expect(shipProductController.parameters.store['terminalresponse']).to.equal(terminal_response);
       });
 
     });
@@ -119,11 +120,11 @@ describe('controllers/workers/shipProduct', function () {
 
     it('successfully responds', () => {
 
-      let terminal_response_code = 'success';
+      let terminal_response = getValidTerminalResponse();
 
       let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
-      shipProductController.parameters.set('terminalresponsecode', terminal_response_code);
+      shipProductController.parameters.set('terminalresponse', terminal_response);
 
       let response = shipProductController.respond();
 
@@ -139,6 +140,7 @@ describe('controllers/workers/shipProduct', function () {
     it('successfully executes', () => {
 
       let rebill = getValidRebill();
+      let terminal_response = getValidTerminalResponse();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         get:({id}) => {
@@ -151,7 +153,7 @@ describe('controllers/workers/shipProduct', function () {
 
         }
         shipRebill({rebill}){
-          return Promise.resolve(getValidTerminalResponse());
+          return Promise.resolve(terminal_response);
         }
       }
 
@@ -163,7 +165,7 @@ describe('controllers/workers/shipProduct', function () {
 
       return shipProductController.execute(message).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-        expect(shipProductController.parameters.store['terminalresponsecode']).to.equal('success');
+        expect(shipProductController.parameters.store['terminalresponse']).to.equal(terminal_response);
         expect(result.getCode()).to.equal('success');
       });
 

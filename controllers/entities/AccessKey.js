@@ -1,4 +1,5 @@
 'use strict';
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -15,8 +16,14 @@ class accessKeyController extends entityController {
 
       const accesskey_helper = global.SixCRM.routes.include('helpers', 'accesskey/AccessKey.js');
 
-      entity.access_key = accesskey_helper.generateAccessKey();
-      entity.secret_key = accesskey_helper.generateSecretKey();
+      //Note:  This caused issues with seeding...
+      if(!_.has(entity, 'access_key')){
+        entity.access_key = accesskey_helper.generateAccessKey();
+      }
+
+      if(!_.has(entity, 'secret_key')){
+        entity.secret_key = accesskey_helper.generateSecretKey();
+      }
 
       return super.create({entity: entity});
 
