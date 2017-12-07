@@ -262,11 +262,11 @@ describe('controllers/workers/components/relay.js', function () {
       let relayController = new RelayController();
 
         relayController.sqsutilities = {
-            sendMessage: function({message_body: body, queue: queue}, callback) {
+            sendMessage: function({message_body: body, queue: queue}) {
                 expect(body).to.deep.equal(params.body);
                 expect(queue).to.equal(params.queue);
 
-                callback(null, 'success');
+                return Promise.resolve(null);
             }
         };
 
@@ -280,10 +280,11 @@ describe('controllers/workers/components/relay.js', function () {
       let relayController = new RelayController();
 
         relayController.sqsutilities = {
-            sendMessage: function({message_body: body, queue: queue}, callback) {
+            sendMessage: function({message_body: body, queue: queue}) {
                 expect(body).to.equal(undefined);
                 expect(queue).to.equal(undefined);
-                callback(new Error('fail'), null);
+
+                return Promise.reject(new Error('fail'));
             }
         };
 

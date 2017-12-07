@@ -1129,16 +1129,16 @@ describe('controllers/providers/Register.js', () => {
 
     });
 
-    xit('returns null when creation of transaction was unsuccessful', () => {
+    it('rejects when creation of transaction was unsuccessful', () => {
 
         assumePermissionedRole();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'dynamodb-utilities.js'), {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
           queryRecords: (table, parameters, index, callback) => {
             return Promise.resolve([]);
           },
           saveRecord: (tableName, entity, callback) => {
-            return new Error();
+            return Promise.reject(new Error('Saving failed.'));
           }
         });
 
@@ -1175,8 +1175,8 @@ describe('controllers/providers/Register.js', () => {
         processor_response.code = 'error';
         registerController.parameters.set('processorresponse', processor_response);
 
-        return registerController.issueReceipt().then(result => {
-          expect(result).to.equal(null);
+        return registerController.issueReceipt().catch((error) => {
+          expect(error.message).to.equal('Saving failed.');
         });
 
     });

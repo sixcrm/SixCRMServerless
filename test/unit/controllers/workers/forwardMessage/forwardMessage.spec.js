@@ -696,7 +696,7 @@ describe('workers/forwardMessage', () => {
     it('successfully forwards to correct failure queue', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+        sendMessage: ({message_body, queue}) => {
           let body = JSON.parse(validMessage.Body);
 
           body['referring_workerfunction'] = global.SixCRM.routes.path('workers', 'wf.js');
@@ -704,7 +704,7 @@ describe('workers/forwardMessage', () => {
           expect(queue).to.equal('some_queue');
           expect(message_body).to.equal(JSON.stringify(body));
 
-          return callback(null, true);
+          return Promise.resolve({});
         }
       });
 
@@ -785,10 +785,10 @@ describe('workers/forwardMessage', () => {
     it('successfully forwards to destination queue', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+        sendMessage: ({message_body, queue}) => {
           expect(queue).to.equal('some_success_queue');
           expect(message_body).to.equal(validMessage.Body);
-          return callback(null, true);
+          return Promise.resolve({});
         }
       });
 
@@ -869,7 +869,7 @@ describe('workers/forwardMessage', () => {
     it('successfully forwards to error queue', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+        sendMessage: ({message_body, queue}) => {
           let body = JSON.parse(validMessage.Body);
 
           body['referring_workerfunction'] = global.SixCRM.routes.path('workers', 'wf.js');
@@ -877,7 +877,7 @@ describe('workers/forwardMessage', () => {
           expect(queue).to.equal('some_error_queue');
           expect(message_body).to.equal(JSON.stringify(body));
 
-          return callback(null, true);
+          return Promise.resolve({});
         }
       });
 
