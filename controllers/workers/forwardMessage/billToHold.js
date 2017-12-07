@@ -11,7 +11,7 @@ module.exports = class BillToHoldForwardMessageController extends forwardRebillM
         name: 'billtohold',
         origin_queue: 'bill',
         destination_queue: 'hold',
-        failure_queue: 'bill_failed',
+        failure_queue: 'recover',
         workerfunction: 'processBilling.js',
         error_queue: 'some_queue'
       })
