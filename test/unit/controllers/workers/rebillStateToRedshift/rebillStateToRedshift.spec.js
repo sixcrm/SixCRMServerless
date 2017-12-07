@@ -52,7 +52,7 @@ function getInvalidRebillsDynamoResponse(count){
 
 }
 
-describe.only('controllers/workers/rebillStateToRedshift', () => {
+describe('controllers/workers/rebillStateToRedshift', () => {
 
   before(() => {
     mockery.enable({
