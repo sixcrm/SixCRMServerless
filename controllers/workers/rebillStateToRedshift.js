@@ -50,8 +50,10 @@ module.exports = class RebillStateToRedshiftController extends workerController 
         const changed_after = timestamp.getLastHourInISO8601();
         const changed_before = timestamp.getThisHourInISO8601();
 
-        return this.rebillController.listByState({state_changed_after: changed_after, state_changed_before: changed_before}).then((rebills) =>{
-            this.parameters.set('rebills', rebills);
+        return this.rebillController.listByState({state_changed_after: changed_after, state_changed_before: changed_before}).then((result) =>{
+            const rebills = result.rebills;
+
+            this.parameters.set('rebills', rebills || []);
 
             return Promise.resolve(true);
         })
@@ -60,6 +62,8 @@ module.exports = class RebillStateToRedshiftController extends workerController 
     pushToRedshift() {
 
         let transformedRebills = this.parameters.get('transformedrebills');
+
+        du.debug('Uploading Rebills to Kenesis, count:', transformedRebills.length);
 
         let promises = arrayutilities.map(transformedRebills, (rebill) => {
             return kinesisfirehoseutilities.putRecord('rebills', rebill);
