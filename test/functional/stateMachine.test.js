@@ -4,6 +4,8 @@ const SqSTestUtils = require('./sqs-test-utils');
 const TestUtils = require('./test-utils');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+
 
 describe.only('stateMachine', () => {
     let lambdas = [];
@@ -18,7 +20,7 @@ describe.only('stateMachine', () => {
         'holdtoarchive',
         'rebilltoarchive',
         'recovertoarchive',
-        // 'pickrebillstobill'
+        'pickrebillstobill'
     ];
 
     before((done) => {
@@ -34,9 +36,11 @@ describe.only('stateMachine', () => {
         TestUtils.setGlobalUser();
         TestUtils.setEnvironmentVariables();
         configureLambdas();
-        SqSTestUtils.purgeAllQueues().then(() => {
-            done();
-        });
+        SqSTestUtils.purgeAllQueues().then(() => done());
+    });
+
+    after((done) => {
+        SqSTestUtils.purgeAllQueues().then(() => done());
     });
 
     describe('Flush', () => {
@@ -53,46 +57,82 @@ describe.only('stateMachine', () => {
 
     describe('Moving messages', () => {
 
-        it('should move a message from bill to hold', () => {
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/processBilling.js'), {
-                execute: () => {
-                    const WorkerResponse = class {
-                        getCode() {
-                            return 'success';
-                        }
-                    };
-
-                    return Promise.resolve(new WorkerResponse());
-                }
-            });
-
+        beforeEach((done) => {
             let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+
             RebillHelperController.prototype.updateRebillState = () => {
                 return Promise.resolve();
             };
+            RebillHelperController.prototype.getAvailableRebillsAsMessages = () => {
+                return Promise.resolve([]);
+            };
 
-            return Promise.all([
-                SqSTestUtils.messageCountInQueue('bill'),
-                SqSTestUtils.messageCountInQueue('hold')])
-            .then((counts) => {
-                return expect(counts).to.deep.equal([0,0])})
-            .then(() => {
-                return SqSTestUtils.sendMessageToQueue('bill', JSON.stringify(getValidRebill()))})
-            .then(() => {
-                return SqSTestUtils.messageCountInQueue('bill')})
-            .then((count) => {
-                return expect(count).to.equal(1)})
-            .then(() => {
-                return flushStateMachine()})
-            .then(() => {
-                return Promise.all([
-                    SqSTestUtils.messageCountInQueue('bill'),
-                    SqSTestUtils.messageCountInQueue('hold')])})
-            .then((counts) => {
-                return expect(counts).to.deep.equal([0, 1])})
-
+            SqSTestUtils.purgeAllQueues().then(() => done());
         });
+
+        afterEach(() => {
+            delete require.cache[require.resolve(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'))];
+        });
+
+        let tests = [
+            {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success'},
+            {from: 'bill', to: 'recover', worker: 'processBilling.js', status: 'fail'},
+            {from: 'hold', to: 'pending', worker: 'shipProduct.js', status: 'success'},
+            {from: 'hold', to: 'pending_failed', worker: 'shipProduct.js', status: 'fail'},
+            {from: 'pending', to: 'shipped', worker: 'confirmShipped.js', status: 'success'},
+            {from: 'recover', to: 'hold', worker: 'recoverBilling.js', status: 'success'},
+            {from: 'shipped', to: 'delivered', worker: 'confirmDelivered.js', status: 'success'}
+        ];
+
+        arrayutilities.map(tests, (test) => {
+            it(`should move a message from ${test.from} to ${test.to}`, () => {
+
+                mockery.registerMock(global.SixCRM.routes.path('controllers', `workers/${test.worker}`), {
+                    execute: () => {
+                        const WorkerResponse = class {
+                            getCode() {
+                                return test.status;
+                            }
+
+                            getAdditionalInformation() {
+                                return test.status;
+                            }
+                        };
+
+                        return Promise.resolve(new WorkerResponse());
+                    }
+                });
+
+                let rebill = JSON.stringify(getValidRebill());
+
+                return Promise.all([
+                    SqSTestUtils.messageCountInQueue(test.from),
+                    SqSTestUtils.messageCountInQueue(test.to)])
+                    .then((counts) => expect(counts).to.deep.equal([0,0], 'Queues are not empty at the start of test.'))
+                    .then(() => SqSTestUtils.sendMessageToQueue(test.from, rebill))
+                    .then(() => SqSTestUtils.messageCountInQueue(test.from))
+                    .then((count) => expect(count).to.equal(1, 'Message was not delivered to input queue.'))
+                    .then(() => flushStateMachine())
+                    .then(() => Promise.all([
+                        SqSTestUtils.messageCountInQueue(test.from),
+                        SqSTestUtils.messageCountInQueue(test.to)]))
+                    .then((counts) => expect(counts).to.deep.equal([0, 1], 'Message was not delivered to destination queue.'))
+                    // .then(() => timestamp.delay(31*1000)())
+                    // .then(() => SqSTestUtils.receiveMessageFromQueue(test.to))
+                    // .then((message) => {
+                    //     expect(message.id).to.equal(rebill.id);
+                    //     expect(message.account).to.equal(rebill.account);
+                    //     expect(message.amount).to.equal(rebill.amount);
+                    //     expect(message.parrentsession).to.equal(rebill.parrentsession);
+                    //     expect(message.product_schedules).to.deep.equal(rebill.product_schedules);
+                    //     expect(message.bill_at).to.equal(rebill.bill_at);
+                    //     expect(message.created_at).to.equal(rebill.created_at);
+                    //     expect(message.updated_at).to.equal(rebill.updated_at);
+                    // })
+
+            });
+        });
+
 
     });
 
