@@ -15,10 +15,6 @@
 	"properties": {
 		"start": {"$ref": "#/definitions/ISO8601"},
 		"end": {"$ref": "#/definitions/ISO8601"},
-		"order":{
-			"type":"string",
-			"enum": ["asc", "desc"]
-		},
 		"account:":{
 			"type": "array",
 			"minItems": 1,
@@ -30,21 +26,7 @@
 		  "enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed","fail_hold",
 				"pending", "fail_shipped", "fail_delivered", "fail_recover"
 			]
-		},
-		"limit":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
-		},
-		"offset":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": true,
-			"exclusiveMinimum": false
 		}
 	},
-	"required":["start", "end", "order", "limit", "offset", "account"]
+	"required":["start", "end", "account"]
 }

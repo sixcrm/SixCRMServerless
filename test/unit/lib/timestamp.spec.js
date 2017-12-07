@@ -67,6 +67,29 @@ describe('lib/timestamp', () => {
             expect(differenceInSeconds).to.equal(expectedDifferenceInSeconds);
         });
 
+        it('retrieves date rounded by this hour', () => {
+            // given
+            givenTimeIsFrozen();
+
+            // when
+            let this_hour = Timestamp.getThisHourInISO8601();
+
+            // then
+            expect(this_hour).to.equal('2017-02-22T13:00:00.000Z');
+        });
+
+
+        it('retrieves date rounded by last hour', () => {
+            // given
+            givenTimeIsFrozen();
+
+            // when
+            let last_hour = Timestamp.getLastHourInISO8601();
+
+            // then
+            expect(last_hour).to.equal('2017-02-22T12:00:00.000Z');
+        });
+
         it('successfully retrieves format from moment', () => {
 
             let frozenDate = new Date(frozenNowAsISO8601);

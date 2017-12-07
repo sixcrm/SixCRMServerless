@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/transformedrebills",
+	"title": "Transformed Rebills",
+	"description": "A array of Rebills transformed for redshift upload",
+	"type":"array",
+	"items":{"$ref":"../transformedrebill.json"}
+}

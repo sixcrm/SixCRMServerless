@@ -350,6 +350,10 @@ module.exports.graphObj = new GraphQLObjectType({
                   description: 'ISO8601 datetime after when state was changed',
                   type: GraphQLString
                 },
+                state_changed_before: {
+                  description: 'ISO8601 datetime before when state was changed',
+                  type: GraphQLString
+                },
                 pagination: {
                   type: paginationInputType.graphObj
                 }
@@ -357,7 +361,13 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, args){
                 const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-                return rebillController.listByState({state: args.state, state_changed_after: args.state_changed_after, pagination: args.pagination});
+                return rebillController.listByState(
+                  {
+                    state: args.state,
+                    state_changed_after: args.state_changed_after,
+                    state_changed_before: args.state_changed_before,
+                    pagination: args.pagination
+                  });
             }
         },
         campaignlistbyproductschedule: {

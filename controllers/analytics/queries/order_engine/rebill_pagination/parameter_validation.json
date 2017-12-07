@@ -15,6 +15,10 @@
 	"properties": {
 		"start": {"$ref": "#/definitions/ISO8601"},
 		"end": {"$ref": "#/definitions/ISO8601"},
+		"period":{
+			"type":"string",
+			"enum": ["minute", "hour","day","week","month","quarter","year"]
+		},
 		"order":{
 			"type":"string",
 			"enum": ["asc", "desc"]
@@ -25,7 +29,7 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"queuename:":{
+		"current_queuename:":{
 			"type": "array",
 		  "enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed","fail_hold",
 				"pending", "fail_shipped", "fail_delivered", "fail_recover"
@@ -46,5 +50,5 @@
 			"exclusiveMinimum": false
 		}
 	},
-	"required":["start", "end", "order", "limit", "offset", "account"]
+	"required":["start", "end", "order", "limit", "offset", "account","period"]
 }

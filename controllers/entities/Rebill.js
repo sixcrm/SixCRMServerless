@@ -262,9 +262,9 @@ class rebillController extends entityController {
 
     }
 
-    listByState({state, state_changed_after, pagination}){
+    listByState({state, state_changed_after, state_changed_before, pagination}){
 
-      du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}'`);
+      du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}', state_changed_before: '${state_changed_before}'`);
 
       let query_parameters = {};
 
@@ -275,9 +275,15 @@ class rebillController extends entityController {
       }
 
       if (state_changed_after) {
-        query_parameters = this.appendFilterExpression(query_parameters, '#statechangedat > :statechangedatv');
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#statechangedat', 'state_changed_at');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statechangedatv', state_changed_after);
+        query_parameters = this.appendFilterExpression(query_parameters, '#statechangedafter > :statechangedafterv');
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#statechangedafter', 'state_changed_at');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statechangedafterv', state_changed_after);
+      }
+
+      if (state_changed_before) {
+        query_parameters = this.appendFilterExpression(query_parameters, '#statechangedbefore <= :statechangedbeforev');
+        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#statechangedbefore', 'state_changed_at');
+        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statechangedbeforev', state_changed_before);
       }
 
       return this.listByAccount({query_parameters: query_parameters, pagination: pagination});

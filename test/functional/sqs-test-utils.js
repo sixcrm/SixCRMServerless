@@ -18,9 +18,13 @@ class SqsTestUtils {
     purgeAllQueues() {
         return Promise.all([
             this.purgeQueue('bill'),
+            this.purgeQueue('bill_failed'),
             this.purgeQueue('rebill'),
+            this.purgeQueue('pending'),
+            this.purgeQueue('pending_failed'),
             this.purgeQueue('recover'),
             this.purgeQueue('hold'),
+            this.purgeQueue('hold_failed'),
             this.purgeQueue('shipped'),
             this.purgeQueue('delivered'),
             this.purgeQueue('searchindex')
@@ -52,7 +56,9 @@ class SqsTestUtils {
 
     receiveMessageFromQueue(queue) {
         return this.executeQuery(queue, 'Action=ReceiveMessage&AttributeName=All').then(res => {
-            return res.text.match(/<Body>(.*)<\/Body>/)[1];
+            let bodies = res.text.match(/<Body>(.*)<\/Body>/);
+
+            return bodies ? bodies[1].replace(/&quot;/g,'"') : null;
         });
     }
 
