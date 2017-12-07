@@ -13,8 +13,8 @@ module.exports = function(results, parameters){
   arrayutilities.map(results, (result) => {
 
     result_array.push({
-      queuename: result.queuename,
-      averagetime: result.average_time
+      failure_percentage: result.failure_percentage,
+      queuename: result.queuename
     });
 
   });

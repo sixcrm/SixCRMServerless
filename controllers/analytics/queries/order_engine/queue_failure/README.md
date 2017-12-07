@@ -1,15 +1,13 @@
-# Queue average time
+# Failure movement query
 
-07.12.2017 A.Zelen
+08.12.2017 A.Zelen
 
 ____
 
 ## Required query output:
 
-* `average time in queue`
-* `queue name`
-
-
+* `queue`
+* `failure_percentage`
 
 ## Arguments:
 
@@ -24,7 +22,8 @@ ____
 ---
 ### Query notes
 
-Query calculates average time in queue
+The query returns the percent of rebills moving from a queue to a fail queue
+
 
 ---
 ## Results:

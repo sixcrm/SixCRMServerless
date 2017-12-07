@@ -14,6 +14,4 @@ SELECT
   queuename,
   nvl(avg(delta_time), INTERVAL '0 second') AS average_time
 FROM rebills_delta
-GROUP BY queuename
-LIMIT {{LIMIT}}
-OFFSET {{OFFSET}};
+GROUP BY queuename;
