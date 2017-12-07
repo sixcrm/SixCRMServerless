@@ -22,11 +22,10 @@ class HashtagController extends fulfillmentProviderController {
     this.wsdl = 'https://secure-wms.com/webserviceexternal/contracts.asmx?wsdl';
 
     const SoapUtilities = global.SixCRM.routes.include('lib', 'soap-utilities.js');
+
     this.soaputilities = new SoapUtilities({wsdl: this.wsdl});
 
   }
-
-  fulfill()
 
     triggerFulfillment(){
 
