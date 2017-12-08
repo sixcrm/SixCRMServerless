@@ -55,6 +55,66 @@ describe.only('stateMachine', () => {
 
     });
 
+    describe('No action', () => {
+
+        beforeEach((done) => {
+            let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+
+            RebillHelperController.prototype.updateRebillState = () => {
+                return Promise.resolve();
+            };
+            RebillHelperController.prototype.getAvailableRebillsAsMessages = () => {
+                return Promise.resolve([]);
+            };
+
+            SqSTestUtils.purgeAllQueues().then(() => done());
+        });
+
+        afterEach(() => {
+            delete require.cache[require.resolve(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'))];
+        });
+
+        let tests = [
+            {from: 'bill', worker: 'processBilling.js'},
+            {from: 'hold', worker: 'shipProduct.js'},
+            {from: 'pending', worker: 'confirmShipped.js'},
+            {from: 'recover', worker: 'recoverBilling.js'},
+            {from: 'shipped', worker: 'confirmDelivered.js'}
+        ];
+
+        arrayutilities.map(tests, (test) => {
+            it(`should not move a message from ${test.from}`, () => {
+
+                mockery.registerMock(global.SixCRM.routes.path('controllers', `workers/${test.worker}`), {
+                    execute: () => {
+                        const WorkerResponse = class {
+                            getCode() {
+                                return 'noaction';
+                            }
+
+                            getAdditionalInformation() {
+                                return 'noaction';
+                            }
+                        };
+
+                        return Promise.resolve(new WorkerResponse());
+                    }
+                });
+
+                let rebill = JSON.stringify(getValidRebill());
+
+                return SqSTestUtils.messageCountInQueue(test.from)
+                    .then((counts) => expect(counts).to.deep.equal(0, 'Queues are not empty at the start of test.'))
+                    .then(() => SqSTestUtils.sendMessageToQueue(test.from, rebill))
+                    .then(() => SqSTestUtils.messageCountInQueue(test.from))
+                    .then((count) => expect(count).to.equal(1, 'Message was not delivered to input queue.'))
+                    .then(() => flushStateMachine())
+                    .then(() => SqSTestUtils.messageCountInQueue(test.from))
+                    .then((counts) => expect(counts).to.deep.equal(1, 'Message left the input queue.'))
+            });
+        });
+    });
+
     describe('Moving messages', () => {
 
         beforeEach((done) => {
@@ -80,6 +140,7 @@ describe.only('stateMachine', () => {
             {from: 'hold', to: 'pending', worker: 'shipProduct.js', status: 'success'},
             {from: 'hold', to: 'pending_failed', worker: 'shipProduct.js', status: 'fail'},
             {from: 'pending', to: 'shipped', worker: 'confirmShipped.js', status: 'success'},
+            {from: 'pending_failed', to: 'pending', worker: 'shipProduct.js', status: 'success'},
             {from: 'recover', to: 'hold', worker: 'recoverBilling.js', status: 'success'},
             {from: 'shipped', to: 'delivered', worker: 'confirmDelivered.js', status: 'success'}
         ];
@@ -136,6 +197,63 @@ describe.only('stateMachine', () => {
 
     });
 
+    describe('Archiving messages', () => {
+
+        beforeEach((done) => {
+            let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+
+            RebillHelperController.prototype.updateRebillState = () => {
+                return Promise.resolve();
+            };
+            RebillHelperController.prototype.getAvailableRebillsAsMessages = () => {
+                return Promise.resolve([]);
+            };
+
+            SqSTestUtils.purgeAllQueues().then(() => done());
+        });
+
+        afterEach(() => {
+            delete require.cache[require.resolve(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'))];
+        });
+
+        let tests = [
+            {from: 'delivered'},
+            {from: 'rebill'},
+            {from: 'recover'}
+        ];
+
+        arrayutilities.map(tests, (test) => {
+            it(`should move a message from ${test.from} to archive`, () => {
+
+                mockery.registerMock(global.SixCRM.routes.path('controllers', `workers/archive.js`), {
+                    execute: () => {
+                        const WorkerResponse = class {
+                            getCode() {
+                                return 'success';
+                            }
+
+                            getAdditionalInformation() {
+                                return 'success';
+                            }
+                        };
+
+                        return Promise.resolve(new WorkerResponse());
+                    }
+                });
+
+                let rebill = JSON.stringify(getValidRebill());
+
+                return SqSTestUtils.messageCountInQueue(test.from)
+                    .then((count) => expect(count).to.equal(0, 'Queue is not empty at the start of test.'))
+                    .then(() => SqSTestUtils.sendMessageToQueue(test.from, rebill))
+                    .then(() => SqSTestUtils.messageCountInQueue(test.from))
+                    .then((count) => expect(count).to.equal(1, 'Message was not delivered to input queue.'))
+                    .then(() => flushStateMachine())
+                    .then(() => SqSTestUtils.messageCountInQueue(test.from))
+                    .then((count) => expect(count).to.equal(0, 'Message was left in input queue.'))
+            });
+        });
+    });
 
     function flushStateMachine() {
         let all_function_executions = arrayutilities.map(lambdas, (lambda) => {
