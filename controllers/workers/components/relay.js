@@ -39,7 +39,7 @@ module.exports = class RelayController {
 
         du.warning('Invoking additional lambda');
 
-        return this.lambdautilities.invokeFunction({
+       this.lambdautilities.invokeFunction({
           function_name: this.lambdautilities.buildLambdaName(params.name),
           payload: JSON.stringify({}),
           invocation_type: 'Event' //Asynchronous execution
@@ -50,8 +50,6 @@ module.exports = class RelayController {
         });
 
       }
-
-      du.output('No additional lambda required');
 
       return Promise.resolve(true);
 
@@ -80,12 +78,16 @@ module.exports = class RelayController {
         return this.sqsutilities.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then((messages) => {
           this.parameters.set('messages', messages);
 
-          return true;
+          return messages;
         });
 
       }else{
 
-        return this.message_acquisition_function();
+        return this.message_acquisition_function().then((messages) => {
+            this.parameters.set('messages', messages);
+
+            return messages;
+        });
 
       }
 

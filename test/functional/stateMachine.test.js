@@ -4,6 +4,7 @@ const SqSTestUtils = require('./sqs-test-utils');
 const TestUtils = require('./test-utils');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 
@@ -262,23 +263,14 @@ describe.only('stateMachine', () => {
             return lambda[function_name](null, null, () => {})
         });
 
-        return Promise.all(all_function_executions);
+        return Promise.all(all_function_executions).then((results) => {
+            timestamp.delay(1*1000)().then(() => results);
+        });
     }
 
     function configureLambdas() {
-        lambda_names.forEach((lambda_name) => {
-            let lambda = global.SixCRM.configuration.serverless_config.functions[lambda_name];
-            let handler = lambda.handler.replace(/\.[^/.]+$/, '') ; // strip function name from path, i.e. 'handler.billtohold'
-
-            let path = global.SixCRM.routes.root + '/' + handler;
-
-            if (lambda.environment) {
-                for (let key in lambda.environment) {
-                    process.env[key] = lambda.environment[key];
-                }
-            }
-
-            lambdas.push(require(path));
+        arrayutilities.map(lambda_names, (lambda_name) => {
+            lambdas.push(lambdautilities.getLambdaInstance(lambda_name));
         });
     }
 
