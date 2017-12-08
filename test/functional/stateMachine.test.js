@@ -8,7 +8,7 @@ const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 
-describe.only('stateMachine', () => {
+describe('stateMachine', () => {
     let lambdas = [];
     let lambda_names = [
         'billtohold',
@@ -74,7 +74,7 @@ describe.only('stateMachine', () => {
 
     });
 
-    describe.only('Moving messages', () => {
+    describe('Moving messages', () => {
 
         let tests = [
             {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success', messages: 1},

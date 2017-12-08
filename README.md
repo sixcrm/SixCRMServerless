@@ -63,6 +63,14 @@ You can use it as an Amazon SQS instance, including calling methods documented i
 After running the server you can execute the deploy script to create queues. You can do so by running `SIX_VERBOSE=2 AWS_PROFILE=six stage=local node deployment/sqs/deploy_queues.js`.
 Much like local DynamoDB, local SQS server keeps the queues in-memory, which means that after restarting it you need to create queues again. 
 
+### State machine tests
+
+In order to run functional tests, you need working local SQS instace. Refer to the previous paragraph, but in essence:
+
+1. `tools/elasticmq/runLocalSqs.sh` (keep running in a separate terminal)
+2. `SIX_VERBOSE=2 AWS_PROFILE=six stage=local node deployment/sqs/deploy_queues.js` (execute to create local queues)
+3. `npm run test-functional` (run tests)
+
 #### Redis
 
 You will also need a Redis service available on your local machine.  To accomplish this there are a variety of options:
