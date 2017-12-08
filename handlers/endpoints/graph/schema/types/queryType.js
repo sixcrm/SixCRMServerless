@@ -140,6 +140,7 @@ let cacheInputType = require('./cache/cacheInputType');
 /* Start state machine */
 
 let queueSummaryType = require('./analytics/order_engine/queuesummary/queueSummaryType');
+let queueStateType = require('./analytics/order_engine/queuesummary/queueStateType');
 
 /* End State machine */
 
@@ -536,6 +537,44 @@ module.exports.graphObj = new GraphQLObjectType({
             const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
             return analyticsController.executeAnalyticsFunction(args, 'getQueueSummary');
+          }
+        },
+        rebillsummary: {
+          type: queueSummaryType.graphObj,
+          args: {
+            analyticsfilter: { type: analyticsFilterInputType.graphObj },
+            pagination: {type: analyticsPaginationInputType.graphObj},
+            queuename: {
+              description: 'Name of a queue',
+              type: new GraphQLNonNull(GraphQLString)
+            },
+            period: {
+              description: 'Period of granularity',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: function(root, args){
+            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+            return analyticsController.executeAnalyticsFunction(args, 'getRebillSummary');
+          }
+        },
+        queuestate: {
+          type: queueStateType.graphObj,
+          args: {
+            analyticsfilter: { type: analyticsFilterInputType.graphObj },
+            pagination: {type: analyticsPaginationInputType.graphObj},
+            queuename: {
+              description: 'Name of a queue',
+              type: new GraphQLNonNull(GraphQLString)
+            },
+            period: {
+              description: 'Period of granularity',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: function(root, args){
+            return Promise.resolve(args);
           }
         },
         transactionsummaryreportsummary: {

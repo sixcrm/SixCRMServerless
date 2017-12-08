@@ -224,6 +224,43 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    getRebillSummary(parameters){
+      const queue_name = parameters.queuename;
+      const period = parameters.period;
+
+      parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      parameters = this.appendQueueName(parameters, queue_name);
+      parameters = this.appendPeriod(parameters, {name: period});
+
+      return this.getResults('order_engine/rebill_pagination', parameters, this.default_queue_filters);
+
+    }
+
+    getQueueFailure(parameters){
+      du.debug('Get Queue Failure');
+
+      const queue_name = parameters.queuename;
+
+      parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      parameters = this.appendQueueName(parameters, queue_name);
+
+      return this.getResults('order_engine/queue_failure', parameters, this.default_queue_filters);
+    }
+
+    getQueueAverageTime(parameters){
+      du.debug('Get Queue Failure');
+
+      const queue_name = parameters.queuename;
+
+      parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      parameters = this.appendQueueName(parameters, queue_name);
+
+      return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_filters);
+    }
+
     /* Report Pages */
 
     getAffiliateReportSubaffiliates(parameters){
