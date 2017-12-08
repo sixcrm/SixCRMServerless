@@ -24,8 +24,13 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLInt),
             description: 'Average time messages stay in queue.',
             resolve: function(args){
+              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-              return 0;
+              return analyticsController.executeAnalyticsFunction(args, 'getQueueAverageTime').then((result) => {
+                const item = result.summary[0] || {};
+
+                return item.averagetime || 0;
+              });
 
             }
         },
@@ -33,8 +38,13 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLInt),
             description: 'Percentage of fail messages.',
             resolve: function(args){
+              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-              return 0;
+              return analyticsController.executeAnalyticsFunction(args, 'getQueueFailure').then((result) => {
+                const item = result.summary[0] || {};
+
+                return item.failure_percentage || 0;
+              });
 
             }
         }
