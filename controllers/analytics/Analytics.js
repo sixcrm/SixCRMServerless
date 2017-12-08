@@ -250,7 +250,7 @@ class AnalyticsController extends AnalyticsUtilities{
     }
 
     getQueueAverageTime(parameters){
-      du.debug('Get Queue Failure');
+      du.debug('Get Average Time of Messages in Queue');
 
       const queue_name = parameters.queuename;
 
