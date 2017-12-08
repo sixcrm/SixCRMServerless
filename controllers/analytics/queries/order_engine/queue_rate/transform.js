@@ -13,7 +13,10 @@ module.exports = function(results, parameters){
   arrayutilities.map(results, (result) => {
 
     result_array.push({
-      failure_percentage: result.failure_percentage,
+      failure_percentage: result.failure_rate,
+      error_rate: result.error_rate,
+      success_rate: result.success_rate,
+      expired_rate: result.expired_rate,
       queuename: result.queuename
     });
 
