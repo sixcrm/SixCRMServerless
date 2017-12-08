@@ -74,7 +74,7 @@ describe.only('stateMachine', () => {
 
     });
 
-    describe('Moving messages', () => {
+    describe.only('Moving messages', () => {
 
         let tests = [
             {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success', messages: 1},
@@ -84,6 +84,7 @@ describe.only('stateMachine', () => {
             {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success', messages: 21},
             {from: 'bill', to: 'recover', worker: 'processBilling.js', status: 'fail', messages: 1},
             {from: 'bill', to: 'bill', worker: 'processBilling.js', status: 'noaction', messages: 1},
+            {from: 'bill', to: 'bill_error', worker: 'processBilling.js', status: 'error', messages: 1},
             {from: 'hold', to: 'pending', worker: 'shipProduct.js', status: 'success', messages: 1},
             {from: 'hold', to: 'pending_failed', worker: 'shipProduct.js', status: 'fail', messages: 1},
             {from: 'hold', to: 'hold', worker: 'shipProduct.js', status: 'noaction', messages: 5},
