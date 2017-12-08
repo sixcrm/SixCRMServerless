@@ -12,9 +12,9 @@ FROM
          ELSE 0
          END
      )                     num_of_failed_rebills
-   FROM f_rebills
-   WHERE 1
-    {{filter}}
-    AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-   WHERE previous_queuename NOT LIKE 'fail%' and previous_queuename != 'pending'
-   GROUP BY previous_queuename);
+FROM f_rebills
+WHERE 1
+  {{filter}}
+  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
+  AND previous_queuename NOT LIKE 'fail%' and previous_queuename != 'pending'
+GROUP BY previous_queuename);
