@@ -14,8 +14,12 @@
 	},
 	"properties": {
     "id_rebill":{"$ref": "#/definitions/UUIDv4"},
-		"current_queuename":{"type":"string","enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed"]},
-    "previous_queuename":{"type":"string","enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed"]},
+		"current_queuename":{"type":"string","enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed","fail_hold",
+			"pending", "fail_shipped", "fail_delivered", "fail_recover"
+		]},
+    "previous_queuename":{"type":"string","enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed","fail_hold",
+			"pending", "fail_shipped", "fail_delivered", "fail_recover"
+		]},
 		"account":{"$ref": "#/definitions/UUIDv4"},
 		"datetime": {"$ref": "#/definitions/ISO8601"}
 	},

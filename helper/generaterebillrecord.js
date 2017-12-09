@@ -15,7 +15,9 @@ function createRandomRebillQueueRecord(){
 
     let spoofed_record = {
       id_rebill: uuidV4(),
-      current_queuename: random.selectRandomFromArray(["bill", "hold", "pending", "shipped", "delivered", "recover", "failed"]),
+      current_queuename: random.selectRandomFromArray(["bill", "hold", "pending", "shipped", "delivered", "recover", "failed","fail_hold",
+				"pending", "fail_shipped", "fail_delivered", "fail_recover"
+			]),
       previous_queuename: random.selectRandomFromArray(["bill", "hold", "pending", "shipped", "delivered", "recover", "failed"]),
       account: uuidV4(),
       datetime: timestamp.getISO8601()

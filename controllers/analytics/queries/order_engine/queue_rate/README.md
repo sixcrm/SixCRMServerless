@@ -7,7 +7,10 @@ ____
 ## Required query output:
 
 * `queue`
-* `failure_percentage`
+* `failure_rate`
+* `error_rate`
+* `success_rate`
+* `expired_rate`
 
 ## Arguments:
 

@@ -19,6 +19,7 @@ class SqsTestUtils {
         return Promise.all([
             this.purgeQueue('bill'),
             this.purgeQueue('bill_failed'),
+            this.purgeQueue('bill_error'),
             this.purgeQueue('rebill'),
             this.purgeQueue('pending'),
             this.purgeQueue('pending_failed'),
