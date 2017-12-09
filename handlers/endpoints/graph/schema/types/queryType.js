@@ -94,6 +94,9 @@ let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType
 let trackerType = require('./tracker/trackerType');
 let trackerListType = require('./tracker/trackerListType');
 
+let billType = require('./bill/billType');
+let billListType = require('./bill/billListType');
+
 let tokenListType = require('./token/tokenListType');
 
 let suggestInputType = require('./search/suggestInputType');
@@ -1018,6 +1021,18 @@ module.exports.graphObj = new GraphQLObjectType({
                 return trackerController.listByAccount({pagination: tracker.pagination, fatal:list_fatal, search: tracker.search});
             }
         },
+        billlist: {
+            type: billListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: function(root, bill){
+                const billController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+
+                return billController.listByAccount({pagination: bill.pagination, fatal:list_fatal, search: bill.search});
+            }
+        },
         creditcardlist: {
             type: creditCardListType.graphObj,
             args: {
@@ -1287,6 +1302,20 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return trackerController.get({id: tracker.id, fatal: get_fatal});
             }
+        },
+        bill: {
+          type: billType.graphObj,
+          args: {
+            id: {
+              description: 'id of the bill',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: function(root, bill){
+            const billController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+
+            return billController.get({id: bill.id, fatal: get_fatal});
+          }
         },
         accesskey: {
             type: accessKeyType.graphObj,
