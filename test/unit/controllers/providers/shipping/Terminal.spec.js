@@ -14,6 +14,26 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 
 const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
 
+function getValidGroupedShipableTransactionProducts(){
+
+  let return_object = {};
+
+  return_object[uuidV4()] = getValidAugmentedTransactionProducts();
+  return_object[uuidV4()] = getValidAugmentedTransactionProducts();
+
+  return return_object;
+
+}
+
+function getValidFulfillmentResponse(){
+
+  const FulfillmentResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Hashtag/Response.js');
+  let response = new FulfillmentResponse({error: null, response: 'success', body:'um'});
+
+  return response;
+
+}
+
 function getValidFulfillmentProviders(){
 
   return [
@@ -610,111 +630,163 @@ describe('controllers/workers/shipProduct', function () {
 
   });
 
-  /*
-  hydrateFulfillmentProviders(){
+  describe('executeFulfillment', () => {
 
-    du.debug('Hydrate Fulfilment Providers');
+    it('successfully executes', () => {
 
-    let products = this.parameters.get('products');
+      let grouped_shipable_transaction_products = getValidGroupedShipableTransactionProducts();
 
-    let fulfillment_provider_ids = arrayutilities.map(products, product => product.fulfillment_provider);
+      let mocked_fulfillment_class = class {
+        constructor(){
 
-    fulfillment_provider_ids = arrayutilities.unique(fulfillment_provider_ids);
-
-    return this.fulfillmentProviderController.list(fulfillment_provider_ids).then(fullfillment_providers => {
-
-      this.parameters.set('fulfillmentproviders', fulfillment_providers);
-
-      return true;
-
-    });
-
-  }
-  */
-
-  /*
-  describe('hydrateRebillProperties', () => {
-
-    it('successfully hydrates rebill properties', () => {
-
-      let rebill = getValidRebill();
-      let transactions =  getValidTransactions();
-
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-        listTransactions:(rebill) => {
-          return Promise.resolve(transactions);
         }
-      });
+        execute({fulfillment_provider_id, augmented_transaction_products}){
+          return Promise.resolve(getValidFulfillmentResponse());
+        }
+      };
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Fulfill.js'), mocked_fulfillment_class);
 
-      shipProductController.parameters.set('rebill', rebill);
+      let terminalController = new TerminalController();
 
-      return shipProductController.hydrateRebillProperties().then(result => {
+      terminalController.parameters.set('groupedshipabletransactionproducts', grouped_shipable_transaction_products);
+
+      return terminalController.executeFulfillment().then(result => {
+
         expect(result).to.equal(true);
-        expect(shipProductController.parameters.store['transactions']).to.deep.equal(transactions);
+
+        arrayutilities.map(terminalController.parameters.get('fulfillmentresponses'), fulfillment_response => {
+          expect(fulfillment_response.getCode()).to.equal('success');
+        });
+
       });
 
     });
 
   });
 
-  describe('hydrateTransactionProducts', () => {
+  describe('transformFulfillmentResponses', () => {
 
-    it('successfully hydrates transaction products', () => {
+    it('successfully evaluates fulfillment responses', () => {
 
+      let fulfillment_responses = [getValidFulfillmentResponse(), getValidFulfillmentResponse()];
+
+      let terminalController = new TerminalController();
+
+      terminalController.parameters.set('fulfillmentresponses', fulfillment_responses);
+
+      let response = terminalController.transformFulfillmentResponses();
+
+      expect(response).to.equal(true);
+      expect(terminalController.parameters.store['responsecode']).to.equal('success');
+
+    });
+
+    it('successfully evaluates fulfillment responses (fail)', () => {
+
+      let fulfillment_responses = [getValidFulfillmentResponse(), getValidFulfillmentResponse()];
+
+      fulfillment_responses[0].setCode('fail');
+
+      let terminalController = new TerminalController();
+
+      terminalController.parameters.set('fulfillmentresponses', fulfillment_responses);
+
+      let response = terminalController.transformFulfillmentResponses();
+
+      expect(response).to.equal(true);
+      expect(terminalController.parameters.store['responsecode']).to.equal('fail');
+
+    });
+
+    it('successfully evaluates fulfillment responses (error)', () => {
+
+      let fulfillment_responses = [getValidFulfillmentResponse(), getValidFulfillmentResponse()];
+
+      fulfillment_responses[0].setCode('error');
+
+      let terminalController = new TerminalController();
+
+      terminalController.parameters.set('fulfillmentresponses', fulfillment_responses);
+
+      let response = terminalController.transformFulfillmentResponses();
+
+      expect(response).to.equal(true);
+      expect(terminalController.parameters.store['responsecode']).to.equal('error');
+
+    });
+
+  });
+
+  describe('respond', () => {
+
+    it('successfully responds', () => {
+
+      let terminalController = new TerminalController();
+
+      terminalController.parameters.set('responsecode', 'success');
+
+      let result = terminalController.respond();
+
+      expect(result.getCode()).to.equal('success');
+
+    });
+
+  });
+
+  describe('shipRebill', () => {
+
+    it('successfully ships a rebill', () => {
+
+      let rebill = getValidRebill();
+      let products = getValidProducts();
       let transactions = getValidTransactions();
-      let transaction_products = getValidTransactionProducts();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions:(rebill) => {
+          return Promise.resolve(transactions);
+        },
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
 
       let mock_transaction_helper_controller = class {
         constructor(){
 
         }
         getTransactionProducts(transactions){
-          return transaction_products;
+          return getValidTransactionProducts();
         }
-      }
+      };
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
-
-      shipProductController.parameters.set('transactions', transactions);
-
-      let result = shipProductController.hydrateTransactionProducts();
-
-      expect(result).to.equal(true);
-      expect(shipProductController.parameters.store['transactionproducts']).to.deep.equal(transaction_products);
-
-    });
-
-  });
-
-  describe('hydrateProducts', () => {
-
-    it('successfully hydrates the products', () => {
-
-      let transaction_products = getValidTransactionProducts();
-      let products = getValidProducts();
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        list:(product_ids) => {
+        list:(id_array) => {
           return Promise.resolve(products);
         }
       });
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      let mocked_fulfillment_class = class {
+        constructor(){
 
-      shipProductController.parameters.set('transactionproducts', transaction_products);
+        }
+        execute({fulfillment_provider_id, augmented_transaction_products}){
+          return Promise.resolve(getValidFulfillmentResponse());
+        }
+      };
 
-      return shipProductController.hydrateProducts().then(result => {
-        expect(result).to.equal(true);
-        expect(shipProductController.parameters.store['products']).to.deep.equal(products);
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Fulfill.js'), mocked_fulfillment_class);
+
+      let terminalController = new TerminalController();
+
+      return terminalController.shipRebill({rebill: rebill}).then(result => {
+        expect(result.getCode()).to.equal('success');
       });
 
     });
 
   });
-  */
 
 });

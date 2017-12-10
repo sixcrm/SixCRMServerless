@@ -7,8 +7,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
-const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
-const TerminalResponse = global.SixCRM.routes.include('providers', 'shipping/Response.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class TerminalController extends PermissionedController  {
@@ -46,7 +44,9 @@ module.exports = class TerminalController extends PermissionedController  {
       fulfillmentproviders: global.SixCRM.routes.path('model', 'entities/components/fulfillmentproviders.json'),
       selectedfulfillmentproviderid: global.SixCRM.routes.path('model', 'definitions/uuidv4.json'),
       selectedfulfillmentprovider: global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
-      instantiatedfulfillmentprovider: global.SixCRM.routes.path('model', 'providers/shipping/terminal/instantiatedfulfillmentprovider.json')
+      instantiatedfulfillmentprovider: global.SixCRM.routes.path('model', 'providers/shipping/terminal/instantiatedfulfillmentprovider.json'),
+      fulfillmentresponses: global.SixCRM.routes.path('model', 'providers/shipping/terminal/fulfillmentresponses.json'),
+      responsecode: global.SixCRM.routes.path('model', 'providers/shipping/terminal/responsecode.json')
     };
 
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -57,7 +57,7 @@ module.exports = class TerminalController extends PermissionedController  {
 
     this.transactionHelperController = new TransactionHelperController();
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
+    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
   }
 
@@ -74,8 +74,8 @@ module.exports = class TerminalController extends PermissionedController  {
     .then(() => this.getShipableProductIDs())
     .then(() => this.createShipableTransactionProductGroup())
     .then(() => this.groupShipableTransactionProductGroupByFulfillmentProvider())
-    .then(() => this.hydrateFulfillmentProviders())
     .then(() => this.executeFulfillment())
+    .then(() => this.transformFulfillmentResponses())
     .then(() => this.respond());
 
   }
@@ -228,19 +228,18 @@ module.exports = class TerminalController extends PermissionedController  {
 
   }
 
-  //Tested To Here...
   executeFulfillment(){
 
     du.debug('Execute Fulfillment');
 
-    let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
     let grouped_shipable_transaction_products = this.parameters.get('groupedshipabletransactionproducts');
 
     let fulfillment_promises = objectutilities.map(grouped_shipable_transaction_products, fulfillment_provider => {
 
+      const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
       let fulfillmentController = new FulfillmentController();
 
-      return fulfillmentController.execute({fulfillment_provider_id: fulfillment_provider_id, augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider_id]});
+      return fulfillmentController.execute({fulfillment_provider_id: fulfillment_provider, augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider]});
 
     });
 
@@ -255,9 +254,9 @@ module.exports = class TerminalController extends PermissionedController  {
 
   }
 
-  transformFulfillmentResponse(){
+  transformFulfillmentResponses(){
 
-    du.debug('Transform Fulfillment Response');
+    du.debug('Transform Fulfillment Responses');
 
     let fulfillment_responses = this.parameters.get('fulfillmentresponses');
 
@@ -285,13 +284,16 @@ module.exports = class TerminalController extends PermissionedController  {
 
     du.debug('Respond');
 
-    let responsecode = this.parameters.get('responsecode');
+    let response_code = this.parameters.get('responsecode');
 
-    let response_prototype = {}
+    let response_prototype = {
+      response_type: response_code
+    };
 
+    const TerminalResponse = global.SixCRM.routes.include('providers', 'shipping/Response.js');
     let terminal_response = new TerminalResponse(response_prototype);
 
-    return Promise.resolve(terminal_response);
+    return terminal_response;
 
   }
 

@@ -1,0 +1,6 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/fulfillmentresponse.json",
+	"title": "Fulfillment Response",
+	"type":"object"
+}

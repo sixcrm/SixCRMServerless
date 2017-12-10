@@ -10,13 +10,9 @@ class HashtagController extends fulfillmentProviderController {
 
     super(arguments[0]);
 
-    this.parameter_validation = {
+    this.parameter_validation = {};
 
-    };
-
-    this.parameter_definition = {
-
-    };
+    this.parameter_definition = {};
 
     // Technical Debt: Read this from config.
     this.wsdl = 'https://secure-wms.com/webserviceexternal/contracts.asmx?wsdl';

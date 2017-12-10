@@ -1,0 +1,6 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/responsecode.json",
+	"title": "Response Code",
+	"type":"string"
+}
