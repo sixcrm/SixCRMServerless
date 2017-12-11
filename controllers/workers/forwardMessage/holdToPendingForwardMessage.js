@@ -11,7 +11,7 @@ module.exports = class HoldToPendingForwardMessageController extends forwardRebi
         name: 'holdtopending',
         origin_queue: 'hold',
         destination_queue: 'pending',
-        failure_queue: 'pending_failed',
+        failure_queue: 'hold_failed',
         workerfunction: 'shipProduct.js'
       })
 

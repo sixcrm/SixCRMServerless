@@ -7,8 +7,29 @@ class SqsTestUtils {
         this.queuePrefix = 'queue';
     }
 
-    sendMessageToQueue(queue, body) {
-        return this.executeQuery(queue, 'Action=SendMessage&MessageBody=' + encodeURIComponent(body));
+    /**
+     * Send a message to a queue, N times.
+     *
+     * @param queue Where to send.
+     * @param body  What to send.
+     * @param count How many times to send (the same message).
+     * @returns {Promise.<T>}
+     */
+    sendMessageToQueue(queue, body, count) {
+        if (count === 0) {
+            return Promise.resolve();
+        }
+
+        if (!count) {
+            count = 1;
+        }
+
+        let messages =[];
+        for (let i = 0; i < count; i++) {
+            messages.push(this.executeQuery(queue, 'Action=SendMessage&MessageBody=' + encodeURIComponent(body)))
+        }
+
+        return Promise.all(messages);
     }
 
     purgeQueue(queue) {
@@ -46,11 +67,12 @@ class SqsTestUtils {
 
             let match = regexp.exec(text);
 
-            while (match != null) {
+            while (match !== null) {
                 result += Number(match[1]);
                 match = regexp.exec(text);
             }
 
+            // console.log(`${queue}: ${result}`);
             return result;
         });
     }
