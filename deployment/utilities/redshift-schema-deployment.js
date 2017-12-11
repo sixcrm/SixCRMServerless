@@ -616,6 +616,33 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  transformQuery(query){
+    /* Transforms query to PostgreSQL format by clearing Redshift specifics */
+
+    if(process.env.stage == 'local'){
+
+      return arrayutilities.map(query.split(/\r?\n/), (data) =>
+          data.replace(/(DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*)(\,)?/,(match, p1, p2) => { // eslint-disable-line no-useless-escape
+
+            if(p2 == ','){
+                return `${p2}`;
+            } else if(p1.startsWith('encode')){
+                return ''
+            }
+            else {
+                return ';'
+            }
+
+          })
+      ).join('\n');
+
+    } else {
+
+        return query;
+    }
+
+  }
+
 }
 
 module.exports = new RedshiftSchemaDeployment();
