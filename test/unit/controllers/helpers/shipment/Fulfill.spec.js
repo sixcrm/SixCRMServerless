@@ -73,4 +73,40 @@ describe('helpers/shipment/Fulfill.js', () => {
       mockery.deregisterAll();
   });
 
+  describe('constructor', () => {
+
+    it('successfully constructs', () => {
+
+      let FulfillController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
+      let fulfillController = new FulfillController();
+
+      expect(objectutilities.getClassName(fulfillController)).to.equal('FulfillController');
+    });
+
+  });
+
+  xdescribe('hydrateRequestProperties', () => {
+    it('', () => {
+      //Complete
+    });
+  });
+
+  xdescribe('execute', () => {
+    it('', () => {
+      //Complete
+    });
+  });
+
+  xdescribe('hydrateAugmentedTransactionProducts', () => {
+    it('', () => {
+      //Complete
+    });
+  });
+
+  xdescribe('executeFulfillment', () => {
+    it('', () => {
+      //Complete
+    });
+  });
+
 });

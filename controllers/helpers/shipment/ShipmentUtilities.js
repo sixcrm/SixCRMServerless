@@ -24,7 +24,10 @@ module.exports = class ShipmentUtilities {
       'rebillid': global.SixCRM.routes.path('model','definitions/uuidv4.json'),
       'rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
       'augmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproducts.json'),
-      'augmentedtransactionproduct': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproduct.json')
+      'augmentedtransactionproduct': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproduct.json'),
+      'hydratedaugmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/hydratedaugmentedtransactionproducts.json'),
+      'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+      'session':global.SixCRM.routes.path('model', 'entities/session.json')
     };
 
     this.parameter_definition = {};
@@ -129,7 +132,7 @@ module.exports = class ShipmentUtilities {
 
     product_ids = arrayutilities.unique(product_ids);
 
-    return this.productController.getList({list: product_ids}).then(products => {
+    return this.productController.getListByAccount({ids: product_ids}).then(products => {
 
       this.parameters.set('products', products);
 
@@ -222,7 +225,6 @@ module.exports = class ShipmentUtilities {
 
   }
 
-  //needs testing
   marryProductsToAugmentedTransactionProducts(){
 
     du.debug('Marry Products To Augmented Transaction Products');

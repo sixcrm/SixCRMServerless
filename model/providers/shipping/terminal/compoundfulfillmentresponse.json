@@ -1,0 +1,10 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/compoundfulfillmentresponse.json",
+	"title": "Compound Fulfillment Response",
+	"type":"object",
+	"properties":{
+		"fulfillment_response":{"$ref":"./fulfillmentresponse.json"},
+		"shipping_receipt":{"$ref":"../../../entities/shippingreceipt.json"}
+	}
+}

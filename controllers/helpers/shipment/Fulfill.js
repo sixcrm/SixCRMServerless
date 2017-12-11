@@ -53,7 +53,7 @@ module.exports = class FulfillController extends ShipmentUtilities {
     du.debug('Hydrate Request Properties');
 
     let promises = [
-      this.hydrateFulfillfillmentProvider(),
+      this.hydrateFulfillmentProvider(),
       this.hydrateAugmentedTransactionProducts(),
       this.acquireCustomer()
     ];

@@ -8,6 +8,9 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
+const TerminalReceiptController = global.SixCRM.routes.include('providers', 'shipping/Receipt.js');
+const TerminalResponse = global.SixCRM.routes.include('providers', 'shipping/Response.js');
 
 module.exports = class TerminalController extends PermissionedController  {
 
@@ -45,7 +48,7 @@ module.exports = class TerminalController extends PermissionedController  {
       selectedfulfillmentproviderid: global.SixCRM.routes.path('model', 'definitions/uuidv4.json'),
       selectedfulfillmentprovider: global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
       instantiatedfulfillmentprovider: global.SixCRM.routes.path('model', 'providers/shipping/terminal/instantiatedfulfillmentprovider.json'),
-      fulfillmentresponses: global.SixCRM.routes.path('model', 'providers/shipping/terminal/fulfillmentresponses.json'),
+      compoundfulfillmentresponses: global.SixCRM.routes.path('model', 'providers/shipping/terminal/compoundfulfillmentresponses.json'),
       responsecode: global.SixCRM.routes.path('model', 'providers/shipping/terminal/responsecode.json')
     };
 
@@ -75,7 +78,7 @@ module.exports = class TerminalController extends PermissionedController  {
     .then(() => this.createShipableTransactionProductGroup())
     .then(() => this.groupShipableTransactionProductGroupByFulfillmentProvider())
     .then(() => this.executeFulfillment())
-    .then(() => this.transformFulfillmentResponses())
+    .then(() => this.transformCompoundFulfillmentResponses())
     .then(() => this.respond());
 
   }
@@ -84,7 +87,7 @@ module.exports = class TerminalController extends PermissionedController  {
 
     du.debug('Acquire Rebill');
 
-    let rebill =  this.parameters.get('rebill');
+    let rebill = this.parameters.get('rebill');
 
     return this.rebillController.get({id: rebill.id}).then(result => {
       this.parameters.set('rebill', rebill);
@@ -139,13 +142,13 @@ module.exports = class TerminalController extends PermissionedController  {
 
     let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
-    let productids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+    let product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
       return augmented_transaction_product.product;
     });
 
-    productids = arrayutilities.unique(productids);
+    product_ids = arrayutilities.unique(product_ids);
 
-    return this.productController.list(productids).then(products => {
+    return this.productController.getListByAccount({ids: product_ids}).then(products => {
       this.parameters.set('products', products);
       return true;
     });
@@ -234,19 +237,29 @@ module.exports = class TerminalController extends PermissionedController  {
 
     let grouped_shipable_transaction_products = this.parameters.get('groupedshipabletransactionproducts');
 
-    let fulfillment_promises = objectutilities.map(grouped_shipable_transaction_products, fulfillment_provider => {
+    let compound_fulfillment_promises = objectutilities.map(grouped_shipable_transaction_products, fulfillment_provider => {
 
-      const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
       let fulfillmentController = new FulfillmentController();
+      let terminalReceiptController = new TerminalReceiptController();
 
-      return fulfillmentController.execute({fulfillment_provider_id: fulfillment_provider, augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider]});
+      return fulfillmentController.execute({fulfillment_provider_id: fulfillment_provider, augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider]})
+      .then((fulfillment_response) => {
+
+        return terminalReceiptController.issueReceipt({
+          fulfillment_provider: fulfillment_provider,
+          fulfillment_response: fulfillment_response,
+          augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider]
+        }).then(shipping_receipt => {
+          return {shipping_receipt, fulfillment_response};
+        });
+
+      });
 
     });
 
-    //Technical Debt:  These need to execute serially
-    return Promise.all(fulfillment_promises).then(fulfillment_promises => {
+    return Promise.all(compound_fulfillment_promises).then(compound_fulfillment_promises => {
 
-      this.parameters.set('fulfillmentresponses', fulfillment_promises);
+      this.parameters.set('compoundfulfillmentresponses', compound_fulfillment_promises);
 
       return true;
 
@@ -254,21 +267,25 @@ module.exports = class TerminalController extends PermissionedController  {
 
   }
 
-  transformFulfillmentResponses(){
+  transformCompoundFulfillmentResponses(){
 
-    du.debug('Transform Fulfillment Responses');
+    du.debug('Transform Compound Fulfillment Responses');
 
-    let fulfillment_responses = this.parameters.get('fulfillmentresponses');
+    let compound_fulfillment_responses = this.parameters.get('compoundfulfillmentresponses');
 
     let response = 'fail';
 
-    let is_success = arrayutilities.every(fulfillment_responses, fulfillment_response => (fulfillment_response.getCode() == 'success'));
+    let is_success = arrayutilities.every(compound_fulfillment_responses, compound_fulfillment_response => {
+      return (compound_fulfillment_response.fulfillment_response.getCode() == 'success');
+    });
 
     if(is_success){
       response = 'success'
     }
 
-    let is_error = arrayutilities.find(fulfillment_responses, fulfillment_response => (fulfillment_response.getCode() == 'error'));
+    let is_error = arrayutilities.find(compound_fulfillment_responses, compound_fulfillment_response => {
+      return (compound_fulfillment_response.fulfillment_response.getCode() == 'error');
+    });
 
     if(is_error){
       response = 'error';
@@ -290,7 +307,6 @@ module.exports = class TerminalController extends PermissionedController  {
       response_type: response_code
     };
 
-    const TerminalResponse = global.SixCRM.routes.include('providers', 'shipping/Response.js');
     let terminal_response = new TerminalResponse(response_prototype);
 
     return terminal_response;

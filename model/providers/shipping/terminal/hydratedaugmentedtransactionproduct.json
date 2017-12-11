@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/hydratedaugmentedtransactionproduct.json",
+	"title": "Hydrated Augmented Transaction Product",
+	"type":"object",
+	"properties":{
+		"product":{"$ref":"../../../entities/product.json"},
+		"amount":{"$ref":"../../../definitions/currency.json"},
+		"transaction":{"$ref":"../../../entities/transaction.json"}
+	},
+	"required":["product","amount","transaction"]
+}

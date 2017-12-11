@@ -14,6 +14,64 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 
 const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
+function getValidRebill(){
+
+  return {
+    bill_at: "2017-04-06T18:40:41.405Z",
+    id: "70de203e-f2fd-45d3-918b-460570338c9b",
+    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    parentsession: "1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d",
+    product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+    amount: 79.99,
+    created_at:"2017-04-06T18:40:41.405Z",
+    updated_at:"2017-04-06T18:41:12.521Z"
+  };
+
+}
+
+function getValidSession(){
+
+  return {
+    completed: false,
+    subaffiliate_5: '45f025bb-a9dc-45c7-86d8-d4b7a4443426',
+    created_at: '2017-04-06T18:40:41.405Z',
+    subaffiliate_2: '22524f47-9db7-42f9-9540-d34a8909b072',
+    subaffiliate_1: '6b6331f6-7f84-437a-9ac6-093ba301e455',
+    subaffiliate_4: 'd515c0df-f9e4-4a87-8fe8-c53dcace0995',
+    subaffiliate_3: 'fd2548db-66a8-481e-aacc-b2b76a88fea7',
+    product_schedules: [ '2200669e-5e49-4335-9995-9c02f041d91b' ],
+    updated_at: '2017-04-06T18:41:12.521Z',
+    affiliate: '332611c7-8940-42b5-b097-c49a765e055a',
+    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+    customer: '24f7c851-29d4-4af9-87c5-0298fa74c689',
+    campaign: '70a6689a-5814-438b-b9fd-dd484d0812f9',
+    id: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+    cid: 'fb10d33f-da7d-4765-9b2b-4e5e42287726'
+  };
+
+}
+
+function getValidCustomer(){
+  return {
+    updated_at: '2017-10-31T20:10:05.380Z',
+    lastname: 'Damunaste',
+    created_at: '2017-10-14T16:15:19.506Z',
+    creditcards: [ 'df84f7bb-06bd-4daa-b1a3-6a2c113edd72' ],
+    firstname: 'Rama',
+    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+    address:{
+      zip: '97213',
+      country: 'US',
+      state: 'OR',
+      city: 'London',
+      line1: '10 Downing St.'
+    },
+    id: '24f7c851-29d4-4af9-87c5-0298fa74c689',
+    email: 'rama@damunaste.org',
+    phone: '1234567890'
+  };
+}
+
 function getValidTransactionProducts(){
 
   return [
@@ -151,7 +209,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let products = getValidProducts();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        getList:({list}) => {
+        getListByAccount:({ids}) => {
           return Promise.resolve(products);
         }
       });
@@ -163,6 +221,206 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       return shipmentUtilitiesController.hydrateProducts().then(result => {
         expect(result).to.equal(true);
         expect(shipmentUtilitiesController.parameters.store['products'], products);
+      });
+
+    });
+
+  });
+
+  describe('marryProductsToAugmentedTransactionProducts', () => {
+
+    it('successfully marrys products to augmented transaction products', () => {
+
+      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let products = getValidProducts();
+
+      augmented_transaction_products = arrayutilities.map(augmented_transaction_products, (augmented_transaction_product, index) => {
+        let updated_augmented_transaction_product = objectutilities.clone(augmented_transaction_product);
+
+        updated_augmented_transaction_product.product = products[index % products.length].id;
+        return updated_augmented_transaction_product;
+      });
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+      shipmentUtilitiesController.parameters.set('products', products);
+
+      let result = shipmentUtilitiesController.marryProductsToAugmentedTransactionProducts();
+
+      expect(result).to.equal(true);
+      expect(shipmentUtilitiesController.parameters.store['hydratedaugmentedtransactionproducts']).to.be.defined;
+
+    });
+
+  });
+
+  describe('acquireCustomerFromSession', () => {
+
+    it('successfully acquires a customer from a session', () => {
+
+      let session = getValidSession();
+      let customer = getValidCustomer();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        getCustomer:(session) => {
+          return Promise.resolve(customer);
+        }
+      });
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('session', session);
+
+      return shipmentUtilitiesController.acquireCustomerFromSession().then(result => {
+        expect(result).to.equal(true);
+        expect(shipmentUtilitiesController.parameters.store['customer']).to.equal(customer);
+      });
+    });
+
+  });
+
+  describe('acquireRebillFromTransactions', () => {
+
+    it('successfully acquires a rebill from transactions', () => {
+
+      let rebill = getValidRebill();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+
+      augmented_transaction_products[0].transaction.rebill = rebill.id;
+      augmented_transaction_products[1].transaction.rebill = rebill.id;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+
+      return shipmentUtilitiesController.acquireRebillFromTransactions().then(result => {
+        expect(result).to.equal(true);
+        expect(shipmentUtilitiesController.parameters.store['rebill']).to.deep.equal(rebill);
+      });
+
+    });
+
+  });
+
+  describe('acquireRebill', () => {
+
+    it('successfully acquires a rebill', () => {
+
+      let rebill = getValidRebill();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('rebillid', rebill.id);
+
+      return shipmentUtilitiesController.acquireRebill().then(result => {
+        expect(result).to.equal(true);
+        expect(shipmentUtilitiesController.parameters.store['rebill']).to.equal(rebill);
+      });
+
+    });
+
+  });
+
+  describe('acquireSessionFromRebill', () => {
+
+    it('successfully acquires a session from a rebill', () => {
+
+      let rebill = getValidRebill();
+      let session = getValidSession();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        getSession:({rebill}) => {
+          return Promise.resolve(session);
+        }
+      });
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('rebill', rebill);
+
+      return shipmentUtilitiesController.acquireSessionFromRebill().then(result => {
+        expect(result).to.equal(true);
+        expect(shipmentUtilitiesController.parameters.store['session']).to.equal(session);
+      });
+
+    });
+
+  });
+
+  describe('acquireCustomerFromSession', () => {
+
+    it('successfully acquires a customer from a session', () => {
+
+      let session = getValidSession();
+      let customer = getValidCustomer();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        getCustomer:({session}) => {
+          return Promise.resolve(customer);
+        }
+      });
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('session', session);
+
+      return shipmentUtilitiesController.acquireCustomerFromSession().then(result => {
+        expect(result).to.equal(true);
+        expect(shipmentUtilitiesController.parameters.store['customer']).to.equal(customer);
+      });
+
+    });
+
+  });
+
+  describe('acquireCustomer', () => {
+
+    it('successfully acquires a customer', () => {
+
+      let rebill = getValidRebill();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+
+      augmented_transaction_products[0].transaction.rebill = rebill.id;
+      augmented_transaction_products[1].transaction.rebill = rebill.id;
+
+      let session = getValidSession();
+      let customer = getValidCustomer();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        getCustomer:({session}) => {
+          return Promise.resolve(customer);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        },
+        getSession:({rebill}) => {
+          return Promise.resolve(session);
+        }
+      });
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+
+      return shipmentUtilitiesController.acquireCustomer().then(result => {
+        expect(result).to.equal(true);
+        expect(shipmentUtilitiesController.parameters.store['customer']).to.equal(customer);
       });
 
     });

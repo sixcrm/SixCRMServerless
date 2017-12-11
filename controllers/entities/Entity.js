@@ -49,6 +49,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Technical Debt:  Deprecate!
     //NOTE:  Expensive! (and incomplete)
     listByAssociations({id, field, pagination, fatal}){
 
@@ -74,6 +75,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Technical Debt:  Deprecate!
     //NOTE:  Expensive!
     listByAssociation({id, field, pagination, fatal}){
 
@@ -102,6 +104,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Technical Debt:  Deprecate!
     //NOTE: Expensive (and incomplete)
     listBySecondaryIndex({field, index_value, index_name, pagination, fatal}) {
 
@@ -132,6 +135,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Technical Debt:  Deprecate!
     //NOTE: Expensive
     listBy({list_array, field, fatal}){
 
@@ -222,8 +226,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    //Technical Debt: getList
-
     //NOTE:  Cheap!  Complete!
     listByAccount({query_parameters, account, pagination, reverse_order, fatal, search}){
 
@@ -254,6 +256,40 @@ module.exports = class entityController extends entityUtilitiesController {
       .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, 'account-index'))
       .then((data) => this.buildResponse(data))
       .catch((error) => this.handleErrors(error, fatal));
+
+    }
+
+    getListByAccount({ids, query_parameters, account, pagination, reverse_order, fatal, search}){
+
+      du.debug('Get List By Account');
+
+      ids = (_.isUndefined(ids))?[]:ids;
+      let list_condition = this.createINQueryParameters({field: 'id', list_array: ids});
+
+      let argumentation = arguments[0];
+
+      if(_.isUndefined(argumentation.query_parameters)){
+        argumentation.query_parameters = list_condition;
+      }else{
+        argumentation.query_parameters = objectutilities.merge(list_condition, argumentation.query_parameters);
+      }
+
+      return this.listByAccount(argumentation);
+
+    }
+
+    getListByUser({ids, query_parameters, account, pagination, reverse_order, fatal, search}){
+
+      du.debug('Get List By User');
+
+      ids = (_.isUndefined(ids))?[]:ids;
+      let list_condition = this.createINQueryParameters({field: 'id', list_array: ids});
+
+      let argumentation = arguments[0];
+
+      argumentation.query_parameters = objectutilities.merge(list_condition, argumentation.query_parameters);
+
+      return this.listByUser(argumentation);
 
     }
 

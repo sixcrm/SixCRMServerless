@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/compoundfulfillmentresponses.json",
+	"title": "Compound Fulfillment Responses",
+	"type":"array",
+	"items": {"$ref": "./compoundfulfillmentresponse.json"}
+}
