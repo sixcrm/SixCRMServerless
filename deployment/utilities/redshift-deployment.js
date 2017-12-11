@@ -24,7 +24,10 @@ module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
 
     if(process.env.stage == 'production'){
         this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/'+process.env.stage+'.json');
-    }else{
+    } else if(process.env.stage == 'local'){
+      this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/local.json');
+    }
+    else {
       this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/default.json');
     }
 

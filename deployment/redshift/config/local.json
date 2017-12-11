@@ -1,7 +1,9 @@
 {
-  "database": "analytics",
+  "database": "circle_test",
   "host": "localhost",
   "port": 5439,
   "max": 10,
-  "idle_timeout": 30000
+  "idle_timeout": 30000,
+  "user": "root",
+  "docker_image": "circleci/postgres:9-alpine-ram"
 }
