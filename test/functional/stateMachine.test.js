@@ -50,6 +50,8 @@ describe('stateMachine', () => {
             return Promise.resolve([]);
         };
 
+        mockWorkerFunctions();
+
         SqSTestUtils.purgeAllQueues().then(() => done());
     });
 
@@ -77,6 +79,7 @@ describe('stateMachine', () => {
     describe('Moving messages', () => {
 
         let tests = [
+            {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success', messages: 0},
             {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success', messages: 1},
             {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success', messages: 9},
             {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success', messages: 10},
@@ -86,7 +89,7 @@ describe('stateMachine', () => {
             {from: 'bill', to: 'bill', worker: 'processBilling.js', status: 'noaction', messages: 1},
             {from: 'bill', to: 'bill_error', worker: 'processBilling.js', status: 'error', messages: 1},
             {from: 'hold', to: 'pending', worker: 'shipProduct.js', status: 'success', messages: 1},
-            {from: 'hold', to: 'pending_failed', worker: 'shipProduct.js', status: 'fail', messages: 1},
+            {from: 'hold', to: 'hold_failed', worker: 'shipProduct.js', status: 'fail', messages: 1},
             {from: 'hold', to: 'hold', worker: 'shipProduct.js', status: 'noaction', messages: 5},
             {from: 'pending', to: 'shipped', worker: 'confirmShipped.js', status: 'success', messages: 1},
             {from: 'pending_failed', to: 'pending', worker: 'shipProduct.js', status: 'success', messages: 1},
@@ -97,23 +100,7 @@ describe('stateMachine', () => {
         arrayutilities.map(tests, (test) => {
             it(`should move ${test.messages} message(es) from ${test.from} to ${test.to}`, () => {
 
-                mockery.registerMock(global.SixCRM.routes.path('controllers', `workers/${test.worker}`), {
-                    execute: () => {
-                        const WorkerResponse = class {
-                            getCode() {
-                                return test.status;
-                            }
-
-                            getAdditionalInformation() {
-                                return test.status;
-                            }
-                        };
-
-                        return Promise.resolve(new WorkerResponse());
-                    }
-                });
-
-                let rebill = JSON.stringify(getValidRebill());
+                let rebill = JSON.stringify(getRebill(test.status));
 
                 let expected_number_in_input = 0;
                 let expected_number_in_output = test.messages;
@@ -124,13 +111,7 @@ describe('stateMachine', () => {
                     error_message = 'Message moved out of input queue.'
                 }
 
-                let messages = [];
-
-                for (let i = 0; i < test.messages; i++) {
-                    messages.push(SqSTestUtils.sendMessageToQueue(test.from, rebill))
-                }
-
-                return Promise.all(messages)
+                return SqSTestUtils.sendMessageToQueue(test.from, rebill, test.messages)
                     .then(() => SqSTestUtils.messageCountInQueue(test.from))
                     .then((count) => expect(count).to.equal(test.messages, 'Message(es) not delivered to input queue.'))
                     .then(() => flushStateMachine())
@@ -139,22 +120,9 @@ describe('stateMachine', () => {
                         SqSTestUtils.messageCountInQueue(test.to)]))
                     .then((counts) => expect(counts).to.deep.equal(
                         [expected_number_in_input, expected_number_in_output], error_message))
-                    // .then(() => timestamp.delay(31*1000)())
-                    // .then(() => SqSTestUtils.receiveMessageFromQueue(test.to))
-                    // .then((message) => {
-                    //     expect(message.id).to.equal(rebill.id);
-                    //     expect(message.account).to.equal(rebill.account);
-                    //     expect(message.amount).to.equal(rebill.amount);
-                    //     expect(message.parrentsession).to.equal(rebill.parrentsession);
-                    //     expect(message.product_schedules).to.deep.equal(rebill.product_schedules);
-                    //     expect(message.bill_at).to.equal(rebill.bill_at);
-                    //     expect(message.created_at).to.equal(rebill.created_at);
-                    //     expect(message.updated_at).to.equal(rebill.updated_at);
-                    // })
 
             });
         });
-
 
     });
 
@@ -170,23 +138,7 @@ describe('stateMachine', () => {
         arrayutilities.map(tests, (test) => {
             it(`should archive a message from ${test.from}`, () => {
 
-                mockery.registerMock(global.SixCRM.routes.path('controllers', `workers/archive.js`), {
-                    execute: () => {
-                        const WorkerResponse = class {
-                            getCode() {
-                                return 'success';
-                            }
-
-                            getAdditionalInformation() {
-                                return 'success';
-                            }
-                        };
-
-                        return Promise.resolve(new WorkerResponse());
-                    }
-                });
-
-                let rebill = JSON.stringify(getValidRebill());
+                let rebill = JSON.stringify(getRebill(test.status));
 
                 return SqSTestUtils.messageCountInQueue(test.from)
                     .then((count) => expect(count).to.equal(0, 'Queue is not empty at the start of test.'))
@@ -200,6 +152,144 @@ describe('stateMachine', () => {
         });
     });
 
+    describe('Mix and match', () => {
+
+        let tests = [
+            {
+                start_state: [
+                    {queue: 'bill', status: 'success', messages: 1},
+                    {queue: 'hold', status: 'success', messages: 2},
+                    {queue: 'hold', status: 'fail', messages: 1}
+                ],
+
+                number_of_flushes: 1,
+
+                end_state: [
+                    {queue: 'bill', messages: 0},
+                    {queue: 'hold', messages: 1},
+                    {queue: 'pending', messages: 2},
+                    {queue: 'hold_failed', messages: 1}
+                ]
+
+            },
+            {
+                start_state: [
+                    {queue: 'bill', status: 'success', messages: 1},
+                    {queue: 'bill', status: 'error', messages: 1},
+                    {queue: 'bill', status: 'fail', messages: 1},
+                    {queue: 'bill', status: 'noaction', messages: 1}
+                ],
+
+                number_of_flushes: 1,
+
+                end_state: [
+                    {queue: 'hold', messages: 1},
+                    {queue: 'bill_error', messages: 1},
+                    {queue: 'recover', messages: 1},
+                    {queue: 'bill', messages: 1}
+                ]
+
+            }
+        ];
+
+        arrayutilities.map(tests, (test) => {
+            it(`should move messages around`, () => {
+
+                let begin = [];
+                arrayutilities.map(test.start_state, (state) => {
+                    let rebill = JSON.stringify(getRebill(state.status));
+                    begin.push(SqSTestUtils.sendMessageToQueue(state.queue, rebill, state.messages))
+                });
+
+                return Promise.all(begin)
+                    .then(() => flushStateMachine())
+                    .then(() => {
+                        let end = [];
+                        arrayutilities.map(test.end_state, (state) => {
+                            end.push(SqSTestUtils.messageCountInQueue(state.queue))
+                        });
+
+                        return Promise.all(end);
+                    })
+                    .then((counts) => {
+                        test.end_state.forEach((state, i) => {
+                            expect(counts[i]).to.equal(state.messages, `Number of messages in queue '${state.queue}' is incorrect.`);
+                        })
+                    })
+
+            });
+
+        });
+
+    });
+
+    describe('Incorrect message', () => {
+
+        it(`valid JSON moves forward`, () => {
+
+            let message = JSON.stringify({not_a_rebill: 'but still valid JSON'});
+
+            return SqSTestUtils.sendMessageToQueue('bill', message)
+                .then(() => SqSTestUtils.messageCountInQueue('bill'))
+                .then((count) => expect(count).to.equal(1, 'Message(es) not delivered to input queue.'))
+                .then(() => flushStateMachine())
+                .then(() => SqSTestUtils.messageCountInQueue('bill'))
+                .then((count) => expect(count).to.equal(0))
+        });
+
+        it(`invalid JSON stays in the queue`, () => {
+
+            let message = "abc123";
+
+            return SqSTestUtils.sendMessageToQueue('bill', message)
+                .then(() => SqSTestUtils.messageCountInQueue('bill'))
+                .then((count) => expect(count).to.equal(1, 'Message(es) not delivered to input queue.'))
+                .then(() => flushStateMachine())
+                .then(() => SqSTestUtils.messageCountInQueue('bill'))
+                .then((count) => expect(count).to.equal(1))
+        });
+
+
+    });
+
+    describe('Flushing queue twice', () => {
+
+        let tests = [
+            {from: 'bill', to: 'hold', eventually: 'pending', worker: 'processBilling.js', status: 'success', messages: 1}
+        ];
+
+        arrayutilities.map(tests, (test) => {
+            it(`should move ${test.messages} message(es) from ${test.from} to ${test.to} end eventually to ${test.eventually}`, () => {
+
+                let rebill = JSON.stringify(getRebill(test.status));
+
+                let expected_number_in_input = 0;
+                let expected_number_in_output = test.messages;
+                let error_message = 'Message(es) not delivered to destination queue.';
+
+                return SqSTestUtils.sendMessageToQueue(test.from, rebill, test.messages)
+                    .then(() => SqSTestUtils.messageCountInQueue(test.from))
+                    .then((count) => expect(count).to.equal(test.messages, 'Message(es) not delivered to input queue.'))
+                    .then(() => flushStateMachine())
+                    .then(() => Promise.all([
+                        SqSTestUtils.messageCountInQueue(test.from),
+                        SqSTestUtils.messageCountInQueue(test.to)]))
+                    .then((counts) => expect(counts).to.deep.equal(
+                        [expected_number_in_input, expected_number_in_output], error_message))
+                    .then(() => timestamp.delay(32*1000)())
+                    .then(() => flushStateMachine())
+                    .then(() => Promise.all([
+                        SqSTestUtils.messageCountInQueue(test.from),
+                        SqSTestUtils.messageCountInQueue(test.eventually)]))
+                    .then((counts) => expect(counts).to.deep.equal(
+                        [expected_number_in_input, expected_number_in_output], error_message))
+
+            });
+        });
+
+
+    });
+
     function flushStateMachine() {
         let all_function_executions = arrayutilities.map(lambdas, (lambda) => {
             let function_name = Object.keys(lambda); // function is the first property of the handler
@@ -208,7 +298,7 @@ describe('stateMachine', () => {
         });
 
         return Promise.all(all_function_executions).then((results) => {
-            return timestamp.delay(0.05*1000)().then(() => results);
+            return timestamp.delay(0.2*1000)().then(() => results);
         });
     }
 
@@ -218,7 +308,29 @@ describe('stateMachine', () => {
         });
     }
 
-    function getValidRebill(){
+    function mockWorkerFunctions() {
+        arrayutilities.map(global.SixCRM.routes.files('controllers', `workers`), (worker_function) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', `workers/${worker_function}`), {
+                execute: (message) => {
+                    const WorkerResponse = class {
+                        getCode() {
+                            let body = JSON.parse(message.Body);
+                            return body.return_status ? body.return_status : 'success';
+                        }
+
+                        getAdditionalInformation() {
+                            let body = JSON.parse(message.Body);
+                            return body.return_status ? body.return_status : 'success';
+                        }
+                    };
+
+                    return Promise.resolve(new WorkerResponse());
+                }
+            });
+        });
+    }
+
+    function getRebill(status){
 
         return {
             "bill_at": "2017-04-06T18:40:41.405Z",
@@ -228,7 +340,8 @@ describe('stateMachine', () => {
             "product_schedules": ["2200669e-5e49-4335-9995-9c02f041d91b"],
             "amount": 79.99,
             "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
+            "updated_at":"2017-04-06T18:41:12.521Z",
+            "return_status": status
         };
 
     }
