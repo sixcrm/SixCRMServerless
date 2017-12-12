@@ -3,7 +3,7 @@ const expect = chai.expect;
 
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-describe.only('config', () => {
+describe('config', () => {
 
     describe('serverless', () => {
 
