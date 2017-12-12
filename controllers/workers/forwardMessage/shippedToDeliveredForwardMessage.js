@@ -11,6 +11,8 @@ module.exports = class ShippedToDeliveredForwardMessageController extends forwar
         name: 'shippedtodelivered',
         workerfunction: 'confirmDelivered.js',
         origin_queue: 'shipped',
+        failure_queue: 'shipped_failed',
+        error_queue: 'shipped_error',
         destination_queue: 'delivered'
       })
 

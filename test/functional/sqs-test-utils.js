@@ -5,6 +5,7 @@ class SqsTestUtils {
     constructor() {
         this.baseUrl = 'http://localhost:9324/';
         this.queuePrefix = 'queue';
+        this.queueNames = ['bill', 'recover', 'hold', 'pending', 'shipped', 'delivered'];
     }
 
     /**
@@ -25,6 +26,7 @@ class SqsTestUtils {
         }
 
         let messages =[];
+
         for (let i = 0; i < count; i++) {
             messages.push(this.executeQuery(queue, 'Action=SendMessage&MessageBody=' + encodeURIComponent(body)))
         }
@@ -37,20 +39,15 @@ class SqsTestUtils {
     }
 
     purgeAllQueues() {
-        return Promise.all([
-            this.purgeQueue('bill'),
-            this.purgeQueue('bill_failed'),
-            this.purgeQueue('bill_error'),
-            this.purgeQueue('rebill'),
-            this.purgeQueue('pending'),
-            this.purgeQueue('pending_failed'),
-            this.purgeQueue('recover'),
-            this.purgeQueue('hold'),
-            this.purgeQueue('hold_failed'),
-            this.purgeQueue('shipped'),
-            this.purgeQueue('delivered'),
-            this.purgeQueue('searchindex')
-        ]);
+        let queues = [];
+
+        this.queueNames.map((queue) => {
+            queues.push(queue);
+            queues.push(queue + '_error');
+            queues.push(queue + '_failed');
+        });
+
+        return Promise.all(queues.map(queue => this.purgeQueue(queue)));
     }
 
     messageCountInQueue(queue) {

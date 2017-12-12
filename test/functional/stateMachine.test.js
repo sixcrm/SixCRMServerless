@@ -156,6 +156,7 @@ describe('stateMachine', () => {
 
         let tests = [
             {
+                description: 'should move things around',
                 start_state: [
                     {queue: 'bill', status: 'success', messages: 1},
                     {queue: 'hold', status: 'success', messages: 2},
@@ -173,6 +174,7 @@ describe('stateMachine', () => {
 
             },
             {
+                description: 'should move messages out of bill to fail and error queues',
                 start_state: [
                     {queue: 'bill', status: 'success', messages: 1},
                     {queue: 'bill', status: 'error', messages: 1},
@@ -189,15 +191,74 @@ describe('stateMachine', () => {
                     {queue: 'bill', messages: 1}
                 ]
 
+            },
+            {
+                description: 'should move messages out of hold to fail and error queues',
+                start_state: [
+                    {queue: 'hold', status: 'success', messages: 1},
+                    {queue: 'hold', status: 'error', messages: 1},
+                    {queue: 'hold', status: 'fail', messages: 1},
+                    {queue: 'hold', status: 'noaction', messages: 1}
+                ],
+
+                number_of_flushes: 1,
+
+                end_state: [
+                    {queue: 'pending', messages: 1},
+                    {queue: 'hold_error', messages: 1},
+                    {queue: 'hold_failed', messages: 1},
+                    {queue: 'hold', messages: 1}
+                ]
+
+            },
+            {
+                description: 'should move messages out of pending to fail and error queues',
+                start_state: [
+                    {queue: 'pending', status: 'success', messages: 1},
+                    {queue: 'pending', status: 'error', messages: 1},
+                    {queue: 'pending', status: 'fail', messages: 1},
+                    {queue: 'pending', status: 'noaction', messages: 1}
+                ],
+
+                number_of_flushes: 1,
+
+                end_state: [
+                    {queue: 'shipped', messages: 1},
+                    {queue: 'pending_error', messages: 1},
+                    {queue: 'pending_failed', messages: 1},
+                    {queue: 'pending', messages: 1}
+                ]
+
+            },
+            {
+                description: 'should move messages out of shipped to fail and error queues',
+                start_state: [
+                    {queue: 'shipped', status: 'success', messages: 1},
+                    {queue: 'shipped', status: 'error', messages: 1},
+                    {queue: 'shipped', status: 'fail', messages: 1},
+                    {queue: 'shipped', status: 'noaction', messages: 1}
+                ],
+
+                number_of_flushes: 1,
+
+                end_state: [
+                    {queue: 'delivered', messages: 1},
+                    {queue: 'shipped_error', messages: 1},
+                    {queue: 'shipped_failed', messages: 1},
+                    {queue: 'shipped', messages: 1}
+                ]
+
             }
         ];
 
         arrayutilities.map(tests, (test) => {
-            it(`should move messages around`, () => {
+            it(test.description, () => {
 
                 let begin = [];
+
                 arrayutilities.map(test.start_state, (state) => {
                     let rebill = JSON.stringify(getRebill(state.status));
+
                     begin.push(SqSTestUtils.sendMessageToQueue(state.queue, rebill, state.messages))
                 });
 
@@ -205,6 +266,7 @@ describe('stateMachine', () => {
                     .then(() => flushStateMachine())
                     .then(() => {
                         let end = [];
+
                         arrayutilities.map(test.end_state, (state) => {
                             end.push(SqSTestUtils.messageCountInQueue(state.queue))
                         });
@@ -315,11 +377,13 @@ describe('stateMachine', () => {
                     const WorkerResponse = class {
                         getCode() {
                             let body = JSON.parse(message.Body);
+
                             return body.return_status ? body.return_status : 'success';
                         }
 
                         getAdditionalInformation() {
                             let body = JSON.parse(message.Body);
+
                             return body.return_status ? body.return_status : 'success';
                         }
                     };
