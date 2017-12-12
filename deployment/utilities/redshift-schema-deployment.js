@@ -523,8 +523,15 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   execute(query) {
 
-    du.debug('Execute');
+    du.debug('Execute Query');
 
+    // I am sure this could be cleaner
+
+    if(process.env.TEST_IMAGE == 'true'){
+      query = this.transformQuery(query);
+    }
+
+    du.info(query)
     return this.redshiftqueryutilities.query(query);
 
   }
@@ -619,27 +626,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
   transformQuery(query){
     /* Transforms query to PostgreSQL format by clearing Redshift specifics */
 
-    if(process.env.stage == 'local'){
-
       return arrayutilities.map(query.split(/\r?\n/), (data) =>
-          data.replace(/(DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*)(\,)?/,(match, p1, p2) => { // eslint-disable-line no-useless-escape
+          data.replace(/(getdate.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/,(match, p1, p2) => { // eslint-disable-line no-useless-escape
 
             if(p2 == ','){
                 return `${p2}`;
             } else if(p1.startsWith('encode')){
-                return ''
+               return ''
+            } else if(p1.startsWith('ENCODE')){
+               return ''
+            } else if(p1.startsWith('getdate')){
+               return 'now();'
             }
             else {
-                return ';'
+              return ';'
             }
 
           })
       ).join('\n');
-
-    } else {
-
-        return query;
-    }
 
   }
 
