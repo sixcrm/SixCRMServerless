@@ -31,7 +31,6 @@ let emailTemplateType = require('./emailtemplate/emailTemplateType');
 
 let fulfillmentProviderInputType = require('./fulfillmentprovider/fulfillmentProviderInputType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
-let fulfillmentProviderValidationInputType = require('./fulfillmentprovider/fulfillmentProviderValidationInputType');
 let fulfillmentProviderValidationType = require('./fulfillmentprovider/fulfillmentProviderValidationType');
 
 let deleteOutputType = require('./general/deleteOutputType');
