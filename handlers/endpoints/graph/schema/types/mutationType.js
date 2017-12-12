@@ -205,16 +205,19 @@ module.exports.graphObj = new GraphQLObjectType({
             }
         },
         fulfillmentprovidervalidation: {
-            type: fulfillmentProviderValidationType.graphObj,
-            description:  'Validates a Fulfillment Provider configuration',
-            args: {
-                fulfillmentprovidervalidation: { type: fulfillmentProviderValidationInputType.graphObj }
-            },
-            resolve: function(root, args){
-                const FulfillmentTriggerController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentTrigger.js');
-
-                return FulfillmentTriggerController.validateProvider(args.fulfillmentprovidervalidation.fulfillmentprovider);
+          type: fulfillmentProviderValidationType.graphObj,
+          description:  'Validates a Fulfillment Provider configuration',
+          args: {
+            id: {
+              type: GraphQLString
             }
+          },
+          resolve: function(root, args){
+            const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+            let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: args.id});
+
+            return fulfillmentProviderController.validate();
+          }
         },
         //Note: Fix
         createuser:{

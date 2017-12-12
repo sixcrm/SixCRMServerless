@@ -40,7 +40,7 @@ function getValidRebill(){
 
 function getValidTerminalResponse(){
 
-  const TerminalResponse = global.SixCRM.routes.include('providers', 'shipping/Response.js');
+  const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
 
   return new TerminalResponse({
     response_type: 'success',
@@ -51,7 +51,11 @@ function getValidTerminalResponse(){
 }
 
 function getValidProviderResponse(){
-  return '';
+  return {
+    result:{},
+    code:'success',
+    message:''
+  };
 }
 
 describe('controllers/workers/shipProduct', function () {
@@ -101,7 +105,7 @@ describe('controllers/workers/shipProduct', function () {
         }
       }
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'shipping/Terminal.js'), terminal_mock);
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Terminal.js'), terminal_mock);
 
       let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
@@ -157,7 +161,7 @@ describe('controllers/workers/shipProduct', function () {
         }
       }
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'shipping/Terminal.js'), terminal_mock);
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Terminal.js'), terminal_mock);
 
       let message = getValidMessage();
 

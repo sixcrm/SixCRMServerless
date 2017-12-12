@@ -63,6 +63,15 @@ function getValidTransactions(){
 
 }
 
+function getValidTransactionProduct(){
+
+  return {
+    product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+    amount:34.99
+  }
+
+}
+
 describe('helpers/entities/transaction/Transaction.js', () => {
 
   before(() => {
@@ -161,6 +170,65 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
         expect(transactionHelperController.parameters.store['transaction'].chargeback).to.equal(false);
 
+      });
+
+    });
+
+  });
+
+  describe('updateTransactionProductsPrototype', () => {
+
+    it('successfully updates the local transaction model with a new transaction prototype', () => {
+
+      let transaction = getValidTransaction();
+      let updated_transaction_product = transaction.products[0];
+
+      updated_transaction_product.shipping_receipt = uuidV4();
+
+      let updated_transaction = objectutilities.clone(transaction);
+
+      updated_transaction.products[0] = updated_transaction_product;
+
+      let transactionHelperController = new TransactionHelperController();
+
+      transactionHelperController.parameters.set('transaction', transaction);
+      transactionHelperController.parameters.set('transactionproduct', updated_transaction_product);
+
+      let result = transactionHelperController.updateTransactionProductsPrototype();
+
+      expect(result).to.equal(true);
+      expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(updated_transaction);
+
+    });
+
+  });
+
+  describe('updateTransactionProduct', () => {
+
+    it('successfully updates a transaction product', () => {
+
+      let transaction = getValidTransaction();
+      let updated_transaction_product = transaction.products[0];
+
+      updated_transaction_product.shipping_receipt = uuidV4();
+
+      let updated_transaction = objectutilities.clone(transaction);
+
+      updated_transaction.products[0] = updated_transaction_product;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+        get:({id}) => {
+          return Promise.resolve(transaction);
+        },
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      let transactionHelperController = new TransactionHelperController();
+
+      return transactionHelperController.updateTransactionProduct({id: transaction.id, transaction_product: updated_transaction_product}).then(result => {
+        expect(result).to.deep.equal(updated_transaction);
       });
 
     });

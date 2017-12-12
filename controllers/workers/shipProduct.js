@@ -6,7 +6,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
-const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
 
 class shipProductController extends workerController {
 

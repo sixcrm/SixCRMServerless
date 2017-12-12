@@ -179,7 +179,7 @@ function getValidProducts(product_ids){
 
 }
 
-describe('controllers/workers/shipProduct', function () {
+describe('controllers/providers/terminal/Terminal.js', function () {
 
   before(() => {
     mockery.enable({
@@ -221,7 +221,7 @@ describe('controllers/workers/shipProduct', function () {
         }
       })
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('rebill', rebill);
@@ -247,7 +247,7 @@ describe('controllers/workers/shipProduct', function () {
         }
       });
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('rebill', rebill);
@@ -278,7 +278,7 @@ describe('controllers/workers/shipProduct', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('transactions', transactions);
@@ -305,7 +305,7 @@ describe('controllers/workers/shipProduct', function () {
         }
       });
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -330,7 +330,7 @@ describe('controllers/workers/shipProduct', function () {
 
       let shipable_products = [products[1].id];
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('products', products);
@@ -351,7 +351,7 @@ describe('controllers/workers/shipProduct', function () {
 
       let shipable_products = [products[0].id, products[1].id];
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('products', products);
@@ -372,7 +372,7 @@ describe('controllers/workers/shipProduct', function () {
 
       let shipable_products = [];
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('products', products);
@@ -395,7 +395,7 @@ describe('controllers/workers/shipProduct', function () {
         return augmented_transaction_product.product;
       });
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -417,7 +417,7 @@ describe('controllers/workers/shipProduct', function () {
 
       shipable_product_ids.pop();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -439,7 +439,7 @@ describe('controllers/workers/shipProduct', function () {
 
       shipable_product_ids.shift();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -459,7 +459,7 @@ describe('controllers/workers/shipProduct', function () {
 
       shipable_product_ids.pop();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -481,7 +481,7 @@ describe('controllers/workers/shipProduct', function () {
 
       augmented_transaction_products[0].shipping_receipt = uuidV4();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -504,7 +504,7 @@ describe('controllers/workers/shipProduct', function () {
       augmented_transaction_products[0].shipping_receipt = uuidV4();
       augmented_transaction_products[1].shipping_receipt = uuidV4();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -526,7 +526,7 @@ describe('controllers/workers/shipProduct', function () {
 
       augmented_transaction_products[0].no_ship = true;
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -549,7 +549,7 @@ describe('controllers/workers/shipProduct', function () {
       augmented_transaction_products[0].no_ship = true;
       augmented_transaction_products[1].no_ship = true;
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -571,7 +571,7 @@ describe('controllers/workers/shipProduct', function () {
       let shippable_transaction_product_group = getValidShippableTransactionProductGroup();
       let products = getValidProducts();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('products', products);
@@ -598,7 +598,7 @@ describe('controllers/workers/shipProduct', function () {
 
       grouped_products[products[1].fulfillment_provider] = shipable_transaction_product_group;
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('products', products);
@@ -625,7 +625,7 @@ describe('controllers/workers/shipProduct', function () {
 
       grouped_products[products[1].fulfillment_provider] = shipable_transaction_product_group;
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('products', products);
@@ -652,7 +652,7 @@ describe('controllers/workers/shipProduct', function () {
       grouped_products[products[0].fulfillment_provider] = [shipable_transaction_product_group[0]];
       grouped_products[products[1].fulfillment_provider] = [shipable_transaction_product_group[1]];
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('products', products);
@@ -694,9 +694,9 @@ describe('controllers/workers/shipProduct', function () {
         }
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'shipping/Receipt.js'), mocked_terminal_receipt_class);
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mocked_terminal_receipt_class);
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('groupedshipabletransactionproducts', grouped_shipable_transaction_products);
@@ -721,7 +721,7 @@ describe('controllers/workers/shipProduct', function () {
 
       let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
@@ -739,7 +739,7 @@ describe('controllers/workers/shipProduct', function () {
 
       compound_fulfillment_responses[0].fulfillment_response.setCode('fail');
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
@@ -757,7 +757,7 @@ describe('controllers/workers/shipProduct', function () {
 
       compound_fulfillment_responses[0].fulfillment_response.setCode('error');
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
@@ -775,7 +775,7 @@ describe('controllers/workers/shipProduct', function () {
 
     it('successfully responds', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       terminalController.parameters.set('responsecode', 'success');
@@ -806,7 +806,7 @@ describe('controllers/workers/shipProduct', function () {
         }
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'shipping/Receipt.js'), mocked_receipt_class);
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mocked_receipt_class);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         listTransactions:(rebill) => {
@@ -845,7 +845,7 @@ describe('controllers/workers/shipProduct', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Fulfill.js'), mocked_fulfillment_class);
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'shipping/Terminal.js');
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
       return terminalController.shipRebill({rebill: rebill}).then(result => {

@@ -15,6 +15,13 @@ module.exports = class TransactionHelperController {
           chargebackstatus: 'chargeback_status'
         },
         optional:{}
+      },
+      updateTransactionProduct:{
+        required:{
+          transactionid:'id',
+          transactionproduct:'transaction_product'
+        },
+        optional:{}
       }
     };
 
@@ -106,6 +113,44 @@ module.exports = class TransactionHelperController {
       this.parameters.set('transaction', transaction);
       return true;
     });
+
+  }
+
+  updateTransactionProduct({id, transaction_product}){
+
+    du.debug('Update Transaction Product');
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateTransactionProduct'}))
+    .then(() => this.acquireTransaction())
+    .then(() => this.updateTransactionProductsPrototype())
+    .then(() => this.updateTransaction())
+    .then(() => {
+      return this.parameters.get('transaction');
+    });
+
+  }
+
+  updateTransactionProductsPrototype(){
+
+    du.debug('Update Transaction Product Prototype');
+
+    let transaction =  this.parameters.get('transaction');
+    let updated_transaction_product = this.parameters.get('transactionproduct');
+
+    transaction.products = arrayutilities.map(transaction.products, transaction_product => {
+
+      if(transaction_product.product == updated_transaction_product.product){
+        return updated_transaction_product;
+      }
+
+      return transaction_product;
+
+    });
+
+    this.parameters.set('transaction', transaction);
+
+    return true;
 
   }
 

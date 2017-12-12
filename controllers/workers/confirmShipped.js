@@ -5,6 +5,14 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
+/*
+
+Technical Debt:
+
+This must ask the fulfillment provider for the tracking number if it's not already on the shipping receipt
+
+*/
+
 class confirmShippedController extends workerController {
 
     constructor(){

@@ -9,8 +9,8 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
-const TerminalReceiptController = global.SixCRM.routes.include('providers', 'shipping/Receipt.js');
-const TerminalResponse = global.SixCRM.routes.include('providers', 'shipping/Response.js');
+const TerminalReceiptController = global.SixCRM.routes.include('providers', 'terminal/Receipt.js');
+const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
 
 module.exports = class TerminalController extends PermissionedController  {
 

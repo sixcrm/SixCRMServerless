@@ -40,7 +40,7 @@ module.exports = class FulfillController extends ShipmentUtilities {
     return Promise.resolve()
     .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
     .then(() => this.hydrateRequestProperties())
-    .then(() => this.instantiateFullfillmentProviderClass())
+    .then(() => this.instantiateFulfillmentProviderClass())
     .then(() => this.executeFulfillment())
     .then(() => {
       return this.parameters.get('providerresponse');

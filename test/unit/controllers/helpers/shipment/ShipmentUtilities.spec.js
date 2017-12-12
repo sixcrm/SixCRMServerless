@@ -14,6 +14,20 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 
 const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
+function getValidShippingReceipt(){
+
+  return {
+    id:uuidV4(),
+		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		status:"pending",
+		trackingnumber: randomutilities.createRandomString(10),
+		trackingstatus: "intransit",
+		created_at: timestamp.getISO8601(),
+		updated_at:timestamp.getISO8601()
+  };
+
+}
+
 function getValidRebill(){
 
   return {
@@ -150,7 +164,7 @@ function getValidFulfillmentProvider(){
 		name: randomutilities.createRandomString(20),
 		username: randomutilities.createRandomString(10),
 		password: randomutilities.createRandomString(10),
-		provider:"HASHTAG",
+		provider:"Hashtag",
 		created_at: timestamp.getISO8601(),
 		updated_at:timestamp.getISO8601()
   };
@@ -422,6 +436,95 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
         expect(result).to.equal(true);
         expect(shipmentUtilitiesController.parameters.store['customer']).to.equal(customer);
       });
+
+    });
+
+  });
+
+  describe('markTransactionProductsWithShippingReceipt', () => {
+
+    it('successfully marks transaction products with a shipping receipt', () => {
+
+      let shipping_receipt = getValidShippingReceipt();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+
+      let mock_transaction_helper_controller = class {
+        constructor(){
+
+        }
+        updateTransactionProduct({id, transaction_product}){
+          let transaction = getValidTransaction();
+
+          transaction.products = [transaction_product]
+          return Promise.resolve(transaction);
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('shippingreceipt', shipping_receipt);
+      shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+
+      return shipmentUtilitiesController.markTransactionProductsWithShippingReceipt().then(result => {
+        expect(result).to.equal(true);
+      });
+
+    });
+
+  });
+
+  describe('instantiateFulfillmentProviderClass', () => {
+    it('successfully instantiates a fulfillment provider class', () => {
+
+      let fulfillment_provider = getValidFulfillmentProvider();
+
+      let mock_fulfillment_provider_class = class {
+        constructor({fulfillment_provider}){
+
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('vendors','fulfillmentproviders/Hashtag/handler.js'), mock_fulfillment_provider_class);
+
+      let mock_fulfillment_provider = new mock_fulfillment_provider_class({});
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('fulfillmentprovider', fulfillment_provider);
+
+      let result = shipmentUtilitiesController.instantiateFulfillmentProviderClass();
+
+      expect(result).to.equal(true);
+      expect(shipmentUtilitiesController.parameters.store['instantiatedfulfillmentprovider']).to.deep.equal(mock_fulfillment_provider);
+
+    });
+
+  });
+
+  describe('issueReceipts', () => {
+
+    it('successfully issues a shipping receipt', () => {
+
+      let shipping_receipt = getValidShippingReceipt();
+
+      let mock_terminal_receipt_controller = class {
+        constructor(){
+
+        }
+        issueReceipt({something}){
+          return Promise.resolve(shipping_receipt);
+        }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mock_terminal_receipt_controller);
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      return shipmentUtilitiesController.issueReceipts().then(result => {
+        expect(result).to.equal(true);
+        expect(shipmentUtilitiesController.parameters.store['shippingreceipt']).to.deep.equal(shipping_receipt);
+      })
 
     });
 

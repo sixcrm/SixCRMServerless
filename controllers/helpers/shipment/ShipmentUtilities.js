@@ -17,6 +17,10 @@ module.exports = class ShipmentUtilities {
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
     this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
+    const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+
+    this.transactionHelperController = new TransactionHelperController();
+
     this.parameter_validation = {
       'products':global.SixCRM.routes.path('model', 'entities/components/products.json'),
       'fulfillmentprovider':global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
@@ -27,7 +31,9 @@ module.exports = class ShipmentUtilities {
       'augmentedtransactionproduct': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproduct.json'),
       'hydratedaugmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/hydratedaugmentedtransactionproducts.json'),
       'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
-      'session':global.SixCRM.routes.path('model', 'entities/session.json')
+      'session':global.SixCRM.routes.path('model', 'entities/session.json'),
+      'instantiatedfulfillmentprovider': global.SixCRM.routes.path('model', 'helpers/shipment/instantiatedfulfillmentprovider.json'),
+      'shippingreceipt':global.SixCRM.routes.path('model', 'entities/shippingreceipt.json')
     };
 
     this.parameter_definition = {};
@@ -36,7 +42,6 @@ module.exports = class ShipmentUtilities {
 
   }
 
-  //Needs testing
   augmentParameters(){
 
     du.debug('Augment Parameters');
@@ -48,37 +53,39 @@ module.exports = class ShipmentUtilities {
 
   }
 
-  //Needs Testing
   instantiateFulfillmentProviderClass(){
 
     du.debug('Instantiate Fulfillment Provider Class');
 
     let fulfillment_provider = this.parameters.get('fulfillmentprovider');
 
-    const FulfillmentController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/'+fulfillment_provider.gateway.name+'/handler.js');
+    const FulfillmentController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/'+fulfillment_provider.provider+'/handler.js');
 
     let fulfillmentController = new FulfillmentController({fulfillment_provider: fulfillment_provider});
 
     this.parameters.set('instantiatedfulfillmentprovider', fulfillmentController);
 
+    return true;
+
   }
 
-  //Needs testing
-  updateTransactions(){
+  //Technical Debt:  Serial Promise Execution necessary
+  markTransactionProductsWithShippingReceipt(){
 
-    du.debug('Update Transactions');
+    du.debug('Mark Transaction Products With Shipping Receipt');
 
     let shipping_receipt = this.parameters.get('shippingreceipt');
-    let selected_augmented_transaction_products = this.parameters.get('selectedaugmentedtransactionproducts');
+    let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
-    let update_promises = arrayutilities.map(selected_augmented_transaction_products, selected_augmented_transaction_product => {
+    let update_promises = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
 
-      let updated_transaction_product = objectutilities.clone(selected_augmented_transaction_product);
+      let updated_transaction_product = objectutilities.transcribe({product: 'product', amount: 'amount'}, augmented_transaction_product, {}, true);
 
-      delete updated_transaction_product.transaction;
+      updated_transaction_product = objectutilities.transcribe({no_ship: 'no_ship'}, augmented_transaction_product, updated_transaction_product);
       updated_transaction_product.shipping_receipt = shipping_receipt.id;
 
-      return this.transactionHelperController.updateTransactionProduct({transaction: selected_augmented_transaction_product.transaction.id, transaction_product: updated_transaction_product}).then(result => {
+      return this.transactionHelperController.updateTransactionProduct({id: augmented_transaction_product.transaction.id, transaction_product: updated_transaction_product}).then(result => {
+        //Note:  This is a transaction
         return result;
       });
 
@@ -86,6 +93,7 @@ module.exports = class ShipmentUtilities {
 
     //Technical Debt:  This needs to occur serially
     return Promise.all(update_promises).then(update_promises => {
+      //Note:  update_promises is a array of transactions
       return true;
     });
 
@@ -96,11 +104,11 @@ module.exports = class ShipmentUtilities {
 
     du.debug('Issue Receipts');
 
-    const FulfillmentReceiptController = global.SixCRM.routes.include('providers', 'shipping/Receipt.js');
+    const FulfillmentReceiptController = global.SixCRM.routes.include('providers', 'terminal/Receipt.js');
     let fulfillmentReceiptController = new FulfillmentReceiptController();
 
-    return fulfillmentReceiptController.issueReceipt(this.parameters.get('all')).then(shipping_receipt => {
-      this.paramerers.set('shippingreceipt', shipping_receipt);
+    return fulfillmentReceiptController.issueReceipt(this.parameters.getAll()).then(shipping_receipt => {
+      this.parameters.set('shippingreceipt', shipping_receipt);
       return true;
     });
 
