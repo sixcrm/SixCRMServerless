@@ -24,5 +24,5 @@
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["name", "sku","ship", "account", "created_at", "updated_at"]
+	"required":["name", "sku", "account", "created_at", "updated_at"]
 }
