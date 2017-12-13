@@ -249,6 +249,21 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  seed_test_referential() {
+
+    du.debug('Seed test referential');
+
+    let query_copy = `
+      INSERT INTO d_datetime(datetime)
+      SELECT dd
+      FROM generate_series( '2017-01-01'::timestamp, '2017-12-31'::timestamp, '1 second'::interval) dd;`;
+
+    du.info(query_copy);
+
+    return this.execute(query_copy);
+
+  }
+
   seedBINDatabase(){
 
     du.debug('Seed BIN Database');

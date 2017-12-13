@@ -82,7 +82,7 @@ docker_postgresql:
   port: 5432
   max: 10
   idle_timeout: 30000
-  docker_image: 'circleci/postgres:9-alpine-ram'
+  docker_image: 'circleci/postgres:9.6'
 
 notifications:
   apn:
