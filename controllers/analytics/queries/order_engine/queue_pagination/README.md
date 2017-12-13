@@ -1,4 +1,4 @@
-# Que counts pagination
+# Queue counts pagination
 
 17.10.2017 A.Zelen
 
@@ -9,7 +9,7 @@ ____
 * `date/Time (If already sorted by date)`
 * `queue`
 * `account`
-* `count` 
+* `count`
 
 ## Arguments:
 
@@ -22,18 +22,10 @@ ____
 * `account` - a UUIDv4
 
 ### Optional
-* `campaign` -  a array of UUIDv4 strings
-* `affiliate` -  a affiliate string (the affiliate alias)
-* `subaffiliate_1` -  a sub-affiliate string
-* `subaffiliate_2` -  a sub-affiliate string
-* `subaffiliate_3` -  a sub-affiliate string
-* `subaffiliate_4` -  a sub-affiliate string
-* `subaffiliate_5` -  a sub-affiliate string
-* `processor_result` -  a array of UUIDv4 strings
 
 ---
 ### Query notes
-
+Old query, I guess not in use anymore
 
 
 

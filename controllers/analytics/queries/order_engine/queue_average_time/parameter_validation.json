@@ -28,5 +28,5 @@
 			]
 		}
 	},
-	"required":["start", "end", "account"]
+	"required":["start", "end"]
 }

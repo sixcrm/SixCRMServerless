@@ -50,5 +50,5 @@
 			"exclusiveMinimum": false
 		}
 	},
-	"required":["start", "end", "order", "limit", "offset", "account","period"]
+	"required":["start", "end", "order", "limit", "offset","period"]
 }

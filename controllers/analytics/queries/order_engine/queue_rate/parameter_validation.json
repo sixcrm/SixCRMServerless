@@ -21,12 +21,18 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"queuename:":{
+		"current_queuename:":{
+			"type": "array",
+		  "enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed","fail_hold",
+				"pending", "fail_shipped", "fail_delivered", "fail_recover"
+			]
+		},
+		"previous_queuename:":{
 			"type": "array",
 		  "enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed","fail_hold",
 				"pending", "fail_shipped", "fail_delivered", "fail_recover"
 			]
 		}
 	},
-	"required":["start", "end", "account"]
+	"required":["start", "end"]
 }

@@ -18,10 +18,11 @@ ____
 * `limit` - the number of displayed rows
 * `period` - the period of aggregation
 * `offset` - the number of rows from the first row of the dataset
-* `account` - a UUIDv4
+
 
 ### Optional
-
+* `account` - a UUIDv4
+* `current_queuename` - name of the current queue we are looking at
 ---
 ### Query notes
 
