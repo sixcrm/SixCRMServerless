@@ -8,7 +8,7 @@ WITH rebills_delta AS
  FROM
    f_rebills
  WHERE 1
- {{FILTER}}
+ {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}')
 SELECT
   queuename,

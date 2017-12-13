@@ -230,23 +230,23 @@ class AnalyticsController extends AnalyticsUtilities{
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendQueueName(parameters, queue_name);
+      parameters = this.appendCurrentQueueName(parameters, queue_name);
       parameters = this.appendPeriod(parameters, {name: period});
 
       return this.getResults('order_engine/rebill_pagination', parameters, this.default_queue_filters);
 
     }
 
-    getQueueFailure(parameters){
+  getQueueRates(parameters){
       du.debug('Get Queue Failure');
 
       const queue_name = parameters.queuename;
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendQueueName(parameters, queue_name);
+      parameters = this.appendCurrentQueueName(parameters, queue_name);
 
-      return this.getResults('order_engine/queue_failure', parameters, this.default_queue_filters);
+      return this.getResults('order_engine/queue_rate', parameters, this.default_queue_filters);
     }
 
     getQueueAverageTime(parameters){
@@ -256,9 +256,36 @@ class AnalyticsController extends AnalyticsUtilities{
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendQueueName(parameters, queue_name);
+      parameters = this.appendCurrentQueueName(parameters, queue_name);
 
       return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_filters);
+    }
+
+    getQueueState(parameters) {
+
+      const promises = [
+        this.getRebillSummary(parameters),
+        this.getQueueRates(parameters),
+        this.getQueueAverageTime(parameters)
+      ];
+
+      return Promise.all(promises).then((results) => {
+
+        const count = results[0].summary[0] || {count: 0};
+        const rates = results[1].summary[0] || {failure_percentage: 0, success_rate: 0, expired_rate: 0, error_rate: 0};
+        const average_time = results[2].summary[0] || {averagetime: 0};
+
+        return {
+          count: count.count,
+          failure_rate: rates.failure_percentage,
+          success_rate: rates.success_rate,
+          expired_rate: rates.expired_rate,
+          error_rate: rates.error_rate,
+          average_time: average_time.averagetime,
+          average_time_color: average_time.averagetime < 300 ? 'GREEN' : (average_time.averagetime > 400 ? 'RED' : 'ORANGE'),
+          failure_rate_color: rates.failure_percentage < 5 ? 'GREEN' : (rates.failure_percentage > 8 ? 'RED' : 'ORANGE')
+        }
+      });
     }
 
     /* Report Pages */
