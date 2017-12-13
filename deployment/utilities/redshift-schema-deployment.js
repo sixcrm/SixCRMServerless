@@ -219,6 +219,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  seed_test(){
+
+    du.debug('Seed');
+
+    return this.getTestSeedQueries()
+    .then((seed_queries) => {
+      arrayutilities.isArray(seed_queries, true);
+      if(seed_queries.length > 0){
+        return this.executeQueries(seed_queries);
+      }
+      return Promise.resolve(true);
+    })
+    .then((result) => {
+      return 'Complete';
+    });
+
+  }
+
   seed_referential(){
 
     du.debug('Seed Referential data');
@@ -364,6 +382,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     du.debug('Get Seed Queries');
 
     return this.getDirectorySQLFilepaths('seeds').then((filepaths) => {
+
+      let query_promises = arrayutilities.map((filepaths), (filepath) => {
+
+        return this.getQueryFromPath(filepath, false);
+
+      });
+
+      return Promise.all(query_promises);
+
+    });
+
+  }
+
+  getTestSeedQueries(){
+
+    du.debug('Get Seed Queries');
+
+    return this.getDirectorySQLFilepaths('seeds_test').then((filepaths) => {
 
       let query_promises = arrayutilities.map((filepaths), (filepath) => {
 
