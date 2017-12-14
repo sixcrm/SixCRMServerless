@@ -32,7 +32,7 @@ dependencies:
     - serverless dynamodb install --stage $CIRCLE_BRANCH
     - source ./tools/restoreLastCommit.sh
     - echo $LAST_COMMIT
-    - echo ~/.circlerc
+    - cat ~/.circlerc
 
     # Collect debug info
     #- npm ls
@@ -115,6 +115,8 @@ deployment:
       - node ./deployment/dynamodb/deploy_seeds.js
       ###########
 
+      - ./tools/saveLastCommitInCircle.sh
+
       - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
       - export SIX_VERBOSE=0 && npm run test-analytics
@@ -184,6 +186,8 @@ deployment:
       #Dynamo Seeds
       - ./tools/changesInDirectorySince.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js
       ###########
+
+      - ./tools/saveLastCommitInCircle.sh
 
       - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
