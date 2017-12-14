@@ -393,6 +393,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
     getTransactionsReport(parameters){
 
+      du.info(parameters);
       du.debug('Get Transaction Report');
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
