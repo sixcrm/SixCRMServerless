@@ -1,5 +1,5 @@
 {
-	"requestContext":"{"authorizer":{ "user": "owner.user@test.com" }}",
-	"pathParameters": "{ "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" }",
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
 	"body":"{notificationsettingdefault { notification_groups { key, name, description, display, notifications { key, name, description, default } } } }"
 }
