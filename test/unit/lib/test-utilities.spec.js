@@ -249,17 +249,13 @@ describe('lib/test-utilities', () => {
 
         it('retrieves query from file', () => {
 
-            let a_content_of_file = '{"body": "Example\ndata"}';
-
-            mockery.registerMock('fs', {
-                readFileSync: () => {
-                    return a_content_of_file;
-                }
-            });
+            const path = __dirname + '/model/query.json';
+            const file = require(path);
+            const query = file.body;
 
             const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
-            expect(testutilities.getQuery('a_path')).to.equal('Example data');
+            expect(testutilities.getQuery(path)).to.deep.equal(query);
         });
     });
 
