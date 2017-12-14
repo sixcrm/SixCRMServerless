@@ -263,29 +263,38 @@ class AnalyticsController extends AnalyticsUtilities{
 
     getQueueState(parameters) {
 
-      const promises = [
-        this.getRebillSummary(parameters),
-        this.getQueueRates(parameters),
-        this.getQueueAverageTime(parameters)
-      ];
+      let obj = {};
 
-      return Promise.all(promises).then((results) => {
+      return this.getRebillSummary(parameters)
+        .then((result) => {
+          const count = result.summary[0] || {count: 0};
 
-        const count = results[0].summary[0] || {count: 0};
-        const rates = results[1].summary[0] || {failure_percentage: 0, success_rate: 0, expired_rate: 0, error_rate: 0};
-        const average_time = results[2].summary[0] || {averagetime: 0};
+          obj = {count: count.count};
 
-        return {
-          count: count.count,
-          failure_rate: rates.failure_percentage,
-          success_rate: rates.success_rate,
-          expired_rate: rates.expired_rate,
-          error_rate: rates.error_rate,
-          average_time: average_time.averagetime,
-          average_time_color: average_time.averagetime < 300 ? 'GREEN' : (average_time.averagetime > 400 ? 'RED' : 'ORANGE'),
-          failure_rate_color: rates.failure_percentage < 5 ? 'GREEN' : (rates.failure_percentage > 8 ? 'RED' : 'ORANGE')
-        }
-      });
+          return Promise.resolve();
+        })
+        .then(() => this.getQueueRates(parameters)
+          .then((result) => {
+            const rates = result.summary[0] || {failure_percentage: 0, success_rate: 0, expired_rate: 0, error_rate: 0};
+
+            obj.failure_rate = rates.failure_percentage;
+            obj.success_rate = rates.success_rate;
+            obj.expired_rate = rates.expired_rate;
+            obj.error_rate = rates.error_rate;
+            obj.failure_rate_color= rates.failure_percentage < 5 ? 'GREEN' : (rates.failure_percentage > 8 ? 'RED' : 'ORANGE');
+
+            return Promise.resolve();
+          }))
+        .then(() => this.getQueueAverageTime(parameters)
+          .then((result) => {
+            const average_time = result.summary[0] || {averagetime: 0};
+
+            obj.average_time = average_time.averagetime;
+            obj.average_time_color = average_time.averagetime < 300 ? 'GREEN' : (average_time.averagetime > 400 ? 'RED' : 'ORANGE');
+
+            return obj;
+          }));
+
     }
 
     /* Report Pages */
