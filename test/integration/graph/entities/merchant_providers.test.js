@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Merchant Providers';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getMerchantProviders')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getMerchantProviders.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getMerchantProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getMerchantProvider.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createMerchantProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createMerchantProvider.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateMerchantProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateMerchantProvider.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteMerchantProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteMerchantProvider.json')
 }];
 
 let this_request = request(endpoint);

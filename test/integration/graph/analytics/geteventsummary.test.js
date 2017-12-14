@@ -34,7 +34,7 @@ let account = {
     id: '*'
 };
 
-let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getEventSummary');
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getEventSummary.json');
 
 let this_request = request(global.integration_test_config.endpoint);
 

@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"mutation {smtpvalidation (smtpvalidation: {email:\"tmdalbey@gmail.com\" , smtpprovider:\"18213d0b-cd6d-4cea-91b9-993d7443468b\" }) { send_properties{ sender_email, sender_name, subject, body, recepient_emails }, smtp_response, smtpprovider { id, name, hostname, username, password, from_email, from_name, port, created_at, updated_at } } }"
+}

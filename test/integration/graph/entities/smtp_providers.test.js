@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'SMTP Providers';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getSMTPProviders')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getSMTPProviders.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getSMTPProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getSMTPProvider.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createSMTPProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createSMTPProvider.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateSMTPProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateSMTPProvider.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteSMTPProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteSMTPProvider.json')
 }];
 
 let this_request = request(endpoint);

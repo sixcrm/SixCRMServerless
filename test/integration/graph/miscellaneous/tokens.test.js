@@ -14,7 +14,7 @@ let endpoint = global.integration_test_config.endpoint;
 let entity = 'Tokens';
 let tests = [{
     name: "uncategorized",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/getTokens')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/getTokens.json')
 }];
 
 let test_users = [

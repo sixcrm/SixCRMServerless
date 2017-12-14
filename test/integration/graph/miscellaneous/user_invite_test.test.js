@@ -14,7 +14,7 @@ let endpoint = global.integration_test_config.endpoint;
 let entity = 'User Invite';
 let tests = [{
     name: "uncategorized",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/sendUserInvite')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/sendUserInvite.json')
 }];
 
 let test_users = [

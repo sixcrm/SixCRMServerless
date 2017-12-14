@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "super.user@test.com" }},
+	"pathParameters": { "account": "*" },
+	"body":"mutation {deleteuseracl (id: \"a9cfa0d1-ea58-45d9-8ae7-3a0d0e4ab463\") {id}}"
+}

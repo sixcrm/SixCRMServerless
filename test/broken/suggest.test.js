@@ -13,7 +13,7 @@ let endpoint = global.integration_test_config.endpoint;
 let entity = 'Search';
 let tests = [{
 	name: "view",
-	query: "./endpoints/graph/queries/uncategorized/getSuggestions"
+	query: "./endpoints/graph/queries/uncategorized/getSuggestions.json"
 }];
 
 let test_users = [

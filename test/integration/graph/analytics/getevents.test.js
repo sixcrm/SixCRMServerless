@@ -20,7 +20,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Events';
-let test_query = global.SixCRM.routes.path('handlers','/endpoints/graph/queries/analytics/getEvents');
+let test_query = global.SixCRM.routes.path('handlers','/endpoints/graph/queries/analytics/getEvents.json');
 
 //set the test user
 let test_user = {

@@ -14,7 +14,7 @@ let endpoint = global.integration_test_config.endpoint;
 let entity = 'User Introspection';
 let tests = [{
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getUserIntrospection')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getUserIntrospection.json')
 }];
 
 let test_users = [

@@ -20,7 +20,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Transactions By Facet';
-let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getTransactionsByFacet');
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getTransactionsByFacet.json');
 
 //set the test user
 let test_user = {

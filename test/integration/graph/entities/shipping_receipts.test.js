@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Shipping Receipts';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getShippingReceipts')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getShippingReceipts.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getShippingReceipt')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getShippingReceipt.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createShippingReceipt')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createShippingReceipt.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateShippingReceipt')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateShippingReceipt.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteShippingReceipt')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteShippingReceipt.json')
 }];
 
 let this_request = request(endpoint);

@@ -20,7 +20,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Transaction Summary';
-let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getTransactionSummary');
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getTransactionSummary.json');
 
 //set the test user
 let test_user = {

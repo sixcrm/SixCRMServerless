@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Product Schedules';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getProductSchedules')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getProductSchedules.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getProductSchedule')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getProductSchedule.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createProductSchedule')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createProductSchedule.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateProductSchedule')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateProductSchedule.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteProductSchedule')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteProductSchedule.json')
 }];
 
 let this_request = request(endpoint);

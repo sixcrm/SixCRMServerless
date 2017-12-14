@@ -13,23 +13,23 @@ let endpoint = global.integration_test_config.endpoint;
 let entity = 'Access Keys';
 let tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getAccessKeys')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getAccessKeys.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getAccessKey')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getAccessKey.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createAccessKey')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createAccessKey.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateAccessKey')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateAccessKey.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteAccessKey')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteAccessKey.json')
 }];
 
 let this_request = request(endpoint);

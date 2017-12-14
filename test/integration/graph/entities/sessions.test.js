@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Sessions';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getSessions')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getSessions.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getSession')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getSession.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createSession')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createSession.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateSession')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateSession.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteSession')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteSession.json')
 }];
 
 let this_request = request(endpoint);

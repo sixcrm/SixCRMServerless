@@ -14,18 +14,18 @@ let endpoint = global.integration_test_config.endpoint;
 let customerGraph = {
     create: {
         name: "create",
-        query: global.SixCRM.routes.path('handlers','/endpoints/graph/queries/create/createCustomer')
+        query: global.SixCRM.routes.path('handlers','/endpoints/graph/queries/create/createCustomer.json')
     },
     delete: {
         name: "delete",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteCustomer')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteCustomer.json')
     }
 };
 
 let searchGraph = {
     search: {
         name: "search",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/getSearchResultsForCustomerId')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/getSearchResultsForCustomerId.json')
     }
 };
 

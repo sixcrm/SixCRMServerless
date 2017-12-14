@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Load Balancers';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getLoadBalancers')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getLoadBalancers.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getLoadBalancer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getLoadBalancer.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createLoadBalancer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createLoadBalancer.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateLoadBalancer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateLoadBalancer.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteLoadBalancer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteLoadBalancer.json')
 }];
 
 let this_request = request(endpoint);

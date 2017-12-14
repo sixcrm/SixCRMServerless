@@ -14,23 +14,23 @@ const entity = 'Notifications';
 const tests = [
     {
         name: "index",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getNotifications')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getNotifications.json')
     },
     {
         name: "view",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getNotification')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getNotification.json')
     },
     {
         name: "create",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createNotification')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createNotification.json')
     },
     {
         name: "update",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateNotification')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateNotification.json')
     },
     {
         name: "delete",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteNotification')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteNotification.json')
     }
 ];
 
@@ -78,7 +78,7 @@ describe('Graph ' + entity + ' Test', function () {
         let test_user = global.test_users[0];
         let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-        let query = tu.getQuery(global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/sendTestNotification'));
+        let query = tu.getQuery(global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/sendTestNotification.json'));
 
         this_request.post('graph/' + account)
             .set('Authorization', test_jwt)

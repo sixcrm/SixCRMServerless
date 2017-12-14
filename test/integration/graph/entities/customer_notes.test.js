@@ -15,27 +15,27 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Customer Notes';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getCustomerNotes')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getCustomerNotes.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getCustomerNote')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getCustomerNote.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createCustomerNote')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createCustomerNote.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateCustomerNote')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateCustomerNote.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteCustomerNote')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteCustomerNote.json')
 },
 {
     name: "index-secondaryindex",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getCustomerNotesByCustomer')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getCustomerNotesByCustomer.json')
 }
 ];
 
