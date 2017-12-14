@@ -14,7 +14,7 @@
 
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-$dir/changes.sh $2 | grep "^$1" > /dev/null
+$dir/changesSince.sh $2 | grep "^$1" > /dev/null
 were_changes=$?
 test $were_changes -eq 0 && echo yes || echo no
 exit $were_changes
