@@ -62,19 +62,19 @@ deployment:
       ###########
       #S3
       #- node ./deployment/s3/destroy_buckets.js
-      - ./tools/changesInDirectorySince.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js
+      - ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js
       ###########
 
       ###########
       #SQS
-      - ./tools/changesInDirectorySince.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js
+      - ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js
       #- node ./deployment/sqs/purge_queues.js
       ###########
 
       ###########
       #CloudSearch
       #- ./tools/inCommit.sh ^deployment/cloudsearch/.* && echo "skipping, no updates" || node ./deployment/cloudsearch/deploy.js
-      - ./tools/changesInDirectorySince.sh deployment/cloudsearch &&  node ./deployment/cloudsearch/deploy.js
+      - ./tools/changesInDirectory.sh deployment/cloudsearch &&  node ./deployment/cloudsearch/deploy.js
       #- node ./deployment/cloudsearch/purge.js
 
       ###########
@@ -82,7 +82,7 @@ deployment:
       ###########
       #ElastiCache
       #- ./tools/inCommit.sh ^deployment/elasticache/.* && echo "skipping, no updates" || node ./deployment/elasticache/deploy.js
-      - ./tools/changesInDirectorySince.sh deployment/elasticache &&  node ./deployment/elasticache/deploy.js
+      - ./tools/changesInDirectory.sh deployment/elasticache &&  node ./deployment/elasticache/deploy.js
       #- node ./deployment/elasticache/purge.js
       ###########
 
@@ -90,24 +90,24 @@ deployment:
       #DynamoDB
       # Technical Debt: Upgrade this to purge only TEST data
       #- node ./deployment/dynamodb/purge_tables.js
-      - ./tools/changesInDirectorySince.sh deployment/dynamodb &&  node ./deployment/dynamodb/deploy_tables.js
+      - ./tools/changesInDirectory.sh deployment/dynamodb &&  node ./deployment/dynamodb/deploy_tables.js
       ###########
 
       ##########
       #Redshift
-      - ./tools/changesInDirectorySince.sh deployment/redshift &&  node ./deployment/redshift/deploy_cluster.js
-      - ./tools/changesInDirectorySince.sh deployment/redshift &&  ./deployment/redshift/deploy_tables.js
+      - ./tools/changesInDirectory.sh deployment/redshift &&  node ./deployment/redshift/deploy_cluster.js
+      - ./tools/changesInDirectory.sh deployment/redshift &&  ./deployment/redshift/deploy_tables.js
 
       #Technical Debt:  Eliminate this.
       - echo "Pausing to allow queries to complete..." && sleep 240
 
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/seed_referential.js
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/seed_tables.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js
       ###########
 
       ###########
       #Kinesis
-      - ./tools/changesInDirectorySince.sh deployment/kinesis &&  node ./deployment/kinesis/deploy_streams.js
+      - ./tools/changesInDirectory.sh deployment/kinesis &&  node ./deployment/kinesis/deploy_streams.js
       ###########
 
       ###########
@@ -137,24 +137,24 @@ deployment:
       ###########
       #S3
       #- node ./deployment/s3/destroy_buckets.js
-      - ./tools/changesInDirectorySince.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js
+      - ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js
       ###########
 
       ###########
       #SQS
-      - ./tools/changesInDirectorySince.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js
+      - ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js
       #- node ./deployment/sqs/purge_queues.js
       ###########
 
       ###########
       #CloudSearch
-      - ./tools/changesInDirectorySince.sh deployment/cloudsearch && node ./deployment/cloudsearch/deploy.js
+      - ./tools/changesInDirectory.sh deployment/cloudsearch && node ./deployment/cloudsearch/deploy.js
       #- node ./deployment/cloudsearch/purge.js
       ###########
 
       ###########
       #ElastiCache
-      - ./tools/changesInDirectorySince.sh deployment/elasticache && node ./deployment/elasticache/deploy.js
+      - ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/deploy.js
       #- node ./deployment/elasticache/purge.js
       ###########
 
@@ -162,29 +162,29 @@ deployment:
       #DynamoDB
       # Technical Debt: Upgrade this to purge only TEST data
       #- node ./deployment/dynamodb/purge_tables.js
-      - ./tools/changesInDirectorySince.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js
+      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js
       ###########
 
       ##########
       #Redshift
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js
 
       #Technical Debt:  Eliminate this.
       - echo "Pausing to allow queries to complete..." && sleep 240
 
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/seed_referential.js
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/seed_tables.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js
       ###########
 
       ###########
       #Kinesis
-      - ./tools/changesInDirectorySince.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js
+      - ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js
       ###########
 
       ###########
       #Dynamo Seeds
-      - ./tools/changesInDirectorySince.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js
+      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js
       ###########
 
       - ./tools/saveLastCommitInCircle.sh
@@ -212,31 +212,31 @@ deployment:
       ###########
       #S3
       #- node ./deployment/s3/destroy_buckets.js
-      - ./tools/changesInDirectorySince.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js
+      - ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js
       ###########
 
       ###########
       #SQS
-      - ./tools/changesInDirectorySince.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js
-      - ./tools/changesInDirectorySince.sh deployment/sqs && node ./deployment/sqs/purge_queues.js
+      - ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js
+      - ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/purge_queues.js
       ###########
 
       ###########
       #CloudSearch
-      - ./tools/changesInDirectorySince.sh deployment/cloudsearch && node ./deployment/cloudsearch/deploy.js
-      - ./tools/changesInDirectorySince.sh deployment/cloudsearch && node ./deployment/cloudsearch/purge.js
+      - ./tools/changesInDirectory.sh deployment/cloudsearch && node ./deployment/cloudsearch/deploy.js
+      - ./tools/changesInDirectory.sh deployment/cloudsearch && node ./deployment/cloudsearch/purge.js
       ###########
 
       ###########
       #ElastiCache
-      - ./tools/changesInDirectorySince.sh deployment/elasticache && node ./deployment/elasticache/deploy.js
-      - ./tools/changesInDirectorySince.sh deployment/elasticache && node ./deployment/elasticache/purge.js
+      - ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/deploy.js
+      - ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/purge.js
       ###########
 
       ###########
       #DynamoDB
       #- node ./deployment/dynamodb/purge_tables.js && exit 0;
-      - ./tools/changesInDirectorySince.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js
+      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js
       ###########
 
       ###########
@@ -247,21 +247,21 @@ deployment:
 
       ###########
       #Redshift
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240
 
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/seed_referential.js
-      - ./tools/changesInDirectorySince.sh deployment/redshift && node ./deployment/redshift/seed_tables.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js
+      - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js
       ###########
 
       ###########
       #Kinesis
-      - ./tools/changesInDirectorySince.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js
+      - ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js
       ###########
 
       ###########
       #Dynamo Seed
-      - ./tools/changesInDirectorySince.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js
+      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js
       ###########
 
       - ./tools/saveLastCommitInCircle.sh
