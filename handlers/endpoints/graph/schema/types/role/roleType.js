@@ -1,6 +1,7 @@
 'use strict';
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 let permissionsType = require('./permissionsType');
@@ -20,7 +21,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The name of the role.',
         },
         active: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLBoolean),
             description: 'The active status of the role.',
         },
         permissions:{
