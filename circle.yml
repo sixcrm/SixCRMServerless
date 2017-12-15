@@ -30,7 +30,8 @@ dependencies:
   post:
     - echo "$AWS_ACCOUNT $AWS_REGION $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
     - serverless dynamodb install --stage $CIRCLE_BRANCH
-    - source ./tools/restoreLastCommit.sh
+    - tools/saveCommitHashInCircle.sh `node deployment/circle/read_last_commit.js`
+    - source ~/.circlerc
     - echo $LAST_COMMIT
     - cat ~/.circlerc
 
@@ -115,7 +116,7 @@ deployment:
       - node ./deployment/dynamodb/deploy_seeds.js
       ###########
 
-      - ./tools/saveLastCommitInCircle.sh
+      - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
 
       - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
@@ -187,7 +188,7 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
       ###########
 
-      - ./tools/saveLastCommitInCircle.sh
+      - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
 
       - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
@@ -264,7 +265,7 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
       ###########
 
-      - ./tools/saveLastCommitInCircle.sh
+      - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
 
       - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
