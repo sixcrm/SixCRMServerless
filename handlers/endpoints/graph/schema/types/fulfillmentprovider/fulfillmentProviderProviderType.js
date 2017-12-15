@@ -8,7 +8,7 @@ let fulfillmentProviderProviderEnum = require('./fulfillmentProviderProviderEnum
 module.exports.graphObj = new GraphQLObjectType({
     name: 'fulfillmentproviderprovidertype',
     fields: () => ({
-        name: { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: new GraphQLString },
     }),
     interfaces: []
 });
