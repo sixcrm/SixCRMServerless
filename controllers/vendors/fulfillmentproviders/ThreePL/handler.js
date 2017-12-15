@@ -169,8 +169,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
     let login_data = objectutilities.transcribe({
         ThreePLKey: 'provider.threepl_key',
         Login: 'provider.username',
-        Password: 'provider.password',
-        FacilityID: 'provider.facility_id',
+        Password: 'provider.password'
       },
       fulfillment_provider,
       {},
@@ -178,6 +177,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
     );
 
     login_data["@"] = { xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/' };
+    login_data.FacilityID = this.getFacilityID();
 
     login_data = {
       extLoginData: login_data
@@ -187,12 +187,29 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
   }
 
+  getFacilityID(){
+
+    du.debug('Get Facility ID');
+
+    if(_.has(this, 'ThreePLFacilityID')){
+      return this.ThreePLFacilityID;
+    }
+
+    let facility_id = this.parameters.get('fulfillment_provider', 'provider.threepl_facility_id', false);
+
+    if(!_.isNull(facility_id)){
+      return facility_id;
+    }
+
+    eu.throwError('server', 'Unable to establish ThreePL Facility ID.');
+
+  }
+
   getFindOrdersFulfillmentProviderParameters(){
 
     du.debug('Get CreateOrders Fulfillment Provider Parameters');
 
     let fulfillment_provider = this.parameters.get('fulfillmentprovider');
-    let threepl_id = this.getThreePLID();
 
     let user_login_data = objectutilities.transcribe({
         Login: 'provider.username',
@@ -204,7 +221,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
     );
 
     user_login_data["@"] = { xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/' };
-    user_login_data.ThreePLID = threepl_id;
+    user_login_data.ThreePLID = this.getThreePLID();
 
     user_login_data = {
       userLoginData: user_login_data

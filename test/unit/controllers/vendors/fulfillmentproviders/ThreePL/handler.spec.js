@@ -306,6 +306,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});
 
+      threePLController.ThreePLFacilityID = 2;
+
       return threePLController.fulfill({customer: customer, products: products}).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('ThreePLResponse');
         expect(result.getCode()).to.equal('success');
@@ -332,6 +334,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});
+
+      threePLController.ThreePLFacilityID = 2;
 
       return threePLController.fulfill({customer: customer, products: products}).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('ThreePLResponse');

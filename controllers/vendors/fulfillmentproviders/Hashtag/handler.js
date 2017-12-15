@@ -11,6 +11,7 @@ class HashtagController extends ThreePLController {
     super(arguments[0]);
 
     this.ThreePLID = 773;
+    this.ThreePLFacilityID = 2;
 
     this.parameter_validation = {};
     this.parameter_definition = {};

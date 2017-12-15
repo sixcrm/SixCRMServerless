@@ -10,12 +10,6 @@
 		"name": {
 			"type":"string"
 		},
-		"username": {
-			"type":"string"
-		},
-		"password": {
-			"type":"string"
-		},
 		"provider":{
 			"type":"object",
 			"properties":{
@@ -29,5 +23,5 @@
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":[ "name", "username", "password", "provider", "created_at", "updated_at", "account"]
+	"required":[ "name", "provider", "created_at", "updated_at", "account"]
 }
