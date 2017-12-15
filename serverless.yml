@@ -369,5 +369,9 @@ resources:
              Action:
                - sns:*
              Resource: "*"
+           - Effect: Allow
+             Action:
+               - redshift:*
+             Resource: "*"
         Roles:
           - Ref: IamRoleLambdaExecution
