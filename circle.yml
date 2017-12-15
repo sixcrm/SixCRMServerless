@@ -100,7 +100,7 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/redshift &&  ./deployment/redshift/deploy_tables.js || echo "No changes, skipping."
 
       #Technical Debt:  Eliminate this.
-      - echo "Pausing to allow queries to complete..." && sleep 240
+      - ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
 
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
@@ -172,7 +172,7 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js || echo "No changes, skipping."
 
       #Technical Debt:  Eliminate this.
-      - echo "Pausing to allow queries to complete..." && sleep 240
+      - ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
 
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
@@ -250,6 +250,9 @@ deployment:
       #Redshift
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+
+      #Technical Debt:  Eliminate this.
+            - ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
 
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
