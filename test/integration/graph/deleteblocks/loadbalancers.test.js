@@ -6,7 +6,7 @@ const expect = require('chai').expect
 
 const LoadBalancerTest = global.SixCRM.routes.include('test', 'integration/classes/LoadBalancer');
 
-describe('Load Balancer (Product) Delete Block Test', () => {
+xdescribe('Load Balancer (Product) Delete Block Test', () => {
 
   it('Should not allow the delete', () => {
 

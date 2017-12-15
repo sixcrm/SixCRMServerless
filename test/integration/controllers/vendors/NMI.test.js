@@ -67,7 +67,7 @@ function getValidProcessRequestParametersObject(){
         city:"Portland",
         state:"OR",
         zip:"97213",
-        country:"USA"
+        country:"US"
       }
     },
     customer: {

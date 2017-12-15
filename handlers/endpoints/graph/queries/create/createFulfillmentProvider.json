@@ -1,5 +1,5 @@
 {
   "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
   "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":"mutation {createfulfillmentprovider ( fulfillmentprovider: { id: \"2cd22324-4619-4f98-8319-f6f3cabc62d8\", name: \"test\", username: \"test\", password: \"test\", endpoint: \"test\", provider: \"HASHTAG\"}) {id, name, provider, username, password, endpoint, created_at, updated_at}}"
+  "body":"mutation {createfulfillmentprovider ( fulfillmentprovider: { id: \"2cd22324-4619-4f98-8319-f6f3cabc62d8\", name: \"test\", username: \"test\", password: \"test\", endpoint: \"test\", provider: { name: \"Hashtag\"}}) {id, name, provider { name }, username, password, endpoint, created_at, updated_at}}"
 }

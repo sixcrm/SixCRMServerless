@@ -30,7 +30,8 @@ dependencies:
   post:
     - echo "$AWS_ACCOUNT $AWS_REGION $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
     - serverless dynamodb install --stage $CIRCLE_BRANCH
-    - source ./tools/restoreLastCommit.sh
+    - tools/saveCommitHashInCircle.sh `node deployment/circle/read_last_commit.js`
+    - source ~/.circlerc
     - echo $LAST_COMMIT
     - cat ~/.circlerc
 
@@ -99,7 +100,7 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/redshift &&  ./deployment/redshift/deploy_tables.js || echo "No changes, skipping."
 
       #Technical Debt:  Eliminate this.
-      - echo "Pausing to allow queries to complete..." && sleep 240
+      - ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
 
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
@@ -115,7 +116,7 @@ deployment:
       - node ./deployment/dynamodb/deploy_seeds.js
       ###########
 
-      - ./tools/saveLastCommitInCircle.sh
+      - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
 
       - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
@@ -171,7 +172,7 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js || echo "No changes, skipping."
 
       #Technical Debt:  Eliminate this.
-      - echo "Pausing to allow queries to complete..." && sleep 240
+      - ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
 
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
@@ -187,7 +188,7 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
       ###########
 
-      - ./tools/saveLastCommitInCircle.sh
+      - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
 
       - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
@@ -250,6 +251,9 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
 
+      #Technical Debt:  Eliminate this.
+      - ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
       - ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
       ###########
@@ -264,7 +268,7 @@ deployment:
       - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
       ###########
 
-      - ./tools/saveLastCommitInCircle.sh
+      - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
 
       - export SIX_VERBOSE=0 && npm run test-transactions
       - export SIX_VERBOSE=0 && npm run test-graph
