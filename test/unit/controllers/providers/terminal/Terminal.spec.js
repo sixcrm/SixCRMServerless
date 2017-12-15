@@ -49,7 +49,7 @@ function getValidCompoundFulfillmentResponse(){
 function getValidFulfillmentResponse(){
 
   const FulfillmentResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Hashtag/Response.js');
-  let response = new FulfillmentResponse({error: null, response: 'success', body:'um'});
+  let response = new FulfillmentResponse({error: null, response: {statusCode: 200, statusMessage: 'Success'}, body:'um'});
 
   return response;
 

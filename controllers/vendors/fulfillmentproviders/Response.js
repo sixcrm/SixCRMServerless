@@ -6,13 +6,41 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
-//Technical Debt:  This needs to extend the Response Provider
-module.exports = class Response {
+module.exports = class FulfillmentProviderVendorResponse extends Response {
 
   constructor(){
 
-    this.allowed_codes = ['success', 'fail', 'error'];
+    super();
+
+    this.parameter_definition = {
+      handleResponse:{
+        required: {
+          error:'error',
+          response:'response',
+          body:'body'
+        },
+        optional:{}
+      }
+    };
+
+    this.parameter_validation = {
+      'error':global.SixCRM.routes.path('model','vendors/shippingproviders/response/error.json'),
+      'response':global.SixCRM.routes.path('model','vendors/shippingproviders/response/response.json'),
+      'body':global.SixCRM.routes.path('model','vendors/shippingproviders/response/body.json'),
+      'code': global.SixCRM.routes.path('model','vendors/shippingproviders/response/code.json'),
+      'result': global.SixCRM.routes.path('model','vendors/shippingproviders/response/result.json'),
+      'message': global.SixCRM.routes.path('model','vendors/shippingproviders/response/message.json'),
+    };
+
+    this.result_messages = {
+      'success':'Success',
+      'fail': 'Failed',
+      'error': 'Error'
+    };
+
+    this.initialize();
 
     this.handleResponse(arguments[0]);
 
@@ -26,23 +54,31 @@ module.exports = class Response {
 
   }
 
-  handleResponse({error, response, body}){
+  handleResponse(){
 
     du.debug('Handle Response');
 
-    if(!_.isUndefined(error) && !_.isNull(error)){
+    this.parameters.setParameters({argumentation: arguments[0], action: 'handleResponse'});
+
+    let error = this.parameters.get('error', null, false);
+
+    if(!_.isNull(error)){
 
       this.handleError(error);
 
     }else{
 
-      let parsed_response = this.parseResponse({response: response, body: body});
+      if(_.isFunction(this.determineResultCode)){
 
-      if(this.validateResponse(parsed_response)){
+        let response = this.parameters.get('response');
+        let body = this.parameters.get('body');
 
-        this.setResult(parsed_response);
+        this.validateProviderResponse();
 
-        this.setResponseProperties(parsed_response);
+        let result_code = this.determineResultCode({response: response, body: body});
+        let result_message = this.determineResultMessage(result_code);
+
+        this.setAllProperties({code: result_code, message: result_message, response: response});
 
       }
 
@@ -50,35 +86,56 @@ module.exports = class Response {
 
   }
 
-  setResponseProperties(parsed_response){
+  setAllProperties({code, message, response}){
 
-    du.debug('Set Response Properties');
+    du.debug('Set All Properties');
 
-    this.setCode(this.mapResponseCode({parsed_response: parsed_response}));
+    this.setCode(code);
 
-    this.setMessage(this.mapResponseMessage({parsed_response: parsed_response}));
+    this.setMessage(message);
+
+    //response is already set
 
   }
 
-  validateResponse(parsed_response){
+  determineResultCode({response: response, body: body}){
 
-    du.debug('Validate Response');
+    du.debug('Determine Result');
 
-    let validated = true;
+    if(_.has(response, 'statusCode') && _.has(response, 'statusMessage')){
 
-    try{
+      if(response.statusCode == 200 && _.contains(['Success', 'OK'], response.statusMessage)){
 
-      mvu.validateModel(parsed_response, global.SixCRM.routes.path('model', 'functional/'+this.getFulfillmentProviderName()+'/response.json'));
+        return 'success';
 
-    }catch(error){
+      }
 
-      validated = false;
-
-      this.handleError(error);
+      return 'fail';
 
     }
 
-    return validated;
+    return 'error';
+
+  }
+
+  determineResultMessage(result_code){
+
+    du.debug('Determine Result Message');
+
+    return this.result_messages[result_code];
+
+  }
+
+  validateProviderResponse(){
+
+    du.debug('Validate Provider Response');
+
+    let fulfillment_provider_name = this.getFulfillmentProviderName();
+    let response = this.parameters.get('response');
+
+    mvu.validateModel(response, global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/'+fulfillment_provider_name+'/response.json'));
+
+    return true;
 
   }
 
@@ -90,57 +147,9 @@ module.exports = class Response {
 
     if(_.has(error, 'message')){
       this.setMessage(error.message);
-    }
-
-    this.setResult(error);
-
-  }
-
-  setCode(code){
-
-    du.debug('SetCode');
-
-    if(_.contains(this.allowed_codes, code)){
-      this.code = code;
     }else{
-      eu.throwError('server', 'Unrecognized code: "'+code+'".');
+      this.setMessage(this.determineResultMessage('error'));
     }
-
-  }
-
-  setMessage(message){
-
-    du.debug('Set Message');
-
-    this.message = message;
-
-  }
-
-  setResult(result){
-
-    du.debug('Set Result');
-
-    this.result = result;
-
-  }
-
-  getResultJSON(){
-
-    du.debug('Get Result JSON');
-
-    return {
-      code: this.getCode(),
-      result: this.getResult(),
-      message: this.getMessage()
-    };
-
-  }
-
-  getCode(){
-
-    du.debug('Get Code');
-
-    return this.code;
 
   }
 
@@ -148,7 +157,33 @@ module.exports = class Response {
 
     du.debug('Get Result');
 
-    return this.result;
+    return {
+      code: this.getCode(),
+      response: this.getResponse(),
+      message: this.getMessage()
+    };
+
+  }
+
+  getResponse(){
+
+    du.debug('Get Response');
+
+    let body = this.parameters.get('body', null, false);
+
+    return {
+      body: body
+    };
+
+  }
+
+  setMessage(message){
+
+    du.debug('Set Message');
+
+    this.parameters.set('message', message);
+
+    return true;
 
   }
 
@@ -156,7 +191,31 @@ module.exports = class Response {
 
     du.debug('Get Message');
 
-    return this.message;
+    return this.parameters.get('message')
+
+  }
+
+  setCode(code){
+
+    du.debug('Set Code');
+
+    this.parameters.set('code', code);
+
+    return true;
+
+  }
+
+  getCode(){
+
+    du.debug('Get Code');
+
+    let code = this.parameters.get('code', null, false);
+
+    if(_.isNull(code)){
+      return super.getCode();
+    }
+
+    return code;
 
   }
 

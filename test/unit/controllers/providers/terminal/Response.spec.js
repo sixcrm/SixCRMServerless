@@ -16,8 +16,10 @@ function getValidProviderResponse(){
 
   return {
     code:'success',
-    result:{},
-    message:''
+    response:{
+      body: ''
+    },
+    message:'Success'
   };
 
 }

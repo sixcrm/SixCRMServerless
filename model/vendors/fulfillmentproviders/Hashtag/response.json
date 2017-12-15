@@ -1,0 +1,7 @@
+{
+  "id":"/vendors/fulfillmentproviders/Hashtag/response.json",
+  "title":"Hashtag Response",
+  "allOf":[
+    {"$ref":"../ThreePL/response.json"}
+  ]
+}

@@ -1,186 +1,493 @@
 'use strict';
 const _ = require('underscore');
+const js2xmlparser = require("js2xmlparser2");
+const request = require('request');
+const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
 
-const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider');
+const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider');
 
-class ThreePLController extends fulfillmentProviderController {
+module.exports = class ThreePLController extends FulfillmentProviderController {
 
-  constructor({fulfillment_provider}){
+  constructor(){
 
     super(arguments[0]);
 
+    this.methods = {
+      fulfill: 'CreateOrders',
+      test: 'FindOrders',
+      info: 'FindOrders'
+    };
+
     this.parameter_validation = {};
 
-    this.parameter_definition = {};
+    this.parameter_definition = {
+      fulfill:{
+        required:{
+          action: 'action',
+          customer: 'customer',
+          products: 'products'
+        },
+        optional:{}
+      },
+      test:{
+        required:{
+          action:'action'
+        },
+        optional:{}
+      },
+      info:{
+        required:{
+          action:'action',
+          referencenumber:'reference_number'
+        },
+        optional:{}
+      }
+    };
 
-    // Technical Debt: Read this from config.
-    this.wsdl = 'https://secure-wms.com/webserviceexternal/contracts.asmx?wsdl';
-
-    const SoapUtilities = global.SixCRM.routes.include('lib', 'soap-utilities.js');
-
-    this.soaputilities = new SoapUtilities({wsdl: this.wsdl});
+    this.augmentParameters();
 
   }
 
   fulfill({customer, products}){
 
-    du.debug('Trigger fulfillment in Hashtag.');
+    du.debug('Fulfill');
 
-    return this.parameters.setParameters({arumentation: arguments[0], action: 'fulfill'})
-    .then(() => this.createParametersObject('fulfill'))
+    let argumentation = arguments[0];
+
+    argumentation.action = 'fulfill';
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: argumentation, action: 'fulfill'}))
+    .then(() => this.setMethod())
+    .then(() => this.createParametersObject())
     .then(() => this.issueRequest())
-    .then(() => this.processResponse())
+    .then(() => this.postRequestProcessing())
     .then(() => this.respond());
-
-
-    // Technical Debt: Finish, probably using this:
-    // https://secure-wms.com/webserviceexternal/contracts.asmx?op=CreateOrders
 
   }
 
-  createParametersObject(action){
+  info(){
+
+    du.debug('info');
+
+    let argumentation = arguments[0];
+
+    argumentation.action = 'info';
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: argumentation, action: 'info'}))
+    .then(() => this.setMethod())
+    .then(() => this.createParametersObject())
+    .then(() => this.issueRequest())
+    .then(() => this.postRequestProcessing())
+    .then(() => this.respond());
+
+  }
+
+  test(){
+
+    du.debug('Test');
+
+    let argumentation = {action: 'test'};
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: argumentation, action: 'test'}))
+    .then(() => this.setMethod())
+    .then(() => this.createParametersObject())
+    .then(() => this.issueRequest())
+    .then(() => this.postRequestProcessing())
+    .then(() => this.respond());
+
+  }
+
+  setMethod(){
+
+    du.debug('Set Method');
+
+    let action = this.parameters.get('action');
+    let method = this.methods[action];
+
+    this.parameters.set('method', method);
+
+    return true;
+
+  }
+
+  createParametersObject(){
 
     du.debug('Create Parameters Object');
 
+    let parameters_object = objectutilities.merge({}, this.getVendorParameters());
+
+    parameters_object = objectutilities.merge(parameters_object, this.getFulfillmentProviderParameters());
+
+    parameters_object = objectutilities.merge(parameters_object, this.getMethodParameters());
+    parameters_object = objectutilities.merge(parameters_object, this.getRequestParameters());
+
+    this.parameters.set('parametersobject', parameters_object);
+
+    return true;
+
+  }
+
+  getVendorParameters(){
+
+    du.debug('Get Vendor Parameters');
+
+    //Technical Debt:  Do these need to come from configuration files?
+    this.parameters.set('wsdl', 'https://secure-wms.com/webserviceexternal/contracts.asmx?wsdl');
+
+    return {};
+
+  }
+
+  getFulfillmentProviderParameters(){
+
+    du.debug('Get Fulfillment Provider Parameters');
+
+    let method = this.parameters.get('method');
+
+    if(_.isFunction(this['get'+method+'FulfillmentProviderParameters'])){
+      return this['get'+method+'FulfillmentProviderParameters']();
+    }
+
+    return {};
+
+  }
+
+  getCreateOrdersFulfillmentProviderParameters(){
+
+    du.debug('Get CreateOrders Fulfillment Provider Parameters');
+
     let fulfillment_provider = this.parameters.get('fulfillmentprovider');
-    let parameters_object = {
-      ThreePLID: fulfillment_provider.threepl_id,
-      ThreePLKey: fulfillment_provider.threepl_key,
-      Login: fulfillment_provider.username,
-      Password: fulfillment_provider.password,
-      FacilityID: fulfillment_provider.facility_id,
-      ReferenceNum: fulfillment_provider.reference_number
+
+    let login_data = objectutilities.transcribe({
+        ThreePLKey: 'provider.threepl_key',
+        Login: 'provider.username',
+        Password: 'provider.password',
+        FacilityID: 'provider.facility_id',
+      },
+      fulfillment_provider,
+      {},
+      true
+    );
+
+    login_data["@"] = { xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/' };
+
+    login_data = {
+      extLoginData: login_data
     };
 
-    /*
-    this.setParametersObjectCustomerFields()
-        Name: customer_name
-        CompanyName:
-        Address1:
-        Address2:
-        City:
-        State:
-        Zip
-        Country
-        Address:
-        Carrier: 'UPS'
-        Mode: 'Ground',
-        BillingCode: 'FreightCollect'
-        Account: 12345675
-      */
+    return login_data;
+
+  }
+
+  getFindOrdersFulfillmentProviderParameters(){
+
+    du.debug('Get CreateOrders Fulfillment Provider Parameters');
+
+    let fulfillment_provider = this.parameters.get('fulfillmentprovider');
+    let threepl_id = this.getThreePLID();
+
+    let user_login_data = objectutilities.transcribe({
+        Login: 'provider.username',
+        Password: 'provider.password',
+      },
+      fulfillment_provider,
+      {},
+      true
+    );
+
+    user_login_data["@"] = { xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/' };
+    user_login_data.ThreePLID = threepl_id;
+
+    user_login_data = {
+      userLoginData: user_login_data
+    };
+
+    return user_login_data;
+
+  }
+
+  getThreePLID(){
+
+    du.debug('Get ThreePL ID');
+
+    if(_.has(this, 'ThreePLID')){
+      return this.ThreePLID;
+    }
+
+    eu.throwError('Unknown ThreePL ID');
+
+  }
+
+  getMethodParameters(){
+
+    du.debug('Get Method Parameters');
+
+    let method = this.parameters.get('method');
+
+    this.parameters.set('soapaction', 'http://www.JOI.com/schemas/ViaSub.WMS/'+method);
+
+    if(_.isFunction(this['get'+method+'MethodParameters'])){
+      return this['get'+method+'MethodParameters']();
+    }
+
+    return {};
+
+  }
+
+  getRequestParameters(){
+
+    du.debug('Get Request Parameters');
+
+    let method = this.parameters.get('method');
+
+    if(_.isFunction(this['get'+method+'RequestParameters'])){
+      return this['get'+method+'RequestParameters']();
+    }
+
+    return {};
+
+  }
+
+  /*
+  getCreateOrdersMethodParameters(){
+
+    du.debug('Get Create Orders Method Parameters');
+
+    //Technical Debt:  Where do these come from?
+    return {};
+
+  }
+  */
+
+  getFindOrdersRequestParameters(){
+
+    du.debug('Get FindOrders Request Parameters');
+
+    let fulfillment_provider = this.parameters.get('fulfillmentprovider');
+    let reference_number = this.parameters.get('referencenumber', null, false);
+
+    let request_parameters = {
+      focr: {
+        '@':{
+          xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/',
+        },
+        CustomerID: fulfillment_provider.provider.customer_id,
+        FacilityID: fulfillment_provider.provider.facility_id,
+        //OverAlloc: 'Any',
+        //Closed: 'Any',
+        //ASNSent: 'Any',
+        //RouteSent: 'Any',
+        //BeginDate: '2013-07-17',
+        //EndDate: '2013-07-18',
+        //DateRangeType: 'Confirm'
+      },
+      limitCount: {
+        '@':{
+          xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/'
+        },
+        '#':1000
+      }
+    };
+
+    if(!_.isNull(reference_number)){
+      request_parameters.focr.ReferenceNum = reference_number;
+    }
+
+    return request_parameters;
+
+  }
+
+  getCreateOrdersRequestParameters(){
+
+    du.debug('Get Create Orders Method Parameters');
+
+    let request_parameters = {
+      orders: {
+        '@':{
+          xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/',
+        },
+        Order: {
+          TransInfo:{
+            ReferenceNum: uuidV4()
+          },
+          ShipTo: this.getCustomerParameters(),
+          ShippingInstructions: {
+            Carrier:'USPS',
+            Mode: 'First Class Mail',
+            BillingCode: 'Prepaid'
+            //Technical Debt:  What is this?!
+            //Account: 12345675
+          },
+          Notes: 'none',
+          OrderLineItems: this.getProductParameters()
+        }
+      },
+      warnings: {
+        '@':{
+          xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/'
+        },
+        '#':'none'
+      }
+    };
+
+    return request_parameters;
+
+  }
+
+  getCustomerParameters(){
+
+    du.debug('Get Customer Parameters');
+
+    let customer = this.parameters.get('customer');
+
+    let address = this.getCustomerAddress();
+
+    let parameters = {
+      Name: customer.firstname+' '+customer.lastname,
+      CompanyName: customer.firstname+' '+customer.lastname,
+      Address: address
+    };
+
+    parameters = objectutilities.transcribe(
+      {
+        PhoneNumber1:'phone',
+        EmailAddress1: 'email'
+      },
+      customer,
+      parameters
+    );
+
+    return parameters;
+
+  }
+
+  getCustomerAddress(){
+
+    let customer = this.parameters.get('customer');
+
+    let address = objectutilities.transcribe(
+      {
+        Address1:'address.line1',
+        City: 'address.city',
+        State: 'address.state',
+        Zip: 'address.zip',
+        Country: 'address.country'
+      },
+      customer,
+      {},
+      true
+    );
+
+    return objectutilities.transcribe(
+      {
+        Address2: 'address.line2',
+      },
+      customer,
+      address
+    );
+
+  }
+
+  getProductParameters(){
+
+    du.debug('Get Product Parameters');
+
+    let productHelperController = new ProductHelperController();
+
+    let products = this.parameters.get('products');
+
+    let skus = productHelperController.getDistributionBySKU({products: products});
+
+    return objectutilities.map(skus, (sku) =>  {
+      return{
+        SKU:sku,
+        Qty:skus[sku]
+      };
+    });
+
+  }
+
+  packageSoapXMLParameters(){
+
+    let parameters_object = this.parameters.get('parametersobject');
+
+    let root_parameters = {
+      '@':{
+        'xmlns:xsi':'http://www.w3.org/2001/XMLSchema-instance',
+        'xmlns:xsd':'http://www.w3.org/2001/XMLSchema',
+        'xmlns:soap':'http://schemas.xmlsoap.org/soap/envelope/'
+      },
+      'soap:Body':parameters_object
+    };
+
+    let options =  {
+      prettyPrinting:{
+        enabled: false
+      },
+      wrapArray: {
+        enabled: true,
+        elementName: 'OrderLineItem'
+      }
+    };
+
+    return js2xmlparser('soap:Envelope', root_parameters, options);
+
   }
 
   issueRequest(){
 
     du.debug('Issue Request');
 
-    let create_orders_parameters_object = this.parameters.get('createordersparametersobject');
+    let soap_parameters = this.packageSoapXMLParameters();
+    let soap_action = this.parameters.get('soapaction');
 
-    return this.soaputilities.executeMethod({
-        name: 'FindOrders',
-        parameters: create_orders_parameters_object
-    }).catch(error => {
-        return { error_message: error.message }
+    var options = {
+      uri: 'http://secure-wms.com/webserviceexternal/contracts.asmx',
+      headers: {
+        'Content-Type': 'text/xml; charset=utf-8',
+        'Content-Length': soap_parameters.length.toString(),
+        'SOAPAction': soap_action ,
+        'Host': 'secure-wms.com',
+        'Connection': 'keep-alive'
+      },
+      method: 'POST',
+      body: soap_parameters
+    };
+
+    return new Promise((resolve) => {
+
+      request.post(options, (error, response) => {
+        if(error){
+          du.error(error);
+          return resolve({error: error, body:null, response: null});
+        }
+
+        return resolve({error: null, body: response.body, response: response});
+
+      });
+
+    }).then((result) => {
+
+      this.parameters.set('providerresponse', result);
+
+      return true;
+
     });
 
   }
-    /*
-    <soap:Body>
-<extLoginData xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">
-<ThreePLKey>string</ThreePLKey> <Login>string</Login> <Password>string</Password> <FacilityID>int</FacilityID>
- 5
 
+  postRequestProcessing(response){
 
-     </extLoginData>
-<orders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">
-<Order> <TransInfo>
-<ReferenceNum>TestOrder123</ReferenceNum> <EarliestShipDate>20130101</EarliestShipDate> [OPTIONAL] <ShipCancelDate>20130131</ShipCancelDate> [OPTIONAL] <PONum>TestPO</PONum> [OPTIONAL]
-</TransInfo> <ShipTo>
-<Name>John Smith</Name> [OPTIONAL] <CompanyName>John’s Bakery</CompanyName> <Address>
-<Address1>1212 Main Street</Address1> <Address2>string</Address2> [OPTIONAL] <City>Los Angeles</City> <State>CA</State>
-<Zip>90010</Zip>
-<Country>US</Country>
-</Address>
-<PhoneNumber1>string</PhoneNumber1> [OPTIONAL]
-<Fax>string</Fax> [OPTIONAL]
-<EmailAddress1>string</EmailAddress1> [OPTIONAL] <CustomerName>string</CustomerName> [OPTIONAL]
-<Vendor>string</Vendor> [OPTIONAL]
-<Dept>string</Dept> [OPTIONAL]
-<RetailerID>int</RetailerID> [OPTIONAL – do not send if not matching with value in the 3PL
-Central]
-</ShipTo> <ShippingInstructions>
-<Carrier>UPS</Carrier>
-<Mode>Ground</Mode> <BillingCode>FreightCollect</BillingCode> <Account>12345675</Account> <ShippingNotes>string</ShippingNotes> [OPTIONAL]
-</ShippingInstructions> <ShipmentInfo>
-<NumUnits1>decimal</NumUnits1> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<NumUnits1TypeID>int</NumUnits1TypeID> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<NumUnits1TypeDesc>string</NumUnits1TypeDesc> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<NumUnits2>decimal</NumUnits2> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<NumUnits2TypeID>int</NumUnits2TypeID> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-  6
+    return true;
 
-     <NumUnits2TypeDesc>string</NumUnits2TypeDesc> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<TotalWeight>decimal</TotalWeight> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<TotalVolume>decimal</TotalVolume> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-</ShipmentInfo>
-<Notes>string</Notes>
-<PalletCount>int</PalletCount> [OPTIONAL – do not send if not matching with value in the 3PL
-Central]
-<OrderLineItems> <OrderLineItem>
-<SKU>TestItem</SKU>
-<Qualifier>string</Qualifier> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<Qty>12</Qty>
-<Packed>decimal</Packed> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<CuFtPerCarton>decimal</CuFtPerCarton> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<LotNumber>string</LotNumber> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<SerialNumber>string</SerialNumber> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<ExpirationDate>dateTime</ExpirationDate> [OPTIONAL – do not send if not matching with value in the 3PL Central]
-<Notes>string</Notes> [OPTIONAL] <FulfillmentSalePrice>decimal</FulfillmentSalePrice> [OPTIONAL] <FulfillmentDiscountPercentage>decimal</FulfillmentDiscountPercentage> [OPTIONAL] <FulfillmentDiscountAmount>decimal</FulfillmentDiscountAmount> [OPTIONAL]
-</OrderLineItem>
-<SavedElements> [ENTIRE SEGMENT IS OPTIONAL]
-<CodeDescrPair> <Code>string</Code> <Description>string</Description>
-</CodeDescrPair> <CodeDescrPair>
-<Code>string</Code>
-<Description>string</Description> </CodeDescrPair>
-</SavedElements>
-<FulfillmentInfo> [ENTIRE SEGMENT IS OPTIONAL]
-<FulfillInvShippingAndHandling>decimal</FulfillInvShippingAndHandling> <FulfillInvTax>decimal</FulfillInvTax> <FulfillInvDiscountCode>string</FulfillInvDiscountCode> <FulfillInvDiscountAmount>decimal</FulfillInvDiscountAmount> <FulfillInvGiftMessage>string</FulfillInvGiftMessage>
-  7
-
-
-</FulfillmentInfo>
-<SoldTo> [ENTIRE SEGMENT IS OPTIONAL]
-<Name>string</Name> <CompanyName>string</CompanyName> <Address>
-<Address1>string</Address1> <Address2>string</Address2> <City>string</City> <State>string</State> <Zip>string</Zip> <Country>string</Country>
-</Address> <PhoneNumber1>string</PhoneNumber1> <Fax>string</Fax> <EmailAddress1>string</EmailAddress1> <CustomerName>string</CustomerName> <Vendor>string</Vendor> <Dept>string</Dept> <RetailerID>int</RetailerID>
-</SoldTo> </Order>
-</orders>
-<warnings xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">string</warnings> </soap:Body>
-</soap:Envelope>
-*/
-
-
-
-  testConnection({username, password, threepl_id, threepl_key, facility_id, customer_id}) {
-
-    du.debug('Test connection.');
-
-    return this.soaputilities.executeMethod({
-        name: 'FindOrders',
-        parameters: {
-            ThreePLID: threepl_id,
-            ThreePLKey: threepl_key,
-            Login: username,
-            Password: password,
-            FacilityID: facility_id,
-            CustomerID: customer_id
-        }
-    }).catch(error => {
-        return { error_message: error.message }
-    });
   }
 
 }
-
-module.exports = new ThreePLController();

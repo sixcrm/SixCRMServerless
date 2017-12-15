@@ -24,8 +24,7 @@
 					"amount":{"$ref":"../definitions/currency.json"}
 				},
 				"required":["created_at", "description", "amount"]
-			},
-			"minItems": 1
+			}
 		},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}

@@ -14,9 +14,31 @@
     "city":{
       "type":"string"
     },
-    "state":{"$ref": "../definitions/statecode.json"},
-    "zip":{"$ref": "../definitions/zipcode.json"},
-    "country":{"$ref": "../definitions/countrycode.json"}
+    "state":{
+      "type":"string",
+      "pattern":"^[A-Z]{2}$"
+    },
+    "zip":{
+      "anyOf":[
+        {
+          "type":"string",
+          "pattern":"^[0-9]{5}$"
+        },
+        {
+          "type":"string",
+          "pattern":"^[0-9]{5}-[0-9]{4}$"
+        },
+        {
+          "type":"number",
+          "minimum":10000,
+          "maximum":99999
+        }
+      ]
+    },
+    "country":{
+      "type":"string",
+      "pattern":"^[A-Z]{2}$"
+    }
   },
   "required":["line1","city","state","zip","country"]
 }

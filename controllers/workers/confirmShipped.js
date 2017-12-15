@@ -10,6 +10,8 @@ const workerController = global.SixCRM.routes.include('controllers', 'workers/co
 Technical Debt:
 
 This must ask the fulfillment provider for the tracking number if it's not already on the shipping receipt
+This needs to happen AFTER the shippinf receipt is acquired
+Note, not all transaction_products will have shipping receipts -  many are no-ship.
 
 */
 

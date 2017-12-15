@@ -52,9 +52,9 @@ function getValidTerminalResponse(){
 
 function getValidProviderResponse(){
   return {
-    result:{},
+    response:{},
     code:'success',
-    message:''
+    message:'Success'
   };
 }
 

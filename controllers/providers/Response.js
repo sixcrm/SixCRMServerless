@@ -5,11 +5,12 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-module.exports = class Response{
+module.exports = class Response {
 
   constructor(){}
 
   initialize(){
+
     this.setResponseTypes();
     this.setParameterDefinition();
     this.setParameterValidation();
@@ -18,6 +19,7 @@ module.exports = class Response{
       validation: this.merged_parameter_validation,
       definition: this.merged_parameter_definition
     });
+
   }
 
   setResponseTypes(){

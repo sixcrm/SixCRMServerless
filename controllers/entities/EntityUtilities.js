@@ -113,7 +113,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
       let valid = mvu.validateModel(object, path_to_model);
 
       if(_.isError(valid)){
-          return Promise.reject(valid);
+        return Promise.reject(valid);
       }
 
       return Promise.resolve(valid);

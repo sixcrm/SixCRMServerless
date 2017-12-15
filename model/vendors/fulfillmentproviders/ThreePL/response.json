@@ -1,0 +1,12 @@
+{
+  "id":"/vendors/fulfillmentproviders/ThreePL/response.json",
+  "title":"ThreePL Response",
+  "type":"object",
+  "properties":{
+    "statusCode":{"$ref":"../../../definitions/httpcode.json"},
+    "statusMessage":{
+      "type":"string"
+    }
+  },
+  "required":["statusCode", "statusMessage"]
+}

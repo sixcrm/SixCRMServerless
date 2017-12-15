@@ -59,7 +59,7 @@ module.exports = class ShipmentUtilities {
 
     let fulfillment_provider = this.parameters.get('fulfillmentprovider');
 
-    const FulfillmentController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/'+fulfillment_provider.provider+'/handler.js');
+    const FulfillmentController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/'+fulfillment_provider.provider.name+'/handler.js');
 
     let fulfillmentController = new FulfillmentController({fulfillment_provider: fulfillment_provider});
 

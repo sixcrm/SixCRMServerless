@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/response.json",
+  "title":"Shipping Provider Response Response",
+  "type":"object"
+}

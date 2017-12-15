@@ -3,6 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class TransactionHelperController {
 
@@ -151,6 +152,22 @@ module.exports = class TransactionHelperController {
     this.parameters.set('transaction', transaction);
 
     return true;
+
+  }
+
+  getDistributionBySKU({products}){
+
+    du.debug('Get Distribution By SKU');
+
+    let grouped_products = arrayutilities.group(products, (product) => {
+      return product.sku;
+    });
+
+    objectutilities.map(grouped_products, (sku) => {
+      grouped_products[sku] = grouped_products[sku].length;
+    });
+
+    return grouped_products;
 
   }
 

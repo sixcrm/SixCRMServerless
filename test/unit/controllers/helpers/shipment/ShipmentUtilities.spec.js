@@ -164,7 +164,9 @@ function getValidFulfillmentProvider(){
 		name: randomutilities.createRandomString(20),
 		username: randomutilities.createRandomString(10),
 		password: randomutilities.createRandomString(10),
-		provider:"Hashtag",
+		provider:{
+      name: "Hashtag"
+    },
 		created_at: timestamp.getISO8601(),
 		updated_at:timestamp.getISO8601()
   };

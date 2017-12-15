@@ -1,35 +1,59 @@
 'use strict';
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class fulfillmentProviderController {
 
-    constructor({fulfillment_provider}){
+    constructor(){
 
-      //parameters
-        //this.stati = {success: "NOTIFIED", noship: "NOSHIP", error: "NOTIFICATIONERROR", failed: "FAILED"};
+      this.parameter_validation = {
+        'fulfillmentprovider':global.SixCRM.routes.path('model','entities/fulfillmentprovider.json')
+      };
+
+      this.parameter_definition = {
+        construct:{
+          required:{
+            fulfillmentprovider: 'fulfillment_provider'
+          },
+          optional:{
+
+          }
+        }
+      };
+
+      this.parameters = new Parameters({definition: this.parameter_definition, validation: this.parameter_validation});
+
+      this.parameters.setParameters({argumentation: arguments[0], action: 'construct'});
+
     }
 
-    triggerFulfillment(){
+    augmentParameters(){
 
-        du.warning('Trigger fulfillment in base class. NOT IMPLEMENTED.');
+      du.debug('Augment Parameters');
 
-        return Promise.resolve(this.stati.success);
+      this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
+      this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
+
+      return true;
 
     }
 
-    testConnection() {
+    respond(){
 
-        du.warning('Test connection in base class. NOT IMPLEMENTED.');
+      du.debug('Respond');
 
-        return Promise.resolve(this.stati.success);
+      let provider_response = this.parameters.get('providerresponse');
+      const VendorResponseClass = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/'+this.getVendorName()+'/Response.js');
+
+      return new VendorResponseClass(provider_response);
+
     }
 
-    validate() {
+    getVendorName(){
 
-      du.debug('Validate');
-
-      return null;
+      return objectutilities.getClassName(this).replace('Controller', '');
 
     }
 

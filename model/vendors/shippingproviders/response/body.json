@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/body.json",
+  "title":"Shipping Provider Response Body",
+  "type":"string"
+}

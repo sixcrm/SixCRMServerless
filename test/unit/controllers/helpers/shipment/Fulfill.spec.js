@@ -105,8 +105,10 @@ function getValidProviderResponse(){
 
   return {
     code:'success',
-    result:{},
-    message:''
+    response:{
+      body: 'everybody needs somebody'
+    },
+    message:'Success'
   };
 
 }

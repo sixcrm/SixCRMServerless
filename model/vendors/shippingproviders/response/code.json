@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id":"/result.json",
-  "title":"Shipping Provider Response Result",
+  "id":"/code.json",
+  "title":"Shipping Provider Response Code",
   "type":"string",
   "enum":["success", "fail", "error"]
 }
