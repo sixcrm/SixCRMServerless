@@ -11,7 +11,7 @@ chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
 
-var entity = 'User signing string';
+var entity = 'User Signing String';
 var tests = [
     {
         name: "index",

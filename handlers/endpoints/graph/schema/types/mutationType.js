@@ -1361,6 +1361,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 return userSigningStringController.update({entity:usersigningstring.usersigningstring});
             }
         },
+        //Technical Debt:  Where is this used?
         storeusersigningstring:{
             type: userSigningStringType.graphObj,
             description: 'Updates a user signing string.',
