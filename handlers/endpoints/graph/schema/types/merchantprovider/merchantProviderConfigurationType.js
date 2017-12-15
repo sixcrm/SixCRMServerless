@@ -1,6 +1,7 @@
 'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLString = require('graphql').GraphQLString;
 
 let merchantProviderType = require('./merchantProviderType');
@@ -12,7 +13,7 @@ module.exports.graphObj = new GraphQLObjectType({
     description: 'A merchant provider configuration.',
     fields: () => ({
   	   distribution: {
-         type: new GraphQLNonNull(GraphQLString),
+         type: new GraphQLNonNull(GraphQLFloat),
          description: 'The distribution target for the merchant provider instance.',
      },
         merchantprovider: {
