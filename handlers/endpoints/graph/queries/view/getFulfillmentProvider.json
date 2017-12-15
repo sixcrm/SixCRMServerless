@@ -1,6 +1,6 @@
 {
 	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
 	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"{fulfillmentprovider (id: \"1bd805d0-0062-499b-ae28-00c5d1b827ba\") { id, name, username, password, endpoint, provider, company, threepl_key, facility_id, threepl_id, customer_id, return_address, created_at, updated_at } }"
+	"body":"{fulfillmentprovider (id: \"1bd805d0-0062-499b-ae28-00c5d1b827ba\") { id, name, username, password, endpoint, provider { name }, company, threepl_key, facility_id, threepl_id, customer_id, return_address, created_at, updated_at } }"
 }
 

@@ -3,7 +3,7 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
-let fulfillmentProviderProviderEnum = require('./fulfillmentProviderProviderEnum');
+let fulfillmentProviderProviderType = require('./fulfillmentProviderProviderType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'fulfillmentprovider',
@@ -18,7 +18,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The name of the fulfillment provider instance.',
         },
         provider: {
-            type: new GraphQLNonNull(fulfillmentProviderProviderEnum.graphObj),
+            type: new GraphQLNonNull(fulfillmentProviderProviderType.graphObj),
             description: 'The provider.',
         },
         username: {
