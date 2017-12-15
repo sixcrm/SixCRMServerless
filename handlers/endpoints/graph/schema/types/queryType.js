@@ -577,7 +577,9 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: function(root, args){
-            return Promise.resolve(args);
+            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+            return analyticsController.executeAnalyticsFunction(args, 'getQueueState');
           }
         },
         transactionsummaryreportsummary: {

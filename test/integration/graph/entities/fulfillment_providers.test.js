@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Fulfillment Providers';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getFulfillmentProviders')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getFulfillmentProviders.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getFulfillmentProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getFulfillmentProvider.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createFulfillmentProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createFulfillmentProvider.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateFulfillmentProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateFulfillmentProvider.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteFulfillmentProvider')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteFulfillmentProvider.json')
 }];
 
 let this_request = request(endpoint);

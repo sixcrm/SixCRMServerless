@@ -11,11 +11,11 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Transactions';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getTransactions')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getTransactions.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getTransaction')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getTransaction.json')
 }];
 
 let this_request = request(endpoint);

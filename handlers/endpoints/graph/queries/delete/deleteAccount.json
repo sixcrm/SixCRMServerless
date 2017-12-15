@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"mutation {deleteaccount (id: \"14821fc6-9d18-4ced-a5cd-d968d2e630ff\") {id}}"
+}

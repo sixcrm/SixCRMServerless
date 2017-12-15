@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"query {useracllist (pagination:{limit: \"10\"}){ useracls { id, role { id, name }, account { id, name }, user { id, name }, pending, created_at, updated_at }, pagination { count, end_cursor, has_next_page } }, }"
+}

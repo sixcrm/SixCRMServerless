@@ -20,7 +20,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Merchant Providers By Amount';
-let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getMerchantProviderAmounts');
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getMerchantProviderAmounts.json');
 
 //set the test user
 let test_user = {

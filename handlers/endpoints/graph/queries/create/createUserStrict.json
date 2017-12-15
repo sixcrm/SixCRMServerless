@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{"user":"test@test.com"}},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":"mutation {createuserstrict (user: { id: \"test@test.com\", auth0_id: \"test\", name: \"testingname\", active:true, termsandconditions:\"2.1\", address:{line1: \"123 Heckamecca\", line2:\"Room 666\", city:\"Portland\", state:\"OR\", zip:\"97203\", country:\"US\"}}) {id,auth0_id,name,active,address {line1,line2,city,state,zip,country},acl {account {id,name,active},role {id,name,active}},termsandconditions,created_at,updated_at}}"
+}

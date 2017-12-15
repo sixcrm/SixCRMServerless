@@ -1,0 +1,62 @@
+{
+  "title": "SiteConfig",
+  "type": "object",
+
+  "properties": {
+    "aws": {
+      "required": ["region", "account"]
+    },
+    "ses": {
+      "required": ["hostname", "port", "username", "smtp_username", "smtp_password", "default_sender_email", "default_sender_name"]
+    },
+    "jwt": {
+      "properties": {
+        "site": {
+          "required": ["secret_key", "domain", "expiration"]
+        },
+        "transaction": {
+          "required": ["secret_key", "expiration"]
+        }
+      },
+      "required": ["issuer", "site", "transaction"]
+    },
+    "dynamodb": {
+      "required": ["endpoint"]
+    },
+    "sqs": {
+      "required": ["deadletter_postfix", "max_receive_count"]
+    },
+    "cloudsearch": {
+      "required": ["domainname"]
+    },
+    "lambda": {
+      "required": ["endpoint", "function_names"]
+    },
+    "redshift": {
+      "required": ["user", "database", "password", "port", "max", "idle_timeout", "randomdata"]
+    },
+    "notifications": {
+      "properties": {
+        "apn": {
+          "required": ["token_key", "token_key_id", "token_team_id", "production"]
+        }
+      },
+      "required": ["apn"]
+    },
+    "cache": {
+      "required": ["usecache", "cachebuster"]
+    },
+    "elasticache": {
+      "required": ["max_attempts", "retry_time", "endpoint", "port", "default_expiration"]
+    },
+    "logging": {
+      "required": ["loglevel"]
+    },
+    "slack": {
+      "required": ["channels"]
+    }
+
+
+  },
+  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "shipping_providers", "redshift", "notifications", "cache", "elasticache", "logging", "slack"]
+}

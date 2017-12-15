@@ -17,10 +17,10 @@ ____
 ### Required
 * `start` - a ISO-8601 datetime
 * `end` - a ISO-8601 datetime
-* `account` - a UUIDv4
 
 ### Optional
-
+* `current_queuename` - name of the queue
+* `account` - a UUIDv4
 
 ---
 ### Query notes

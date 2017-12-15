@@ -1,7 +1,9 @@
 'use strict';
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLFloat = require('graphql').GraphQLFloat;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 module.exports.graphObj = new GraphQLInputObjectType({
@@ -10,8 +12,8 @@ module.exports.graphObj = new GraphQLInputObjectType({
         id:						{ type: GraphQLString },
         name:					{ type: new GraphQLNonNull(GraphQLString) },
         sku:					{ type: new GraphQLNonNull(GraphQLString) },
-        ship:					{ type: new GraphQLNonNull(GraphQLString) },
-        shipping_delay: 		{ type: GraphQLString },
+        ship:					{ type: GraphQLBoolean },
+        shipping_delay: 		{ type: GraphQLInt },
         fulfillment_provider: 	{ type: GraphQLString },
         default_price:       	{ type: GraphQLFloat }
     })

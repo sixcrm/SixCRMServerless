@@ -15,23 +15,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Credit Cards';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getCreditCards')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getCreditCards.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getCreditCard')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getCreditCard.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createCreditCard')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createCreditCard.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateCreditCard')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateCreditCard.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteCreditCard')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteCreditCard.json')
 }];
 
 let this_request = request(endpoint);

@@ -20,7 +20,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Activity By Identifier';
-let test_query = global.SixCRM.routes.path('handlers','/endpoints/graph/queries/analytics/getActivityByIdentifier');
+let test_query = global.SixCRM.routes.path('handlers','/endpoints/graph/queries/analytics/getActivityByIdentifier.json');
 
 //set the test user
 let test_user = {

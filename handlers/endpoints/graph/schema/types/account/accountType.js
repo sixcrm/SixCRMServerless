@@ -1,6 +1,7 @@
 'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 
@@ -21,7 +22,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The name of the account.',
         },
         active: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLBoolean),
             description: 'The active status of the account.',
         },
         acl:{

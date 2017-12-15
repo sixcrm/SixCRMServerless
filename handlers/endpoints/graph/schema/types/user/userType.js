@@ -3,6 +3,7 @@ const _ = require('underscore');
 
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
 
@@ -39,7 +40,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'The auth0_id of the user.',
         },
         active: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: new GraphQLNonNull(GraphQLBoolean),
             description: 'The active status of the user',
         },
         alias: {

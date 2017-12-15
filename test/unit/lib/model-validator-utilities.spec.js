@@ -5,6 +5,8 @@ let chai = require('chai');
 let fs = require('fs');
 let expect = chai.expect;
 
+let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+
 let schemaWithNoReferences = `${__dirname}/model/sql_pagination.json`;
 let schemaWithReferences = `${__dirname}/model/sixcrmidentifier.json`;
 let schemaWithNestedReferences = `${__dirname}/model/entity.json`;
@@ -91,6 +93,101 @@ describe('lib/model-validator-utilities', () => {
 
     });
 
+    // Use this to test validation via graph, if needed.
+    // describe('mutation', () => {
+    //
+    //     PermissionTestGenerators.givenUserWithAllowed('create', 'customer');
+    //
+    //     it('works', () => {
+    //         let mutationType = require('../../../handlers/endpoints/graph/schema/types/mutationType.js');
+    //
+    //         let customer = { id: 'b5803b28-c584-4bb3-8fac-3315b91686b4',
+    //             firstname: 'Test_b5803b28-c584-4bb3-8fac-3315b91686b3',
+    //             lastname: 'Test',
+    //             email: 'test@test.com',
+    //             phone: '1234567890',
+    //             address:
+    //                 { line1: '123 Test St.',
+    //                     line2: 'Apartment 3',
+    //                     city: 'Portland',
+    //                     state: 'OR',
+    //                     zip: '97213',
+    //                     country: 'USA' },
+    //             creditcards: [ 'df84f7bb-06bd-4daa-b1a3-6a2c113edd72' ],
+    //             account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+    //             created_at: '2017-12-12T19:13:00.020Z',
+    //             updated_at: '2017-12-12T19:13:00.020Z' };
+    //
+    //         du.info(mutationType.graphObj.getFields().createcustomer.resolve(null,
+    //             {customer: customer}
+    //         ));
+    //     });
+    // });
+
+    describe('entity-utils', () => {
+
+        const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
+        let eu = new entityUtilitiesController();
+
+        let customer = { id: 'b5803b28-c584-4bb3-8fac-3315b91686b4',
+            firstname: 'Test_b5803b28-c584-4bb3-8fac-3315b91686b3',
+            lastname: 'Test',
+            email: 'test@test.com',
+            phone: '1234567890',
+            address:
+                { line1: '123 Test St.',
+                    line2: 'Apartment 3',
+                    city: 'Portland',
+                    state: 'OR',
+                    zip: '97213',
+                    country: 'USA' },
+            creditcards: [ 'df84f7bb-06bd-4daa-b1a3-6a2c113edd72' ],
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            created_at: '2017-12-12T19:13:00.020Z',
+            updated_at: '2017-12-12T19:13:00.020Z' };
+
+        it('loads references recursively', (done) => {
+            try {
+                eu.validate(customer, global.SixCRM.routes.path('model', 'entities/customer.json'));
+                done('Validation should have failed.')
+            } catch (error) {
+                expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+                done();
+            }
+        });
+    });
+
+    describe('customer', () => {
+        let customer = {
+            id:"24f7c851-29d4-4af9-87c5-0298fa74c689",
+            account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            email:"rama@damunaste.org",
+            firstname:"Rama",
+            lastname:"Damunaste",
+            phone:"1234567890",
+            address:{
+                line1:"10 Downing St.",
+                city:"London",
+                state:"Oregon",
+                zip:"97213",
+                country:"US"
+            },
+            creditcards:["df84f7bb-06bd-4daa-b1a3-6a2c113edd72"],
+            created_at:"2017-04-06T18:40:41.405Z",
+            updated_at:"2017-04-06T18:41:12.521Z"
+        };
+
+        it('loads references recursively', (done) => {
+            try {
+                mvu.validateModel(customer, global.SixCRM.routes.path('model', 'entities/customer.json'));
+                done('Validation should have failed.')
+            } catch (error) {
+                expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+                done();
+            }
+        });
+    });
+
     describe('entities', () => {
 
         function validateSchemasOnPath(path) {
@@ -110,7 +207,7 @@ describe('lib/model-validator-utilities', () => {
                         try {
                             mvu.validateModel(invalid_model, schema);
                         } catch (e) {
-                          expect(e.message).to.have.string('[500] One or more validation errors occurred:');
+                            expect(e.message).to.have.string('[500] One or more validation errors occurred:');
                         }
                     });
 

@@ -1,5 +1,5 @@
 {
-    "QueueName": "rebill_failed",
+    "QueueName": "pending_error",
     "Attributes": {
         "MessageRetentionPeriod": "345600",
         "VisibilityTimeout": "300",

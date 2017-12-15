@@ -12,23 +12,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Affiliates';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getAffiliates')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getAffiliates.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getAffiliate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getAffiliate.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createAffiliate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createAffiliate.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateAffiliate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateAffiliate.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteAffiliate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteAffiliate.json')
 }];
 
 let this_request = request(endpoint);

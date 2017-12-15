@@ -15,19 +15,19 @@ var entity = 'User setting';
 var tests = [
     {
         name: "create",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createUserSetting')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createUserSetting.json')
     },
     {
         name: "view",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getUserSetting')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getUserSetting.json')
     },
     {
         name: "update",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateUserSetting')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateUserSetting.json')
     },
     {
         name: "delete",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteUserSetting')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteUserSetting.json')
     }];
 
 let this_request = request(endpoint);

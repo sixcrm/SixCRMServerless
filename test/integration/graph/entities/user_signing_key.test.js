@@ -15,23 +15,23 @@ var entity = 'User signing string';
 var tests = [
     {
         name: "index",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getUserSigningStrings')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getUserSigningStrings.json')
     },
     {
         name: "create",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createUserSigningString')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createUserSigningString.json')
     },
     {
         name: "view",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getUserSigningString')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getUserSigningString.json')
     },
     {
         name: "update",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateUserSigningString')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateUserSigningString.json')
     },
     {
         name: "delete",
-        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteUserSigningString')
+        query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteUserSigningString.json')
     }];
 
 let this_request = request(endpoint);

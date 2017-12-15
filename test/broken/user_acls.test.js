@@ -12,23 +12,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'User ACLs';
 var tests = [{
 	name: "index",
-	query: "./endpoints/graph/queries/index/getUserACLs"
+	query: "./endpoints/graph/queries/index/getUserACLs.json"
 },
 {
 	name: "view",
-	query: "./endpoints/graph/queries/view/getUserACL"
+	query: "./endpoints/graph/queries/view/getUserACL.json"
 },
 {
 	name: "create",
-	query: "./endpoints/graph/queries/create/createUserACL"
+	query: "./endpoints/graph/queries/create/createUserACL.json"
 },
 {
 	name: "update",
-	query: "./endpoints/graph/queries/update/updateUserACL"
+	query: "./endpoints/graph/queries/update/updateUserACL.json"
 },
 {
 	name: "delete",
-	query: "./endpoints/graph/queries/delete/deleteUserACL"
+	query: "./endpoints/graph/queries/delete/deleteUserACL.json"
 }];
 
 let this_request = request(endpoint);

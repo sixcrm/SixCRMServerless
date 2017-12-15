@@ -230,23 +230,23 @@ class AnalyticsController extends AnalyticsUtilities{
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendQueueName(parameters, queue_name);
+      parameters = this.appendCurrentQueueName(parameters, queue_name);
       parameters = this.appendPeriod(parameters, {name: period});
 
       return this.getResults('order_engine/rebill_pagination', parameters, this.default_queue_filters);
 
     }
 
-    getQueueFailure(parameters){
+  getQueueRates(parameters){
       du.debug('Get Queue Failure');
 
       const queue_name = parameters.queuename;
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendQueueName(parameters, queue_name);
+      parameters = this.appendCurrentQueueName(parameters, queue_name);
 
-      return this.getResults('order_engine/queue_failure', parameters, this.default_queue_filters);
+      return this.getResults('order_engine/queue_rate', parameters, this.default_queue_filters);
     }
 
     getQueueAverageTime(parameters){
@@ -256,9 +256,45 @@ class AnalyticsController extends AnalyticsUtilities{
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendQueueName(parameters, queue_name);
+      parameters = this.appendCurrentQueueName(parameters, queue_name);
 
       return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_filters);
+    }
+
+    getQueueState(parameters) {
+
+      let obj = {};
+
+      return this.getRebillSummary(parameters)
+        .then((result) => {
+          const count = result.summary[0] || {count: 0};
+
+          obj = {count: count.count};
+
+          return Promise.resolve();
+        })
+        .then(() => this.getQueueRates(parameters)
+          .then((result) => {
+            const rates = result.summary[0] || {failure_percentage: 0, success_rate: 0, expired_rate: 0, error_rate: 0};
+
+            obj.failure_rate = rates.failure_percentage;
+            obj.success_rate = rates.success_rate;
+            obj.expired_rate = rates.expired_rate;
+            obj.error_rate = rates.error_rate;
+            obj.failure_rate_color= rates.failure_percentage < 5 ? 'GREEN' : (rates.failure_percentage > 8 ? 'RED' : 'ORANGE');
+
+            return Promise.resolve();
+          }))
+        .then(() => this.getQueueAverageTime(parameters)
+          .then((result) => {
+            const average_time = result.summary[0] || {averagetime: 0};
+
+            obj.average_time = average_time.averagetime;
+            obj.average_time_color = average_time.averagetime < 300 ? 'GREEN' : (average_time.averagetime > 400 ? 'RED' : 'ORANGE');
+
+            return obj;
+          }));
+
     }
 
     /* Report Pages */
@@ -357,6 +393,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
     getTransactionsReport(parameters){
 
+      du.info(parameters);
       du.debug('Get Transaction Report');
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));

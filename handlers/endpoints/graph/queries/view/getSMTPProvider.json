@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": {"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"{smtpprovider (id: \"18213d0b-cd6d-4cea-91b9-993d7443468b\") { id, name, hostname, username, password, from_email, from_name, port, created_at, updated_at } }"
+}

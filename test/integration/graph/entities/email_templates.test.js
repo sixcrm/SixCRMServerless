@@ -15,23 +15,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'EmailTemplates';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getEmailTemplates')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getEmailTemplates.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getEmailTemplate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getEmailTemplate.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createEmailTemplate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createEmailTemplate.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateEmailTemplate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateEmailTemplate.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteEmailTemplate')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteEmailTemplate.json')
 }];
 
 let this_request = request(endpoint);

@@ -14,23 +14,23 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'Rebills';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getRebills')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getRebills.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getRebill')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getRebill.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createRebill')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createRebill.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateRebill')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateRebill.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteRebill')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteRebill.json')
 }];
 
 let this_request = request(endpoint);

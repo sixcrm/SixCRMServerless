@@ -11,6 +11,8 @@ module.exports = class PendingToShippedForwardMessageController extends forwardR
         name: 'pendingtoshipped',
         workerfunction: 'confirmShipped.js',
         origin_queue: 'pending',
+        failure_queue: 'pending_failed',
+        error_queue: 'pending_error',
         destination_queue: 'shipped'
       })
 

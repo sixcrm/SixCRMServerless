@@ -219,6 +219,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  seed_test(){
+
+    du.debug('Seed');
+
+    return this.getTestSeedQueries()
+    .then((seed_queries) => {
+      arrayutilities.isArray(seed_queries, true);
+      if(seed_queries.length > 0){
+        return this.executeQueries(seed_queries);
+      }
+      return Promise.resolve(true);
+    })
+    .then((result) => {
+      return 'Complete';
+    });
+
+  }
+
   seed_referential(){
 
     du.debug('Seed Referential data');
@@ -228,6 +246,21 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     .then((result) => {
       return 'Complete';
     });
+
+  }
+
+  seed_test_referential() {
+
+    du.debug('Seed test referential');
+
+    let query_copy = `
+      INSERT INTO d_datetime(datetime)
+      SELECT dd
+      FROM generate_series( '2017-01-01'::timestamp, '2017-06-30'::timestamp, '1 second'::interval) dd;`;
+
+    du.info(query_copy);
+
+    return this.execute(query_copy);
 
   }
 
@@ -364,6 +397,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     du.debug('Get Seed Queries');
 
     return this.getDirectorySQLFilepaths('seeds').then((filepaths) => {
+
+      let query_promises = arrayutilities.map((filepaths), (filepath) => {
+
+        return this.getQueryFromPath(filepath, false);
+
+      });
+
+      return Promise.all(query_promises);
+
+    });
+
+  }
+
+  getTestSeedQueries(){
+
+    du.debug('Get Seed Queries');
+
+    return this.getDirectorySQLFilepaths('seeds_test').then((filepaths) => {
 
       let query_promises = arrayutilities.map((filepaths), (filepath) => {
 
@@ -523,8 +574,15 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   execute(query) {
 
-    du.debug('Execute');
+    du.debug('Execute Query');
 
+    // I am sure this could be cleaner
+
+    if(process.env.TEST_IMAGE == 'true'){
+      query = this.transformQuery(query);
+    }
+
+    du.info(query)
     return this.redshiftqueryutilities.query(query);
 
   }
@@ -619,27 +677,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
   transformQuery(query){
     /* Transforms query to PostgreSQL format by clearing Redshift specifics */
 
-    if(process.env.stage == 'local'){
-
       return arrayutilities.map(query.split(/\r?\n/), (data) =>
-          data.replace(/(DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*)(\,)?/,(match, p1, p2) => { // eslint-disable-line no-useless-escape
+          data.replace(/(getdate.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/,(match, p1, p2) => { // eslint-disable-line no-useless-escape
 
             if(p2 == ','){
                 return `${p2}`;
             } else if(p1.startsWith('encode')){
-                return ''
+               return ''
+            } else if(p1.startsWith('ENCODE')){
+               return ''
+            } else if(p1.startsWith('getdate')){
+               return 'now();'
             }
             else {
-                return ';'
+              return ';'
             }
 
           })
       ).join('\n');
-
-    } else {
-
-        return query;
-    }
 
   }
 

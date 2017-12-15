@@ -5,12 +5,11 @@ let chai = require('chai');
 let expect = chai.expect;
 let EntityController = global.SixCRM.routes.include('controllers','entities/Entity');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const uuidV4 = require('uuid/v4');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-
 describe('controllers/Entity.js', () => {
-    let entityController;
 
     before(() => {
         mockery.enable({
@@ -120,7 +119,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    return Promise.resolve([anEntity]);
+                    return Promise.resolve({Items: [anEntity]});
                 },
                 saveRecord: (tableName, entity) => {
                     return Promise.resolve(entity);
@@ -229,6 +228,49 @@ describe('controllers/Entity.js', () => {
 
             });
         });
+
+        it('fails when primary key is missing', () => {
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            try {
+                entityController.update({entity: {}})
+            }catch(error){
+                expect(error.message).to.equal('[400] Unable to update ' + entityController.descriptive_name
+                    + '. Missing property "' + entityController.primary_key + '"');
+            }
+
+        });
+
+        it('fail when entity with specified id does not exist', () => {
+            // given
+            let anEntity = {
+                secret_key: "secret-key",
+                access_key: "access-key",
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve([]);
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('accesskey');
+
+            // when
+            return entityController.update({entity: anEntity}).catch((error) => {
+                expect(error.message).to.equal('[404] Unable to update ' + entityController.descriptive_name +
+                    ' with ID: "' + anEntity.id + '" -  record doesn\'t exist.');
+            });
+        });
     });
 
     describe('delete', () => {
@@ -335,7 +377,6 @@ describe('controllers/Entity.js', () => {
 
         });
 
-        //
         it('throws error when there are multiple entities with given id', () => {
             // given
             let anEntity = {
@@ -882,6 +923,616 @@ describe('controllers/Entity.js', () => {
             for (let uuid of invalidUUIDs) {
                 expect(entityController.isUUID(uuid)).to.equal(false, `'${uuid}' should not be considered valid.`)
             }
+        });
+    });
+
+    describe('store', () => {
+
+        beforeEach(() => {
+
+            let mock_preindexing_helper = class {
+                constructor() {}
+
+                addToSearchIndex(entity) {
+                    return Promise.resolve(true);
+                }
+
+                removeFromSearchIndex(entity) {
+                    return Promise.resolve(true);
+                }
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+        });
+
+        it('stores entity if it has a primary key', () => {
+            // given
+            let anEntity = {
+                secret_key: "secret-key",
+                access_key: "access-key",
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a' //primary key
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve([]);
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('accesskey');
+
+            // when
+            return entityController.store({entity: anEntity}).then((result) => {
+                expect(result.secret_key).to.equal(anEntity.secret_key);
+                expect(result.access_key).to.equal(anEntity.access_key);
+                expect(result.id).to.equal(anEntity.id);
+                expect(result).to.have.property('id');
+                expect(result).to.have.property('created_at');
+                expect(result).to.have.property('updated_at');
+
+            });
+        });
+
+        it('updates existing entity', () => {
+            // given
+            let anEntity = {
+                secret_key: "secret-key",
+                access_key: "access-key",
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a',
+                created_at: '2017-11-12T09:01:41.182Z',
+                updated_at: '2017-11-12T09:01:78.182Z'
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({Items: [anEntity]});
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('accesskey');
+
+            // when
+            return entityController.store({entity: anEntity}).then((result) => {
+                expect(result.secret_key).to.equal(anEntity.secret_key);
+                expect(result.access_key).to.equal(anEntity.access_key);
+                expect(result.id).to.equal(anEntity.id);
+                expect(result).to.have.property('id');
+                expect(result).to.have.property('created_at');
+                expect(result).to.have.property('updated_at');
+
+            });
+        });
+
+        it('stores entity when it doesn\'t have a primary key', () => {
+            // given
+            let anEntity = {
+                secret_key: "secret-key",
+                access_key: "access-key"
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve([]);
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('accesskey');
+
+            // when
+            return entityController.store({entity: anEntity}).then((result) => {
+                expect(result.secret_key).to.equal(anEntity.secret_key);
+                expect(result.access_key).to.equal(anEntity.access_key);
+                expect(result).to.have.property('created_at');
+                expect(result).to.have.property('updated_at');
+
+            });
+        });
+    });
+
+    describe('touch', () => {
+
+        beforeEach(() => {
+
+            let mock_preindexing_helper = class {
+                constructor() {}
+
+                addToSearchIndex(entity) {
+                    return Promise.resolve(true);
+                }
+
+                removeFromSearchIndex(entity) {
+                    return Promise.resolve(true);
+                }
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+        });
+
+        it('creates entity if it does not exist', () => {
+            // given
+            let anEntity = {
+                secret_key: "secret-key",
+                access_key: "access-key",
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('*', 'accesskey');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve([]);
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('accesskey');
+
+            // when
+            return entityController.touch({entity: anEntity}).then((result) => {
+                expect(result.secret_key).to.equal(anEntity.secret_key);
+                expect(result.access_key).to.equal(anEntity.access_key);
+                expect(result).to.have.property('id');
+                expect(result).to.have.property('created_at');
+                expect(result).to.have.property('updated_at');
+
+            });
+        });
+
+        it('updates entity if it already exists', () => {
+            // given
+            let anEntity = {
+                secret_key: "secret-key",
+                access_key: "access-key",
+                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a',
+                created_at: '2017-11-12T09:01:41.182Z',
+                updated_at: '2017-11-12T09:01:78.182Z'
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({Items: [anEntity]});
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('accesskey');
+
+            // when
+            return entityController.touch({entity: anEntity}).then((result) => {
+                expect(result.secret_key).to.equal(anEntity.secret_key);
+                expect(result.access_key).to.equal(anEntity.access_key);
+                expect(result).to.have.property('id');
+                expect(result).to.have.property('created_at');
+                expect(result).to.have.property('updated_at');
+
+            });
+        });
+    });
+
+    describe('createAssociatedEntitiesObject', () => {
+
+        it('fails when object is missing id property', () => {
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            try{
+                entityController.createAssociatedEntitiesObject({name: 'a_name', object: {}})
+            }catch(error){
+                expect(error.message).to.equal('[500] Create Associated Entities expects the object parameter to have field "id"');
+            }
+        });
+
+        it('creates associated entities object', () => {
+            let param = {
+                name: 'a_name',
+                object: {
+                    id: 'dummy_id'
+                }
+            };
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            expect(entityController.createAssociatedEntitiesObject(param))
+                .to.deep.equal({name: param.name, entity: {id: param.object.id}});
+        });
+    });
+
+    describe('listByUser', () => {
+
+        it('returns data when there is any', () => {
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({
+                        Count: 2,
+                        Items: [{}, {}]
+                    });
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listByUser({pagination:{limit:2}}).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+
+        it('returns empty data when there are none', () => {
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({Count: 0,Items: []});
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listByUser({pagination:{limit:2}}).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 0,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: null
+                });
+            });
+        });
+    });
+
+    describe('listByAccount', () => {
+
+        it('returns data when there is any', () => {
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({
+                        Count: 2,
+                        Items: [{}, {}]
+                    });
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listByAccount({pagination:{limit:2}}).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+
+        it('returns empty data when there are none', () => {
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({Count: 0,Items: []});
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listByAccount({pagination:{limit:2}}).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 0,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: null
+                });
+            });
+        });
+    });
+
+    describe('getListByAccount', () => {
+
+        it('retrieves list by account', () => {
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({
+                        Count: 2,
+                        Items: [{}, {}]
+                    });
+                },
+                createINQueryParameters: (field, list_array) => {
+                    return Promise.resolve({
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: 'an_expression_values'
+                    })
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.getListByAccount({pagination:{limit:2}}).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+    });
+
+    describe('getListByUser', () => {
+
+        it('retrieves list by user', () => {
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({
+                        Count: 2,
+                        Items: [{}, {}]
+                    });
+                },
+                createINQueryParameters: (field, list_array) => {
+                    return Promise.resolve({
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: 'an_expression_values'
+                    })
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.getListByUser({query_parameters: {}, pagination:{limit:2}}).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+    });
+
+    describe('getBySecondaryIndex', () => {
+
+        it('successfully retrieves by secondary index', () => {
+
+            let params = {
+                field:'field',
+                index_value:'index_value',
+                index_name:'index_name'
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(index).to.equal(params.index_name);
+                    expect(parameters).to.have.property('key_condition_expression');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.expression_attribute_values).to.have.property(':index_valuev');
+                    expect(parameters.expression_attribute_values).to.have.property(':accountv');
+                    return Promise.resolve({ Items: [{a_single_item: 'a_single_item'}] });
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.getBySecondaryIndex(params).then((response) => {
+                expect(response).to.deep.equal({a_single_item: 'a_single_item'});
+            });
+        });
+    });
+
+    describe('queryByParameters', () => {
+
+        it('returns data retrieved by specified expressions', () => {
+
+            let params = {
+                parameters:{
+                    filter_expression:'filter_expression',
+                    expression_attribute_values:{
+                        expression_attribute_value:'expression_attribute_value'
+                    },
+                    expression_attribute_names:{
+                        expression_attribute_name:'expression_attribute_name'
+                    }
+                },
+                pagination:{limit:2},
+                index:'an_index'
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(index).to.equal(params.index);
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters).to.have.property('expression_attribute_names');
+                    return Promise.resolve({ Count:2, Items: [{}, {}] });
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.queryByParameters(params).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+    });
+
+    describe('scanByParameters', () => {
+
+        it('successfully scans by specified expressions', () => {
+
+            let params = {
+                parameters:{
+                    filter_expression:'filter_expression',
+                    expression_attribute_values:{
+                        expression_attribute_value:'expression_attribute_value'
+                    },
+                    expression_attribute_names:{
+                        expression_attribute_name:'expression_attribute_name'
+                    }
+                },
+                pagination:{limit:2}
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                scanRecords: (table, parameters) => {
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters).to.have.property('expression_attribute_names');
+                    return Promise.resolve({ Count:2, Items: [{}, {}] });
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.scanByParameters(params).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+    });
+
+    describe('checkAssociatedEntities', () => {
+
+        it('throws error when appointed entity is associated with other entities', () => {
+
+            let entity_name = 'entity';
+
+            let associated_entities = {
+                name: 'a_name',
+                entity: {
+                    type: {},
+                    id: uuidV4()
+                }
+            };
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC(entity_name);
+
+            entityController.associatedEntitiesCheck = () => {
+                return Promise.resolve([associated_entities]);
+            };
+
+            return entityController.checkAssociatedEntities({id:'dummy_id'}).catch((error) => {
+                expect(error.message).to.deep.equal('[403] The ' + entity_name + ' entity that you are attempting to delete ' +
+                    'is currently associated with other entities.  Please delete the entity associations before ' +
+                    'deleting this ' + entity_name + '.');
+            });
+        });
+
+        it('returns true when entity is not associated with other entites', () => {
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            entityController.associatedEntitiesCheck = () => {
+                return Promise.resolve([]);
+            };
+
+            return entityController.checkAssociatedEntities({id:'dummy_id'}).then((result) => {
+                expect(result).to.be.true;
+            });
         });
     });
 });
