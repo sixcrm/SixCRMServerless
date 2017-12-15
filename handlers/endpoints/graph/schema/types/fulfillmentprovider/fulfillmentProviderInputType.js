@@ -3,22 +3,13 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
-let fulfillmentProviderProviderInputType = require('./fulfillmentProviderProviderInputType');
+let providerInputType = require('./elements/providerInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'FulfillmentProviderInput',
     fields: () => ({
         id:					{ type: GraphQLString },
         name:				{ type: new GraphQLNonNull(GraphQLString) },
-        username:			{ type: new GraphQLNonNull(GraphQLString) },
-        password:			{ type: new GraphQLNonNull(GraphQLString) },
-        endpoint:			{ type: GraphQLString },
-        provider:			{ type: fulfillmentProviderProviderInputType.graphObj },
-        company:            { type: GraphQLString },
-        threepl_key:        { type: GraphQLString },
-        facility_id:        { type: GraphQLString },
-        threepl_id:         { type: GraphQLString },
-        customer_id:        { type: GraphQLString },
-        return_address:     { type: GraphQLString }
+        provider:		{ type: new GraphQLNonNull(providerInputType.graphObj) }
     })
 });

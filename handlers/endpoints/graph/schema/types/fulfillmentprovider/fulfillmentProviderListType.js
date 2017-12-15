@@ -10,14 +10,14 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'FulfillmentProviders',
     description: 'Fulfillment providers',
     fields: () => ({
-        fulfillmentproviders: {
-            type: new GraphQLList(fulfillmentProviderType.graphObj),
-            description: 'The fulfillment providers',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
-        }
+      fulfillmentproviders: {
+        type: new GraphQLList(fulfillmentProviderType.graphObj),
+        description: 'The fulfillment providers',
+      },
+      pagination: {
+        type: new GraphQLNonNull(paginationType.graphObj),
+        description: 'Query pagination',
+      }
     }),
     interfaces: []
 });

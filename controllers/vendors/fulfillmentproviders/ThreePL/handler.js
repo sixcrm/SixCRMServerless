@@ -296,8 +296,8 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
         '@':{
           xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/',
         },
-        CustomerID: fulfillment_provider.provider.customer_id,
-        FacilityID: fulfillment_provider.provider.facility_id,
+        CustomerID: fulfillment_provider.provider.customer_id, //Technical Debt: what is this?
+        FacilityID: this.getFacilityID(),
         //OverAlloc: 'Any',
         //Closed: 'Any',
         //ASNSent: 'Any',

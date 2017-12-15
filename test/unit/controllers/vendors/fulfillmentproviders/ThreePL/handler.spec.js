@@ -186,6 +186,7 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});
 
+      threePLController.ThreePLFacilityID = 2;
       threePLController.ThreePLID = 773;
 
       return threePLController.test().then(result => {
@@ -213,6 +214,7 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});
 
+      threePLController.ThreePLFacilityID = 2;
       threePLController.ThreePLID = 773;
 
       return threePLController.test().then(result => {
@@ -240,6 +242,7 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});
 
+      threePLController.ThreePLFacilityID = 2;
       threePLController.ThreePLID = 773;
 
       return threePLController.test().then(result => {
