@@ -38,7 +38,7 @@ module.exports = class FulfillmentProviderTest extends IntegrationTest {
 
     du.output('Create Fulfillment Provider');
 
-    let fulfillmentprovider_create_query = `mutation { createfulfillmentprovider ( fulfillmentprovider: { id: "`+fulfillment_provider_id+`", name: "test", username: "test", password: "test", endpoint: "test", provider: "HASHTAG"}) { id } }`;
+    let fulfillmentprovider_create_query = `mutation { createfulfillmentprovider ( fulfillmentprovider: { id: "`+fulfillment_provider_id+`", name: "test", provider: {name: "Hashtag"}}) { id } }`;
 
     return this.executeQuery(fulfillmentprovider_create_query);
 
@@ -48,7 +48,7 @@ module.exports = class FulfillmentProviderTest extends IntegrationTest {
 
     du.output('Create Product');
 
-    let product_create_query = `mutation { createproduct (product: { id: "`+product_id+`", name: "Testing Entity Indexing", sku: "abc1234", ship: "true", shipping_delay:"3600",  fulfillment_provider:"`+fulfillment_provider_id+`", default_price:4.99}) { id } }`;
+    let product_create_query = `mutation { createproduct (product: { id: "`+product_id+`", name: "Testing Entity Indexing", sku: "abc1234", ship: true, shipping_delay:3600,  fulfillment_provider:"`+fulfillment_provider_id+`", default_price:4.99}) { id } }`;
 
     return this.executeQuery(product_create_query);
 

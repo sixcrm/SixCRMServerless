@@ -68,7 +68,7 @@ module.exports = class MerchantProviderTest extends IntegrationTest {
 
     du.output('Create Load Balancer');
 
-    let loadbalancer_create_query = `mutation { createloadbalancer ( loadbalancer: {id: "`+loadbalancer_id+`", name: "Simple load balancer", merchantproviders: [{id:"`+merchantprovider_id+`", distribution:"1.0" } ] } ) { id } }`;
+    let loadbalancer_create_query = `mutation { createloadbalancer ( loadbalancer: {id: "`+loadbalancer_id+`", name: "Simple load balancer", merchantproviders: [{id:"`+merchantprovider_id+`", distribution:1.0 } ] } ) { id } }`;
 
     return this.executeQuery(loadbalancer_create_query);
 

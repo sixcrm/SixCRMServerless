@@ -6,7 +6,7 @@ const expect = require('chai').expect
 
 const FulfillmentProviderTest = global.SixCRM.routes.include('test', 'integration/classes/FulfillmentProvider');
 
-xdescribe('Fulfillment Provider (Product) Delete Block Test', () => {
+describe('Fulfillment Provider (Product) Delete Block Test', () => {
 
   it('Should not allow the delete', () => {
 

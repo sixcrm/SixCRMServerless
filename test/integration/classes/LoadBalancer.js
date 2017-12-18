@@ -38,7 +38,7 @@ module.exports = class LoadBalancerTest extends IntegrationTest {
 
     du.output('Create Load Balancer');
 
-    let loadbalancer_create_query = `mutation { createloadbalancer ( loadbalancer: {id: "`+loadbalancer_id+`", name: "Simple load balancer", merchantproviders: [{id:"6c40761d-8919-4ad6-884d-6a46a776cfb9", distribution:"1.0" } ] } ) { id } }`;
+    let loadbalancer_create_query = `mutation { createloadbalancer ( loadbalancer: {id: "`+loadbalancer_id+`", name: "Simple load balancer", merchantproviders: [{id:"6c40761d-8919-4ad6-884d-6a46a776cfb9", distribution:1.0 } ] } ) { id } }`;
 
     return this.executeQuery(loadbalancer_create_query);
 

@@ -48,7 +48,7 @@ describe('vendors/fulfillmentproviders/Response.js', () =>{
   });
 
 
-  describe.only('handleResponse', () => {
+  describe('handleResponse', () => {
     it('successfully handles response when error is null', () => {
 
       const FulfillmentResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Response.js');
