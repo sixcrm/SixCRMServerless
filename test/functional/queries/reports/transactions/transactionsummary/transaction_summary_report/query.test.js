@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-describe('Reports/TransactionsSummary/Transactions_summary_report query', function () {
+describe('reports/transactionsSummary/transactions_summary_report query', function () {
 
     let query_input = { analyticsfilter:
                         { start: '2017-01-01T00:00:00.000Z',
