@@ -6,6 +6,16 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 describe('config', () => {
 
+    let stage;
+
+    beforeEach(() => {
+        stage = global.SixCRM.configuration.stage;
+    });
+
+    afterEach(() => {
+        global.SixCRM.configuration.stage = stage;
+    });
+
     describe('serverless', () => {
 
         it('should be valid', () => {
