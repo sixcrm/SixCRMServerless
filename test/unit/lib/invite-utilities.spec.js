@@ -26,6 +26,17 @@ describe('lib/invite-utilities', () => {
 
     describe('buildInviteLink', () => {
 
+        let stage;
+
+        beforeEach(() => {
+            stage = global.SixCRM.configuration.stage;
+        });
+
+        afterEach(() => {
+            global.SixCRM.configuration.stage = stage;
+        });
+
+
         it('builds link for development', () => {
 
             global.SixCRM.configuration.stage = 'development';
