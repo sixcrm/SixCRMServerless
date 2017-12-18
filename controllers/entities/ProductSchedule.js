@@ -65,18 +65,13 @@ class productScheduleController extends entityController {
 
     }
 
-    //Technical Debt: This only works insofar as Scan Parameters returns all results (not true)
-    //Technical Debt:  Expensive!
-    //Technical Debt:  Slow
-    //Technical Debt:  Dynamo scan't query on map attributes of lists
     listByProduct({product, pagination}){
 
       du.debug('List By Product');
 
       let product_id = this.getID(product);
 
-      //Technical Debt:  This just attempts to get all products...  BUT DOESN'T
-      return this.scanByParameters({parameters: {}, pagination: pagination})
+      return this.listByAccount({pagination: pagination})
       .then((productschedules) => this.getResult(productschedules, 'productschedules'))
       .then((productschedules) => {
 

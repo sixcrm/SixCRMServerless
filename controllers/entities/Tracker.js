@@ -40,7 +40,7 @@ class trackerController extends entityController {
       }
 
       //Technical Debt:  Update to use account query
-      return this.scanByParameters({parameters: query_parameters, pagination: pagination});
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
 
     }
 

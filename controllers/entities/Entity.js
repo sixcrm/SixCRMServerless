@@ -49,8 +49,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    //Technical Debt:  Deprecate!
-    //NOTE:  Expensive! (and incomplete)
+    //NOTE:  We need to make a designation when it's appropriate to list by account and when it's appropriate to list by user.
     listByAssociations({id, field, pagination, fatal}){
 
       du.debug('List By Association');
@@ -70,36 +69,7 @@ module.exports = class entityController extends entityUtilitiesController {
         };
 
       })
-      .then((query_parameters) => this.scanByParameters({parameters: query_parameters, pagination: pagination}))
-      .catch(this.handleErrors);
-
-    }
-
-    //Technical Debt:  Deprecate!
-    //NOTE:  Expensive!
-    listByAssociation({id, field, pagination, fatal}){
-
-      du.debug('List By Associations');
-
-      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
-      .then((permission) => this.catchPermissions(permission, 'read'))
-      .then(() => {
-
-        //Technical Debt:  Add validation
-
-        return {
-          filter_expression: '#f1 = :id',
-          expression_attribute_values: {
-            ':id':id
-          },
-          expression_attribute_names: {
-            '#f1':field
-          }
-        };
-
-      })
-      .then((query_parameters) => this.list({query_parameters: query_parameters, pagination: pagination}))
-      //Technical Debt:  Shouldn't this reference the fatal setting?
+      .then((query_parameters) => this.listByAccount({query_parameters: query_parameters, pagination: pagination}))
       .catch(this.handleErrors);
 
     }
@@ -226,7 +196,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    //NOTE:  Cheap!  Complete!
+    //Note:  When the query parameters have a filter expression, we need to implement a Six specific pagination...
     listByAccount({query_parameters, account, pagination, reverse_order, fatal, search}){
 
       du.debug('List By Account');
@@ -389,6 +359,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    /*
     scanByParameters({parameters, pagination, fatal}){
 
       du.debug('Scan By Parameters');
@@ -414,6 +385,7 @@ module.exports = class entityController extends entityUtilitiesController {
       .catch(this.handleErrors);
 
     }
+    */
 
     //NOTE: Returns an entity
     get({id, fatal}){

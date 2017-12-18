@@ -214,51 +214,52 @@ class rebillController extends entityController {
 
     }
 
-	//Technical Debt:  This shouldn't go here...
+    //Technical Debt:  Likely broken
     getRebillsAfterTimestamp(a_timestamp, cursor, limit){
 
-        return new Promise((resolve, reject) => {
+      let timestamp_iso8601 = timestamp.toISO8601(a_timestamp);
 
-            let timestamp_iso8601 = timestamp.toISO8601(a_timestamp);
+      let query_parameters = {
+        filter_expression: '#bill_at < :timestamp_iso8601v AND #processing <> :processingv',
+        expression_attribute_values: {
+          ':timestamp_iso8601v':timestamp_iso8601,
+          ':processingv':'true'
+        },
+        expression_attribute_names: {
+          '#bill_at':'bill_at',
+          '#processing': 'processing'
+        }
+      };
 
-            var query_parameters = {
-              filter_expression: 'bill_at < :timestamp_iso8601v AND processing <> :processingv',
-              expression_attribute_values: {
-                ':timestamp_iso8601v':timestamp_iso8601,
-                ':processingv':'true'
-              }
-            };
+      if(!_.isUndefined(cursor)){
+        query_parameters.ExclusiveStartKey = cursor;
+      }
 
-            if(!_.isUndefined(cursor)){
-              query_parameters.ExclusiveStartKey = cursor;
-            }
+      let pagination = {};
 
-            let pagination = {};
+      if(!_.isUndefined(limit)){
+        pagination.limit = limit;
+      }
 
-            if(!_.isUndefined(limit)){
-              pagination.limit = limit;
-            }
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination})
+      .then((data) => {
 
-            this.scanByParameters({parameters: query_parameters, pagination: pagination})
-            .then((data) => {
-              //Technical Debt:  This is probably broken
-              du.warning(`
-
-
-
-                Hey! Likely Broken!
-
+        //Technical Debt:  This is probably broken
+        du.warning(`
 
 
-              `);
 
-              if(_.isArray(data)){
-                return data;
-              }
+          Hey! Likely Broken!
 
-            });
 
-        });
+
+        `);
+
+        if(_.isArray(data)){
+          return data;
+        }
+
+      });
 
     }
 

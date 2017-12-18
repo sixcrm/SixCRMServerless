@@ -41,22 +41,22 @@ class sessionController extends entityController {
         affiliate = this.getID(affiliate);
 
         let scan_parameters = {
-            filter_expression: '#f1 = :affiliate_id or #f2 = :affiliate_id OR #f3 = :affiliate_id OR #f4 = :affiliate_id OR #f5 = :affiliate_id OR #f6 = :affiliate_id OR #f7 = :affiliate_id',
-            expression_attribute_names:{
-                '#f1': 'affiliate',
-                '#f2': 'subaffiliate_1',
-                '#f3': 'subaffiliate_2',
-                '#f4': 'subaffiliate_3',
-                '#f5': 'subaffiliate_4',
-                '#f6': 'subaffiliate_5',
-                '#f7': 'cid'
-            },
-            expression_attribute_values: {
-                ':affiliate_id': affiliate
-            }
+          filter_expression: '#f1 = :affiliate_id or #f2 = :affiliate_id OR #f3 = :affiliate_id OR #f4 = :affiliate_id OR #f5 = :affiliate_id OR #f6 = :affiliate_id OR #f7 = :affiliate_id',
+          expression_attribute_names:{
+            '#f1': 'affiliate',
+            '#f2': 'subaffiliate_1',
+            '#f3': 'subaffiliate_2',
+            '#f4': 'subaffiliate_3',
+            '#f5': 'subaffiliate_4',
+            '#f6': 'subaffiliate_5',
+            '#f7': 'cid'
+          },
+          expression_attribute_values: {
+            ':affiliate_id': affiliate
+          }
         };
 
-        return this.scanByParameters({parameters: scan_parameters, pagination: pagination});
+        return this.listByAccount({query_parameters: scan_parameters, pagination: pagination});
 
     }
 
@@ -307,11 +307,22 @@ class sessionController extends entityController {
 
     }
 
+    //Note: Called by the campaign controller only...
     listByCampaign({campaign, pagination}) {
 
       du.warning('List By Campaign');
 
-      return this.listByAssociation({field: 'campaign', id: this.getID(campaign), pagination: pagination});
+      let query_parameters = {
+        filter_expression: '#field = :field_value',
+        expression_attribute_names: {
+          '#field': 'campaign'
+        },
+        expression_attribute_values:{
+          ':field_value': this.getID(campaign)
+        }
+      }
+
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
 
     }
 

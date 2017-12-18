@@ -24,6 +24,7 @@ module.exports = class PickRebillsToBillController extends forwardRebillMessageC
 
       this.rebillHelperController = new RebillHelperController();
 
+      //Technical Debt:  This needs to run in a permissioned context.
       this.message_acquisition_function = this.rebillHelperController.getAvailableRebillsAsMessages.bind(this.rebillHelperController);
 
     }

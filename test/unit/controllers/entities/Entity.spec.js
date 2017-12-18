@@ -1448,7 +1448,8 @@ describe('controllers/Entity.js', () => {
         });
     });
 
-    describe('scanByParameters', () => {
+    //Note:  Method eliminated
+    xdescribe('scanByParameters', () => {
 
         it('successfully scans by specified expressions', () => {
 
