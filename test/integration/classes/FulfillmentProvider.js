@@ -38,7 +38,7 @@ module.exports = class FulfillmentProviderTest extends IntegrationTest {
 
     du.output('Create Fulfillment Provider');
 
-    let fulfillmentprovider_create_query = `mutation { createfulfillmentprovider ( fulfillmentprovider: { id: "`+fulfillment_provider_id+`", name: "test", provider: {name: "Hashtag"}}) { id } }`;
+    let fulfillmentprovider_create_query = `mutation { createfulfillmentprovider ( fulfillmentprovider: { id: "`+fulfillment_provider_id+`", name: "test", provider: {name: "Hashtag", username:"abc123", password:"abc123", threepl_key:"{`+uuidV4()+`}", threepl_customer_id: 123}}) { id } }`;
 
     return this.executeQuery(fulfillmentprovider_create_query);
 
