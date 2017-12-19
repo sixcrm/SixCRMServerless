@@ -1,0 +1,1405 @@
+'use strict';
+
+const mockery = require('mockery');
+let chai = require('chai');
+let expect = chai.expect;
+
+function getValidNotificationSettings(){
+    return {
+        settings: {
+            notification_groups: [{
+                notifications: [{
+                    default: 'any_default',
+                    key: 'a_type_of_notification'
+                }]
+            }]
+        }
+    }
+}
+
+describe.only('controllers/EntityUtilities.js', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    beforeEach(() => {
+        mockery.resetCache();
+    });
+
+    afterEach(() => {
+        mockery.deregisterAll();
+    });
+
+    describe('catchPermissions', () => {
+
+        it('returns true for valid permissions for specified action', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.catchPermissions(true, 'create')).to.be.true;
+        });
+
+        it('returns true when for default action', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.catchPermissions(true)).to.be.true;
+        });
+
+        it('throws error for false', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.catchPermissions(false)
+            }catch (error) {
+                expect(error.message).to.equal('[403] Invalid Permissions: user does not have sufficient permission to perform this action.');
+            }
+        });
+
+        it('throws error when user does not have permission for specified action', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.catchPermissions(false, 'update')
+            }catch (error) {
+                expect(error.message).to.equal('[403] Invalid Permissions: user does not have sufficient permission to perform this action.');
+            }
+        });
+    });
+
+    describe('handleErrors', () => {
+
+        it('throws forbidden error when error code is 403', () => {
+
+            let fail = {
+                code: '403',
+                message: 'Forbidden error message.' //Sample error message
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.handleErrors(fail, true)
+            }catch (error) {
+                expect(error.message).to.equal(fail.message);
+            }
+        });
+
+        it('returns null if error is not fatal', () => {
+
+            let fail = {
+                code: '403',
+                message: 'Forbidden error message.' //Sample error message
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.handleErrors(fail, false)).to.equal(null);
+        });
+
+        it('throws specified error', () => {
+
+            let fail = {
+                code: '404',
+                message: 'Not found error message.' //Sample error message
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.handleErrors(fail, true)
+            }catch (error) {
+                expect(error.message).to.equal(fail.message);
+            }
+        });
+
+        it('throws server error when error code is not defined and error is fatal', () => {
+
+            let fail = 'Some server error message.'; //Sample error message
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.handleErrors(fail, true)
+            }catch (error) {
+                expect(error.message).to.equal('[500] Some server error message.');
+            }
+        });
+
+        it('throws server error when error code is not defined', () => {
+
+            let fail = 'Some server error message.'; //Sample error message
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.handleErrors(fail)
+            }catch (error) {
+                expect(error.message).to.equal('[500] Some server error message.');
+            }
+        });
+    });
+
+    describe('prune', () => {
+
+        it('returns entity itself when entity is not an object', () => {
+
+            let entity = 'sample non object entity';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.prune(entity)).to.equal(entity);
+        });
+
+        it('returns pruned entity when default primary key is set', () => {
+
+            let entity = {
+                any_value: {
+                    id: 'dummy id'
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.primary_key = 'id'; //set primary key
+
+            expect(entityUtilitiesController.prune(entity)).to.deep.equal({ any_value: 'dummy id' });
+        });
+
+        it('returns pruned entity when primary key is specified', () => {
+
+            let entity = {
+                any_value: {
+                    a_primary_key: 'dummy id'
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.prune(entity, 'a_primary_key')).to.deep.equal({ any_value: 'dummy id' });
+        });
+
+        it('returns entity when specified primary key is not present in an entity', () => {
+
+            let entity = {
+                any_value: {
+                    another_primary_key: 'dummy id'
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.prune(entity, 'a_primary_key')).to.deep.equal(entity);
+        });
+    });
+
+    describe('validate', () => {
+
+        it('returns true when model is valid', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'notificationsetting';
+
+            return entityUtilitiesController.validate(getValidNotificationSettings()).then((result) => {
+                expect(result).to.be.true;
+            });
+        });
+
+        it('returns true when model and path to model are valid', () => {
+
+            let path_to_model = '../model/entities/notificationsetting.json'; //valid path
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'notificationsetting';
+
+            return entityUtilitiesController.validate(getValidNotificationSettings(), path_to_model).then((result) => {
+                expect(result).to.be.true;
+            });
+        });
+
+        it('throws error when path to model is invalid', () => {
+
+            let path_to_model = '../nonexisting/path/to/model/any.json'; //invalid path
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'notificationsetting';
+
+            try {
+                entityUtilitiesController.validate(getValidNotificationSettings(), path_to_model)
+            }catch(error) {
+                expect(error.message).to.equal('Cannot find module \'' + path_to_model + '\'');
+            }
+        });
+    });
+
+    describe('getUUID', () => {
+
+        it('returns valid UUID version 4', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            let result = entityUtilitiesController.getUUID();
+
+            expect(result).to.be.defined;
+            expect(result).to.be.a('string');
+            expect(result.length).to.equal(36);
+        });
+    });
+
+    describe('isUUID', () => {
+
+        it('returns true if it is a valid UUID', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.isUUID('7721e753-eda4-489c-b501-24b3d7ef8c6e', 4)).to.be.true;
+        });
+
+        it('returns false if it is not a valid UUID', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            let invalid_uuids = ['not-valid-uuid', '', '123456456789', null, 123, -456, 123.456789, {}, [], () => {}];
+
+            invalid_uuids.forEach(invalid_uuid => {
+                expect(entityUtilitiesController.isUUID(invalid_uuid)).to.be.false;
+            });
+        });
+    });
+
+    describe('isEmail', () => {
+
+        it('returns true if it is a valid email', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.isEmail('testemail@example.com')).to.be.true;
+        });
+
+        it('returns false if it is not a valid email', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            let invalid_emails = ['not-valid-email', 'test.com', 'example@', 'example@test', '', '123456456789', null, 123, -456, 123.456789, {}, [], () => {}];
+
+            invalid_emails.forEach(invalid_uuid => {
+                expect(entityUtilitiesController.isEmail(invalid_uuid)).to.be.false;
+            });
+        });
+    });
+
+    describe('acquireGlobalUser', () => {
+
+        let user_copy;
+
+        beforeEach(() => {
+            user_copy = global.user;
+        });
+
+        afterEach(() => {
+            global.user = user_copy;
+        });
+
+        it('returns null when global.user is not set', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            delete global.user;
+
+            expect(entityUtilitiesController.acquireGlobalUser()).to.equal(null);
+        });
+
+        it('returns global user when global.user is previously set', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            global.user = 'a_user';
+
+            expect(entityUtilitiesController.acquireGlobalUser()).to.equal('a_user');
+        });
+    });
+
+    describe('acquireGlobalAccount', () => {
+
+        let account_copy;
+
+        beforeEach(() => {
+            account_copy = global.account;
+        });
+
+        afterEach(() => {
+            global.account = account_copy;
+        });
+
+        it('returns null when global.account is not set', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            delete global.account;
+
+            expect(entityUtilitiesController.acquireGlobalAccount()).to.equal(null);
+        });
+
+        it('returns global account when global.account is previously set', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            global.account = 'an_account';
+
+            expect(entityUtilitiesController.acquireGlobalAccount()).to.equal('an_account');
+        });
+    });
+
+    describe('removeFromSearchIndex', () => {
+
+        it('removes from search index', () => {
+
+            let mock_preindexing_helper = class {
+                constructor(){
+
+                }
+                removeFromSearchIndex(entity){
+                    expect(entity).to.have.property('id');
+                    expect(entity.id).to.equal('dummy_id');
+                    expect(entity).to.have.property('entity_type');
+                    expect(entity.entity_type).to.equal('an_entity_type');
+                    return Promise.resolve(true);
+                }
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            return entityUtilitiesController.removeFromSearchIndex('dummy_id', 'an_entity_type').then((result) => {
+                expect(result).to.be.true;
+            });
+        });
+    });
+
+    describe('addToSearchIndex', () => {
+
+        it('adds to search index', () => {
+
+            let an_entity = {
+                id: 'dummy_id'
+            };
+
+            let mock_preindexing_helper = class {
+                constructor(){}
+
+                addToSearchIndex(entity){
+                    expect(entity).to.have.property('id');
+                    expect(entity.id).to.equal(an_entity.id);
+                    expect(entity).to.have.property('entity_type');
+                    expect(entity.entity_type).to.equal('an_entity_type');
+                    return Promise.resolve(true);
+                }
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            return entityUtilitiesController.addToSearchIndex(an_entity, 'an_entity_type').then((result) => {
+                expect(result).to.be.true;
+            });
+        });
+    });
+
+    describe('setCreatedAt', () => {
+
+        it('sets "created at" and "updated at" for specified entity', () => {
+
+            let an_entity = {};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            let result = entityUtilitiesController.setCreatedAt(an_entity);
+
+            expect(result.created_at).to.be.defined;
+            expect(result.updated_at).to.be.defined;
+            expect(result.created_at).to.equal(result.updated_at);
+        });
+
+        it('sets "created at" to appointed time', () => {
+
+            let an_entity = {};
+
+            let created_at = '2017-12-13T11:34:01.103Z';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            let result = entityUtilitiesController.setCreatedAt(an_entity, created_at);
+
+            expect(result.created_at).to.be.defined;
+            expect(result.updated_at).to.be.defined;
+            expect(result.created_at).to.equal(result.updated_at);
+            expect(result.created_at).to.equal(created_at);
+        });
+    });
+
+    describe('setUpdatedAt', () => {
+
+        it('sets "updated at" for specified entity if "updated at" does not previously exist', () => {
+
+            let an_entity = {
+                created_at: '2017-12-13T11:34:01.103Z'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            let result = entityUtilitiesController.setUpdatedAt(an_entity);
+
+            expect(result.created_at).to.be.defined;
+            expect(result.updated_at).to.be.defined;
+            expect(result.created_at).to.equal(result.updated_at);
+        });
+
+        it('sets "updated at" for specified entity if "updated at" previously exists', () => {
+
+            let an_entity = {
+                created_at: '2017-12-13T11:34:01.103Z',
+                updated_at: '2017-12-14T11:34:01.103Z'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            let result = entityUtilitiesController.setUpdatedAt(an_entity);
+
+            expect(result.created_at).to.be.defined;
+            expect(result.updated_at).to.be.defined;
+            expect(result.created_at).not.to.equal(result.updated_at);
+        });
+
+        it('throws error when "created at" is not set', () => {
+
+            let an_entity = {};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.setUpdatedAt(an_entity);
+            }catch (error) {
+                expect(error.message).to.equal('[500] Entity lacks a "created_at" property');
+            }
+        });
+    });
+
+    describe('persistCreatedUpdated', () => {
+
+        it('sets "created at" and "updated at" for specified entity', () => {
+
+            let an_entity = {};
+
+            let exists = {
+                created_at: '2017-12-13T11:34:01.103Z',
+                updated_at: '2017-12-14T11:34:01.103Z'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            let result = entityUtilitiesController.persistCreatedUpdated(an_entity, exists);
+
+            expect(result.created_at).to.be.defined;
+            expect(result.updated_at).to.be.defined;
+            expect(result.created_at).to.equal(exists.created_at);
+            expect(result.updated_at).to.equal(exists.updated_at);
+        });
+
+        it('throws error when "updated at" is not set', () => {
+
+            let an_entity = {};
+
+            let exists = {
+                created_at: '2017-12-13T11:34:01.103Z'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try{
+                entityUtilitiesController.persistCreatedUpdated(an_entity, exists)
+            }catch (error) {
+                expect(error.message).to.equal('[500] Entity lacks "updated_at" property.')
+            }
+        });
+
+        it('throws error when "created at" is not set', () => {
+
+            let an_entity = {};
+
+            let exists = {};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try{
+                entityUtilitiesController.persistCreatedUpdated(an_entity, exists)
+            }catch (error) {
+                expect(error.message).to.equal('[500] Entity lacks "created_at" property.')
+            }
+        });
+    });
+
+    describe('marryQueryParameters', () => {
+
+        it('returns first param extended with non-overlapping key/values from second param', () => {
+
+            let any_param = {
+                a: 'b',
+                c: 'd'
+            };
+
+            let any_other_param = {
+                c: 'g',
+                e: 'f'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.marryQueryParameters(any_param, any_other_param)).to.deep.equal({
+                a: 'b',
+                c: 'd',
+                e: 'f'
+            });
+        });
+
+        it('throws error when second argument is not an object', () => {
+
+            let any_param = {
+                a: 'b',
+                c: 'd'
+            };
+
+            let any_other_param = 'not an object';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.marryQueryParameters(any_param, any_other_param)
+            } catch(error){
+                expect(error.message).to.equal('[500] Thing is not an object.');
+            }
+        });
+
+        it('returns second argument when first is undefined', () => {
+
+            let any_param = {a: 'b'};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.marryQueryParameters(undefined, any_param)).to.deep.equal(any_param);
+        });
+    });
+
+    describe('assureSingular', () => {
+
+        it('throws error when argumentation is not an array', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try{
+                entityUtilitiesController.assureSingular()
+            }catch(error){
+                expect(error.message).to.equal('[500] ArrayUtilities.isArray thing argument is not an array.');
+            }
+        });
+
+        it('throws error when array has more than one element', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try{
+                entityUtilitiesController.assureSingular(['any_elem', 'any_other_elem'])
+            }catch(error){
+                expect(error.message).to.equal('[500] Non-specific undefined entity results.');
+            }
+        });
+
+        it('returns null when argumentation is null', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.assureSingular(null)).to.equal(null);
+        });
+
+        it('returns null when array is empty', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.assureSingular([])).to.equal(null);
+        });
+
+        it('returns single element from array when array only has one element', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.assureSingular(['a_single_element'])).to.equal('a_single_element');
+        });
+    });
+
+    describe('assignPrimaryKey', () => {
+
+        it('sets primary key of entity', () => {
+
+            let an_entity = {};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.primary_key = 'id';
+
+            let result = entityUtilitiesController.assignPrimaryKey(an_entity);
+
+            expect(result.id).to.be.defined;
+            expect(result.id).to.be.a('string');
+            expect(result.id.length).to.equal(36);
+        });
+
+        it('returns unchanged entity when primary key is not an id', () => {
+
+            let an_entity = {};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.primary_key = 'any_primary_key'; //any primary key that is not an 'id'
+
+            expect(entityUtilitiesController.assignPrimaryKey(an_entity)).to.equal(an_entity);
+        });
+    });
+
+    describe('assignAccount', () => {
+
+        let account_copy;
+
+        beforeEach(() => {
+            account_copy = global.account;
+        });
+
+        afterEach(() => {
+            global.account = account_copy;
+        });
+
+        it('assigns an account to an entity', () => {
+
+            let an_entity = {};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'any_entity';
+            entityUtilitiesController.nonaccounts = ['any_other_entity'];
+
+            global.account = 'an_account';
+
+            expect(entityUtilitiesController.assignAccount(an_entity)).to.deep.equal({account: 'an_account'});
+        });
+
+        it('returns unchanged entity when it already exists in the non-account list', () => {
+
+            let an_entity = {};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'any_entity';
+            entityUtilitiesController.nonaccounts = ['any_entity', 'any_other_entity'];
+
+            global.account = 'an_account';
+
+            expect(entityUtilitiesController.assignAccount(an_entity)).to.deep.equal(an_entity);
+        });
+
+        it('returns unchanged entity when global account is not available', () => {
+
+            let an_entity = {};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            delete global.account;
+
+            expect(entityUtilitiesController.assignAccount(an_entity)).to.deep.equal(an_entity);
+        });
+
+        it('returns unchanged entity when entity is already bound to an account', () => {
+
+            let an_entity = {
+                account: 'an_account'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.assignAccount(an_entity)).to.deep.equal(an_entity);
+        });
+    });
+
+    describe('appendLimit', () => {
+
+        it('appends limit to query parameters', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            //any number between 1 and 100 for limit
+            expect(entityUtilitiesController.appendLimit({query_parameters: {}, limit: 5}))
+                .to.deep.equal({"limit": 5});
+        });
+
+        it('appends limit to query parameters when specified limit is a number-like string', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            //any number-like string between 1 and 100 for limit
+            expect(entityUtilitiesController.appendLimit({query_parameters: {}, limit: '21'}))
+                .to.deep.equal({"limit": 21});
+        });
+
+        it('appends default limit to query parameters', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            //limit is neither string nor number
+            expect(entityUtilitiesController.appendLimit({query_parameters: {}, limit: {}}))
+                .to.deep.equal({"limit": 100});
+        });
+
+        it('appends default limit to query parameters when limit is undefined', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            //limit is not defined
+            expect(entityUtilitiesController.appendLimit({}))
+                .to.deep.equal({"limit": 100});
+        });
+
+        it('throws error when limit is less than 1', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            //limit is less than 1
+            try {
+                entityUtilitiesController.appendLimit({query_parameters: {}, limit: -3})
+            }catch(error) {
+                expect(error.message).to.equal('[500] The graph API limit minimum is 1.');
+            }
+        });
+
+        it('throws error when limit is bigger than 100', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            //limit is bigger than 100
+            try {
+                entityUtilitiesController.appendLimit({query_parameters: {}, limit: 110})
+            }catch(error) {
+                expect(error.message).to.equal('[500] The graph API record limit is 100.');
+            }
+        });
+    });
+
+    describe('assurePresence', () => {
+
+        it('returns unchanged object when object contains specified field', () => {
+
+            let a_thing = {a_field: 'any_field'};
+            let a_default_value = {a_default_value: 'any_default_value'};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.assurePresence(a_thing, 'a_field', a_default_value))
+                .to.deep.equal(a_thing);
+        });
+
+        it('returns object with appended specified default value', () => {
+
+            let a_thing = {another_field: 'any_field'};
+            let a_default_value = {a_default_value: 'any_default_value'};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.assurePresence(a_thing, 'a_field', a_default_value))
+                .to.deep.equal({another_field: 'any_field', a_field: {a_default_value: 'any_default_value'}});
+        });
+
+        it('returns object with appended default value when default value is not specified', () => {
+
+            let a_thing = {another_field: 'any_field'};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.assurePresence(a_thing, 'a_field'))
+                .to.deep.equal({another_field: 'any_field', a_field: {}});
+        });
+    });
+
+    describe('appendExpressionAttributeNames', () => {
+
+        it('appends expression attribute names', () => {
+
+            let query_parameters = {
+                expression_attribute_names: {},
+                some_other_value:'some_other_value'
+            };
+            let any_value = 'any_value';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExpressionAttributeNames(query_parameters, 'a_key', any_value))
+                .to.deep.equal({
+                expression_attribute_names: {"a_key": "any_value"},
+                some_other_value:'some_other_value'
+            });
+        });
+
+        it('appends expression attribute names when query parameters are undefined', () => {
+
+            let any_value = 'any_value';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExpressionAttributeNames(undefined, 'a_key', any_value))
+                .to.deep.equal({expression_attribute_names: {"a_key": "any_value"}});
+        });
+    });
+
+    describe('appendKeyConditionExpression', () => {
+
+        it('appends conjunction and key condition expression', () => {
+
+            let query_parameters = {
+                key_condition_expression: 'any_value',
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendKeyConditionExpression(query_parameters, 'a_condition_expression', 'a_conjunction'))
+                .to.deep.equal({
+                "key_condition_expression": "any_value a_conjunction a_condition_expression",
+                "some_other_value": "some_other_value"
+            });
+        });
+
+        it('assures condition expression and appends it to query parameters', () => {
+
+            let query_parameters = {
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendKeyConditionExpression(query_parameters, 'a_condition_expression'))
+                .to.deep.equal({
+                "key_condition_expression": "a_condition_expression",
+                "some_other_value": "some_other_value"
+            });
+        });
+
+        it('appends default conjunction and key condition expression', () => {
+
+            let query_parameters = {
+                key_condition_expression: 'any_value',
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendKeyConditionExpression(query_parameters, 'a_condition_expression'))
+                .to.deep.equal({
+                "key_condition_expression": "any_value AND a_condition_expression",
+                "some_other_value": "some_other_value"
+            });
+        });
+    });
+
+    describe('appendExpressionAttributeValues', () => {
+
+        it('appends expression attribute values', () => {
+
+            let query_parameters = {
+                expression_attribute_values: {},
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExpressionAttributeValues(query_parameters, 'a_key', 'a_value'))
+                .to.deep.equal({
+                "expression_attribute_values": {"a_key": "a_value"},
+                "some_other_value": "some_other_value"
+            });
+        });
+
+        it('assures and appends expression attribute values', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExpressionAttributeValues(undefined, 'a_key', 'a_value'))
+                .to.deep.equal({expression_attribute_values: {"a_key": "a_value"}});
+        });
+    });
+
+    describe('appendFilterExpression', () => {
+
+        it('appends filter expression', () => {
+
+            let query_parameters = {
+                filter_expression: 'any value',
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendFilterExpression(query_parameters, 'a_filter_expression'))
+                .to.deep.equal({
+                "filter_expression": "any value AND a_filter_expression",
+                "some_other_value": "some_other_value"
+            });
+        });
+
+        it('assures and appends filter expression', () => {
+
+            let query_parameters = {
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendFilterExpression(query_parameters, 'a_filter_expression'))
+                .to.deep.equal({
+                "filter_expression": "a_filter_expression",
+                "some_other_value": "some_other_value"
+            });
+        });
+
+        it('appends new filter expression value when previous value is null', () => {
+
+            let query_parameters = {
+                filter_expression: null,
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendFilterExpression(query_parameters, 'a_filter_expression'))
+                .to.deep.equal({
+                "filter_expression": "a_filter_expression",
+                "some_other_value": "some_other_value"
+            });
+        });
+
+        it('appends new filter expression when previous value is an empty string', () => {
+
+            let query_parameters = {
+                filter_expression: '',
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendFilterExpression(query_parameters, 'a_filter_expression'))
+                .to.deep.equal({
+                "filter_expression": "a_filter_expression",
+                "some_other_value": "some_other_value"
+            });
+        });
+
+        it('throws error when filter expression from query parameters is not a string', () => {
+
+            let query_parameters = {
+                filter_expression: 123, //non string value
+                some_other_value:'some_other_value'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.appendFilterExpression(query_parameters, 'a_filter_expression')
+            }catch(error) {
+                expect(error.message).to.equal('[400] Unrecognized query parameter filter expression type.');
+            }
+        });
+    });
+
+    describe('getItems', () => {
+
+        it('retrieves items from appointed data', () => {
+
+            let data = {Items: ['a', 'b']};
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.getItems(data)).to.deep.equal(data.Items);
+        });
+
+        it('returns null when items are not an array', () => {
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            //items are not an array
+            expect(entityUtilitiesController.getItems({Items: ''})).to.equal(null);
+        });
+    });
+
+    describe('getID', () => {
+
+        it('returns unchanged string', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.getID('any_string')).to.equal('any_string');
+        });
+
+        it('returns value from primary key if such exists in specified object', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.primary_key = 'id';
+
+            expect(entityUtilitiesController.getID({id: 'an_id'})).to.equal('an_id');
+        });
+
+        it('throws error when primary key does not exist in specified object', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.primary_key = 'id';
+
+            try {
+                entityUtilitiesController.getID({any_primary_key: 'an_id'})
+            }catch (error){
+                expect(error.message).to.equal('[400] Could not determine identifier.');
+            }
+        });
+
+        it('throws error when argumentation is not an expected value', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            try {
+                entityUtilitiesController.getID()
+            }catch (error){
+                expect(error.message).to.equal('[400] Could not determine identifier.');
+            }
+        });
+
+        it('returns null when argumentation is null', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.primary_key = 'id';
+
+            expect(entityUtilitiesController.getID(null)).to.equal(null);
+        });
+    });
+
+    describe('getDescriptiveName', () => {
+
+        it('returns descriptive name if it is set', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'a_descriptive_name';
+
+            expect(entityUtilitiesController.getDescriptiveName()).to.equal('a_descriptive_name');
+        });
+
+        it('returns null if descriptive name is not set', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            delete entityUtilitiesController.descriptive_name;
+
+            expect(entityUtilitiesController.getDescriptiveName()).to.equal(null);
+        });
+    });
+
+    describe('translateControllerNameToFilename', () => {
+
+        it('translates controller name to filename', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.translateControllerNameToFilename('aNameOfController')).to.equal('ANameOf.js');
+        });
+    });
+
+    describe('createEndOfPaginationResponse', () => {
+
+        it('creates end of pagination response', () => {
+            let any_items = ['a', 'b'];
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            return entityUtilitiesController.createEndOfPaginationResponse('entities', any_items).then((result) => {
+                expect(result).to.deep.equal({
+                    entities: any_items,
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: false
+                    }
+                });
+            });
+        });
+    });
+
+    describe('transformListArray', () => {
+
+        it('transforms list array', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.transformListArray(['a', 'b', '', 'c'])).to.deep.equal(['a', 'b', 'c']);
+        });
+
+        it('returns null when list array is empty', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.transformListArray([])).to.deep.equal(null);
+        });
+
+        it('returns null when list array contains empty strings', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.transformListArray(['', '', ''])).to.deep.equal(null);
+        });
+    });
+
+    describe('getResult', () => {
+
+        it('retrieves field if specified object contains such key', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            return entityUtilitiesController.getResult({a_field: 'any_value'}, 'a_field').then((result) => {
+                expect(result).to.deep.equal('any_value');
+            });
+        });
+
+        it('retrieves value object if object contains a key equal to descriptive name', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'any_name';
+
+            return entityUtilitiesController.getResult({any_names: 'any_value'}).then((result) => {
+                expect(result).to.deep.equal('any_value');
+            });
+        });
+
+        it('returns null when specified object does not contain a key equal to specified field', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            return entityUtilitiesController.getResult({any_name: 'any_value'}, 'a_field').then((result) => {
+                expect(result).to.deep.equal(null);
+            });
+        });
+    });
+
+    describe('buildResponse', () => {
+
+        it('build response', () => {
+
+            let data = {
+                Items: ['any_item'],
+                Count: 1,
+                LastEvaluatedKey: {id: 'dummy_id'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'a_name';
+
+            expect(entityUtilitiesController.buildResponse(data)).to.deep.equal({
+                a_names: data.Items,
+                pagination: {
+                    count: 1,
+                    end_cursor: "dummy_id",
+                    has_next_page: "true",
+                    last_evaluated: "{\"id\":\"dummy_id\"}"
+                },
+            });
+        });
+
+        it('returns data when "Items" are undefined', () => {
+
+            let data = {
+                Count: 1,
+                LastEvaluatedKey: {id: 'dummy_id'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.buildResponse(data)).to.deep.equal(data);
+        });
+
+        it('builds response when "Items" are null', () => {
+
+            let data = {
+                Items: [],
+                Count: 1,
+                LastEvaluatedKey: {id: 'dummy_id'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'a_name';
+
+            expect(entityUtilitiesController.buildResponse(data)).to.deep.equal({
+                a_names: data.Items,
+                pagination: {
+                    count: 1,
+                    end_cursor: "dummy_id",
+                    has_next_page: "true",
+                    last_evaluated: "{\"id\":\"dummy_id\"}"
+                },
+            });
+        });
+    });
+
+    describe('buildPaginationObject', () => {
+
+        it('builds pagination object', () => {
+
+            let data = {
+                Count: 1,
+                LastEvaluatedKey: {id: 'dummy_id'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.buildPaginationObject(data)).to.deep.equal({
+                count: 1,
+                end_cursor: "dummy_id",
+                has_next_page: "true",
+                last_evaluated: "{\"id\":\"dummy_id\"}"
+            });
+        });
+    });
+
+    describe('appendAccountCondition', () => {
+
+        it('appends account condition', () => {
+
+            let query_params = {
+                query_parameters:
+                    {
+                        key_condition_expression:['a_key_condition_expression']
+                    },
+                account:'any_string'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendAccountCondition(query_params)).to.deep.equal({
+                expression_attribute_names: {
+                    "#account": "account"
+                },
+                expression_attribute_values: {
+                    ":accountv": "any_string"
+                },
+                key_condition_expression: "#account = :accountv"
+            });
+        });
+    });
+});

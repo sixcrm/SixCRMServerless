@@ -18,7 +18,7 @@ SELECT
   ft.subaffiliate_5,
   ft.subtype
 FROM f_transactions ft
-WHERE 1
+WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 ORDER BY DATETIME {{order}}

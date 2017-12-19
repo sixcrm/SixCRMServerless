@@ -69,7 +69,7 @@ SELECT
   count(distinct case when type='new' then customer else null end) as current_active_customer,
   0 count_alert_count
 FROM f_transactions
-WHERE 1
+WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 GROUP BY date_trunc('day',datetime)

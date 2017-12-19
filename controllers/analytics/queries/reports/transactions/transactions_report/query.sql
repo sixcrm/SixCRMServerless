@@ -11,7 +11,7 @@ SELECT
   null as cycle,
   null as recycle
 FROM f_transactions ft
-WHERE 1
+WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 ORDER BY DATETIME {{order}}
