@@ -17,7 +17,7 @@ function getValidNotificationSettings(){
     }
 }
 
-describe.only('controllers/EntityUtilities.js', () => {
+describe('controllers/EntityUtilities.js', () => {
 
     before(() => {
         mockery.enable({
