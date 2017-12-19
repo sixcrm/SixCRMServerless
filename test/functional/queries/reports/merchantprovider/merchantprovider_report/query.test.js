@@ -19,14 +19,14 @@ describe('reports/merchantprovider/merchantprovider_report query', function () {
       return analyticsController.executeAnalyticsFunction(query_input, 'getMerchantReport').then((result) => {
         console.log(result.merchants);
         console.log('Result');
-        expect(result.merchants).to.equal({ merchant_provider: '6c40761d-8919-4ad6-884d-6a46a776cfb9',
+        expect(result.merchants).to.deep.equal([{ merchant_provider: '6c40761d-8919-4ad6-884d-6a46a776cfb9',
               sale_count: '1',
               sale_gross_revenue: '139.99',
               refund_expenses: '0',
               refund_count: '0',
               net_revenue: undefined,
               mtd_sales_count: '0',
-              mtd_gross_count: '0' } );
+              mtd_gross_count: '0' }]);
       });
     });
 
