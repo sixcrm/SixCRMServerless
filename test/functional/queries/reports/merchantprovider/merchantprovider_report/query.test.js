@@ -1,6 +1,7 @@
 const expect = require('chai').expect;
 const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 describe('reports/merchantprovider/merchantprovider_report query', function () {
 
@@ -12,8 +13,21 @@ describe('reports/merchantprovider/merchantprovider_report query', function () {
     it('Expect to return at least one row based on test seed data', () => {
       global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
       global.user = 'admin.user@test.com';
-      expect(analyticsController.executeAnalyticsFunction(query_input, 'getMerchantReport')).to.exist;
-    });
 
+      PermissionTestGenerators.givenUserWithAllowed('getMerchantReport', 'analytics');
+
+      return analyticsController.executeAnalyticsFunction(query_input, 'getMerchantReport').then((result) => {
+        console.log(result.merchants);
+        console.log('Result');
+        expect(result.merchants).to.equal({ merchant_provider: '6c40761d-8919-4ad6-884d-6a46a776cfb9',
+              sale_count: '1',
+              sale_gross_revenue: '139.99',
+              refund_expenses: '0',
+              refund_count: '0',
+              net_revenue: undefined,
+              mtd_sales_count: '0',
+              mtd_gross_count: '0' } );
+      });
+    });
 
 });
