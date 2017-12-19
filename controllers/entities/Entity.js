@@ -359,34 +359,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    /*
-    scanByParameters({parameters, pagination, fatal}){
-
-      du.debug('Scan By Parameters');
-
-      return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
-      .then((permission) => this.catchPermissions(permission, 'read'))
-      .then(() => this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
-      .then(() => {
-
-        let query_parameters = {
-            filter_expression: parameters.filter_expression,
-            expression_attribute_values: parameters.expression_attribute_values,
-            expression_attribute_names: parameters.expression_attribute_names
-        };
-
-        query_parameters = this.appendPagination({query_parameters: query_parameters, pagination: pagination});
-        query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
-
-        return this.dynamoutilities.scanRecords(this.table_name, query_parameters);
-
-      })
-      .then((data) => this.buildResponse(data))
-      .catch(this.handleErrors);
-
-    }
-    */
-
     //NOTE: Returns an entity
     get({id, fatal}){
 

@@ -1,0 +1,12 @@
+{
+  "id":"/vendors/fulfillmentproviders/Response/response.json",
+  "title":"Response",
+  "type":"object",
+  "properties":{
+    "body":{
+      "type":"string"
+    },
+    "statusCode":{"$ref":"../../../definitions/httpcode.json"}
+  },
+  "required":["body", "statusCode"]
+}

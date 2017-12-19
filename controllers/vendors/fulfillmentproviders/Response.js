@@ -27,11 +27,12 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
     this.parameter_validation = {
       'error':global.SixCRM.routes.path('model','vendors/shippingproviders/response/error.json'),
-      'response':global.SixCRM.routes.path('model','vendors/shippingproviders/response/response.json'),
+      'response':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/response/response.json'),
       'body':global.SixCRM.routes.path('model','vendors/shippingproviders/response/body.json'),
       'code': global.SixCRM.routes.path('model','vendors/shippingproviders/response/code.json'),
       'result': global.SixCRM.routes.path('model','vendors/shippingproviders/response/result.json'),
       'message': global.SixCRM.routes.path('model','vendors/shippingproviders/response/message.json'),
+      'parsedresponse':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/response/parsedresponse.json'),
     };
 
     this.result_messages = {
@@ -78,11 +79,36 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
         let result_code = this.determineResultCode({response: response, body: body});
         let result_message = this.determineResultMessage(result_code);
 
-        this.setAllProperties({code: result_code, message: result_message, response: response});
+        if(_.isFunction(this.translateResponse)){
+          let parsed_response = this.translateResponse(response);
+
+          if(!_.isNull(parsed_response)){
+            this.parameters.set('parsedresponse', parsed_response);
+          }
+        }
+
+        this.setCode(result_code);
+        this.setMessage(result_message);
 
       }
 
     }
+
+  }
+
+  getParsedResponse(){
+
+    du.debug('Get Parsed Response');
+
+    return this.parameters.get('parsedresponse');
+
+  }
+
+  setResponse(response){
+
+    du.debug('Set Response');
+
+    this.parameters.set('response', response);
 
   }
 
@@ -94,7 +120,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
     this.setMessage(message);
 
-    //response is already set
+    //this.setResponse(response);
 
   }
 
@@ -102,9 +128,9 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
     du.debug('Determine Result');
 
-    if(_.has(response, 'statusCode') && _.has(response, 'statusMessage')){
+    if(_.has(response, 'statusCode')){
 
-      if(response.statusCode == 200 && _.contains(['Success', 'OK'], response.statusMessage)){
+      if(response.statusCode == 200){
 
         return 'success';
 
@@ -169,11 +195,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
     du.debug('Get Response');
 
-    let body = this.parameters.get('body', null, false);
-
-    return {
-      body: body
-    };
+    return this.parameters.get('response', null, false);
 
   }
 

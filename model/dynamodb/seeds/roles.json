@@ -34,7 +34,7 @@
 			"role/read",
 			"session/*",
 			"shippingreceipt/*",
-			"smtprovider/*",
+			"smtpprovider/*",
 			"transaction/*",
 			"account/read",
 			"notification/*",
@@ -46,7 +46,8 @@
 			"usersigningstring/*",
 			"userdevicetoken/*",
 			"tracker/*",
-			"register/*"
+			"register/*",
+			"fulfillmentprovider/*"
 		],
 		"deny":["*"]
 	},

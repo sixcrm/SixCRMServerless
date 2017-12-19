@@ -28,13 +28,10 @@ function getValidFulfillmentProvider(){
 		password: randomutilities.createRandomString(10),
 		provider: {
       name: "Hashtag",
-      threepl_id: '773',
       threepl_key: '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
       username:'kristest',
       password:'kristest',
-      facility_id: '2',
-      customer_id: '10',
-      reference_number:'10'
+      threepl_customer_id: 10
     },
 		created_at: timestamp.getISO8601(),
 		updated_at:timestamp.getISO8601()
@@ -91,13 +88,13 @@ function getValidProducts(product_ids){
 function getValidThreePLResponse(method){
 
   let method_responses = {
-    FindOrders:{
-      body:'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><FindOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">&lt;orders /&gt;</FindOrders><totalOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">0</totalOrders></soap:Body></soap:Envelope>',
+    FindOrders: {
+      body:'<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><FindOrders xmlns=\"http://www.JOI.com/schemas/ViaSub.WMS/\">&lt;orders&gt;&lt;order&gt;&lt;CustomerName&gt;Tests Hashtag Tests&lt;/CustomerName&gt;&lt;CustomerEmail&gt;Charlie.C@Hashtagfulfillment.com&lt;/CustomerEmail&gt;&lt;CustomerPhone&gt;&lt;/CustomerPhone&gt;&lt;Facility&gt;Hashtag Fulfillment&lt;/Facility&gt;&lt;FacilityID&gt;2&lt;/FacilityID&gt;&lt;WarehouseTransactionID&gt;1181282&lt;/WarehouseTransactionID&gt;&lt;ReferenceNum&gt;Order 682&lt;/ReferenceNum&gt;&lt;PONum&gt;&lt;/PONum&gt;&lt;Retailer /&gt;&lt;ShipToCompanyName&gt;Example Company&lt;/ShipToCompanyName&gt;&lt;ShipToName&gt;Example Company&lt;/ShipToName&gt;&lt;ShipToEmail&gt;&lt;/ShipToEmail&gt;&lt;ShipToPhone&gt;&lt;/ShipToPhone&gt;&lt;ShipToAddress1&gt;Example Address&lt;/ShipToAddress1&gt;&lt;ShipToAddress2&gt;&lt;/ShipToAddress2&gt;&lt;ShipToCity&gt;Example City&lt;/ShipToCity&gt;&lt;ShipToState&gt;CA&lt;/ShipToState&gt;&lt;ShipToZip&gt;90505&lt;/ShipToZip&gt;&lt;ShipToCountry&gt;US&lt;/ShipToCountry&gt;&lt;ShipMethod&gt;Next Day Air&lt;/ShipMethod&gt;&lt;MarkForName&gt;&lt;/MarkForName&gt;&lt;BatchOrderID /&gt;&lt;CreationDate&gt;2016-01-19T14:56:00&lt;/CreationDate&gt;&lt;EarliestShipDate /&gt;&lt;ShipCancelDate /&gt;&lt;PickupDate /&gt;&lt;Carrier&gt;Fed Ex&lt;/Carrier&gt;&lt;BillingCode&gt;BillThirdParty&lt;/BillingCode&gt;&lt;TotWeight&gt;0.33&lt;/TotWeight&gt;&lt;TotCuFt&gt;0.00&lt;/TotCuFt&gt;&lt;TotPackages&gt;1.0000&lt;/TotPackages&gt;&lt;TotOrdQty&gt;1.0000&lt;/TotOrdQty&gt;&lt;TotLines&gt;1.00&lt;/TotLines&gt;&lt;Notes&gt;&lt;/Notes&gt;&lt;OverAllocated&gt;&lt;/OverAllocated&gt;&lt;PickTicketPrintDate /&gt;&lt;ProcessDate&gt;2016-01-19&lt;/ProcessDate&gt;&lt;TrackingNumber&gt;&lt;/TrackingNumber&gt;&lt;LoadNumber&gt;&lt;/LoadNumber&gt;&lt;BillOfLading&gt;&lt;/BillOfLading&gt;&lt;MasterBillOfLading&gt;&lt;/MasterBillOfLading&gt;&lt;ASNSentDate /&gt;&lt;ConfirmASNSentDate&gt;&lt;/ConfirmASNSentDate&gt;&lt;RememberRowInfo&gt;1181282:10:2::2016/01/19:0:False:1:735163&lt;/RememberRowInfo&gt;&lt;/order&gt;&lt;/orders&gt;</FindOrders><totalOrders xmlns=\"http://www.JOI.com/schemas/ViaSub.WMS/\">2729</totalOrders></soap:Body></soap:Envelope>',
       statusCode:200,
       statusMessage:'OK'
     },
     CreateOrders:{
-      body:'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><FindOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">&lt;orders /&gt;</FindOrders><totalOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">0</totalOrders></soap:Body></soap:Envelope>',
+      body:'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><Int32 xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">1</Int32><warnings xmlns="http://www.JOI.com/schemas/ViaSub.WMS/" /></soap:Body></soap:Envelope>',
       statusCode:200,
       statusMessage:'OK'
     }
@@ -194,6 +191,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         expect(result.getCode()).to.equal('success');
         expect(result.getMessage()).to.equal('Success');
         expect(result.getResponse().body).to.equal(three_pl_response.body);
+        expect(result.getParsedResponse()).to.be.defined;
+
       });
 
     });
@@ -222,6 +221,7 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         expect(result.getCode()).to.equal('fail');
         expect(result.getMessage()).to.equal('Failed');
         expect(result.getResponse().body).to.equal(three_pl_response.body);
+        expect(result.getParsedResponse()).to.be.defined;
       });
 
     });
@@ -250,6 +250,7 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         expect(result.getCode()).to.equal('fail');
         expect(result.getMessage()).to.equal('Failed');
         expect(result.getResponse().body).to.equal(three_pl_response.body);
+        expect(result.getParsedResponse()).to.be.defined;
       });
 
     });
@@ -295,16 +296,19 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 
       let customer = getValidCustomer();
       let products = getValidProducts();
-      //products[0].sku = 'SKU 10'; //use these in a integration test
-      //products[1].sku = 'SKU 100'; //use these in a integration test
+
+      products[0].sku = 'SKU 10'; //use these in a integration test
+      products[1].sku = 'SKU 100'; //use these in a integration test
       let fulfillment_provider = getValidFulfillmentProvider();
       let three_pl_response = getValidThreePLResponse('CreateOrders');
 
+      /*
       mockery.registerMock('request', {
         post: (request_options, callback) => {
          callback(null, three_pl_response);
         }
       });
+      */
 
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});

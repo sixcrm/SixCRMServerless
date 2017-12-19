@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/addressline1.json",
+  "title": "Address Line 1",
+  "description": "A address line 1",
+  "type":"string",
+  "pattern":"^[0-9]+\\s.*"
+}

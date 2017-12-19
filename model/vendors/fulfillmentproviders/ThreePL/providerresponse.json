@@ -1,0 +1,35 @@
+{
+  "id":"/vendors/fulfillmentproviders/ThreePL/providerresponse.json",
+  "title":"Provider Response",
+  "type":"object",
+  "properties":{
+    "error":{
+      "anyOf":[
+        {"type":"null"},
+        {"type":"object"}
+      ]
+    },
+    "body":{
+      "anyOf":[
+        {"type":"string"},
+        {"type":"null"}
+      ]
+    },
+    "response":{
+      "anyOf":[
+        {"type":"null"},
+        {
+          "type":"object",
+          "properties":{
+            "body":{
+              "type":"string"
+            },
+            "statusCode":{"$ref":"../../../definitions/httpcode.json"}
+          },
+          "required":["body","statusCode"]
+        }
+      ]
+    }
+  },
+  "required":["body","error","response"]
+}

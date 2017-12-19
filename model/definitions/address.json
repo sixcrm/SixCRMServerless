@@ -5,40 +5,17 @@
   "description": "An address",
   "type":"object",
   "properties": {
-    "line1":{
-      "type":"string"
-    },
+    "line1":{"$ref":"./addressline1.json"},
     "line2":{
       "type":"string"
     },
     "city":{
-      "type":"string"
-    },
-    "state":{
       "type":"string",
-      "pattern":"^[A-Z]{2}$"
+      "minLength":1
     },
-    "zip":{
-      "anyOf":[
-        {
-          "type":"string",
-          "pattern":"^[0-9]{5}$"
-        },
-        {
-          "type":"string",
-          "pattern":"^[0-9]{5}-[0-9]{4}$"
-        },
-        {
-          "type":"number",
-          "minimum":10000,
-          "maximum":99999
-        }
-      ]
-    },
-    "country":{
-      "type":"string",
-      "pattern":"^[A-Z]{2}$"
-    }
+    "state":{"$ref":"./statecode.json"},
+    "zip":{"$ref":"./zipcode.json"},
+    "country":{"$ref":"./countrycode.json"}
   },
   "required":["line1","city","state","zip","country"]
 }

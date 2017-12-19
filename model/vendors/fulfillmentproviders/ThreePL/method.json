@@ -1,0 +1,6 @@
+{
+  "id":"/vendors/fulfillmentproviders/ThreePL/action.json",
+  "title":"ThreePL Method",
+  "type":"string",
+  "enum":["FindOrders","CreateOrders"]
+}

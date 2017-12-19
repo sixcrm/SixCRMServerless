@@ -1,0 +1,7 @@
+{
+  "id":"/vendors/fulfillmentproviders/ThreePL/wsdl.json",
+  "title":"ThreePL WSDL",
+  "type":"string",
+  "enum":["https://secure-wms.com/webserviceexternal/contracts.asmx?wsdl"],
+  "format":"uri"
+}

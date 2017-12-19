@@ -45,6 +45,7 @@ module.exports = class fulfillmentProviderController {
       du.debug('Respond');
 
       let provider_response = this.parameters.get('providerresponse');
+
       const VendorResponseClass = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/'+this.getVendorName()+'/Response.js');
 
       return new VendorResponseClass(provider_response);

@@ -4,9 +4,9 @@
   "type":"object",
   "properties":{
     "statusCode":{"$ref":"../../../definitions/httpcode.json"},
-    "statusMessage":{
+    "body":{
       "type":"string"
     }
   },
-  "required":["statusCode", "statusMessage"]
+  "required":["statusCode", "body"]
 }

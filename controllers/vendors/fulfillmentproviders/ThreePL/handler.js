@@ -23,7 +23,16 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
       info: 'FindOrders'
     };
 
-    this.parameter_validation = {};
+    this.parameter_validation = {
+      'providerresponse':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/ThreePL/providerresponse.json'),
+      'action': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/action.json'),
+      'method': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/method.json'),
+      'soapaction': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/soapaction.json'),
+      'wsdl': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/wsdl.json'),
+      'parametersobject': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/parametersobject.json'),
+      'customer':global.SixCRM.routes.path('model','entities/customer.json'),
+      'products':global.SixCRM.routes.path('model','entities/components/products.json')
+    };
 
     this.parameter_definition = {
       fulfill:{
@@ -273,17 +282,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
   }
 
-  /*
-  getCreateOrdersMethodParameters(){
-
-    du.debug('Get Create Orders Method Parameters');
-
-    //Technical Debt:  Where do these come from?
-    return {};
-
-  }
-  */
-
   getFindOrdersRequestParameters(){
 
     du.debug('Get FindOrders Request Parameters');
@@ -296,12 +294,13 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
         '@':{
           xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/',
         },
-        CustomerID: fulfillment_provider.provider.customer_id, //Technical Debt: what is this?
+        CustomerID: fulfillment_provider.provider.threepl_customer_id,
         FacilityID: this.getFacilityID(),
-        //OverAlloc: 'Any',
-        //Closed: 'Any',
-        //ASNSent: 'Any',
-        //RouteSent: 'Any',
+        OverAlloc: 'Any',
+        Closed: 'Any',
+        ASNSent: 'Any',
+        RouteSent: 'Any',
+        //ReferenceNum: '50fee3d6-3bc6-422f-95f3-101f64b5e60d' //this works...
         //BeginDate: '2013-07-17',
         //EndDate: '2013-07-18',
         //DateRangeType: 'Confirm'
@@ -310,7 +309,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
         '@':{
           xmlns: 'http://www.JOI.com/schemas/ViaSub.WMS/'
         },
-        '#':1000
+        '#':1
       }
     };
 
@@ -491,9 +490,9 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
       });
 
-    }).then((result) => {
+    }).then((result_object) => {
 
-      this.parameters.set('providerresponse', result);
+      this.parameters.set('providerresponse', result_object);
 
       return true;
 

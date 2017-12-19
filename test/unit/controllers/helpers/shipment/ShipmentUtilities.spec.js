@@ -165,7 +165,11 @@ function getValidFulfillmentProvider(){
 		username: randomutilities.createRandomString(10),
 		password: randomutilities.createRandomString(10),
 		provider:{
-      name: "Hashtag"
+      name: "Hashtag",
+      threepl_key:'{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
+      threepl_customer_id: 10,
+      username:"kristest",
+      password:"kristest"
     },
 		created_at: timestamp.getISO8601(),
 		updated_at:timestamp.getISO8601()

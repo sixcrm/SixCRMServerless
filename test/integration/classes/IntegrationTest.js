@@ -45,7 +45,6 @@ module.exports = class IntegrationTest {
       .end(function(err, response){
 
         //du.info(response.body);
-        //process.exit();
 
         if(err){
           du.error(err);
