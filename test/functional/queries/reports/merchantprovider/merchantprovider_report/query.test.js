@@ -3,7 +3,7 @@ const analyticsController = global.SixCRM.routes.include('controllers', 'analyti
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
-describe('reports/merchantprovider/merchantprovider_report query', function () {
+describe('queries/reports/merchantprovider/merchantprovider_report query', function () {
 
     let query_input = { analyticsfilter:
                         { start: '2017-01-01T00:00:00.000Z',
@@ -17,8 +17,7 @@ describe('reports/merchantprovider/merchantprovider_report query', function () {
       PermissionTestGenerators.givenUserWithAllowed('getMerchantReport', 'analytics');
 
       return analyticsController.executeAnalyticsFunction(query_input, 'getMerchantReport').then((result) => {
-        console.log(result.merchants);
-        console.log('Result');
+
         expect(result.merchants).to.deep.equal([{ merchant_provider: '6c40761d-8919-4ad6-884d-6a46a776cfb9',
               sale_count: '1',
               sale_gross_revenue: '139.99',
