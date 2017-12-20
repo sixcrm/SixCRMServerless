@@ -1506,16 +1506,38 @@ describe('updateRebillState', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         listTransactions: (rebill) => {
-          return Promise.resolve(transactions);
+          return Promise.resolve({transactions: transactions});
         },
         get: ({id}) => {
           return Promise.resolve(rebill);
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'rebills';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
         getListByAccount: ({ids}) => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'shippingreceipts';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
         }
       });
 
@@ -1538,10 +1560,21 @@ describe('updateRebillState', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         listTransactions: (rebill) => {
-          return Promise.resolve(transactions);
+          return Promise.resolve({transactions: transactions});
         },
         get: ({id}) => {
           return Promise.resolve(rebill);
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'rebills';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
         }
       });
 
@@ -1571,7 +1604,18 @@ describe('updateRebillState', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         listTransactions: (rebill) => {
-          return Promise.resolve(transactions);
+          return Promise.resolve({transactions: transactions});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'rebills';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
         }
       });
 
@@ -1583,6 +1627,39 @@ describe('updateRebillState', () => {
       return rebillHelperController.acquireTransactions().then(result => {
         expect(result).to.equal(true);
         expect(rebillHelperController.parameters.store['transactions']).to.deep.equal(transactions);
+      });
+
+    });
+
+    it('successfully handles the no-transactions case', () => {
+
+      let rebill = getValidRebill();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions: (rebill) => {
+          return Promise.resolve({transactions: null});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'rebills';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('rebill', rebill);
+
+      return rebillHelperController.acquireTransactions().then(result => {
+        expect(result).to.equal(true);
+        expect(rebillHelperController.parameters.store['transactions']).to.not.be.defined;
       });
 
     });
@@ -1608,6 +1685,21 @@ describe('updateRebillState', () => {
 
     });
 
+    it('successfully handles no transactions case', () => {
+
+      let transactions = getValidTransactions();
+      let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      let result = rebillHelperController.getShippingReceiptIDs();
+
+      expect(result).to.equal(true);
+      expect(rebillHelperController.parameters.store['shippingreceiptids']).to.not.be.defined;
+
+    });
+
   });
 
   describe('acquireShippingReceipts', () => {
@@ -1620,6 +1712,17 @@ describe('updateRebillState', () => {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
         getListByAccount: ({ids}) => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'shippingreceipts';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
         }
       });
 
@@ -1631,6 +1734,40 @@ describe('updateRebillState', () => {
       return rebillHelperController.acquireShippingReceipts().then(result => {
         expect(result).to.equal(true);
         expect(rebillHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
+      });
+
+    });
+
+    it('successfully acquires shipping receipts given a list of shipping receipt IDs', () => {
+
+      let shipping_receipts = getValidShippingReceipts();
+      let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount: ({ids}) => {
+          return Promise.resolve({shippingreceipts: null});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'shippingreceipts';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);
+
+      return rebillHelperController.acquireShippingReceipts().then(result => {
+        expect(result).to.equal(true);
+        expect(rebillHelperController.parameters.store['shippingreceipts']).to.not.be.defined;
       });
 
     });
