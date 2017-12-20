@@ -326,14 +326,17 @@ class RandomRedshiftData extends workerController {
             amount:"",
             processor_result:"",
             account:"",
-            transaction_type:"",
-            transaction_subtype:"",
+            type:"",
+            subtype:"",
             product_schedule:"",
             subaffiliate_1:"",
             subaffiliate_2:"",
             subaffiliate_3:"",
             subaffiliate_4:"",
-            subaffiliate_5:""
+            subaffiliate_5:"",
+            prepaid:"",
+            result:"",
+            associated_transaction:""
         };
 
         for(var j in transaction){
@@ -348,8 +351,8 @@ class RandomRedshiftData extends workerController {
         transaction.amount = this.getAmountFromProductSchedule(event_type, event_object, account_object);
 
         transaction.processor_result = 'success';
-        transaction.transaction_type = 'new';
-        transaction.transaction_subtype = event_type;
+        transaction.type = 'new';
+        transaction.subtype = event_type;
 
         return transaction;
 
