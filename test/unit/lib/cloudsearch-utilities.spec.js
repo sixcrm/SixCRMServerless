@@ -1,7 +1,30 @@
 const chai = require('chai');
 const expect = chai.expect;
+const mockery = require('mockery');
 
 describe('lib/cloudsearch-utilities', () => {
+
+    before(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
+            set: (parameters) => {
+                return Promise.resolve();
+            },
+            get: (parameters) => {
+                return Promise.resolve('cloudsearch.local');
+            }
+        });
+
+    });
+
 
     describe('defineIndexField', () => {
 
@@ -9,6 +32,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 defineIndexField: () => {
                        return {
                            on: (parameters, response) => {
@@ -28,6 +54,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 defineIndexField: () => {
                        return {
                            on: () => {
@@ -54,6 +83,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 createDomain: () => {
                        return {
                            on: (parameters, response) => {
@@ -73,6 +105,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 createDomain: () => {
                        return {
                            on: () => {
@@ -109,6 +144,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 describeDomains: function(parameters, callback) {
                     callback(null, 'success')
                 }
@@ -123,6 +161,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 describeDomains: function(parameters, callback) {
                     callback('fail', null)
                 }
@@ -140,6 +181,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 describeDomains: function(parameters, callback) {
                     callback(null, {DomainStatusList: [{Created: true, Processing: false}]})
                 }
@@ -155,6 +199,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 describeDomains: function(parameters, callback) {
                     callback(null, 'success')
                 }
@@ -182,6 +229,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 listDomainNames: function(callback) {
                     callback(null, {DomainNames: 'a_domain_name'})
                 }
@@ -196,6 +246,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 listDomainNames: function(callback) {
                     callback('fail', null)
                 }
@@ -213,6 +266,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 deleteDomain: function(parameters, callback) {
                     callback(null, 'success')
                 }
@@ -227,6 +283,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 deleteDomain: function(parameters, callback) {
                     callback('fail', null)
                 }
@@ -244,6 +303,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 indexDocuments: function(parameters, callback) {
                     callback(null, 'success')
                 }
@@ -258,6 +320,9 @@ describe('lib/cloudsearch-utilities', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
+                describeDomains: function() {
+                  return getValidDomains()
+                },
                 indexDocuments: function(parameters, callback) {
                     callback('fail', null)
                 }
@@ -431,4 +496,8 @@ describe('lib/cloudsearch-utilities', () => {
             }
         });
     });
+
+    function getValidDomains() {
+        return {DomainStatusList: [{DocService:{Endpoint: 'cloudsearch.domain'}}]};
+    }
 });
