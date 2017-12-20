@@ -8,7 +8,10 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+
 const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
+const TestController = global.SixCRM.routes.include('helpers', 'shipment/Test.js');
+
 const TerminalReceiptController = global.SixCRM.routes.include('providers', 'terminal/Receipt.js');
 const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
 
@@ -19,20 +22,23 @@ module.exports = class TerminalController extends PermissionedController  {
     super();
 
     this.parameter_definition = {
-      shipRebill:{
+      fulfill:{
         required: {
           rebill: 'rebill'
         },
         optional:{}
       },
-      fulfill:{
+      info:{
         required: {
-          selecedfulfillmentproviderid:'fulfillment_provider_id',
-          selectedaugmentedtransactionproducts:'augmented_transaction_products'
+          shippingreceipt:'shippingreceipt'
         },
-        optional:{
-
-        }
+        optional:{}
+      },
+      test:{
+        required:{
+          fulfillmentproviderid: 'fulfillment_provider_id'
+        },
+        optional:{}
       }
     };
 
@@ -49,7 +55,9 @@ module.exports = class TerminalController extends PermissionedController  {
       selectedfulfillmentprovider: global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
       instantiatedfulfillmentprovider: global.SixCRM.routes.path('model', 'providers/shipping/terminal/instantiatedfulfillmentprovider.json'),
       compoundfulfillmentresponses: global.SixCRM.routes.path('model', 'providers/shipping/terminal/compoundfulfillmentresponses.json'),
-      responsecode: global.SixCRM.routes.path('model', 'providers/shipping/terminal/responsecode.json')
+      responsecode: global.SixCRM.routes.path('model', 'providers/shipping/terminal/responsecode.json'),
+      fulfillmentproviderid: global.SixCRM.routes.path('model', 'definitions/uuidv4.json'),
+      fulfillmentprovider: global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json')
     };
 
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -64,12 +72,16 @@ module.exports = class TerminalController extends PermissionedController  {
 
   }
 
-  shipRebill({rebill}){
+  fulfill({rebill}){
 
-    du.debug('Execute');
+    du.debug('Fulfill');
+
+    //Takes a rebill
+    //Responds with shipping receipts
+    //Marks the shipping receipts behind the scenes
 
     return Promise.resolve(true)
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'shipRebill'}))
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'fulfill'}))
     .then(() => this.acquireRebill())
     .then(() => this.acquireTransactions())
     .then(() => this.setAugmentedTransactionProducts())
@@ -79,6 +91,31 @@ module.exports = class TerminalController extends PermissionedController  {
     .then(() => this.groupShipableTransactionProductGroupByFulfillmentProvider())
     .then(() => this.executeFulfillment())
     .then(() => this.transformCompoundFulfillmentResponses())
+    .then(() => this.respond());
+
+  }
+
+  info({shippingreceipt}){
+
+    du.debug('info');
+    //Takes a shipping receipt
+    //Returns a tracking number
+    return Promise.resolve(true)
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'info'}))
+    .then(() => this.acquireShippingReceipt())
+    .then(() => this.executeInfo())
+    .then(() => this.respond());
+
+  }
+
+  test({fulfillment_provider_id}){
+
+    du.debug('Test');
+
+    return Promise.resolve(true)
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'test'}))
+    .then(() => this.executeTest())
+    .then(() => this.transformTestResponse())
     .then(() => this.respond());
 
   }
@@ -231,6 +268,24 @@ module.exports = class TerminalController extends PermissionedController  {
 
   }
 
+  executeTest(){
+
+    du.debug('Execute Test');
+
+    let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
+
+    let testController = new TestController();
+
+    return testController.execute({fulfillment_provider_id: fulfillment_provider_id}).then(result => {
+
+      this.parameters.set('testresponse', result);
+
+      return true;
+
+    });
+
+  }
+
   executeFulfillment(){
 
     du.debug('Execute Fulfillment');
@@ -264,6 +319,22 @@ module.exports = class TerminalController extends PermissionedController  {
       return true;
 
     });
+
+  }
+
+  transformTestResponse(){
+
+    du.debug('Transform Test Response');
+
+    let test_response = this.parameters.get('testresponse');
+
+    du.info(test_response); process.exit();
+
+    du.warning(test_response); process.exit();
+
+    this.parameters.set('responsecode', 'success');
+
+    return true;
 
   }
 
@@ -310,6 +381,38 @@ module.exports = class TerminalController extends PermissionedController  {
     let terminal_response = new TerminalResponse(response_prototype);
 
     return terminal_response;
+
+  }
+
+  acquireShippingReceipt(){
+
+    du.debug('Acquire Shipping Receipt');
+
+    let shipping_receipt = this.parameters.get('shippingreceipt');
+
+    return this.shippingReceiptController.get({id: shipping_receipt.id}).then(shipping_receipt => {
+
+      this.parameters.set('shippingreceipt', shipping_receipt);
+
+      return true;
+
+    });
+
+  }
+
+  acquireFulfillmentProvider(){
+
+    du.debug('Acquire Shipping Receipt');
+
+    let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
+
+    return this.fulfillmentProviderController.get({id: fulfillment_provider_id}).then(fulfillment_provider => {
+
+      this.parameters.set('fulfillmentprovider', fulfillment_provider);
+
+      return true;
+
+    });
 
   }
 

@@ -100,7 +100,7 @@ describe('controllers/workers/shipProduct', function () {
         constructor(){
 
         }
-        shipRebill({rebill}){
+        fulfill({rebill}){
           return Promise.resolve(terminal_response);
         }
       }
@@ -156,7 +156,7 @@ describe('controllers/workers/shipProduct', function () {
         constructor(){
 
         }
-        shipRebill({rebill}){
+        fulfill({rebill}){
           return Promise.resolve(terminal_response);
         }
       }

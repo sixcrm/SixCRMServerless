@@ -49,7 +49,7 @@ class shipProductController extends workerController {
 
     let terminalController = new TerminalController();
 
-    return terminalController.shipRebill({rebill: rebill}).then(response => {
+    return terminalController.fulfill({rebill: rebill}).then(response => {
 
       this.parameters.set('terminalresponse', response);
 

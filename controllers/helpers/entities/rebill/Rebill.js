@@ -49,6 +49,12 @@ module.exports = class RebillHelper {
           previousstate:'previous_state'
         }
       },
+      getShippingReceipts:{
+        required: {
+          rebill: 'rebill'
+        },
+        optional:{}
+      },
       updateRebillProcessing:{
         required: {
           rebill:'rebill',
@@ -85,7 +91,10 @@ module.exports = class RebillHelper {
       'updatedrebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/updatedrebillprototype.json'),
       'newstate': global.SixCRM.routes.path('model', 'workers/queuename.json'),
       'previousstate': global.SixCRM.routes.path('model', 'workers/queuename.json'),
-      'errormessage': global.SixCRM.routes.path('model', 'helpers/rebill/errormessage.json')
+      'errormessage': global.SixCRM.routes.path('model', 'helpers/rebill/errormessage.json'),
+      'shippingreceipts': global.SixCRM.routes.path('model','entities/components/shippingreceipts.json'),
+      'shippingreceiptids': global.SixCRM.routes.path('model','general/uuidv4list.json'),
+      'transactions': global.SixCRM.routes.path('model','entities/components/transactions.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
@@ -742,6 +751,106 @@ module.exports = class RebillHelper {
     this.parameters.set('queuemessagebodyprototype', queue_message_body_prototype);
 
     return true;
+
+  }
+
+  getShippingReceipts({rebill}){
+
+    du.debug('Get Shipping Receipts');
+
+    return Promise.resolve(true)
+    .then(() => this.setParameters({argumentation: arguments[0], action: 'getShippingReceipts'}))
+    .then(() => this.acquireRebill())
+    .then(() => this.acquireTransactions())
+    .then(() => this.getShippingReceiptIDs())
+    .then(() => this.acquireShippingReceipts())
+    .then(() => {
+      let shipping_receipts = this.parameters.get('shippingreceipts', null, false);
+
+      if(_.isNull(shipping_receipts)){
+        shipping_receipts = [];
+      }
+      return shipping_receipts;
+    });
+
+  }
+
+  acquireTransactions(){
+
+    du.debug('Acquire Transactions');
+
+    let rebill = this.parameters.get('rebill');
+
+    if(!_.has(this, 'rebillController')){
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    }
+
+    return this.rebillController.listTransactions(rebill).then(transactions => {
+
+      this.parameters.set('transactions', transactions);
+
+      return true;
+
+    });
+
+  }
+
+  getShippingReceiptIDs(){
+
+    du.debug('Get Shipping Receipt IDs');
+
+    let transactions = this.parameters.get('transactions');
+
+    let shipping_receipt_ids = arrayutilities.map(transactions, transaction => {
+
+      return arrayutilities.map(transaction.products, transaction_product => {
+
+        if(_.has(transaction_product, 'shipping_receipt')){
+          return transaction_product.shipping_receipt;
+        }
+
+      });
+
+    });
+
+    shipping_receipt_ids = arrayutilities.flatten(shipping_receipt_ids);
+    shipping_receipt_ids = arrayutilities.unique(shipping_receipt_ids);
+    shipping_receipt_ids = arrayutilities.filter(shipping_receipt_ids, shipping_receipt_id => {
+      if(_.isUndefined(shipping_receipt_id) || _.isNull(shipping_receipt_ids)){
+        return false;
+      }
+      return true;
+    });
+
+    if(arrayutilities.nonEmpty(shipping_receipt_ids)){
+      this.parameters.set('shippingreceiptids', shipping_receipt_ids);
+    }
+
+    return true;
+
+  }
+
+  acquireShippingReceipts(){
+
+    du.debug('Acquire Shipping Receipts');
+
+    let shipping_receipt_ids = this.parameters.get('shippingreceiptids', null, false);
+
+    if(_.isNull(shipping_receipt_ids)){
+      return true;
+    }
+
+    if(!_.has(this, 'shippingReceiptController')){
+      this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+    }
+
+    return this.shippingReceiptController.getListByAccount({ids: shipping_receipt_ids}).then(shipping_receipts => {
+
+      this.parameters.set('shippingreceipts', shipping_receipts);
+
+      return true;
+
+    });
 
   }
 

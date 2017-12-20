@@ -69,10 +69,14 @@ function getValidFulfillmentProvider(){
   return {
     id:uuidV4(),
 		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		name: randomutilities.createRandomString(20),
-		username: randomutilities.createRandomString(10),
-		password: randomutilities.createRandomString(10),
-		provider:"HASHTAG",
+    name: randomutilities.createRandomString(20),
+		provider:{
+      name:"Hashtag",
+      username: 'kristest',
+  		password: 'kristest',
+      threepl_key:'{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
+      threepl_customer_id: 10
+    },
 		created_at: timestamp.getISO8601(),
 		updated_at:timestamp.getISO8601()
   };
@@ -788,7 +792,32 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
   });
 
-  describe('shipRebill', () => {
+  xdescribe('test', () => {
+
+    it('Successfully executes a test of a fulfillment provider', () => {
+
+      let fulfillment_provider = getValidFulfillmentProvider();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
+        get:({id}) => {
+          return Promise.resolve(fulfillment_provider);
+        }
+      });
+
+      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+      let terminalController = new TerminalController();
+
+      return terminalController.test({fulfillment_provider_id: fulfillment_provider.id}).then(result => {
+
+        du.info(result); process.exit();
+
+      });
+
+    });
+
+  });
+
+  describe('fulfill', () => {
 
     it('successfully ships a rebill', () => {
 
@@ -848,7 +877,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
-      return terminalController.shipRebill({rebill: rebill}).then(result => {
+      return terminalController.fulfill({rebill: rebill}).then(result => {
         expect(result.getCode()).to.equal('success');
       });
 

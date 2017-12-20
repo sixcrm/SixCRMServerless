@@ -13,7 +13,7 @@ const FulfillmentProviderController = global.SixCRM.routes.include('controllers'
 
 module.exports = class ThreePLController extends FulfillmentProviderController {
 
-  constructor(){
+  constructor({fulfillment_provider}){
 
     super(arguments[0]);
 
@@ -500,7 +500,9 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
   }
 
-  postRequestProcessing(response){
+  postRequestProcessing(){
+
+    //du.highlight(this.parameters.get('providerresponse'));
 
     return true;
 

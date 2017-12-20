@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const ThreePLController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/ThreePL/handler.js');
 
-class HashtagController extends ThreePLController {
+module.exports = class HashtagController extends ThreePLController {
 
   constructor({fulfillment_provider}){
 
@@ -21,5 +21,3 @@ class HashtagController extends ThreePLController {
   }
 
 }
-
-module.exports = new HashtagController();

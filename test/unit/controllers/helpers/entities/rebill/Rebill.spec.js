@@ -18,6 +18,53 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
+function getValidTransactions(){
+
+  return [getValidTransaction(), getValidTransaction()];
+
+}
+
+function getValidTransaction(){
+
+  return {
+    id: uuidV4(),
+    amount: 14.99,
+    alias:"T"+randomutilities.createRandomString(9),
+    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    rebill: uuidV4(),
+    processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894419\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
+    merchant_provider: uuidV4(),
+    products:[{
+      product:uuidV4(),
+      amount:14.99,
+      shipping_receipt: uuidV4()
+    }],
+    type:"sale",
+    result:"success",
+    created_at:timestamp.getISO8601(),
+    updated_at:timestamp.getISO8601()
+  };
+
+}
+
+function getValidShippingReceipts(){
+  return [getValidShippingReceipt(),getValidShippingReceipt()];
+}
+
+function getValidShippingReceipt(){
+
+  return {
+    id: uuidV4(),
+    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    status: "delivered",
+    trackingnumber:"0909012312139134134134",
+    trackingstatus:"TEST 3 Departed USPS Origin Facility",
+    created_at:timestamp.getISO8601(),
+    updated_at:timestamp.getISO8601()
+  };
+
+}
+
 function getValidQueueMessageBodyPrototype(){
 
   return JSON.stringify({id: uuidV4()});
@@ -1443,6 +1490,148 @@ describe('updateRebillState', () => {
       let parsed_queue_message_body_prototype = JSON.parse(rebillHelperController.parameters.store['queuemessagebodyprototype']);
 
       expect(parsed_queue_message_body_prototype).to.deep.equal({id: rebill.id});
+
+    });
+
+  });
+
+  describe('getShippingReceipts', () => {
+
+    it('successfully retrieves shipping receipts associated with a rebill', () => {
+
+      let rebill = getValidRebill();
+      let transactions = getValidTransactions();
+      let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
+      let shipping_receipts = getValidShippingReceipts();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions: (rebill) => {
+          return Promise.resolve(transactions);
+        },
+        get: ({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount: ({ids}) => {
+          return Promise.resolve(shipping_receipts);
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      return rebillHelperController.getShippingReceipts({rebill: rebill}).then(result => {
+        expect(result).to.deep.equal(shipping_receipts);
+      });
+
+    });
+
+    it('successfully returns a empty array', () => {
+
+      let rebill = getValidRebill();
+      let transactions = getValidTransactions();
+
+      delete transactions[0].products[0].shipping_receipt;
+      delete transactions[1].products[0].shipping_receipt;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions: (rebill) => {
+          return Promise.resolve(transactions);
+        },
+        get: ({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount: ({ids}) => {
+          return Promise.resolve(null);
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      return rebillHelperController.getShippingReceipts({rebill: rebill}).then(result => {
+        expect(result).to.deep.equal([]);
+      });
+
+    });
+
+  });
+
+  describe('acquireTransactions', () => {
+
+    it('successfully retrieves transactions associated with a rebill', () => {
+
+      let rebill = getValidRebill();
+      let transactions = getValidTransactions();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions: (rebill) => {
+          return Promise.resolve(transactions);
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('rebill', rebill);
+
+      return rebillHelperController.acquireTransactions().then(result => {
+        expect(result).to.equal(true);
+        expect(rebillHelperController.parameters.store['transactions']).to.deep.equal(transactions);
+      });
+
+    });
+
+  });
+
+  describe('getShippingReceiptIDs', () => {
+
+    it('successfully parses shipping receipts ids from a transaction', () => {
+
+      let transactions = getValidTransactions();
+      let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('transactions', transactions);
+
+      let result = rebillHelperController.getShippingReceiptIDs();
+
+      expect(result).to.equal(true);
+      expect(rebillHelperController.parameters.store['shippingreceiptids']).to.deep.equal(shipping_receipt_ids);
+
+    });
+
+  });
+
+  describe('acquireShippingReceipts', () => {
+
+    it('successfully acquires shipping receipts given a list of shipping receipt IDs', () => {
+
+      let shipping_receipts = getValidShippingReceipts();
+      let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount: ({ids}) => {
+          return Promise.resolve(shipping_receipts);
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);
+
+      return rebillHelperController.acquireShippingReceipts().then(result => {
+        expect(result).to.equal(true);
+        expect(rebillHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
+      });
 
     });
 
