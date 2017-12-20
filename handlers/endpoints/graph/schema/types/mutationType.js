@@ -213,10 +213,11 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: function(root, args){
-            const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
-            let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: args.id});
+            const FulfillmentProviderHelperController = global.SixCRM.routes.include('helpers', 'entities/fulfillmentprovider/FulfillmentProvider.js');
+            let fulfillmentProviderHelperController = new FulfillmentProviderHelperController();
 
-            return fulfillmentProviderController.validate();
+            return fulfillmentProviderHelperController.validate({fulfillment_provider_id: args.id});
+
           }
         },
         //Note: Fix
