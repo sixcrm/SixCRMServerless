@@ -785,9 +785,13 @@ module.exports = class RebillHelper {
       this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
     }
 
-    return this.rebillController.listTransactions(rebill).then(transactions => {
+    return this.rebillController.listTransactions(rebill)
+    .then((results) => this.rebillController.getResult(results, 'transactions'))
+    .then(transactions => {
 
-      this.parameters.set('transactions', transactions);
+      if(!_.isNull(transactions)){
+        this.parameters.set('transactions', transactions);
+      }
 
       return true;
 
@@ -799,7 +803,11 @@ module.exports = class RebillHelper {
 
     du.debug('Get Shipping Receipt IDs');
 
-    let transactions = this.parameters.get('transactions');
+    let transactions = this.parameters.get('transactions', null, false);
+
+    if(_.isNull(transactions)){
+      return true;
+    }
 
     let shipping_receipt_ids = arrayutilities.map(transactions, transaction => {
 
@@ -844,9 +852,13 @@ module.exports = class RebillHelper {
       this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
     }
 
-    return this.shippingReceiptController.getListByAccount({ids: shipping_receipt_ids}).then(shipping_receipts => {
+    return this.shippingReceiptController.getListByAccount({ids: shipping_receipt_ids})
+    .then((results) => this.shippingReceiptController.getResult(results))
+    .then(shipping_receipts => {
 
-      this.parameters.set('shippingreceipts', shipping_receipts.shippingreceipts);
+      if(!_.isNull(shipping_receipts)){
+        this.parameters.set('shippingreceipts', shipping_receipts);
+      }
 
       return true;
 
