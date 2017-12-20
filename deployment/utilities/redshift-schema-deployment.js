@@ -104,6 +104,28 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  getTestingDirectorySQLFilepaths(directory) {
+
+    du.highlight('Get Directory SQL Filepaths');
+
+    let directory_filepath = global.SixCRM.routes.path('test', 'functional/queries' + directory);
+
+    return fileutilities.getDirectoryFiles(directory_filepath).then((files) => {
+
+      files = arrayutilities.filter(files, (file) => {
+        return file.match(/\.sql$/);
+      });
+
+      files = arrayutilities.map(files, (file) => {
+        return directory_filepath+'/'+file;
+      });
+
+      return files;
+
+    });
+
+  }
+
   getQueries(query_filepaths, versioned) {
 
     du.debug('Get Queries');
@@ -224,6 +246,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     du.debug('Seed');
 
     return this.getTestSeedQueries()
+    .then((seed_queries) => {
+      arrayutilities.isArray(seed_queries, true);
+      if(seed_queries.length > 0){
+        return this.executeQueries(seed_queries);
+      }
+      return Promise.resolve(true);
+    })
+    .then((result) => {
+      return 'Complete';
+    });
+
+  }
+
+  seed_query_test(test_case){
+
+    du.debug('Seed');
+
+    return this.getTestCaseSeedQueries(test_case)
     .then((seed_queries) => {
       arrayutilities.isArray(seed_queries, true);
       if(seed_queries.length > 0){
@@ -415,6 +455,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     du.debug('Get Seed Queries');
 
     return this.getDirectorySQLFilepaths('seeds_test').then((filepaths) => {
+
+      let query_promises = arrayutilities.map((filepaths), (filepath) => {
+
+        return this.getQueryFromPath(filepath, false);
+
+      });
+
+      return Promise.all(query_promises);
+
+    });
+
+  }
+
+  getTestCaseSeedQueries(test_case){
+
+    du.debug('Get Seed Queries');
+
+    return this.getDirectorySQLFilepaths(test_case).then((filepaths) => {
 
       let query_promises = arrayutilities.map((filepaths), (filepath) => {
 

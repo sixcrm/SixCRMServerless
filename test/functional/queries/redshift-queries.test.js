@@ -4,7 +4,7 @@ const analyticsController = global.SixCRM.routes.include('controllers', 'analyti
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
-describe('queries/reports/redshift-queries.js', () => {
+describe('queries/redshift-queries.js', () => {
 
     before(() => {
         global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
