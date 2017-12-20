@@ -63,14 +63,6 @@ You can use it as an Amazon SQS instance, including calling methods documented i
 After running the server you can execute the deploy script to create queues. You can do so by running `SIX_VERBOSE=2 AWS_PROFILE=six stage=local node deployment/sqs/deploy_queues.js`.
 Much like local DynamoDB, local SQS server keeps the queues in-memory, which means that after restarting it you need to create queues again. 
 
-### State machine tests
-
-In order to run functional tests, you need working local SQS instace. Refer to the previous paragraph, but in essence:
-
-1. `tools/elasticmq/runLocalSqs.sh` (keep running in a separate terminal)
-2. `SIX_VERBOSE=2 AWS_PROFILE=six stage=local node deployment/sqs/deploy_queues.js` (execute to create local queues)
-3. `npm run test-functional` (run tests)
-
 #### Redis
 
 You will also need a Redis service available on your local machine.  To accomplish this there are a variety of options:
@@ -137,11 +129,24 @@ Six comes with a robust testing package.
 To run unit tests execute `npm run test-unit` in the root of the project. Tests are also run automatically before each
 commit. You can access the code coverage report at `coverage/lcov-report/index.html`.
 
-### Functional tests
+### State machine tests
 
-1. Make sure ElasticMQ is running
-1. Make sure local dynamodb is running
-1. execute `npm run test-functional`
+In order to run functional tests, you need working local SQS instace. Refer to the paragraph `SQS`, but in essence:
+
+1. `tools/elasticmq/runLocalSqs.sh` (keep running in a separate terminal)
+2. `SIX_VERBOSE=2 AWS_PROFILE=six stage=local node deployment/sqs/deploy_queues.js` (execute to create local queues)
+3. `npm run test-functional` (run tests)
+
+### Redshift query tests
+
+We have tests that cover our analytics queries. In order to run them you need a local PostgreSQL instance.
+
+1. `docker pull circleci/postgres:9.6`
+2. `docker run -p 5432:5432 circleci/postgres:9.6` (keep running in a separate terminal)
+3. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/deploy_tables.js`
+4. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/seed_test_referential.js`
+5. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/seed_test_tables.js` 
+6. `npm run test-queries`
 
 ### Integration tests
 

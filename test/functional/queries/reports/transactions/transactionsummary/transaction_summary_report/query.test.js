@@ -3,7 +3,7 @@ const analyticsController = global.SixCRM.routes.include('controllers', 'analyti
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
-describe('reports/transactionsSummary/transactions_summary_report query', function () {
+xdescribe('reports/transactionsSummary/transactions_summary_report query', function () {
 
     let query_input = { analyticsfilter:
                         { start: '2017-01-01T00:00:00.000Z',
