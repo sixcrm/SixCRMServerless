@@ -98,7 +98,7 @@ describe('queries/redshift-queries.js', () => {
     arrayutilities.map(tests, (test) => {
         it(`returns results from ${test.method}`, () => {
             PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
-
+            console.log(process.env.TEST_IMAGE);
             return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
 
                 expect(result[test.result_name]).to.deep.equal(test.expect);

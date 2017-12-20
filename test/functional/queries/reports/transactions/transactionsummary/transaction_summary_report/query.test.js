@@ -11,10 +11,10 @@ xdescribe('reports/transactionsSummary/transactions_summary_report query', funct
                           pagination: { limit: 10, order: 'asc', offset: 0 } };
 
     it('Expect to return at least one row based on test seed data', () => {
-      global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
-      global.user = 'admin.user@test.com';
 
       PermissionTestGenerators.givenUserWithAllowed('getTransactionSummaryReport', 'analytics');
+      global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
+      global.user = 'admin.user@test.com';
 
       return analyticsController.executeAnalyticsFunction(query_input, 'getTransactionSummaryReport').then((result) => {
 
