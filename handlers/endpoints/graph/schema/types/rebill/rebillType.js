@@ -8,8 +8,10 @@ let transactionType = require('../transaction/transactionType');
 let productScheduleType = require('../productschedule/productScheduleType');
 let sessionType = require('../session/sessionType');
 let rebillStateHistoryItem = require('./rebillStateHistoryItemType');
+let shippingReceiptType = require('../shippingreceipt/shippingReceiptType');
 
 const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Rebill',
@@ -42,6 +44,15 @@ module.exports.graphObj = new GraphQLObjectType({
 	          type: new GraphQLList(transactionType.graphObj),
             description: 'The transactions associated with the rebill',
             resolve: rebill => rebillController.listTransactions(rebill),
+        },
+        shippingreceipts: {
+            type: new GraphQLList(shippingReceiptType.graphObj),
+            description: 'The shipping receipts associated with the rebill',
+            resolve: (rebill) => {
+                const rebillHelperController = new RebillHelperController();
+
+                return rebillHelperController.getShippingReceipts({rebill: rebill});
+            }
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),

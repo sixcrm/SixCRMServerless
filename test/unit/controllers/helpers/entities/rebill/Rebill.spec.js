@@ -1515,7 +1515,7 @@ describe('updateRebillState', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
         getListByAccount: ({ids}) => {
-          return Promise.resolve(shipping_receipts);
+          return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
 
@@ -1619,7 +1619,7 @@ describe('updateRebillState', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
         getListByAccount: ({ids}) => {
-          return Promise.resolve(shipping_receipts);
+          return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
 

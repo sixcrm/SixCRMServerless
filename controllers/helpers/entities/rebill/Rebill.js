@@ -846,7 +846,7 @@ module.exports = class RebillHelper {
 
     return this.shippingReceiptController.getListByAccount({ids: shipping_receipt_ids}).then(shipping_receipts => {
 
-      this.parameters.set('shippingreceipts', shipping_receipts);
+      this.parameters.set('shippingreceipts', shipping_receipts.shippingreceipts);
 
       return true;
 
