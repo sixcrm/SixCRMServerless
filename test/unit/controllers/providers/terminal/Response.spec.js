@@ -12,7 +12,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
-function getValidProviderResponse(){
+function getValidVendorResponse(){
 
   return {
     code:'success',
@@ -39,35 +39,35 @@ describe('/providers/terminal/Response.js', () => {
 
   });
 
-  describe('setProviderResponse', () => {
+  describe('setVendorResponse', () => {
 
-    it('successfully sets the provider response', () => {
+    it('successfully sets the vendor response', () => {
 
-      let provider_response = getValidProviderResponse();
+      let vendor_response = getValidVendorResponse();
 
       const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
       let terminalResponse = new TerminalResponse();
 
-      terminalResponse.setProviderResponse(provider_response);
-      expect(terminalResponse.parameters.store['providerresponse']).to.deep.equal(provider_response);
+      terminalResponse.setVendorResponse(vendor_response);
+      expect(terminalResponse.parameters.store['vendorresponse']).to.deep.equal(vendor_response);
     });
 
   });
 
-  describe('setProviderResponse', () => {
+  describe('setVendorResponse', () => {
 
     it('successfully sets the provider response', () => {
 
-      let provider_response = getValidProviderResponse();
+      let vendor_response = getValidVendorResponse();
 
       const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
       let terminalResponse = new TerminalResponse();
 
-      terminalResponse.parameters.set('providerresponse', provider_response);
+      terminalResponse.parameters.set('vendorresponse', vendor_response);
 
-      let result = terminalResponse.getProviderResponse();
+      let result = terminalResponse.getVendorResponse();
 
-      expect(result).to.deep.equal(provider_response);
+      expect(result).to.deep.equal(vendor_response);
 
     });
 
@@ -76,9 +76,9 @@ describe('/providers/terminal/Response.js', () => {
       const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
       let terminalResponse = new TerminalResponse();
 
-      let result = terminalResponse.getProviderResponse();
+      let result = terminalResponse.getVendorResponse();
 
-      expect(result).to.equal(null);
+      expect(result).to.be.null;
 
     });
 

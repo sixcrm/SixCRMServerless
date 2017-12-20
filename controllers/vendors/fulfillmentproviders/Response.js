@@ -100,7 +100,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
     du.debug('Get Parsed Response');
 
-    return this.parameters.get('parsedresponse');
+    return this.parameters.get('parsedresponse', null, false);
 
   }
 

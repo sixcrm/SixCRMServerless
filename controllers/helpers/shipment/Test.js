@@ -16,7 +16,7 @@ module.exports = class TestController extends ShipmentUtilities {
     super();
 
     this.parameter_validation = {
-      'providerresponse':global.SixCRM.routes.path('model', 'providers/shipping/terminal/providerresponse.json')
+      'vendorresponseclass':global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/response/responseclass.json')
     };
 
     this.parameter_definition = {
@@ -42,7 +42,7 @@ module.exports = class TestController extends ShipmentUtilities {
     .then(() => this.instantiateFulfillmentProviderClass())
     .then(() => this.executeTest())
     .then(() => {
-      return this.parameters.get('providerresponse');
+      return this.parameters.get('vendorresponseclass');
     });
 
   }
@@ -53,10 +53,9 @@ module.exports = class TestController extends ShipmentUtilities {
 
     let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
 
-    return instantiated_fulfillment_provider.test().then(providerresponse =>{
+    return instantiated_fulfillment_provider.test().then(vendorresponseclass =>{
 
-      du.info(providerresponse); process.exit();
-      this.parameters.set('providerresponse', providerresponse);
+      this.parameters.set('vendorresponseclass', vendorresponseclass);
 
       return true;
 

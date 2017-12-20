@@ -1,0 +1,15 @@
+{
+  "id":"helpers/entities/fulfillmentprovider/transformedvalidationresponse.json",
+  "title":"Transformed Validation Response",
+  "type":"object",
+  "properties":{
+    "code":{
+      "type":"string",
+      "enum":["success", "fail", "error"]
+    },
+    "vendor_response":{
+      "type":"object"
+    }
+  },
+  "required":["code", "vendor_response"]
+}

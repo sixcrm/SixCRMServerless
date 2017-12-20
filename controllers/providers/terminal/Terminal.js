@@ -112,6 +112,10 @@ module.exports = class TerminalController extends PermissionedController  {
 
     du.debug('Test');
 
+    //takes a fulfillment provider id
+    //returns success/fail/error
+    //returns vendor response
+
     return Promise.resolve(true)
     .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'test'}))
     .then(() => this.executeTest())
@@ -278,7 +282,7 @@ module.exports = class TerminalController extends PermissionedController  {
 
     return testController.execute({fulfillment_provider_id: fulfillment_provider_id}).then(result => {
 
-      this.parameters.set('testresponse', result);
+      this.parameters.set('vendorresponse', result);
 
       return true;
 
@@ -298,14 +302,14 @@ module.exports = class TerminalController extends PermissionedController  {
       let terminalReceiptController = new TerminalReceiptController();
 
       return fulfillmentController.execute({fulfillment_provider_id: fulfillment_provider, augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider]})
-      .then((fulfillment_response) => {
+      .then((vendor_response) => {
 
         return terminalReceiptController.issueReceipt({
           fulfillment_provider: fulfillment_provider,
-          fulfillment_response: fulfillment_response,
+          fulfillment_response: vendor_response,
           augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider]
         }).then(shipping_receipt => {
-          return {shipping_receipt, fulfillment_response};
+          return {shipping_receipt, vendor_response};
         });
 
       });
@@ -326,13 +330,17 @@ module.exports = class TerminalController extends PermissionedController  {
 
     du.debug('Transform Test Response');
 
-    let test_response = this.parameters.get('testresponse');
+    let vendor_response = this.parameters.get('vendorresponse');
 
-    du.info(test_response); process.exit();
+    let responsecode = 'fail';
 
-    du.warning(test_response); process.exit();
+    if(vendor_response.getCode() == 'success' && vendor_response.getMessage() == 'Success'){
+      responsecode = 'success';
+    }else if(vendor_response.getCode() == 'error'){
+      responsecode = 'error';
+    }
 
-    this.parameters.set('responsecode', 'success');
+    this.parameters.set('responsecode', responsecode);
 
     return true;
 
@@ -372,15 +380,17 @@ module.exports = class TerminalController extends PermissionedController  {
 
     du.debug('Respond');
 
-    let response_code = this.parameters.get('responsecode');
-
     let response_prototype = {
-      response_type: response_code
+      response_type: this.parameters.get('responsecode')
     };
 
-    let terminal_response = new TerminalResponse(response_prototype);
+    let vendor_response = this.parameters.get('vendorresponse', null, false);
 
-    return terminal_response;
+    if(!_.isNull(vendor_response) && _.isFunction(vendor_response.getParsedResponse)){
+      response_prototype.vendor_response = vendor_response.getParsedResponse();
+    }
+
+    return new TerminalResponse(response_prototype);
 
   }
 

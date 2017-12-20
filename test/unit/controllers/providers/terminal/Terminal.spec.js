@@ -12,6 +12,87 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
+function getValidVendorResponseClass(){
+
+  let valid_vendor_response = getValidVendorResponse();
+
+  let VendorResponseClass = global.SixCRM.routes.include('vendors','fulfillmentproviders/ThreePL/Response.js');
+
+  return new VendorResponseClass({error: null, response: valid_vendor_response, body: valid_vendor_response.body})
+
+}
+
+function getValidVendorResponse(){
+
+  return {
+    statusCode:200,
+    statusMessage: 'OK',
+    body: getValidVendorResponseBody()
+  }
+}
+
+function getValidVendorResponseBody(){
+
+  return '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><FindOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">&lt;orders&gt;&lt;order&gt;&lt;CustomerName&gt;Tests Hashtag Tests&lt;/CustomerName&gt;&lt;CustomerEmail&gt;Charlie.C@Hashtagfulfillment.com&lt;/CustomerEmail&gt;&lt;CustomerPhone&gt;&lt;/CustomerPhone&gt;&lt;Facility&gt;Hashtag Fulfillment&lt;/Facility&gt;&lt;FacilityID&gt;2&lt;/FacilityID&gt;&lt;WarehouseTransactionID&gt;1181282&lt;/WarehouseTransactionID&gt;&lt;ReferenceNum&gt;Order 682&lt;/ReferenceNum&gt;&lt;PONum&gt;&lt;/PONum&gt;&lt;Retailer /&gt;&lt;ShipToCompanyName&gt;Example Company&lt;/ShipToCompanyName&gt;&lt;ShipToName&gt;Example Company&lt;/ShipToName&gt;&lt;ShipToEmail&gt;&lt;/ShipToEmail&gt;&lt;ShipToPhone&gt;&lt;/ShipToPhone&gt;&lt;ShipToAddress1&gt;Example Address&lt;/ShipToAddress1&gt;&lt;ShipToAddress2&gt;&lt;/ShipToAddress2&gt;&lt;ShipToCity&gt;Example City&lt;/ShipToCity&gt;&lt;ShipToState&gt;CA&lt;/ShipToState&gt;&lt;ShipToZip&gt;90505&lt;/ShipToZip&gt;&lt;ShipToCountry&gt;US&lt;/ShipToCountry&gt;&lt;ShipMethod&gt;Next Day Air&lt;/ShipMethod&gt;&lt;MarkForName&gt;&lt;/MarkForName&gt;&lt;BatchOrderID /&gt;&lt;CreationDate&gt;2016-01-19T14:56:00&lt;/CreationDate&gt;&lt;EarliestShipDate /&gt;&lt;ShipCancelDate /&gt;&lt;PickupDate /&gt;&lt;Carrier&gt;Fed Ex&lt;/Carrier&gt;&lt;BillingCode&gt;BillThirdParty&lt;/BillingCode&gt;&lt;TotWeight&gt;0.33&lt;/TotWeight&gt;&lt;TotCuFt&gt;0.00&lt;/TotCuFt&gt;&lt;TotPackages&gt;1.0000&lt;/TotPackages&gt;&lt;TotOrdQty&gt;1.0000&lt;/TotOrdQty&gt;&lt;TotLines&gt;1.00&lt;/TotLines&gt;&lt;Notes&gt;&lt;/Notes&gt;&lt;OverAllocated&gt;&lt;/OverAllocated&gt;&lt;PickTicketPrintDate /&gt;&lt;ProcessDate&gt;2016-01-19&lt;/ProcessDate&gt;&lt;TrackingNumber&gt;&lt;/TrackingNumber&gt;&lt;LoadNumber&gt;&lt;/LoadNumber&gt;&lt;BillOfLading&gt;&lt;/BillOfLading&gt;&lt;MasterBillOfLading&gt;&lt;/MasterBillOfLading&gt;&lt;ASNSentDate /&gt;&lt;ConfirmASNSentDate&gt;&lt;/ConfirmASNSentDate&gt;&lt;RememberRowInfo&gt;1181282:10:2::2016/01/19:0:False:1:735163&lt;/RememberRowInfo&gt;&lt;/order&gt;&lt;/orders&gt;</FindOrders><totalOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">2786</totalOrders></soap:Body></soap:Envelope>';
+
+}
+
+function getValidTestVendorParsedResponse(){
+
+  return {
+    orders:{
+      order:[
+        { CustomerName: [ 'Tests Hashtag Tests' ],
+          CustomerEmail: [ 'Charlie.C@Hashtagfulfillment.com' ],
+          CustomerPhone: [ '' ],
+          Facility: [ 'Hashtag Fulfillment' ],
+          FacilityID: [ '2' ],
+          WarehouseTransactionID: [ '1181282' ],
+          ReferenceNum: [ 'Order 682' ],
+          PONum: [ '' ],
+          Retailer: [ '' ],
+          ShipToCompanyName: [ 'Example Company' ],
+          ShipToName: [ 'Example Company' ],
+          ShipToEmail: [ '' ],
+          ShipToPhone: [ '' ],
+          ShipToAddress1: [ 'Example Address' ],
+          ShipToAddress2: [ '' ],
+          ShipToCity: [ 'Example City' ],
+          ShipToState: [ 'CA' ],
+          ShipToZip: [ '90505' ],
+          ShipToCountry: [ 'US' ],
+          ShipMethod: [ 'Next Day Air' ],
+          MarkForName: [ '' ],
+          BatchOrderID: [ '' ],
+          CreationDate: [ '2016-01-19T14:56:00' ],
+          EarliestShipDate: [ '' ],
+          ShipCancelDate: [ '' ],
+          PickupDate: [ '' ],
+          Carrier: [ 'Fed Ex' ],
+          BillingCode: [ 'BillThirdParty' ],
+          TotWeight: [ '0.33' ],
+          TotCuFt: [ '0.00' ],
+          TotPackages: [ '1.0000' ],
+          TotOrdQty: [ '1.0000' ],
+          TotLines: [ '1.00' ],
+          Notes: [ '' ],
+          OverAllocated: [ '' ],
+          PickTicketPrintDate: [ '' ],
+          ProcessDate: [ '2016-01-19' ],
+          TrackingNumber: [ '' ],
+          LoadNumber: [ '' ],
+          BillOfLading: [ '' ],
+          MasterBillOfLading: [ '' ],
+          ASNSentDate: [ '' ],
+          ConfirmASNSentDate: [ '' ],
+          RememberRowInfo: [ '1181282:10:2::2016/01/19:0:False:1:735163' ]
+        }
+      ]
+    }
+  };
+
+}
+
 function getValidShippingReceipt(){
 
   return {
@@ -41,17 +122,8 @@ function getValidCompoundFulfillmentResponse(){
 
   return {
     shipping_receipt: getValidShippingReceipt(),
-    fulfillment_response: getValidFulfillmentResponse()
+    fulfillment_response: getValidVendorResponseClass()
   };
-
-}
-
-function getValidFulfillmentResponse(){
-
-  const FulfillmentResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Hashtag/Response.js');
-  let response = new FulfillmentResponse({error: null, response: {statusCode: 200, body: 'um'}, body:'um'});
-
-  return response;
 
 }
 
@@ -683,7 +755,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
         }
         execute({fulfillment_provider_id, augmented_transaction_products}){
-          return Promise.resolve(getValidFulfillmentResponse());
+          return Promise.resolve(getValidVendorResponseClass());
         }
       };
 
@@ -710,7 +782,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
         expect(result).to.equal(true);
 
         arrayutilities.map(terminalController.parameters.get('compoundfulfillmentresponses'), compound_fulfillment_response => {
-          expect(compound_fulfillment_response.fulfillment_response.getCode()).to.equal('success');
+          expect(compound_fulfillment_response.vendor_response.getCode()).to.equal('success');
         });
 
       });
@@ -792,11 +864,23 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
   });
 
-  xdescribe('test', () => {
+  describe('test', () => {
 
     it('Successfully executes a test of a fulfillment provider', () => {
 
       let fulfillment_provider = getValidFulfillmentProvider();
+      let vendor_response_class = getValidVendorResponseClass();
+
+      let test_helper_mock = class {
+        constructor(){
+
+        }
+        execute({fulfillment_provider_id}){
+          return Promise.resolve(vendor_response_class);
+        }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Test.js'), test_helper_mock);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
         get:({id}) => {
@@ -809,7 +893,9 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
       return terminalController.test({fulfillment_provider_id: fulfillment_provider.id}).then(result => {
 
-        du.info(result); process.exit();
+        expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
+        expect(result.getCode()).to.equal('success');
+        expect(result.getVendorResponse()).to.deep.equal(vendor_response_class.getParsedResponse());
 
       });
 
@@ -868,7 +954,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
         }
         execute({fulfillment_provider_id, augmented_transaction_products}){
-          return Promise.resolve(getValidFulfillmentResponse());
+          return Promise.resolve(getValidVendorResponseClass());
         }
       };
 

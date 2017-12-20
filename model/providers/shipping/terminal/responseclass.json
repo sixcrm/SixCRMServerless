@@ -1,0 +1,5 @@
+{
+  "id":"/providers/shipping/terminal/responseclass.json",
+  "title":"Terminal Response Class",
+  "type":"object"
+}
