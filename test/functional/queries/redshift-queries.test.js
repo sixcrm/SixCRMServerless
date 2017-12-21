@@ -31,7 +31,7 @@ describe('queries/redshift-queries.js', () => {
 
     arrayutilities.map(tests, (test) => {
         beforeEach((done) => {
-            dropDatabase(test)
+            dropDatabase()
                 .then(() => createTables(test))
                 .then(() => seedDatabase(test))
                 .then(() => done());
@@ -70,7 +70,7 @@ describe('queries/redshift-queries.js', () => {
     }
 
     function dropDatabase() {
-        return Promise.resolve();
+        return redshiftSchemaDeployment.destroy();
     }
 
     function createTables() {

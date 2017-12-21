@@ -36,7 +36,7 @@ FROM (
         END) m_upsell
   FROM
     f_events
-  WHERE 1
+  WHERE 1=1
     {{filter}}
   AND   datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
   GROUP BY SESSION

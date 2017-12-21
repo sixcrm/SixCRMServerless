@@ -31,7 +31,7 @@ FROM
               ELSE 0
               END) AS transaction_count_prior
         FROM f_transactions
-        WHERE 1
+        WHERE 1 = 1
               {{filter}}
               AND datetime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND TIMESTAMP '{{end}}'
         GROUP BY campaign)
