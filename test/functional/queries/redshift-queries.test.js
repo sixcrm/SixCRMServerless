@@ -43,7 +43,8 @@ describe('queries/redshift-queries.js', () => {
                 let result_name = test.result_name;
                 let result_value = result[result_name];
 
-                expect(result_value).to.not.equal(undefined, 'Response is missing "' + result_name + '" property');
+                expect(result_value).to.not.equal(
+                    undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
                 expect(result_value).to.deep.equal(test.expect, result_value + ' does not equal ' + test.expect);
             });
 
