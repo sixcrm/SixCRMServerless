@@ -61,13 +61,12 @@ FROM
                     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
                     AND {{facet}} IS NOT NULL
               GROUP BY {{facet}}
-            )
+            ) t1
           ORDER BY transactions_count {{order}}
           LIMIT {{limit}}+1
           OFFSET {{offset}}
-        ))
+        ) t2 ) t3
    UNION ALL
-   (
      SELECT 0 AS R_ID,
        'none'      AS {{facet}},
        count(*)    AS transactions_count,
@@ -79,6 +78,5 @@ FROM
            AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
            AND {{facet}} IS NULL
      GROUP BY {{facet}}
-   )
-  )
+  ) t1
 ORDER BY transactions_count {{order}}

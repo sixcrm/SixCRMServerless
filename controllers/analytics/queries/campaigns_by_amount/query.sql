@@ -7,6 +7,6 @@ FROM
    WHERE 1 = 1
          {{filter}}
          AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-   GROUP BY campaign)
+   GROUP BY campaign) cba
 ORDER BY campaign_amount {{order}}
 LIMIT {{limit}};

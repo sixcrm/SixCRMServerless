@@ -4,7 +4,8 @@
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",
     "end": "2017-01-13T00:00:00.000Z" },
-    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+    "pagination": { "limit": 10, "order": "asc", "offset":0},
+    "facet":"type" },
   "result_name": "facets",
   "expect": {}
 }

@@ -40,4 +40,4 @@ FROM (
     {{filter}}
   AND   datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
   GROUP BY SESSION
-);
+) ef;
