@@ -19,7 +19,7 @@ describe('queries/redshift-queries.js', () => {
     let test_dirs = fileutilities.getDirectoryList(test_directory);
 
     arrayutilities.map(test_dirs, (dir) => {
-        tests.push(prepareTest(dir));
+        prepareTest(dir);
     });
 
     before(() => {
@@ -40,8 +40,11 @@ describe('queries/redshift-queries.js', () => {
         it(`returns results from ${test.method}`, () => {
             PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
             return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
+                let result_name = test.result_name;
+                let result_value = result[result_name];
 
-                expect(result[test.result_name]).to.shallowDeepEqual(test.expect);
+                expect(result_value).to.not.equal(undefined, 'Response is missing "' + result_name + '" property');
+                expect(result_value).to.deep.equal(test.expect, result_value + ' does not equal ' + test.expect);
             });
 
         });
@@ -53,7 +56,8 @@ describe('queries/redshift-queries.js', () => {
 
         test.directory = directory;
         test.seeds = test.directory + 'seeds/';
-        return test;
+
+        tests.push(test);
     }
 
     function seedDatabase(test) {
