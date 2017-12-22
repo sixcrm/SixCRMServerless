@@ -629,10 +629,7 @@ class RandomRedshiftData extends workerController {
 
             let new_timestamp = timestamp.dateToTimestamp(event_object.datetime) + additional_seconds;
 
-            new_timestamp = Math.min(100000000000000,new_timestamp);
-
-            du.debug(new_timestamp);
-
+            new_timestamp = Math.min(3000000000,new_timestamp);
             event_object['datetime'] = timestamp.toISO8601(new_timestamp);
 
         }
@@ -759,7 +756,7 @@ class RandomRedshiftData extends workerController {
 
         new_timestamp = Math.min(100000000000000,new_timestamp);
 
-        du.debug(timestamp.toISO8601(new_timestamp));
+        du.highlight(timestamp.toISO8601(new_timestamp));
 
         return timestamp.toISO8601(new_timestamp);
 
