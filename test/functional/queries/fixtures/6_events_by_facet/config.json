@@ -7,5 +7,5 @@
     "facet": "affiliate",
     "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
   "result_name": "facets",
-  "expect": {}
+  "expect": [{"facet":"99999999-999e-44aa-999e-aaa9a99a9999","count":1,"percentage":"100.00%"}]
 }
