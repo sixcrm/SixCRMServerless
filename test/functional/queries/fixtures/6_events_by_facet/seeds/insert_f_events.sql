@@ -15,6 +15,20 @@ INSERT INTO f_events (session, type, datetime, account, campaign, product_schedu
       '99999999-999e-44aa-999e-aaa9a99a9999'
    UNION ALL
    SELECT
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      'lead',
+      timestamp'2017-01-02 00:00:00.000000',
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      '99999999-999e-44aa-999e-aaa9a99a9999',
+      '99999999-999e-44aa-999e-aaa9a99a9999'
+   UNION ALL
+   SELECT
       '668ad918-0d09-4116-a6fe-0e8a9eda36f7',
       'lead',
       timestamp'2017-04-06T18:40:41.405Z',
