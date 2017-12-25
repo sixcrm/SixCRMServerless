@@ -634,13 +634,11 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Execute Query');
 
-    // I am sure this could be cleaner
-
-    if(process.env.TEST_IMAGE == 'true'){
+    if(global.SixCRM.configuration.stage === 'local') {
       query = this.transformQuery(query);
+      du.info(query);
     }
 
-    du.info(query)
     return this.redshiftqueryutilities.query(query);
 
   }
