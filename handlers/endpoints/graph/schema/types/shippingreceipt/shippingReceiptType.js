@@ -10,9 +10,9 @@ module.exports.graphObj = new GraphQLObjectType({
   	id: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The id of the shipping receipt.',
-  },
+    },
         status: {
-            type: new GraphQLNonNull(GraphQLString),
+            type: GraphQLString,
             description: 'A shipping status',
         },
         trackingnumber: {

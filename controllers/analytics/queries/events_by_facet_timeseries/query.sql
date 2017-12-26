@@ -9,7 +9,7 @@ FROM
       *
     FROM
       f_events
-    WHERE 1
+    WHERE 1=1
       {{filter}}
       AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
   ) ft
@@ -25,10 +25,10 @@ FROM
           distinct {{facet}}
         FROM
           f_events
-          WHERE 1
+          WHERE 1=1
           {{filter}}
       )
-    WHERE 1
+    WHERE 1=1
       AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
     GROUP BY
       {{facet}},

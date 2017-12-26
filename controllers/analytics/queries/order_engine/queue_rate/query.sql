@@ -31,7 +31,7 @@ FROM
      )                     num_of_success_rebills,
      sum(
          CASE
-         WHEN m_datetime = datetime and datetime - 14 < getdate()
+         WHEN m_datetime = datetime and datetime < now() + interval '14 days'
            THEN 1
          ELSE 0
          END
@@ -41,8 +41,8 @@ FROM
   SELECT fr.*,
          max(datetime) over (partition by id_rebill) as m_datetime
   FROM f_rebills fr
-WHERE 1
+WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-  AND previous_queuename NOT LIKE 'fail%' and previous_queuename != 'pending' )
-GROUP BY previous_queuename);
+  AND previous_queuename NOT LIKE 'fail%' and previous_queuename != 'pending' ) rebill_sub_1
+GROUP BY previous_queuename) rebill_sub_2;
