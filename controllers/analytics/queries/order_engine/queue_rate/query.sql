@@ -44,5 +44,5 @@ FROM
 WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-  AND previous_queuename NOT LIKE 'fail%' and previous_queuename != 'pending' )
-GROUP BY previous_queuename);
+  AND previous_queuename NOT LIKE 'fail%' and previous_queuename != 'pending' ) rebill_sub_1
+GROUP BY previous_queuename) rebill_sub_2;
