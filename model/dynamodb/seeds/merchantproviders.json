@@ -23,8 +23,7 @@
 			"type":"NMI",
 			"name":"NMI",
 			"username":"demo",
-			"password":"password",
-			"endpoint":"https://secure.networkmerchants.com/api/transact.php"
+			"password":"password"
 		},
 		"allow_prepaid":true,
 		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
@@ -60,8 +59,7 @@
 			"type":"NMI",
 			"name":"NMI",
 			"username":"demo",
-			"password":"password",
-			"endpoint":"https://secure.networkmerchants.com/api/transact.php"
+			"password":"password"
 		},
 		"allow_prepaid":true,
 		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],

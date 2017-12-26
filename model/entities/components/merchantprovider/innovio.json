@@ -1,0 +1,28 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/entities/components/merchantprovider/innovio.json",
+	"title": "A Innovio Merchant Provider",
+	"type":"object",
+  "properties":{
+    "name":{
+      "type":"string",
+      "enum":["Innovio"]
+    },
+    "username":{
+      "type":"string"
+    },
+    "password":{
+      "type":"string"
+    },
+    "product_id":{
+      "type":"string"
+    },
+    "site_id":{
+      "type":"string"
+    },
+    "merchant_account_id":{
+      "type":"string"
+    }
+  },
+  "required":["name","username","password"]
+}

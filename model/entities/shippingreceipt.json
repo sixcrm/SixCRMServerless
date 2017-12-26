@@ -9,19 +9,7 @@
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"history":{
 			"type":"array",
-			"items":{
-				"type":"object",
-				"properties":{
-					"created_at":{"$ref": "../definitions/iso8601.json"},
-					"status":{
-						"type":"string"
-					},
-					"detail":{
-						"type":"string"
-					}
-				},
-				"required":["created_at", "status"]
-			}
+			"items":{"$ref":"./components/shippingreceipt/historyelement.json"}
 		},
 		"fulfillment_provider":{"$ref": "../definitions/uuidv4.json"},
 		"fulfillment_provider_reference":{
@@ -30,8 +18,11 @@
 		"trackingnumber": {
 			"type":"string"
 		},
+		"status":{
+			"type":"string"
+		},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["account", "fulfillment_provider", "created_at", "updated_at"]
+	"required":["account", "fulfillment_provider", "status", "created_at", "updated_at"]
 }

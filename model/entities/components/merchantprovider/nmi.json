@@ -1,0 +1,22 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/entities/components/merchantprovider/nmi.json",
+	"title": "A NMI Merchant Provider",
+	"type":"object",
+  "properties":{
+    "name":{
+      "type":"string",
+      "enum":["NMI"]
+    },
+    "username":{
+      "type":"string"
+    },
+    "password":{
+      "type":"string"
+    },
+    "processor_id": {
+			"type": "string"
+		}
+  },
+  "required":["name","username","password"]
+}

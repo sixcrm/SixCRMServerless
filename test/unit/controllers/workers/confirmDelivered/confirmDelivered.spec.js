@@ -11,6 +11,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 function getValidMessage(){
@@ -32,16 +33,7 @@ function getValidShippingStati(){
 
 function getValidShippingReceipt(){
 
-  return {
-    id:uuidV4(),
-		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		trackingnumber: randomutilities.createRandomString(10),
-    history:[],
-    fulfillment_provider: uuidV4(),
-    fulfillment_provider_reference: uuidV4(),
-		created_at: timestamp.getISO8601(),
-		updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidShippingReceipt();
 
 }
 

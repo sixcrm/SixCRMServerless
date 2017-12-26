@@ -37,17 +37,6 @@ class ModelGenerator {
             // validator utilities accept. We either need to generate better uris, or have more correct validation.
             // In the meantime here we manually change the values of uris when whe _know_ they are needed.
 
-            if (name === 'entities/fulfillmentprovider') {
-                generated_object.endpoint = 'http://test.com';
-
-            }
-
-            if (name === 'entities/merchantprovider' || name === 'transaction/merchantprovider') {
-                generated_object.gateway.endpoint = 'http://test.com';
-            }
-
-            du.info(generated_object);
-
             return generated_object;
 
         });
