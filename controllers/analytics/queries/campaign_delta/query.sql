@@ -31,10 +31,10 @@ FROM
               ELSE 0
               END) AS transaction_count_prior
         FROM f_transactions
-        WHERE 1
+        WHERE 1 = 1
               {{filter}}
               AND datetime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND TIMESTAMP '{{end}}'
-        GROUP BY campaign)
-    )
+        GROUP BY campaign) cd
+    ) cd
      ORDER BY abs(percent_change_count) DESC, percent_change_count, percent_change_amount
 LIMIT {{limit}};

@@ -143,9 +143,8 @@ We have tests that cover our analytics queries. In order to run them you need a 
 
 1. `docker pull circleci/postgres:9.6`
 2. `docker run -p 5432:5432 circleci/postgres:9.6` (keep running in a separate terminal)
-3. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/deploy_tables.js`
-4. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/seed_test_referential.js`
-5. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/seed_test_tables.js` 
+3. `SIX_VERBOSE=2 stage=local node -r ./SixCRM.js ./deployment/redshift/deploy_tables.js`
+4. `SIX_VERBOSE=2 stage=local node -r ./SixCRM.js ./deployment/redshift/seed_test_referential.js`
 6. `npm run test-queries`
 
 ### Integration tests

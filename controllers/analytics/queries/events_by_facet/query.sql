@@ -39,26 +39,24 @@ FROM
                 sum(count(*))
                 OVER ( )    AS all_events_count
               FROM f_events
-              WHERE 1
+              WHERE 1 = 1
                     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
                     AND {{facet}} IS NOT NULL
               GROUP BY {{facet}}
-            )
+            ) sfe
           ORDER BY events_count {{order}}
           LIMIT {{limit}}+1
           OFFSET {{offset}}
-        ))
+        ) sfo ) fso
    UNION ALL
-   (
      SELECT 0 AS R_ID,
        'none'      AS {{facet}},
        count(*)    AS events_count,
        {{offset}}           AS all_events_count
      FROM f_events
-     WHERE 1
+     WHERE 1 = 1
            AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
            AND {{facet}} IS NULL
      GROUP BY {{facet}}
-   )
-  )
+ ) ecl
 ORDER BY events_count {{order}}
