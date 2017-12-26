@@ -13,7 +13,7 @@ SELECT
   fe.subaffiliate_5
 FROM
   f_events fe
-WHERE 1
+WHERE 1=1
 {{filter}}
 AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 ORDER BY DATETIME {{order}}

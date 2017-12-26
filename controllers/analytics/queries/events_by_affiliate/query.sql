@@ -7,7 +7,7 @@ FROM
       affiliate,
       coalesce(count(*), 0) AS affiliate_count
     FROM f_events
-    WHERE 1
+    WHERE 1=1
     {{filter}}
     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
     GROUP BY affiliate

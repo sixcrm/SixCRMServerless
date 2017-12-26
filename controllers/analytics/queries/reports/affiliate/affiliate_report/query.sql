@@ -31,7 +31,7 @@ FROM
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
    FROM f_events fe
-   WHERE 1
+   WHERE 1=1
      {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
    GROUP BY affiliate,
@@ -50,7 +50,7 @@ RIGHT OUTER JOIN
           affiliate,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
    FROM f_transactions
-   WHERE 1
+   WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
    GROUP BY affiliate,

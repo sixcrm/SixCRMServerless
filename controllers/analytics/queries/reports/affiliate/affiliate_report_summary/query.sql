@@ -28,7 +28,7 @@ FROM
                     ELSE NULL
                 END) count_sales
    FROM f_events fe
-   WHERE 1
+   WHERE 1=1
     {{filter}}
    AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
    GROUP BY affiliate) fe
@@ -45,7 +45,7 @@ RIGHT OUTER JOIN
                 END) decline_count,
           affiliate
    FROM f_transactions
-   WHERE 1
+   WHERE 1=1
     {{filter}}
    AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
    GROUP BY affiliate) ft ON (fe.affiliate = ft.affiliate)
