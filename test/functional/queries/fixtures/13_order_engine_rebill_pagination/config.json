@@ -4,7 +4,11 @@
     "analyticsfilter":
   { "start": "2017-04-01T00:00:00.000Z",
     "end": "2017-05-01T00:00:00.000Z" },
-    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
-  "result_name": "queues",
-  "expect":   {}
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 },
+  "period":"day" },
+  "result_name": "summary",
+  "expect":  [{"datetime":"2017-04-05T22:00:00.000Z","count":"1"},
+              {"datetime":"2017-04-06T22:00:00.000Z","count":"2"},
+              {"datetime":"2017-04-07T22:00:00.000Z","count":"1"},
+              {"datetime":"2017-04-09T22:00:00.000Z","count":"1"}]
 }

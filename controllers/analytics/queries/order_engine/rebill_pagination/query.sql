@@ -1,7 +1,7 @@
 SELECT
   DATE_TRUNC('{{period}}',DATETIME) AS datetime,
   COUNT(*) AS count
-FROM f_queue_count fq
+FROM f_rebills fq
 WHERE 1=1
  {{filter}}
  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
