@@ -98,9 +98,10 @@ function getValidShippingReceipt(){
   return {
     id:uuidV4(),
 		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		status:"pending",
 		trackingnumber: randomutilities.createRandomString(10),
-		trackingstatus: "intransit",
+    history:[],
+    fulfillment_provider: uuidV4(),
+    fulfillment_provider_reference: uuidV4(),
 		created_at: timestamp.getISO8601(),
 		updated_at:timestamp.getISO8601()
   };

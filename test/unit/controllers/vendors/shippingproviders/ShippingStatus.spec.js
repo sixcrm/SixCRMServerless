@@ -27,15 +27,18 @@ function getValidShippingProviderResponse(){
 }
 
 function getValidShippingReceipt(){
+
   return {
     id:uuidV4(),
 		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		status:"in-transit",
-		trackingnumber:randomutilities.createRandomString(20),
-		trackingstatus:"in-transit",
-		created_at:timestamp.getISO8601(),
+		trackingnumber: randomutilities.createRandomString(10),
+    history:[],
+    fulfillment_provider: uuidV4(),
+    fulfillment_provider_reference: uuidV4(),
+		created_at: timestamp.getISO8601(),
 		updated_at:timestamp.getISO8601()
-  }
+  };
+
 }
 
 describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
