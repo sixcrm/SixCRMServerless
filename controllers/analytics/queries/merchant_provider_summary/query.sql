@@ -32,7 +32,7 @@ FROM
                   ELSE 0
               END ) amount_transactions_month
    FROM f_transactions
-   WHERE 1
+   WHERE 1=1
      {{filter}}
      AND datetime BETWEEN add_months(getdate(),-1) AND getdate()
    GROUP BY merchant_provider

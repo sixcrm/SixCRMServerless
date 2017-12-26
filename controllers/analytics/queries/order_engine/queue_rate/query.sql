@@ -41,7 +41,7 @@ FROM
   SELECT fr.*,
          max(datetime) over (partition by id_rebill) as m_datetime
   FROM f_rebills fr
-WHERE 1
+WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
   AND previous_queuename NOT LIKE 'fail%' and previous_queuename != 'pending' )
