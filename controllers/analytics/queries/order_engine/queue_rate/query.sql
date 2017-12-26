@@ -31,7 +31,7 @@ FROM
      )                     num_of_success_rebills,
      sum(
          CASE
-         WHEN m_datetime = datetime and datetime - 14 < getdate()
+         WHEN m_datetime = datetime and datetime < now() + interval '14 days'
            THEN 1
          ELSE 0
          END
