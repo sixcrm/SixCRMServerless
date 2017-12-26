@@ -245,15 +245,29 @@ TRANSACTIONS_SUB5 AS (SELECT sum(amount) sum_amount,
   UNION ALL
   SELECT * FROM TRANSACTIONS_SUB4)
 SELECT ft.subaffiliate,
-       nvl(fe.count_click,0) AS count_click,
-       nvl(fe.count_partials,0) AS count_partials,
-       decode(nvl(fe.count_click,0),0,0, 1.0*fe.count_partials / fe.count_click) AS partials_percent,
+       coalesce(fe.count_click,0) AS count_click,
+       coalesce(fe.count_partials,0) AS count_partials,
+       case
+          when coalesce(fe.count_click,0) = 0 then 0
+          else 1.0*fe.count_partials / fe.count_click
+       end AS partials_percent,
        coalesce(decline_count,0) AS decline_count,
-       coalesce(decode(nvl(decline_count,0),0,0, 1.0*decline_count / fe.count_click),0) AS declines_percent,
-       nvl(fe.count_sales,0) AS count_sales,
-       decode(nvl(fe.count_sales,0),0,0, 1.0*fe.count_sales / fe.count_click) AS sales_percent,
-       nvl(fe.count_upsell,0) AS count_upsell ,
-       decode(nvl(fe.count_upsell,0),0,0, 1.0*fe.count_upsell / fe.count_click) AS upsell_percent,
+       coalesce(
+         case
+            when coalesce(decline_count,0) = 0 then 0
+            else 1.0*decline_count / fe.count_click
+            end
+       ,0) AS declines_percent,
+       coalesce(fe.count_sales,0) AS count_sales,
+       case
+          when coalesce(fe.count_sales,0) = 0 then 0
+          else 1.0*fe.count_sales / fe.count_click
+       end AS sales_percent,
+       coalesce(fe.count_upsell,0) AS count_upsell ,
+       case
+          when coalesce(fe.count_upsell,0) = 0 then 0
+          else 1.0*fe.count_upsell / fe.count_click
+       end AS upsell_percent,
        sum_upsell,
        sum_amount,
        fe.{{period}} AS {{period}}
