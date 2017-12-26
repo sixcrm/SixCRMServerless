@@ -26,31 +26,38 @@ describe('queries/redshift-queries.js', () => {
     before(() => {
         global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
         global.user = 'admin.user@test.com';
+
+        process.env.stage = 'local';
+        global.SixCRM.configuration.stage = 'local';
     });
 
     arrayutilities.map(tests, (test) => {
-        beforeEach((done) => {
-            dropDatabase()
-                .then(() => createTables(test))
-                .then(() => seedDatabase(test))
-                .then(() => done());
-        });
 
         it(`returns results from ${test.method}`, () => {
             PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
-            return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
-                let result_name = test.result_name;
-                let result_value = result[result_name];
 
-                expect(result_value).to.not.equal(
-                    undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
-                expect(result_value).to.deep.equal(
-                    test.expect, JSON.stringify(result_value) + ' does not equal ' + JSON.stringify(test.expect));
+            return prepareDatabase(test).then(() => {
+                return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
+                    let result_name = test.result_name;
+                    let result_value = result[result_name];
+
+                    expect(result_value).to.not.equal(
+                        undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
+                    expect(result_value).to.deep.equal(
+                        test.expect, JSON.stringify(result_value) + ' does not equal ' + JSON.stringify(test.expect));
+                });
             });
+
 
         });
 
     });
+
+    function prepareDatabase(test) {
+        return dropDatabase()
+            .then(() => createTables(test))
+            .then(() => seedDatabase(test));
+    }
 
     function prepareTest(dir) {
         let directory = test_directory + '/' + dir + '/';
