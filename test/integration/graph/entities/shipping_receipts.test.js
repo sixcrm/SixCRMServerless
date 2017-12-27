@@ -51,19 +51,19 @@ describe('Graph '+entity+' Test', function() {
               let account = test_account.id;
 
               it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
-                  var query = tu.getQuery(test.query);
+                var query = tu.getQuery(test.query);
 
-                  this_request.post('graph/'+account)
-							.set('Authorization', test_jwt)
-							.send(query)
-							.expect(200)
-							.expect('Content-Type', 'application/json')
-							.expect('Access-Control-Allow-Origin','*')
-							.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-							.end(function(err, response){
-    tu.assertResultSetAsync(response, test_user.role, test.name, done);
-});
+                this_request.post('graph/'+account)
+  							.set('Authorization', test_jwt)
+  							.send(query)
+  							.expect(200)
+  							.expect('Content-Type', 'application/json')
+  							.expect('Access-Control-Allow-Origin','*')
+  							.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
+  							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
+  							.end(function(err, response){
+                  tu.assertResultSetAsync(response, test_user.role, test.name, done);
+                });
               });
           });
 
