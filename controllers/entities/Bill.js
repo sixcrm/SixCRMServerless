@@ -19,6 +19,7 @@ class billController extends entityController {
 
     du.debug('Update');
 
+    //Technical Debt:  This doesn't work with the seeding strategy (permissionUtilties.disableACLs)
     if(this.isMasterAccount()){
       return super.update(arguments[0]);
     }
@@ -31,6 +32,7 @@ class billController extends entityController {
 
     du.debug('Create');
 
+    //Technical Debt:  This doesn't work with the seeding strategy (permissionUtilties.disableACLs)
     if(this.isMasterAccount()){
       return super.create(arguments[0]);
     }
