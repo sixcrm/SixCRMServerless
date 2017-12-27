@@ -203,7 +203,6 @@ describe('lib/dynamodb-utilities', () => {
 
     it('should execute a recursive query and return a single result', () => {
 
-
       let table_name = 'sessions';
       let index = 'account-index';
       let parameters = {
