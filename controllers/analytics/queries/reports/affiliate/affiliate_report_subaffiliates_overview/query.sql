@@ -49,6 +49,6 @@ WHERE 1=1
 GROUP BY subaffiliate_5
 )
 SELECT subaffiliate,
-       sum(amount) as AMOUNT
+       sum(amount) as amount
 FROM SUBAFFILIATES
 GROUP BY subaffiliate;

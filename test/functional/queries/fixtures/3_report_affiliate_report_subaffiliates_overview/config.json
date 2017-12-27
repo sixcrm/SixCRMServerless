@@ -1,0 +1,11 @@
+{
+  "method": "getAffiliateReportSubaffiliatesOverview",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-13T00:00:00.000Z" },
+    "period":"day",
+    "pagination": { "limit": 2, "order": "asc", "offset": 0 } },
+  "result_name": "undefined",
+  "expect": {"count":1,"affiliates":[{"subaffiliate":"99999999-999e-44aa-999e-aaa9a99a9999","amount":"279.98"}]}
+}
