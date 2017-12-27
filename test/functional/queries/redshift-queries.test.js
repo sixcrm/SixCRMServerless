@@ -40,7 +40,7 @@ describe('queries/redshift-queries.js', () => {
             return prepareDatabase(test).then(() => {
                 return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
                     let result_name = test.result_name;
-                    let result_value = result[result_name];
+                    let result_value = (result_name === "undefined") ? result : result[result_name];
 
                     expect(result_value).to.not.equal(
                         undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
