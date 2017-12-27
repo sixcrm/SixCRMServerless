@@ -72,6 +72,8 @@ redshift:
   port: 5432
   max: 10
   idle_timeout: 30000
+  randomdata:
+      interval: 300
 
 notifications:
   apn:
