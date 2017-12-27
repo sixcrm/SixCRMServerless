@@ -13,6 +13,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         work_phone:	    { type: GraphQLString },
         cell_phone:	    { type: GraphQLString },
         timezone:	    { type: GraphQLString },
+        language:	    { type: GraphQLString },
         notifications:	{ type: new GraphQLList(userNotificationSettingInputType.graphObj), },
     })
 });
