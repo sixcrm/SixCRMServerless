@@ -438,7 +438,6 @@ class AnalyticsController extends AnalyticsUtilities{
         ['actor', 'actor_type','acted_upon', 'acted_upon_type','associated_with', 'associated_with_type'].forEach((argument) => {
             this_query_filter = arrayutilities.removeElement(this_query_filter, argument);
         });
-
         return this.getResults('activity_by_identifier', parameters, this_query_filter);
 
     }
