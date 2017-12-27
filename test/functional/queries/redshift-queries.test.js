@@ -18,7 +18,7 @@ describe('queries/redshift-queries.js', () => {
 
     const test_directory = __dirname + '/fixtures';
     // this is temporary here, ignore tests where second letter is *, not first as we want to keep the folder structure
-    let test_dirs = fileutilities.getDirectoryList(test_directory).filter(test => test[1] !='*');
+    let test_dirs = fileutilities.getDirectoryList(test_directory).filter(test => !test.includes('*'));
 
     arrayutilities.map(test_dirs, (dir) => {
         prepareTest(dir);
