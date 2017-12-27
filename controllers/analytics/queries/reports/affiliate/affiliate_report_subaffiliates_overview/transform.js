@@ -17,7 +17,7 @@ module.exports = function(results, parameters){
 
             result_array.push({
       			  subaffiliate: result.subaffiliate,
-              amount: result.affiliate
+              amount: result.amount
             });
 
         });

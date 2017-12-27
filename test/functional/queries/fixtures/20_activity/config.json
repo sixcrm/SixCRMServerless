@@ -1,0 +1,22 @@
+{
+  "method": "getActivity",
+  "input": {
+    "activityfilter":{
+      "start":"2017-01-01T15:51:57Z",
+      "end": "2017-01-31T15:51:57Z",
+      "action": ["continued"]
+    },
+    "pagination": { "limit": 1, "offset": 0, "order": "desc" } },
+  "result_name": "activity",
+  "expect":  [{"id":"25324eaf-80f2-4c87-b696-bb66aa2ee028",
+               "datetime":"2017-01-06T09:06:54.000Z",
+               "actor":"rama@damunaste.org",
+               "actor_type":"customer",
+               "action":"continued",
+               "acted_upon":"rama@damunaste.org",
+               "acted_upon_type":"notificationread",
+               "associated_with":"","associated_with_type":"",
+               "english":"{\"actor\":{\"id\":\"rama@damunaste.org\",\"type\":\"customer\"},\"acted_upon\":{\"id\":\"rama@damunaste.org\",\"type\":\"notificationread\"},\"english_template\":\"{actor} {action} {acted_upon}.\"}"}
+             ]
+
+}
