@@ -42,8 +42,10 @@ describe('controllers/Notification.js', () => {
                 },
                 saveRecord: (table, item) => {
                     return Promise.resolve({});
+                },
+                countRecords: () => {
+                    return Promise.resolve({ Count: 2});
                 }
-
             });
 
             let mock_preindexing_helper = class {

@@ -585,6 +585,20 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    getCount({parameters, index, fatal}) {
+        if (_.isUndefined(fatal)) {
+            fatal = false;
+        }
+
+        return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
+            .then((permission) => this.catchPermissions(permission, 'read'))
+            .then(() => {
+                parameters = this.appendAccountFilter({query_parameters: parameters});
+
+                return this.dynamoutilities.countRecords(this.table_name, parameters, index);
+            })
+    }
+
     checkAssociatedEntities({id}){
 
       du.debug('Check Associated Entities');

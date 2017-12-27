@@ -34,7 +34,7 @@ class notificationController extends entityController {
         };
 
       })
-      .then(query_parameters => this.queryByParameters({parameters: query_parameters, index: 'user-index'}))
+      .then(query_parameters => this.getCount({parameters: query_parameters, index: 'user-index'}))
       .then(data => {
 
         if(objectutilities.has(data, 'Count', true)){
