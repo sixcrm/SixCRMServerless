@@ -1,5 +1,6 @@
 {
   "method": "getMerchantReport",
+  "test_case": "random input",
   "input": {
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",

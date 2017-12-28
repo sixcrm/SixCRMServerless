@@ -34,7 +34,7 @@ describe('queries/redshift-queries.js', () => {
 
     arrayutilities.map(tests, (test) => {
 
-        it(`returns results from ${test.method}`, () => {
+        it(`returns results from ${test.method} using test case ${test.test_case}`, () => {
             PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
 
             return prepareDatabase(test).then(() => {
@@ -88,6 +88,10 @@ describe('queries/redshift-queries.js', () => {
 
     function dropDatabase() {
         return redshiftSchemaDeployment.destroy();
+    }
+
+    function seedReferentialDatabase() {
+        return redshiftSchemaDeployment.seed_test_referential();
     }
 
     function createTables() {
