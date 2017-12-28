@@ -2,7 +2,7 @@ INSERT INTO public.f_transactions (id, datetime, customer, creditcard, merchant_
   ((
      SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
-      timestamp'2017-01-01T18:50:41.405Z',
+      timestamp'2017-01-02T18:50:41.405Z',
       '99999999-999e-44aa-999e-aaa9a99a9999',
       '99999999-999e-44aa-999e-aaa9a99a9999',
       '99999999-999e-44aa-999e-aaa9a99a9999',

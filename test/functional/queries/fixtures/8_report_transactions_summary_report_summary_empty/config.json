@@ -1,6 +1,6 @@
 {
   "method": "getTransactionSummaryReportSummary",
-  "test_case": "query out off bounds",
+  "test_case": "random input with out of bounds query input",
   "input": {
     "analyticsfilter":
   { "start": "2017-07-01T00:00:00.000Z",
