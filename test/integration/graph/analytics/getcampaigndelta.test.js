@@ -48,7 +48,7 @@ describe('Get '+test_name+' Test', function() {
 
         du.info(test_jwt, account.id, query);
 
-        this_request.post('graph/'+account.id)
+        this_request.post('graph/'+account.id, {timeout: 5000})
 				.set('Authorization', test_jwt)
 				.send(query)
 				.expect(200)
