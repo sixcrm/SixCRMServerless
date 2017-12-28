@@ -1,6 +1,6 @@
 {
   "method": "getTransactionSummaryReport",
-  "test_case": "input to get new transactions",
+  "test_case": "input to get chargeback transactions",
   "input": {
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",
