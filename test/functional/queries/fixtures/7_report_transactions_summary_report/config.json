@@ -4,20 +4,20 @@
   "input": {
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",
-    "end": "2017-01-13T00:00:00.000Z" },
+    "end": "2017-01-31T00:00:00.000Z" },
     "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
   "result_name": "periods",
-  "expect": [{
-    "period": "2017-01-01T23:00:00.000Z",
-    "sale_count": "1",
-    "sale_revenue": "139.99",
-    "rebill_count": "0",
-    "rebill_revenue": "0",
-    "refund_expenses": "0",
-    "refund_count": "0",
-    "gross_revenue": "139.99",
-    "declines_count": "0",
-    "declines_revenue": "0",
-    "chargeback_count": "0",
-    "current_active_customer": "1",
-    "count_alert_count": 0 } ]}
+  "expect":  [{"period":"2016-12-31T23:00:00.000Z",
+               "sale_count":"2",
+               "sale_revenue":"44.99",
+               "rebill_count":"1",
+               "rebill_revenue":"124.99",
+               "refund_expenses":"4.99",
+               "refund_count":"1",
+               "gross_revenue":"169.98",
+               "declines_count":"1",
+               "declines_revenue":"139.99",
+               "chargeback_count":"1",
+               "current_active_customer":"2",
+               "count_alert_count":0}]
+}

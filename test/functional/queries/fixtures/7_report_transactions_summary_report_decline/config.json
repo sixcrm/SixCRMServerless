@@ -1,0 +1,27 @@
+{
+  "method": "getTransactionSummaryReport",
+  "test_case": "input to get declined transactions",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-30T00:00:00.000Z" },
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "periods",
+  "expect":  [
+        {
+          "chargeback_count": "1",
+          "count_alert_count": 0,
+          "current_active_customer": "2",
+          "declines_count": "6",
+          "declines_revenue": "1671.88",
+          "gross_revenue": "0",
+          "period": "2017-01-01T23:00:00.000Z",
+          "rebill_count": "0",
+          "rebill_revenue": "0",
+          "refund_count": "0",
+          "refund_expenses": "0",
+          "sale_count": "0",
+          "sale_revenue": "0"
+        }
+      ]
+}
