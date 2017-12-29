@@ -1,6 +1,6 @@
 {
   "method": "getAffiliateReportSubaffiliatesOverview",
-  "test_case": "random input",
+  "test_case": "input where the same affiliate is in in different subaffiliates_* columns",
   "input": {
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",
