@@ -90,10 +90,6 @@ describe('queries/redshift-queries.js', () => {
         return redshiftSchemaDeployment.destroy();
     }
 
-    function seedReferentialDatabase() {
-        return redshiftSchemaDeployment.seed_test_referential();
-    }
-
     function createTables() {
         return redshiftSchemaDeployment.deployTables();
     }
