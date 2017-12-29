@@ -88,10 +88,17 @@ deployment:
       ###########
 
       ###########
+      #IAM roles
+      - node ./deployment/iam/destroy_roles.js
+      - node ./deployment/iam/deploy_roles.js
+      ###########
+
+      ###########
       #DynamoDB
       # Technical Debt: Upgrade this to purge only TEST data
       #- node ./deployment/dynamodb/purge_tables.js
       - ./tools/changesInDirectory.sh deployment/dynamodb &&  node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
       ###########
 
       ##########
@@ -160,10 +167,17 @@ deployment:
       ###########
 
       ###########
+      #IAM roles
+      - node ./deployment/iam/destroy_roles.js
+      - node ./deployment/iam/deploy_roles.js
+      ###########
+
+      ###########
       #DynamoDB
       # Technical Debt: Upgrade this to purge only TEST data
       #- node ./deployment/dynamodb/purge_tables.js
       - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
       ###########
 
       ##########
@@ -235,15 +249,16 @@ deployment:
       ###########
 
       ###########
-      #DynamoDB
-      #- node ./deployment/dynamodb/purge_tables.js && exit 0;
-      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
-      ###########
-
-      ###########
       #IAM roles
       - node ./deployment/iam/destroy_roles.js
       - node ./deployment/iam/deploy_roles.js
+      ###########
+
+      ###########
+      #DynamoDB
+      #- node ./deployment/dynamodb/purge_tables.js && exit 0;
+      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
       ###########
 
       ###########
