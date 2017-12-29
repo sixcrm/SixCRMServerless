@@ -1,5 +1,6 @@
 {
   "method": "getActivityByIdentifier",
+  "test_case": "random input",
   "input": {
     "activityfilter":{
       "start":"2017-01-01T15:51:57Z",

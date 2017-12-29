@@ -1,0 +1,18 @@
+{
+  "method": "getMerchantReport",
+  "test_case": "random input with refund transaction type",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-13T00:00:00.000Z" },
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "merchants",
+  "expect": [{"merchant_provider":"6c40761d-8919-4ad6-884d-6a46a776cfb9",
+              "sale_count":"0",
+              "sale_gross_revenue":"0",
+              "refund_expenses":"29.99",
+              "refund_count":"2",
+              "net_revenue":"-29.99",
+              "mtd_sales_count":"0",
+              "mtd_gross_count":"0"}]
+}

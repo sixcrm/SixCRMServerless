@@ -1,5 +1,6 @@
 {
   "method": "getQueueRates",
+  "test_case": "random input",
   "input": {
     "analyticsfilter":
   { "start": "2017-04-01T00:00:00.000Z",
