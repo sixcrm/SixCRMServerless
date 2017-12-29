@@ -9,8 +9,8 @@ Typical changes where :
 (Redshift) nvl to (PostgreSQL) coalesce
 (Redshift) decode to (PostgreSQL) case
 
-All queries that are integrated in the *Analytics.js* class are/will be covered with test, be there integrated via GraphQL or no.
-
+All queries that are integrated in the *Analytics.js* class are/will be covered with test, be there integrated via GraphQL or not.
+All queries are covered with multiple tests whose specifics are described in the config.json of the respectfully test.
 
 ## Tests
 
