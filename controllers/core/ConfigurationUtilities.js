@@ -75,6 +75,11 @@ module.exports = class ConfigurationUtilities {
 
       }else{
 
+          if (process.env.TEST_MODE === 'true') {
+              du.debug('Test Mode');
+              return Promise.resolve();
+          }
+
         eu.throwError('server', 'Maximum attempts exhausted.');
 
       }
