@@ -1,0 +1,18 @@
+{
+  "id":"/deployment/dynamodb/autoscaling/tablenames.json",
+  "title":"DynamoDB Table Names",
+  "type":"object",
+  "properties":{
+    "Table":{
+      "type":"object",
+      "properties":{
+        "TableArn":{"$ref":"../../../definitions/arn.json"},
+        "TableName":{
+          "type":"string"
+        }
+      },
+      "required":["TableArn","TableName"]
+    }
+  },
+  "required":["Table"]
+}

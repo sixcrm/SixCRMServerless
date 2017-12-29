@@ -59,30 +59,6 @@
 	"updated_at":"2017-04-24T18:41:12.521Z"
 },
 {
-	"name":"KrisTrujillo",
-	"first_name": "Kris",
-	"last_name": "Trujillo",
-	"auth0_id":"abc123",
-	"id":"kris@sixcrm.com",
-	"active":true,
-	"termsandconditions":"0.1",
-	"alias":"a0733c92cfde7964bb91ee0f6fe99d4c7168cdc8",
-	"created_at":"2017-04-06T18:40:41.405Z",
-	"updated_at":"2017-04-06T18:41:12.521Z"
-},
-{
-	"name":"Mychael Walton",
-	"first_name": "Mychael",
-	"last_name": "Walton",
-	"auth0_id":"google-oauth2|115021313586107803846",
-	"id":"waltr0n21@gmail.com",
-	"active":true,
-	"termsandconditions":"0.1",
-	"alias":"c3c9866a90ca48bd565b2291671702158a2c468b",
-	"created_at":"2017-04-06T18:40:41.405Z",
-	"updated_at":"2017-04-06T18:41:12.521Z"
-},
-{
 	"name":"Customer Service Test User",
 	"first_name": "Customer Service",
 	"last_name": "Test User",
@@ -155,30 +131,6 @@
 	"alias":"f07632079dc5536880bae702123369df62b9940f",
 	"created_at":"2017-04-06T18:40:41.405Z",
 	  "updated_at":"2017-04-06T18:41:12.521Z"
-},
-{
-  "name":"Mychael Walton",
-  "first_name": "Mychael",
-  "last_name": "Walton",
-  "auth0_id":"awdawdawdawdawd",
-  "id":"mychael.walton@crmblackbox.com",
-  "active":true,
-  "termsandconditions":"0.1",
-  "alias":"e6ee25453cada3474a985a887a7daf0b2f989a9c",
-  "created_at":"2017-04-06T18:40:41.405Z",
-  "updated_at":"2017-04-06T18:41:12.521Z"
-},
-{
-  "name":"Nathan Brenner",
-  "first_name": "Nathan",
-  "last_name": "Brenner",
-  "auth0_id":"awdawdawdawdawd",
-  "id":"nathan.brenner@crmblackbox.com",
-  "active":true,
-  "termsandconditions":"0.1",
-  "alias":"114e90febcc27bad5d0d4a7d189adaf68e06b10c",
-  "created_at":"2017-04-06T18:40:41.405Z",
-  "updated_at":"2017-04-06T18:41:12.521Z"
 },
 {
   "name":"Aldo Zelen",

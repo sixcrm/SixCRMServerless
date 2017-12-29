@@ -16,22 +16,6 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
   },
   {
-      "id":"6bbf9d03-033d-44e6-a02b-b87868b65efe",
-      "account":"*",
-      "user":"kris@sixcrm.com",
-      "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-  },
-  {
-      "id":"51447f6b-e2ea-4ba6-952a-5ff9fe85872f",
-    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    "user":"kris@sixcrm.com",
-    "role":"1116c054-42bb-4bf5-841e-ee0c413fa69e",
-    "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-  },
-  {
       "id":"2e947415-f6eb-46e9-af8a-17c57bd01998",
       "account":"*",
       "user":"nikola.bosic@toptal.com",
@@ -65,14 +49,6 @@
       "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
       "created_at":"2017-04-24T18:40:41.405Z",
       "updated_at":"2017-04-24T18:41:12.521Z"
-  },
-  {
-      "id":"ad489e81-2422-4b03-9c8d-7da51e697ecd",
-      "account":"*",
-      "user":"waltr0n21@gmail.com",
-      "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
   },
   {
       "id":"ba10bdfb-e1c9-4e78-815a-837812ee46da",
@@ -130,14 +106,6 @@
       "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
       "created_at":"2017-04-06T18:40:41.405Z",
           "updated_at":"2017-04-06T18:41:12.521Z"
-  },
-  {
-    "account": "*",
-    "created_at": "2017-06-15T14:22:59.547Z",
-    "id": "0102e36a-9936-48a6-8c75-4a2b39ba8e51",
-    "role": "cae614de-ce8a-40b9-8137-3d3bdff78039",
-    "updated_at": "2017-06-15T14:22:59.547Z",
-    "user": "nathan.brenner@crmblackbox.com"
   },
   {
     "account": "*",

@@ -1,0 +1,6 @@
+{
+  "id":"/deployment/dynamodb/autoscaling/scalingpolicyconfigurations.json",
+  "title":"DynamoDB Table Autoscaling Scaling Policy Configurations",
+  "type":"array",
+  "items":{"$ref":"scalingpolicyconfiguration.json"}
+}

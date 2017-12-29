@@ -1,0 +1,6 @@
+{
+  "id":"/deployment/dynamodb/autoscaling/autoscalingconfigurations.json",
+  "title":"DynamoDB Autoscaling Configurations",
+  "type":"array",
+  "items":{"$ref":"autoscalingconfiguration.json"}
+}

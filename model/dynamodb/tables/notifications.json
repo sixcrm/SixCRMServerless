@@ -22,10 +22,6 @@
       {
         "AttributeName": "account",
         "AttributeType": "S"
-      },
-      {
-        "AttributeName": "type",
-        "AttributeType": "S"
       }
     ],
     "GlobalSecondaryIndexes": [
