@@ -10,8 +10,8 @@ model: /model/
 config: /config/
 deployment: /deployment/
 providers: /controllers/providers/
-tabledefinitions: /model/dynamodb/tables/
-seeds: /model/dynamodb/seeds/
+tabledefinitions: /deployment/dynamodb/configuration/tables/
+seeds: /deployment/dynamodb/configuration/seeds/
 analytics: /controllers/analytics/
 vendors: /controllers/vendors/
 authorizers: /controllers/authorizers/
