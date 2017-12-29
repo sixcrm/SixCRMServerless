@@ -37,7 +37,7 @@ let account = {
 
 let this_request = request(global.integration_test_config.endpoint);
 
-describe.only('Get '+test_name+' Test', function() {
+describe('Get '+test_name+' Test', function() {
 
     let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
