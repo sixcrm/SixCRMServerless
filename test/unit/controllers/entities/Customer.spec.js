@@ -65,6 +65,18 @@ function getValidCreditCards() {
     }]
 }
 
+function getValidCustomerNotes() {
+    return [{
+        "id":"135295f3-b1b2-4724-8911-8cc6ab54a4a9",
+        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        "customer":"24f7c851-29d4-4af9-87c5-0298fa74c689",
+        "body":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam non venenatis lacus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed et consequat mi. Sed eu volutpat lectus, ut cursus purus. Maecenas ut convallis mi, ac venenatis nunc. Donec in ante vel lorem sodales ultricies. Aliquam vel ligula vitae lorem consequat placerat. Aenean mollis molestie mollis. Ut convallis a eros a sagittis. Etiam porttitor ultrices nibh, cursus blandit orci sollicitudin vel. Morbi non egestas nisl. Vivamus congue mauris arcu, eu sodales ex ultricies vel.",
+        "user":"customerservice.user@test.com",
+        "created_at":"2017-04-06T18:40:41.405Z",
+        "updated_at":"2017-04-06T18:41:12.521Z"
+    }]
+}
+
 describe('controllers/entities/Customer.js', () => {
 
     before(() => {
@@ -123,6 +135,45 @@ describe('controllers/entities/Customer.js', () => {
 
             return customerController.getCustomerSessions(customer).then((result) => {
                 expect(result[0].session).to.deep.equal(session);
+            });
+        });
+    });
+
+    describe('listByCreditCard', () => {
+
+        it('lists customers by credit card', () => {
+            let customer = getValidCustomer();
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('customers');
+                    expect(parameters).to.have.property('key_condition_expression');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.expression_attribute_values[':id']).to.equal(customer.creditcards[0]);
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [customer]
+                    });
+                }
+            });
+
+            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+
+            return customerController.listByCreditCard({
+                creditcard: customer.creditcards[0], pagination: 0
+            }).then((result) => {
+                expect(result).to.deep.equal({
+                    customers: [customer],
+                    pagination: {
+                        count: 1,
+                        end_cursor: "",
+                        has_next_page: "false",
+                        last_evaluated: ""
+                    }
+                });
             });
         });
     });
@@ -228,6 +279,11 @@ describe('controllers/entities/Customer.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('customers');
+                    expect(parameters).to.have.property('key_condition_expression');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.expression_attribute_values[':id']).to.equal(customer.creditcards[0]);
                     return Promise.resolve({
                         Count: 2,
                         Items: [{}, {}]
@@ -266,6 +322,200 @@ describe('controllers/entities/Customer.js', () => {
 
             return customerController.getCreditCards(customer).then((result) => {
                 expect(result).to.equal(null);
+            });
+        });
+    });
+
+    describe('getMostRecentCreditCard', () => {
+
+        it('successfully retrieves most recent credit cards', () => {
+
+            let customer = getValidCustomer();
+
+            let credit_cards = getValidCreditCards();
+
+            credit_cards[1] = {
+                updated_at:"2017-12-25T10:21:12.521Z"
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('customers');
+                    expect(parameters).to.have.property('key_condition_expression');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(customer.id);
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [customer]
+                    });
+                },
+                createINQueryParameters: (field, list_array) => {
+                    expect(field).to.equal('id');
+                    expect(list_array[0]).to.equal(customer.creditcards[0]);
+                    return Promise.resolve({
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: 'an_expression_values'
+                    })
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/CreditCard.js'), {
+                listByAccount: (query_parameters) => {
+                    return Promise.resolve({creditcards: credit_cards});
+                }
+            });
+
+            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+
+            return customerController.getMostRecentCreditCard(customer).then((result) => {
+                expect(result).to.equal(credit_cards[0]);
+            });
+        });
+
+        it('returns first in line credit card when two or more credit cards have the same update date', () => {
+
+            let customer = getValidCustomer();
+
+            let credit_cards = getValidCreditCards();
+
+            credit_cards[1] = {
+                updated_at: credit_cards[0].updated_at
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('customers');
+                    expect(parameters).to.have.property('key_condition_expression');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(customer.id);
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [customer]
+                    });
+                },
+                createINQueryParameters: (field, list_array) => {
+                    expect(field).to.equal('id');
+                    expect(list_array[0]).to.equal(customer.creditcards[0]);
+                    return Promise.resolve({
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: 'an_expression_values'
+                    })
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/CreditCard.js'), {
+                listByAccount: (query_parameters) => {
+                    return Promise.resolve({creditcards: credit_cards});
+                }
+            });
+
+            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+
+            return customerController.getMostRecentCreditCard(customer).then((result) => {
+                expect(result).to.equal(credit_cards[0]);
+            });
+        });
+
+        it('returns null when customer data is empty', () => {
+
+            let customer = getValidCustomer();
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('customers');
+                    expect(parameters).to.have.property('key_condition_expression');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(customer.id);
+                    return Promise.resolve({
+                        Count: 0,
+                        Items: [{}]
+                    });
+                }
+            });
+
+            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+
+            return customerController.getMostRecentCreditCard(customer).then((result) => {
+                expect(result).to.equal(null);
+            });
+        });
+
+        it('returns null when customer data is null', () => {
+
+            let customer = getValidCustomer();
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('customers');
+                    expect(parameters).to.have.property('key_condition_expression');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(customer.id);
+                    return Promise.resolve({
+                        Count: 0,
+                        Items: [null]
+                    });
+                }
+            });
+
+            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+
+            return customerController.getMostRecentCreditCard(customer).then((result) => {
+                expect(result).to.equal(null);
+            });
+        });
+    });
+
+    describe('associatedEntitiesCheck', () => {
+
+        it('checks associated entities', () => {
+
+            let session = getValidSession();
+
+            let customer_notes = getValidCustomerNotes();
+
+            let params = {customer: getValidCustomer(), pagination: 0};
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), {
+                listByCustomer: ({customer}) => {
+                    expect(customer).to.equal(params.customer.id);
+                    return Promise.resolve({ sessions: [session] });
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CustomerNote.js'), {
+                listByCustomer: ({customer}) => {
+                    expect(customer).to.equal(params.customer.id);
+                    return Promise.resolve({ customernotes: customer_notes });
+                }
+            });
+
+            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+
+            return customerController.associatedEntitiesCheck({id: params.customer.id}).then((result) => {
+                expect(result[0]).to.deep.equal({
+                    name:'Customer Note',
+                    entity: {
+                        id: customer_notes[0].id
+                    }
+                });
+                expect(result[1]).to.deep.equal({
+                    name:'Session',
+                    entity: {
+                        id: session.id
+                    }
+                });
             });
         });
     });
