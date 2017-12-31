@@ -59,7 +59,7 @@ FROM
          ELSE 0
          END) amount_transactions_month
    FROM f_transactions
-   WHERE 1
+   WHERE 1=1
          AND merchant_provider IN (('15224d91-ff5d-4282-aa2c-783ad2fb925b'),
                                    ('8d1e896f-c50d-4a6b-8c84-d5661c16a046'),
                                    ('6c40761d-8919-4ad6-884d-6a46a776cfb9'),

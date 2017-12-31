@@ -26,6 +26,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: GraphQLString,
             description: 'Timezone.',
         },
+        language: {
+            type: GraphQLString,
+            description: 'Language.',
+        },
         notifications: {
             type: new GraphQLList(userNotificationSettingType.graphObj),
             description:'The settings for notifications.'

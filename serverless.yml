@@ -47,9 +47,9 @@ custom:
       inMemory: true
       migration: true
     migration:
-      dir: ./model/dynamodb/tables
+      dir: ./deployment/dynamodb/configuration/tables
     seed:
-      dir: ./model/dynamodb/seeds
+      dir: ./deployment/dynamodb/configuration/seeds
 
 #is this necessary here?
 site_config: ${file(./config/${opt:stage}/site.yml)}

@@ -1,0 +1,6 @@
+{
+  "id":"/deployment/dynamodb/autoscaling/scalabletargetconfigurations.json",
+  "title":"DynamoDB Table Autoscaling Scalable Target Configurations",
+  "type":"array",
+  "items":{"$ref":"scalabletargetconfiguration.json"}
+}

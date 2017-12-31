@@ -13,7 +13,7 @@ FROM
        SELECT merchant_provider AS merchant_provider
        FROM
          d_merchant_provider
-       WHERE 1
+       WHERE 1=1
              AND activity_flag = 'active'
              AND merchant_provider IN ({{merchantprovider}})
      ) ft
@@ -25,7 +25,7 @@ FROM
                      SUM(amount)                 AS sum_amount,
                      COUNT(*)                    AS transaction_count
                    FROM f_transactions
-                   WHERE 1
+                   WHERE 1=1
                       {{filter}}
                       AND merchant_provider IN ({{merchantprovider}})
                       AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

@@ -158,7 +158,7 @@ module.exports = class ActivityToEnglishUtilities {
 
         du.debug('Get');
 
-        if(!_.has(this.activity_row, type) || this.activity_row[type] == ''){
+        if(!_.has(this.activity_row, type) || this.activity_row[type] == '' || this.activity_row[type] === null){
 
             return Promise.resolve(null);
 

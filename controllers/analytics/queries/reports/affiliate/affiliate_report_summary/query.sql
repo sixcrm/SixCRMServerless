@@ -1,14 +1,35 @@
-SELECT nvl(SUM(fe.count_click),0) AS count_click,
-       nvl(SUM(fe.count_partials),0) AS count_partials,
-       SUM(decode(nvl(fe.count_click,0),0,0, 1.0*fe.count_partials / fe.count_click)) AS partials_percent,
-       SUM(coalesce(decline_count,0)) AS decline_count,
-       SUM(coalesce(decode(decline_count,0,0, 1.0*decline_count / fe.count_click),0)) AS declines_percent,
-       nvl(SUM(fe.count_sales),0) AS count_sales,
-       SUM(decode(nvl(fe.count_sales,0),0,0, 1.0*fe.count_sales / fe.count_click)) AS sales_percent,
-       nvl(SUM(fe.count_upsell),0) AS count_upsell,
-       SUM(decode(nvl(fe.count_upsell,0),0,0, 1.0*fe.count_upsell / fe.count_click)) AS upsell_percent,
-       nvl(SUM(sum_upsell),0) AS sum_upsell,
-       nvl(SUM(sum_amount),0) AS sum_amount
+SELECT coalesce(SUM(fe.count_click),0) AS count_click,
+       coalesce(SUM(fe.count_partials),0) AS count_partials,
+       coalesce(SUM(
+         case
+          when coalesce(fe.count_click,0) = 0 then 0
+          else 1.0*fe.count_partials / fe.count_click
+         end
+       ),0) AS partials_percent,
+       coalesce(SUM(coalesce(decline_count,0)),0) AS decline_count,
+       coalesce(SUM(
+         coalesce(
+           case
+            when decline_count = 0 then 0
+            else 1.0*decline_count / fe.count_click
+           end
+       ,0)),0) AS declines_percent,
+       coalesce(SUM(fe.count_sales),0) AS count_sales,
+       coalesce(SUM(
+         case
+          when coalesce(fe.count_sales,0) = 0 then 0
+          else 1.0*fe.count_sales / fe.count_click
+         end
+       ),0) AS sales_percent,
+       coalesce(SUM(fe.count_upsell),0) AS count_upsell,
+       coalesce(SUM(
+         case
+          when coalesce(fe.count_upsell,0) = 0 then 0
+          else 1.0*fe.count_upsell / fe.count_click
+         end
+       ),0) AS upsell_percent,
+       coalesce(SUM(sum_upsell),0) AS sum_upsell,
+       coalesce(SUM(sum_amount),0) AS sum_amount
 FROM
   (SELECT affiliate,
           count(CASE
@@ -28,7 +49,7 @@ FROM
                     ELSE NULL
                 END) count_sales
    FROM f_events fe
-   WHERE 1
+   WHERE 1=1
     {{filter}}
    AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
    GROUP BY affiliate) fe
@@ -45,7 +66,7 @@ RIGHT OUTER JOIN
                 END) decline_count,
           affiliate
    FROM f_transactions
-   WHERE 1
+   WHERE 1=1
     {{filter}}
    AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
    GROUP BY affiliate) ft ON (fe.affiliate = ft.affiliate)

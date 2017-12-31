@@ -1,0 +1,13 @@
+{
+  "method": "getAffiliateReportSubaffiliatesOverview",
+  "test_case": "input where the multiple affiliates is in in different subaffiliates_* columns",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-13T00:00:00.000Z" },
+    "period":"day",
+    "pagination": { "limit": 5, "order": "asc", "offset": 0 } },
+  "result_name": "undefined",
+  "expect": {"count":2,"affiliates":[{"subaffiliate":"70a6689a-5814-438b-b9fd-dd484d0812f9","amount":"29.99"},
+            {"subaffiliate":"99999999-999e-44aa-999e-aaa9a99a9999","amount":"139.99"}]}
+}

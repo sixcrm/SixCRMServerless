@@ -61,7 +61,7 @@ To start a local SQS server, make sure the file `tools/elasticmq/runLocalSqs.sh`
 and run it (`tools/elasticmq/runLocalSqs.sh`). It will download and run the local ElasticMQ server which is compatible with SQS.
 You can use it as an Amazon SQS instance, including calling methods documented in the Amazon SQS API Reference: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/Welcome.html
 After running the server you can execute the deploy script to create queues. You can do so by running `SIX_VERBOSE=2 AWS_PROFILE=six stage=local node deployment/sqs/deploy_queues.js`.
-Much like local DynamoDB, local SQS server keeps the queues in-memory, which means that after restarting it you need to create queues again. 
+Much like local DynamoDB, local SQS server keeps the queues in-memory, which means that after restarting it you need to create queues again.
 
 #### Redis
 
@@ -143,10 +143,7 @@ We have tests that cover our analytics queries. In order to run them you need a 
 
 1. `docker pull circleci/postgres:9.6`
 2. `docker run -p 5432:5432 circleci/postgres:9.6` (keep running in a separate terminal)
-3. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/deploy_tables.js`
-4. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/seed_test_referential.js`
-5. `SIX_VERBOSE=2 stage=development TEST_IMAGE=true node -r ./SixCRM.js ./deployment/redshift/seed_test_tables.js` 
-6. `npm run test-queries`
+3. `npm run test-queries`
 
 ### Integration tests
 

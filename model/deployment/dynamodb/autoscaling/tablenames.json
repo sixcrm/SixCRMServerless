@@ -1,0 +1,8 @@
+{
+  "id":"/deployment/dynamodb/autoscaling/tablenames.json",
+  "title":"DynamoDB Table Names",
+  "type":"array",
+  "items":{
+    "type":"string"
+  }
+}

@@ -15,5 +15,5 @@ SELECT fs.id,
        fs.cid
 FROM f_sessions fs
 LEFT OUTER JOIN f_product_schedules fps ON (fs.id = fps.session_id)
-WHERE 1
+WHERE 1=1
   AND id = {{SESSION}};

@@ -19,7 +19,7 @@ module.exports = function(results, parameters){
           sale_gross_revenue:result.sale_gross_revenue,
           refund_expenses:result.refund_expenses,
           refund_count:result.refund_count,
-          net_revenue:result.net_Revenue,
+          net_revenue:result.net_revenue,
           mtd_sales_count:result.mtd_sales_count,
           mtd_gross_count:result.mtd_gross_count
         };

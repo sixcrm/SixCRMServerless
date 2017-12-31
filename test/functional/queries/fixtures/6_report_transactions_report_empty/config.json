@@ -1,0 +1,11 @@
+{
+  "method": "getTransactionsReport",
+  "test_case": "random input with out of bounds query input",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-07-01T00:00:00.000Z",
+    "end": "2017-08-01T00:00:00.000Z" },
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "transactions",
+  "expect": []
+}

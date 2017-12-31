@@ -65,6 +65,18 @@ module.exports = class Parameters {
 
   }
 
+  unset(key){
+
+    du.debug('Unset');
+
+    if(_.has(this.store, key)){
+
+      delete this.store[key];
+
+    }
+
+  }
+
   getAll(){
 
     du.debug('Get All');

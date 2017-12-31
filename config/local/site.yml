@@ -65,14 +65,15 @@ shipping_providers:
     password: '392VM80MW850'
 
 redshift:
-  user: 'admin'
-  database: 'analytics'
-  password: 'Jagodica9'
-  port: 5439
+  user: 'root'
+  database: 'circle_test'
+  password: ''
+  host: 'localhost'
+  port: 5432
   max: 10
   idle_timeout: 30000
   randomdata:
-    interval: 300
+      interval: 300
 
 notifications:
   apn:

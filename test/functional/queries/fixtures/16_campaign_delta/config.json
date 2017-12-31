@@ -1,0 +1,11 @@
+{
+  "method": "getCampaignDelta",
+  "test_case": "random input",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-13T00:00:00.000Z" },
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "campaigns",
+  "expect": [{"campaign":"70a6689a-5814-438b-b9fd-dd484d0812f9","percent_change_amount":"13899.00%","percent_change_count":"0.00%"}]
+}

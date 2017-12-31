@@ -9,9 +9,19 @@ function getValidBucketObjects() {
 
 describe('lib/s3-utilities', () => {
 
+    let test_mode;
+    before(() => {
+        test_mode = process.env.TEST_MODE;
+        process.env.TEST_MODE = 'false';
+    });
+
     beforeEach(() => {
         // cleanup
         delete require.cache[require.resolve(global.SixCRM.routes.path('lib', 's3-utilities.js'))];
+    });
+
+    after(() => {
+        process.env.TEST_MODE = test_mode;
     });
 
     describe('assureDelete', () => {

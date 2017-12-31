@@ -9,6 +9,7 @@
 		"work_phone":{"$ref": "../definitions/phone.json"},
 		"cell_phone":{"$ref": "../definitions/phone.json"},
 		"timezone":{"$ref": "../definitions/timezone.json"},
+		"language":{"$ref": "../definitions/language.json"},
 		"notifications":{
 			"type":"array",
 			"items":{

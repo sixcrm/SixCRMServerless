@@ -7,17 +7,22 @@
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"status":{
+		"history":{
+			"type":"array",
+			"items":{"$ref":"./components/shippingreceipt/historyelement.json"}
+		},
+		"fulfillment_provider":{"$ref": "../definitions/uuidv4.json"},
+		"fulfillment_provider_reference":{
 			"type":"string"
 		},
 		"trackingnumber": {
 			"type":"string"
 		},
-		"trackingstatus": {
+		"status":{
 			"type":"string"
 		},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["account", "status", "trackingnumber", "created_at", "updated_at"]
+	"required":["account", "fulfillment_provider", "status", "created_at", "updated_at"]
 }

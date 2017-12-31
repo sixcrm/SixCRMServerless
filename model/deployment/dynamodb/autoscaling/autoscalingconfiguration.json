@@ -1,0 +1,17 @@
+{
+  "id":"/deployment/dynamodb/autoscaling/autoscalingconfiguration.json",
+  "title":"DynamoDB Autoscaling Configuration",
+  "type":"object",
+  "properties":{
+    "ResourceId":{
+      "type":"string"
+    },
+    "scalable_targets":{
+      "type":"array"
+    },
+    "scaling_policies":{
+      "type":"array"
+    }
+  },
+  "required":["ResourceId", "scalable_targets","scaling_policies"]
+}

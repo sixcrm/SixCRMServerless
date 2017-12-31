@@ -164,11 +164,14 @@ module.exports = class Configuration extends ConfigurationUtilities {
   }
 
     regenerateCloudsearchConfiguration() {
-        du.debug('Regenerate Cloudsearch Configuration');
 
-        const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+      //Technical Debt:  This is causing some issues in unit tests...
+      du.debug('Regenerate Cloudsearch Configuration');
 
-        return cloudsearchutilities.saveDomainConfiguration();
+      const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+      return cloudsearchutilities.saveDomainConfiguration();
+
     }
 
   isValidConfiguration(key, value){

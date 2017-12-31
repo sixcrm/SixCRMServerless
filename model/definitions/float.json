@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/float.json",
+  "title": "Float",
+  "type":"number",
+  "description": "A floating point number"
+}

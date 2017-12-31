@@ -10,7 +10,6 @@ module.exports = function(results, parameters){
   let result = results[0];
 
   return Promise.resolve({
-    period: result.period,
     sale_count: result.sale_count,
     sale_revenue: result.sale_revenue,
     rebill_count: result.rebill_count,

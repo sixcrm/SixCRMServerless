@@ -140,7 +140,7 @@ describe('lib/cloudsearch-utilities', () => {
 
     describe('describeDomains', () => {
 
-        it('describe domains', () => {
+        xit('describe domains', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
@@ -175,7 +175,7 @@ describe('lib/cloudsearch-utilities', () => {
         });
     });
 
-    describe('waitFor', () => {
+    xdescribe('waitFor', () => {
 
         it('returns true when status is ready', () => {
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');

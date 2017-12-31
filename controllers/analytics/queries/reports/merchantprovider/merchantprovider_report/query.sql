@@ -35,7 +35,7 @@ SELECT
         WHEN processor_result = 'success' AND type = 'refund' THEN amount
         ELSE 0
       END
-  ),0) AS net_Revenue,
+  ),0) AS net_revenue,
   coalesce(SUM(
       CASE
         WHEN processor_result = 'success' AND type = 'new' AND datetime >= DATE_TRUNC('Month',current_date) THEN 1

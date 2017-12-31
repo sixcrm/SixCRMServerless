@@ -16,6 +16,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
       super();
 
       this.dynamodbutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
+      this.iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
 
       this.controllers = [];
 
@@ -198,49 +199,6 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
       });
 
     }
-    /*
-    deployTables() {
-
-      du.debug('Deploy Tables');
-
-      return this.getTableDefinitionFilenames().then((table_definition_filenames) => {
-
-        let table_deployment_promises = arrayutilities.map(table_definition_filenames, (table_definition_filename) => {
-          return () => this.deployTable(table_definition_filename);
-        });
-
-        let table_deployment_functions = arrayutilities.chunk(table_deployment_promises, 2);
-
-        let reduction_function = (current, next) => {
-
-          if(arrayutilities.nonEmpty(current)){
-
-            let current_promises = arrayutilities.map(current, entry => {
-              return entry();
-            });
-
-            du.highlight('current promises: ', current_promises);
-
-            return Promise.all(current_promises);
-
-          }else{
-
-            return Promise.all(current).then(() => {
-              return next;
-            });
-
-          }
-
-        };
-
-        return arrayutilities.serial(table_deployment_functions, reduction_function, Promise.resolve()).then(() => {
-          return 'Complete';
-        });
-
-      });
-
-    }
-    */
 
     destroyTables(){
 

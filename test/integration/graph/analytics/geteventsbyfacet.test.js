@@ -44,7 +44,7 @@ describe('Get '+test_name+' Test', function() {
     it('Should return return a 200 HTTP response code', function (done) {
         var query = tu.getQuery(test_query);
 
-        this_request.post('graph/'+account.id)
+        this_request.post('graph/'+account.id,{timeout: 5000})
 				.set('Authorization', test_jwt)
 				.send(query)
 				.expect(200)
