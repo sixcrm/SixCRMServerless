@@ -41,6 +41,8 @@ class RandomRedshiftData extends workerController {
         };
 
         this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
+        this.start_datetime = '2017-11-20T00:00:00.000Z';
+        this.end_datetime = '2018-02-01T00:00:00.000Z';
 
     }
 
@@ -627,12 +629,9 @@ class RandomRedshiftData extends workerController {
 
             let additional_seconds = Math.round(randomutilities.randomGaussian(20, 5));
 
-            let new_timestamp = timestamp.dateToTimestamp(event_object.datetime) + additional_seconds;
+            let new_timestamp = parseInt(timestamp.dateToTimestamp(event_object.datetime)) + additional_seconds;
 
-            new_timestamp = Math.min(100000000000000,new_timestamp);
-
-            du.debug(new_timestamp);
-
+            new_timestamp = Math.min(3000000000,new_timestamp);
             event_object['datetime'] = timestamp.toISO8601(new_timestamp);
 
         }
@@ -747,19 +746,14 @@ class RandomRedshiftData extends workerController {
     createDatetimeOverRange(start_datetime, end_datetime){
 
         du.debug('Select Create Datetime Over Range');
-
         let start_time_seconds = timestamp.dateToTimestamp(start_datetime);
         let end_time_seconds = timestamp.dateToTimestamp(end_datetime);
-
         let period_length = end_time_seconds - start_time_seconds;
-
         let random_uniform_scalar = randomutilities.randomDouble(0, 1, 5);
-
-        let new_timestamp = ((period_length) * random_uniform_scalar) + start_time_seconds;
-
+        let new_timestamp = period_length * random_uniform_scalar + parseInt(start_time_seconds);
         new_timestamp = Math.min(100000000000000,new_timestamp);
 
-        du.debug(timestamp.toISO8601(new_timestamp));
+        du.highlight(timestamp.toISO8601(new_timestamp));
 
         return timestamp.toISO8601(new_timestamp);
 
