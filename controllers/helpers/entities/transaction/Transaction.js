@@ -17,10 +17,10 @@ module.exports = class TransactionHelperController {
         },
         optional:{}
       },
-      updateTransactionProduct:{
+      updateTransactionProducts:{
         required:{
-          transactionid:'id',
-          transactionproduct:'transaction_product'
+          transactionid:'transaction_id',
+          updatedtransactionproducts:'updated_transaction_products'
         },
         optional:{}
       }
@@ -60,8 +60,6 @@ module.exports = class TransactionHelperController {
 
   markTransactionChargeback({transactionid, chargeback_status}){
 
-    du.warning(arguments[0]);
-
     du.debug('Mark Transaction Chargeback');
 
     return Promise.resolve(true)
@@ -82,9 +80,12 @@ module.exports = class TransactionHelperController {
     let transaction_id = this.parameters.get('transactionid');
 
     return this.transactionController.get({id: transaction_id}).then(transaction => {
+
       if(_.isNull(transaction)){ eu.throwError('notfound', 'Transaction not found.'); }
+
       this.parameters.set('transaction', transaction);
       return true;
+
     });
 
   }
@@ -117,12 +118,14 @@ module.exports = class TransactionHelperController {
 
   }
 
-  updateTransactionProduct({id, transaction_product}){
+  updateTransactionProducts({transaction_id, updated_transaction_products}){
 
     du.debug('Update Transaction Product');
 
+    du.output(arguments[0]);
+
     return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateTransactionProduct'}))
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateTransactionProducts'}))
     .then(() => this.acquireTransaction())
     .then(() => this.updateTransactionProductsPrototype())
     .then(() => this.updateTransaction())
@@ -137,17 +140,35 @@ module.exports = class TransactionHelperController {
     du.debug('Update Transaction Product Prototype');
 
     let transaction =  this.parameters.get('transaction');
-    let updated_transaction_product = this.parameters.get('transactionproduct');
+    let updated_transaction_products = this.parameters.get('updatedtransactionproducts');
 
-    transaction.products = arrayutilities.map(transaction.products, transaction_product => {
+    let missed_transaction_products = arrayutilities.filter(updated_transaction_products, updated_transaction_product => {
 
-      if(transaction_product.product == updated_transaction_product.product){
-        return updated_transaction_product;
+      let found_product = arrayutilities.find(transaction.products, (transaction_product, index) => {
+
+        if(transaction_product.product == updated_transaction_product.product && transaction_product.price == updated_transaction_product.price){
+          transaction.products[index] = updated_transaction_product;
+          return true;
+        }
+
+        return false;
+
+      });
+
+      if(_.isNull(found_product) || _.isUndefined(found_product)){
+        return true;
       }
 
-      return transaction_product;
+      return false;
 
     });
+
+    if(arrayutilities.nonEmpty(missed_transaction_products)){
+
+      du.info(missed_transaction_products);
+      eu.throwError('server', 'Unaccounted for transaction products in update.');
+
+    }
 
     this.parameters.set('transaction', transaction);
 

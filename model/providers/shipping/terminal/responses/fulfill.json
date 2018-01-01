@@ -1,0 +1,17 @@
+{
+  "id":"/providers/shipping/terminal/responses/fulfill.json",
+  "title":"Fulfill response object",
+  "type":"object",
+  "properties":{
+    "success":{
+      "type":"boolean"
+    },
+    "message":{
+      "type":"string"
+    },
+    "reference_number":{
+      "type":"string"
+    }
+  },
+  "required":["reference_number", "success", "message"]
+}

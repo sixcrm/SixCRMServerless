@@ -69,7 +69,7 @@ describe('controllers/helpers/indexing/Indexing.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

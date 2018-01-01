@@ -1,10 +1,12 @@
 'use strict'
 const _ = require('underscore');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -130,6 +132,18 @@ module.exports = class ShipmentUtilities {
 
   }
 
+  hydrateShippingReceiptProperties(){
+
+    du.debug('Hydrate Shipping Receipt Properties');
+
+    let shipping_receipt = this.parameters.get('shippingreceipt');
+
+    this.parameters.set('fulfillmentproviderid', shipping_receipt.fulfillment_provider);
+
+    return this.hydrateFulfillmentProvider();
+
+  }
+
   hydrateProducts(){
 
     du.debug('Hydrate Products');
@@ -140,7 +154,9 @@ module.exports = class ShipmentUtilities {
 
     product_ids = arrayutilities.unique(product_ids);
 
-    return this.productController.getListByAccount({ids: product_ids}).then(products => {
+    return this.productController.getListByAccount({ids: product_ids})
+    .then(results => this.productController.getResult(results, 'products'))
+    .then(products => {
 
       this.parameters.set('products', products);
 
@@ -253,6 +269,41 @@ module.exports = class ShipmentUtilities {
     });
 
     this.parameters.set('hydratedaugmentedtransactionproducts', hydrated_augmented_transaction_products);
+
+    return true;
+
+  }
+
+  validateResponse(){
+
+    du.debug('Validate Response');
+
+    if(_.has(this, 'response_validation')){
+
+      let vendor_response = this.parameters.get('vendorresponseclass');
+
+      let parsed_response = vendor_response.getParsedResponse();
+
+      mvu.validateModel(parsed_response, this.response_validation);
+
+      return true;
+
+    }
+
+    return false;
+
+  }
+
+  pruneResponse(){
+
+    du.debug('Prune Response');
+
+    let vendor_response_class = this.parameters.get('vendorresponseclass');
+
+    vendor_response_class.parameters.unset('vendorresponse');
+    vendor_response_class.parameters.unset('response');
+
+    this.parameters.set('vendorresponseclass', vendor_response_class);
 
     return true;
 

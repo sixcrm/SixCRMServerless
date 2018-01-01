@@ -9,40 +9,41 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
-module.exports = class TestController extends ShipmentUtilities {
+module.exports = class InfoController extends ShipmentUtilities {
 
   constructor(){
 
     super();
 
     this.parameter_validation = {
+      'shippingreceipt':global.SixCRM.routes.path('model', 'entities/shippingreceipt.json'),
       'vendorresponseclass':global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/response/responseclass.json')
     };
 
     this.parameter_definition = {
       execute:{
         required:{
-          fulfillmentproviderid:'fulfillment_provider_id'
+          shippingreceipt:'shipping_receipt'
         },
         optional:{}
       }
     };
 
-    this.response_validation = global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/test.json');
+    this.response_validation = global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/info.json');
 
     this.augmentParameters();
 
   }
 
-  execute({fulfillment_provider_id}){
+  execute({shipping_receipt}){
 
-    du.debug('Fulfill');
+    du.debug('Execute');
 
     return Promise.resolve()
     .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
-    .then(() => this.hydrateFulfillmentProvider())
+    .then(() => this.hydrateShippingReceiptProperties())
     .then(() => this.instantiateFulfillmentProviderClass())
-    .then(() => this.executeTest())
+    .then(() => this.executeInfo())
     .then(() => this.validateResponse())
     .then(() => this.pruneResponse())
     .then(() => {
@@ -51,13 +52,14 @@ module.exports = class TestController extends ShipmentUtilities {
 
   }
 
-  executeTest(){
+  executeInfo(){
 
     du.debug('Execute Fulfillment');
 
     let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
+    let shipping_receipt = this.parameters.get('shippingreceipt');
 
-    return instantiated_fulfillment_provider.test().then(vendorresponseclass =>{
+    return instantiated_fulfillment_provider.info({shipping_receipt: shipping_receipt}).then(vendorresponseclass =>{
 
       this.parameters.set('vendorresponseclass', vendorresponseclass);
 

@@ -116,7 +116,7 @@ describe('/helpers/entities/fulfillmentprovider/FulfillmentProvider.json', () =>
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

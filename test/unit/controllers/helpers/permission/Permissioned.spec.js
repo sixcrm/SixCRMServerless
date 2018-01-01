@@ -23,7 +23,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

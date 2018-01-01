@@ -16,7 +16,7 @@ module.exports = class FulfillController extends ShipmentUtilities {
     super();
 
     this.parameter_validation = {
-      'providerresponse':global.SixCRM.routes.path('model', 'providers/shipping/terminal/providerresponse.json')
+      'vendorresponseclass':global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/vendorresponseclass.json')
     };
 
     this.parameter_definition = {
@@ -28,6 +28,8 @@ module.exports = class FulfillController extends ShipmentUtilities {
         optional:{}
       }
     };
+
+    this.response_validation = global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/fulfill.json');
 
     this.augmentParameters();
 
@@ -42,9 +44,26 @@ module.exports = class FulfillController extends ShipmentUtilities {
     .then(() => this.hydrateRequestProperties())
     .then(() => this.instantiateFulfillmentProviderClass())
     .then(() => this.executeFulfillment())
+    .then(() => this.validateResponse())
+    .then(() => this.pruneResponse())
     .then(() => {
-      return this.parameters.get('providerresponse');
+      return this.parameters.get('vendorresponseclass');
     });
+
+  }
+
+  pruneResponse(){
+
+    du.debug('Prune Response');
+
+    let vendor_response_class = this.parameters.get('vendorresponseclass');
+
+    vendor_response_class.parameters.unset('vendorresponse');
+    vendor_response_class.parameters.unset('response');
+
+    this.parameters.set('vendorresponseclass', vendor_response_class);
+
+    return true;
 
   }
 
@@ -83,9 +102,14 @@ module.exports = class FulfillController extends ShipmentUtilities {
     let hydrated_augmented_transaction_products = this.parameters.get('hydratedaugmentedtransactionproducts');
     let customer = this.parameters.get('customer');
 
-    return instantiated_fulfillment_provider.fulfill({customer: customer, products: hydrated_augmented_transaction_products}).then(providerresponse =>{
+    //Technical Debt:  So why all the work to create these things?
+    let products = arrayutilities.map(hydrated_augmented_transaction_products, hydrated_augmented_transaction_product => {
+      return hydrated_augmented_transaction_product.product;
+    });
 
-      this.parameters.set('providerresponse', providerresponse);
+    return instantiated_fulfillment_provider.fulfill({customer: customer, products: products}).then(vendor_response_class =>{
+
+      this.parameters.set('vendorresponseclass', vendor_response_class);
 
       return true;
 

@@ -1265,7 +1265,7 @@ describe('/helpers/entities/Rebill.js', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {

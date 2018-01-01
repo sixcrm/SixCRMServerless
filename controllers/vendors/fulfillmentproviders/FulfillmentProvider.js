@@ -1,5 +1,5 @@
 'use strict';
-
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -40,15 +40,22 @@ module.exports = class fulfillmentProviderController {
 
     }
 
-    respond(){
+    respond({additional_parameters}){
 
       du.debug('Respond');
 
-      let provider_response = this.parameters.get('providerresponse');
+      let vendor_response = this.parameters.get('vendorresponse');
+      let action = this.parameters.get('action');
 
       const VendorResponseClass = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/'+this.getVendorName()+'/Response.js');
 
-      return new VendorResponseClass(provider_response);
+      let response_object = {vendor_response: vendor_response, action: action};
+
+      if(!_.isNull(additional_parameters) && !_.isUndefined(additional_parameters)){
+        response_object['additional_parameters'] = additional_parameters;
+      }
+
+      return new VendorResponseClass(response_object);
 
     }
 

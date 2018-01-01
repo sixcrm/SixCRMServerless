@@ -1,6 +1,6 @@
 {
-  "id":"/vendors/fulfillmentproviders/ThreePL/providerresponse.json",
-  "title":"Provider Response",
+  "id":"/vendors/fulfillmentproviders/ThreePL/vendorresponse.json",
+  "title":"Vendor Response",
   "type":"object",
   "properties":{
     "error":{

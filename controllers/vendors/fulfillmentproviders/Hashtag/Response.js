@@ -12,7 +12,7 @@ const ThreePLResponse = global.SixCRM.routes.include('vendors', 'fulfillmentprov
 
 module.exports = class HashtagResponse extends ThreePLResponse {
 
-  constructor({error, response, body}){
+  constructor({vendor_response, action, additional_parameters}){
 
     super(arguments[0]);
 

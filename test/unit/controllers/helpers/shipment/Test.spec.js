@@ -188,7 +188,7 @@ function getValidFulfillmentProvider(){
 
 }
 
-describe('helpers/shipment/Fulfill.js', () => {
+describe('helpers/shipment/Test.js', () => {
 
   before(() => {
     mockery.enable({
@@ -211,15 +211,16 @@ describe('helpers/shipment/Fulfill.js', () => {
 
     it('successfully constructs', () => {
 
-      let FulfillController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
-      let fulfillController = new FulfillController();
+      let TestController = global.SixCRM.routes.include('helpers', 'shipment/Test.js');
+      let testController = new TestController();
 
-      expect(objectutilities.getClassName(fulfillController)).to.equal('FulfillController');
+      expect(objectutilities.getClassName(testController)).to.equal('TestController');
 
     });
 
   });
 
+  /*
   describe('executeFulfillment', () => {
     it('successfully executes fulfillment', () => {
 
@@ -390,5 +391,5 @@ describe('helpers/shipment/Fulfill.js', () => {
 
     });
   });
-
+  */
 });
