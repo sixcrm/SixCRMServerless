@@ -22,24 +22,34 @@ class MockEntities {
 
     id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
 
-    return {
+    let firstname = randomutilities.createRandomName('first');
+    let lastname = randomutilities.createRandomName('last');
+    let email = firstname+'.'+lastname+'@'+randomutilities.createDomainName();
+
+    let customer = {
       id:id,
       account:this.getTestAccountID(),
-      email: "rama@damunaste.org",
-      firstname: "Rama",
-      lastname: "Damunaste",
-      phone: "1234567890",
+      email: email,
+      firstname: firstname,
+      lastname: lastname,
+      phone: randomutilities.createRandomPhoneNumber(),
       address:{
-        line1:"10 Downing St.",
-        city:"London",
-        state:"OR",
-        zip:"97213",
-        country:"US"
+        line1:randomutilities.createRandomAddress('line1'),
+        city:randomutilities.createRandomAddress('city'),
+        state:randomutilities.createRandomAddress('state'),
+        zip:randomutilities.createRandomAddress('zip'),
+        country:randomutilities.createRandomAddress('country')
       },
       creditcards:[uuidV4()],
       created_at:timestamp.getISO8601(),
       updated_at:timestamp.getISO8601()
     }
+
+    if(randomutilities.randomBoolean()){
+      customer.address.line2 = randomutilities.createRandomAddress('line2');
+    }
+
+    return customer;
 
   }
 
