@@ -54,6 +54,8 @@ module.exports = class MerchantProvider {
 
         let parameters = this.createParameterObject();
 
+        let endpoint = this.createEndpoint(method_parameters);
+
         parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
 
         parameters = this.setRequestParameters({type: action, request_parameters: request_parameters, return_parameters: parameters});
@@ -64,8 +66,8 @@ module.exports = class MerchantProvider {
 
         var request_options = {
     		  headers: {'content-type' : 'application/x-www-form-urlencoded'},
-    		  url:     this.get('VendorConfiguration').endpoint,
-    		  body:    parameter_querystring
+    		  url: endpoint,
+    		  body: parameter_querystring
         };
 
         request.post(request_options, (error, response, body) => {
@@ -80,6 +82,20 @@ module.exports = class MerchantProvider {
         });
 
       });
+
+    }
+
+    createEndpoint(method_parameters){
+
+      du.debug('Create Endpoint');
+
+      let base = this.get('VendorConfiguration').endpoint;
+
+      if(_.has(method_parameters, 'path')){
+        base += method_parameters.path;
+      }
+
+      return base;
 
     }
 

@@ -1,0 +1,16 @@
+{
+	"title": "NMI Merchant Provider Configuration",
+	"type": "object",
+	"properties": {
+		"username":{
+      "type":"string"
+    },
+		"password":{
+      "type":"string"
+    },
+		"processor_id":{
+      "type":"string"
+    }
+	},
+	"required":["username", "password"]
+}

@@ -16,7 +16,7 @@
 			"properties":{
 				"name":{
 					"type":"string",
-					"enum":["NMA","Humbolt","GMA","Group ISO"]
+					"enum":["NMA","Humbolt","GMA","Group ISO","Test"]
 				},
 				"id":{
 					"type":"string"
@@ -47,7 +47,8 @@
 			"type":"object",
 			"anyOf":[
 				{"$ref":"./components/merchantprovider/innovio.json"},
-				{"$ref":"./components/merchantprovider/nmi.json"}
+				{"$ref":"./components/merchantprovider/nmi.json"},
+				{"$ref":"./components/merchantprovider/test.json"}
 			]
 		},
 		"enabled":{

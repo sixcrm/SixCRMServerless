@@ -5,7 +5,6 @@ package:
     - .git/**
     - bin/**
     - coverage/**
-    - model/dynamodb/**
     - model/redshift/seeds/**
     - deployment/**
     - test/**

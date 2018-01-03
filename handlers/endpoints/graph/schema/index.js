@@ -5,6 +5,7 @@ let queryType = require('./types/queryType');
 
 //Technical Debt:  Hack!
 let NMIType = require('./types/merchantprovider/gateways/NMIType');
+let TestType = require('./types/merchantprovider/gateways/TestType');
 let InnovioType = require('./types/merchantprovider/gateways/InnovioType');
 let GatewayType = require('./types/merchantprovider/gateways/gatewayType');
 
@@ -16,5 +17,5 @@ let providerType = require('./types/fulfillmentprovider/providers/providerType')
 module.exports = new GraphQLSchema({
   query: queryType.graphObj,
   mutation: mutationType.graphObj,
-  types: [NMIType.graphObj, InnovioType.graphObj, GatewayType.graphObj, HashtagType.graphObj, ThreePLType.graphObj, providerType.graphObj]
+  types: [NMIType.graphObj, TestType.graphObj, InnovioType.graphObj, GatewayType.graphObj, HashtagType.graphObj, ThreePLType.graphObj, providerType.graphObj]
 });

@@ -30,10 +30,12 @@ module.exports.graphObj = new GraphQLInterfaceType({
       //Technical Debt:  Necessary because of circuitous includes...
       let NMIType = require('./NMIType');
       let InnovioType = require('./InnovioType');
+      let TestType = require('./TestType');
 
       let gatewaytypes = {
         'NMI':NMIType,
-        'Innovio':InnovioType
+        'Innovio':InnovioType,
+        'Test':TestType
       };
 
       if(_.has(gatewaytypes, gateway.type)){
