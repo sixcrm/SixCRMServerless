@@ -97,8 +97,8 @@ deployment:
       #DynamoDB
       # Technical Debt: Upgrade this to purge only TEST data
       #- node ./deployment/dynamodb/purge_tables.js
-      - ./tools/changesInDirectory.sh deployment/dynamodb &&  node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
-      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/autoscaling && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
       ###########
 
       ##########
@@ -120,7 +120,7 @@ deployment:
 
       ###########
       #Dynamo Seeds
-      - node ./deployment/dynamodb/deploy_seeds.js
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
       ###########
 
       - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
@@ -176,8 +176,8 @@ deployment:
       #DynamoDB
       # Technical Debt: Upgrade this to purge only TEST data
       #- node ./deployment/dynamodb/purge_tables.js
-      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
-      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/autoscaling && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
       ###########
 
       ##########
@@ -199,7 +199,7 @@ deployment:
 
       ###########
       #Dynamo Seeds
-      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
       ###########
 
       - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
@@ -257,8 +257,8 @@ deployment:
       ###########
       #DynamoDB
       #- node ./deployment/dynamodb/purge_tables.js && exit 0;
-      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
-      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/autoscaling && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
       ###########
 
       ###########
@@ -280,7 +280,7 @@ deployment:
 
       ###########
       #Dynamo Seed
-      - ./tools/changesInDirectory.sh deployment/dynamodb && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
+      - ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
       ###########
 
       - SIX_VERBOSE=2 node deployment/circle/save_last_commit.js
