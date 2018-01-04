@@ -1125,6 +1125,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 shippingreceipt: { type: shippingReceiptInputType.graphObj }
             },
             resolve: (value, shippingreceipt) => {
+
                 const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
 
                 return shippingReceiptController.update({entity:shippingreceipt.shippingreceipt});
