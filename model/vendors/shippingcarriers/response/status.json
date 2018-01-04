@@ -1,6 +1,6 @@
 {
-  "id":"/vendors/shippingcarriers/response/detail.json",
-  "title":"Shipping Carrier Response Detail",
+  "id":"/vendors/shippingcarriers/response/status.json",
+  "title":"Shipping Carrier Response Status",
   "type":"string",
-  "enum":["intransit","delivered","returned"]
+  "enum":["unknown","intransit","delivered","returned"]
 }

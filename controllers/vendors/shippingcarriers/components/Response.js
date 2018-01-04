@@ -17,7 +17,8 @@ module.exports = class ShippingCarrierResponse extends ResponseController {
       'vendorresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/vendorresponse.json'),
       'additionalparameters':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/additionalparameters.json'),
       'detail':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/detail.json'),
-      'status':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/status.json')
+      'status':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/status.json'),
+      'parsedresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/parsedresponse.json')
     };
 
     this.parameter_definition = {

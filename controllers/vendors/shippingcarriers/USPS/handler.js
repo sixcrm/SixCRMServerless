@@ -4,113 +4,148 @@ var request = require('request');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const parseString = require('xml2js').parseString;
 
 const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/components/ShippingCarrier.js');
 
-class USPSController extends ShippingCarrierController {
+module.exports = class USPSController extends ShippingCarrierController {
 
-    constructor(){
+  constructor(){
 
-      super();
+    super();
 
-      this.shortname = 'usps';
-
-      this.stati = {
-        delivered: 'delivered',
-        instransit: 'intransit',
-        unknown: 'unknown'
+    this.parameter_definition = {
+      info: {
+        required: {
+          trackingnumber: 'tracking_number'
+        },
+        optional:{}
       }
+    };
 
-      this.parameter_definition = {
-        getStatus: {
-          required: {
-            trackingnumber: 'trackingnumber'
-          },
-          optional:{}
-        }
-      };
+    this.parameter_validation = {
+      'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/trackingnumber.json'),
+      'userid': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/userid.json'),
+      'requestxml': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requestxml.json'),
+      'requesturi': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requesturi.json'),
+      'vendorresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/response.json')
+    };
 
-      this.parameter_validation = {
-        'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/trackingnumber.json'),
-        'userid': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/userid.json'),
-        'requestxml': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requestxml.json'),
-        'requesturi': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requesturi.json'),
-        'apiresponse': global.SixCRM.routes.path('model', 'general/request/response.json'),
-        'apiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requestresponsebody.json'),
-        'parsedapiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/parsedapiresponsebody.json'),
-        'processedparsedapiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/processedparsedapiresponsebody.json'),
-      };
+    this.augmentParameters();
 
-      this.augmentParameters();
+    this.acquireConfigurationInformation();
 
-      this.acquireConfigurationInformation();
+  }
 
-    }
+  acquireConfigurationInformation(){
 
-    info(tracking_number){
+    du.debug('Acquire Configuration Information');
 
-      du.debug('info');
+    let vendor_configuration = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/shippingcarriers/USPS.yml');
 
-      return this.setParameters({argumentation: {trackingnumber: tracking_number}, action: 'getStatus'})
-      .then(() => this.acquireAPIResult())
-      .then(() => this.parseAPIResponseBody())
-      .then(() => this.processParsedAPIResponseBody())
-      .then(() => this.respond());
+    this.parameters.set('userid', vendor_configuration.user_id);
+    //this.parameters.set('password', vendor_configuration.password);
 
-    }
+    return true;
 
-    acquireAPIResult(){
+  }
 
-      du.debug('Acquire API Result');
+  info({tracking_number}){
 
-      return Promise.resolve()
-      .then(() => this.buildRequestXML())
-      .then(() => this.buildRequestURI())
-      .then(() => this.executeAPIRequest())
-      .then(() => this.validateAPIResponse());
+    du.debug('info');
 
-    }
+    this.parameters.set('action', 'info');
 
-    executeAPIRequest(){
+    return Promise.resolve()
+    .then(() => this.setParameters({argumentation: arguments[0], action: 'info'}))
+    .then(() => this.acquireAPIResult())
+    .then(() => this.respond({}));
 
-      du.debug('Execute API Request');
+  }
 
-      let request_uri = this.parameters.get('requesturi');
+  acquireAPIResult(){
 
-      return new Promise((resolve) => {
+    du.debug('Acquire API Result');
 
-        request(request_uri, (error, response, body) => {
+    return Promise.resolve()
+    .then(() => this.buildRequestXML())
+    .then(() => this.buildRequestURI())
+    .then(() => this.executeAPIRequest());
 
-          if(error){
-            eu.throw(error);
+  }
+
+  buildRequestXML(){
+
+    du.debug('Build Request XML');
+
+    let tracking_number = this.parameters.get('trackingnumber');
+    let user_id = this.parameters.get('userid');
+
+    //Technical Debt:  Do it this way...
+    //js2xmlparser
+    /*
+    let prexml = {
+      TrackFieldRequest:{
+        '@':{
+          USERID:user_id
+        },
+        TrackerID:{
+          '@':{
+            ID:tracking_number
           }
+        }
+      }
+    };
+    */
 
-          this.parameters.set('apiresponse', response);
-          this.parameters.set('apiresponsebody', body);
+    let request_xml = '<?xml version="1.0" encoding="UTF-8" ?><TrackFieldRequest USERID="'+user_id+'"><TrackID ID="'+tracking_number+'"/></TrackFieldRequest>';
 
-          return resolve(true);
+    this.parameters.set('requestxml', request_xml);
 
-        });
+    return true;
+
+  }
+
+  buildRequestURI(){
+
+    du.debug('Build URI');
+
+    let request_xml = this.parameters.get('requestxml');
+
+    let request_uri = 'http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML='+encodeURIComponent(request_xml);
+
+    this.parameters.set('requesturi', request_uri);
+
+    return true;
+
+  }
+
+  executeAPIRequest(){
+
+    du.debug('Execute API Request');
+
+    let request_uri = this.parameters.get('requesturi');
+
+    return new Promise((resolve) => {
+
+      request(request_uri, (error, response, body) => {
+
+        if(error){
+          eu.throw(error);
+        }
+
+        du.info(response);
+        this.parameters.set('vendorresponse', response);
+
+        return resolve(true);
 
       });
 
-    }
+    });
 
-    validateAPIResponse(){
+  }
 
-      du.debug('Handle API Response');
-
-      let response = this.parameters.get('apiresponse');
-
-      if(response.statusCode !== 200){
-        eu.throwError('server', 'USPS API returned a non-200 status code: '+response.statusCode);
-      }
-
-      return true;
-
-    }
-
+}
+    /*
     parseAPIResponseBody(){
 
       du.debug('Parse API Response Body');
@@ -157,35 +192,6 @@ class USPSController extends ShippingCarrierController {
 
     }
 
-    buildRequestURI(){
-
-      du.debug('Build URI');
-
-      let request_xml = this.parameters.get('requestxml');
-
-      let request_uri = 'http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML='+encodeURIComponent(request_xml);
-
-      this.parameters.set('requesturi', request_uri);
-
-      return true;
-
-    }
-
-    buildRequestXML(){
-
-      du.debug('Build Request XML');
-
-      let tracking_number = this.parameters.get('trackingnumber');
-      let user_id = this.parameters.get('userid');
-
-      let request_xml = '<?xml version="1.0" encoding="UTF-8" ?><TrackFieldRequest USERID="'+user_id+'"><TrackID ID="'+tracking_number+'"/></TrackFieldRequest>';
-
-      this.parameters.set('requestxml', request_xml);
-
-      return true;
-
-    }
-
     parseTrackSummaryMessage(track_summary_message){
 
       du.debug('Parse Track Summary Message');
@@ -206,15 +212,6 @@ class USPSController extends ShippingCarrierController {
 
     }
 
-    acquireConfigurationInformation(){
-
-      du.debug('Acquire Configuration Information');
-
-      this.parameters.set('userid', global.SixCRM.configuration.site_config.shipping_providers.usps.user_id);
-
-      return true;
-
-    }
 
     respond(){
 
@@ -237,6 +234,4 @@ class USPSController extends ShippingCarrierController {
 
     }
 
-}
-
-module.exports = new USPSController();
+    */

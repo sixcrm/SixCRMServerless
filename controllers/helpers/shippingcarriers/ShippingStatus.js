@@ -3,13 +3,9 @@ const _ = require('underscore');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-class ShippingStatusController {
+module.exports = class ShippingStatusController {
 
     constructor(){
-
-      this.carriers = {
-        usps: () => this.getUSPSStatus()
-      }
 
       this.parameter_definition = {
         getStatus:{
@@ -28,9 +24,7 @@ class ShippingStatusController {
 
       this.parameter_validation = {
         'shippingreceipt': global.SixCRM.routes.path('model','entities/shippingreceipt.json'),
-        'shippingcarrier': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/shippingcarrier.json'),
-        'shippingproviderresponse': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response.json'),
-        'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/trackingnumber.json')
+        'trackerresponse': global.SixCRM.routes.path('model','providers/tracker/responses/info.json')
       };
 
       const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -45,7 +39,7 @@ class ShippingStatusController {
 
       return this.getStatus(arguments[0])
       .then(result => {
-        return result.getDelivered();
+        return (result.status == 'delivered');
       });
 
     }
@@ -61,7 +55,7 @@ class ShippingStatusController {
 
         this.updateShippingReceiptHistory();
 
-        return this.parameters.get('shippingproviderresponse');
+        return this.parameters.get('trackerresponse');
 
       });
 
@@ -71,11 +65,8 @@ class ShippingStatusController {
 
       du.debug('Update Shipping Receipt History');
 
-      let shipping_provider_response = this.parameters.get('shippingproviderresponse');
+      let tracker_response = this.parameters.get('trackerresponse');
       let shipping_receipt = this.parameters.get('shippingreceipt');
-
-      let status = shipping_provider_response.getStatus();
-      let detail = shipping_provider_response.getDetail();
 
       if(!_.has(this, 'shippingReceiptHelperController')){
         this.shippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
@@ -83,8 +74,8 @@ class ShippingStatusController {
 
       return this.shippingReceiptHelperController.updateShippingReceipt({
         shipping_receipt: shipping_receipt,
-        detail: detail,
-        status: status
+        detail: tracker_response.detail,
+        status: tracker_response.status
       }).then(result => {
         this.parameters.set('shippingreceipt', result);
         return true;
@@ -96,54 +87,19 @@ class ShippingStatusController {
 
       du.debug('Get Carrier Status');
 
-      let carrier = this.parameters.get('shippingcarrier');
-
-      if(!_.has(this.carriers, carrier)){
-        eu.throwError('server', 'Unknown shipping carrier: '+carrier);
-      }
-
-      return this.carriers[carrier]();
-
-    }
-
-    getTrackingNumber(){
-
-      du.debug('Get Tracking Number');
-
       let shipping_receipt = this.parameters.get('shippingreceipt');
 
-      if(!_.has(this, 'shippingReceiptHelperController')){
-        this.shippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
-      }
+      let TrackerController = global.SixCRM.routes.include('providers','tracker/Tracker.js');
+      let trackerController = new TrackerController();
 
-      let tracking_number = this.shippingReceiptHelperController.getTrackingNumber(shipping_receipt);
+      return trackerController.info({shipping_receipt: shipping_receipt}).then(result => {
 
-      this.parameters.set('trackingnumber', tracking_number);
+        this.parameters.set('trackerresponse', result);
 
-      return true;
-
-    }
-
-    /*
-    getUSPSStatus(){
-
-      du.debug('Get USPS Status');
-
-      return Promise.resolve()
-      .then(() => this.getTrackingNumber())
-      .then(() => {
-
-        let tracking_number = this.parameters.get('trackingnumber');
-        let USPSController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/USPS/handler.js');
-
-        return USPSController.getStatus(tracking_number).then(result => {
-          this.parameters.set('shippingproviderresponse', result);
-          return true;
-        });
+        return true;
 
       });
 
     }
-    */
 
 }
