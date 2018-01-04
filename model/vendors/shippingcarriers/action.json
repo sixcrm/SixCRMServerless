@@ -1,0 +1,6 @@
+{
+  "id":"/vendors/shippingcarriers/action.json",
+  "title":"Shipping Carrier Action",
+  "type":"string",
+  "enum":["info"]
+}

@@ -6,15 +6,21 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parseString = require('xml2js').parseString;
 
-const shippingProviderController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/components/ShippingProvider.js');
+const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/components/ShippingCarrier.js');
 
-class USPSController extends shippingProviderController {
+class USPSController extends ShippingCarrierController {
 
     constructor(){
 
       super();
 
       this.shortname = 'usps';
+
+      this.stati = {
+        delivered: 'delivered',
+        instransit: 'intransit',
+        unknown: 'unknown'
+      }
 
       this.parameter_definition = {
         getStatus: {
@@ -26,14 +32,14 @@ class USPSController extends shippingProviderController {
       };
 
       this.parameter_validation = {
-        'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingproviders/USPS/trackingnumber.json'),
-        'userid': global.SixCRM.routes.path('model', 'vendors/shippingproviders/USPS/userid.json'),
-        'requestxml': global.SixCRM.routes.path('model', 'vendors/shippingproviders/USPS/requestxml.json'),
-        'requesturi': global.SixCRM.routes.path('model', 'vendors/shippingproviders/USPS/requesturi.json'),
+        'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/trackingnumber.json'),
+        'userid': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/userid.json'),
+        'requestxml': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requestxml.json'),
+        'requesturi': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requesturi.json'),
         'apiresponse': global.SixCRM.routes.path('model', 'general/request/response.json'),
-        'apiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingproviders/USPS/requestresponsebody.json'),
-        'parsedapiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingproviders/USPS/parsedapiresponsebody.json'),
-        'processedparsedapiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingproviders/USPS/processedparsedapiresponsebody.json'),
+        'apiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requestresponsebody.json'),
+        'parsedapiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/parsedapiresponsebody.json'),
+        'processedparsedapiresponsebody': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/processedparsedapiresponsebody.json'),
       };
 
       this.augmentParameters();
@@ -42,9 +48,9 @@ class USPSController extends shippingProviderController {
 
     }
 
-    getStatus(tracking_number){
+    info(tracking_number){
 
-      du.debug('Get Status');
+      du.debug('info');
 
       return this.setParameters({argumentation: {trackingnumber: tracking_number}, action: 'getStatus'})
       .then(() => this.acquireAPIResult())
@@ -216,7 +222,7 @@ class USPSController extends shippingProviderController {
 
       let processed_parsed_api_response_body = this.parameters.get('processedparsedapiresponsebody');
 
-      const ShippingProviderResponse  = global.SixCRM.routes.include('vendors', 'shippingproviders/components/Response.js');
+      const ShippingProviderResponse  = global.SixCRM.routes.include('vendors', 'shippingcarriers/components/Response.js');
       let shippingProviderResponse = new ShippingProviderResponse({
         shortname: this.shortname,
         parameters: {

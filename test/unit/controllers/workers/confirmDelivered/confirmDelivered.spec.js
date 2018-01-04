@@ -245,7 +245,7 @@ describe('controllers/workers/confirmDelivered', () => {
       let shipping_receipts = getValidShippingReceipts();
       let shipping_stati = getValidShippingStati();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/ShippingStatus.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingcarriers/ShippingStatus.js'), {
         isDelivered:(provider, trackingnumber) => {
           return Promise.resolve(true);
         }
@@ -350,7 +350,7 @@ describe('controllers/workers/confirmDelivered', () => {
       let transaction_products = getValidTransactionProducts();
       let shipping_receipts = getValidShippingReceipts();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/ShippingStatus.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingcarriers/ShippingStatus.js'), {
         isDelivered:(provider, trackingnumber) => {
           return Promise.resolve(true);
         }
@@ -404,7 +404,7 @@ describe('controllers/workers/confirmDelivered', () => {
       let transaction_products = getValidTransactionProducts();
       let shipping_receipts = getValidShippingReceipts();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/ShippingStatus.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingcarriers/ShippingStatus.js'), {
         isDelivered:(provider, trackingnumber) => {
           return Promise.resolve(false);
         }

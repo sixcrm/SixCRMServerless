@@ -21,7 +21,10 @@
     "fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
     "fulfillment_provider_reference":"3e538134-7596-47c5-96b3-249a9b65afe3",
     "status":"intransit",
-    "trackingnumber":"09812304981039480219358",
+    "tracking":{
+      "carrier":"UPS",
+      "id":"09812304981039480219358"
+    },
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
   },
@@ -35,7 +38,10 @@
         "detail":"TEST 3 Departed USPS Origin Facility"
       }
     ],
-    "trackingnumber":"0909012312139134134134",
+    "tracking":{
+      "carrier":"UPS",
+      "id":"0909012312139134134134"
+    },
     "fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
     "fulfillment_provider_reference":"537e439e-c4bc-4897-bf47-2c1ffde9edf6",
     "status":"delivered",

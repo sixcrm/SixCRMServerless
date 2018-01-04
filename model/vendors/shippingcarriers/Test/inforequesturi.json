@@ -1,0 +1,6 @@
+{
+  "id":"/vendors/shippingcarriers/Test/inforequesturi.json",
+  "title":"Test Shipping Carrier Info Request URI",
+  "type":"string",
+  "format":"uri"
+}

@@ -7,21 +7,19 @@ class ShippingStatusController {
 
     constructor(){
 
-      this.providers = {
+      this.carriers = {
         usps: () => this.getUSPSStatus()
       }
 
       this.parameter_definition = {
         getStatus:{
           required:{
-            shippingprovider:'shipping_provider',
             shippingreceipt:'shipping_receipt'
           },
           optional:{}
         },
         isDelivered:{
           required:{
-            shippingprovider:'shipping_provider',
             shippingreceipt:'shipping_receipt'
           },
           optional:{}
@@ -30,9 +28,9 @@ class ShippingStatusController {
 
       this.parameter_validation = {
         'shippingreceipt': global.SixCRM.routes.path('model','entities/shippingreceipt.json'),
-        'shippingprovider': global.SixCRM.routes.path('model', 'vendors/shippingproviders/shippingprovider.json'),
-        'shippingproviderresponse': global.SixCRM.routes.path('model', 'vendors/shippingproviders/response.json'),
-        'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingproviders/trackingnumber.json')
+        'shippingcarrier': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/shippingcarrier.json'),
+        'shippingproviderresponse': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response.json'),
+        'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/trackingnumber.json')
       };
 
       const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -41,7 +39,7 @@ class ShippingStatusController {
 
     }
 
-    isDelivered({shipping_provider, shipping_receipt}){
+    isDelivered({shipping_receipt}){
 
       du.debug('Is Delivered');
 
@@ -52,13 +50,13 @@ class ShippingStatusController {
 
     }
 
-    getStatus({shipping_provider, shipping_receipt}){
+    getStatus({shipping_receipt}){
 
       du.debug('Get Status');
 
       return Promise.resolve()
       .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'getStatus'}))
-      .then(() => this.getProviderStatus())
+      .then(() => this.getCarrierStatus())
       .then(() => {
 
         this.updateShippingReceiptHistory();
@@ -94,17 +92,17 @@ class ShippingStatusController {
 
     }
 
-    getProviderStatus(){
+    getCarrierStatus(){
 
-      du.debug('Get Provider Status');
+      du.debug('Get Carrier Status');
 
-      let provider = this.parameters.get('shippingprovider');
+      let carrier = this.parameters.get('shippingcarrier');
 
-      if(!_.has(this.providers, provider)){
-        eu.throwError('server', 'Unknown shipping provider: '+provider);
+      if(!_.has(this.carriers, carrier)){
+        eu.throwError('server', 'Unknown shipping carrier: '+carrier);
       }
 
-      return this.providers[provider]();
+      return this.carriers[carrier]();
 
     }
 
@@ -126,6 +124,7 @@ class ShippingStatusController {
 
     }
 
+    /*
     getUSPSStatus(){
 
       du.debug('Get USPS Status');
@@ -135,7 +134,7 @@ class ShippingStatusController {
       .then(() => {
 
         let tracking_number = this.parameters.get('trackingnumber');
-        let USPSController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/USPS/handler.js');
+        let USPSController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/USPS/handler.js');
 
         return USPSController.getStatus(tracking_number).then(result => {
           this.parameters.set('shippingproviderresponse', result);
@@ -145,7 +144,6 @@ class ShippingStatusController {
       });
 
     }
+    */
 
 }
-
-module.exports = new ShippingStatusController();

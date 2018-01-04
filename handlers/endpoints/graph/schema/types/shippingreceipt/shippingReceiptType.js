@@ -7,6 +7,7 @@ const GraphQLList = require('graphql').GraphQLList;
 
 let shippingReceiptHistoryElementType = require('./elements/historyElementType');
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
+let shippingReceiptTrackingElementType = require('./elements/trackingElementType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'shippingreceipt',
@@ -20,9 +21,9 @@ module.exports.graphObj = new GraphQLObjectType({
         type: GraphQLString,
         description: 'A shipping status',
       },
-      trackingnumber: {
-        type: GraphQLString,
-        description: 'A tracking number for the shipment',
+      tracking: {
+        type: shippingReceiptTrackingElementType.graphObj,
+        description: 'Tracking Details for the shipping receipt.',
       },
       fulfillment_provider: {
         type: fulfillmentProviderType.graphObj,

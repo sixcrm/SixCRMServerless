@@ -5,23 +5,9 @@ const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-module.exports = class shippingProviderController {
+module.exports = class ShippingCarrierController {
 
   constructor(){
-
-    this.stati = {
-      delivered: 'delivered',
-      instransit: 'intransit',
-      unknown: 'unknown'
-    }
-
-    this.initialize();
-
-  }
-
-  initialize(){
-
-    du.debug('Initialize');
 
     let parameter_validation = {}
 
@@ -54,6 +40,31 @@ module.exports = class shippingProviderController {
     this.parameters.setParameters(parameters_object);
 
     return Promise.resolve(true);
+
+  }
+
+  respond({additional_parameters}){
+
+    du.debug('Respond');
+
+    let vendor_response = this.parameters.get('vendorresponse');
+    let action = this.parameters.get('action');
+
+    const VendorResponseClass = global.SixCRM.routes.include('vendors', 'shippingcarriers/'+this.getVendorName()+'/Response.js');
+
+    let response_object = {vendor_response: vendor_response, action: action};
+
+    if(!_.isNull(additional_parameters) && !_.isUndefined(additional_parameters)){
+      response_object['additional_parameters'] = additional_parameters;
+    }
+
+    return new VendorResponseClass(response_object);
+
+  }
+
+  getVendorName(){
+
+    return objectutilities.getClassName(this).replace('Controller', '');
 
   }
 

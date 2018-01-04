@@ -9,6 +9,16 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
 
+  static getValidTrackingNumber(vendor){
+
+    let vendor_tracking_numbers = {
+      'Test':() => randomutilities.createRandomString(20)
+    }
+
+    return vendor_tracking_numbers[vendor]();
+
+  }
+
   static getValidTransactionProduct(id){
 
     id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
@@ -101,7 +111,10 @@ class MockEntities {
     return {
       id:uuidV4(),
   		account: this.getTestAccountID(),
-  		trackingnumber: randomutilities.createRandomString(10),
+      tracking:{
+        carrier: 'UPS',
+        id: randomutilities.createRandomString(10)
+      },
       history:[],
       status:"intransit",
       fulfillment_provider: uuidV4(),

@@ -27,9 +27,10 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
     };
 
     this.parameter_validation = {
-      'vendorresponse':global.SixCRM.routes.path('model','vendors/shippingproviders/response/vendorresponse.json'),
+      'vendorresponse':global.SixCRM.routes.path('model','vendors/shippingcarriers/response/vendorresponse.json'),
       'action':global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/action.json'),
-      'additionalparameters': global.SixCRM.routes.path('model', 'vendors/shippingproviders/response/additionalparameters.json'),
+      'additionalparameters': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/additionalparameters.json'),
+      //Technical Debt:  Bad Paths...
       'code': global.SixCRM.routes.path('model','vendors/shippingproviders/response/code.json'),
       'result': global.SixCRM.routes.path('model','vendors/shippingproviders/response/result.json'),
       'message': global.SixCRM.routes.path('model','vendors/shippingproviders/response/message.json'),

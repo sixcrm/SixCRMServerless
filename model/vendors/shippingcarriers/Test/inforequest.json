@@ -1,0 +1,9 @@
+{
+  "id":"/vendors/shippingcarriers/Test/inforequest.json",
+  "title":"Test Shipping Carrier Info Request",
+  "type":"object",
+  "properties":{
+    "tracking_number":{"$ref":"./trackingnumber.json"}
+  },
+  "required":["tracking_number"]
+}

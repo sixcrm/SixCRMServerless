@@ -11,7 +11,7 @@ let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const ShippingProviderResponse  = global.SixCRM.routes.include('vendors', 'shippingproviders/components/Response.js');
+const ShippingProviderResponse  = global.SixCRM.routes.include('vendors', 'shippingcarriers/components/Response.js');
 
 function getValidShippingProviderResponse(){
 
@@ -33,7 +33,7 @@ function getValidShippingReceipt(){
 
 }
 
-describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
+xdescribe('/controllers/vendors/shippingcarriers/ShippingStatus.js', () => {
 
   before(() => {
       mockery.enable({
@@ -50,7 +50,7 @@ describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
 
   describe('constructor', () => {
     it('successfully constructs', () => {
-      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingproviders/ShippingStatus.js');
+      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingcarriers/ShippingStatus.js');
 
       expect(objectutilities.getClassName(shippingStatusController)).to.equal('ShippingStatusController');
     });
@@ -69,7 +69,7 @@ describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
         }
       });
 
-      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingproviders/ShippingStatus.js');
+      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingcarriers/ShippingStatus.js');
 
       shippingStatusController.parameters.set('shippingreceipt', shipping_receipt);
 
@@ -96,13 +96,13 @@ describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/USPS/handler.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingcarriers/USPS/handler.js'), {
         getStatus:() => {
           return Promise.resolve(shipping_provider_response);
         }
       });
 
-      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingproviders/ShippingStatus.js');
+      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingcarriers/ShippingStatus.js');
 
       shippingStatusController.parameters.set('shippingreceipt', shipping_receipt);
 
@@ -130,13 +130,13 @@ describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/USPS/handler.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingcarriers/USPS/handler.js'), {
         getStatus:() => {
           return Promise.resolve(shipping_provider_response);
         }
       });
 
-      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingproviders/ShippingStatus.js');
+      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingcarriers/ShippingStatus.js');
 
       shippingStatusController.parameters.set('shippingreceipt', shipping_receipt);
       shippingStatusController.parameters.set('shippingprovider', shipping_provider);
@@ -168,7 +168,7 @@ describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
         }
       });
 
-      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingproviders/ShippingStatus.js');
+      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingcarriers/ShippingStatus.js');
 
       shippingStatusController.parameters.set('shippingreceipt', shipping_receipt);
       shippingStatusController.parameters.set('shippingproviderresponse', shipping_provider_response);
@@ -203,13 +203,13 @@ describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/USPS/handler.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingcarriers/USPS/handler.js'), {
         getStatus:() => {
           return Promise.resolve(shipping_provider_response);
         }
       });
 
-      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingproviders/ShippingStatus.js');
+      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingcarriers/ShippingStatus.js');
 
       return shippingStatusController.getStatus({shipping_provider: shipping_provider, shipping_receipt: shipping_receipt}).then(result => {
 
@@ -241,13 +241,13 @@ describe('/controllers/vendors/shippingproviders/ShippingStatus.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingproviders/USPS/handler.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/shippingcarriers/USPS/handler.js'), {
         getStatus:() => {
           return Promise.resolve(shipping_provider_response);
         }
       });
 
-      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingproviders/ShippingStatus.js');
+      let shippingStatusController = global.SixCRM.routes.include('vendors', 'shippingcarriers/ShippingStatus.js');
 
       return shippingStatusController.isDelivered({shipping_provider: shipping_provider, shipping_receipt: shipping_receipt}).then(result => {
 
