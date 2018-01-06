@@ -16,8 +16,8 @@
 	"updated_at":"2017-04-06T18:41:12.521Z"
 },
 {
-	"id":"2e16a51e-f1d6-4d4f-81ea-90d67558202a",
-	"name": "Test Load Balancer",
+	"id":"45367480-f1c1-4f61-a3d6-413c22a44dc3",
+	"name": "Integration Test Load Balancer",
 	"account":"eefdeca6-41bc-4af9-a561-159acb449b5e",
 	"merchantproviders":[
 		{

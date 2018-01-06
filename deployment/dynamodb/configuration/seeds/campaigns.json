@@ -10,4 +10,17 @@
 	"affiliate_deny":["*"],
 	"created_at":"2017-04-06T18:40:41.405Z",
 	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"5c593d31-5001-4faf-8ea2-e8c1a1f85f04",
+	"account":"eefdeca6-41bc-4af9-a561-159acb449b5e",
+	"name": "Integeration Test Campaign",
+	"allow_prepaid": false,
+	"show_prepaid": false,
+	"productschedules":["77c72379-de6f-449d-96b6-ac888852729f"],
+	"emailtemplates":[],
+	"affiliate_allow":[],
+	"affiliate_deny":[],
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
 }]
