@@ -3,61 +3,10 @@
   "title":"Info response object",
   "type":"object",
   "properties":{
-    "reference_number":{
-      "type":"string"
-    },
-    "customer":{
-      "type":"object",
-      "properties":{
-        "name":{
-          "type":"string"
-        },
-        "email":{
-          "type":"string",
-          "format":"email"
-        }
-      },
-      "required":["name"]
-    },
-    "shipping": {
-      "type":"object",
-      "properties":{
-        "address":{
-          "type":"object",
-          "properties":{
-            "line1":{"type":"string"},
-            "line2":{"type":"string"},
-            "city":{
-              "type":"string",
-              "minLength":1
-            },
-            "state":{"$ref":"../../../../definitions/statecode.json"},
-            "zip":{"$ref":"../../../../definitions/zipcode.json"},
-            "country":{"$ref":"../../../../definitions/countrycode.json"}
-          },
-          "required":["line1", "city", "state", "zip", "country"]
-        },
-        "carrier": {
-          "type":"string"
-        },
-        "tracking_number":{
-          "anyOf":[
-            {
-              "type":"string"
-            },
-            {
-              "type":"null"
-            }
-          ]
-
-        },
-        "method":{
-          "type":"string"
-        }
-      },
-      "required":["carrier", "tracking_number"]
-    },
-    "created_at":{"$ref":"../../../../definitions/iso8601.json"}
+    "orders":{
+      "type":"array",
+      "items":{"$ref":"./inforesponseelement.json"}
+    }
   },
-  "required":["reference_number", "customer", "shipping"]
+  "required":"orders"
 }

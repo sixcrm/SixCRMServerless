@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const xmlutilities = global.SixCRM.routes.include('lib', 'xml-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
@@ -46,12 +47,11 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 
     let parsed_response = xmlutilities.parse(response.body);
 
-    if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.FindOrders.0._', false)){
+    if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.totalOrders.0._', false)){
       return this.parseFindOrdersResponse(parsed_response);
     }
 
-    //Technical Debt:  Throw Error?
-    return parsed_response;
+    eu.throwError('server', 'Unrecognized response from ThreePL');
 
   }
 
@@ -100,8 +100,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
       message: 'Non-specific failure.',
       reference_number:reference_number
     };
-
-    du.info(response.body);
 
     let parsed_response = xmlutilities.parse(response.body);
 
@@ -156,16 +154,39 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 
     du.debug('Parse Find Orders Response');
 
-    parsed_response = xmlutilities.parse(parsed_response['soap:Envelope']['soap:Body'][0].FindOrders[0]['_']);
+    let order_count = parsed_response['soap:Envelope']['soap:Body'][0].totalOrders[0]['_'];
+    let orders = [];
 
-    let order = parsed_response.orders.order[0];
+    if(order_count > 0){
+
+      orders = this.getOrdersFromFindOrdersResponse(parsed_response);
+
+    }
 
     return {
-      customer: this.createCustomer(order),
-      shipping: this.createShippingInformation(order),
-      reference_number: this.createReferenceNumber(order),
-      created_at: this.createCreatedAt(order)
+      orders: orders
     };
+
+  }
+
+  getOrdersFromFindOrdersResponse(parsed_response){
+
+    du.debug('Get Orders From Find Orders Response');
+
+    parsed_response = xmlutilities.parse(parsed_response['soap:Envelope']['soap:Body'][0].FindOrders[0]['_']);
+
+    return arrayutilities.map(parsed_response.orders, order => {
+
+      order = order[0];
+
+      return {
+        customer: this.createCustomer(order),
+        shipping: this.createShippingInformation(order),
+        reference_number: this.createReferenceNumber(order),
+        created_at: this.createCreatedAt(order)
+      };
+
+    });
 
   }
 

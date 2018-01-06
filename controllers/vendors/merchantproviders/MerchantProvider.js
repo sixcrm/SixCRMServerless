@@ -151,7 +151,7 @@ module.exports = class MerchantProvider {
 
       du.debug('Set Vendor Configuration Path');
 
-      this.set('VendorConfigurationPath', global.SixCRM.configuration.stage+'/vendors/'+this.get('MerchantProviderName')+'.yml');
+      this.set('VendorConfigurationPath', global.SixCRM.configuration.stage+'/vendors/merchantproviders/'+this.get('MerchantProviderName')+'.yml');
 
     }
 

@@ -155,7 +155,7 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
 
   });
 
-  describe.only('fulfill', () => {
+  describe('fulfill', () => {
 
     it('successfully executes a fulfill request', () => {
 
