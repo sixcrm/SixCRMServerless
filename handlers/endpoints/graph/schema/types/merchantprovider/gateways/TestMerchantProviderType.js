@@ -6,8 +6,8 @@ const GraphQLString = require('graphql').GraphQLString;
 let GatewayInterfaceType = require('./gatewayType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Test',
-    description: 'A Test gateway.',
+    name: 'TestMerchantProvider',
+    description: 'A Test Merchant Provider.',
     interfaces: [GatewayInterfaceType.graphObj],
     fields: () => ({
     	name: {

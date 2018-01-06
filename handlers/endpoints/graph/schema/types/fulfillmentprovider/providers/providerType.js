@@ -1,5 +1,6 @@
 'use strict';
 let _ = require('underscore');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -15,13 +16,11 @@ module.exports.graphObj = new GraphQLInterfaceType({
       }
     }),
     resolveType(provider){
-      //Technical Debt:  Necessary because of circuitous includes...
-      let HashtagType = require('./HashtagType');
-      let ThreePLType = require('./ThreePLType');
 
       let providertypes = {
-        'Hashtag':HashtagType,
-        'ThreePL':ThreePLType
+        'Hashtag':require('./HashtagType'),
+        'ThreePL':require('./ThreePLType'),
+        'Test':require('./TestFulfillmentProviderType')
       };
 
       if(_.has(providertypes, provider.name)){

@@ -117,26 +117,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
   }
 
-  setReferenceNumber(){
-
-    du.debug('Set Reference Number');
-
-    let shipping_receipt = this.parameters.get('shippingreceipt', null, false);
-
-    if(!_.isNull(shipping_receipt)){
-
-      this.parameters.set('referencenumber', shipping_receipt.reference_number);
-
-    }else{
-
-      this.parameters.set('referencenumber', uuidV4());
-
-    }
-
-    return true;
-
-  }
-
   setMethod(){
 
     du.debug('Set Method');
