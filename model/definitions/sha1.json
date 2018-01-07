@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/sha1.json",
+  "title": "SHA1",
+  "description": "A SHA-1 string hash",
+  "type":"string",
+  "pattern":"^[0-9a-f]{5,40}$"
+}

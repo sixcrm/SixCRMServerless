@@ -2,12 +2,47 @@
 const _ = require('underscore');
 const jsf = require('json-schema-faker');
 const uuidV4 = require('uuid/v4');
+const creditcardgenerator = require('creditcard-generator');
+
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
+
+  static getValidAccessKey(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
+
+    return {
+      id:id,
+      account:this.getTestAccountID(),
+      name:randomutilities.createRandomString(10),
+      notes: 'This is a mock access key.',
+      access_key: this.getValidAccessKeyString(),
+      secret_key: this.getValidSecretKeyString(),
+      created_at:timestamp.getISO8601(),
+      updated_at:timestamp.getISO8601()
+    }
+
+  }
+
+  static getValidAccessKeyString(){
+
+    let accessKeyHelperController = global.SixCRM.routes.include('helpers', 'accesskey/AccessKey.js');
+
+    return accessKeyHelperController.generateAccessKey();
+
+  }
+
+  static getValidSecretKeyString(){
+
+    let accessKeyHelperController = global.SixCRM.routes.include('helpers', 'accesskey/AccessKey.js');
+
+    return accessKeyHelperController.generateSecretKey();
+
+  }
 
   static getValidTrackingNumber(vendor){
 
@@ -182,6 +217,100 @@ class MockEntities {
       subaffiliate_5:	uuidV4(),
       cid:uuidV4()
     };
+
+  }
+
+  static getValidTransactionCustomer(){
+
+    let phone = randomutilities.createRandomPhoneNumber();
+    let firstname = randomutilities.createRandomName('first');
+    let lastname = randomutilities.createRandomName('last');
+    let email = firstname+'.'+lastname+'@'+randomutilities.createDomainName();
+    let address = this.getValidAddress();
+
+    return {
+      email: email,
+      firstname: firstname,
+      lastname: lastname,
+      phone: phone,
+      address: address,
+      billing: address
+    };
+
+  }
+
+  static getValidAddress(){
+
+    return {
+      line1:randomutilities.createRandomAddress('line1'),
+      city:randomutilities.createRandomAddress('city'),
+      state:randomutilities.createRandomAddress('state'),
+      zip:randomutilities.createRandomAddress('zip'),
+      country:randomutilities.createRandomAddress('country')
+    };
+
+  }
+
+  static getValidTransactionCreditCard(name, address, type){
+
+    let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
+
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
+
+    name = (!_.isUndefined(name) && !_.isNull(name))?name:randomutilities.creatRandomName('full');
+
+    address = (!_.isUndefined(address) && !_.isNull(address))?address:this.createAddress();
+
+    return {
+      name: name,
+      number: this.getValidCreditCardNumber(type),
+      expiration:this.getValidCreditCardExpiration(),
+      ccv: this.getValidCreditCardCCV(type),
+      address: address
+    };
+
+  }
+
+  static getValidCreditCardNumber(type){
+
+    du.debug('Get Valid CreditCard Numbers');
+
+    let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
+
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
+
+    return creditcardgenerator.GenCC(type);
+
+  }
+
+  static getValidCreditCardExpiration(){
+
+    du.debug('Get Valid CreditCard Expiration');
+
+    let current_year = timestamp.getYear();
+
+    let expiration_month = randomutilities.randomInt(1,12).toString();
+    let expiration_year = randomutilities.randomInt(current_year, (current_year+randomutilities.randomInt(1,5))).toString().slice(-2);
+
+    return expiration_month+expiration_year;
+
+  }
+
+  static getValidCreditCardCCV(type){
+
+    du.debug('Get Valid CreditCard CCV');
+
+    let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
+
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
+
+    if(type == 'Amex'){
+
+      return randomutilities.randomInt(1001, 9999).toString();
+
+    }
+
+    return randomutilities.randomInt(111, 999).toString();
 
   }
 

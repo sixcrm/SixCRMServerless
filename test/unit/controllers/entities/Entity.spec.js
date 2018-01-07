@@ -8,6 +8,7 @@ let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/pe
 const uuidV4 = require('uuid/v4');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 describe('controllers/Entity.js', () => {
 
@@ -108,12 +109,8 @@ describe('controllers/Entity.js', () => {
         });
 
         it('fails entity with given id already exists', () => {
-            // given
-            let anEntity = {
-                id:"82478014-c96f-49ef-b31c-5408e99df66e",
-                secret_key:"secret-key",
-                access_key:"access-key"
-            };
+
+            let anEntity = MockEntities.getValidAccessKey('82478014-c96f-49ef-b31c-5408e99df66e');
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
@@ -157,11 +154,8 @@ describe('controllers/Entity.js', () => {
         });
 
         it('throws error when reading from database fails', () => {
-            // given
-            let anEntity = {
-                secret_key:"secret-key",
-                access_key:"access-key"
-            };
+
+            let anEntity = MockEntities.getValidAccessKey();
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
@@ -952,12 +946,8 @@ describe('controllers/Entity.js', () => {
         });
 
         it('stores entity if it has a primary key', () => {
-            // given
-            let anEntity = {
-                secret_key: "secret-key",
-                access_key: "access-key",
-                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a' //primary key
-            };
+
+            let anEntity = MockEntities.getValidAccessKey('e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a');
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
@@ -986,14 +976,8 @@ describe('controllers/Entity.js', () => {
         });
 
         it('updates existing entity', () => {
-            // given
-            let anEntity = {
-                secret_key: "secret-key",
-                access_key: "access-key",
-                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a',
-                created_at: '2017-11-12T09:01:41.182Z',
-                updated_at: '2017-11-12T09:01:78.182Z'
-            };
+
+            let anEntity = MockEntities.getValidAccessKey('e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a');
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 
@@ -1022,11 +1006,10 @@ describe('controllers/Entity.js', () => {
         });
 
         it('stores entity when it doesn\'t have a primary key', () => {
-            // given
-            let anEntity = {
-                secret_key: "secret-key",
-                access_key: "access-key"
-            };
+
+            let anEntity = MockEntities.getValidAccessKey('e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a');
+
+            delete anEntity.id;
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
@@ -1079,12 +1062,8 @@ describe('controllers/Entity.js', () => {
         });
 
         it('creates entity if it does not exist', () => {
-            // given
-            let anEntity = {
-                secret_key: "secret-key",
-                access_key: "access-key",
-                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a'
-            };
+
+            let anEntity = MockEntities.getValidAccessKey('e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a');
 
             PermissionTestGenerators.givenUserWithAllowed('*', 'accesskey');
 
@@ -1112,14 +1091,8 @@ describe('controllers/Entity.js', () => {
         });
 
         it('updates entity if it already exists', () => {
-            // given
-            let anEntity = {
-                secret_key: "secret-key",
-                access_key: "access-key",
-                id: 'e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a',
-                created_at: '2017-11-12T09:01:41.182Z',
-                updated_at: '2017-11-12T09:01:78.182Z'
-            };
+
+            let anEntity = MockEntities.getValidAccessKey('e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a');
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 

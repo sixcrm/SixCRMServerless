@@ -45,31 +45,31 @@ class verifySignatureController {
 
      return new Promise((resolve, reject) =>	{
 
-         accessKeyController.disableACLs();
-         accessKeyController.getAccessKeyByKey(tokens[0]).then((access_key) => {
-             accessKeyController.enableACLs();
+       accessKeyController.disableACLs();
+       accessKeyController.getAccessKeyByKey(tokens[0]).then((access_key) => {
+         accessKeyController.enableACLs();
 
-             if(_.has(access_key, 'secret_key') && _.has(access_key, 'id')){
+         if(_.has(access_key, 'secret_key') && _.has(access_key, 'id')){
 
-                 let token_object = {
-                     access_key: access_key,
-                     timestamp: tokens[1],
-                     signature: tokens[2]
-                 };
+           let token_object = {
+               access_key: access_key,
+               timestamp: tokens[1],
+               signature: tokens[2]
+           };
 
-                 return resolve(token_object);
+           return resolve(token_object);
 
-             }else{
+         }else{
 
-                 return reject(eu.getError('not_implemented', 'Unset Access Key properties.'));
+           return reject(eu.getError('not_implemented', 'Unset Access Key properties.'));
 
-             }
+         }
 
-         }).catch((error) => {
+       }).catch((error) => {
 
-             return reject(error);
+         return reject(error);
 
-         });
+       });
 
      });
 
@@ -78,21 +78,21 @@ class verifySignatureController {
 
     verifyTimestamp(token_object){
 
-        du.debug('Verify Timestamp');
+      du.debug('Verify Timestamp');
 
-        let time_difference = timestamp.getTimeDifference(token_object.timestamp);
+      let time_difference = timestamp.getTimeDifference(token_object.timestamp);
 
-        if(time_difference > (60 * 60 * 5)){
+      if(time_difference > (60 * 60 * 5)){
 
-            du.warning('Signature failed:  Timestamp expired');
+          du.warning('Signature failed:  Timestamp expired');
 
-            return Promise.reject(false);
+          return Promise.reject(false);
 
-        }
+      }
 
-        du.info('Timestamp valid');
+      du.info('Timestamp valid');
 
-        return Promise.resolve(token_object);
+      return Promise.resolve(token_object);
 
     }
 
@@ -118,19 +118,9 @@ class verifySignatureController {
 
     populateAuthorityUser(token_object){
 
-        du.debug('Populate Authority User');
+      du.debug('Populate Authority User');
 
-        userController.disableACLs();
-        return userController.getUserByAccessKeyId(token_object.access_key.id).then((user) => {
-            userController.enableACLs();
-
-            return userController.validate(user).then(() => {
-
-                return user;
-
-            });
-
-        });
+      return {id: 'system@sixcrm.com'};
 
     }
 
