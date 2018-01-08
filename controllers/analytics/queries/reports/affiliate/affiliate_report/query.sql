@@ -8,18 +8,18 @@ SELECT ft.affiliate,
        coalesce(decline_count,0) AS decline_count,
        coalesce(
          case
-           when coalesce(decline_count,0) = 0 then 0
+           when coalesce(fe.count_click,0) = 0 then 0
            else 1.0*decline_count / fe.count_click
          end,
        0) AS declines_percent,
        coalesce(fe.count_sales,0) AS count_sales,
        case
-          when coalesce(fe.count_sales,0) = 0 then 0
+          when coalesce(fe.count_click,0) = 0 then 0
           else 1.0*fe.count_sales / fe.count_click
        end AS sales_percent,
        coalesce(fe.count_upsell,0) AS count_upsell ,
        case
-          when coalesce(fe.count_upsell,0) = 0 then 0
+          when coalesce(fe.count_click,0) = 0 then 0
           else 1.0*fe.count_upsell / fe.count_click
        end AS upsell_percent,
        sum_upsell,

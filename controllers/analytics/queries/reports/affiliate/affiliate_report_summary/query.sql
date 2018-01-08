@@ -10,21 +10,21 @@ SELECT coalesce(SUM(fe.count_click),0) AS count_click,
        coalesce(SUM(
          coalesce(
            case
-            when decline_count = 0 then 0
+            when fe.count_click = 0 then 0
             else 1.0*decline_count / fe.count_click
            end
        ,0)),0) AS declines_percent,
        coalesce(SUM(fe.count_sales),0) AS count_sales,
        coalesce(SUM(
          case
-          when coalesce(fe.count_sales,0) = 0 then 0
+          when coalesce(fe.count_click,0) = 0 then 0
           else 1.0*fe.count_sales / fe.count_click
          end
        ),0) AS sales_percent,
        coalesce(SUM(fe.count_upsell),0) AS count_upsell,
        coalesce(SUM(
          case
-          when coalesce(fe.count_upsell,0) = 0 then 0
+          when coalesce(fe.count_click,0) = 0 then 0
           else 1.0*fe.count_upsell / fe.count_click
          end
        ),0) AS upsell_percent,
