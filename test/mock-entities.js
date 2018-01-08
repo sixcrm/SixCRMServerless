@@ -11,6 +11,49 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
 
+  static getValidMerchantProvider(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
+
+    return {
+      id: id,
+  		account:this.getTestAccountID(),
+  		name:randomutilities.createRandomString(20),
+  		processor:{
+  			name:"NMA",
+  			id:"someIDValue"
+  		},
+  		processing:{
+  			monthly_cap: 50000.00,
+  			discount_rate:0.9,
+  			transaction_fee:0.06,
+  			reserve_rate: 0.5,
+  			maximum_chargeback_ratio:0.17,
+  			transaction_counts:{
+  				daily:30,
+  				monthly:30,
+  				weekly:30
+  			}
+  		},
+  		enabled:true,
+  		gateway: {
+  			name:"NMI",
+  			username:"demo",
+  			password:"password"
+  		},
+  		allow_prepaid:true,
+  		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
+  		customer_service:{
+  			email:"customer.service@mid.com",
+  			url:"http://mid.com",
+  			description:"Some string here..."
+  		},
+  		created_at:timestamp.getISO8601(),
+      updated_at:timestamp.getISO8601()
+    };
+
+  }
+
   static getValidAccessKey(id){
 
     id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
@@ -241,13 +284,20 @@ class MockEntities {
 
   static getValidAddress(){
 
-    return {
+    let address = {
       line1:randomutilities.createRandomAddress('line1'),
       city:randomutilities.createRandomAddress('city'),
       state:randomutilities.createRandomAddress('state'),
       zip:randomutilities.createRandomAddress('zip'),
-      country:randomutilities.createRandomAddress('country')
+      //country:randomutilities.createRandomAddress('country')
+      country:'US'
     };
+
+    if(randomutilities.randomBoolean()){
+      address.line2 = randomutilities.createRandomAddress('line2');
+    }
+
+    return address;
 
   }
 
@@ -279,7 +329,7 @@ class MockEntities {
 
     type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
 
-    return creditcardgenerator.GenCC(type);
+    return creditcardgenerator.GenCC(type).shift();
 
   }
 
@@ -287,12 +337,14 @@ class MockEntities {
 
     du.debug('Get Valid CreditCard Expiration');
 
-    let current_year = timestamp.getYear();
+    return '10/2019';
 
+    /*
     let expiration_month = randomutilities.randomInt(1,12).toString();
     let expiration_year = randomutilities.randomInt(current_year, (current_year+randomutilities.randomInt(1,5))).toString().slice(-2);
 
     return expiration_month+expiration_year;
+    */
 
   }
 

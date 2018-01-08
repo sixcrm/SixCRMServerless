@@ -39,6 +39,8 @@ module.exports = class TransactionGeneratorHelperController {
 
     this.parameter_validation = {
       'signature': global.SixCRM.routes.path('model', 'definitions/signature.json'),
+      'jwt': global.SixCRM.routes.path('model', 'definitions/jwt.json'),
+      'session': global.SixCRM.routes.path('model', 'definitions/uuidv4.json'),
       'endpoint': global.SixCRM.routes.path('model','definitions/url.json'),
       'accesskey': global.SixCRM.routes.path('model','definitions/accesskey.json'),
       'secretkey': global.SixCRM.routes.path('model','definitions/sha1.json'),
@@ -104,7 +106,9 @@ module.exports = class TransactionGeneratorHelperController {
 
     du.debug('Acquire Token');
 
-    let post_body = {campaign: this.parameters.get('campaign')};
+    let post_body = {
+      campaign: this.parameters.get('campaign')
+    };
 
     let parameters = {
       headers: {Authorization: this.parameters.get('signature')},
@@ -112,13 +116,11 @@ module.exports = class TransactionGeneratorHelperController {
       endpoint: this.parameters.get('endpoint')+'token/acquire/'+this.parameters.get('account')
     };
 
-    du.info(parameters);
-
     return httputilities.postJSON(parameters).then(result => {
 
-      du.debug(result.body);
+      du.debug('Acquire Token Response: ', result);
 
-      this.parameters.set('jwt', result.response);
+      this.parameters.set('jwt', result.body.response);
 
       return true;
 
@@ -130,17 +132,81 @@ module.exports = class TransactionGeneratorHelperController {
 
     du.debug('Create Lead');
 
+    let post_body = {
+      campaign: this.parameters.get('campaign'),
+      customer: this.parameters.get('customer')
+    };
+
+    let parameters = {
+      headers: {Authorization: this.parameters.get('jwt')},
+      body: post_body,
+      endpoint: this.parameters.get('endpoint')+'lead/create/'+this.parameters.get('account')
+    };
+
+    du.info(parameters);
+
+    return httputilities.postJSON(parameters).then(result => {
+
+      du.debug('Create Lead Response: ', result.body);
+
+      this.parameters.set('session', result.body.response.id);
+
+      return true;
+
+    });
+
   }
 
   createOrder(){
 
     du.debug('Create Order');
 
+    let post_body = {
+      session: this.parameters.get('session'),
+      product_schedules: [this.parameters.get('productschedule')],
+      creditcard: this.parameters.get('creditcard'),
+      transaction_subtype: 'main'
+    };
+
+    let parameters = {
+      headers: {Authorization: this.parameters.get('jwt')},
+      body: post_body,
+      endpoint: this.parameters.get('endpoint')+'order/create/'+this.parameters.get('account')
+    };
+
+    du.info(parameters);
+
+    return httputilities.postJSON(parameters).then(result => {
+
+      du.debug('Create Order Response: ', result.body);
+
+      return true;
+
+    });
+
   }
 
   confirmOrder(){
 
     du.debug('Confirm Order');
+
+    let parameters = {
+      headers: {Authorization: this.parameters.get('jwt')},
+      endpoint: this.parameters.get('endpoint')+'order/confirm/'+this.parameters.get('account'),
+      querystring:{
+        session:this.parameters.get('session')
+      }
+    };
+
+    du.info(parameters);
+
+    return httputilities.getJSON(parameters).then(result => {
+
+      du.debug('Confirm Order Response: ', result.body);
+
+      return true;
+
+    });
 
   }
 

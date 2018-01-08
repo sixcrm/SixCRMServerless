@@ -15,6 +15,8 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 
 const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
 
+const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
+
 function assumePermissionedRole(){
 
   let permissions = [
@@ -74,81 +76,17 @@ function getValidMerchantProviderSummaries(){
   ];
 }
 
+function getValidMerchantProvider(id){
+
+  return MockEntities.getValidMerchantProvider(id);
+
+}
+
 function getValidMerchantProviders(){
 
   return [
-  	{
-  		id:"6c40761d-8919-4ad6-884d-6a46a776cfb9",
-  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  		name:"NMI Account 1",
-  		processor:{
-  			name:"NMA",
-  			id:"someIDValue"
-  		},
-  		processing:{
-  			monthly_cap: 50000.00,
-  			discount_rate:0.9,
-  			transaction_fee:0.06,
-  			reserve_rate: 0.5,
-  			maximum_chargeback_ratio:0.17,
-  			transaction_counts:{
-  				daily:30,
-  				monthly:30,
-  				weekly:30
-  			}
-  		},
-  		enabled:true,
-  		gateway: {
-  			name:"NMI",
-  			username:"demo",
-  			password:"password",
-  		},
-  		allow_prepaid:true,
-  		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
-  		customer_service:{
-  			email:"customer.service@mid.com",
-  			url:"http://mid.com",
-  			description:"Some string here..."
-  		},
-  		created_at:"2017-04-06T18:40:41.405Z",
-  		updated_at:"2017-04-06T18:41:12.521Z"
-  	},
-  	{
-  		id:"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
-  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  		name:"NMI Account 2",
-  		processor:{
-  			name:"NMA",
-  			id:"someIDValue"
-  		},
-  		processing:{
-  			monthly_cap: 50000.00,
-  			discount_rate:0.9,
-  			transaction_fee:0.06,
-  			reserve_rate: 0.5,
-  			maximum_chargeback_ratio:0.17,
-  			transaction_counts:{
-  				daily:30,
-  				monthly:30,
-  				weekly:30
-  			}
-  		},
-  		enabled:true,
-  		gateway: {
-  			name:"NMI",
-  			username:"demo",
-  			password:"password"
-  		},
-  		allow_prepaid:true,
-  		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
-  		customer_service:{
-  			email:"customer.service@mid.com",
-  			url:"http://mid.com",
-  			description:"Some string here..."
-  		},
-  		created_at:"2017-04-06T18:40:41.405Z",
-  		updated_at:"2017-04-06T18:41:12.521Z"
-  	}
+    getValidMerchantProvider('79189a4a-ed89-4742-aa96-afcd7f6c08fb'),
+    getValidMerchantProvider('6c40761d-8919-4ad6-884d-6a46a776cfb9')
   ];
 
 }
@@ -363,7 +301,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       return ph.selectMerchantProvider().then((result) => {
 
-        expect(result).to.deep.equal(merchantproviders[1]);
+        expect(result).to.deep.equal(merchantproviders[0]);
 
       });
 
@@ -411,7 +349,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
-      merchantproviders[0].accepted_payment_methods = ["Monopoly Money"];
+      merchantproviders[0].accepted_payment_methods = ['American Express'];
       loadbalancer.monthly_sum = 4000.00;
 
       creditcard.properties = creditcard_properties;
@@ -1381,7 +1319,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       ph.parameters.set('selected_loadbalancer', loadbalancer);
 
       return ph.getMerchantProviderTargetDistribution(merchantproviders[1]).then((target_distribution) => {
-        expect(target_distribution).to.equal(loadbalancer.merchantproviders[1].distribution);
+        expect(target_distribution).to.equal(loadbalancer.merchantproviders[0].distribution);
       });
 
     });
@@ -1720,7 +1658,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
         expect(response.code).to.equal('success');
         expect(response.message).to.equal('SUCCESS');
-        expect(response.merchant_provider).to.equal(merchantproviders[1].id);
+        expect(response.merchant_provider).to.equal(merchantproviders[0].id);
         expect(response.result).to.include({
           response: '1',
           responsetext: 'SUCCESS',

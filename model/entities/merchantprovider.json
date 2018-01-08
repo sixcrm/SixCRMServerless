@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/merchantprovider",
+	"id":"/entities/merchantprovider.json",
 	"title": "Merchant Provider",
 	"type": "object",
 	"description": "A merchant provider",

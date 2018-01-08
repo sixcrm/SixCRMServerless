@@ -22,5 +22,5 @@
 		"subtype":{"$ref": "../general/transaction/subtype.json"},
 		"amount":{"$ref": "../definitions/currency.json"}
 	},
-	"required":["id", "customer", "creditcard","merchant_provider","campaign","affiliate","account","product_schedules","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5","datetime","processor_result","type","subtype","amount"]
+	"required":["id", "customer", "creditcard","merchant_provider","campaign","account","product_schedules","datetime","processor_result","type","subtype","amount"]
 }

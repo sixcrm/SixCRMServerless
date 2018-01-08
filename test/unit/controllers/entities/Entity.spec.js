@@ -1097,12 +1097,12 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
-                    return Promise.resolve({Items: [anEntity]});
-                },
-                saveRecord: (tableName, entity) => {
-                    return Promise.resolve(entity);
-                }
+              queryRecords: (table, parameters, index) => {
+                  return Promise.resolve({Items: [anEntity]});
+              },
+              saveRecord: (tableName, entity) => {
+                  return Promise.resolve(entity);
+              }
             });
 
             const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
