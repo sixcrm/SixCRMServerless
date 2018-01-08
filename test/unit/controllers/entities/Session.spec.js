@@ -8,6 +8,14 @@ function getValidSession() {
   return MockEntities.getValidSession();
 }
 
+function getValidRebill(){
+  return MockEntities.getValidRebill();
+}
+
+function getValidTransaction(){
+  return MockEntities.getValidTransaction();
+}
+
 describe('controllers/Session.js', () => {
 
     before(() => {
@@ -549,11 +557,11 @@ describe('controllers/Session.js', () => {
         it('returns list of transactions', () => {
 
             let session = getValidSession();
-
+            let transaction = getValidTransaction();
             let session_rebills = {
-                rebills: [{
-                    id: 'dummy_id'
-                }]
+                rebills: [
+                  getValidRebill()
+                ]
             };
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
@@ -565,14 +573,14 @@ describe('controllers/Session.js', () => {
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), {
                 listTransactionsByRebillID: ({id}) => {
                     expect(id).to.equal(session_rebills.rebills[0].id);
-                    return Promise.resolve(['a_transaction']);
+                    return Promise.resolve({transactions: [transaction]});
                 }
             });
 
             let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
 
             return sessionController.listTransactions(session).then((result) => {
-                expect(result).to.deep.equal(['a_transaction']);
+                expect(result).to.deep.equal([transaction]);
             });
         });
     });

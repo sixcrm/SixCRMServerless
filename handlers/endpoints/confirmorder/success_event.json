@@ -1,6 +1,14 @@
 {
-	"requestContext":"{\"authorizer\":{\"user\":\"4ee23a8f5c8661612075a89e72a56a3c6d00df90\"}}",
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
-	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts",
-	"queryStringParameters":"session=668ad918-0d09-4116-a6fe-0e8a9eda36f7"
+	"requestContext":{
+		"authorizer":{
+			"user":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37693"
+		}
+	},
+	"pathParameters": {
+		"account": "eefdeca6-41bc-4af9-a561-159acb449b5e"
+	},
+	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2RldmVsb3BtZW50LWFwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNTE1NDQ0OTEwLCJleHAiOjE1MTU0NDg1MTAsInVzZXJfYWxpYXMiOiI2MGZjOGNjYzg1ZDhiN2U2ZWFhZTMzM2JiMjBkMmRiNTFhYTM3NjkzIn0.J63kECWpPWljuK4wooDkJ26RRQu0FggEtDnRt5opFic",
+	"queryStringParameters":{
+		"session":"5556afa7-b538-49b0-aba5-765589a4ac58"
+	}
 }

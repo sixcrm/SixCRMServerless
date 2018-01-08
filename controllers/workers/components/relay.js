@@ -76,9 +76,13 @@ module.exports = class RelayController {
         let params = this.parameters.get('params');
 
         return this.sqsutilities.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then((messages) => {
+
+          du.debug('Messages', messages);
+
           this.parameters.set('messages', messages);
 
           return messages;
+
         });
 
       }else{

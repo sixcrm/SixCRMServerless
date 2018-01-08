@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/transactions",
+	"id":"/entities/components/transactions.json",
 	"title": "Transactions",
 	"description": "A array of transactions",
 	"type":"array",

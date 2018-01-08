@@ -198,47 +198,62 @@ class sessionController extends entityController {
 
       du.debug('List Transactions');
 
-      return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session}).then((session_rebills) => {
+      return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session})
+      .then((session_rebills) => {
 
         if(_.has(session_rebills, 'rebills') && arrayutilities.nonEmpty(session_rebills.rebills)){
 
-          let rebill_transactions = arrayutilities.map(session_rebills.rebills, (session_rebill) => {
+          return session_rebills.rebills;
 
-            return this.executeAssociatedEntityFunction('transactionController', 'listTransactionsByRebillID', {id: this.getID(session_rebill)});
+        }
+
+        return null;
+
+      })
+      .then(rebills => {
+
+        du.highlight(rebills);
+
+        if(!_.isNull(rebills) && arrayutilities.nonEmpty(rebills)){
+
+          let rebills_transactions_promises = arrayutilities.map(rebills, (rebill) => {
+
+            return this.executeAssociatedEntityFunction('transactionController', 'listTransactionsByRebillID', {id: this.getID(rebill)});
 
           });
 
-          return Promise.all(rebill_transactions).then(session_rebill_transactions => {
+          return Promise.all(rebills_transactions_promises);
 
-            let return_array = [];
+        }
 
-            if(arrayutilities.isArray(session_rebill_transactions) && arrayutilities.nonEmpty(session_rebill_transactions)){
+        return null;
 
-              arrayutilities.map(session_rebill_transactions, (rebill_transactions) => {
+      })
+      .then(rebills_transactions => {
 
-                if(arrayutilities.isArray(rebill_transactions) && arrayutilities.nonEmpty(rebill_transactions)){
+        if(arrayutilities.isArray(rebills_transactions) && arrayutilities.nonEmpty(rebills_transactions)){
 
-                  return arrayutilities.map(rebill_transactions, transaction => {
+          let return_array = [];
 
-                    return_array.push(transaction);
+          arrayutilities.map(rebills_transactions, rebill_transactions => {
 
-                  });
+            if(_.has(rebill_transactions, 'transactions') && arrayutilities.nonEmpty(rebill_transactions.transactions)){
 
-                }
+              arrayutilities.map(rebill_transactions.transactions, rebill_transaction => {
+
+                return_array.push(rebill_transaction);
 
               });
 
             }
 
-            return (arrayutilities.nonEmpty(return_array))?return_array:null;
-
           });
 
-        }else{
-
-          return null;
+          return (arrayutilities.nonEmpty(return_array))?return_array:null;
 
         }
+
+        return null;
 
       });
 
