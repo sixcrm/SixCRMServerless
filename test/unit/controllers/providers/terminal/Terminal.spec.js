@@ -287,15 +287,13 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
   });
 
-  describe.only('acquireTransactions', () => {
+  describe('acquireTransactions', () => {
 
     it('successfully acquires rebill transactions', () => {
 
       let permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
 
-      permissionutilities.setPermissions('*',['*/*'],[])
-
-      let rebill = getValidRebill('09741edf-434b-44ab-b5a3-da4822e975d8');
+      let rebill = getValidRebill();
       let transactions =  getValidTransactions();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
