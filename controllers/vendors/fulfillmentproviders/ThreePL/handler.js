@@ -24,14 +24,15 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
     };
 
     this.parameter_validation = {
-      'providerresponse':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/ThreePL/providerresponse.json'),
+      'vendorresponse':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/ThreePL/vendorresponse.json'),
       'action': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/action.json'),
       'method': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/method.json'),
       'soapaction': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/soapaction.json'),
       'wsdl': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/wsdl.json'),
       'parametersobject': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/parametersobject.json'),
       'customer':global.SixCRM.routes.path('model','entities/customer.json'),
-      'products':global.SixCRM.routes.path('model','entities/components/products.json')
+      //Technical Debt:  Resolve
+      //'products':global.SixCRM.routes.path('model','entities/components/products.json')
     };
 
     this.parameter_definition = {
@@ -52,7 +53,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
       info:{
         required:{
           action:'action',
-          referencenumber:'reference_number'
+          shippingreceipt:'shipping_receipt'
         },
         optional:{}
       }
@@ -73,10 +74,14 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
     return Promise.resolve()
     .then(() => this.parameters.setParameters({argumentation: argumentation, action: 'fulfill'}))
     .then(() => this.setMethod())
+    .then(() => this.setReferenceNumber())
     .then(() => this.createParametersObject())
     .then(() => this.issueRequest())
-    .then(() => this.postRequestProcessing())
-    .then(() => this.respond());
+    .then(() => {
+      let reference_number = this.parameters.get('referencenumber');
+
+      return this.respond({additional_parameters: {reference_number: reference_number}});
+    });
 
   }
 
@@ -91,17 +96,16 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
     return Promise.resolve()
     .then(() => this.parameters.setParameters({argumentation: argumentation, action: 'info'}))
     .then(() => this.setMethod())
+    .then(() => this.setReferenceNumber())
     .then(() => this.createParametersObject())
     .then(() => this.issueRequest())
-    .then(() => this.postRequestProcessing())
-    .then(() => this.respond());
+    .then(() => this.respond({}));
 
   }
 
   test(){
 
     du.debug('Test');
-
     let argumentation = {action: 'test'};
 
     return Promise.resolve()
@@ -109,8 +113,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
     .then(() => this.setMethod())
     .then(() => this.createParametersObject())
     .then(() => this.issueRequest())
-    .then(() => this.postRequestProcessing())
-    .then(() => this.respond());
+    .then(() => this.respond({}));
 
   }
 
@@ -325,6 +328,8 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
     du.debug('Get Create Orders Method Parameters');
 
+    let reference_number = this.parameters.get('referencenumber');
+
     let request_parameters = {
       orders: {
         '@':{
@@ -332,7 +337,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
         },
         Order: {
           TransInfo:{
-            ReferenceNum: uuidV4()
+            ReferenceNum: reference_number
           },
           ShipTo: this.getCustomerParameters(),
           ShippingInstructions: {
@@ -492,19 +497,11 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
     }).then((result_object) => {
 
-      this.parameters.set('providerresponse', result_object);
+      this.parameters.set('vendorresponse', result_object);
 
       return true;
 
     });
-
-  }
-
-  postRequestProcessing(){
-
-    //du.highlight(this.parameters.get('providerresponse'));
-
-    return true;
 
   }
 

@@ -5,7 +5,6 @@ package:
     - .git/**
     - bin/**
     - coverage/**
-    - model/dynamodb/**
     - model/redshift/seeds/**
     - deployment/**
     - test/**
@@ -209,12 +208,14 @@ functions:
 
 # Workers
 #These do not use the forwardMessage controller because thier datasources are not SQS
-  randomredshiftdata:
-    handler: handlers/workers/randomredshiftdata/handler.randomredshiftdata
+  integrationtestgenerator:
+    handler: handlers/workers/integrationtestgenerator/handler.integrationtestgenerator
     events:
       - schedule:
           rate: rate(5 minutes)
           enabled: true
+    environment:
+      observations: 1
 
 #execute on fifth minute of every hour
   rebillstatetoredshift:
@@ -251,6 +252,7 @@ functions:
     handler: handlers/endpoints/acquiretoken/handler.acquiretoken
     events:
       - http:
+         #note:  Account shouldn't be necessary here...
          path: token/acquire/{account}
          method: post
          cors: true
@@ -267,6 +269,7 @@ functions:
     handler: handlers/endpoints/createlead/handler.createlead
     events:
       - http:
+         #note:  Account shouldn't be necessary here...
          path: lead/create/{account}
          method: post
          cors: true
@@ -279,6 +282,7 @@ functions:
     handler: handlers/endpoints/createorder/handler.createorder
     events:
       - http:
+         #note:  Account shouldn't be necessary here...
          path: order/create/{account}
          method: post
          cors: true
@@ -291,6 +295,7 @@ functions:
     handler: handlers/endpoints/confirmorder/handler.confirmorder
     events:
       - http:
+         #note:  Account shouldn't be necessary here...
          path: order/confirm/{account}
          method: get
          cors: true
@@ -303,6 +308,7 @@ functions:
     handler: handlers/endpoints/tracking/handler.tracking
     events:
       - http:
+         #note:  Account shouldn't be necessary here...
          path: tracking/{account}
          method: post
          cors: true
@@ -315,6 +321,7 @@ functions:
     handler: handlers/endpoints/checkout/handler.checkout
     events:
       - http:
+         #note:  Account shouldn't be necessary here...
          path: checkout/{account}
          method: post
          cors: true

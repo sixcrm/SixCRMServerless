@@ -28,6 +28,8 @@ module.exports = class TestController extends ShipmentUtilities {
       }
     };
 
+    this.response_validation = global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/test.json');
+
     this.augmentParameters();
 
   }
@@ -41,6 +43,8 @@ module.exports = class TestController extends ShipmentUtilities {
     .then(() => this.hydrateFulfillmentProvider())
     .then(() => this.instantiateFulfillmentProviderClass())
     .then(() => this.executeTest())
+    .then(() => this.validateResponse())
+    .then(() => this.pruneResponse())
     .then(() => {
       return this.parameters.get('vendorresponseclass');
     });

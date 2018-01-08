@@ -17,4 +17,14 @@
     "secret_key": "c3VwZXIudXNlckB0ZXN0LmNvbQ==",
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+  "access_key": "8SUJAY9BR17LN2QUJAMLQ6NDXZ8RTCQ7SS42RTAE",
+  "account": "eefdeca6-41bc-4af9-a561-159acb449b5e",
+  "created_at": "2018-01-06T21:36:11.231Z",
+  "name":"Integration Test Access Key",
+  "notes":"This access key is used by integration tests.",
+  "id": "5426d18f-4fc9-4462-83cc-29e0dfaaba46",
+  "secret_key": "fb809cd5cb5342222c9bcd95ba7e5510ecb033e5",
+  "updated_at": "2018-01-06T21:36:11.231Z"
 }]

@@ -1,0 +1,22 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/entities/components/merchantprovider/test.json",
+	"title": "A Test Merchant Provider",
+	"type":"object",
+  "properties":{
+    "name":{
+      "type":"string",
+      "enum":["Test"]
+    },
+    "username":{
+      "type":"string"
+    },
+    "password":{
+      "type":"string"
+    },
+    "processor_id": {
+			"type": "string"
+		}
+  },
+  "required":["name","username","password"]
+}

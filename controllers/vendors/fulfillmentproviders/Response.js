@@ -17,22 +17,24 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
     this.parameter_definition = {
       handleResponse:{
         required: {
-          error:'error',
-          response:'response',
-          body:'body'
+          vendorresponse:'vendor_response',
+          action:'action'
         },
-        optional:{}
+        optional:{
+          additionalparameters: 'additional_parameters'
+        }
       }
     };
 
     this.parameter_validation = {
-      'error':global.SixCRM.routes.path('model','vendors/shippingproviders/response/error.json'),
-      'response':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/response/response.json'),
-      'body':global.SixCRM.routes.path('model','vendors/shippingproviders/response/body.json'),
+      'vendorresponse':global.SixCRM.routes.path('model','vendors/shippingcarriers/response/vendorresponse.json'),
+      'action':global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/action.json'),
+      'additionalparameters': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/additionalparameters.json'),
+      //Technical Debt:  Bad Paths...
       'code': global.SixCRM.routes.path('model','vendors/shippingproviders/response/code.json'),
       'result': global.SixCRM.routes.path('model','vendors/shippingproviders/response/result.json'),
       'message': global.SixCRM.routes.path('model','vendors/shippingproviders/response/message.json'),
-      'parsedresponse':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/response/parsedresponse.json'),
+      'parsedresponse':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/response/parsedresponse.json')
     };
 
     this.result_messages = {
@@ -71,10 +73,14 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
       if(_.isFunction(this.determineResultCode)){
 
-        let response = this.parameters.get('response');
-        let body = this.parameters.get('body');
+        let vendor_response = this.parameters.get('vendorresponse');
+        let response = vendor_response.response;
+        let body = vendor_response.body;
 
-        this.validateProviderResponse();
+        this.parameters.set('response', response);
+        this.parameters.set('body', body);
+
+        this.validateVendorResponse();
 
         let result_code = this.determineResultCode({response: response, body: body});
         let result_message = this.determineResultMessage(result_code);
@@ -152,7 +158,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
   }
 
-  validateProviderResponse(){
+  validateVendorResponse(){
 
     du.debug('Validate Provider Response');
 

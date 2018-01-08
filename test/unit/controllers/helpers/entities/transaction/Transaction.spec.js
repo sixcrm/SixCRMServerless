@@ -15,6 +15,7 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 
@@ -26,49 +27,13 @@ function getValidTransaction(){
 
 function getValidTransactions(){
 
-  return [{
-    amount: 34.99,
-    id: "d376f777-3e0b-43f7-a5eb-98ee109fa2c5",
-    alias:"T56S2HJ922",
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    rebill: "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-    processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-    merchant_provider: "6c40761d-8919-4ad6-884d-6a46a776cfb9",
-    products:[{
-      product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-      amount:34.99
-    }],
-    type:"reverse",
-    result:"success",
-    created_at:"2017-04-06T18:40:41.405Z",
-    updated_at:"2017-04-06T18:41:12.521Z"
-  },
-  {
-    amount: 13.22,
-    id: "d376f777-3e0b-43f7-a5eb-98ee109fa2c5",
-    alias:"T56S2HJ922",
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    rebill: "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-    processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-    merchant_provider: "6c40761d-8919-4ad6-884d-6a46a776cfb9",
-    products:[{
-      product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-      amount:34.99
-    }],
-    type:"refund",
-    result:"success",
-    created_at:"2017-04-06T18:40:41.405Z",
-    updated_at:"2017-04-06T18:41:12.521Z"
-  }];
+  return [MockEntities.getValidTransaction(),MockEntities.getValidTransaction()];
 
 }
 
 function getValidTransactionProduct(){
 
-  return {
-    product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-    amount:34.99
-  }
+  return MockEntities.getValidTransactionProduct()
 
 }
 
@@ -87,7 +52,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {
@@ -100,18 +65,13 @@ describe('helpers/entities/transaction/Transaction.js', () => {
     it('returns transaction products from transaction records', () => {
 
       let transaction = getValidTransaction();
-      let expected_transaction_products = [
-        {
-          "amount": 34.99,
-          "product": "be992cea-e4be-4d3e-9afa-8e020340ed16"
-        }
-      ];
+      let transaction_products = transaction.products;
 
       let transactionHelperController = new TransactionHelperController();
 
       let result = transactionHelperController.getTransactionProducts([transaction]);
 
-      expect(result).to.deep.equal(expected_transaction_products);
+      expect(result).to.deep.equal(transaction_products);
 
     });
 
@@ -192,7 +152,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       let transactionHelperController = new TransactionHelperController();
 
       transactionHelperController.parameters.set('transaction', transaction);
-      transactionHelperController.parameters.set('transactionproduct', updated_transaction_product);
+      transactionHelperController.parameters.set('updatedtransactionproducts', [updated_transaction_product]);
 
       let result = transactionHelperController.updateTransactionProductsPrototype();
 
@@ -203,23 +163,16 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
   });
 
-  describe('updateTransactionProduct', () => {
+  describe('updateTransaction', () => {
 
-    it('successfully updates a transaction product', () => {
+    it('successfully updates a transaction', () => {
 
       let transaction = getValidTransaction();
-      let updated_transaction_product = transaction.products[0];
-
-      updated_transaction_product.shipping_receipt = uuidV4();
-
       let updated_transaction = objectutilities.clone(transaction);
 
-      updated_transaction.products[0] = updated_transaction_product;
+      updated_transaction.products[0].shipping_receipt = uuidV4();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        get:({id}) => {
-          return Promise.resolve(transaction);
-        },
         update:({entity}) => {
           return Promise.resolve(entity);
         }
@@ -227,8 +180,11 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
       let transactionHelperController = new TransactionHelperController();
 
-      return transactionHelperController.updateTransactionProduct({id: transaction.id, transaction_product: updated_transaction_product}).then(result => {
-        expect(result).to.deep.equal(updated_transaction);
+      transactionHelperController.parameters.set('transaction', updated_transaction);
+
+      return transactionHelperController.updateTransaction().then(result => {
+        expect(result).to.equal(true);
+        expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(updated_transaction);
       });
 
     });

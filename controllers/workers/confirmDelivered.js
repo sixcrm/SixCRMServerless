@@ -123,12 +123,12 @@ class confirmDeliveredController extends workerController {
       let shipping_receipts = this.parameters.get('shippingreceipts');
 
       if(!_.has(this, 'shippingStatusController')){
-        this.shippingStatusController = global.SixCRM.routes.include('controllers', 'vendors/shippingproviders/ShippingStatus.js');
+        this.shippingStatusController = global.SixCRM.routes.include('controllers', 'helpers/shippingcarriers/ShippingStatus.js');
       }
 
       let delivered_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
 
-        return this.shippingStatusController.isDelivered({shipping_provider: 'usps', shipping_receipt: shipping_receipt});
+        return this.shippingStatusController.isDelivered({shipping_receipt: shipping_receipt});
 
       });
 

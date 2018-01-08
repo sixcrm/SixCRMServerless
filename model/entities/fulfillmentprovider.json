@@ -14,7 +14,8 @@
 			"type":"object",
 			"anyOf":[
 				{"$ref":"./components/fulfillmentproviders/hashtag.json"},
-				{"$ref":"./components/fulfillmentproviders/threepl.json"}
+				{"$ref":"./components/fulfillmentproviders/threepl.json"},
+				{"$ref":"./components/fulfillmentproviders/test.json"}
 			]
 		},
 		"created_at":{"$ref": "../definitions/iso8601.json"},

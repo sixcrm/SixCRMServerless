@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/additionalparameters.json",
+  "title":"Shipping Provider Response Additional Parameters",
+  "type":"object"
+}

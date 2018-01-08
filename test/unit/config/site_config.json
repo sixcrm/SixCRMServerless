@@ -58,5 +58,5 @@
 
 
   },
-  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "shipping_providers", "redshift", "notifications", "cache", "elasticache", "logging", "slack"]
+  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "redshift", "notifications", "cache", "elasticache", "logging", "slack"]
 }

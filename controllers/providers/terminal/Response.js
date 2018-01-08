@@ -13,8 +13,7 @@ module.exports = class TerminalResponse extends Response {
 
     this.parameter_validation = {
       'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
-      //'providerresponse':global.SixCRM.routes.path('model', 'providers/shipping/terminal/providerresponse.json'),
-      'vendorresponse':global.SixCRM.routes.path('model','providers/shipping/terminal/vendorresponse.json')
+      'vendorresponse':global.SixCRM.routes.path('model','providers/shipping/terminal/responses/vendorresponseclass.json')
     };
 
     this.parameter_definition = {

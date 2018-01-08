@@ -47,7 +47,7 @@ describe('controllers/entities/Bill.js', () => {
     });
 
     beforeEach(() => {
-        global.SixCRM.localcache.clear('all');
+        //global.SixCRM.localcache.clear('all');
         account_copy = global.account;
 
         let mock_preindexing_helper = class {
@@ -133,6 +133,7 @@ describe('controllers/entities/Bill.js', () => {
         it('throws error when entity does not have expected fields', () => {
 
             let entity = getValidBill();
+
             delete entity.id;
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'bill', '*');

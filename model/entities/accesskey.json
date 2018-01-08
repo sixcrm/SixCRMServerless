@@ -12,14 +12,8 @@
 			"type": "string"
 		},
 		"account": {"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"access_key":{
-			"type":"string",
-			"minLength":3
-		},
-		"secret_key":{
-			"type":"string",
-			"minLength":3
-		},
+		"access_key":{"$ref": "../definitions/accesskey.json"},
+		"secret_key":{"$ref": "../definitions/sha1.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},

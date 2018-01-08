@@ -60,7 +60,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let result = shippingReceiptHelperController.getTrackingNumber(shipping_receipt);
 
-      expect(result).to.equal(shipping_receipt.trackingnumber);
+      expect(result).to.equal(shipping_receipt.tracking.id);
 
     });
 
@@ -68,7 +68,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_receipt = getValidShippingReceipt();
 
-      delete shipping_receipt.trackingnumber;
+      delete shipping_receipt.tracking;
 
       let shippingReceiptHelperController = new ShippingReceiptHelperController();
 

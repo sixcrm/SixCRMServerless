@@ -1,0 +1,12 @@
+{
+  "id":"/providers/shipping/terminal/info.json",
+  "title":"Info response object",
+  "type":"object",
+  "properties":{
+    "orders":{
+      "type":"array",
+      "items":{"$ref":"./inforesponseelement.json"}
+    }
+  },
+  "required":"orders"
+}

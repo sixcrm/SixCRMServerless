@@ -99,7 +99,7 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

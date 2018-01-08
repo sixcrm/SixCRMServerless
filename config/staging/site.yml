@@ -61,11 +61,6 @@ lambda:
     forwardmessage_sendnotificationstoarchive: 'sendnotificationstoarchive'
     forwardmessage_recovertoarchive: 'recovertoarchive'
 
-shipping_providers:
-  usps:
-    user_id: '005SIXCR2114'
-    password: '392VM80MW850'
-
 #Technical Debt: This all needs to be configured elsewhere?
 #Technical Debt:  Username and Password combinations need to be encrypted...
 

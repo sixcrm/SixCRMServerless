@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/product",
+	"id":"/entities/product.json",
 	"title": "Product",
 	"type": "object",
 	"description": "A product",

@@ -1,6 +1,0 @@
-{
-  "$schema": "http://json-schema.org/schema#",
-  "id":"/requestresponsebody.json",
-  "title":"Request Response Body",
-  "type":"string"
-}

@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/accesskey.json",
+  "title": "Access Key",
+  "description": "A transactional endpoint access key",
+  "type":"string",
+  "pattern":"^[a-zA-Z0-9]{40}$"
+}

@@ -1,0 +1,29 @@
+{
+	"title": "NMI Merchant Provider Refund Object",
+	"type": "object",
+	"properties": {
+		"type":{
+			"type":"string",
+			"enum":["refund"]
+		},
+		"username":{
+			"type":"string"
+		},
+		"password":{
+			"type":"string"
+		},
+		"processor_id":{
+			"type":"string"
+		},
+		"endpoint":{
+			"type":"string",
+			"format":"uri"
+		},
+		"amount":{"$ref": "../../definitions/currency.json"},
+		"transactionid":{
+			"type":"string",
+			"minLength":1
+		}
+	},
+	"required":["type", "username", "password", "endpoint", "transactionid"]
+}

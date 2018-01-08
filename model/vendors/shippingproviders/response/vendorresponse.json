@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/vendorresponse.json",
+  "title":"Shipping Provider Response Response",
+  "type":"object",
+  "properties":{
+    "error":{"ref":"./error.json"},
+    "body":{"$ref":"./body.json"},
+    "response":{"$ref":"./response.json"}
+  }
+}

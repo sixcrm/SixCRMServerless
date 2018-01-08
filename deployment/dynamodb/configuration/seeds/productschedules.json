@@ -76,4 +76,20 @@
 	],
 	"created_at":"2017-04-06T18:40:41.405Z",
 	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"77c72379-de6f-449d-96b6-ac888852729f",
+	"name":"Integration Test Product Schedule",
+	"account":"eefdeca6-41bc-4af9-a561-159acb449b5e",
+	"loadbalancer":"45367480-f1c1-4f61-a3d6-413c22a44dc3",
+	"schedule":[
+		{
+			"product_id":"b0b93fba-faff-4215-bb55-3ada6b298e17",
+			"price":19.99,
+			"start":0,
+			"period":30
+		}
+	],
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
 }]

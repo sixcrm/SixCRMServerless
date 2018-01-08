@@ -59,11 +59,6 @@ lambda:
     forwardmessage_sendnotificationstoarchive: 'sendnotificationstoarchive'
     forwardmessage_recovertoarchive: 'recovertoarchive'
 
-shipping_providers:
-  usps:
-    user_id: '005SIXCR2114'
-    password: '392VM80MW850'
-
 redshift:
   user: 'admin'
   database: 'analytics'

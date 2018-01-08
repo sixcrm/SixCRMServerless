@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/vendors/shippingcarriers/USPS/trackingnumber.json",
+  "title":"USPS Tracking Number",
+  "type":"string"
+}

@@ -11,20 +11,15 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 const FulfillController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
 
 function getValidTransactionProducts(){
 
   return [
-    {
-      amount: 34.99,
-      product: uuidV4()
-    },
-    {
-      amount: 34.99,
-      product: uuidV4()
-    }
+    MockEntities.getValidTransactionProduct(),
+    MockEntities.getValidTransactionProduct()
   ];
 
 }
@@ -66,77 +61,51 @@ function getValidAmount(){
 
 function getValidProduct(){
 
-  return {
-    id:uuidV4(),
-    name:randomutilities.createRandomString(20),
-    sku:randomutilities.createRandomString(20),
-    ship:true,
-    shipping_delay:3600,
-    fulfillment_provider:uuidV4(),
-    default_price:39.99,
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    created_at:timestamp.getISO8601(),
-    updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidProduct()
 
 }
 
 function getValidTransaction(){
-  return {
-    amount: 34.99,
-    id: uuidV4(),
-    alias:'T'+randomutilities.createRandomString(9),
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    rebill: uuidV4(),
-    processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-    merchant_provider: uuidV4(),
-    products:[{
-      product:uuidV4(),
-      amount:34.99
-    }],
-    type:"sale",
-    result:"success",
-    created_at:timestamp.getISO8601(),
-    updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidTransaction()
 }
 
-function getValidProviderResponse(){
+function getValidVendorResponse(){
 
-  return {
-    code:'success',
-    response:{
-      body: 'everybody needs somebody'
+  const VendorResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Hashtag/Response.js');
+
+  return new VendorResponse({
+    vendor_response: {
+      error: null,
+      body: 'Everybody needs somebody.',
+      response: {
+        body:'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><Int32 xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">1</Int32><warnings xmlns="http://www.JOI.com/schemas/ViaSub.WMS/" /></soap:Body></soap:Envelope>',
+        statusCode:200,
+        statusMessage:'OK'
+      }
     },
-    message:'Success'
-  };
+    action: 'fulfill',
+    additional_parameters: {
+      reference_number: uuidV4()
+    }
+  });
 
 }
 
 function getValidCustomer(){
-  return {
-    updated_at: '2017-10-31T20:10:05.380Z',
-    lastname: 'Damunaste',
-    created_at: '2017-10-14T16:15:19.506Z',
-    creditcards: [ 'df84f7bb-06bd-4daa-b1a3-6a2c113edd72' ],
-    firstname: 'Rama',
-    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    address:{
-      zip: '97213',
-      country: 'US',
-      state: 'OR',
-      city: 'London',
-      line1: '10 Downing St.'
-    },
-    id: '24f7c851-29d4-4af9-87c5-0298fa74c689',
-    email: 'rama@damunaste.org',
-    phone: '1234567890'
-  };
+  return MockEntities.getValidCustomer()
+}
+
+function getValidRebill(){
+  return MockEntities.getValidRebill();
+}
+
+function getValidSession(){
+  return MockEntities.getValidSession();
 }
 
 function getValidInstantiatedFulfillmentProvider(){
 
-  let processor_response = getValidProviderResponse();
+  let processor_response = getValidVendorResponse();
   let fulfillment_provider = class {
     constructor({fulfillment_provider}){}
     fulfill(){
@@ -157,34 +126,14 @@ function getValidProducts(product_ids){
   }
 
   return arrayutilities.map(product_ids, product_id => {
-    return {
-      id:product_id,
-  		name:randomutilities.createRandomString(20),
-  		sku:randomutilities.createRandomString(20),
-  		ship:true,
-      shipping_delay:3600,
-  		fulfillment_provider:uuidV4(),
-  		default_price:39.99,
-  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  		created_at:timestamp.getISO8601(),
-  		updated_at:timestamp.getISO8601()
-    };
+    return MockEntities.getValidProduct(product_id)
   });
 
 }
 
 function getValidFulfillmentProvider(){
 
-  return {
-    id:uuidV4(),
-		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		name: randomutilities.createRandomString(20),
-		username: randomutilities.createRandomString(10),
-		password: randomutilities.createRandomString(10),
-		provider:"Hashtag",
-		created_at: timestamp.getISO8601(),
-		updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidFulfillmentProvider()
 
 }
 
@@ -199,7 +148,7 @@ describe('helpers/shipment/Fulfill.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {
@@ -314,67 +263,68 @@ describe('helpers/shipment/Fulfill.js', () => {
   describe('execute', () => {
     it('successfully executes a fulfill', () => {
 
+      let session = getValidSession();
+      let rebill = getValidRebill();
       let fulfillment_provider = getValidFulfillmentProvider();
       let augmented_transaction_products = getValidAugmentedTransactionProducts();
-      let provider_response = getValidProviderResponse();
+      let products = arrayutilities.map(augmented_transaction_products, (augmented_transaction_product, index) => {
+        augmented_transaction_products[index].transaction.rebill = rebill.id;
+        return MockEntities.getValidProduct(augmented_transaction_product.product);
+      });
+
+      let vendor_response = getValidVendorResponse();
       let instantiated_fulfillment_provider = getValidInstantiatedFulfillmentProvider();
       let hydrated_augmented_transaction_products = getValidHydratedAugmentedTransactionProducts();
       let customer = getValidCustomer();
 
-      let mock_shipment_utilities = class {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
+        get:({id}) => {
+          return Promise.resolve(fulfillment_provider);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        },
+        getSession: (rebill) => {
+          return Promise.resolve(session);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        getCustomer:(session) => {
+          return Promise.resolve(customer);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+        getListByAccount:({ids}) => {
+          return Promise.resolve({products: products});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = this.descriptive_name+'s';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
+      });
+
+      let mock_vendor = class {
         constructor(){
-          const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
-
-          this.transactionHelperController = new TransactionHelperController();
-
-          this.parameter_validation = {
-            'products':global.SixCRM.routes.path('model', 'entities/components/products.json'),
-            'fulfillmentprovider':global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
-            'fulfillmentproviderid': global.SixCRM.routes.path('model','definitions/uuidv4.json'),
-            'rebillid': global.SixCRM.routes.path('model','definitions/uuidv4.json'),
-            'rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
-            'augmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproducts.json'),
-            'augmentedtransactionproduct': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproduct.json'),
-            'hydratedaugmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/hydratedaugmentedtransactionproducts.json'),
-            'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
-            'session':global.SixCRM.routes.path('model', 'entities/session.json'),
-            'instantiatedfulfillmentprovider': global.SixCRM.routes.path('model', 'helpers/shipment/instantiatedfulfillmentprovider.json'),
-            'shippingreceipt':global.SixCRM.routes.path('model', 'entities/shippingreceipt.json')
-          };
-
-          this.parameter_definition = {};
-
-          const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
-
-          this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_defintion});
 
         }
-        augmentParameters(){
-          du.debug('Augment Parameters');
-
-          this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
-          this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
-
-          return true;
-        }
-        hydrateProducts(){
-          return Promise.resolve(true);
-        }
-        marryProductsToAugmentedTransactionProducts(){
-          return Promise.resolve(true);
-        }
-        hydrateFulfillmentProvider(){
-          return Promise.resolve(true);
-        }
-        acquireCustomer(){
-          return Promise.resolve(true);
-        }
-        instantiateFulfillmentProviderClass(){
-          return true;
+        fulfill(){
+          return Promise.resolve(vendor_response);
         }
       }
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/ShipmentUtilities.js'), mock_shipment_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/fulfillmentproviders/'+fulfillment_provider.provider.name+'/handler.js'), mock_vendor);
 
       const FulfillController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
       let fulfillController = new FulfillController();
@@ -384,8 +334,11 @@ describe('helpers/shipment/Fulfill.js', () => {
       fulfillController.parameters.set('hydratedaugmentedtransactionproducts', hydrated_augmented_transaction_products);
       fulfillController.parameters.set('customer', customer);
 
-      return fulfillController.execute({fulfillment_provider_id: fulfillment_provider.id, augmented_transaction_products: augmented_transaction_products}).then(result => {
-        expect(result).to.deep.equal(provider_response);
+      return fulfillController.execute({
+        fulfillment_provider_id: fulfillment_provider.id,
+        augmented_transaction_products: augmented_transaction_products
+      }).then(result => {
+        expect(result).to.deep.equal(vendor_response);
       });
 
     });

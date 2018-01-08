@@ -1,0 +1,6 @@
+{
+  "id":"/vendors/fulfillmentproviders/Test/action.json",
+  "title":"ThreePL Method",
+  "type":"string",
+  "enum":["getinfo","fulfill"]
+}

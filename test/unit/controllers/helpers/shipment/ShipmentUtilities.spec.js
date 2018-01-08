@@ -23,60 +23,18 @@ function getValidShippingReceipt(){
 
 function getValidRebill(){
 
-  return {
-    bill_at: "2017-04-06T18:40:41.405Z",
-    id: "70de203e-f2fd-45d3-918b-460570338c9b",
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    parentsession: "1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d",
-    product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
-    amount: 79.99,
-    created_at:"2017-04-06T18:40:41.405Z",
-    updated_at:"2017-04-06T18:41:12.521Z"
-  };
+  return MockEntities.getValidRebill();
 
 }
 
 function getValidSession(){
 
-  return {
-    completed: false,
-    subaffiliate_5: '45f025bb-a9dc-45c7-86d8-d4b7a4443426',
-    created_at: '2017-04-06T18:40:41.405Z',
-    subaffiliate_2: '22524f47-9db7-42f9-9540-d34a8909b072',
-    subaffiliate_1: '6b6331f6-7f84-437a-9ac6-093ba301e455',
-    subaffiliate_4: 'd515c0df-f9e4-4a87-8fe8-c53dcace0995',
-    subaffiliate_3: 'fd2548db-66a8-481e-aacc-b2b76a88fea7',
-    product_schedules: [ '2200669e-5e49-4335-9995-9c02f041d91b' ],
-    updated_at: '2017-04-06T18:41:12.521Z',
-    affiliate: '332611c7-8940-42b5-b097-c49a765e055a',
-    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    customer: '24f7c851-29d4-4af9-87c5-0298fa74c689',
-    campaign: '70a6689a-5814-438b-b9fd-dd484d0812f9',
-    id: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
-    cid: 'fb10d33f-da7d-4765-9b2b-4e5e42287726'
-  };
+  return MockEntities.getValidSession();
 
 }
 
 function getValidCustomer(){
-  return {
-    updated_at: '2017-10-31T20:10:05.380Z',
-    lastname: 'Damunaste',
-    created_at: '2017-10-14T16:15:19.506Z',
-    creditcards: [ 'df84f7bb-06bd-4daa-b1a3-6a2c113edd72' ],
-    firstname: 'Rama',
-    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    address:{
-      zip: '97213',
-      country: 'US',
-      state: 'OR',
-      city: 'London',
-      line1: '10 Downing St.'
-    },
-    id: '24f7c851-29d4-4af9-87c5-0298fa74c689',
-    email: 'rama@damunaste.org',
-    phone: '1234567890'
-  };
+  return MockEntities.getValidCustomer();
 }
 
 function getValidTransactionProducts(){
@@ -95,23 +53,7 @@ function getValidTransactionProducts(){
 }
 
 function getValidTransaction(){
-  return {
-    amount: 34.99,
-    id: uuidV4(),
-    alias:'T'+randomutilities.createRandomString(9),
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    rebill: uuidV4(),
-    processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-    merchant_provider: uuidV4(),
-    products:[{
-      product:uuidV4(),
-      amount:34.99
-    }],
-    type:"sale",
-    result:"success",
-    created_at:timestamp.getISO8601(),
-    updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidTransaction();
 }
 
 function getValidAugmentedTransactionProducts(){
@@ -133,40 +75,14 @@ function getValidProducts(product_ids){
   }
 
   return arrayutilities.map(product_ids, product_id => {
-    return {
-      id:product_id,
-  		name:randomutilities.createRandomString(20),
-  		sku:randomutilities.createRandomString(20),
-  		ship:true,
-      shipping_delay:3600,
-  		fulfillment_provider:uuidV4(),
-  		default_price:39.99,
-  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  		created_at:timestamp.getISO8601(),
-  		updated_at:timestamp.getISO8601()
-    };
+    return MockEntities.getValidProduct(product_id);
   });
 
 }
 
 function getValidFulfillmentProvider(){
 
-  return {
-    id:uuidV4(),
-		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		name: randomutilities.createRandomString(20),
-		username: randomutilities.createRandomString(10),
-		password: randomutilities.createRandomString(10),
-		provider:{
-      name: "Hashtag",
-      threepl_key:'{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
-      threepl_customer_id: 10,
-      username:"kristest",
-      password:"kristest"
-    },
-		created_at: timestamp.getISO8601(),
-		updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidFulfillmentProvider();
 
 }
 
@@ -223,7 +139,18 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
         getListByAccount:({ids}) => {
-          return Promise.resolve(products);
+          return Promise.resolve({products: products});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = this.descriptive_name+'s';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
         }
       });
 

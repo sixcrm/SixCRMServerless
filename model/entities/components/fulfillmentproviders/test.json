@@ -1,0 +1,13 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/entities/components/fulfillmentproviders/test.json",
+	"title": "A Test fulfillment provider",
+	"type":"object",
+  "properties":{
+    "name": {
+      "type":"string",
+      "enum":["Test"]
+    }
+  },
+  "required":["name"]
+}

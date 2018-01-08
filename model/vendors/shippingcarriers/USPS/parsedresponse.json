@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id":"/vendors/shippingcarriers/USPS/parsedresponse.json",
+  "title":"Parsed API Response Body",
+  "type":"object",
+  "properties":{
+    "TrackResponse": {
+      "type":"object",
+      "properties":{
+        "TrackInfo": {
+          "type": "array",
+          "items":[
+            {
+              "type":"object",
+              "properties": {
+                "$": {
+                  "type":"object",
+                  "properties":{
+                    "ID":{
+                      "type":"string"
+                    }
+                  },
+                  "required":["ID"]
+                },
+                "TrackSummary":{
+                  "type":"array",
+                  "items":{
+                    "type":"string"
+                  }
+                },
+                "TrackDetail":{
+                  "type":"array",
+                  "items":{
+                    "type":"string"
+                  }
+                },
+                "Error":{
+                  "type":"array",
+                  "items":{
+                    "type":"object",
+                    "properties":{
+                      "Number":{
+                        "type":"array",
+                        "items":{
+                          "type":"string"
+                        }
+                      },
+                      "Description":{
+                        "type":"array",
+                        "items":{
+                          "type":"string"
+                        }
+                      }
+                    },
+                    "required":["Number", "Description"]
+                  }
+                }
+              },
+              "required":["$"]
+            }
+          ]
+        }
+      },
+      "required":["TrackInfo"]
+    }
+  },
+  "required":["TrackResponse"]
+}

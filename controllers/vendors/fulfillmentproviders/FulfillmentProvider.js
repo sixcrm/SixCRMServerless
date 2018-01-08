@@ -1,4 +1,6 @@
 'use strict';
+const _ = require('underscore');
+const uuidV4 = require('uuid/v4');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
@@ -40,21 +42,72 @@ module.exports = class fulfillmentProviderController {
 
     }
 
-    respond(){
+    respond({additional_parameters}){
 
       du.debug('Respond');
 
-      let provider_response = this.parameters.get('providerresponse');
+      let vendor_response = this.parameters.get('vendorresponse');
+      let action = this.parameters.get('action');
 
       const VendorResponseClass = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/'+this.getVendorName()+'/Response.js');
 
-      return new VendorResponseClass(provider_response);
+      let response_object = {vendor_response: vendor_response, action: action};
+
+      if(!_.isNull(additional_parameters) && !_.isUndefined(additional_parameters)){
+        response_object['additional_parameters'] = additional_parameters;
+      }
+
+      return new VendorResponseClass(response_object);
 
     }
 
     getVendorName(){
 
       return objectutilities.getClassName(this).replace('Controller', '');
+
+    }
+
+    setReferenceNumber(){
+
+      du.debug('Set Reference Number');
+
+      let shipping_receipt = this.parameters.get('shippingreceipt', null, false);
+
+      if(!_.isNull(shipping_receipt)){
+
+        this.parameters.set('referencenumber', shipping_receipt.fulfillment_provider_reference);
+
+      }else{
+
+        this.parameters.set('referencenumber', this.createReferenceNumber());
+
+      }
+
+      return true;
+
+    }
+
+    createReferenceNumber(){
+
+      du.debug('Create Reference Number');
+
+      return uuidV4();
+
+    }
+
+    setMethod(){
+
+      du.debug('Set Method');
+
+      let action = this.parameters.get('action');
+
+      if(objectutilities.hasRecursive(this, 'methods.'+action)){
+
+        this.parameters.set('method', this.methods[action]);
+
+      }
+
+      return true;
 
     }
 

@@ -17,7 +17,7 @@
 					"properties":{
 						"name":{
 							"type":"string",
-							"enum":["NMA","Humbolt","GMA","Group ISO"]
+							"enum":["NMA","Humbolt","GMA","Group ISO","Test"]
 						},
 						"id":{
 							"type":"string"
@@ -49,7 +49,7 @@
 					"properties":{
 						"name":{
 							"type":"string",
-							"enum":["NMI","Innovio"]
+							"enum":["NMI","Innovio", "Test"]
 						}
 					},
 					"required":["name"]

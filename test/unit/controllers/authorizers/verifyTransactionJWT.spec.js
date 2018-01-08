@@ -60,7 +60,7 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

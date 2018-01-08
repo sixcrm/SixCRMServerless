@@ -1,6 +1,0 @@
-Bug Recap:
-
-1.  When inviting a user, accept invite needs to use the user account that we are currently iviting the user to, not the global.account, for example.
-2.  When inviting a new user to a account, the user was/is presented a screen which allows the user to change the account name?
-3.  When inviting a user with insufficient permissions to a account, they can't change thier name and the 403 blocks registration
- - Note:  A user should always be able to change their own user record.

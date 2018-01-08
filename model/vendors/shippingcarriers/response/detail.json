@@ -1,0 +1,6 @@
+{
+  "id":"/vendors/shippingcarriers/response/detail.json",
+  "title":"Shipping Carrier Response Detail",
+  "type":"string",
+  "minLength":1
+}

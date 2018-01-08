@@ -1,0 +1,25 @@
+{
+	"title": "Test Merchant Provider Process Object",
+	"type": "object",
+	"properties": {
+		"processor_id":{
+			"type":"string"
+		},
+		"amount":{"$ref": "../../definitions/currency.json"},
+		"creditcard":{
+      "type":"object",
+      "properties":{
+        "number":{"$ref":"../../definitions/creditcardnumber.json"},
+        "ccv":{"$ref":"../../definitions/creditcardccv.json"},
+        "expiration":{"$ref":"../../definitions/creditcardexpirationdate.json"},
+        "address":{"$ref":"../../definitions/address.json"}
+      },
+      "required":["number", "ccv", "expiration"]
+    },
+		"customer":{
+      "firstname":{"$ref":"../../definitions/firstname.json"},
+      "lastname":{"$ref":"../../definitions/lastname.json"}
+    }
+	},
+	"required":["amount", "creditcard","customer"]
+}

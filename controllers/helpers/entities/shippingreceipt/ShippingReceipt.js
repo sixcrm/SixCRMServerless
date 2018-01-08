@@ -25,8 +25,8 @@ module.exports = class ShippingReceiptHelperController {
 
     this.parameter_validation = {
       'shippingreceipt': global.SixCRM.routes.path('model','entities/shippingreceipt.json'),
-      'shippingdetail': global.SixCRM.routes.path('model', 'vendors/shippingproviders/response/detail.json'),
-      'shippingstatus': global.SixCRM.routes.path('model', 'vendors/shippingproviders/response/status.json'),
+      'shippingdetail': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/detail.json'),
+      'shippingstatus': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/status.json'),
       'updatedshippingreceipt': global.SixCRM.routes.path('model', 'entities/shippingreceipt.json')
     };
 
@@ -40,8 +40,8 @@ module.exports = class ShippingReceiptHelperController {
 
     fatal = (_.isUndefined(fatal))?false:fatal;
 
-    if(_.has(shipping_receipt, 'trackingnumber')){
-      return shipping_receipt.trackingnumber;
+    if(_.has(shipping_receipt, 'tracking')){
+      return shipping_receipt.tracking.id;
     }
 
     if(fatal == true){
