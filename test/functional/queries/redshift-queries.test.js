@@ -14,90 +14,98 @@ const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'uti
 
 describe('queries/redshift-queries.js', () => {
 
-    let tests = [];
+    const suite_directory = __dirname + '/tests';
+    let suites = fileutilities.getDirectoryList(suite_directory);
 
-    const test_directory = __dirname + '/fixtures';
-    // this is temporary here, ignore tests where second letter is *, not first as we want to keep the folder structure
-    let test_dirs = fileutilities.getDirectoryList(test_directory).filter(test => !test.includes('*'));
+    arrayutilities.map(suites, (suite) => {
 
-    arrayutilities.map(test_dirs, (dir) => {
-        prepareTest(dir);
-    });
+        describe(suite, () => {
+            let tests = [];
 
-    before(() => {
-        global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
-        global.user = 'admin.user@test.com';
+            const test_directory = suite_directory + '/' + suite;
+            // this is temporary here, ignore tests where second letter is *, not first as we want to keep the folder structure
+            let test_dirs = fileutilities.getDirectoryList(test_directory).filter(test => !test.includes('*'));
 
-        process.env.stage = 'local';
-        global.SixCRM.configuration.stage = 'local';
-    });
-
-    arrayutilities.map(tests, (test) => {
-
-        it(`returns results from ${test.method} using test case ${test.test_case}`, () => {
-            PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
-
-            return prepareDatabase(test).then(() => {
-                return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
-                    let result_name = test.result_name;
-                    let result_value = (result_name === "undefined") ? result : result[result_name];
-
-                    expect(result_value).to.not.equal(
-                        undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
-                    expect(result_value).to.deep.equal(
-                        test.expect, JSON.stringify(result_value) + ' does not equal ' + JSON.stringify(test.expect));
-                });
+            arrayutilities.map(test_dirs, (dir) => {
+                prepareTest(dir);
             });
 
+            before(() => {
+                global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
+                global.user = 'admin.user@test.com';
 
+                process.env.stage = 'local';
+                global.SixCRM.configuration.stage = 'local';
+            });
+
+            arrayutilities.map(tests, (test) => {
+
+                it(test.test_case, () => {
+                    PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
+
+                    return prepareDatabase(test).then(() => {
+                        return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
+                            let result_name = test.result_name;
+                            let result_value = (result_name === "undefined") ? result : result[result_name];
+
+                            expect(result_value).to.not.equal(
+                                undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
+                            expect(result_value).to.deep.equal(
+                                test.expect, JSON.stringify(result_value) + ' does not equal ' + JSON.stringify(test.expect));
+                        });
+                    });
+
+
+                });
+
+            });
+
+            function prepareDatabase(test) {
+                return dropDatabase()
+                    .then(() => createTables(test))
+                    .then(() => seedDatabase(test));
+            }
+
+            function prepareTest(dir) {
+                let directory = test_directory + '/' + dir + '/';
+                let test = require(directory + '/config.json');
+
+                test.directory = directory;
+                test.seeds = test.directory + 'seeds/';
+
+                tests.push(test);
+            }
+
+            function seedDatabase(test) {
+                du.debug(`Seeding Test database with ${test.method}`);
+
+                if (!fileutilities.fileExists(test.seeds)) {
+                    du.debug('Nothing to seed');
+                    return;
+                }
+
+                let seeds = fileutilities.getDirectoryFilesSync(test.seeds);
+
+                let seed_promises = [];
+
+                arrayutilities.map(seeds, (seed) => {
+                    let query = fileutilities.getFileContentsSync(test.seeds + seed);
+
+                    seed_promises.push(() => redshiftqueryutilities.query(query));
+                });
+
+                return arrayutilities.serial(seed_promises);
+            }
+
+            function dropDatabase() {
+                return redshiftSchemaDeployment.destroy();
+            }
+
+            function createTables() {
+                return redshiftSchemaDeployment.deployTables();
+            }
         });
 
     });
-
-    function prepareDatabase(test) {
-        return dropDatabase()
-            .then(() => createTables(test))
-            .then(() => seedDatabase(test));
-    }
-
-    function prepareTest(dir) {
-        let directory = test_directory + '/' + dir + '/';
-        let test = require(directory + '/config.json');
-
-        test.directory = directory;
-        test.seeds = test.directory + 'seeds/';
-
-        tests.push(test);
-    }
-
-    function seedDatabase(test) {
-        du.debug(`Seeding Test database with ${test.method}`);
-
-        if (!fileutilities.fileExists(test.seeds)) {
-            du.debug('Nothing to seed');
-            return;
-        }
-
-        let seeds = fileutilities.getDirectoryFilesSync(test.seeds);
-
-        let seed_promises = [];
-
-        arrayutilities.map(seeds, (seed) => {
-            let query = fileutilities.getFileContentsSync(test.seeds + seed);
-
-            du.debug(query)
-            seed_promises.push(() => redshiftqueryutilities.query(query));
-        });
-
-        return arrayutilities.serial(seed_promises);
-    }
-
-    function dropDatabase() {
-        return redshiftSchemaDeployment.destroy();
-    }
-
-    function createTables() {
-        return redshiftSchemaDeployment.deployTables();
-    }
 
 });
