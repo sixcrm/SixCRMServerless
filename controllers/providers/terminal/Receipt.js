@@ -45,6 +45,7 @@ module.exports = class TerminalRecieptGenerator {
 
     du.debug('Issue Receipt');
 
+    du.info(arguments[0]);
     this.parameters.setParameters({argumentation: arguments[0], action: 'issueReceipt'});
 
     return this.hydrateProperties()

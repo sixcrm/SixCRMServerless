@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/helpers/entities/transaction/updatedtransactionproduct.json",
+	"title": "Updated Transaction Product",
+  "type":"object",
+  "properties":{
+    "amount":{"$ref":"../../../definitions/currency.json"},
+    "product":{"$ref":"../../../definitions/uuidv4.json"},
+    "shipping_receipt":{"$ref":"../../../definitions/uuidv4.json"}
+  },
+  "required":["amount", "product"]
+}

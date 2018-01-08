@@ -29,7 +29,8 @@ module.exports = class TransactionHelperController {
     this.parameter_validation = {
       'transactionid': global.SixCRM.routes.path('model','definitions/uuidv4.json'),
       'transaction': global.SixCRM.routes.path('model','entities/transaction.json'),
-      'chargebackstatus': global.SixCRM.routes.path('model','helpers/transaction/chargeback.json')
+      'chargebackstatus': global.SixCRM.routes.path('model','helpers/transaction/chargeback.json'),
+      'updatedtransactionproducts': global.SixCRM.routes.path('model', 'helpers/entities/transaction/updatedtransactionproducts.json')
     };
 
     const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -81,7 +82,9 @@ module.exports = class TransactionHelperController {
 
     return this.transactionController.get({id: transaction_id}).then(transaction => {
 
-      if(_.isNull(transaction)){ eu.throwError('notfound', 'Transaction not found.'); }
+      if(_.isNull(transaction)){
+        eu.throwError('notfound', 'Transaction not found.');
+      }
 
       this.parameters.set('transaction', transaction);
       return true;
@@ -142,13 +145,19 @@ module.exports = class TransactionHelperController {
     let transaction =  this.parameters.get('transaction');
     let updated_transaction_products = this.parameters.get('updatedtransactionproducts');
 
+    du.info(transaction);
+    du.warning(updated_transaction_products);
+
     let missed_transaction_products = arrayutilities.filter(updated_transaction_products, updated_transaction_product => {
 
       let found_product = arrayutilities.find(transaction.products, (transaction_product, index) => {
 
-        if(transaction_product.product == updated_transaction_product.product && transaction_product.price == updated_transaction_product.price){
-          transaction.products[index] = updated_transaction_product;
+        if(transaction_product.product == updated_transaction_product.product && transaction_product.amount == updated_transaction_product.amount){
+
+          transaction.products[index].shipping_receipt = updated_transaction_product.shipping_receipt;
+
           return true;
+
         }
 
         return false;
@@ -165,7 +174,6 @@ module.exports = class TransactionHelperController {
 
     if(arrayutilities.nonEmpty(missed_transaction_products)){
 
-      du.info(missed_transaction_products);
       eu.throwError('server', 'Unaccounted for transaction products in update.');
 
     }

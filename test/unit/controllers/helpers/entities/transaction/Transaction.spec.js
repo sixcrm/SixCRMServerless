@@ -141,13 +141,15 @@ describe('helpers/entities/transaction/Transaction.js', () => {
     it('successfully updates the local transaction model with a new transaction prototype', () => {
 
       let transaction = getValidTransaction();
-      let updated_transaction_product = transaction.products[0];
-
-      updated_transaction_product.shipping_receipt = uuidV4();
+      let updated_transaction_product = {
+        product: transaction.products[0].product,
+        amount: transaction.products[0].amount,
+        shipping_receipt: uuidV4()
+      };
 
       let updated_transaction = objectutilities.clone(transaction);
 
-      updated_transaction.products[0] = updated_transaction_product;
+      updated_transaction.products[0].shipping_receipt = updated_transaction_product.shipping_receipt;
 
       let transactionHelperController = new TransactionHelperController();
 
@@ -157,6 +159,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       let result = transactionHelperController.updateTransactionProductsPrototype();
 
       expect(result).to.equal(true);
+
       expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(updated_transaction);
 
     });

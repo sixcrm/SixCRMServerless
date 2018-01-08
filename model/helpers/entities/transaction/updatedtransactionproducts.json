@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/helpers/entities/transaction/updatedtransactionproducts.json",
+	"title": "Updated Transaction Products",
+  "type":"array",
+  "items":{"$ref":"./updatedtransactionproduct.json"}
+}

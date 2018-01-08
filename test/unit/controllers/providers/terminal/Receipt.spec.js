@@ -90,6 +90,7 @@ describe('/providers/terminal/Receipt.js', () => {
 
       let fulfillment_provider = getValidFulfillmentProvider();
       let augmented_transaction_products = getValidAugmentedTransactionProducts();
+
       let transactions = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
         return augmented_transaction_product.transaction;
       });

@@ -61,7 +61,7 @@ module.exports = class TerminalController extends TerminalUtilities  {
       .then((vendor_response_class) => {
 
         return terminalReceiptController.issueReceipt({
-          fulfillment_provider_id: fulfillment_provider.id,
+          fulfillment_provider_id: fulfillment_provider,
           augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider],
           fulfillment_provider_reference: vendor_response_class.getParsedResponse().reference_number,
         }).then(shipping_receipt => {
