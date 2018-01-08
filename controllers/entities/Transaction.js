@@ -224,7 +224,7 @@ class transactionController extends entityController {
       //Technical Debt: this is silly but necessary ATM
       id = this.getID(id);
 
-      return this.queryBySecondaryIndex({field: 'rebill', index_value: id, index_name: 'rebill-index'}).then((result) => this.getResult(result));
+      return this.queryBySecondaryIndex({field: 'rebill', index_value: id, index_name: 'rebill-index'});
 
     }
 

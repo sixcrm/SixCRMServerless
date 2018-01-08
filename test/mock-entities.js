@@ -178,10 +178,12 @@ class MockEntities {
     return "d3fa3bf3-7824-49f4-8261-87674482bf1c";
   }
 
-  static getValidFulfillmentProvider(){
+  static getValidFulfillmentProvider(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
 
     return {
-      id:uuidV4(),
+      id:id,
   		account: this.getTestAccountID(),
       name: randomutilities.createRandomString(20),
   		provider:{
@@ -197,10 +199,12 @@ class MockEntities {
 
   }
 
-  static getValidShippingReceipt(){
+  static getValidShippingReceipt(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
 
     return {
-      id:uuidV4(),
+      id:id,
   		account: this.getTestAccountID(),
       tracking:{
         carrier: 'UPS',
@@ -216,10 +220,12 @@ class MockEntities {
 
   }
 
-  static getValidTransaction(){
+  static getValidTransaction(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
 
     return {
-      id: uuidV4(),
+      id: id,
       amount: 14.99,
       alias:"T"+randomutilities.createRandomString(9),
       account: this.getTestAccountID(),
@@ -239,11 +245,13 @@ class MockEntities {
 
   }
 
-  static getValidRebill(){
+  static getValidRebill(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
 
     return {
       bill_at: timestamp.getISO8601(),
-      id: uuidV4(),
+      id: id,
       account: this.getTestAccountID(),
       parentsession: uuidV4(),
       product_schedules: [uuidV4()],
@@ -254,10 +262,12 @@ class MockEntities {
 
   }
 
-  static getValidSession(){
+  static getValidSession(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
 
     return {
-      id: uuidV4(),
+      id: id,
       account:this.getTestAccountID(),
       customer: uuidV4(),
       campaign:uuidV4(),

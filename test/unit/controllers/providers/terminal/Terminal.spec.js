@@ -163,18 +163,9 @@ function getValidAugmentedTransactionProducts(){
 
 }
 
-function getValidRebill(){
+function getValidRebill(id){
 
-  return {
-    bill_at: timestamp.getISO8601(),
-    id: uuidV4(),
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    parentsession: uuidV4(),
-    product_schedules: [uuidV4(), uuidV4()],
-    amount: 79.99,
-    created_at:timestamp.getISO8601(),
-    updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidRebill(id);
 
 }
 
@@ -296,11 +287,15 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
   });
 
-  describe('acquireTransactions', () => {
+  describe.only('acquireTransactions', () => {
 
     it('successfully acquires rebill transactions', () => {
 
-      let rebill = getValidRebill();
+      let permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
+
+      permissionutilities.setPermissions('*',['*/*'],[])
+
+      let rebill = getValidRebill('09741edf-434b-44ab-b5a3-da4822e975d8');
       let transactions =  getValidTransactions();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
