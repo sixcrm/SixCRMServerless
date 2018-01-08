@@ -436,6 +436,7 @@ class CreateOrderController extends transactionEndpointController{
 
     let rebill = this.parameters.get('rebill');
 
+    //Critical
     //Technical Debt:  This depends on result of the transaction...
 
     return this.rebillHelperController.addRebillToQueue({rebill: rebill, queue_name: 'hold'}).then(() => {

@@ -12,29 +12,17 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
-function getValidMessage(){
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-  return {
-    MessageId:"someMessageID",
-    ReceiptHandle:"SomeReceiptHandle",
-    Body: JSON.stringify({id:uuidV4()}),
-    MD5OfBody:"SomeMD5"
-  };
+function getValidMessage(id){
+
+  return MockEntities.getValidMessage(id);
 
 }
 
-function getValidRebill(){
+function getValidRebill(id){
 
-  return {
-    bill_at: timestamp.getISO8601(),
-    id: uuidV4(),
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    parentsession: uuidV4(),
-    product_schedules: [uuidV4(), uuidV4()],
-    amount: 79.99,
-    created_at:timestamp.getISO8601(),
-    updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidRebill(id);
 
 }
 
@@ -144,11 +132,15 @@ describe('controllers/workers/shipProduct', function () {
     it('successfully executes', () => {
 
       let rebill = getValidRebill();
+      let message = getValidMessage(rebill.id);
       let terminal_response = getValidTerminalResponse();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         get:({id}) => {
-          return Promise.resolve(rebill);
+          if(id == rebill.id){
+            return Promise.resolve(rebill);
+          }
+          return Promise.resolve(null);
         }
       });
 
@@ -162,8 +154,6 @@ describe('controllers/workers/shipProduct', function () {
       }
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Terminal.js'), terminal_mock);
-
-      let message = getValidMessage();
 
       let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 

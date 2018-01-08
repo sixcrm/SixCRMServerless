@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 module.exports = class workerController {
 
@@ -79,13 +80,12 @@ module.exports = class workerController {
     }
 
     //Technical Debt: This is kind of gross...
-    parseMessageBody(){
+    parseMessageBody(message, response_field){
 
-      du.debug('Parse Input Message');
+      du.debug('Parse Message Body');
 
-      let response_field = (_.has(this, 'response_field'))?this.response_field:'id';
-
-      let message = this.parameters.get('message');
+      response_field = this.setResponseField(response_field);
+      message = this.setMessage();
 
       let message_body;
 
@@ -93,7 +93,7 @@ module.exports = class workerController {
         message_body = JSON.parse(message.Body);
       }catch(error){
         du.error(error);
-        eu.throwError('server', 'Unable to parse message body: '+message.Body);
+        eu.throwError('server', 'Unable to parse message body: '+message);
       }
 
       objectutilities.hasRecursive(message_body, response_field, true);
@@ -104,47 +104,69 @@ module.exports = class workerController {
 
     }
 
+    setMessage(message){
+
+      du.debug('Set Message');
+
+      if(!_.isUndefined(message) && !_.isNull(message) && objectutilities.isObject(message, false)){
+        return message;
+      }
+
+      return this.parameters.get('message');
+
+    }
+
+    setResponseField(response_field){
+
+      du.debug('Set Response Field');
+
+      if(!_.isUndefined(response_field) && !_.isNull(response_field) && stringutilities.isString(response_field, false)){
+        return response_field;
+      }
+
+      if(_.has(this, 'response_field')){
+        return this.response_field;
+      }
+
+      return 'id';
+
+    }
+
     acquireRebill(){
 
       du.debug('Acquire Rebill');
 
-      let message = this.parameters.get('message');
+      let parsed_message_body = this.parameters.get('parsedmessagebody');
 
-      return this.parseMessageBody(message, 'id').then(id => {
+      if(!_.has(this, 'rebillController')){
+        this.rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+      }
 
-        if(!_.has(this, 'rebillController')){
-          this.rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
-        }
+      return this.rebillController.get({id: parsed_message_body.id}).then((rebill) => {
 
-        return this.rebillController.get({id: id}).then((rebill) => {
+        this.parameters.set('rebill', rebill);
 
-          this.parameters.set('rebill', rebill);
-
-          return true;
-
-        });
+        return true;
 
       });
 
     }
 
-    acquireSession(message){
+    acquireSession(){
 
       du.debug('Acquire Session');
 
-      return this.parseMessageBody(message, 'id').then((id) => {
+      let parsed_message_body = this.parameters.get('parsedmessagebody');
 
-        if(!_.has(this, 'sessionController')){
-          this.sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
-        }
+      if(!_.has(this, 'sessionController')){
+        this.sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+      }
 
-        return this.sessionController.get({id: id}).then((session) => {
+      return this.sessionController.get({id: parsed_message_body.id}).then((session) => {
 
-          this.parameters.set('session', session);
+        this.parameters.set('session', session);
 
-          return true;
-
-        });
+        return true;
 
       });
 

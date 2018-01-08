@@ -868,7 +868,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
             if(_.has(object, this.primary_key)){
 
-                return object[this.primary_key];
+              return object[this.primary_key];
 
             }
 

@@ -11,6 +11,19 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
 
+  static getValidMessage(id){
+
+    id = (!_.isUndefined(id) && !_.isNull(id))?id:uuidV4();
+
+    return {
+      MessageId:"someMessageID",
+      ReceiptHandle:"SomeReceiptHandle",
+      Body: JSON.stringify({id:id}),
+      MD5OfBody:"SomeMD5"
+    };
+
+  }
+
   static getValidMerchantProvider(id){
 
     id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
@@ -337,14 +350,17 @@ class MockEntities {
 
     du.debug('Get Valid CreditCard Expiration');
 
-    return '10/2019';
-
-    /*
     let expiration_month = randomutilities.randomInt(1,12).toString();
-    let expiration_year = randomutilities.randomInt(current_year, (current_year+randomutilities.randomInt(1,5))).toString().slice(-2);
 
-    return expiration_month+expiration_year;
-    */
+    if(expiration_month.length == 1){
+      expiration_month = '0'+expiration_month;
+    }
+
+    let current_year = parseInt(timestamp.getYear());
+
+    let expiration_year = randomutilities.randomInt(current_year, (current_year+randomutilities.randomInt(1,5))).toString();
+
+    return expiration_month+'/'+expiration_year;
 
   }
 

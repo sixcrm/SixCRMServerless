@@ -10,6 +10,10 @@ module.exports = class TransactionUtilities {
 
     constructor(){
 
+      this.brandaliases = {
+        'amex':'americanexpress'
+      };
+
     }
 
     //Technical Debt: Broken!
@@ -19,7 +23,13 @@ module.exports = class TransactionUtilities {
 
       stringutilities.isString(a_string, true);
 
-      return stringutilities.removeWhitespace(a_string).toLowerCase();
+      let transformed_string = stringutilities.removeWhitespace(a_string).toLowerCase();
+
+      if(_.has(this.brandaliases, transformed_string)){
+        return this.brandaliases[transformed_string];
+      }
+
+      return transformed_string;
 
     }
 

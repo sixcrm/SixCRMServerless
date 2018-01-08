@@ -52,7 +52,11 @@ class createRebillsController extends workerController {
 
       let message = this.parameters.get('message');
 
-      return super.acquireSession(message);
+      return Promise.resolve()
+      .then(() => this.parseMessageBody())
+      .then(() => {
+        return super.acquireSession();
+      });
 
     }
 
