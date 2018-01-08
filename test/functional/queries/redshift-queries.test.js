@@ -72,6 +72,12 @@ describe('queries/redshift-queries.js', () => {
 
     function seedDatabase(test) {
         du.debug(`Seeding Test database with ${test.method}`);
+
+        if (!fileutilities.fileExists(test.seeds)) {
+            du.debug('Nothing to seed');
+            return;
+        }
+
         let seeds = fileutilities.getDirectoryFilesSync(test.seeds);
 
         let seed_promises = [];
