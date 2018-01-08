@@ -97,7 +97,9 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    mockery.resetCache();
+    mockery.deregisterAll();
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {
@@ -281,8 +283,8 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let rebill = getValidRebill();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        getSession:({rebill}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        get:({id}) => {
           return Promise.resolve(session);
         }
       });
@@ -342,15 +344,15 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
         getCustomer:({session}) => {
           return Promise.resolve(customer);
+        },
+        get:({id}) => {
+          return Promise.resolve(session);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         get:({id}) => {
           return Promise.resolve(rebill);
-        },
-        getSession:({rebill}) => {
-          return Promise.resolve(session);
         }
       });
 

@@ -223,7 +223,7 @@ module.exports = class ShipmentUtilities {
 
     let rebill = this.parameters.get('rebill');
 
-    return this.rebillController.getSession(rebill).then(session => {
+    return this.sessionController.get({id: rebill.parentsession}).then(session => {
 
       this.parameters.set('session', session);
 
