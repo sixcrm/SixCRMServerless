@@ -31,6 +31,7 @@ sqs:
 
 cloudsearch:
   domainname: 'sixcrm'
+  domainendpoint: 'doc-sixcrm-rl5yyjlfnghqtgvz5re6ig5xnq.us-east-1.cloudsearch.amazonaws.com'
 
 #Technical Debt:  Let's eliminate this.
 lambda:
