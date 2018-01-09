@@ -12,7 +12,7 @@ ____
 * `f_activity` - fact table of activities
 * `f_sessions` - fact table of sessions
 * `f_product_schedules` - fact table of product schedules
-* `f_queue_count` - fact table of queue counts 
+* `f_queue_count` - fact table of queue counts
 
 
 Transactional tables are defined with the distribution key based on the account.
@@ -51,3 +51,30 @@ Redshift is a pure column store analytical database and as such lacks fatures fo
 * `d_resultimes.sql` - dimensional table creation and row insertion
 
 **IN WORK** Change the compression type on columns for better performance
+
+## Folder structure:
+
+### Migration Folder
+
+Contains the migration scripts need to move the model, or data, from one consistent state to the next.
+
+### Schemas
+
+Contains the ddl for schema creation in the database
+
+### Seed referential
+
+Contains csv files for ingest into Redshift of referential data. Referential data is data that is persistent and
+does not change with the database state but is needed from normal query functionality.
+
+### Seeds
+
+Seeds needed for sanity checks,structural checks etc..
+
+### System
+
+Contains "system" tables needed from normal functionality of continuous integration
+
+### Tables
+
+Contains tables of the SixCRM Redshift analytical database model 
