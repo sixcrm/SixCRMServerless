@@ -60,9 +60,11 @@ module.exports = class TerminalController extends TerminalUtilities  {
       })
       .then((vendor_response_class) => {
 
+        let augmented_transaction_products = this.convertToAugmentedTransactionProducts(grouped_shipable_transaction_products[fulfillment_provider]);
+
         return terminalReceiptController.issueReceipt({
           fulfillment_provider_id: fulfillment_provider,
-          augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider],
+          augmented_transaction_products: augmented_transaction_products,
           fulfillment_provider_reference: vendor_response_class.getParsedResponse().reference_number,
         }).then(shipping_receipt => {
           return {shipping_receipt: shipping_receipt, vendor_response_class: vendor_response_class};
@@ -76,6 +78,34 @@ module.exports = class TerminalController extends TerminalUtilities  {
     .then((results) => {
       this.parameters.set('compoundfulfillmentresponses', results);
       return true;
+    });
+
+  }
+
+  convertToAugmentedTransactionProducts(grouped_shipable_transaction_products){
+
+    return arrayutilities.map(grouped_shipable_transaction_products, grouped_shipable_transaction_product => {
+
+      let prototype = objectutilities.transcribe(
+        {
+          product:'product.id',
+          amount:'amount',
+          transaction:'transaction'
+        },
+        grouped_shipable_transaction_product,
+        {}
+      );
+
+      return objectutilities.transcribe(
+        {
+          shipping_receipt:'shipping_receipt',
+          no_ship:'no_ship'
+        },
+        grouped_shipable_transaction_product,
+        prototype,
+        false
+      );
+
     });
 
   }

@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/augmentedtransactionproduct.json",
+	"id":"/providers/shipping/terminal/augmentedtransactionproduct.json",
 	"title": "Augmented Transaction Product",
 	"allOf":[
 		{"$ref": "../../../entities/components/transactionproduct.json"},

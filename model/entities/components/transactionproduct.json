@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/transactionproduct",
+	"id":"/entities/components/transactionproduct.json",
 	"title": "Transaction Product",
 	"type": "object",
 	"description": "A connection between transaction and a product",
