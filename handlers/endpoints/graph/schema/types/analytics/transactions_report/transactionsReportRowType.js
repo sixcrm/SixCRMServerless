@@ -45,7 +45,13 @@ module.exports.graphObj = new GraphQLObjectType({
       affiliate: {
         type: affiliateType.graphObj,
         description: 'Affiliate associated with the transaction.',
-        resolve: row => affiliateController.get({id: row.affiliate})
+        resolve: row => {
+          if (!row.affiliate) {
+            return null;
+          }
+
+          return affiliateController.get({id: row.affiliate})
+        }
       },
       amount: {
         type: new GraphQLNonNull(GraphQLString),
