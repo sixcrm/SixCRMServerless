@@ -594,7 +594,7 @@ module.exports = class RebillHelper {
 
       du.warning('Rebill does not have a history of being in previous state: '+previous_state);
 
-      matching_states = [].push(this.createHistoryElementPrototype({state: previous_state, entered_at: state_changed_at, error_message: 'Rebill had no previous history of being in this state.'}));
+      matching_states.push(this.createHistoryElementPrototype({state: previous_state, entered_at: state_changed_at, error_message: 'Rebill had no previous history of being in this state.'}));
 
     }
 
