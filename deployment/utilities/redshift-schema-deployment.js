@@ -625,7 +625,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     /* Transforms query to PostgreSQL format by clearing Redshift specifics */
 
       return arrayutilities.map(query.split(/\r?\n/), (data) =>
-          data.replace(/(getdate.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/,(match, p1, p2) => { // eslint-disable-line no-useless-escape
+          data.replace(/(getdate.*|integer identity.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/,(match, p1, p2) => { // eslint-disable-line no-useless-escape
 
             if(p2 == ','){
                 return `${p2}`;
@@ -635,7 +635,9 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
                return ''
             } else if(p1.startsWith('getdate')){
                return 'now();'
-            }
+             } else if(p1.startsWith('integer identity')){
+                return 'serial ,'
+             }
             else {
               return ';'
             }
