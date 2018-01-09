@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS sys_sixcrm.sys_change_log
 (
-  change_number integer,
+  change_number integer identity,
   datetime timestamp,
   description varchar(500)
 );
