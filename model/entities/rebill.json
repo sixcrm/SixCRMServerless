@@ -29,7 +29,7 @@
 		"state_changed_at":{"$ref": "../definitions/iso8601.json"},
 		"history":{
 			"type":"array",
-			"items":{"$ref": "../definitions/rebillstatehistoryitem.json"}
+			"items":{"$ref": "./components/rebillstatehistoryelement.json"}
 		},
 		"second_attempt":{
 			"type":"boolean"
