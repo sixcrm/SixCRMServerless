@@ -207,6 +207,8 @@ describe('controllers/helpers/indexing/Indexing.js', () => {
       expect(deserialized_address_document.fields).to.have.property('zip');
       expect(deserialized_address_document.fields).to.have.property('country');
 
+      expect(deserialized_address_document.fields).not.to.have.property('address');
+
       expect(deserialized_address_document.fields.address_line_1).to.equal(fake_address.line1);
       expect(deserialized_address_document.fields.address_line_2).to.equal(fake_address.line2);
       expect(deserialized_address_document.fields.city).to.equal(fake_address.city);

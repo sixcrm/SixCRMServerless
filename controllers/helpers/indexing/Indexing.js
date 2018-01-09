@@ -231,6 +231,8 @@ module.exports = class IndexingHelperController {
 
       }
 
+      delete processed_document.fields.address;
+
     }
 
     return processed_document;
