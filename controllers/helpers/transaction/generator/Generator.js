@@ -66,6 +66,10 @@ module.exports = class TransactionGeneratorHelperController {
     .then(() => {
       du.output('Complete');
       return true;
+    }).catch(result => {
+      du.error(result);
+      du.output('Failed');
+      return false;
     });
 
   }
@@ -122,6 +126,10 @@ module.exports = class TransactionGeneratorHelperController {
 
       du.debug('Acquire Token Response: ', result.body);
 
+      if(result.body.success !== true){
+        return Promise.reject(result);
+      }
+
       this.parameters.set('jwt', result.body.response);
 
       return true;
@@ -150,6 +158,10 @@ module.exports = class TransactionGeneratorHelperController {
     return httputilities.postJSON(parameters).then(result => {
 
       du.debug('Create Lead Response: ', result.body);
+
+      if(result.body.success !== true){
+        return Promise.reject(result);
+      }
 
       this.parameters.set('session', result.body.response.id);
 
@@ -182,6 +194,10 @@ module.exports = class TransactionGeneratorHelperController {
 
       du.debug('Create Order Response: ', result.body);
 
+      if(result.body.success !== true){
+        return Promise.reject(result);
+      }
+
       return true;
 
     });
@@ -205,6 +221,10 @@ module.exports = class TransactionGeneratorHelperController {
     return httputilities.getJSON(parameters).then(result => {
 
       du.debug('Confirm Order Response: ', result.body);
+
+      if(result.body.success !== true){
+        return Promise.reject(result);
+      }
 
       return true;
 

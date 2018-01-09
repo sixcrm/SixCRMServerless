@@ -9,6 +9,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
@@ -20,10 +21,13 @@ function getValidMessage(id){
 
 }
 
-process.argv.forEach(function (val, index, array) {
-  console.log(index + ': ' + val);
+let rebill_id = null
+
+process.argv.forEach((val, index, array) => {
+  if(stringutilities.isMatch(val, /^--rebill=[a-z0-9\-].*$/)){
+    rebill_id = val.split('=')[1];
+  }
 });
-process.exit();
 
 describe('controllers/workers/shipProduct', () => {
 
@@ -31,7 +35,8 @@ describe('controllers/workers/shipProduct', () => {
 
     it('successfully executes', () => {
 
-      let message = getValidMessage('8ebe1767-8e6c-47a3-b761-cd67db283cbc');
+      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
+      let message = getValidMessage(rebill_id);
 
       let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 

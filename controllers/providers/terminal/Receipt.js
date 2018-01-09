@@ -40,7 +40,7 @@ module.exports = class TerminalRecieptGenerator {
       'shippingreceiptprototype':global.SixCRM.routes.path('model', 'providers/shipping/terminal/shippingreceiptprototype.json'),
       'account':global.SixCRM.routes.path('model', 'definitions/sixcrmaccountidentifier.json'),
       'augmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproducts.json'),
-      'fulfillmentproviderreference': global.SixCRM.routes.path('model', 'definitions/uuidV4.json')
+      'fulfillmentproviderreference': global.SixCRM.routes.path('model', 'definitions/uuidv4.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
