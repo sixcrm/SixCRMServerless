@@ -542,7 +542,7 @@ module.exports = class RebillHelper {
 
     if(_.has(rebill, 'history') && arrayutilities.nonEmpty(rebill.history)){
 
-      rebill.history = this.updateHistoryWithNewExit();
+      rebill.history = this.updateHistoryPreviousStateWithNewExit();
 
     }else{
 
@@ -550,7 +550,7 @@ module.exports = class RebillHelper {
 
     }
 
-    let new_history_element = this.createHistoryElementPrototype();
+    let new_history_element = this.createHistoryElementPrototype({});
 
     rebill.history.push(new_history_element);
 
@@ -558,7 +558,7 @@ module.exports = class RebillHelper {
 
   }
 
-  updateHistoryWithNewExit(){
+  updateHistoryPreviousStateWithNewExit(){
 
     du.debug('Update History With New Exit');
 
@@ -566,21 +566,7 @@ module.exports = class RebillHelper {
     let previous_state = this.parameters.get('previousstate');
     let state_changed_at = this.parameters.get('statechangedat');
 
-    let matching_states = arrayutilities.filter(rebill.history, (history_element) => {
-      return (history_element.state == previous_state)
-    });
-
-    if(!arrayutilities.nonEmpty(matching_states)){
-      eu.throwError('server', 'Rebill does not have a history of being in previous state: '+previous_state);
-    }
-
-    matching_states = arrayutilities.sort(matching_states, (a, b) => {
-      return (a.entered_at - b.entered_at);
-    });
-
-    let last_matching_state = matching_states[matching_states.length - 1];
-
-    last_matching_state.exited_at = state_changed_at;
+    let last_matching_state = this.getLastMatchingStatePrototype();
 
     arrayutilities.find(rebill.history, (history_element, index) => {
       if((history_element.state == last_matching_state.state) && (history_element.entered_at == last_matching_state.entered_at)){
@@ -592,23 +578,61 @@ module.exports = class RebillHelper {
 
   }
 
-  createHistoryElementPrototype(){
+  getLastMatchingStatePrototype(){
+
+    du.debug('Get Last Matching State Prototype');
+
+    let rebill = this.parameters.get('rebill');
+    let previous_state = this.parameters.get('previousstate');
+    let state_changed_at = this.parameters.get('statechangedat');
+
+    let matching_states = arrayutilities.filter(rebill.history, (history_element) => {
+      return (history_element.state == previous_state)
+    });
+
+    if(!arrayutilities.nonEmpty(matching_states)){
+
+      du.warning('Rebill does not have a history of being in previous state: '+previous_state);
+
+      matching_states = [].push(this.createHistoryElementPrototype({state: previous_state, entered_at: state_changed_at, error_message: 'Rebill had no previous history of being in this state.'}));
+
+    }
+
+    matching_states = arrayutilities.sort(matching_states, (a, b) => {
+      return (a.entered_at - b.entered_at);
+    });
+
+    let last_matching_state = matching_states[matching_states.length - 1];
+
+    last_matching_state.exited_at = state_changed_at;
+
+    return last_matching_state;
+
+  }
+
+  createHistoryElementPrototype({state, entered_at, exited_at, error_message}){
 
     du.debug('Create Rebill History Element Prototype');
 
-    let new_history_element = {
-      entered_at: this.parameters.get('statechangedat')
+    state = (!_.isUndefined(state) && !_.isNull(state))?state:this.parameters.get('newstate');
+    entered_at = (!_.isUndefined(entered_at) && !_.isNull(entered_at))?entered_at:this.parameters.get('statechangedat');
+    exited_at = (!_.isUndefined(exited_at) && !_.isNull(exited_at))?exited_at:this.parameters.get('exitedat', null, false);
+    error_message = (!_.isUndefined(error_message))?error_message:this.parameters.get('errormessage', null, false);
+
+    let history_element = {
+      entered_at: entered_at,
+      state: state
     };
 
-    if(this.parameters.isSet('errormessage')){
-      new_history_element.error_message = this.parameters.get('errormessage');
+    if(!_.isNull(error_message)){
+      history_element.error_message = error_message;
     }
 
-    if(this.parameters.isSet('newstate')){
-      new_history_element.state = this.parameters.get('newstate');
+    if(!_.isNull(exited_at)){
+      history_element.exited_at = exited_at;
     }
 
-    return new_history_element;
+    return history_element;
 
   }
 
