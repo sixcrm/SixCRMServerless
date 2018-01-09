@@ -10,6 +10,8 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
 
       super();
 
+      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
     }
 
     handleWorkerResponseObject(worker_response_object){
@@ -27,7 +29,7 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
 
       let params = this.parameters.get('params');
 
-      const rebill = JSON.parse(compound_worker_response_object.message.Body);
+      const rebill_id = JSON.parse(compound_worker_response_object.message.Body);
 
       const previous_state = params.origin_queue;
       let new_state  = params.destination_queue;
@@ -46,8 +48,9 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
         this.rebillHelperController = new RebillHelperController();
       }
 
-      return this.rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state})
-        .then(() => Promise.resolve(compound_worker_response_object));
+      return this.rebillController.get({id: rebill_id})
+      .then((rebill) => this.rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state}))
+      .then(() => Promise.resolve(compound_worker_response_object));
 
     }
 

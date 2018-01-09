@@ -4,14 +4,22 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-const getRebill = () => {
-  return {id: 'REBILL_ID'};
+const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
+
+function getValidRebill(){
+  return MockEntities.getValidRebill();
 };
 
+function getValidMessage(id){
+  return MockEntities.getValidMessage(id);
+}
+
 const getRebillResponseObject = (code) => {
+  let rebill = getValidRebill();
+
   return {
     worker_response_object: {getCode: function() {return code}},
-    message: {Body: JSON.stringify(getRebill())}
+    message: getValidMessage(rebill.id)
   };
 };
 
@@ -28,7 +36,7 @@ describe('workers/forwardRebillMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -38,14 +46,22 @@ describe('workers/forwardRebillMessage', () => {
 
     it('updates rebill after forwarding success message.', () => {
 
+      let rebill = getValidRebill();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
+
       let mock_rebill_helper = class {
         constructor(){}
 
         updateRebillState({rebill, new_state, previous_state, error_message}) {
-          expect(rebill).to.deep.equal(getRebill());
+          expect(rebill).to.deep.equal(rebill);
           expect(previous_state).to.equal('some_origin_queue');
           expect(new_state).to.equal('some_destination_queue');
-          expect(error_message).to.equal(undefined);
+          expect(error_message).to.not.be.defined;
 
           return Promise.resolve(rebill);
         }
@@ -74,11 +90,19 @@ describe('workers/forwardRebillMessage', () => {
 
     it('updates rebill after forwarding failure message.', () => {
 
+      let rebill = getValidRebill();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
+
       let mock_rebill_helper = class {
         constructor(){}
 
         updateRebillState({rebill, new_state, previous_state, error_message}) {
-          expect(rebill).to.deep.equal(getRebill());
+          expect(rebill).to.deep.equal(rebill);
           expect(new_state).to.equal('some_fail_queue');
           expect(previous_state).to.equal('some_origin_queue');
           expect(error_message).to.equal(undefined);
@@ -110,11 +134,19 @@ describe('workers/forwardRebillMessage', () => {
 
     it('updates rebill after forwarding error message.', () => {
 
+      let rebill = getValidRebill();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get:({id}) => {
+          return Promise.resolve(rebill);
+        }
+      });
+
       let mock_rebill_helper = class {
         constructor(){}
 
         updateRebillState({rebill, new_state, previous_state, error_message}) {
-          expect(rebill).to.deep.equal(getRebill());
+          expect(rebill).to.deep.equal(rebill);
           expect(new_state).to.equal('some_error_queue');
           expect(previous_state).to.equal('some_origin_queue');
           expect(error_message).to.equal(undefined);

@@ -542,7 +542,7 @@ module.exports = class RebillHelper {
 
     if(_.has(rebill, 'history') && arrayutilities.nonEmpty(rebill.history)){
 
-      rebill.history = this.updateHistoryWithNewExit();
+      rebill.history = this.updateHistoryPreviousStateWithNewExit();
 
     }else{
 
@@ -558,9 +558,29 @@ module.exports = class RebillHelper {
 
   }
 
-  updateHistoryWithNewExit(){
+  updateHistoryPreviousStateWithNewExit(){
 
     du.debug('Update History With New Exit');
+
+    let rebill = this.parameters.get('rebill');
+    let previous_state = this.parameters.get('previousstate');
+    let state_changed_at = this.parameters.get('statechangedat');
+
+    let last_matching_state = this.getLastMatchingStatePrototype();
+
+    arrayutilities.find(rebill.history, (history_element, index) => {
+      if((history_element.state == last_matching_state.state) && (history_element.entered_at == last_matching_state.entered_at)){
+        rebill.history[index] = last_matching_state;
+      }
+    });
+
+    return rebill.history;
+
+  }
+
+  getLastMatchingStatePrototype(){
+
+    du.debug('Get Last Matching State Prototype');
 
     let rebill = this.parameters.get('rebill');
     let previous_state = this.parameters.get('previousstate');
@@ -582,13 +602,7 @@ module.exports = class RebillHelper {
 
     last_matching_state.exited_at = state_changed_at;
 
-    arrayutilities.find(rebill.history, (history_element, index) => {
-      if((history_element.state == last_matching_state.state) && (history_element.entered_at == last_matching_state.entered_at)){
-        rebill.history[index] = last_matching_state;
-      }
-    });
-
-    return rebill.history;
+    return last_matching_state;
 
   }
 
