@@ -64,11 +64,11 @@ module.exports = class TransactionGeneratorHelperController {
     .then(() => this.createOrder())
     .then(() => this.confirmOrder())
     .then(() => {
-      du.output('Complete');
+      du.output('Transaction Complete');
       return true;
     }).catch(result => {
-      du.error(result);
-      du.output('Failed');
+      du.error(result.body);
+      du.output('Transaction Failed');
       return false;
     });
 
@@ -80,7 +80,7 @@ module.exports = class TransactionGeneratorHelperController {
 
     let customer = MockEntities.getValidTransactionCustomer();
     let fullname = customer.firstname+' '+customer.lastname;
-    let creditcard = MockEntities.getValidTransactionCreditCard(fullname, customer.address);
+    let creditcard = MockEntities.getValidTransactionCreditCard(fullname, customer.address, randomutilities.selectRandomFromArray(['VISA', 'Amex', 'Mastercard']));
 
     let signature = this.createTransactionSignature();
 
