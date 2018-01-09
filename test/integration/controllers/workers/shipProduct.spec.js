@@ -20,61 +20,24 @@ function getValidMessage(id){
 
 }
 
-function getValidRebill(id){
+process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
+});
+process.exit();
 
-  return MockEntities.getValidRebill(id);
-
-}
-
-function getValidTerminalResponse(){
-
-  const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
-
-  return new TerminalResponse({
-    response_type: 'success',
-    rebill: getValidRebill(),
-    provider_response: getValidProviderResponse()
-  });
-
-}
-
-function getValidProviderResponse(){
-  return {
-    response:{},
-    code:'success',
-    message:'Success'
-  };
-}
-
-describe('controllers/workers/shipProduct', function () {
-
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
-
-  beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
-  });
-
-  afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-  });
+describe('controllers/workers/shipProduct', () => {
 
   describe('execute', () => {
 
     it('successfully executes', () => {
 
-      let message = getValidMessage('b21c969f-e6b4-460d-a57e-552b7b471027');
+      let message = getValidMessage('8ebe1767-8e6c-47a3-b761-cd67db283cbc');
 
       let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
 
       return shipProductController.execute(message).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+        du.info(result, result.getCode())
         expect(result.getCode()).to.equal('success');
       });
 

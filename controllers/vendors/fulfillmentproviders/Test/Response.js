@@ -70,10 +70,6 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 
     du.debug('Translate Fulfill');
 
-    if(!stringutilities.nonEmpty(response.body)){
-      return null;
-    }
-
     let reference_number = this.acquireReferenceNumber();
 
     let response_prototype = {
@@ -81,6 +77,7 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
       message: 'Success',
       reference_number: reference_number
     };
+
 
     return response_prototype;
 

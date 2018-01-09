@@ -4,5 +4,5 @@
 	"title": "Shipping Receipt Status",
 	"description": "Known shipping receipt stati",
 	"type":"string",
-	"enum":["intransit","delivered"]
+	"enum":["pending","intransit","delivered"]
 }

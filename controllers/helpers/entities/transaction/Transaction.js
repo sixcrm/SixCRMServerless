@@ -145,9 +145,6 @@ module.exports = class TransactionHelperController {
     let transaction =  this.parameters.get('transaction');
     let updated_transaction_products = this.parameters.get('updatedtransactionproducts');
 
-    du.info(transaction);
-    du.warning(updated_transaction_products);
-
     let missed_transaction_products = arrayutilities.filter(updated_transaction_products, updated_transaction_product => {
 
       let found_product = arrayutilities.find(transaction.products, (transaction_product, index) => {

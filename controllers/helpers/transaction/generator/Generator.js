@@ -116,9 +116,11 @@ module.exports = class TransactionGeneratorHelperController {
       endpoint: this.parameters.get('endpoint')+'token/acquire/'+this.parameters.get('account')
     };
 
+    du.info(parameters);
+
     return httputilities.postJSON(parameters).then(result => {
 
-      du.debug('Acquire Token Response: ', result);
+      du.debug('Acquire Token Response: ', result.body);
 
       this.parameters.set('jwt', result.body.response);
 

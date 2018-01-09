@@ -34,7 +34,13 @@ module.exports = class TerminalRecieptGenerator {
     };
 
     this.parameter_validation = {
-      'fulfillmentproviderid':global.SixCRM.routes.path('model', 'definitions/uuidv4.json')
+      'fulfillmentproviderid':global.SixCRM.routes.path('model', 'definitions/uuidv4.json'),
+      'fulfillmentprovider':global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
+      'shippingreceipt':global.SixCRM.routes.path('model', 'entities/shippingreceipt.json'),
+      'shippingreceiptprototype':global.SixCRM.routes.path('model', 'providers/shipping/terminal/shippingreceiptprototype.json'),
+      'account':global.SixCRM.routes.path('model', 'definitions/sixcrmaccountidentifier.json'),
+      'augmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproducts.json'),
+      'fulfillmentproviderreference': global.SixCRM.routes.path('model', 'definitions/uuidV4.json')
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
@@ -45,7 +51,6 @@ module.exports = class TerminalRecieptGenerator {
 
     du.debug('Issue Receipt');
 
-    du.info(arguments[0]);
     this.parameters.setParameters({argumentation: arguments[0], action: 'issueReceipt'});
 
     return this.hydrateProperties()
@@ -117,7 +122,10 @@ module.exports = class TerminalRecieptGenerator {
     }
 
     if(!_.isNull(tracking_number)){
-      prototype.tracking_number = tracking_number;
+      prototype.tracking = {
+        id: tracking_number,
+        carrier: 'USPS' //Technical Debt:  Wha? //Critical
+      }
     }
 
     this.parameters.set('shippingreceiptprototype', prototype);
@@ -145,6 +153,8 @@ module.exports = class TerminalRecieptGenerator {
 
     let shipping_receipt = this.parameters.get('shippingreceipt');
     let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
+
+    du.warning(shipping_receipt, augmented_transaction_products);
 
     let grouped_augmented_transaction_products = this.groupAugmentedTransactionProducts(augmented_transaction_products);
 
