@@ -626,6 +626,10 @@ describe('checkout', function () {
           return Promise.resolve(true);
         }
 
+        updateRebillState({rebill, state}){
+          return Promise.resolve(true);
+        }
+
       }
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
@@ -953,6 +957,9 @@ describe('checkout', function () {
           return Promise.resolve(true);
         }
 
+        updateRebillState({rebill, state}){
+          return Promise.resolve(true);
+        }
       }
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);

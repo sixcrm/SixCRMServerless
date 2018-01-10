@@ -505,7 +505,7 @@ module.exports = class RebillHelper {
 
     let rebill = this.parameters.get('rebill');
 
-    if(!this.parameters.isSet('previousstate')){
+    if(!this.parameters.isSet('previousstate') && !_.isUndefined(rebill.state)){
       this.parameters.set('previousstate', rebill.state);
     }
 
@@ -526,7 +526,9 @@ module.exports = class RebillHelper {
     rebill.history = this.createUpdatedHistoryObjectPrototype();
 
     //Technical Debt: note that this doesn't appear to be set every time!
-    rebill.previous_state = this.parameters.get('previousstate');
+    if (this.parameters.isSet('previousstate')) {
+      rebill.previous_state = this.parameters.get('previousstate');
+    }
 
     this.parameters.set('updatedrebillprototype', rebill);
 
@@ -563,8 +565,6 @@ module.exports = class RebillHelper {
     du.debug('Update History With New Exit');
 
     let rebill = this.parameters.get('rebill');
-    let previous_state = this.parameters.get('previousstate');
-    let state_changed_at = this.parameters.get('statechangedat');
 
     let last_matching_state = this.getLastMatchingStatePrototype();
 

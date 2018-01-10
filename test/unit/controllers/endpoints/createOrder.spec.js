@@ -460,6 +460,10 @@ describe('createOrder', function () {
           return Promise.resolve(true);
         }
 
+        updateRebillState({rebill, state}){
+          return Promise.resolve(true);
+        }
+
       }
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
@@ -587,6 +591,10 @@ describe('createOrder', function () {
         }
 
         addRebillToQueue({rebill, queue_name}){
+          return Promise.resolve(true);
+        }
+
+        updateRebillState({rebill, state}){
           return Promise.resolve(true);
         }
 
@@ -1219,6 +1227,10 @@ describe('createOrder', function () {
           return Promise.resolve(true);
         }
 
+        updateRebillState({rebill, state}){
+          return Promise.resolve(true);
+        }
+
       }
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
@@ -1717,6 +1729,10 @@ describe('createOrder', function () {
         }
 
         addRebillToQueue({rebill, queue_name}){
+          return Promise.resolve(true);
+        }
+
+        updateRebillState({rebill, state}){
           return Promise.resolve(true);
         }
 

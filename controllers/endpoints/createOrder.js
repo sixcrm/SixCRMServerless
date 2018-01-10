@@ -419,7 +419,7 @@ class CreateOrderController extends transactionEndpointController{
     let promises = [
       this.pushEventsRecord(),
       this.pushTransactionsRecord(),
-      this.addRebillToQueue()
+      this.addRebillToStateMachine()
     ];
 
     return Promise.all(promises).then(() => {
@@ -428,6 +428,14 @@ class CreateOrderController extends transactionEndpointController{
 
     });
 
+  }
+
+  addRebillToStateMachine() {
+
+    du.debug('Add Rebill To State Machine');
+
+    return this.updateRebillState()
+      .then(() => this.addRebillToQueue())
   }
 
   addRebillToQueue(){
@@ -440,6 +448,18 @@ class CreateOrderController extends transactionEndpointController{
     //Technical Debt:  This depends on result of the transaction...
 
     return this.rebillHelperController.addRebillToQueue({rebill: rebill, queue_name: 'hold'}).then(() => {
+      return true;
+    });
+
+  }
+
+  updateRebillState(){
+
+    du.debug('Update Rebill State');
+
+    let rebill = this.parameters.get('rebill');
+
+    return this.rebillHelperController.updateRebillState({rebill: rebill, new_state: 'hold'}).then(() => {
       return true;
     });
 
