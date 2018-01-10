@@ -65,7 +65,7 @@ describe('controllers/workers/forwardmessage/shippedToDeliveredForwardMessage.js
         }
       });
 
-      const ShippedToDeliveredForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/ShippedToDeliveredForwardMessage.js');
+      const ShippedToDeliveredForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/shippedToDeliveredForwardMessage.js');
       let shippedToDeliveredForwardMessageController = new ShippedToDeliveredForwardMessageController();
 
       return shippedToDeliveredForwardMessageController.execute().then(result => {
