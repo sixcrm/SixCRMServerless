@@ -89,7 +89,10 @@ entities.forEach((entity) => {
 			var returned_id = response.body.response.data[entity.lower+'list'][entity.lower+'s'][0].id;
 
 			assert.property(response.body.response.data[entity.lower+'list'][entity.lower+'s'][0], 'id');
-    	assert.equal(returned_id, cursor);
+
+			if (cursor !== '') {
+                assert.equal(returned_id, cursor);
+			}
 		}
 
     if(response.body.response.data[entity.lower+'list'].pagination.has_next_page == 'true'){
