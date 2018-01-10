@@ -65,7 +65,7 @@ describe('controllers/workers/forwardmessage/pendingToShippedForwardMessage.js',
         }
       });
 
-      const PendingToShippedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/PendingToShippedForwardMessage.js');
+      const PendingToShippedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pendingToShippedForwardMessage.js');
       let pendingToShippedForwardMessageController = new PendingToShippedForwardMessageController();
 
       return pendingToShippedForwardMessageController.execute().then(result => {
