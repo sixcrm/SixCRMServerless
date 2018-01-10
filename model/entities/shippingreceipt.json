@@ -18,13 +18,8 @@
 		"tracking":{
 			"type":"object",
 			"properties":{
-				"id":{
-					"type":"string"
-				},
-				"carrier":{
-					"type":"string",
-					"enum":["USPS","UPS","FedEx","Test","DHL"]
-				}
+				"id":{"$ref":"../vendors/shippingcarriers/trackingid.json"},
+				"carrier":{"$ref":"../vendors/shippingcarriers/carrier.json"}
 			},
 			"required":["id","carrier"]
 		},

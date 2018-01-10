@@ -29,20 +29,9 @@ function getValidShippingProviderResponse(){
 
 }
 
-function getValidMessage(){
+function getValidMessage(id){
 
-  return {
-    MessageId:"someMessageID",
-    ReceiptHandle:"SomeReceiptHandle",
-    Body: JSON.stringify({id:"00c103b4-670a-439e-98d4-5a2834bb5f00"}),
-    MD5OfBody:"SomeMD5"
-  };
-
-}
-
-function getValidShippingStati(){
-
-  return {};
+  return MockEntities.getValidMessage(id);
 
 }
 
@@ -54,7 +43,11 @@ function getValidShippingReceipt(){
 
 function getValidShippingReceipts(){
 
-  return [getValidShippingReceipt(), getValidShippingReceipt(), getValidShippingReceipt()];
+  return [
+    getValidShippingReceipt(),
+    getValidShippingReceipt(),
+    getValidShippingReceipt()
+  ];
 
 }
 
@@ -64,12 +57,12 @@ function getValidTransactionProducts(){
     {
       product: '80852032-1e28-4d87-80e7-b8e733017390',
       amount: 34.99,
-      shippingreceipt: uuidV4()
+      shipping_receipt: uuidV4()
     },
     {
       product: '4b3ced1d-eb47-4ef5-955d-33762e5f98e5',
       amount: 34.99,
-      shippingreceipt: uuidV4()
+      shipping_receipt: uuidV4()
     }
   ];
 
@@ -84,40 +77,8 @@ function getValidRebill(){
 function getValidTransactions(){
 
   return [
-    {
-      amount: 34.99,
-      id: uuidV4(),
-      alias:'T'+randomutilities.createRandomString(9),
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      rebill: uuidV4(),
-      processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-      merchant_provider: uuidV4(),
-      products:[{
-        product:uuidV4(),
-        amount:34.99
-      }],
-      type:"sale",
-      result:"success",
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
-    },
-    {
-      amount: 34.99,
-      id: uuidV4(),
-      alias:'T'+randomutilities.createRandomString(9),
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      rebill: uuidV4(),
-      processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-      merchant_provider: uuidV4(),
-      products:[{
-        product:uuidV4(),
-        amount:34.99
-      }],
-      type:"sale",
-      result:"success",
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
-    }
+    MockEntities.getValidTransaction(),
+    MockEntities.getValidTransaction()
   ];
 
 }
@@ -272,46 +233,6 @@ describe('controllers/workers/confirmShipped', () => {
 
   });
 
-  describe('setShippedStatus', () => {
-
-    it('successfully sets shipped status', () => {
-
-      let product_shipped_stati = [true, true, true];
-
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-
-      confirmedShippedController.parameters.set('productshippedstati', product_shipped_stati);
-
-      return confirmedShippedController.setShippedStatus().then(result => {
-
-        expect(result).to.equal(true);
-        expect(confirmedShippedController.parameters.store['rebillshippedstatus']).to.be.defined;
-        expect(confirmedShippedController.parameters.store['rebillshippedstatus']).to.equal(true);
-
-      });
-
-    });
-
-    it('successfully sets shipped status to false', () => {
-
-      let product_shipped_stati = [true, true, false];
-
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-
-      confirmedShippedController.parameters.set('productshippedstati', product_shipped_stati);
-
-      return confirmedShippedController.setShippedStatus().then(result => {
-
-        expect(result).to.equal(true);
-        expect(confirmedShippedController.parameters.store['rebillshippedstatus']).to.be.defined;
-        expect(confirmedShippedController.parameters.store['rebillshippedstatus']).to.equal(false);
-
-      });
-
-    });
-
-  });
-
   describe('respond', () => {
 
     it('successfully responds', () => {
@@ -350,7 +271,7 @@ describe('controllers/workers/confirmShipped', () => {
 
     xit('successfully executes (success)', () => {
 
-      let message = getValidMessage();
+      let message = getValidMessage('00c103b4-670a-439e-98d4-5a2834bb5f00');
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
       let transaction_products = getValidTransactionProducts();
@@ -405,7 +326,7 @@ describe('controllers/workers/confirmShipped', () => {
 
     xit('successfully executes (noaction)', () => {
 
-      let message = getValidMessage();
+      let message = getValidMessage('00c103b4-670a-439e-98d4-5a2834bb5f00');
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
       let transaction_products = getValidTransactionProducts();

@@ -42,12 +42,13 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 
     du.debug('Translate Info');
 
-    if(!stringutilities.nonEmpty(response.body)){
-      return null;
-    }
+    mvu.validateModel(response.body, global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/Test/responsebody.json'));
 
-    return this.parseGetInfoResponse(response);
-
+    return {
+      orders: [
+        response.body.response
+      ]
+    };
 
   }
 

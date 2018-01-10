@@ -1,5 +1,5 @@
 {
-  "id":"/providers/shipping/terminal/inforesponseelement.json",
+  "id":"/providers/shipping/terminal/responses/inforesponseelement.json",
   "title":"Info response element",
   "type":"object",
   "properties":{

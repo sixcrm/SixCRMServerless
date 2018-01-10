@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -19,15 +20,30 @@ module.exports = class ShippingReceiptHelperController {
           shippingdetail:'detail',
           shippingstatus:'status'
         },
+        optional:{
+          trackingid: 'tracking_id',
+          carrier: 'carrier'
+        }
+      },
+      confirmStati: {
+        required:{
+          shippingreceiptids:'shipping_receipt_ids',
+          shippingstatus:'shipping_status'
+        },
         optional:{}
       }
+
     };
 
     this.parameter_validation = {
       'shippingreceipt': global.SixCRM.routes.path('model','entities/shippingreceipt.json'),
+      'shippingreceipts': global.SixCRM.routes.path('model','entities/components/shippingreceipts.json'),
+      'shippingreceiptids': global.SixCRM.routes.path('model','general/uuidv4list.json'),
       'shippingdetail': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/detail.json'),
       'shippingstatus': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/status.json'),
-      'updatedshippingreceipt': global.SixCRM.routes.path('model', 'entities/shippingreceipt.json')
+      'updatedshippingreceipt': global.SixCRM.routes.path('model', 'entities/shippingreceipt.json'),
+      'trackingid': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/trackingid.json'),
+      'carrier': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/carrier.json'),
     };
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
@@ -52,7 +68,7 @@ module.exports = class ShippingReceiptHelperController {
 
   }
 
-  updateShippingReceipt({shipping_receipt, detail, status}){
+  updateShippingReceipt({shipping_receipt, detail, status, tracking_id, carrier}){
 
     du.debug('Update Shipping Receipt');
 
@@ -112,9 +128,15 @@ module.exports = class ShippingReceiptHelperController {
     let shipping_status = this.parameters.get('shippingstatus');
     let shipping_detail = this.parameters.get('shippingdetail');
 
+    let tracking_id = this.parameters.get('trackingid', null, false);
+    let carrier = this.parameters.get('carrier', null, false);
+
+    shipping_receipt.status = shipping_status;
+
     let history_object = {
-      updated_at: timestamp.getISO8601(),
-      detail: shipping_detail
+      created_at: timestamp.getISO8601(),
+      detail: shipping_detail,
+      status: shipping_status
     };
 
     if(!_.has(shipping_receipt, 'history')){
@@ -123,12 +145,106 @@ module.exports = class ShippingReceiptHelperController {
       shipping_receipt.history = arrayutilities.merge(shipping_receipt.history, [history_object]);
     }
 
-    shipping_receipt.trackingstatus = shipping_status;
-    shipping_receipt.status = shipping_status;
+    let tracking_prototype = (_.has(shipping_receipt, 'tracking'))?shipping_receipt.tracking:{};
+
+    if(!_.isNull(tracking_id)){
+      tracking_prototype.id = tracking_id;
+    }
+
+    if(!_.isNull(carrier)){
+      tracking_prototype.carrier = carrier;
+    }
+
+    shipping_receipt.tracking = tracking_prototype;
 
     this.parameters.set('updatedshippingreceipt', shipping_receipt);
 
     return true;
+
+  }
+
+  confirmStati({shipping_receipt_ids, shipping_status}){
+
+    du.debug('Confirm Stati');
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'confirmStati'}))
+    .then(() => this.acquireShippingReceipts())
+    .then(() => this.confirmShippingReceiptStati());
+
+  }
+
+  acquireShippingReceipts(){
+
+    du.debug('Acquire Shipping Receipts');
+
+    let shipping_receipt_ids = this.parameters.get('shippingreceiptids');
+
+    if(!_.has(this, 'shippingReceiptController')){
+      this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+    }
+
+    return this.shippingReceiptController.getListByAccount({ids: shipping_receipt_ids}).then(result => {
+
+      this.parameters.set('shippingreceipts', result.shippingreceipts);
+
+      return true;
+
+    });
+
+  }
+
+
+  confirmShippingReceiptStati(){
+
+    du.debug('Confirm Shipping Receipt Stati');
+
+    let shipping_receipts = this.parameters.get('shippingreceipts');
+    let shipping_status = this.parameters.get('shippingstatus');
+
+    if(!arrayutilities.nonEmpty(shipping_receipts)){ return null; }
+
+    return arrayutilities.every(shipping_receipts, (shipping_receipt) => {
+
+      if(shipping_receipt.status != shipping_status){ return false; }
+
+      if(shipping_status == 'intransit'){
+
+        if(!objectutilities.hasRecursive(shipping_receipt, 'tracking.id')){
+          return false;
+        }
+
+        if(!objectutilities.hasRecursive(shipping_receipt, 'tracking.carrier')){
+          return false;
+        }
+
+      }
+
+      if(shipping_status == 'delivered'){
+
+        if(!objectutilities.hasRecursive(shipping_receipt, 'tracking.id')){
+          return false;
+        }
+
+        if(!objectutilities.hasRecursive(shipping_receipt, 'tracking.carrier')){
+          return false;
+        }
+
+        if(!_.has(shipping_receipt, 'history')){
+          return false;
+        }
+
+        let delivered = arrayutilities.find(shipping_receipt.history, history_element => {
+          return history_element.status == shipping_status;
+        })
+
+        if(!arrayutilities.nonEmpty(delivered)){ return false; }
+
+      }
+
+      return true;
+
+    });
 
   }
 

@@ -73,6 +73,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
       if(_.isFunction(this.determineResultCode)){
 
+
         let vendor_response = this.parameters.get('vendorresponse');
         let response = vendor_response.response;
         let body = vendor_response.body;
@@ -86,11 +87,13 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
         let result_message = this.determineResultMessage(result_code);
 
         if(_.isFunction(this.translateResponse)){
+
           let parsed_response = this.translateResponse(response);
 
           if(!_.isNull(parsed_response)){
             this.parameters.set('parsedresponse', parsed_response);
           }
+
         }
 
         this.setCode(result_code);

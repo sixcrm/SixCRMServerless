@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/shippedtransactionproduct",
+	"id":"/workers/confirmShipped/shippedtransactionproduct.json",
 	"title": "Transaction Product",
 	"type": "object",
 	"description": "A shipped transaction product",
@@ -8,9 +8,9 @@
     {"$ref":"../../entities/components/transactionproduct.json"},
     {
       "properties":{
-        "shippingreceipt":{"$ref":"../../definitions/uuidv4.json"}
+        "shipping_receipt":{"$ref":"../../definitions/uuidv4.json"}
       },
-      "required":["shippingreceipt"]
+      "required":["shipping_receipt"]
     }
   ]
 }

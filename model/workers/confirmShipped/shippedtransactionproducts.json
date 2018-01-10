@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/shippedtransactionproducts.json",
+	"id":"/workers/confirmShipped/shippedtransactionproducts.json",
 	"title": "Shipped Transaction Products",
 	"description": "A array of shipped transaction products",
 	"type":"array",

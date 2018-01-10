@@ -3,7 +3,10 @@ const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
+
+const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 
 /*
 
@@ -50,8 +53,10 @@ class confirmShippedController extends workerController {
       .then(() => this.acquireTransactions())
       .then(() => this.acquireTransactionProducts())
       .then(() => this.acquireShippingReceipts())
-      .then(() => this.acquireProductShippedStati())
-      .then(() => this.setShippedStatus())
+      .then(() => this.findUntrackedShippingReceipts())
+      .then(() => this.getTrackingInformation())
+      .then(() => this.updateShippingReceipts())
+      .then(() => this.confirmAllShipped())
       .then(() => this.respond())
       .catch(error => {
         du.error(error);
@@ -113,7 +118,7 @@ class confirmShippedController extends workerController {
       }
 
       let shipping_receipt_promises = arrayutilities.map(transaction_products, transaction_product => {
-        return this.shippingReceiptController.get({id:transaction_product.shippingreceipt});
+        return this.shippingReceiptController.get({id:transaction_product.shipping_receipt});
       });
 
       return Promise.all(shipping_receipt_promises).then(shipping_receipts => {
@@ -126,14 +131,28 @@ class confirmShippedController extends workerController {
 
     }
 
-    acquireProductShippedStati(){
+    findUntrackedShippingReceipts(){
 
-      du.debug('Acquire Product Delivered Stati');
+      du.debug('Acquire Product Tracking');
 
       let shipping_receipts = this.parameters.get('shippingreceipts');
 
+      let untracked_shipping_receipts = arrayutilities.filter(shipping_receipts, shipping_receipt => {
+        return !(objectutilities.hasRecursive(shipping_receipt, 'tracking.id') && objectutilities.hasRecursive(shipping_receipt, 'tracking.carrier'));
+      });
+
+      if(arrayutilities.nonEmpty(untracked_shipping_receipts)){
+        this.parameters.set('untrackedshippingreceipts', untracked_shipping_receipts);
+      }
+
+      return true;
+
+      /*
+      du.warning(no_tracking);  process.exit();
+
       if(!_.has(this, 'shippingStatusController')){
-        this.shippingStatusController = global.SixCRM.routes.include('controllers', 'helpers/shippingcarriers/ShippingStatus.js');
+        const ShippingStatusController = global.SixCRM.routes.include('controllers', 'helpers/shippingcarriers/ShippingStatus.js');
+        this.shippingStatusController = new ShippingStatusController();
       }
 
       let shipped_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
@@ -146,27 +165,158 @@ class confirmShippedController extends workerController {
 
       return Promise.all(shipped_stati).then(shipped_stati => {
 
+        du.warning(shipped_stati);  process.exit();
         this.parameters.set('productshippedstati', shipped_stati);
 
         return true;
 
       });
+      */
 
     }
 
-    setShippedStatus() {
+    getTrackingInformation(){
 
-      du.debug('Confirm Shipped');
+      du.debug('Get Tracking Information');
 
-      let shipped_stati = this.parameters.get('productshippedstati');
+      let untracked_shipping_receipts = this.parameters.get('untrackedshippingreceipts', null, false);
 
-      let shipped = arrayutilities.every(shipped_stati, (shipped_status) => {
-        return shipped_status;
-      });
+      if(!_.isNull(untracked_shipping_receipts)){
 
-      this.parameters.set('rebillshippedstatus', shipped);
+        const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
 
-      return Promise.resolve(true);
+        let get_tracking_promises = arrayutilities.map(untracked_shipping_receipts, untracked_shipping_receipt => {
+
+          let terminalController = new TerminalController();
+
+          return terminalController.info({shipping_receipt: untracked_shipping_receipt}).then(result => {
+            return {
+              shipping_receipt: untracked_shipping_receipt,
+              terminal_response: result.getVendorResponse().orders[0]
+            };
+          });
+
+        });
+
+        return Promise.all(get_tracking_promises).then(results => {
+
+          this.parameters.set('compoundshippingobjects', results);
+
+          return true;
+
+        });
+
+      }else{
+
+        du.highlight('No untracked shipping receipts.');
+
+      }
+
+      return true;
+
+    }
+
+    updateShippingReceipts(){
+
+      du.debug('Update Shipping Receipts');
+
+      let compound_shipping_objects = this.parameters.get('compoundshippingobjects', null, false);
+
+      if(!_.isNull(compound_shipping_objects)){
+
+        let update_promises = arrayutilities.map(compound_shipping_objects, compound_shipping_object => {
+
+          let status = this.getStatus(compound_shipping_object.terminal_response);
+          let detail = this.getDetail(compound_shipping_object.terminal_response);
+
+          let update_parameters = {
+            shipping_receipt: compound_shipping_object.shipping_receipt,
+            detail:  detail,
+            status: status,
+          }
+
+          if(_.has(compound_shipping_object.terminal_response, 'tracking_number') && !_.isNull(compound_shipping_object.terminal_response.tracking_number)){
+            update_parameters.tracking_id = compound_shipping_object.terminal_response.tracking_number;
+          }
+
+          if(_.has(compound_shipping_object.terminal_response, 'carrier') && !_.isNull(compound_shipping_object.terminal_response.carrier)){
+            update_parameters.carrier = compound_shipping_object.terminal_response.carrier;
+          }
+
+          let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+          return shippingReceiptHelperController.updateShippingReceipt(update_parameters);
+
+        });
+
+        return Promise.all(update_promises).then(results => {
+          du.info(results);
+          return true;
+        });
+
+      }
+
+      du.highlight('No untracked shipping receipts to update.');
+
+      return true;
+
+    }
+
+    getStatus(terminal_response){
+
+      du.debug('Get Status');
+
+      if(_.has(terminal_response, 'tracking_number') && _.has(terminal_response, 'carrier')){
+        if(!_.isNull(terminal_response.tracking_number) && !_.isNull(terminal_response.carrier)){
+          return 'intransit'
+        }
+      }
+
+      return 'pending';
+
+    }
+
+    getDetail(terminal_response){
+
+      du.debug('Get Status');
+
+      if(_.has(terminal_response, 'tracking_number') && _.has(terminal_response, 'carrier')){
+        if(!_.isNull(terminal_response.tracking_number) && !_.isNull(terminal_response.carrier)){
+          return 'Received tracking number from Fulfillment Provider';
+        }
+      }
+
+      return 'Pending a tracking number from Fulfillment Provider';
+
+    }
+
+    confirmAllShipped(){
+
+      du.debug('Confirm All Shipped');
+
+      let untracked_shipping_receipts = this.parameters.get('untrackedshippingreceipts', null, false);
+
+      if(!_.isNull(untracked_shipping_receipts)){
+
+        let untracked_shipping_receipt_ids = arrayutilities.map(untracked_shipping_receipts, (untracked_shipping_receipt) => { return untracked_shipping_receipt.id });
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        return shippingReceiptHelperController.confirmStati({shipping_receipt_ids: untracked_shipping_receipt_ids, shipping_status: 'intransit'}).then(result => {
+
+          this.parameters.set('rebillshippedstatus', result);
+
+          return true;
+
+        });
+
+      }
+
+      du.highlight('No untracked shipping receipts to confirm.');
+
+      this.parameters.set('rebillshippedstatus', true);
+
+      return true;
 
     }
 

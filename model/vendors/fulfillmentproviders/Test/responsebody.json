@@ -1,0 +1,8 @@
+{
+  "id":"/vendors/fulfillmentproviders/Test/responsebody.json",
+  "title":"Test Response Body",
+  "type":"object",
+  "properties":{
+  },
+  "required":[]
+}

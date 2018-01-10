@@ -1,0 +1,6 @@
+{
+  "id":"/vendors/shippingcarriers/carrier.json",
+  "title":"Shipping Carrier Name",
+  "type":"string",
+  "enum":["USPS","UPS","FedEx","Test","DHL"]
+}
