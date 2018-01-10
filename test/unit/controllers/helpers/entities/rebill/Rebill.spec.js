@@ -1310,7 +1310,7 @@ describe('/helpers/entities/Rebill.js', () => {
         .catch((error) => expect(error.message).to.have.string('[500] Missing source object field: "new_state".'))
     });
 
-    it('throws an error when updating with previous state and no history', () => {
+    it('throws an error when updating to unknown state', () => {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         update: ({entity}) => {
           return Promise.resolve(entity);
@@ -1324,34 +1324,9 @@ describe('/helpers/entities/Rebill.js', () => {
       const rebillHelper = new RebillHelper();
       const rebill = getValidRebill();
 
-      return rebillHelper.updateRebillState({rebill: rebill, new_state: 'hold', previous_state: 'bill'})
-        .catch((error) => expect(error.message).to.have.string('[500] Rebill does not have a history of being in previous state: bill'))
-    });
-
-    it('throws an error when updating with previous state and no matching history', () => {
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: ({entity}) => {
-          return Promise.resolve(entity);
-        },
-        get: ({id}) => {
-          return Promise.resolve(rebill);
-        }
-      });
-
-      const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-      const rebillHelper = new RebillHelper();
-      const rebill = getValidRebill();
-
-      rebill.state = 'hold';
-      rebill.previous_state = 'bill';
-      rebill.state_changed_at = '2017-11-12T07:03:35.571Z';
-      rebill.history =  [
-        {state: 'bill', entered_at: '2017-11-12T06:03:35.571Z', exited_at: '2017-11-12T07:03:35.571Z'},
-        {state: 'hold', entered_at: '2017-11-12T07:03:35.571Z'}
-      ];
-
-      return rebillHelper.updateRebillState({rebill: rebill, new_state: 'hold', previous_state: 'bill'})
-      .catch((error) => expect(error.message).to.have.string('[500] Rebill does not have a history of being in previous state: bill'))
+      return rebillHelper.updateRebillState({rebill: rebill, new_state: 'unknown'})
+        .then(() => expect.fail('Error not thrown'))
+        .catch((error) => expect(error.message).to.have.string('[500] One or more validation errors occurred: Queue Name instance does not match pattern "^(bill|recover|hold|pending|shipped|delivered|search_indexing)(_error|_failed|_deadletter)*$"'))
     });
 
     it('updates rebill state when when rebill has no state (initial state)', () => {
