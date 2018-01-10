@@ -1,5 +1,5 @@
 'use strict'
-
+const _ = require('underscore');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 let expect = chai.expect;
@@ -11,14 +11,21 @@ let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const ShippingProviderResponse  = global.SixCRM.routes.include('vendors', 'shippingcarriers/components/Response.js');
 
-function getValidTrackerResponse(carrier){
+function getValidTrackerResponse({status, delivered, detail}){
+
+  status = (_.isUndefined(status) || _.isNull(status))?'delivered':status;
+  delivered = (_.isUndefined(delivered) || _.isNull(delivered))?true:delivered;
+  detail = (_.isUndefined(detail) || _.isNull(detail))?'Your item was delivered at 8:10 am on June 1 in Wilmington DE 19801.':detail;
 
   return {
-    delivered: true,
-    status: 'delivered',
-    detail: 'Your item was delivered at 8:10 am on June 1 in Wilmington DE 19801.'
+    getVendorResponse: () => {
+      return {
+        delivered: delivered,
+        status: status,
+        detail: detail
+      };
+    }
   };
 
 }
@@ -55,7 +62,7 @@ describe('/controllers/helpers/shippingcarriers/ShippingStatus.js', () => {
 
   describe('getStatus', () => {
 
-    it('successfully return shipping provider status', () => {
+    it('successfully returns shipping provider status', () => {
 
       let shipping_receipt = getValidShippingReceipt();
 
@@ -63,12 +70,13 @@ describe('/controllers/helpers/shippingcarriers/ShippingStatus.js', () => {
 
       let tracker_response = getValidTrackerResponse('USPS');
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), {
-        updateShippingReceipt:(argumentation_object) => {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
+        constructor(){}
+        updateShippingReceipt(argumentation_object){
           shipping_receipt.history = []
           return Promise.resolve(shipping_receipt);
-        },
-        getTrackingNumber:(shipping_receipt, fatal) => {
+        }
+        getTrackingNumber(shipping_receipt, fatal){
           return shipping_receipt.tracking.id;
         }
       });
@@ -105,12 +113,13 @@ describe('/controllers/helpers/shippingcarriers/ShippingStatus.js', () => {
 
       let tracker_response = getValidTrackerResponse('USPS');
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), {
-        updateShippingReceipt:(argumentation_object) => {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
+        constructor(){}
+        updateShippingReceipt(argumentation_object){
           shipping_receipt.history = []
           return Promise.resolve(shipping_receipt);
-        },
-        getTrackingNumber:(shipping_receipt, fatal) => {
+        }
+        getTrackingNumber(shipping_receipt, fatal){
           return shipping_receipt.tracking.id;
         }
       });
@@ -142,16 +151,15 @@ describe('/controllers/helpers/shippingcarriers/ShippingStatus.js', () => {
 
       delete shipping_receipt.history;
 
-      let tracker_response = getValidTrackerResponse('USPS');
+      let tracker_response = getValidTrackerResponse({status: 'instransit', delivered: false, detail: 'Elvis has left the building.'});
 
-      tracker_response.status = 'intransit';
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), {
-        updateShippingReceipt:(argumentation_object) => {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
+        constructor(){}
+        updateShippingReceipt(argumentation_object){
           shipping_receipt.history = []
           return Promise.resolve(shipping_receipt);
-        },
-        getTrackingNumber:(shipping_receipt, fatal) => {
+        }
+        getTrackingNumber(shipping_receipt, fatal){
           return shipping_receipt.tracking.id;
         }
       });

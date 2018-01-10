@@ -4,6 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
+const ShippingStatusController = global.SixCRM.routes.include('controllers', 'helpers/shippingcarriers/ShippingStatus.js');
 
 class confirmDeliveredController extends workerController {
 
@@ -103,7 +104,7 @@ class confirmDeliveredController extends workerController {
       }
 
       let shipping_receipt_promises = arrayutilities.map(transaction_products, transaction_product => {
-        return this.shippingReceiptController.get({id:transaction_product.shippingreceipt});
+        return this.shippingReceiptController.get({id:transaction_product.shipping_receipt});
       });
 
       return Promise.all(shipping_receipt_promises).then(shipping_receipts => {
@@ -122,13 +123,11 @@ class confirmDeliveredController extends workerController {
 
       let shipping_receipts = this.parameters.get('shippingreceipts');
 
-      if(!_.has(this, 'shippingStatusController')){
-        this.shippingStatusController = global.SixCRM.routes.include('controllers', 'helpers/shippingcarriers/ShippingStatus.js');
-      }
-
       let delivered_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
 
-        return this.shippingStatusController.isDelivered({shipping_receipt: shipping_receipt});
+        let shippingStatusController = new ShippingStatusController();
+
+        return shippingStatusController.isDelivered({shipping_receipt: shipping_receipt});
 
       });
 

@@ -105,7 +105,7 @@ module.exports = class ShippingReceiptHelperController {
 
   pushUpdatedShippingReceipt(){
 
-    du.debug('Update Shipping Receipt History');
+    du.debug('Push Updated Shipping Receipt');
 
     let updated_shipping_receipt = this.parameters.get('updatedshippingreceipt');
 

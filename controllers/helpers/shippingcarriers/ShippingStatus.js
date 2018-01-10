@@ -39,7 +39,9 @@ module.exports = class ShippingStatusController {
 
       return this.getStatus(arguments[0])
       .then(result => {
-        return (result.status == 'delivered');
+        let vendor_response = result.getVendorResponse();
+
+        return (vendor_response.status == 'delivered');
       });
 
     }
@@ -51,9 +53,8 @@ module.exports = class ShippingStatusController {
       return Promise.resolve()
       .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'getStatus'}))
       .then(() => this.getCarrierStatus())
+      .then(() => this.updateShippingReceiptHistory())
       .then(() => {
-
-        this.updateShippingReceiptHistory();
 
         return this.parameters.get('trackerresponse');
 
@@ -65,14 +66,13 @@ module.exports = class ShippingStatusController {
 
       du.debug('Update Shipping Receipt History');
 
-      let tracker_response = this.parameters.get('trackerresponse');
+      let tracker_response = this.parameters.get('trackerresponse').getVendorResponse();
       let shipping_receipt = this.parameters.get('shippingreceipt');
 
-      if(!_.has(this, 'shippingReceiptHelperController')){
-        this.shippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
-      }
+      const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
+      let shippingReceiptHelperController = new ShippingReceiptHelperController();
 
-      return this.shippingReceiptHelperController.updateShippingReceipt({
+      return shippingReceiptHelperController.updateShippingReceipt({
         shipping_receipt: shipping_receipt,
         detail: tracker_response.detail,
         status: tracker_response.status

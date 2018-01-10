@@ -809,6 +809,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     getItems(data){
 
+
       du.debug('Get Items');
 
       objectutilities.isObject(data, true);

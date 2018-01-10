@@ -8,9 +8,9 @@
     {"$ref":"../../entities/components/transactionproduct.json"},
     {
       "properties":{
-        "shippingreceipt":{"$ref":"../../definitions/uuidv4.json"}
+        "shipping_receipt":{"$ref":"../../definitions/uuidv4.json"}
       },
-      "required":["shippingreceipt"]
+      "required":["shipping_receipt"]
     }
   ]
 }

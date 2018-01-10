@@ -27,7 +27,7 @@ module.exports = class TrackerUtilitiesController extends PermissionedController
     };
 
     this.parameter_validation = {
-      shippingreceipt: global.SixCRM.routes.path('model', 'entities/shippingreceipt.json')
+      shippingreceipt: global.SixCRM.routes.path('model', 'providers/tracker/trackableshippingreceipt.json')
     };
 
     this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');

@@ -142,8 +142,8 @@ functions:
     handler: handlers/workers/forwardmessage/shippedtodelivered/handler.shippedtodelivered
     events:
       - schedule:
-        rate: rate(1 minute)
-        enabled: true
+          rate: rate(6 hours)
+          enabled: true
 
   deliveredtoarchive:
     handler: handlers/workers/forwardmessage/deliveredtoarchive/handler.deliveredtoarchive

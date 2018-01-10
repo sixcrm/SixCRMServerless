@@ -250,7 +250,6 @@ class confirmShippedController extends workerController {
         });
 
         return Promise.all(update_promises).then(results => {
-          du.info(results);
           return true;
         });
 

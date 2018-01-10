@@ -14,14 +14,9 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
-function getValidMessage(){
+function getValidMessage(id){
 
-  return {
-    MessageId:"someMessageID",
-    ReceiptHandle:"SomeReceiptHandle",
-    Body: JSON.stringify({id:"00c103b4-670a-439e-98d4-5a2834bb5f00"}),
-    MD5OfBody:"SomeMD5"
-  };
+  return MockEntities.getValidMessage(id);
 
 }
 
@@ -39,7 +34,11 @@ function getValidShippingReceipt(){
 
 function getValidShippingReceipts(){
 
-  return [getValidShippingReceipt(), getValidShippingReceipt(), getValidShippingReceipt()];
+  return [
+    getValidShippingReceipt(),
+    getValidShippingReceipt(),
+    getValidShippingReceipt()
+  ];
 
 }
 
@@ -49,69 +48,34 @@ function getValidTransactionProducts(){
     {
       product: '80852032-1e28-4d87-80e7-b8e733017390',
       amount: 34.99,
-      shippingreceipt: uuidV4()
+      shipping_receipt: uuidV4()
     },
     {
       product: '4b3ced1d-eb47-4ef5-955d-33762e5f98e5',
       amount: 34.99,
-      shippingreceipt: uuidV4()
+      shipping_receipt: uuidV4()
     }
   ];
 
 }
 
-function getValidRebill(){
+function getValidRebill(id){
 
-  return {
-    bill_at: "2017-04-06T18:40:41.405Z",
-    id: "70de203e-f2fd-45d3-918b-460570338c9b",
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    parentsession: "1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d",
-    product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
-    amount: 79.99,
-    created_at:"2017-04-06T18:40:41.405Z",
-    updated_at:"2017-04-06T18:41:12.521Z"
-  };
+  return MockEntities.getValidRebill(id);
+
+}
+
+function getValidTransaction(id){
+
+  return MockEntities.getValidTransaction(id);
 
 }
 
 function getValidTransactions(){
 
   return [
-    {
-      amount: 34.99,
-      id: uuidV4(),
-      alias:'T'+randomutilities.createRandomString(9),
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      rebill: uuidV4(),
-      processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-      merchant_provider: uuidV4(),
-      products:[{
-        product:uuidV4(),
-        amount:34.99
-      }],
-      type:"sale",
-      result:"success",
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
-    },
-    {
-      amount: 34.99,
-      id: uuidV4(),
-      alias:'T'+randomutilities.createRandomString(9),
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      rebill: uuidV4(),
-      processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-      merchant_provider: uuidV4(),
-      products:[{
-        product:uuidV4(),
-        amount:34.99
-      }],
-      type:"sale",
-      result:"success",
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
-    }
+    getValidTransaction(),
+    getValidTransaction()
   ];
 
 }
@@ -127,7 +91,7 @@ describe('controllers/workers/confirmDelivered', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {
@@ -245,8 +209,9 @@ describe('controllers/workers/confirmDelivered', () => {
       let shipping_receipts = getValidShippingReceipts();
       let shipping_stati = getValidShippingStati();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
-        isDelivered:(provider, trackingnumber) => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), class {
+        constructor(){}
+        isDelivered(provider, trackingnumber){
           return Promise.resolve(true);
         }
       });
@@ -350,8 +315,9 @@ describe('controllers/workers/confirmDelivered', () => {
       let transaction_products = getValidTransactionProducts();
       let shipping_receipts = getValidShippingReceipts();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
-        isDelivered:(provider, trackingnumber) => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), class {
+        constructor(){}
+        isDelivered(provider, trackingnumber){
           return Promise.resolve(true);
         }
       });
@@ -404,8 +370,9 @@ describe('controllers/workers/confirmDelivered', () => {
       let transaction_products = getValidTransactionProducts();
       let shipping_receipts = getValidShippingReceipts();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
-        isDelivered:(provider, trackingnumber) => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), class {
+        constructor(){}
+        isDelivered(provider, trackingnumber){
           return Promise.resolve(false);
         }
       });

@@ -416,8 +416,6 @@ module.exports = class RebillHelper {
 
   }
 
-  /* Nikola, please see below! */
-
   updateRebillProcessing({rebill, processing}){
 
     du.debug('Mark Rebill Processing');

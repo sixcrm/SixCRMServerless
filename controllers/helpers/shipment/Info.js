@@ -54,7 +54,7 @@ module.exports = class InfoController extends ShipmentUtilities {
 
   executeInfo(){
 
-    du.debug('Execute Fulfillment');
+    du.debug('Execute Info');
 
     let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
     let shipping_receipt = this.parameters.get('shippingreceipt');

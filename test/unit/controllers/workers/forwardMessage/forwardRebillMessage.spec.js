@@ -48,6 +48,8 @@ describe('workers/forwardRebillMessage', () => {
 
       let rebill = getValidRebill();
 
+      const compound_worker_response_object = getRebillResponseObject('success');
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         get:({id}) => {
           return Promise.resolve(rebill);
@@ -63,13 +65,11 @@ describe('workers/forwardRebillMessage', () => {
           expect(new_state).to.equal('some_destination_queue');
           expect(error_message).to.not.be.defined;
 
-          return Promise.resolve(rebill);
+          return Promise.resolve(compound_worker_response_object);
         }
       };
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
-
-      const compound_worker_response_object = getRebillResponseObject('success');
 
       const ForwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
       const forwardRebillMessageController = new ForwardRebillMessageController();
@@ -98,6 +98,8 @@ describe('workers/forwardRebillMessage', () => {
         }
       });
 
+      const compound_worker_response_object = getRebillResponseObject('fail');
+
       let mock_rebill_helper = class {
         constructor(){}
 
@@ -107,13 +109,11 @@ describe('workers/forwardRebillMessage', () => {
           expect(previous_state).to.equal('some_origin_queue');
           expect(error_message).to.equal(undefined);
 
-          return Promise.resolve(rebill);
+          return Promise.resolve(compound_worker_response_object);
         }
       };
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
-
-      const compound_worker_response_object = getRebillResponseObject('fail');
 
       const ForwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
       const forwardRebillMessageController = new ForwardRebillMessageController();
@@ -136,6 +136,8 @@ describe('workers/forwardRebillMessage', () => {
 
       let rebill = getValidRebill();
 
+      const compound_worker_response_object = getRebillResponseObject('error');
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         get:({id}) => {
           return Promise.resolve(rebill);
@@ -151,13 +153,11 @@ describe('workers/forwardRebillMessage', () => {
           expect(previous_state).to.equal('some_origin_queue');
           expect(error_message).to.equal(undefined);
 
-          return Promise.resolve(rebill);
+          return Promise.resolve(compound_worker_response_object);
         }
       };
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
-
-      const compound_worker_response_object = getRebillResponseObject('error');
 
       const ForwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
       const forwardRebillMessageController = new ForwardRebillMessageController();

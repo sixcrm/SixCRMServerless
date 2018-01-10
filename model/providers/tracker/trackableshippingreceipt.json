@@ -1,0 +1,11 @@
+{
+  "id":"/providers/tracker/trackableshippingreceipt.json",
+  "title":"Trackable Shipping Receipt",
+  "allOf":[
+    {"$ref":"../../entities/shippingreceipt.json"},
+    {
+      "type":"object",
+      "required":["tracking"]
+    }
+  ]
+}

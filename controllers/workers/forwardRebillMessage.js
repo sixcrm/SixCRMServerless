@@ -1,7 +1,7 @@
 'use strict';
 const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
+const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 
 module.exports = class forwardRebillMessageController extends forwardMessageController {
@@ -10,8 +10,6 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
 
       super();
 
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-
     }
 
     handleWorkerResponseObject(worker_response_object){
@@ -19,7 +17,7 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
       du.debug('Forward Rebill Message Controller: Handle Worker Response Object');
 
       return this.updateRebillState(worker_response_object)
-        .then((worker_response_object) => super.handleWorkerResponseObject(worker_response_object));
+      .then(() => { return super.handleWorkerResponseObject(worker_response_object); });
 
     }
 
@@ -42,15 +40,16 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
         new_state = params.error_queue;
       }
 
-      if(!_.has(this, 'rebillHelperController')){
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-
-        this.rebillHelperController = new RebillHelperController();
+      if(!_.has(this, 'rebillController')){
+        this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
       }
 
       return this.rebillController.get({id: rebill_id})
-      .then((rebill) => this.rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state}))
-      .then(() => Promise.resolve(compound_worker_response_object));
+      .then((rebill) => {
+        let rebillHelperController = new RebillHelperController();
+
+        return rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state});
+      });
 
     }
 
