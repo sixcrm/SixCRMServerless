@@ -1,4 +1,4 @@
-SELECT merchant_provider,
+SELECT t.merchant_provider,
        max(num_transactions_today) num_transactions_today,
        max(num_transactions_week) num_transactions_week,
        max(num_transactions_month) num_transactions_month,
@@ -8,36 +8,36 @@ SELECT merchant_provider,
 FROM
   (SELECT merchant_provider,
           SUM(CASE
-                  WHEN date_trunc('day', getdate()) = date_trunc('day', datetime) THEN 1
+                  WHEN date_trunc('day', CURRENT_TIMESTAMP) = date_trunc('day', datetime) THEN 1
                   ELSE 0
               END ) num_transactions_today,
           SUM(CASE
-                  WHEN date_trunc('week', getdate()) = date_trunc('week', datetime) THEN 1
+                  WHEN date_trunc('week', CURRENT_TIMESTAMP) = date_trunc('week', datetime) THEN 1
                   ELSE 0
               END ) num_transactions_week,
           SUM(CASE
-                  WHEN date_trunc('month', getdate()) = date_trunc('month', datetime) THEN 1
+                  WHEN date_trunc('month', CURRENT_TIMESTAMP) = date_trunc('month', datetime) THEN 1
                   ELSE 0
               END ) num_transactions_month,
           SUM(CASE
-                  WHEN date_trunc('day', getdate()) = date_trunc('day', datetime) THEN amount
+                  WHEN date_trunc('day', CURRENT_TIMESTAMP) = date_trunc('day', datetime) THEN amount
                   ELSE 0
               END ) amount_transactions_today,
           SUM(CASE
-                  WHEN date_trunc('week', getdate()) = date_trunc('week', datetime) THEN amount
+                  WHEN date_trunc('week', CURRENT_TIMESTAMP) = date_trunc('week', datetime) THEN amount
                   ELSE 0
               END ) amount_transactions_week,
           SUM(CASE
-                  WHEN date_trunc('month', getdate()) = date_trunc('month', datetime) THEN amount
+                  WHEN date_trunc('month', CURRENT_TIMESTAMP) = date_trunc('month', datetime) THEN amount
                   ELSE 0
               END ) amount_transactions_month
    FROM f_transactions
    WHERE 1=1
      {{filter}}
-     AND datetime BETWEEN add_months(getdate(),-1) AND getdate()
+     AND datetime BETWEEN CURRENT_TIMESTAMP - interval '1 month' AND CURRENT_TIMESTAMP
    GROUP BY merchant_provider
    {{union}}
- )
+ ) t
 GROUP BY merchant_provider
 ORDER BY {{order_field}} {{order}}
 LIMIT {{limit}}
