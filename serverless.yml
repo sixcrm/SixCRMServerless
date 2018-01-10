@@ -124,19 +124,19 @@ functions:
           rate: rate(1 minute)
           enabled: true
 
-  pendingfailedtopending:
-    handler: handlers/workers/forwardmessage/pendingfailedtopending/handler.pendingfailedtopending
-    events:
-      - schedule:
-          rate: rate(6 hours)
-          enabled: true
+#  pendingfailedtopending:
+#    handler: handlers/workers/forwardmessage/pendingfailedtopending/handler.pendingfailedtopending
+#    events:
+#      - schedule:
+#          rate: rate(6 hours)
+#          enabled: true
 
   pendingtoshipped:
     handler: handlers/workers/forwardmessage/pendingtoshipped/handler.pendingtoshipped
     events:
       - schedule:
-        rate: rate(1 minute)
-        enabled: true
+          rate: rate(6 hours)
+          enabled: true
 
   shippedtodelivered:
     handler: handlers/workers/forwardmessage/shippedtodelivered/handler.shippedtodelivered
