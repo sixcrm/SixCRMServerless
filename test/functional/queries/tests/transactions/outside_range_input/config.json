@@ -1,0 +1,11 @@
+{
+  "method": "getTransactions",
+  "test_case": "zero input",
+  "input": {
+    "analyticsfilter":
+  { "start": "2016-01-01T00:00:00.000Z",
+    "end": "2016-01-13T00:00:00.000Z"},
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "transactions",
+  "expect":  []
+}
