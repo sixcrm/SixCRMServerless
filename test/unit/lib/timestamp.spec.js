@@ -169,17 +169,25 @@ describe('lib/timestamp', () => {
         }
     });
 
-    describe('withinLastMinute', () => {
-        it('now is within last minute', () => {
-            let now = Timestamp.getISO8601();
-
-            expect(Timestamp.withinLastMinute(now)).to.be.true;
+    describe('should calculate seconds difference', () => {
+        it('for now', () => {
+            expect(Timestamp.getSecondsDifference(nowInMilliseconds())).to.equal(0);
         });
 
-        it('guaranteed old date is not within last minute', () => {
-            let now = '2018-01-11T15:04:08.250Z';
-
-            expect(Timestamp.withinLastMinute(now)).to.be.false;
+        it('for 5 seconds', () => {
+            expect(Timestamp.getSecondsDifference(nowInMilliseconds() - 5000)).to.equal(5);
         });
+
+        it('for minus 5 seconds', () => {
+            expect(Timestamp.getSecondsDifference(nowInMilliseconds() + 5000)).to.equal(5);
+        });
+
+        it('for one minute', () => {
+            expect(Timestamp.getSecondsDifference(nowInMilliseconds() + 60000)).to.equal(60);
+        });
+
+        function nowInMilliseconds() {
+            return Timestamp.createTimestampMilliseconds();
+        }
     });
 });

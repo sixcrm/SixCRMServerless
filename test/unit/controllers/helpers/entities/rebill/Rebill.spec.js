@@ -1326,7 +1326,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return rebillHelper.updateRebillState({rebill: rebill, new_state: 'unknown'})
         .then(() => expect.fail('Error not thrown'))
-        .catch((error) => expect(error.message).to.have.string('[500] One or more validation errors occurred: Queue Name instance does not match pattern "^(bill|recover|hold|pending|shipped|delivered|search_indexing)(_error|_failed|_deadletter)*$"'))
+        .catch((error) => expect(error.message).to.have.string('[500] One or more validation errors occurred: State Name instance does not match pattern "^(bill|recover|hold|pending|shipped|delivered|archived)(_error|_failed|_deadletter)*$"'))
     });
 
     it('updates rebill state when when rebill has no state (initial state)', () => {
@@ -1437,17 +1437,17 @@ describe('/helpers/entities/Rebill.js', () => {
       const rebillHelper = new RebillHelper();
       const rebill = getValidRebill();
 
-      rebill.state = 'search_indexing';
+      rebill.state = 'bill';
       rebill.previous_state = 'hold';
       rebill.state_changed_at = '2017-11-12T07:03:35.571Z';
       rebill.history =  [
         {state: 'hold', entered_at: '2017-11-12T06:03:35.571Z', exited_at: '2017-11-12T07:03:35.571Z'},
-        {state: 'search_indexing', entered_at: '2017-11-12T07:03:35.571Z'}
+        {state: 'bill', entered_at: '2017-11-12T07:03:35.571Z'}
       ];
 
-      return rebillHelper.updateRebillState({rebill: rebill, new_state: 'pending', previous_state: 'search_indexing', error_message: 'errorMessage'})
+      return rebillHelper.updateRebillState({rebill: rebill, new_state: 'pending', previous_state: 'bill', error_message: 'errorMessage'})
         .then((rebill) => {
-          expect(rebill.previous_state).to.equal('search_indexing');
+          expect(rebill.previous_state).to.equal('bill');
           expect(rebill.state).to.equal('pending');
           expect(rebill.history.length).to.equal(3);
 
@@ -1455,7 +1455,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(rebill.history[0].entered_at).to.equal('2017-11-12T06:03:35.571Z');
           expect(rebill.history[0].exited_at).to.equal('2017-11-12T07:03:35.571Z');
 
-          expect(rebill.history[1].state).to.equal('search_indexing');
+          expect(rebill.history[1].state).to.equal('bill');
           expect(rebill.history[1].entered_at).to.equal('2017-11-12T07:03:35.571Z');
           expect(rebill.history[1].exited_at).to.equal(rebill.state_changed_at);
 

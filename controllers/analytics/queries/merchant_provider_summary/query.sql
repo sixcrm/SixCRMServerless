@@ -34,7 +34,7 @@ FROM
    FROM f_transactions
    WHERE 1=1
      {{filter}}
-     AND datetime BETWEEN CURRENT_TIMESTAMP - interval '1 month' AND CURRENT_TIMESTAMP
+     AND datetime BETWEEN CURRENT_TIMESTAMP - interval '30 days' AND CURRENT_TIMESTAMP
    GROUP BY merchant_provider
    {{union}}
  ) t

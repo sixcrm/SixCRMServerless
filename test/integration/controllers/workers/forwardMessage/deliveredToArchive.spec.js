@@ -76,8 +76,11 @@ describe('controllers/workers/forwardmessage/deliveredToArchive.js', () => {
           return rebillController.get({id: rebill_id}).then((rebill) => {
               du.info(rebill);
 
-              expect(rebill.state).to.equal('archived');
-              expect(timestamp.withinLastMinute(rebill.updated_at)).to.equal(true, 'Rebill update time is not recent enough. ' + rebill.updated_at);
+            const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+
+            expect(rebill.state).to.equal('archived');
+            expect(rebill.previous_state).to.equal('delivered');
+            expect(timeSinceCreation).to.be.below(10);
 
           });
       });
