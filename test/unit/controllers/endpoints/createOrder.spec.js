@@ -1058,7 +1058,6 @@ describe('createOrder', function () {
       createOrderController.parameters.set('productschedules', product_schedules);
 
       session.product_schedules = arrayutilities.merge(session.product_schedules, product_schedules);
-      rebill.transactions = arrayutilities.merge(rebill.transactions, [transaction.id]);
 
       return createOrderController.updateEntities().then(result => {
         expect(result).to.equal(true);
@@ -1098,8 +1097,6 @@ describe('createOrder', function () {
       createOrderController.parameters.set('session', session);
       createOrderController.parameters.set('productschedules', product_schedules);
 
-      rebill.transactions = arrayutilities.merge(rebill.transactions, [transaction.id]);
-
       return createOrderController.updateEntities().then(result => {
         expect(result).to.equal(true);
         let updated_session = createOrderController.parameters.store['session'];
@@ -1111,7 +1108,7 @@ describe('createOrder', function () {
 
     });
 
-    it('updates entities associated with a transaction when rebill doesn\'t contain transactions', () => {
+    xit('updates entities associated with a transaction when rebill doesn\'t contain transactions', () => {
 
       let transaction = getValidTransaction();
       let rebill = getValidRebill();
@@ -1132,7 +1129,6 @@ describe('createOrder', function () {
 
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
-      delete rebill.transactions;
       createOrderController.parameters.set('rebill', rebill);
       createOrderController.parameters.set('transaction', transaction);
       createOrderController.parameters.set('session', session);
