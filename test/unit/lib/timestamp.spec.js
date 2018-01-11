@@ -168,4 +168,26 @@ describe('lib/timestamp', () => {
             return Timestamp.createTimestampMilliseconds();
         }
     });
+
+    describe('should calculate seconds difference', () => {
+        it('for now', () => {
+            expect(Timestamp.getSecondsDifference(nowInMilliseconds())).to.equal(0);
+        });
+
+        it('for 5 seconds', () => {
+            expect(Timestamp.getSecondsDifference(nowInMilliseconds() - 5000)).to.equal(5);
+        });
+
+        it('for minus 5 seconds', () => {
+            expect(Timestamp.getSecondsDifference(nowInMilliseconds() + 5000)).to.equal(5);
+        });
+
+        it('for one minute', () => {
+            expect(Timestamp.getSecondsDifference(nowInMilliseconds() + 60000)).to.equal(60);
+        });
+
+        function nowInMilliseconds() {
+            return Timestamp.createTimestampMilliseconds();
+        }
+    });
 });

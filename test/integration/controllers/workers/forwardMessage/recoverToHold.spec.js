@@ -25,7 +25,7 @@ process.argv.forEach((val, index, array) => {
   }
 });
 
-describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () => {
+describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', () => {
 
   before(() => {
     mockery.enable({
@@ -65,10 +65,10 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
         }
       });
 
-      const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
-      let billToHoldForwardMessageController = new BillToHoldForwardMessageController();
+      const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
+      let recoverToHoldForwardMessageController = new RecoverToHoldForwardMessageController();
 
-      return billToHoldForwardMessageController.execute().then((result) => {
+      return recoverToHoldForwardMessageController.execute().then((result) => {
         du.info(result);
 
         return true;
@@ -109,7 +109,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
 
     it('updates state of the rebill', () => {
       expect(rebill.state).to.equal('hold');
-      expect(rebill.previous_state).to.equal('bill');
+      expect(rebill.previous_state).to.equal('recover');
     });
   });
 

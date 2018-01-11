@@ -7,7 +7,10 @@ const mockery = require('mockery');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -17,7 +20,7 @@ function getValidMessage(id){
 
 }
 
-let rebill_id = null;
+let rebill_id = null
 
 process.argv.forEach((val, index, array) => {
   if(stringutilities.isMatch(val, /^--rebill=[a-z0-9\-].*$/)){
@@ -25,7 +28,7 @@ process.argv.forEach((val, index, array) => {
   }
 });
 
-describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () => {
+describe('controllers/workers/forwardmessage/deliveredToArchive.js', () => {
 
   before(() => {
     mockery.enable({
@@ -42,10 +45,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
 
   describe('execute', () => {
 
-    let transaction;
-    let rebill;
-
-    it('successfully executes', () => {
+    it('successfully updates rebill state and date', () => {
 
       rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
       let message = getValidMessage(rebill_id);
@@ -65,52 +65,28 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
         }
       });
 
-      const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
-      let billToHoldForwardMessageController = new BillToHoldForwardMessageController();
+      const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+      let deliveredToArchiveController = new DeliveredToArchiveController();
 
-      return billToHoldForwardMessageController.execute().then((result) => {
+      return deliveredToArchiveController.execute().then(result => {
         du.info(result);
 
-        return true;
-      })
+          let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
-    });
+          return rebillController.get({id: rebill_id}).then((rebill) => {
+              du.info(rebill);
 
-    it('creates new transaction', () => {
-      let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+            const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
 
-      return rebillController.get({id: rebill_id}).then((updatedRebill) => {
-        rebill = updatedRebill;
+            expect(rebill.state).to.equal('archived');
+            expect(rebill.previous_state).to.equal('delivered');
+            expect(timeSinceCreation).to.be.below(10);
 
-        return rebillController.listTransactions(rebill);
-      }).then((transactions) => {
-        const allTransactions = transactions.transactions;
-
-        transaction = allTransactions.sort((f,s) => {
-          if (f.created_at < s.created_at) return 1;
-
-          if (f.created_at > s.created_at) return -1;
-
-          return 0;
-        })[0];
-
-        const timeSinceCreation = timestamp.getSecondsDifference(transaction.created_at);
-
-        expect(transaction.rebill).to.equal(rebill_id);
-        expect(timeSinceCreation).to.be.below(10);
+          });
       });
 
     });
 
-    it('creates valid transaction', () => {
-      expect(transaction.amount).to.equal(rebill.amount);
-      expect(transaction.products.length).to.equal(rebill.products.length);
-    });
-
-    it('updates state of the rebill', () => {
-      expect(rebill.state).to.equal('hold');
-      expect(rebill.previous_state).to.equal('bill');
-    });
   });
 
 });
