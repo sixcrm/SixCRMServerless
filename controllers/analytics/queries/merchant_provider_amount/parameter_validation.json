@@ -15,7 +15,6 @@
 	"properties": {
 		"start": {"$ref": "#/definitions/ISO8601"},
 		"end": {"$ref": "#/definitions/ISO8601"},
-		"account":{"$ref": "#/definitions/UUIDv4"},
 		"period":{
 			"type":"string",
 			"enum": ["minute", "hour","day","week","month", "quarter","year"]
