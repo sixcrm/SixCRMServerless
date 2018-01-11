@@ -40,6 +40,10 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
         new_state = params.error_queue;
       }
 
+      if (_.isUndefined(params.destination_queue)) {
+          new_state = 'archived';
+      }
+
       if(!_.has(this, 'rebillController')){
         this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
       }

@@ -168,4 +168,18 @@ describe('lib/timestamp', () => {
             return Timestamp.createTimestampMilliseconds();
         }
     });
+
+    describe('withinLastMinute', () => {
+        it('now is within last minute', () => {
+            let now = Timestamp.getISO8601();
+
+            expect(Timestamp.withinLastMinute(now)).to.be.true;
+        });
+
+        it('guaranteed old date is not within last minute', () => {
+            let now = '2018-01-11T15:04:08.250Z';
+
+            expect(Timestamp.withinLastMinute(now)).to.be.false;
+        });
+    });
 });
