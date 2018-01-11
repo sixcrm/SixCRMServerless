@@ -325,40 +325,42 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     assignAccount(entity){
 
-        du.debug('Assign Account');
+      du.debug('Assign Account');
 
-        if(!_.has(entity, 'account')){
+      if(!_.has(entity, 'account')){
 
-            du.debug('No account specified in the entity record');
+        du.debug('No account specified in the entity record');
 
-            //Technical Debt:  This is inappropriate here...
-            if(_.has(global, 'account')){
+        //Technical Debt:  This is inappropriate here...
+        if(_.has(global, 'account')){
 
-                du.debug('Global account identified.  Appending to the entity.');
+          du.debug('Global account identified.  Appending to the entity.');
 
-                if(!_.contains(this.nonaccounts, this.descriptive_name)){
+          if(!_.contains(this.nonaccounts, this.descriptive_name)){
 
-                    entity.account = global.account;
+            entity.account = global.account;
 
-                }else{
+          }else{
 
-                    du.debug('Entity exists in the non-account list.');
+              du.debug('Entity exists in the non-account list.');
 
-                }
-
-            }else{
-
-                du.debug('No global account value available.');
-
-            }
+          }
 
         }else{
 
-            du.debug('Entity already bound to a account.');
+            du.debug('No global account value available.');
 
         }
 
-        return entity;
+      }else{
+
+        du.debug('Entity already bound to a account.');
+
+        //Technical Debt:  Need to validate that the user that is creating the entity has permission to assign to the account.
+
+      }
+
+      return entity;
 
     }
 

@@ -48,14 +48,13 @@ module.exports = class RegisterRecieptGenerator {
 
   }
 
-  //Entrypoint
   issueReceipt({argumentation}){
 
     du.debug('Issue Receipt');
 
-    this.parameters.setParameters({argumentation: argumentation, action: 'issue_receipt'});
-
-    return this.createTransactionPrototype()
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: argumentation, action: 'issue_receipt'}))
+    .then(() => this.createTransactionPrototype())
     .then(() => this.transformTransactionPrototypeObject())
     .then(() => this.createTransaction())
     .then(() => {
@@ -117,6 +116,7 @@ module.exports = class RegisterRecieptGenerator {
     let transaction_prototype = this.parameters.get('transactionprototype');
 
     var transformed_transaction_prototype = {
+      account: transaction_prototype.rebill.account,
       rebill: transaction_prototype.rebill.id,
       processor_response: JSON.stringify(transaction_prototype.processor_response),
       amount: transaction_prototype.amount,
