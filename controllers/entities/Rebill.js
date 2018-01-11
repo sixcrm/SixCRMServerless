@@ -16,9 +16,11 @@ const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities
 class rebillController extends entityController {
 
     constructor(){
-        super('rebill');
 
-        this.rebillHelperController = new RebillHelperController();
+      super('rebill');
+
+      this.rebillHelperController = new RebillHelperController();
+
     }
 
     //Technical Debt: finish!
@@ -127,6 +129,7 @@ class rebillController extends entityController {
 
     //Technical Debt:  Clean this up.
 	  //validate this logic with product owner
+    //This should go in the rebill helper
     calculateRebill(day_in_cycle, product_schedule){
 
         du.info(day_in_cycle, product_schedule);

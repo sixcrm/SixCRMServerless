@@ -367,12 +367,6 @@ class CreateOrderController extends transactionEndpointController{
       session.product_schedules = product_schedules;
     }
 
-    if(_.has(rebill, 'transactions') && arrayutilities.nonEmpty(rebill.transactions)){
-      rebill.transactions = arrayutilities.merge(rebill.transactions, [transaction.id]);
-    }else{
-      rebill.transactions = [transaction.id];
-    }
-
     let promises = [
       this.sessionController.update({entity: session}).then(session => {
         this.parameters.set('session', session);
