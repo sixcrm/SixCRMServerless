@@ -1,0 +1,36 @@
+{
+  "method": "getEvents",
+  "test_case": "random input",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-13T00:00:00.000Z" },
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "undefined",
+  "expect": {"affiliates":[{"session":"99999999-999e-44aa-999e-aaa9a99a9999",
+            "type":"lead",
+            "datetime":"2016-12-31T23:00:00.000Z",
+            "account":"d26c1887-7ad4-4a44-be0b-e80dbce22774",
+            "campaign":"99999999-999e-44aa-999e-aaa9a99a9999",
+            "product_schedule":"99999999-999e-44aa-999e-aaa9a99a9999",
+            "affiliate":"99999999-999e-44aa-999e-aaa9a99a9999",
+            "subaffiliate_1":"99999999-999e-44aa-999e-aaa9a99a9999",
+            "subaffiliate_2":"99999999-999e-44aa-999e-aaa9a99a9999",
+            "subaffiliate_3":"99999999-999e-44aa-999e-aaa9a99a9999",
+            "subaffiliate_4":"99999999-999e-44aa-999e-aaa9a99a9999",
+            "subaffiliate_5":"99999999-999e-44aa-999e-aaa9a99a9999"},
+            {"session":"99999999-999e-44aa-999e-aaa9a99a9999",
+              "type":"lead",
+              "datetime":"2017-01-01T23:00:00.000Z",
+              "account":"d26c1887-7ad4-4a44-be0b-e80dbce22774",
+              "campaign":"99999999-999e-44aa-999e-aaa9a99a9999",
+              "product_schedule":"99999999-999e-44aa-999e-aaa9a99a9999",
+              "affiliate":"99999999-999e-44aa-999e-aaa9a99a9999",
+              "subaffiliate_1":"99999999-999e-44aa-999e-aaa9a99a9999",
+              "subaffiliate_2":"99999999-999e-44aa-999e-aaa9a99a9999",
+              "subaffiliate_3":"99999999-999e-44aa-999e-aaa9a99a9999",
+              "subaffiliate_4":"99999999-999e-44aa-999e-aaa9a99a9999",
+              "subaffiliate_5":"99999999-999e-44aa-999e-aaa9a99a9999"}],
+              "pagination":{"order":"asc","limit":10,"offset":0,"count":2}
+            }
+}

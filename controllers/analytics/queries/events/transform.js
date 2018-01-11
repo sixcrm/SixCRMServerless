@@ -16,20 +16,18 @@ module.exports = function(results, parameters) {
     results.forEach((result) => {
 
       result_array.push({
+        session: result.session,
+        type: result.type,
+        datetime: result.datetime,
+        account: result.account,
+        campaign: result.campaign,
+        product_schedule: result.product_schedule,
         affiliate: result.affiliate,
-        count_click: result.count_click,
-        count_partials: result.count_partials,
-        partials_percent: result.partials_percent,
-        decline_count: result.decline_count,
-        declines_percent: result.declines_percent,
-        count_sales: result.count_sales,
-        sales_percent: result.sales_percent,
-        count_upsell: result.count_upsell,
-        upsell_percent: result.upsell_percent,
-        sum_upsell: result.sum_upsell,
-        sum_amount: result.sum_amount,
-        all_sum_amount: result.all_sum_amount,
-        period: result.period
+        subaffiliate_1: result.subaffiliate_1,
+        subaffiliate_2: result.subaffiliate_2,
+        subaffiliate_3: result.subaffiliate_3,
+        subaffiliate_4: result.subaffiliate_4,
+        subaffiliate_5: result.subaffiliate_5
       });
 
     });
