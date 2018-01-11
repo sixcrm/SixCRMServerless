@@ -7,9 +7,52 @@ const creditcardgenerator = require('creditcard-generator');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
+
+  static getValidSchedule(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+
+    let start = 0;
+
+    return arrayutilities.map(ids, (id, index) => {
+
+      let this_start = start;
+      let period = randomutilities.randomInt(1, 60);
+      let end = (start + period);
+
+      start = (this_start + period);
+
+      return {
+        product_id: id,
+        price:randomutilities.randomDouble(1.00, 100.00, 2),
+        start:this_start,
+        end:end,
+        period: period
+      }
+
+    });
+
+  }
+
+  static getValidProductSchedule(id){
+
+    let schedule = this.getValidSchedule();
+
+    return  {
+      id: uuidV4(),
+      name: randomutilities.createRandomString(20),
+      account: this.getTestAccountID(),
+      loadbalancer: uuidV4(),
+      schedule: schedule,
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
+    };
+
+  }
 
   static getValidMessage(id){
 

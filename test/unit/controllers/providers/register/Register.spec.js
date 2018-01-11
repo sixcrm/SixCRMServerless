@@ -1339,10 +1339,11 @@ describe('controllers/providers/Register.js', () => {
 
       it('returns error when session has invalid day in cycle', () => {
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-            calculateDayInCycle: (session_start) => {
-                return -1; //any negative number
-            }
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
+          constructor(){}
+          calculateDayInCycle(session_start){
+              return -1; //any negative number
+          }
         });
 
         let parent_session = getValidParentSession();
@@ -1401,13 +1402,13 @@ describe('controllers/providers/Register.js', () => {
           },
           getParentSession: (rebill) => {
             return Promise.resolve(getValidParentSession());
-          },
-          calculateDayInCycle: (session_start) => {
+          }
+        });
 
-            du.debug('Calculate Day In Cycle');
-
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
+          constructor(){}
+          calculateDayInCycle(session_start){
             return timestamp.getDaysDifference(session_start);
-
           }
         });
 
@@ -1588,8 +1589,12 @@ describe('controllers/providers/Register.js', () => {
           },
           getParentSession: (rebill) => {
             return Promise.resolve(getValidParentSession())
-          },
-          calculateDayInCycle: (session_start) => {
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
+          constructor(){}
+          calculateDayInCycle(session_start){
             return timestamp.getDaysDifference(session_start);
           }
         });

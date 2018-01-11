@@ -37,6 +37,7 @@ class rebillController extends entityController {
     }
 
 	  //Note: rebills don't get product associations, only product schedules
+    //Technical Debt:  Is this deprecated?
     getProducts(rebill){
 
       du.debug('Get Products');
@@ -103,120 +104,6 @@ class rebillController extends entityController {
 
     }
 
-
-    //goes to helper
-    buildRebillObject(parameters){
-
-        let rebill_object = {
-            id: this.getUUID(),
-            bill_at: parameters.bill_at,
-            parentsession: parameters.parentsession,
-            product_schedules: parameters.product_schedules,
-            amount: parameters.amount
-        };
-
-        return rebill_object;
-
-    }
-
-    calculateDayInCycle(session_start){
-
-      du.debug('Calculate Day In Cycle');
-
-      return timestamp.getDaysDifference(session_start);
-
-    }
-
-    //Technical Debt:  Clean this up.
-	  //validate this logic with product owner
-    //This should go in the rebill helper
-    calculateRebill(day_in_cycle, product_schedule){
-
-        du.info(day_in_cycle, product_schedule);
-
-        var calculated_rebill;
-
-        product_schedule.schedule.forEach((scheduled_product) => {
-
-            if(parseInt(day_in_cycle) >= parseInt(scheduled_product.start)){
-
-                if(!_.has(scheduled_product, "end") || (parseInt(day_in_cycle) < parseInt(scheduled_product.end))){
-
-                    let bill_timestamp = timestamp.createTimestampSeconds() + (scheduled_product.period * timestamp.getDayInSeconds());
-
-                    let bill_at = timestamp.toISO8601(bill_timestamp);
-
-                    calculated_rebill = {
-                        product: scheduled_product.product_id,
-                        bill_at: bill_at,
-                        amount: scheduled_product.price,
-                        product_schedule: product_schedule
-                    };
-
-                    return true;
-
-                }
-
-            }
-
-        });
-
-        if(_.isObject(calculated_rebill)){
-
-            return calculated_rebill;
-
-        }
-
-        return false;
-
-    }
-
-    createRebills(session, product_schedules, day_in_cycle){
-
-      du.debug('Create Rebills');
-
-      if(arrayutilities.nonEmpty(product_schedules)){
-
-        let promises = arrayutilities.map(product_schedules, (schedule) => {
-          return this.createRebill(session, schedule, day_in_cycle);
-        });
-
-        return Promise.all(promises);
-
-      }else{
-
-        return null;
-
-      }
-
-    }
-
-	//Technical Debt:  This is a mess
-	//the product schedule needs to be a part of the rebill, not the product
-    createRebill(session, product_schedule, day_in_cycle){
-
-      du.debug('Create Rebill', product_schedule);
-
-      if(!_.isNumber(day_in_cycle)){
-
-        day_in_cycle = this.calculateDayInCycle(session.created);
-
-      }
-
-      var rebill_parameters = this.calculateRebill(day_in_cycle, product_schedule);
-
-      //Technical Debt:  This should use a entity method
-      var rebill_object = this.buildRebillObject({
-          parentsession: session.id,
-          bill_at: rebill_parameters.bill_at,
-          product_schedules: [product_schedule.id],
-          amount: rebill_parameters.amount
-      });
-
-      return this.create({entity: rebill_object});
-
-    }
-
     //Technical Debt:  Likely broken
     getRebillsAfterTimestamp(a_timestamp, cursor, limit){
 
@@ -268,7 +155,9 @@ class rebillController extends entityController {
 
     listByState({state, state_changed_after, state_changed_before, pagination}){
 
-      du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}', state_changed_before: '${state_changed_before}'`);
+      du.debug('List By State');
+
+      //du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}', state_changed_before: '${state_changed_before}'`);
 
       let query_parameters = {};
 

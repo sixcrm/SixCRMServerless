@@ -8,6 +8,7 @@ const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
+const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -443,7 +444,9 @@ module.exports = class Register extends PermissionedController {
 
     let parentsession = this.parameters.get('parentsession');
 
-    var day_in_cycle = this.rebillController.calculateDayInCycle(parentsession.created_at);
+    let rebillHelperController = new RebillHelperController();
+
+    let day_in_cycle = rebillHelperController.calculateDayInCycle(parentsession.created_at);
 
     if(!_.isNumber(day_in_cycle) || day_in_cycle < 0){
       eu.throwError('server', 'Invalid day in cycle returned for session.');
@@ -520,11 +523,10 @@ module.exports = class Register extends PermissionedController {
     let parentsession = this.parameters.get('parentsession');
     let productschedules = this.parameters.get('productschedules');
 
-    du.info(productschedules);
-
-    //Technical Debt:  Deprecated.  Use helpers.
     let productScheduleHelperController = new ProductScheduleHelperController();
-    let day_in_cycle = this.rebillController.calculateDayInCycle(parentsession.created_at);
+    let rebillHelperController = new RebillHelperController();
+
+    let day_in_cycle = rebillHelperController.calculateDayInCycle(parentsession.created_at);
     let transaction_products = productScheduleHelperController.getTransactionProducts({day: day_in_cycle, product_schedules: productschedules});
 
     this.parameters.set('transactionproducts', transaction_products);

@@ -128,17 +128,6 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    describe('calculateDayInCycle', () => {
-
-        it('calculates day in cycle', () => {
-            let session_start = timestamp.createTimestampMilliseconds();
-
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
-
-            expect(rebillController.calculateDayInCycle(session_start)).to.equal(0);
-        });
-    });
-
     describe('listByState', () => {
 
         it('lists rebills by state', () => {

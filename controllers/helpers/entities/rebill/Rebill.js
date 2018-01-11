@@ -186,15 +186,35 @@ module.exports = class RebillHelper {
 
   }
 
-  calculateDayInCycle(){
+  calculateDayInCycle(created_at){
 
     du.debug('Calculate Day In Cycle');
 
-    let session = this.parameters.get('session');
+    if(_.isUndefined(created_at) || _.isNull(created_at)){
 
-    let day = timestamp.getDaysDifference(session.created_at);
+      created_at = null;
 
-    this.parameters.set('day', day);
+      let session = this.parameters.get('session', null, false);
+
+      if(!_.isNull(session)){
+
+        created_at = session.created_at;
+
+      }
+
+    }
+
+    if(timestamp.isISO8601(created_at)){
+
+      let day = timestamp.getDaysDifference(created_at);
+
+      this.parameters.set('day', day);
+
+      return day;
+
+    }
+
+    eu.throwError('server', 'created_at is not a proper ISO-8601');
 
   }
 
@@ -204,6 +224,8 @@ module.exports = class RebillHelper {
 
     let product_schedules = this.parameters.get('productschedules');
     let session = this.parameters.get('session');
+
+    du.info(session, product_schedules);
 
     if(this.parameters.get('day') < 0){
       du.warning('Creating a rebill object without validating the presence of the product_schedules in the session.');
@@ -887,5 +909,99 @@ module.exports = class RebillHelper {
     });
 
   }
+
+  /*
+  createRebills({session, product_schedules, day_in_cycle}){
+
+    du.debug('Create Rebills');
+
+    if(arrayutilities.nonEmpty(product_schedules)){
+
+      let promises = arrayutilities.map(product_schedules, (product_schedule) => {
+        return this.createRebill({session: session, product_schedule: product_schedule, day_in_cycle: day_in_cycle});
+      });
+
+      return Promise.all(promises);
+
+    }else{
+
+      return null;
+
+    }
+
+  }
+  */
+  /*
+  createRebill({session, product_schedule, day_in_cycle}){
+
+    du.info(arguments[0]); process.exit();
+
+    du.debug('Create Rebill');
+
+    if(!_.isNumber(day_in_cycle)){
+
+      day_in_cycle = this.calculateDayInCycle(session.created);
+
+    }
+
+    let rebill_parameters = this.calculateRebill({day_in_cycle: day_in_cycle, product_schedule: product_schedule});
+
+    let rebill_prototype = {
+        parentsession: session.id,
+        bill_at: rebill_parameters.bill_at,
+        product_schedules: [product_schedule.id],
+        amount: rebill_parameters.amount
+    };
+
+    return this.create({entity: rebill_prototype});
+
+  }
+  */
+
+  /*
+  //Technical Debt:  Clean this up.
+  calculateRebill({day_in_cycle, product_schedule}){
+
+    du.debug('Calculate Rebill');
+
+    let calculated_rebill = null;
+
+    arrayutilities.find(product_schedule.schedule, (scheduled_product) => {
+
+      if(parseInt(day_in_cycle) >= parseInt(scheduled_product.start)){
+
+        if(!_.has(scheduled_product, "end") || (parseInt(day_in_cycle) < parseInt(scheduled_product.end))){
+
+          let bill_timestamp = timestamp.createTimestampSeconds() + (scheduled_product.period * timestamp.getDayInSeconds());
+
+          let bill_at = timestamp.toISO8601(bill_timestamp);
+
+          calculated_rebill = {
+              product: scheduled_product.product_id,
+              bill_at: bill_at,
+              amount: scheduled_product.price,
+              product_schedule: product_schedule
+          };
+
+          return true;
+
+        }
+
+      }
+
+      return false;
+
+    });
+
+    if(_.isNull(calculated_rebill)){
+
+      return calculated_rebill;
+
+    }
+
+    return false;
+
+  }
+  */
 
 };

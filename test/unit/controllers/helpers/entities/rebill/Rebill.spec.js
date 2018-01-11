@@ -25,26 +25,9 @@ function getValidTransactions(){
 
 }
 
-function getValidTransaction(){
+function getValidTransaction(id){
 
-  return {
-    id: uuidV4(),
-    amount: 14.99,
-    alias:"T"+randomutilities.createRandomString(9),
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    rebill: uuidV4(),
-    processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894419\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-    merchant_provider: uuidV4(),
-    products:[{
-      product:uuidV4(),
-      amount:14.99,
-      shipping_receipt: uuidV4()
-    }],
-    type:"sale",
-    result:"success",
-    created_at:timestamp.getISO8601(),
-    updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidTransaction(id)
 
 }
 
@@ -64,9 +47,11 @@ function getValidQueueMessageBodyPrototype(){
 
 }
 
-function getValidRebill(){
+function getValidRebill(id){
 
-  return {
+  return MockEntities.getValidRebill(id);
+
+  /*
     parentsession: uuidV4(),
     bill_at: '2017-04-06T18:40:41.405Z',
     amount: 12.22,
@@ -98,29 +83,20 @@ function getValidRebill(){
       }
     ]
   };
+  */
 
 }
 
-function getValidRebillWithNoState(){
+function getValidRebillWithNoState(id){
 
-  return {
-    parentsession: uuidV4(),
-    bill_at: '2017-04-06T18:40:41.405Z',
-    amount: 12.22,
-    product_schedules:
-      [ uuidV4(),
-        uuidV4(),
-        uuidV4() ],
-    products:
-      [ { product: uuidV4(),
-        amount: 3.22 },
-        { product: uuidV4(), amount: 9 } ],
-    id: uuidV4(),
-    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    created_at: '2017-11-12T06:03:35.571Z',
-    updated_at: '2017-11-12T06:03:35.571Z',
-    entity_type: 'rebill'
-  };
+  let rebill = getValidRebill(id);
+
+  delete rebill.history;
+  delete rebill.state;
+  delete rebill.previous_state;
+  delete rebill.state_changed_at;
+
+  return rebill;
 
 }
 
@@ -143,95 +119,27 @@ function getValidRebillPrototype(){
 }
 
 function getValidBillDate(){
-  return '2017-08-06T18:41:12.521Z';
+  return timestamp.getISO8601();
 }
 
-function getValidSession(){
+function getValidSession(id){
 
-  return {
-    completed: false,
-    subaffiliate_5: '45f025bb-a9dc-45c7-86d8-d4b7a4443426',
-    created_at: '2017-04-06T18:40:41.405Z',
-    subaffiliate_2: '22524f47-9db7-42f9-9540-d34a8909b072',
-    subaffiliate_1: '6b6331f6-7f84-437a-9ac6-093ba301e455',
-    subaffiliate_4: 'd515c0df-f9e4-4a87-8fe8-c53dcace0995',
-    subaffiliate_3: 'fd2548db-66a8-481e-aacc-b2b76a88fea7',
-    product_schedules: [ '12529a17-ac32-4e46-b05b-83862843055d' ],
-    updated_at: '2017-04-06T18:41:12.521Z',
-    affiliate: '332611c7-8940-42b5-b097-c49a765e055a',
-    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    customer: '24f7c851-29d4-4af9-87c5-0298fa74c689',
-    campaign: '70a6689a-5814-438b-b9fd-dd484d0812f9',
-    id: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
-    cid: 'fb10d33f-da7d-4765-9b2b-4e5e42287726'
-  };
+  return MockEntities.getValidSession(id)
 
 }
 
-function getValidProductSchedules(){
+function getValidProductSchedule(id){
 
-  return [
-    {
-      id:"12529a17-ac32-4e46-b05b-83862843055d",
-      name:"Product Schedule 1",
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-      schedule:[
-        {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
-          price:4.99,
-          start:0,
-          end:14,
-          period:14
-        },
-        {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-          price:34.99,
-          start:14,
-          end:28,
-          period:14
-        },
-        {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
-          price:34.99,
-          start:28,
-          period:28
-        }
-      ],
-      created_at:"2017-04-06T18:40:41.405Z",
-      updated_at:"2017-04-06T18:41:12.521Z"
-    },
-    {
-      id:"12529a17-ac32-4e46-b05b-83862843055d",
-      name:"Product Schedule 1",
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-      schedule:[
-        {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
-          price:4.99,
-          start:17,
-          end:23,
-          period:33
-        },
-        {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-          price:34.99,
-          start:51,
-          end:750,
-          period:13
-        },
-        {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
-          price:34.99,
-          start:908,
-          period:31
-        }
-      ],
-      created_at:"2017-04-06T18:40:41.405Z",
-      updated_at:"2017-04-06T18:41:12.521Z"
-    }
-  ]
+  return MockEntities.getValidProductSchedule(id);
+
+}
+
+function getValidProductSchedules(ids){
+
+  ids = (!_.isUndefined(ids) && !_.isNull(ids))?ids:[uuidV4(),uuidV4()];
+
+  return arrayutilities.map(ids, id => getValidProductSchedule(id));
+
 }
 
 function getValidProductScheduleIDs(){
@@ -242,11 +150,6 @@ function getValidProductScheduleIDs(){
 
 }
 
-function getValidProductSchedule(){
-
-  return getValidProductSchedules()[0];
-
-}
 describe('/helpers/entities/Rebill.js', () => {
 
   describe('constructor', () => {
@@ -392,6 +295,8 @@ describe('/helpers/entities/Rebill.js', () => {
       let session = getValidSession();
       let product_schedules = [getValidProductSchedule()];
 
+      session.product_schedules = arrayutilities.map(product_schedules, product_schedule => product_schedule.id);
+
       let rebillHelper = new RebillHelperController();
 
       rebillHelper.parameters.set('session', session);
@@ -433,6 +338,29 @@ describe('/helpers/entities/Rebill.js', () => {
     it('successfully acquires the next product schedule bill day number', () => {
 
       let product_schedule = getValidProductSchedule();
+
+      product_schedule.schedule = [
+        {
+          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          price:4.99,
+          start:0,
+          end:14,
+          period:14
+        },
+        {
+          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:14,
+          end:28,
+          period:14
+        },
+        {
+          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:28,
+          period:28
+        }
+      ];
 
       let test_cases = [
         {
@@ -503,6 +431,29 @@ describe('/helpers/entities/Rebill.js', () => {
     it('successfully acquires the next product schedule bill day number against product schedule with lots of primes', () => {
 
       let product_schedule = getValidProductSchedules()[1];
+
+      product_schedule.schedule = [
+        {
+          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          price:4.99,
+          start:17,
+          end:23,
+          period:33
+        },
+        {
+          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:51,
+          end:750,
+          period:13
+        },
+        {
+          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:908,
+          period:31
+        }
+      ];
 
       let test_cases = [
         {
@@ -595,6 +546,29 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let product_schedule = getValidProductSchedule();
 
+      product_schedule.schedule = [
+        {
+          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          price:4.99,
+          start:0,
+          end:14,
+          period:14
+        },
+        {
+          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:14,
+          end:28,
+          period:14
+        },
+        {
+          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:28,
+          period:28
+        }
+      ];
+
       let test_cases = [
         {
           day:0,
@@ -637,7 +611,30 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('handles a non-bill day', () => {
 
-      let product_schedule = getValidProductSchedules()[1];
+      let product_schedule = getValidProductSchedule();
+
+      product_schedule.schedule = [
+        {
+          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          price:4.99,
+          start:17,
+          end:23,
+          period:33
+        },
+        {
+          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:51,
+          end:750,
+          period:13
+        },
+        {
+          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:908,
+          period:31
+        }
+      ];
 
       let test_cases = [
         {
@@ -676,6 +673,29 @@ describe('/helpers/entities/Rebill.js', () => {
     it('successfully acquires the schedule elements on a bill day', () => {
 
       let product_schedule = getValidProductSchedules()[1];
+
+      product_schedule.schedule = [
+        {
+          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          price:4.99,
+          start:17,
+          end:23,
+          period:33
+        },
+        {
+          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:51,
+          end:750,
+          period:13
+        },
+        {
+          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:908,
+          period:31
+        }
+      ];
 
       let test_cases = [
         {
@@ -808,6 +828,9 @@ describe('/helpers/entities/Rebill.js', () => {
       it('successfully sets the bill_at property', () => {
 
         let session = getValidSession();
+
+        session.created_at = '2017-04-06T18:40:41.000Z';
+
         let test_cases = [
           {
             days: 14,
@@ -956,17 +979,46 @@ describe('/helpers/entities/Rebill.js', () => {
 
         let session = getValidSession();
 
+        session.created_at = '2017-04-06T18:40:41.405Z';
+        let product_schedule = getValidProductSchedule();
+
+        product_schedule.schedule = [
+          {
+            product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+            price:4.99,
+            start:0,
+            end:14,
+            period:14
+          },
+          {
+            product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+            price:34.99,
+            start:14,
+            end:28,
+            period:14
+          },
+          {
+            product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+            price:34.99,
+            start:28,
+            period:28
+          }
+        ];
+        let product_schedules = [product_schedule];
+
+        session.product_schedules = arrayutilities.map(product_schedules, product_schedule => product_schedule.id);
+
         rebillHelper.parameters.set('session', session);
         rebillHelper.parameters.set('day', -1);
-        rebillHelper.parameters.set('productschedules', [getValidProductSchedule()]);
+        rebillHelper.parameters.set('productschedules', product_schedules);
 
         let expected_day_number = 0;
-        let expected_schedule_elements = [getValidProductSchedule().schedule[0]];
+        let expected_schedule_elements = [product_schedule.schedule[0]];
         let expected_transaction_products = [{
-          product:getValidProductSchedule().schedule[0].product_id,
-          amount:getValidProductSchedule().schedule[0].price
+          product:product_schedule.schedule[0].product_id,
+          amount:product_schedule.schedule[0].price
         }];
-        let expected_amount = getValidProductSchedule().schedule[0].price;
+        let expected_amount = product_schedule.schedule[0].price;
         let expected_billdate = '2017-04-06T18:40:41.000Z';
 
         return rebillHelper.acquireRebillProperties().then(result => {
@@ -993,6 +1045,36 @@ describe('/helpers/entities/Rebill.js', () => {
 
     describe('createRebill', () => {
 
+      let product_schedules = [getValidProductSchedule()];
+
+      product_schedules[0].schedule = [
+        {
+          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          price:4.99,
+          start:0,
+          end:14,
+          period:14
+        },
+        {
+          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:14,
+          end:28,
+          period:14
+        },
+        {
+          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          price:34.99,
+          start:28,
+          period:28
+        }
+      ];
+      let product_schedule_ids = arrayutilities.map(product_schedules, product_schedule => product_schedule.id);
+      let session = getValidSession();
+
+      session.created_at = '2017-04-06T18:40:41.000Z';
+      session.product_schedules = product_schedule_ids;
+
       before(() => {
           mockery.enable({
               useCleanCache: true,
@@ -1002,8 +1084,6 @@ describe('/helpers/entities/Rebill.js', () => {
       });
 
       beforeEach(() => {
-
-        let product_schedules = [getValidProductSchedule()];
 
         mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
           queryRecords: (table, parameters, index, callback) => {
@@ -1084,10 +1164,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       it('successfully creates a rebill for 0th day', () => {
 
-        let session = getValidSession();
         let day = -1;
-        let product_schedules = [getValidProductSchedule()];
-        let product_schedule_ids = [product_schedules[0].id];
 
         let expected_rebill = {
           account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
@@ -1100,6 +1177,45 @@ describe('/helpers/entities/Rebill.js', () => {
             {
               product: product_schedules[0].schedule[0].product_id,
               amount: product_schedules[0].schedule[0].price
+            }
+          ]
+        };
+
+        let rebillHelper = new RebillHelperController();
+
+        rebillHelper.parameters.set('session', session);
+
+        return rebillHelper.createRebill({session: session, day: day, product_schedules: product_schedule_ids}).then(result => {
+
+          let created_at = result.created_at;
+          let updated_at = result.updated_at;
+          let id = result.id;
+
+          delete result.created_at;
+          delete result.updated_at;
+          delete result.id;
+
+          expect(result).to.deep.equal(expected_rebill);
+
+        });
+      });
+
+      it('successfully creates a rebill for 14th day', () => {
+
+        let day = 0;
+
+
+        let expected_rebill = {
+          account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+          amount: product_schedules[0].schedule[1].price,
+          bill_at: "2017-04-20T18:40:41.000Z",
+          entity_type: "rebill",
+          parentsession: session.id,
+          product_schedules: [product_schedules[0].id],
+          products: [
+            {
+              product: product_schedules[0].schedule[1].product_id,
+              amount: product_schedules[0].schedule[1].price
             }
           ]
         };
@@ -1121,49 +1237,9 @@ describe('/helpers/entities/Rebill.js', () => {
         });
       });
 
-      it('successfully creates a rebill for 14th day', () => {
-
-        let session = getValidSession();
-        let day = 0;
-        let product_schedules = [getValidProductSchedule()];
-
-        let expected_rebill = {
-          account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
-          amount: product_schedules[0].schedule[1].price,
-          bill_at: "2017-04-20T18:40:41.000Z",
-          entity_type: "rebill",
-          parentsession: session.id,
-          product_schedules: [product_schedules[0].id],
-          products: [
-            {
-              product: product_schedules[0].schedule[1].product_id,
-              amount: product_schedules[0].schedule[1].price
-            }
-          ]
-        };
-
-        let rebillHelper = new RebillHelperController();
-
-        return rebillHelper.createRebill({session: session, day: day, product_schedules: [product_schedules[0].id]}).then(result => {
-
-          let created_at = result.created_at;
-          let updated_at = result.updated_at;
-          let id = result.id;
-
-          delete result.created_at;
-          delete result.updated_at;
-          delete result.id;
-
-          expect(result).to.deep.equal(expected_rebill);
-
-        });
-      });
-
       it('successfully creates a rebill for 28th day', () => {
 
-        let session = getValidSession();
         let day = 14;
-        let product_schedules = [getValidProductSchedule()];
 
         let expected_rebill = {
           account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
@@ -1199,9 +1275,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       it('successfully creates a rebill for 56th day', () => {
 
-        let session = getValidSession();
         let day = 28;
-        let product_schedules = [getValidProductSchedule()];
 
         let expected_rebill = {
           account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
@@ -1237,9 +1311,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       it('successfully creates a rebill for 56th day from a non-bill date', () => {
 
-        let session = getValidSession();
         let day = 29;
-        let product_schedules = [getValidProductSchedule()];
 
         let expected_rebill = {
           account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
