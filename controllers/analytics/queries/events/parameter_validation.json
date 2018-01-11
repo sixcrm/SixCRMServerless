@@ -118,7 +118,7 @@
 			"minimum": 0,
 			"maximum": 100,
 			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
+			"exclusiveMinimum": false
 		}
 	},
 	"required":["start", "end", "order", "limit", "offset"]
