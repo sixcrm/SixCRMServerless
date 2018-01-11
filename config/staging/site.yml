@@ -36,31 +36,6 @@ cloudsearch:
 #Technical Debt:  These are not distinct to the environment... Let's eliminate this.
 lambda:
   endpoint: ''
-  function_names:
-    deliveredtoarchive: 'archivedelivered'
-    shippedtodelivered: 'confirmdelivery'
-    pendingtoshipped: 'confirmshipped'
-    pendingfailedtopending: 'shipproduct'
-    holdtopending: 'shipproduct'
-    holdtoarchive: 'archivehold'
-    billtohold: 'processbilling'
-    recovertohold: 'processbilling'
-    createrebillstoarchive: 'createrebills'
-    recovertoarchive: 'archiverecover'
-    indextoarchive: 'indexentities'
-    sendnotificationstoarchive: 'sendnotifications'
-    forwardmessage_deliveredtoarchive: 'deliveredtoarchive'
-    forwardmessage_shippedtodelivered: 'shippedtodelivered'
-    forwardmessage_pendingtoshipped: 'pendingtoshipped'
-    forwardmessage_pendingfailedtopending: 'pendingfailedtopending'
-    forwardmessage_holdtopending: 'holdtopending'
-    forwardmessage_holdtoarchive: 'holdtoarchive'
-    forwardmessage_billtohold: 'billtohold'
-    forwardmessage_recovertohold: 'recovertohold'
-    forwardmessage_createrebillstoarchive: 'rebilltoarchive'
-    forwardmessage_indextoarchive: 'indextoarchive'
-    forwardmessage_sendnotificationstoarchive: 'sendnotificationstoarchive'
-    forwardmessage_recovertoarchive: 'recovertoarchive'
 
 #Technical Debt: This all needs to be configured elsewhere?
 #Technical Debt:  Username and Password combinations need to be encrypted...

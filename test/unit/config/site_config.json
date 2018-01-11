@@ -30,7 +30,7 @@
       "required": ["domainname"]
     },
     "lambda": {
-      "required": ["endpoint", "function_names"]
+      "required": ["endpoint"]
     },
     "redshift": {
       "required": ["user", "database", "password", "port", "max", "idle_timeout", "randomdata"]
@@ -55,8 +55,6 @@
     "slack": {
       "required": ["channels"]
     }
-
-
   },
   "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "redshift", "notifications", "cache", "elasticache", "logging", "slack"]
 }

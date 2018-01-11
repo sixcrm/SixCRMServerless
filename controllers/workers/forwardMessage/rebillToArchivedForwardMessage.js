@@ -9,7 +9,7 @@ module.exports = class RebillToArchivedForwardMessageController extends forwardR
 
       this.parameters.set('params', {
         name: 'rebilltoarchive',
-        workerfunction: 'archive.js',
+        workerfunction: 'createRebills.js',
         origin_queue: 'rebill'
       })
 
