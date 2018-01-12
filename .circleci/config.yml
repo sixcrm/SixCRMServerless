@@ -1,0 +1,204 @@
+version: 2
+environment:
+  TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+jobs:
+  pre:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - run: sudo npm install -g npm@latest
+      - run: git lfs pull
+  build:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install npm wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Save Commit Hash
+          command: tools/saveCommitHashInCircle.sh `node deployment/circle/read_last_commit.js`
+  lint:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - run:
+          name: 'Lint'
+          command: npm run lint
+  unit_tests:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - run:
+          name: 'Unit Tests'
+          command: npm run test-unit
+  functional_tests:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - run:
+          name: Functional Tests
+          command: npm run test-functional
+  integration_tests:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - run:
+          name: Transactional Integration Tests
+          command: npm run test-transactions
+      - run:
+          name: Graph Integration Tests
+          command: npm run test-graph
+      - run:
+          name: Analytics Integration Tests
+          command: npm run test-analytics
+  merge:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - run:
+          name: Merge To Upper
+          command: ./deployment/utilities/merge_branches.sh development staging
+  deploy:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
+      - run:
+          name: Serveless Deploy
+          command: serverless deploy --stage $CIRCLE_BRANCH
+      - run:
+          name: EC2 Security Groups
+          command: node ./deployment/ec2/deploy_security_groups.js
+      - run:
+          name: S3 Buckets
+          command: ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
+      - run:
+          name: SQS
+          command: ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
+      - run:
+          name: Elasticache
+          command: ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/deploy.js || echo "No changes, skipping."
+      - run:
+          name: IAM Deploy Roles
+          command: node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
+      - run:
+          name: DynamoDB Deploy Tables
+          command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
+      - run:
+          name: DynamoDB Autoscale Tables
+          command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/autoscaling && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
+      - run:
+          name: Redshift Create Cluster
+          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
+      - run:
+          name: Redshift Create Tables
+          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+      - run:
+          name: Redshift Pause For Availability
+          command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+      - run:
+          name: Kinesis Deploy
+          command: ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
+      - run:
+          name: Save Last Commit
+          command: node deployment/circle/save_last_commit.js
+  seed:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - run:
+          name: Redshift Referential Data
+          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
+      - run:
+          name: Redshift Table Data
+          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
+      - run:
+          name: Environment
+          command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
+  purge:
+    docker:
+      - image: circleci/node:7.6.0
+    steps:
+      - checkout
+      - run:
+          name: SQS Purge
+          command: node ./deployment/sqs/purge_queues.js
+      - run:
+          name: Cloudsearch Purge
+          command: node ./deployment/cloudsearch/purge.js
+      - run:
+          name: Elasticache Purge
+          command: node ./deployment/elasticache/purge.js
+      - run:
+          name: DynamoDB Purge
+          command: node ./deployment/dynamodb/purge_tables.js
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - pre:
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+      - build:
+          requires:
+            - pre
+      - lint:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - development
+      - unit_tests:
+          requires:
+            - build
+      - functional_tests:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - development
+      - deploy:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - purge:
+          requires:
+            - deploy
+          filters:
+            branches:
+              ignore:
+                - production
+                - staging
+      - seed:
+          requires:
+            - purge
+      - integration_tests:
+          requires:
+            - seed
+      - merge:
+          requires:
+            - integration_tests
