@@ -66,7 +66,7 @@ class createRebillsController extends workerController {
 
       let session = this.parameters.get('session');
 
-      return this.rebillHelperController.createRebills(session).then(rebill => {
+      return this.rebillHelperController.createRebill({session: session}).then(rebill => {
 
         this.parameters.set('rebill', rebill);
 

@@ -394,9 +394,10 @@ module.exports = class RebillHelper {
 
     let product_schedule_ids = arrayutilities.map(this.parameters.get('productschedules'), product_schedule => {
       return product_schedule.id;
-    })
+    });
 
     let rebill_prototype = {
+      account: this.parameters.get('session').account,
       parentsession: this.parameters.get('session').id,
       products: this.parameters.get('transactionproducts'),
       bill_at: this.parameters.get('billdate'),

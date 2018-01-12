@@ -6,7 +6,7 @@
 		"auth0_id":"google-oauth2|115021313586107803846",
 		"id":"system@sixcrm.com",
 		"active":true,
-		"termsandconditions":null,
+		"termsandconditions":"0.1",
 		"alias":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37693",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
