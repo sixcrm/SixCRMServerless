@@ -10,7 +10,9 @@ module.exports = class DeliveredToArchiveForwardMessageController extends forwar
       this.parameters.set('params', {
         name: 'deliveredtoarchive',
         workerfunction: 'archive.js',
-        origin_queue: 'delivered'
+        origin_queue: 'delivered',
+        failure_queue: 'delivered_failed',
+        error_queue: 'delivered_error'
       })
 
     }

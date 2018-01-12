@@ -45,7 +45,7 @@ describe('controllers/workers/forwardmessage/deliveredToArchive.js', () => {
 
   describe('execute', () => {
 
-    it('successfully updates rebill state and date', () => {
+    it('leaves rebill in original state if filter is `noship` and product is shippable', () => {
 
       rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
       let message = getValidMessage(rebill_id);
@@ -64,6 +64,92 @@ describe('controllers/workers/forwardmessage/deliveredToArchive.js', () => {
           return Promise.resolve(true);
         }
       });
+
+      process.env.archivefilter = 'noship';
+
+      const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+      let deliveredToArchiveController = new DeliveredToArchiveController();
+
+      return deliveredToArchiveController.execute().then(result => {
+        du.info(result);
+
+          let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+          return rebillController.get({id: rebill_id}).then((rebill) => {
+              du.info(rebill);
+
+            const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+
+            expect(timeSinceCreation).to.be.above(2);
+
+          });
+      });
+
+    });
+
+    it('leaves rebill in original state if filter is `twoattempts` but none of the products has `second_attempt`', () => {
+
+      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
+      let message = getValidMessage(rebill_id);
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        receiveMessages:({queue, limit}) => {
+          du.highlight('Message read from queue (mock): '+queue);
+          return Promise.resolve([message]);
+        },
+        sendMessage:({message_body: body, queue: queue}) => {
+          du.highlight('Message sent to queue (mock): '+queue);
+          return Promise.resolve(true);
+        },
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.highlight('Deleting message from queue: '+queue);
+          return Promise.resolve(true);
+        }
+      });
+
+      process.env.archivefilter = 'twoattempts';
+
+      const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+      let deliveredToArchiveController = new DeliveredToArchiveController();
+
+      return deliveredToArchiveController.execute().then(result => {
+        du.info(result);
+
+          let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+          return rebillController.get({id: rebill_id}).then((rebill) => {
+              du.info(rebill);
+
+            const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+
+            expect(timeSinceCreation).to.be.above(2);
+
+          });
+      });
+
+    });
+
+    it('successfully updates rebill state and date when filter is `all`', () => {
+
+      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
+      let message = getValidMessage(rebill_id);
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        receiveMessages:({queue, limit}) => {
+          du.highlight('Message read from queue (mock): '+queue);
+          return Promise.resolve([message]);
+        },
+        sendMessage:({message_body: body, queue: queue}) => {
+          du.highlight('Message sent to queue (mock): '+queue);
+          return Promise.resolve(true);
+        },
+        deleteMessage: ({queue, receipt_handle}) => {
+          du.highlight('Deleting message from queue: '+queue);
+          return Promise.resolve(true);
+        }
+      });
+
+        process.env.archivefilter = 'all';
 
       const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
       let deliveredToArchiveController = new DeliveredToArchiveController();

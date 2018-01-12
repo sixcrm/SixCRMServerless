@@ -12,7 +12,7 @@ module.exports = class IndexToArchivedForwardMessageController extends forwardMe
         origin_queue: 'search_indexing',
         failure_queue: 'search_indexing_failed',
         workerfunction: 'indexEntities.js',
-        error_queue: 'some_queue',
+        error_queue: 'search_indexing_error',
         bulk: true
       })
 

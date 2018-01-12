@@ -31,17 +31,25 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
 
       const previous_state = params.origin_queue;
       let new_state  = params.destination_queue;
-
-      if (compound_worker_response_object.worker_response_object.getCode() === 'fail') {
-        new_state = params.failure_queue;
-      }
-
-      if (compound_worker_response_object.worker_response_object.getCode() === 'error') {
-        new_state = params.error_queue;
-      }
+      let code = compound_worker_response_object.worker_response_object.getCode();
 
       if (_.isUndefined(params.destination_queue)) {
           new_state = 'archived';
+      }
+
+      if (code === 'noaction') {
+
+          du.debug('No Action, leaving rebill unaltered.');
+
+          return Promise.resolve();
+      }
+
+      if (code === 'fail') {
+        new_state = params.failure_queue;
+      }
+
+      if (code === 'error') {
+        new_state = params.error_queue;
       }
 
       if(!_.has(this, 'rebillController')){

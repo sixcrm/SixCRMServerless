@@ -93,7 +93,7 @@ class archiveController extends workerController {
 
     return this.rebillController.listTransactions(rebill).then((transactions) => {
 
-      this.parameters.set('transactions', transactions);
+      this.parameters.set('transactions', transactions.transactions);
 
       return true;
 
@@ -117,7 +117,7 @@ class archiveController extends workerController {
 
       arrayutilities.map(product_promises, product_promise => {
         arrayutilities.map(product_promise, product => {
-          products.push(product);
+          products.push(product.product);
         });
       });
 
