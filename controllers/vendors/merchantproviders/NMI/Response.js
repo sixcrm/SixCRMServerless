@@ -37,6 +37,10 @@ module.exports = class NMIResponse extends Response {
       return processor_response.results.transactionid;
     }
 
+    if(objectutilities.hasRecursive(processor_response, 'result.transactionid')){
+      return processor_response.result.transactionid;
+    }
+
     eu.throwError('server', 'Unable to identify the Transaction ID');
 
   }

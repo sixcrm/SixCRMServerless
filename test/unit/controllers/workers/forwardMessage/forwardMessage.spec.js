@@ -1,5 +1,5 @@
 'use strict';
-
+const _ = require('underscore');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
@@ -10,6 +10,8 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
 const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidCompoundWorkerResponseMultipleMessages(response, messages){
 
@@ -30,23 +32,20 @@ function getValidCompoundWorkerResponse(response, message){
 }
 
 function getMultipleValidMessages(count) {
-  let array = [];
+
+  let return_array = [];
 
   for (let i = 0; i < count || 0; i++) {
-    array.push({
-      MessageId: "f0b56385-ff0d-46d9-8faa-328c0f65ad1a",
-      ReceiptHandle: "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
-      MD5OfBody: "d9e803e2c0e1752dcf57050a2b94f5d9",
-      Body: JSON.stringify({id: uuidV4()})
-    });
+    return_array.push(getValidMessage());
   }
 
-  return array;
+  return return_array;
+
 }
 
-function getValidMessage(){
+function getValidMessage(id){
 
-  return getValidMessages().pop();
+  return MockEntities.getValidMessage(id);
 
 }
 
@@ -73,21 +72,12 @@ function getValidMockWorker(){
 
 }
 
-function getValidMessages(){
-  return [
-    {
-      MessageId: "f0b56385-ff0d-46d9-8faa-328c0f65ad1a",
-      ReceiptHandle: "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
-      MD5OfBody: "d9e803e2c0e1752dcf57050a2b94f5d9",
-      Body: JSON.stringify({id: uuidV4()})
-    },
-    {
-      MessageId: "fa969951-ae5f-4ff9-8b1b-1085a407f0cd",
-      ReceiptHandle: "AQEBLc9SRWGv/P/zAExqfkmxxEN2LK7SSeKwz0OyJ5CejQvVC+gBQuvKA0xmq7yC11vwk6jOSaznBTJWILtl1ceayFDYBM9kSLKcnlJlz8/Y5qXuricdeV8LTdPIqFKUeHCr4FLEsT9F1uFDsEduIw6ZTT/2Pya5Y5YaMwY+Uvg1z1UYQ7IcUDHDJk6RGzmoEL42CsSUqIBwxrfKGQ7GkwzJ0Xv4CgAl7Jmd7d44BR2+Y3vgfauSTSVze9ao8tQ71VpsX2dqBfpJK89wpjgtKU7UG/oG/2BeavIirNi9LkzjXXxiHQvrJXSYyREK2J7Eo+iUehctCsNIZYUzF8ubrzOH0NZG80D1ZJZj6vywtE0NQsQT5TbY80ugcDMSNUV8K7IgusvY0p57U7WN1r/GJ40czg==",
-      MD5OfBody: "d9e803e2c0e1752dcf57050a2b94f5d9",
-      Body: JSON.stringify({id: uuidV4()})
-    }
-  ];
+function getValidMessages(ids){
+
+  ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(), uuidV4()]:ids;
+
+  return arrayutilities.map(ids, id => getValidMessage(id));
+
 }
 
 describe('workers/forwardMessage', () => {
@@ -183,7 +173,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -318,7 +308,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -454,7 +444,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -645,7 +635,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -734,7 +724,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -818,7 +808,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -946,7 +936,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -1168,7 +1158,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -1231,7 +1221,7 @@ describe('workers/forwardMessage', () => {
     });
 
     beforeEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
