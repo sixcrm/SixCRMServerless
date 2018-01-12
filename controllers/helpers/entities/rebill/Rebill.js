@@ -732,7 +732,7 @@ module.exports = class RebillHelper {
 
     du.debug('Get Billable Rebills');
 
-    let now = timestamp.createTimestampSeconds();
+    let now = timestamp.createDate();
 
     if(!_.has(this, 'rebillController')){
       this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');

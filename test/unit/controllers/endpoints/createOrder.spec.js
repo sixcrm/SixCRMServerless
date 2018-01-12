@@ -1352,48 +1352,6 @@ describe('createOrder', function () {
 
   });
 
-  describe('pushTransactionsRecord', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
-    it('successfully pushes a transaction record', () => {
-
-      let info = getValidInfo();
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
-          return Promise.resolve(true);
-        }
-      });
-
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-
-      createOrderController.parameters.set('info', info);
-
-      return createOrderController.pushTransactionsRecord().then(result => {
-        expect(result).to.equal(true);
-      });
-
-    });
-
-  });
-
   describe('setProductSchedules', () => {
 
     it('successfully sets product schedules', () => {

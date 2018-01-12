@@ -10,7 +10,9 @@ module.exports = class RecoverToArchivedForwardMessageController extends forward
       this.parameters.set('params', {
         name: 'recovertoarchive',
         workerfunction: 'archive.js',
-        origin_queue: 'recover'
+        origin_queue: 'recover',
+        failure_queue: 'recover_failed',
+        error_queue: 'recover_error'
       })
 
     }

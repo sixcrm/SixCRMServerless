@@ -104,50 +104,25 @@ class rebillController extends entityController {
 
     }
 
-    //Technical Debt:  Likely broken
-    getRebillsAfterTimestamp(a_timestamp, cursor, limit){
+    getRebillsAfterTimestamp(a_timestamp){
 
-      let timestamp_iso8601 = timestamp.toISO8601(a_timestamp);
+      let timestamp_iso8601 = timestamp.castToISO8601(a_timestamp);
 
       let query_parameters = {
         filter_expression: '#bill_at < :timestamp_iso8601v AND #processing <> :processingv',
         expression_attribute_values: {
-          ':timestamp_iso8601v':timestamp_iso8601,
-          ':processingv':'true'
+          ':timestamp_iso8601v': timestamp_iso8601,
+          ':processingv': 'true'
         },
         expression_attribute_names: {
-          '#bill_at':'bill_at',
+          '#bill_at': 'bill_at',
           '#processing': 'processing'
         }
       };
 
-      if(!_.isUndefined(cursor)){
-        query_parameters.ExclusiveStartKey = cursor;
-      }
+      return this.listByAccount({query_parameters: query_parameters}).then((data) => {
 
-      let pagination = {};
-
-      if(!_.isUndefined(limit)){
-        pagination.limit = limit;
-      }
-
-      return this.listByAccount({query_parameters: query_parameters, pagination: pagination})
-      .then((data) => {
-
-        //Technical Debt:  This is probably broken
-        du.warning(`
-
-
-
-          Hey! Likely Broken!
-
-
-
-        `);
-
-        if(_.isArray(data)){
-          return data;
-        }
+          return data.rebills || [];
 
       });
 

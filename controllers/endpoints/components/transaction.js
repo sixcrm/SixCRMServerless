@@ -171,20 +171,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    pushTransactionToRedshift(info){
-
-      du.debug('Push Transaction to Redshift');
-
-      let transaction = this.createTransactionObject(info);
-
-      return this.pushRecordToRedshift('transactions', transaction).then(() => {
-
-        return info;
-
-      });
-
-    }
-
     pushRecordToRedshift(table, object){
 
       return kinesisfirehoseutilities.putRecord(table, object).then((result) => {
@@ -290,5 +276,4 @@ module.exports = class transactionEndpointController extends authenticatedContro
       return this.affiliateHelperController.transcribeAffiliates(info.session, transaction_object);
 
     }
-
-}
+};

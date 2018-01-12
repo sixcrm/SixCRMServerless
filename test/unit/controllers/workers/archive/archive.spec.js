@@ -53,6 +53,41 @@ function getValidProducts(){
 
 }
 
+function getValidProductsForArchive(){
+
+    return [
+        {
+            product:{
+                id:uuidV4(),
+                name:randomutilities.createRandomString(20),
+                sku:randomutilities.createRandomString(20),
+                ship:true,
+                shipping_delay:300,
+                fulfillment_provider:uuidV4(),
+                default_price:34.99,
+                account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+                created_at:timestamp.getISO8601(),
+                updated_at:timestamp.getISO8601()
+            }
+        },
+        {
+            product:{
+                id:uuidV4(),
+                name:randomutilities.createRandomString(20),
+                sku:randomutilities.createRandomString(20),
+                ship:true,
+                shipping_delay:300,
+                fulfillment_provider:uuidV4(),
+                default_price:34.99,
+                account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+                created_at:timestamp.getISO8601(),
+                updated_at:timestamp.getISO8601()
+            }
+        }
+    ];
+
+}
+
 function getValidRebill(){
 
   return {
@@ -172,7 +207,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           }
         });
 
@@ -194,7 +229,7 @@ describe('controllers/workers/archive', function () {
       it('acquires transaction products', () => {
 
         let transactions = getValidTransactions();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           getProducts: (transaction) => {
@@ -208,7 +243,7 @@ describe('controllers/workers/archive', function () {
 
         return archiveController.getTransactionProducts().then(result => {
           expect(result).to.equal(true);
-          expect(archiveController.parameters.store['products']).to.deep.equal(products);
+          expect(archiveController.parameters.store['products'][0]).to.deep.equal(products[0].product);
         });
 
       });
@@ -269,11 +304,14 @@ describe('controllers/workers/archive', function () {
 
     describe('confirmNoShip', () => {
 
-      it('Successfully confirms no ship', () => {
+      it('some ship', () => {
 
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
+
+        products[0].product.ship = true;
+        products[1].product.ship = false;
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           getProducts: (transaction) => {
@@ -283,7 +321,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           }
         });
 
@@ -298,14 +336,14 @@ describe('controllers/workers/archive', function () {
 
       });
 
-      it('Successfully confirms no ship', () => {
+      it('all no ship', () => {
 
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
-        products[0].ship = false;
-        products[1].ship = false;
+        products[0].product.ship = false;
+        products[1].product.ship = false;
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           getProducts: (transaction) => {
@@ -315,7 +353,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           }
         });
 
@@ -353,11 +391,11 @@ describe('controllers/workers/archive', function () {
         let archivefilter = 'noship';
 
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
-        products[0].ship = false;
-        products[1].ship = false;
+        products[0].product.ship = false;
+        products[1].product.ship = false;
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           getProducts: (transaction) => {
@@ -367,7 +405,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           }
         });
 
@@ -387,7 +425,7 @@ describe('controllers/workers/archive', function () {
         let archivefilter = 'noship';
 
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
@@ -398,7 +436,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           }
         });
 
@@ -502,7 +540,7 @@ describe('controllers/workers/archive', function () {
 
         let message = getValidMessage();
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
@@ -513,7 +551,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           },
           get: ({id}) => {
             return Promise.resolve(rebill);
@@ -537,10 +575,10 @@ describe('controllers/workers/archive', function () {
 
         let message = getValidMessage();
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
 
-        products[0].ship = false;
-        products[1].ship = false;
+        products[0].product.ship = false;
+        products[1].product.ship = false;
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
@@ -551,7 +589,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           },
           get: ({id}) => {
             return Promise.resolve(rebill);
@@ -575,7 +613,7 @@ describe('controllers/workers/archive', function () {
 
         let message = getValidMessage();
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
@@ -586,7 +624,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           },
           get: ({id}) => {
             return Promise.resolve(rebill);
@@ -613,7 +651,7 @@ describe('controllers/workers/archive', function () {
         let rebill = getValidRebill();
 
         rebill.second_attempt = true;
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
@@ -624,7 +662,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           },
           get: ({id}) => {
             return Promise.resolve(rebill);
@@ -649,7 +687,7 @@ describe('controllers/workers/archive', function () {
 
         let message = getValidMessage();
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
@@ -660,7 +698,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           },
           get: ({id}) => {
             return Promise.resolve(rebill);
@@ -683,7 +721,7 @@ describe('controllers/workers/archive', function () {
 
         let message = getValidMessage();
         let rebill = getValidRebill();
-        let products = getValidProducts();
+        let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
@@ -694,7 +732,7 @@ describe('controllers/workers/archive', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listTransactions: (rebill) => {
-              return Promise.resolve(transactions);
+              return Promise.resolve({ transactions: transactions });
           },
           get: ({id}) => {
             return Promise.resolve(rebill);

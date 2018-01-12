@@ -4,5 +4,5 @@
 	"title": "Rebills",
 	"description": "A array of rebills",
 	"type":"array",
-	"items":{"$ref":"../rebill.json"}
+	"items":{"$ref":"/../rebill.json"}
 }

@@ -1895,6 +1895,64 @@ describe('/helpers/entities/Rebill.js', () => {
 
     });
 
+    describe('getBillableRebills', () => {
+
+      it('successfully retrieves billable rebills', () => {
+        const rebill = getValidRebill();
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+          getRebillsAfterTimestamp: (stamp) => {
+            expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
+
+            return Promise.resolve([rebill]);
+          }
+        });
+
+        PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+        let rebillHelperController = new RebillHelperController();
+
+        return rebillHelperController.getBillableRebills().then(result => {
+          const rebills = rebillHelperController.parameters.get('billablerebills');
+
+          expect(result).to.equal(true);
+          expect(rebills.length).to.equal(1);
+          expect(rebills[0]).to.deep.equal(rebill)
+        });
+
+      });
+
+      it('filters out rebills in process', () => {
+        const rebill = getValidRebill();
+
+        rebill.processing = true;
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+          getRebillsAfterTimestamp: (stamp) => {
+            expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
+
+            return Promise.resolve([rebill]);
+          }
+        });
+
+        PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+        let rebillHelperController = new RebillHelperController();
+
+        return rebillHelperController.getBillableRebills().then(result => {
+          const rebills = rebillHelperController.parameters.get('billablerebills');
+
+          expect(result).to.equal(true);
+          expect(rebills.length).to.equal(0);
+        });
+
+      });
+
+    });
+
+
   });
 
 });

@@ -10,7 +10,9 @@ module.exports = class HoldToArchivedForwardMessageController extends forwardReb
       this.parameters.set('params', {
         name: 'holdtoarchive',
         workerfunction: 'archive.js',
-        origin_queue: 'hold'
+        origin_queue: 'hold',
+        failure_queue: 'hold_failed',
+        error_queue: 'hold_error'
       })
 
     }

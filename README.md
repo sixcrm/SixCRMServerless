@@ -29,9 +29,13 @@ Note that when lambdas are executed locally, the API gateway implementation whic
 
 ### Pruning Lambdas
 
-Once in a while we run out of space for lambdas on AWS because we keep the old versions uploaded. If you get errors like `Code storage limit exceeded` when deploying
-that is why. In order to proceed, run `AWS_PROFILE=six sls prune -n <number of versions to keep> --stage <environment>` for example `AWS_PROFILE=six sls prune -n 10 --stage development`. You might need to login to AWS console and manually trigger
-stack rollback in CloudFormation, because it's probably stuck in rollback state due to missing space. After stack rolls back, deploy again.
+Once in a while we run out of space for lambdas on AWS because we keep the old versions uploaded. 
+If you get errors like `Code storage limit exceeded` when deploying that is why. In order to proceed, run 
+`AWS_PROFILE=six sls prune -n <number of versions to keep> --stage <environment>` for example 
+`AWS_PROFILE=six sls prune -n 10 --stage development`. You might want to adjust the variables `AWS_SECRET_ACCESS_KEY` and
+`AWS_ACCESS_KEY_ID` to match the environment you use. After the purge is complete you probably need to login to AWS console
+and manually trigger a stack rollback action in CloudFormation, because it's likely stuck in rollback state due to missing space. 
+After the stack rolls back, deploy again.
 
 ### Committing to the Repository
 
