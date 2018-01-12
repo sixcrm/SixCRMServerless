@@ -29,6 +29,8 @@ jobs:
       - image: circleci/node:7.10.0
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: 'Lint'
           command: npm run lint
@@ -37,6 +39,8 @@ jobs:
       - image: circleci/node:7.10.0
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: 'Unit Tests'
           command: npm run test-unit
@@ -45,11 +49,15 @@ jobs:
       - image: circleci/node:7.10.0
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
   integration_tests:
     docker:
       - image: circleci/node:7.10.0
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
@@ -64,6 +72,8 @@ jobs:
       - image: circleci/node:7.10.0
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Add Deployment Keys
           command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
@@ -111,6 +121,8 @@ jobs:
       - image: circleci/node:7.10.0
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Redshift Referential Data
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
@@ -125,6 +137,8 @@ jobs:
       - image: circleci/node:7.10.0
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: SQS Purge
           command: node ./deployment/sqs/purge_queues.js
@@ -142,6 +156,8 @@ jobs:
       - image: circleci/node:7.10.0
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Merge To Upper
           command: ./deployment/utilities/merge_branches.sh development staging
