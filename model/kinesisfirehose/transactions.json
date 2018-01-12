@@ -10,7 +10,6 @@
 		"campaign":{"$ref": "../definitions/uuidv4.json"},
 		"affiliate":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"product_schedules":{"$ref": "../general/uuidv4list.json"},
 		"subaffiliate_1":{"$ref": "../definitions/uuidv4.json"},
 		"subaffiliate_2":{"$ref": "../definitions/uuidv4.json"},
 		"subaffiliate_3":{"$ref": "../definitions/uuidv4.json"},
@@ -22,5 +21,5 @@
 		"subtype":{"$ref": "../general/transaction/subtype.json"},
 		"amount":{"$ref": "../definitions/currency.json"}
 	},
-	"required":["id", "customer", "creditcard","merchant_provider","campaign","account","product_schedules","datetime","processor_result","type","subtype","amount"]
+	"required":["id", "customer", "creditcard","merchant_provider","campaign","account","datetime","processor_result","type","subtype","amount"]
 }

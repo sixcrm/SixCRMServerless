@@ -659,8 +659,7 @@ module.exports = class Register extends PermissionedController {
       processor_result: this.parameters.get('processorresponse').code,
       account: this.parameters.get('receipttransaction').account,
       type: 'new',
-      subtype: 'main',
-      product_schedules: arrayutilities.map(this.parameters.get('productschedules'), (schedule) => schedule.id)
+      subtype: 'main'
     };
 
     if (!this.affiliateHelperController) {
