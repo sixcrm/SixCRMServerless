@@ -5,13 +5,6 @@ jobs:
       - image: circleci/node:7.10.0
     steps:
       - run: sudo npm install -g npm@latest
-      - run:
-          name: Git LFS Pull
-          command: |
-            mkdir -p ~/.ssh
-            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-            ssh git@github.com git-lfs-authenticate "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}" download
-            git lfs pull
   build:
     environment:
       - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
