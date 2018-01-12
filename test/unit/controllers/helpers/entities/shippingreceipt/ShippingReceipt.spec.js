@@ -18,9 +18,17 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 
-function getValidShippingReceipt(){
+function getValidShippingReceipts(ids){
 
-  return MockEntities.getValidShippingReceipt();
+  ids = (!_.isUndefined(ids))?ids:[uuidV4(), uuidV4()];
+
+  return arrayutilities.map(ids, id => getValidShippingReceipt(id));
+
+}
+
+function getValidShippingReceipt(id){
+
+  return MockEntities.getValidShippingReceipt(id);
 
 }
 
@@ -144,7 +152,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
   });
 
-  xdescribe('buildUpdatedShippingReceiptPrototype', () => {
+  describe('buildUpdatedShippingReceiptPrototype', () => {
 
     it('successfully builds the updated shipping receipt prototype', () => {
 
@@ -164,21 +172,19 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       expect(result).to.equal(true);
       expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt']).to.be.defined;
       expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].status).to.equal(shipping_status);
-      expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].trackingstatus).to.equal(shipping_status);
       expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].history[0].detail).to.equal(shipping_detail);
 
     });
 
   });
 
-  xdescribe('updateShippingReceipt', () => {
+  describe('updateShippingReceipt', () => {
 
     it('successfully updates a shipping receipt', () => {
 
       let shipping_receipt = getValidShippingReceipt();
 
-      shipping_receipt.status = 'in-transit';
-      shipping_receipt.trackingstatus = 'in-transit';
+      shipping_receipt.status = 'intransit';
 
       let shipping_status = 'delivered';
       let shipping_detail = 'Your item was delivered at 8:10 am on June 1 in Wilmington DE 19801.';
@@ -199,9 +205,96 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       .then(result => {
         expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt']).to.be.defined;
         expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].status).to.equal(shipping_status);
-        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].trackingstatus).to.equal(shipping_status);
         expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].history[0].detail).to.equal(shipping_detail);
       });
+
+    });
+
+  });
+
+  describe('confirmShippingReceiptStati', () => {
+
+    it('successfully confirms a shipping receipt status', () => {
+
+      let shipping_stati = ['unknown','intransit','delivered', 'returned'];
+
+      arrayutilities.map(shipping_stati, shipping_status => {
+
+        let shipping_receipts = arrayutilities.map(getValidShippingReceipts(), shipping_receipt => {
+
+          shipping_receipt.status = shipping_status;
+
+          if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+
+            shipping_receipt.tracking = {
+              carrier: 'USPS',
+              id: randomutilities.createRandomString(20)
+            };
+
+            shipping_receipt.history = [{
+              status: shipping_status,
+              created_at: timestamp.getISO8601(),
+              detail: ''
+            }];
+
+          }
+
+          return shipping_receipt;
+
+        });
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingreceipts', shipping_receipts);
+        shippingReceiptHelperController.parameters.set('shippingstatus', shipping_status);
+
+        let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+        expect(result).to.equal(true);
+
+      });
+
+    });
+
+  });
+
+  it('successfully fails to confirm a shipping receipt status', () => {
+
+    let shipping_stati = ['unknown','intransit','delivered', 'returned'];
+
+    arrayutilities.map(shipping_stati, shipping_status => {
+
+      let shipping_receipts = arrayutilities.map(getValidShippingReceipts(), shipping_receipt => {
+
+        shipping_receipt.status = 'not that';
+
+        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+
+          shipping_receipt.tracking = {
+            carrier: 'USPS',
+            id: randomutilities.createRandomString(20)
+          };
+
+          shipping_receipt.history = [{
+            status: shipping_status,
+            created_at: timestamp.getISO8601(),
+            detail: ''
+          }];
+
+        }
+
+        return shipping_receipt;
+
+      });
+
+      let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+      shippingReceiptHelperController.parameters.set('shippingreceipts', shipping_receipts);
+      shippingReceiptHelperController.parameters.set('shippingstatus', shipping_status);
+
+      let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+      expect(result).to.equal(false);
 
     });
 

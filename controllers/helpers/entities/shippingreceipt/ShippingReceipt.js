@@ -194,7 +194,6 @@ module.exports = class ShippingReceiptHelperController {
 
   }
 
-
   confirmShippingReceiptStati(){
 
     du.debug('Confirm Shipping Receipt Stati');
@@ -238,7 +237,9 @@ module.exports = class ShippingReceiptHelperController {
           return history_element.status == shipping_status;
         })
 
-        if(!arrayutilities.nonEmpty(delivered)){ return false; }
+        if(!objectutilities.isObject(delivered)){
+          return false;
+        }
 
       }
 
