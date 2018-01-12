@@ -6,6 +6,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 
 const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
@@ -13,6 +14,7 @@ const PermissionedController = global.SixCRM.routes.include('helpers', 'permissi
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
+const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
 
 module.exports = class Register extends PermissionedController {
 
@@ -111,6 +113,7 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.executeProcess())
     .then(() => this.executePostProcess())
     .then(() => this.issueReceipt())
+    .then(() => this.pushTransactionsRecordToRedshift())
     .then(() => this.transformResponse());
 
   }
@@ -293,6 +296,22 @@ module.exports = class Register extends PermissionedController {
       this.parameters.set('receipttransaction', receipt_transaction);
     });
 
+  }
+
+  pushTransactionsRecordToRedshift(){
+
+    du.debug('Push Transactions Record');
+
+    let transaction_redshift_obj = this.generateTransactionObject();
+    let product_schedules_redshift_obj = this.generateProductScheduleObjects();
+
+    let promises = arrayutilities.map(product_schedules_redshift_obj, (schedule) => {
+      return kinesisfirehoseutilities.putRecord('product_schedules', schedule);
+    });
+
+    promises.push(kinesisfirehoseutilities.putRecord('transactions', transaction_redshift_obj));
+
+    return Promise.all(promises).then(() => true);
   }
 
   transformResponse(){
@@ -622,6 +641,47 @@ module.exports = class Register extends PermissionedController {
     this.parameters.set('transactiontype', this.action_to_transaction_type[action]);
 
     return Promise.resolve(true);
+
+  }
+
+  generateTransactionObject(){
+
+    du.debug('Generate Transaction Object');
+
+    let transaction_object = {
+      id: this.parameters.get('receipttransaction').id,
+      datetime: this.parameters.get('receipttransaction').created_at,
+      customer: this.parameters.get('customer').id,
+      creditcard: this.parameters.get('processorresponse').creditcard.id,
+      merchant_provider: this.parameters.get('merchantprovider').id,
+      campaign: this.parameters.get('parentsession').campaign,
+      amount: this.parameters.get('amount'),
+      processor_result: this.parameters.get('processorresponse').code,
+      account: this.parameters.get('receipttransaction').account,
+      type: 'new',
+      subtype: 'main',
+      product_schedules: arrayutilities.map(this.parameters.get('productschedules'), (schedule) => schedule.id)
+    };
+
+    if (!this.affiliateHelperController) {
+      this.affiliateHelperController = new AffiliateHelperController();
+    }
+
+    return this.affiliateHelperController.transcribeAffiliates(this.parameters.get('parentsession'), transaction_object);
+
+  }
+
+  generateProductScheduleObjects(){
+
+    du.debug('Generate Product Schedule Objects from Transaction Object');
+
+    return arrayutilities.map(this.parameters.get('productschedules'), (schedule) => {
+      return {
+        product_schedule: schedule.id,
+        transactions_id: this.parameters.get('receipttransaction').id,
+        datetime: this.parameters.get('receipttransaction').created_at
+      }
+    });
 
   }
 

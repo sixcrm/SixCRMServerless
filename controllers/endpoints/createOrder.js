@@ -412,7 +412,6 @@ class CreateOrderController extends transactionEndpointController{
 
     let promises = [
       this.pushEventsRecord(),
-      this.pushTransactionsRecord(),
       this.addRebillToStateMachine()
     ];
 
@@ -467,20 +466,6 @@ class CreateOrderController extends transactionEndpointController{
     let product_schedules = this.parameters.get('productschedules');
 
     return this.pushEventToRedshift({event_type: 'order', session: session, product_schedules: product_schedules}).then(() => {
-
-      return true;
-
-    });
-
-  }
-
-  pushTransactionsRecord(){
-
-    du.debug('Push Transactions Record');
-
-    let info = this.parameters.get('info');
-
-    return this.pushTransactionToRedshift(info).then(() => {
 
       return true;
 

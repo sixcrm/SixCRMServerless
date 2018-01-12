@@ -27,6 +27,7 @@ function getValidProcessResponse(){
     code:'success',
     message:'Success',
     merchant_provider: getValidMerchantProvider().id,
+    creditcard: getValidCreditCard(),
     result: {}
   };
 
@@ -1996,5 +1997,82 @@ describe('controllers/providers/Register.js', () => {
       });
 
     });
+
+    describe('pushTransactionsRecordToRedshift', () => {
+
+      before(() => {
+        mockery.enable({
+          useCleanCache: true,
+          warnOnReplace: false,
+          warnOnUnregistered: false
+        });
+      });
+
+      beforeEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+      });
+
+      afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+      });
+
+      it('Successfuly sends data to redshift', () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+          putRecord: (table, object) => {
+            expect(['product_schedules', 'transactions']).to.include(table);
+
+            if (table === 'product_schedules') {
+              expect(object.transactions_id).to.equal(getValidTransactionObject().id);
+              expect(object.product_schedule).to.equal(getValidProductSchedules()[0].id);
+              expect(object.datetime).to.equal(getValidTransactionObject().created_at);
+
+            }
+
+            if (table === 'transactions') {
+              expect(object.id).to.equal(getValidTransactionObject().id);
+              expect(object.customer).to.equal(getValidCustomer().id);
+              expect(object.creditcard).to.equal(getValidCreditCard().id);
+              expect(object.merchant_provider).to.equal(getValidMerchantProvider().id);
+              expect(object.campaign).to.equal(getValidParentSession().campaign);
+              expect(object.account).to.equal(getValidParentSession().account);
+              expect(object.affiliate).to.equal(getValidParentSession().affiliate);
+              expect(object.subaffiliate_1).to.equal(getValidParentSession().subaffiliate_1);
+              expect(object.subaffiliate_2).to.equal(getValidParentSession().subaffiliate_2);
+              expect(object.subaffiliate_3).to.equal(getValidParentSession().subaffiliate_3);
+              expect(object.subaffiliate_4).to.equal(getValidParentSession().subaffiliate_4);
+              expect(object.subaffiliate_5).to.equal(getValidParentSession().subaffiliate_5);
+              expect(object.datetime).to.equal(getValidTransactionObject().created_at);
+              expect(object.processor_result).to.equal('success');
+              expect(object.amount).to.equal(getValidAmount());
+              expect(object.type).to.equal('new');
+              expect(object.subtype).to.equal('main');
+            }
+
+            return Promise.resolve(true);
+          }
+        });
+
+        let Register = global.SixCRM.routes.include('providers', 'register/Register.js');
+
+        let registerController = new Register();
+
+        registerController.parameters.set('receipttransaction', getValidTransactionObject());
+        registerController.parameters.set('customer', getValidCustomer());
+        registerController.parameters.set('processorresponse', getValidProcessResponse());
+        registerController.parameters.set('merchantprovider', getValidMerchantProvider());
+        registerController.parameters.set('parentsession', getValidParentSession());
+        registerController.parameters.set('amount', getValidAmount());
+        registerController.parameters.set('productschedules', getValidProductSchedules());
+
+        return registerController.pushTransactionsRecordToRedshift().then(result => {
+
+          expect(result).to.equal(true);
+
+        });
+      });
+
+    })
 
 });
