@@ -110,4 +110,71 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
   });
 
+  describe('disableACLs/enableACLs', () => {
+
+    beforeEach(() => {
+      permissionedController = new PermissionedController();
+    });
+
+    afterEach(() => {
+      delete global.user;
+      global.disableactionchecks = false;
+      global.disableaccountfilter = false;
+    });
+
+    it('successfully disables the acls', () => {
+
+      permissionedController.disableACLs();
+      expect(global.disableactionchecks).to.equal(true);
+      expect(global.disableaccountfilter).to.equal(true);
+
+    });
+
+    it('successfully disables and then enables the acls', () => {
+
+      permissionedController.disableACLs();
+      expect(global.disableactionchecks).to.equal(true);
+      expect(global.disableaccountfilter).to.equal(true);
+      permissionedController.enableACLs();
+      expect(global.disableactionchecks).to.equal(false);
+      expect(global.disableaccountfilter).to.equal(false);
+
+    });
+
+  });
+
+  describe('setGlobalUser/unsetGlobalUser', () => {
+
+    beforeEach(() => {
+      permissionedController = new PermissionedController();
+    });
+
+    afterEach(() => {
+      delete global.user;
+    });
+
+    it('successfully sets/unsets a user object', () => {
+
+      let user = {id: 'some@testuser.com'}
+
+      permissionedController.setGlobalUser(user);
+      expect(global.user).to.deep.equal(user);
+      permissionedController.unsetGlobalUser();
+      expect(global.user).to.not.be.defined;
+
+    });
+
+    it('successfully sets/unsets a user email', () => {
+
+      let user = 'some@testuser.com';
+
+      permissionedController.setGlobalUser(user);
+      expect(global.user).to.equal(user);
+      permissionedController.unsetGlobalUser();
+      expect(global.user).to.not.be.defined;
+
+    });
+
+  });
+
 });
