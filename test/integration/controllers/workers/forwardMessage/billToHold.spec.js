@@ -42,9 +42,6 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
 
   describe('execute', () => {
 
-    let transaction;
-    let rebill;
-
     it('successfully executes', () => {
 
       rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
@@ -65,6 +62,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
         }
       });
 
+      let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
       const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
       let billToHoldForwardMessageController = new BillToHoldForwardMessageController();
 
@@ -72,21 +70,25 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
         du.info(result);
 
         return true;
-      })
+      }).then(() => {
 
-    });
+        return rebillController.get({id: rebill_id})
 
-    it('creates new transaction', () => {
-      let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+      }).then((rebill) => {
 
-      return rebillController.get({id: rebill_id}).then((updatedRebill) => {
-        rebill = updatedRebill;
+        expect(rebill.state).to.equal('hold');
+        expect(rebill.previous_state).to.equal('bill');
 
-        return rebillController.listTransactions(rebill);
-      }).then((transactions) => {
+        return rebillController.listTransactions(rebill)
+          .then((transactions) => {
+            return {rebill: rebill, transactions: transactions}
+          });
+
+      }).then(({rebill, transactions}) => {
+
         const allTransactions = transactions.transactions;
 
-        transaction = allTransactions.sort((f,s) => {
+        let lastTransaction = allTransactions.sort((f,s) => {
           if (f.created_at < s.created_at) return 1;
 
           if (f.created_at > s.created_at) return -1;
@@ -94,23 +96,17 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
           return 0;
         })[0];
 
-        const timeSinceCreation = timestamp.getSecondsDifference(transaction.created_at);
+        const timeSinceCreation = timestamp.getSecondsDifference(lastTransaction.created_at);
 
-        expect(transaction.rebill).to.equal(rebill_id);
         expect(timeSinceCreation).to.be.below(10);
+        expect(lastTransaction.rebill).to.equal(rebill_id);
+        expect(lastTransaction.amount).to.equal(rebill.amount);
+        expect(lastTransaction.products.length).to.equal(rebill.products.length);
+
       });
 
     });
 
-    it('creates valid transaction', () => {
-      expect(transaction.amount).to.equal(rebill.amount);
-      expect(transaction.products.length).to.equal(rebill.products.length);
-    });
-
-    it('updates state of the rebill', () => {
-      expect(rebill.state).to.equal('hold');
-      expect(rebill.previous_state).to.equal('bill');
-    });
   });
 
 });
