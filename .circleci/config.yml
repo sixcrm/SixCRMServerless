@@ -2,7 +2,7 @@ version: 2
 jobs:
   pre:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run: sudo npm install -g npm@latest
       - run: git lfs pull
@@ -10,7 +10,7 @@ jobs:
     environment:
       - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - checkout
       - restore_cache:
@@ -27,28 +27,28 @@ jobs:
           command: tools/saveCommitHashInCircle.sh `node deployment/circle/read_last_commit.js`
   lint:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run:
           name: 'Lint'
           command: npm run lint
   unit_tests:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run:
           name: 'Unit Tests'
           command: npm run test-unit
   functional_tests:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run:
           name: Functional Tests
           command: npm run test-functional
   integration_tests:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run:
           name: Transactional Integration Tests
@@ -61,7 +61,7 @@ jobs:
           command: npm run test-analytics
   deploy:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run:
           name: Add Deployment Keys
@@ -107,7 +107,7 @@ jobs:
           command: node deployment/circle/save_last_commit.js
   seed:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run:
           name: Redshift Referential Data
@@ -120,7 +120,7 @@ jobs:
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
   purge:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run:
           name: SQS Purge
@@ -136,7 +136,7 @@ jobs:
           command: node ./deployment/dynamodb/purge_tables.js
   merge:
     docker:
-      - image: circleci/node:7.6.0
+      - image: circleci/node:7.10.0
     steps:
       - run:
           name: Merge To Upper
