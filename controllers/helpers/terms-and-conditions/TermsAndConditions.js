@@ -1,37 +1,23 @@
 'use strict';
 const _ = require('underscore');
-const fs = require('fs');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 class TermsAndConditions {
 
   getLatestTermsAndConditions(role) {
 
-    du.debug('Retrieving latest terms and conditions for role:', role);
+    du.debug('Get Latest Terms And Conditions');
 
-    return new Promise((resolve, reject) => {
+    role = (!_.isUndefined(role) && !_.isNull(role))?role:'user';
+    let directory = (role == 'user')?role:'user_acl/'+role;
 
-      const directory = (role && role !== 'user') ? ('user_acl/' + role) : 'user';
-      const file_name = 'resources/terms-and-conditions/' + directory + '/terms-and-conditions.json';
+    const terms_and_conditions = global.SixCRM.routes.include('resources', 'terms-and-conditions/'+directory+'/terms-and-conditions.json');
 
-      fs.readFile(file_name, function(err, file) {
-        if (err) {
-          return reject(err);
-        }
+    mvu.validateModel(terms_and_conditions, global.SixCRM.routes.path('model','helpers/termsandconditions/termsandconditions.json'));
 
-        const parsedFile = JSON.parse(file);
-
-        du.debug('Latest terms and conditions file:', parsedFile);
-
-        if (!parsedFile || !parsedFile.version || !parsedFile.title || !parsedFile.body) {
-          return reject('Terms And Conditions file not valid');
-        }
-
-        return resolve(parsedFile);
-      })
-
-    });
+    return Promise.resolve(terms_and_conditions);
 
   }
 

@@ -1,0 +1,17 @@
+{
+  "id":"/helpers/termsandconditions/termsandconditions.json",
+  "title":"Terms and Conditions",
+  "type":"object",
+  "properties":{
+    "title":{
+      "type":"string"
+    },
+    "body":{
+      "type":"string"
+    },
+    "version":{
+      "type":"string"
+    }
+  },
+  "required":["title","body","version"]
+}

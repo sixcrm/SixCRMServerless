@@ -16,3 +16,4 @@ analytics: /controllers/analytics/
 vendors: /controllers/vendors/
 authorizers: /controllers/authorizers/
 workers: /controllers/workers/
+resources: /resources/
