@@ -324,7 +324,7 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
-      - anaytics_integration_tests:
+      - analytics_integration_tests:
           requires:
             - seed
       - graph_integration_tests:
