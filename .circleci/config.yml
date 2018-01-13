@@ -257,8 +257,10 @@ workflows:
       - unit_tests:
           requires:
             - build
-          ignore:
-            - development
+          filters:
+            branches:
+              ignore:
+                - development
       - functional_tests:
           requires:
             - build
