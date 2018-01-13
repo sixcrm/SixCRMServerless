@@ -85,7 +85,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
+          command: echo openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.awscredentials && bash ~/.awscredentials
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -257,6 +257,8 @@ workflows:
       - unit_tests:
           requires:
             - build
+          ignore:
+            - development
       - functional_tests:
           requires:
             - build
