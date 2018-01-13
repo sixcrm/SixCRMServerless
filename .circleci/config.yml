@@ -60,8 +60,8 @@ jobs:
           name: Add Deployment Keys
           command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.awscredentials
       - run:
-          name: Execute
-          command: bash ~/.awscredentials
+          name: Display
+          command: cat ~/.awscredentials
       - run:
           name: Verify Credentials
           command: echo $AWS_ACCOUNT
