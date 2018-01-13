@@ -84,6 +84,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Install Serverless
+          command: npm install serverless -g
+      - run:
           name: Add Deployment Keys
           command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
@@ -177,6 +180,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Save Last Commit
+          command: node deployment/circle/save_last_commit.js
+      - run:
           name: AWS Services Available
           command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   purge:
@@ -218,9 +224,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Save Last Commit
-          command: node deployment/circle/save_last_commit.js
       - run:
           name: Merge To Upper
           command: ./deployment/utilities/merge_branches.sh development staging
