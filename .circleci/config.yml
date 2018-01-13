@@ -77,6 +77,15 @@ jobs:
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
+  pre_deploy:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -85,10 +94,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Install Serverless
-          command: npm install serverless -g
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
+          command: npm install serverless
       - run:
           name: Serveless Deploy
           command: serverless deploy --stage $CIRCLE_BRANCH
@@ -258,23 +264,27 @@ workflows:
             branches:
               only:
                 - development
-      - deploy_serverless:
+      - pre_deploy:
           requires:
             - lint
             - unit_tests
             - functional_tests
           context: org-global
+      - deploy_serverless:
+          requires:
+            - pre_deploy
+          context: org-global
       - deploy_security_groups:
           requires:
-            - deploy_serverless
+            - pre_deploy
           context: org-global
       - deploy_iam:
           requires:
-            - deploy_serverless
+            - pre_deploy
           context: org-global
       - deploy_s3:
           requires:
-            - deploy_serverless
+            - pre_deploy
           context: org-global
       - deploy_sqs:
           requires:
