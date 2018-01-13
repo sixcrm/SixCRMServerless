@@ -285,7 +285,7 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
-      - deploy_dynamod:
+      - deploy_dynamodb:
           requires:
             - lint
             - unit_tests
