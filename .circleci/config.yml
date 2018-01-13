@@ -137,7 +137,7 @@ jobs:
       - run:
           name: IAM Deploy Roles
           command: node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
-  deploy_dynamo:
+  deploy_dynamodb:
     <<: *job-defaults
     steps:
       - checkout
