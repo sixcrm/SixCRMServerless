@@ -65,7 +65,7 @@ jobs:
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
-  deploy:
+  deploy_serverless:
     <<: *job-defaults
     steps:
       - checkout
@@ -77,42 +77,108 @@ jobs:
       - run:
           name: Serveless Deploy
           command: serverless deploy --stage $CIRCLE_BRANCH
+  deploy_security_groups:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: EC2 Security Groups
           command: node ./deployment/ec2/deploy_security_groups.js
+  deploy_s3:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: S3 Buckets
           command: ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
+  deploy_sqs:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: SQS
           command: ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
+  deploy_elasticache:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: Elasticache
           command: ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/deploy.js || echo "No changes, skipping."
+  deploy_iam:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: IAM Deploy Roles
           command: node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
+  deploy_dynamo:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: DynamoDB Deploy Tables
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
       - run:
           name: DynamoDB Autoscale Tables
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/autoscaling && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
+  deploy_redshift:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: Redshift Create Cluster
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
       - run:
           name: Redshift Create Tables
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+  deploy_kinesis:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Redshift Pause For Availability
-          command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: Kinesis Deploy
           command: ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
-      - run:
-          name: Save Last Commit
-          command: node deployment/circle/save_last_commit.js
   seed:
     <<: *job-defaults
     steps:
@@ -153,11 +219,14 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Save Last Commit
+          command: node deployment/circle/save_last_commit.js
+      - run:
           name: Merge To Upper
           command: ./deployment/utilities/merge_branches.sh development staging
 workflows:
   version: 2
-  build_and_test:
+  build_deploy_test_and_merge:
     jobs:
       - pre:
           filters:
@@ -186,14 +255,62 @@ workflows:
             branches:
               only:
                 - development
-      - deploy:
+      - deploy_serverless:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - deploy_security_groups:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - deploy_s3:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - deploy_sqs:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - deploy_elasticache:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - deploy_iam:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - deploy_dynamod:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - deploy_redshift:
+          requires:
+            - lint
+            - unit_tests
+            - functional_tests
+      - deploy_kinesis:
           requires:
             - lint
             - unit_tests
             - functional_tests
       - purge:
           requires:
-            - deploy
+            - deploy_serverless
+            - deploy_security_groups
+            - deploy_s3
+            - deploy_sqs
+            - deploy_elasticache
+            - deploy_iam
+            - deploy_dynamodb
+            - deploy_redshift
+            - deploy_kinesis
           filters:
             branches:
               ignore:
