@@ -85,7 +85,10 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Add Deployment Keys
-          command: echo openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.awscredentials && bash ~/.awscredentials
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.awscredentials
+      - run:
+          name: Execute
+          command: bash ~/.awscredentials
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -93,11 +96,8 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Install Serverless
-          command: npm install serverless
-      - run:
           name: Serveless Deploy
-          command: serverless deploy --stage $CIRCLE_BRANCH
+          command: node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
   deploy_security_groups:
     <<: *job-defaults
     steps:
