@@ -179,21 +179,15 @@ jobs:
       - run:
           name: Kinesis Deploy
           command: ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
-  seed:
+  post_deployment:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Redshift Referential Data
-          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
-      - run:
-          name: Redshift Table Data
-          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
-      - run:
-          name: Environment
-          command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
+          name: AWS Services Available
+          command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   purge:
     <<: *job-defaults
     steps:
@@ -212,6 +206,21 @@ jobs:
       - run:
           name: DynamoDB Purge
           command: node ./deployment/dynamodb/purge_tables.js
+  seed:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Redshift Referential Data
+          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
+      - run:
+          name: Redshift Table Data
+          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
+      - run:
+          name: Environment
+          command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
   merge:
     <<: *job-defaults
     steps:
@@ -260,47 +269,44 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
+          context: deployment
       - deploy_security_groups:
           requires:
-            - lint
-            - unit_tests
-            - functional_tests
-      - deploy_s3:
-          requires:
-            - lint
-            - unit_tests
-            - functional_tests
-      - deploy_sqs:
-          requires:
-            - lint
-            - unit_tests
-            - functional_tests
-      - deploy_elasticache:
-          requires:
-            - lint
-            - unit_tests
-            - functional_tests
+            - deploy_serverless
+          context: deployment
       - deploy_iam:
           requires:
-            - lint
-            - unit_tests
-            - functional_tests
+            - deploy_serverless
+          context: deployment
+      - deploy_s3:
+          requires:
+            - deploy_serverless
+          context: deployment
+      - deploy_sqs:
+          requires:
+            - deploy_security_groups
+            - deploy_iam
+          context: deployment
+      - deploy_elasticache:
+          requires:
+            - deploy_security_groups
+            - deploy_iam
+          context: deployment
       - deploy_dynamodb:
           requires:
-            - lint
-            - unit_tests
-            - functional_tests
+            - deploy_security_groups
+            - deploy_iam
+          context: deployment
       - deploy_redshift:
           requires:
-            - lint
-            - unit_tests
-            - functional_tests
+            - deploy_security_groups
+            - deploy_iam
+          context: deployment
       - deploy_kinesis:
           requires:
-            - lint
-            - unit_tests
-            - functional_tests
-      - purge:
+            - deploy_redshift
+          context: deployment
+      - post_deployment:
           requires:
             - deploy_serverless
             - deploy_security_groups
@@ -311,6 +317,11 @@ workflows:
             - deploy_dynamodb
             - deploy_redshift
             - deploy_kinesis
+          context: deployment
+      - purge:
+          requires:
+            - post_deployment
+          context: deployment
           filters:
             branches:
               ignore:
