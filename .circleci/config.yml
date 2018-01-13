@@ -253,10 +253,6 @@ workflows:
       - lint:
           requires:
             - build
-          filters:
-            branches:
-              ignore:
-                - development
       - unit_tests:
           requires:
             - build
