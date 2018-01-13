@@ -50,7 +50,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-  integration_tests:
+  transactional_integration_tests:
     <<: *job-defaults
     steps:
       - checkout
@@ -59,9 +59,21 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
+  graph_integration_tests:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Graph Integration Tests
           command: npm run test-graph
+  analytics_integration_tests:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
@@ -84,9 +96,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
-      - run:
           name: EC2 Security Groups
           command: node ./deployment/ec2/deploy_security_groups.js
   deploy_s3:
@@ -95,9 +104,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: S3 Buckets
           command: ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
@@ -108,9 +114,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
-      - run:
           name: SQS
           command: ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
   deploy_elasticache:
@@ -120,9 +123,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
-      - run:
           name: Elasticache
           command: ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/deploy.js || echo "No changes, skipping."
   deploy_iam:
@@ -131,9 +131,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: IAM Deploy Roles
           command: node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
@@ -159,9 +156,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
-      - run:
           name: Redshift Create Cluster
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
       - run:
@@ -173,9 +167,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: Kinesis Deploy
           command: ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
@@ -269,44 +260,45 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
-          context: deployment
+          context: org-global
       - deploy_security_groups:
           requires:
             - deploy_serverless
-          context: deployment
+          context: org-global
       - deploy_iam:
           requires:
             - deploy_serverless
-          context: deployment
+          context: org-global
       - deploy_s3:
           requires:
             - deploy_serverless
-          context: deployment
+          context: org-global
       - deploy_sqs:
           requires:
             - deploy_security_groups
             - deploy_iam
-          context: deployment
+          context: org-global
       - deploy_elasticache:
           requires:
             - deploy_security_groups
             - deploy_iam
-          context: deployment
+          context: org-global
       - deploy_dynamodb:
           requires:
             - deploy_security_groups
             - deploy_iam
-          context: deployment
+          context: org-global
       - deploy_redshift:
           requires:
             - deploy_security_groups
             - deploy_iam
-          context: deployment
+          context: org-global
       - deploy_kinesis:
           requires:
             - deploy_redshift
-          context: deployment
+          context: org-global
       - post_deployment:
+          context: org-global
           requires:
             - deploy_serverless
             - deploy_security_groups
@@ -317,11 +309,10 @@ workflows:
             - deploy_dynamodb
             - deploy_redshift
             - deploy_kinesis
-          context: deployment
       - purge:
           requires:
             - post_deployment
-          context: deployment
+          context: org-global
           filters:
             branches:
               ignore:
@@ -330,9 +321,17 @@ workflows:
       - seed:
           requires:
             - purge
-      - integration_tests:
+      - transactional_integration_tests:
+          requires:
+            - seed
+      - anaytics_integration_tests:
+          requires:
+            - seed
+      - graph_integration_tests:
           requires:
             - seed
       - merge:
           requires:
-            - integration_tests
+            - transactional_integration_tests
+            - analytics_integration_tests
+            - graph_integration_tests
