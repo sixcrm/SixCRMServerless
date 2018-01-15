@@ -11,6 +11,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 function getValidMessage(id){
 
@@ -38,6 +39,10 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
       });
     });
 
+    beforeEach(() => {
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+    });
+
     afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();
@@ -46,7 +51,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
     it('successfully executes', () => {
 
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
-      let message = getValidMessage(rebill_id);
+      const message = getValidMessage(rebill_id);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
         receiveMessages: ({queue, limit}) => {
@@ -63,9 +68,9 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
         }
       });
 
-      let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+      const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
       const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
-      let billToHoldForwardMessageController = new BillToHoldForwardMessageController();
+      const billToHoldForwardMessageController = new BillToHoldForwardMessageController();
 
       return billToHoldForwardMessageController.execute().then((result) => {
         du.info(result);
@@ -89,7 +94,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
 
         const allTransactions = transactions.transactions;
 
-        let lastTransaction = allTransactions.sort((f, s) => {
+        const lastTransaction = allTransactions.sort((f, s) => {
           if (f.created_at < s.created_at) return 1;
 
           if (f.created_at > s.created_at) return -1;
@@ -117,7 +122,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
       });
 
       const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
-      let billToHoldForwardMessageController = new BillToHoldForwardMessageController();
+      const billToHoldForwardMessageController = new BillToHoldForwardMessageController();
 
       return billToHoldForwardMessageController.execute().then((result) => {
         du.info(result);
@@ -128,7 +133,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
 
     it('fails with error response if non existing rebill is retrieved from sqs', () => {
 
-      let message = getValidMessage();
+      const message = getValidMessage();
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
         receiveMessages:({queue, limit}) => {
@@ -138,7 +143,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
       });
 
       const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
-      let billToHoldForwardMessageController = new BillToHoldForwardMessageController();
+      const billToHoldForwardMessageController = new BillToHoldForwardMessageController();
 
       return billToHoldForwardMessageController.execute().then((result) => {
         expect(result.response.code).to.equal('error');
@@ -146,10 +151,10 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
 
     });
 
-    it('properly handles error if happens in Process.js', () => {
+    it('properly handles error if happens in worker function', () => {
 
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
-      let message = getValidMessage(rebill_id);
+      const message = getValidMessage(rebill_id);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
         receiveMessages: ({queue, limit}) => {
@@ -157,7 +162,6 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
         },
         sendMessage: ({message_body: body, queue: queue}) => {
           expect(queue).to.equal('bill_error');
-          expect(JSON.parse(body).additional_information).to.equal('[500] Some error in Process.js');
           return Promise.resolve(true);
         },
         deleteMessage: ({queue, receipt_handle}) => {
@@ -166,22 +170,59 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
         }
       });
 
-      let process_mock = class {
-        constructor(){ }
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/processBilling.js'), {
+        execute: (message) => {
+          const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
 
-        process(argument_object){
-          eu.throwError('server', 'Some error in Process.js');
+          const response = new WorkerResponse('error');
+
+          return Promise.resolve(response);
         }
+      });
 
-      };
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Process.js'), process_mock);
 
       const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
-      let billToHoldForwardMessageController = new BillToHoldForwardMessageController();
+      const billToHoldForwardMessageController = new BillToHoldForwardMessageController();
 
       return billToHoldForwardMessageController.execute().then((result) => {
-        console.log(result);
+        expect(result.response.code).to.equal('success');
+      })
+
+    });
+
+    it('properly handles failure if happens in worker function', () => {
+
+      rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+      const message = getValidMessage(rebill_id);
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        receiveMessages: ({queue, limit}) => {
+          return Promise.resolve([message]);
+        },
+        sendMessage: ({message_body: body, queue: queue}) => {
+          expect(queue).to.equal('recover');
+          return Promise.resolve(true);
+        },
+        deleteMessage: ({queue, receipt_handle}) => {
+          expect(queue).to.equal('bill');
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/processBilling.js'), {
+        execute: (message) => {
+          const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
+
+          const response = new WorkerResponse('fail');
+
+          return Promise.resolve(response);
+        }
+      });
+
+      const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
+      const billToHoldForwardMessageController = new BillToHoldForwardMessageController();
+
+      return billToHoldForwardMessageController.execute().then((result) => {
         expect(result.response.code).to.equal('success');
       })
 
@@ -189,11 +230,11 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
 
     it('does not execute register and moves message to error queue if rebill is not billable due to billed at date', () => {
 
-      let rebill = MockEntities.getValidRebill();
-      let session = MockEntities.getValidSession(rebill.parentsession);
-      let schedules = [MockEntities.getValidProductSchedule(rebill.product_schedules[0])];
+      const rebill = MockEntities.getValidRebill();
+      const session = MockEntities.getValidSession(rebill.parentsession);
+      const schedules = [MockEntities.getValidProductSchedule(rebill.product_schedules[0])];
 
-      let message = getValidMessage(rebill.id);
+      const message = getValidMessage(rebill.id);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
         receiveMessages: ({queue, limit}) => {
@@ -223,7 +264,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
       });
 
 
-      let rebill_helper_mock = class {
+      const rebill_helper_mock = class {
         constructor(){ }
 
         updateRebillState({rebill, new_state, previous_state}){
@@ -236,7 +277,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), rebill_helper_mock);
 
-      let process_mock = class {
+      const process_mock = class {
         constructor(){ }
 
         process(argument_object){ expect.fail() }
@@ -246,7 +287,7 @@ describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () =>
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Process.js'), process_mock);
 
       const BillToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/billToHold.js');
-      let billToHoldForwardMessageController = new BillToHoldForwardMessageController();
+      const billToHoldForwardMessageController = new BillToHoldForwardMessageController();
 
       return billToHoldForwardMessageController.execute().then((result) => {
         expect(result.response.code).to.equal('success');
