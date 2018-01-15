@@ -11,7 +11,22 @@
 	"properties": {
 		"transactions_id":{"$ref": "#/definitions/UUIDv4"},
 		"product_schedule":{"$ref": "#/definitions/UUIDv4"},
-		"datetime": {"$ref": "../definitions/iso8601.json"}
+		"datetime": {"$ref": "../definitions/iso8601.json"},
+		"customer":{"$ref": "../definitions/uuidv4.json"},
+		"creditcard":{"$ref": "../definitions/uuidv4.json"},
+		"merchant_provider":{"$ref": "../definitions/uuidv4.json"},
+		"campaign":{"$ref": "../definitions/uuidv4.json"},
+		"affiliate":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+		"subaffiliate_1":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_2":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_3":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_4":{"$ref": "../definitions/uuidv4.json"},
+		"subaffiliate_5":{"$ref": "../definitions/uuidv4.json"},
+		"processor_result":{"$ref": "../general/response/responsetype.json"},
+		"type":{"$ref": "../general/transaction/type.json"},
+		"subtype":{"$ref": "../general/transaction/subtype.json"},
+		"amount":{"$ref": "../definitions/currency.json"}
 	},
 	"required":["transactions_id","product_schedule"]
 }

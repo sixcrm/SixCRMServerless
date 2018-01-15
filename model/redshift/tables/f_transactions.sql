@@ -42,3 +42,4 @@ CREATE TABLE IF NOT EXISTS f_transactions
     INTERLEAVED SORTKEY (account, datetime);
 
 COMMENT ON TABLE f_transactions IS 'Main Fact table with information about transactions';
+COMMENT ON COLUMN f_transactions.product_schedule IS 'Column is depreciated and moved';

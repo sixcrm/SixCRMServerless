@@ -678,7 +678,16 @@ module.exports = class Register extends PermissionedController {
       return {
         product_schedule: schedule.id,
         transactions_id: this.parameters.get('receipttransaction').id,
-        datetime: this.parameters.get('receipttransaction').created_at
+        datetime: this.parameters.get('receipttransaction').created_at,
+        customer: this.parameters.get('customer').id,
+        creditcard: this.parameters.get('processorresponse').creditcard.id,
+        merchant_provider: this.parameters.get('merchantprovider').id,
+        campaign: this.parameters.get('parentsession').campaign,
+        amount: this.parameters.get('amount'),
+        processor_result: this.parameters.get('processorresponse').code,
+        account: this.parameters.get('receipttransaction').account,
+        type: 'new',
+        subtype: 'main'
       }
     });
 

@@ -16,6 +16,7 @@ class AnalyticsController extends AnalyticsUtilities{
         this.default_query_filters = [
           'campaign',
           'merchant_provider',
+          'product_schedule',
           'affiliate',
           's1',
           's2',
@@ -394,6 +395,7 @@ class AnalyticsController extends AnalyticsUtilities{
     getTransactionSummaryReport(parameters){
 
         du.debug('Get Transactions Report Timeseries');
+        du.info(parameters);
 
         let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
 
@@ -403,7 +405,13 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters, period_selection);
 
-        return this.getResults('reports/transactionsummary/transaction_summary_report', parameters, this.default_query_filters);
+        /* In case product schedule is use as a parameter use a different query */
+
+        if(!_.has(parameters, 'product_schedule')){
+          return this.getResults('reports/transactionsummary/transaction_summary_report', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('reports/transactionsummary/transaction_summary_report_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 
