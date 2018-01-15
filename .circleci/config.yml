@@ -23,9 +23,6 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
-      - run:
-          name: Save Commit Hash
-          command: tools/saveCommitHashInCircle.sh `node deployment/circle/read_last_commit.js`
   lint:
     <<: *job-defaults
     steps:
@@ -64,7 +61,7 @@ jobs:
           command: cat $BASH_ENV
       - run:
           name: Verify Credentials
-          command: echo $AWS_ACCOUNT
+          command: echo $AWS_ACCOUNT;  echo $AWS_REGION; echo $AWS_ACCESS_KEY_ID; echo $AWS_SECRET_ACCESS_KEY;
   deploy_serverless:
     <<: *job-defaults
     steps:
