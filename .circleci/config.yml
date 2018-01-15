@@ -1,3 +1,10 @@
+#Todo:
+# Eliminate all of the AWS Credetial imports by adding the credetials to the image
+# Eliminate writes to S3 for the last successfult build.  Use cache instead
+# Integrate databackup before deployment
+# Increase the level of parallelism
+# Add Functional Tests
+
 defaults: &job-defaults
   docker:
     - image: circleci/node:7.10.0
@@ -17,7 +24,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Install npm wee
+          name: Install npm
           command: npm install
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
@@ -227,15 +234,24 @@ jobs:
       - run:
           name: Environment
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
-  graph_integration_tests:
+  deleteblock_integration_tests:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Graph Integration Tests
-          command: npm run test-graph
+          name: Deleteblock Integration Tests
+          command: npm run test-delteblocks
+  entity_integration_tests:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Entity Integration Tests
+          command: npm run test-entities
   analytics_integration_tests:
     <<: *job-defaults
     steps:
@@ -268,7 +284,7 @@ jobs:
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
               ./deployment/utilities/merge_branches.sh staging production
             fi
-            
+
 workflows:
   version: 2
   build_deploy_test_and_merge:
@@ -375,7 +391,10 @@ workflows:
       - seed:
           requires:
             - purge
-      - graph_integration_tests:
+      - entity_integration_tests:
+          requires:
+            - seed
+      - deleteblock_integration_tests:
           requires:
             - seed
       - analytics_integration_tests:
@@ -387,5 +406,6 @@ workflows:
       - merge:
           requires:
             - transactional_integration_tests
-            - graph_integration_tests
+            - entity_integration_tests
+            - deleteblock_integration_tests
             - analytics_integration_tests
