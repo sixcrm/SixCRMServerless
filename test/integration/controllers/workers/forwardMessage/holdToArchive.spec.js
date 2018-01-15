@@ -282,6 +282,72 @@ describe('controllers/workers/forwardmessage/holdToArchivedForwardMessage.js', (
 
       });
 
+      it('handles non-existant rebill', () => {
+
+          rebill_id = uuidV4();
+          let message = getValidMessage(rebill_id);
+
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+              receiveMessages:({queue, limit}) => {
+                  du.highlight('Message read from queue (mock): '+queue);
+                  return Promise.resolve([message]);
+              },
+              sendMessage:({message_body: body, queue: queue}) => {
+                  du.highlight('Message sent to queue (mock): '+queue);
+                  return Promise.resolve(true);
+              },
+              deleteMessage: ({queue, receipt_handle}) => {
+                  du.highlight('Deleting message from queue: '+queue);
+                  return Promise.resolve(true);
+              }
+          });
+
+          process.env.archivefilter = 'noship';
+
+          const HoldToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/holdToArchivedForwardMessage.js');
+          let holdToArchiveController = new HoldToArchiveController();
+
+          return holdToArchiveController.execute().then(result => {
+              du.info(result);
+
+              expect(result.response.code).to.equal('error');
+          });
+
+      });
+
+      it('handles incorrect rebill id', () => {
+
+          rebill_id = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+          let message = getValidMessage(rebill_id);
+
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+              receiveMessages:({queue, limit}) => {
+                  du.highlight('Message read from queue (mock): '+queue);
+                  return Promise.resolve([message]);
+              },
+              sendMessage:({message_body: body, queue: queue}) => {
+                  du.highlight('Message sent to queue (mock): '+queue);
+                  return Promise.resolve(true);
+              },
+              deleteMessage: ({queue, receipt_handle}) => {
+                  du.highlight('Deleting message from queue: '+queue);
+                  return Promise.resolve(true);
+              }
+          });
+
+          process.env.archivefilter = 'noship';
+
+          const HoldToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/holdToArchivedForwardMessage.js');
+          let holdToArchiveController = new HoldToArchiveController();
+
+          return holdToArchiveController.execute().then(result => {
+              du.info(result);
+
+              expect(result.response.code).to.equal('error');
+          });
+
+      });
+
   });
 
 });
