@@ -58,10 +58,10 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.awscredentials
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Display
-          command: cat ~/.awscredentials
+          command: cat $BASH_ENV
       - run:
           name: Verify Credentials
           command: echo $AWS_ACCOUNT
@@ -253,6 +253,10 @@ workflows:
       - lint:
           requires:
             - build
+          filters:
+            branches:
+              ignore:
+                - development
       - unit_tests:
           requires:
             - build
@@ -269,6 +273,7 @@ workflows:
                 - development
       - pre_deploy:
           requires:
+            - build
             - lint
             - unit_tests
             - functional_tests
