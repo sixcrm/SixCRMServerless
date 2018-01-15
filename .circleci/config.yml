@@ -61,11 +61,17 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
+          name: Ideally...
+          command: echo "Ideally this would set a bunch of credentials for the deploy steps?"
+  backup_dynamodb:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Verify Credentials
-          command: echo $AWS_ACCOUNT;  echo $AWS_REGION; echo $AWS_ACCESS_KEY_ID; echo $AWS_SECRET_ACCESS_KEY;
+          name: Backup DynamoDB
+          command: node ./deployment/dynamodb/backup_tables.js $CIRCLE_BRANCH
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -342,6 +348,16 @@ workflows:
             - unit_tests
             - functional_tests
           context: org-global
+      - backup_dynamodb:
+          requires:
+            - build
+            - lint
+            - unit_tests
+            - functional_tests
+          filters:
+            branches:
+              ignore:
+                - development
       - deploy_serverless:
           requires:
             - pre_deploy
