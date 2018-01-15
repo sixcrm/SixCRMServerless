@@ -227,10 +227,26 @@ jobs:
       - run:
           name: Environment
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
-  integration_tests:
+  graph_integration_tests:
     <<: *job-defaults
-    #more containers would be great
-    parallelism: 2
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Graph Integration Tests
+          command: npm run test-graph
+  analytics_integration_tests:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Analytics Integration Tests
+          command: npm run test-analytics
+  transactional_integration_tests:
+    <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
@@ -238,12 +254,6 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
-      - run:
-          name: Graph Integration Tests
-          command: npm run test-graph
-      - run:
-          name: Analytics Integration Tests
-          command: npm run test-analytics
   merge:
     <<: *job-defaults
     steps:
@@ -252,7 +262,13 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Merge To Upper
-          command: ./deployment/utilities/merge_branches.sh development staging
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "development" ]; then
+              ./deployment/utilities/merge_branches.sh development staging
+            elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
+              ./deployment/utilities/merge_branches.sh staging production
+            fi
+            
 workflows:
   version: 2
   build_deploy_test_and_merge:
@@ -359,9 +375,17 @@ workflows:
       - seed:
           requires:
             - purge
-      - integration_tests:
+      - graph_integration_tests:
+          requires:
+            - seed
+      - analytics_integration_tests:
+          requires:
+            - seed
+      - transactional_integration_tests:
           requires:
             - seed
       - merge:
           requires:
-            - integration_tests
+            - transactional_integration_tests
+            - graph_integration_tests
+            - analytics_integration_tests
