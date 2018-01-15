@@ -46,6 +46,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
+      - run:
           name: 'Unit Tests'
           command: npm run test-unit
   functional_tests:
@@ -54,6 +57,9 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
   pre_deploy:
     <<: *job-defaults
     steps:
