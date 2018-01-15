@@ -218,8 +218,9 @@ jobs:
       - run:
           name: Environment
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
-  transactional_integration_tests:
+  integration_tests:
     <<: *job-defaults
+    parallelism: 3
     steps:
       - checkout
       - restore_cache:
@@ -227,21 +228,9 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
-  graph_integration_tests:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Graph Integration Tests
           command: npm run test-graph
-  analytics_integration_tests:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
@@ -360,17 +349,9 @@ workflows:
       - seed:
           requires:
             - purge
-      - transactional_integration_tests:
-          requires:
-            - seed
-      - analytics_integration_tests:
-          requires:
-            - seed
-      - graph_integration_tests:
+      - integration_tests:
           requires:
             - seed
       - merge:
           requires:
-            - transactional_integration_tests
-            - analytics_integration_tests
-            - graph_integration_tests
+            - integration_tests
