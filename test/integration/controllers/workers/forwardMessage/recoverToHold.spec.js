@@ -10,6 +10,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 function getValidMessage(id){
 
@@ -27,66 +28,72 @@ process.argv.forEach((val, index, array) => {
 
 describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', () => {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
-
-  beforeEach(() => {
-    mockery.resetCache();
-    mockery.deregisterAll();
-  });
-
   describe('execute', () => {
 
-    let transaction;
-    let rebill;
+    before(() => {
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+    });
+
+    afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+    });
 
     it('successfully executes', () => {
 
-      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
-      let message = getValidMessage(rebill_id);
+      rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+      const message = getValidMessage(rebill_id);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages:({queue, limit}) => {
-          du.highlight('Message read from queue (mock): '+queue);
+        receiveMessages: ({queue, limit}) => {
+          du.highlight('Message read from queue (mock): ' + queue);
           return Promise.resolve([message]);
         },
-        sendMessage:({message_body: body, queue: queue}) => {
-          du.highlight('Message sent to queue (mock): '+queue);
+        sendMessage: ({message_body: body, queue: queue}) => {
+          du.highlight('Message sent to queue (mock): ' + queue);
           return Promise.resolve(true);
         },
         deleteMessage: ({queue, receipt_handle}) => {
-          du.highlight('Deleting message from queue: '+queue);
+          du.highlight('Deleting message from queue: ' + queue);
           return Promise.resolve(true);
         }
       });
 
+      const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
       const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
-      let recoverToHoldForwardMessageController = new RecoverToHoldForwardMessageController();
+      const recoverToHoldForwardMessageController = new RecoverToHoldForwardMessageController();
 
       return recoverToHoldForwardMessageController.execute().then((result) => {
         du.info(result);
 
         return true;
-      })
+      }).then(() => {
 
-    });
+        return rebillController.get({id: rebill_id})
 
-    it('creates new transaction', () => {
-      let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+      }).then((rebill) => {
 
-      return rebillController.get({id: rebill_id}).then((updatedRebill) => {
-        rebill = updatedRebill;
+        expect(rebill.state).to.equal('hold');
+        expect(rebill.previous_state).to.equal('recover');
 
-        return rebillController.listTransactions(rebill);
-      }).then((transactions) => {
+        return rebillController.listTransactions(rebill)
+          .then((transactions) => {
+            return {rebill: rebill, transactions: transactions}
+          });
+
+      }).then(({rebill, transactions}) => {
+
         const allTransactions = transactions.transactions;
 
-        transaction = allTransactions.sort((f,s) => {
+        let lastTransaction = allTransactions.sort((f, s) => {
           if (f.created_at < s.created_at) return 1;
 
           if (f.created_at > s.created_at) return -1;
@@ -94,23 +101,131 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
           return 0;
         })[0];
 
-        const timeSinceCreation = timestamp.getSecondsDifference(transaction.created_at);
+        const timeSinceCreation = timestamp.getSecondsDifference(lastTransaction.created_at);
 
-        expect(transaction.rebill).to.equal(rebill_id);
         expect(timeSinceCreation).to.be.below(10);
+        expect(lastTransaction.rebill).to.equal(rebill_id);
+        expect(lastTransaction.amount).to.equal(rebill.amount);
+        expect(lastTransaction.products.length).to.equal(rebill.products.length);
+
+      })
+    });
+
+    it('successfuly executes if no messages in queue found', () => {
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        receiveMessages: ({queue, limit}) => {
+          du.highlight('Message read from queue (mock): ' + queue);
+          return Promise.resolve([]);
+        }
       });
 
+      const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
+      const recoverToHoldForwardMessageController = new RecoverToHoldForwardMessageController();
+
+      return recoverToHoldForwardMessageController.execute().then((result) => {
+        du.info(result);
+
+        return true;
+      })
     });
 
-    it('creates valid transaction', () => {
-      expect(transaction.amount).to.equal(rebill.amount);
-      expect(transaction.products.length).to.equal(rebill.products.length);
+    it('fails with error response if non existing rebill is retrieved from sqs', () => {
+
+      const message = getValidMessage();
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        receiveMessages:({queue, limit}) => {
+          du.highlight('Message read from queue (mock): '+queue);
+          return Promise.resolve([message]);
+        }
+      });
+
+      const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
+      const recoverToHoldForwardMessageController = new RecoverToHoldForwardMessageController();
+
+      return recoverToHoldForwardMessageController.execute().then((result) => {
+        expect(result.response.code).to.equal('error');
+      })
+
     });
 
-    it('updates state of the rebill', () => {
-      expect(rebill.state).to.equal('hold');
-      expect(rebill.previous_state).to.equal('recover');
+    it('properly handles error if happens in worker function', () => {
+
+      rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+      const message = getValidMessage(rebill_id);
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        receiveMessages: ({queue, limit}) => {
+          return Promise.resolve([message]);
+        },
+        sendMessage: ({message_body: body, queue: queue}) => {
+          expect(queue).to.equal('recover_error');
+          return Promise.resolve(true);
+        },
+        deleteMessage: ({queue, receipt_handle}) => {
+          expect(queue).to.equal('recover');
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/recoverBilling.js'), {
+        execute: (message) => {
+          const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
+
+          const response = new WorkerResponse('error');
+
+          return Promise.resolve(response);
+        }
+      });
+
+      const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
+      const recoverToHoldForwardMessageController = new RecoverToHoldForwardMessageController();
+
+      return recoverToHoldForwardMessageController.execute().then((result) => {
+        expect(result.response.code).to.equal('success');
+      })
+
     });
+
+    it('properly handles failure if happens in worker function', () => {
+
+      rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+      const message = getValidMessage(rebill_id);
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        receiveMessages: ({queue, limit}) => {
+          return Promise.resolve([message]);
+        },
+        sendMessage: ({message_body: body, queue: queue}) => {
+          expect(queue).to.equal('recover');
+          return Promise.resolve(true);
+        },
+        deleteMessage: ({queue, receipt_handle}) => {
+          expect(queue).to.equal('bill');
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/recoverBilling.js'), {
+        execute: (message) => {
+          const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
+
+          const response = new WorkerResponse('fail');
+
+          return Promise.resolve(response);
+        }
+      });
+
+      const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
+      const recoverToHoldForwardMessageController = new RecoverToHoldForwardMessageController();
+
+      return recoverToHoldForwardMessageController.execute().then((result) => {
+        expect(result.response.code).to.equal('success');
+      })
+
+    });
+
   });
 
 });

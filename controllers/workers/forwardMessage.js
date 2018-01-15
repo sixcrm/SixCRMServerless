@@ -29,7 +29,7 @@ module.exports = class forwardMessageController extends RelayController {
       .then(() => this.respond('success'))
       .catch((error) => {
         du.error(error);
-        this.respond('error');
+        return this.respond('error');
       });
 
     }
