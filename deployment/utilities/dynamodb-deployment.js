@@ -6,6 +6,8 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
@@ -218,15 +220,15 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
     }
 
-    backupTables(){
+    backupTables({branch, version}){
 
       return this.getTableDefinitionFilenames().then((table_definition_filenames) => {
 
         let table_backup_promises = arrayutilities.map(table_definition_filenames, (table_definition_filename) => {
-          return () => this.backupTable(table_definition_filename);
+          return this.backupTable({table_definition_filename: table_definition_filename, branch: branch, version: version});
         });
 
-        return arrayutilities.serial(
+        return Promise.all(
           table_backup_promises
         ).then(() => {
           return 'Complete';
@@ -236,7 +238,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
     }
 
-    backupTable(table_definition_filename) {
+    backupTable({table_definition_filename, branch, version}) {
 
       let table_definition = global.SixCRM.routes.include('tabledefinitions', table_definition_filename);
 
@@ -244,11 +246,26 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
         if(objectutilities.isObject(result)){
 
-          return this.dynamodbutilities.createBackup(table_definition.Table.TableName).then((result) => {
+          let parameters = {
+            TableName: table_definition.Table.TableName,
+            BackupName: table_definition.Table.TableName+'-'+stringutilities.replaceAll(timestamp.getISO8601(),':','.')
+          };
 
-            du.highlight(table_definition.Table.TableName+' backup triggered.');
+          if(!_.isNull(branch) && !_.isUndefined(branch) && !_.isNull(version) && !_.isUndefined(version)){
+            parameters.BackupName = table_definition.Table.TableName+'-'+branch+'-'+version;
+          }
 
-            return true;
+          return this.dynamodbutilities.createBackup(parameters).then((result) => {
+
+            if(objectutilities.hasRecursive(result, 'BackupDetails.BackupStatus')){
+              du.highlight(table_definition.Table.TableName+' backup triggered: ('+result.BackupDetails.BackupName+')');
+              return true;
+            }
+
+            du.warning('Unable to trigger backup.');
+            du.info(result);
+            
+            return false;
 
           });
 
