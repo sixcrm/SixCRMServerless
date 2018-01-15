@@ -190,6 +190,8 @@ jobs:
           command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   purge:
     <<: *job-defaults
+    #more containers would be great
+    parallelism: 2
     steps:
       - checkout
       - restore_cache:
@@ -229,7 +231,8 @@ jobs:
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
   integration_tests:
     <<: *job-defaults
-    parallelism: 3
+    #more containers would be great
+    parallelism: 2
     steps:
       - checkout
       - restore_cache:
