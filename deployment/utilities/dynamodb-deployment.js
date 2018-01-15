@@ -218,6 +218,48 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
     }
 
+    backupTables(){
+
+      return this.getTableDefinitionFilenames().then((table_definition_filenames) => {
+
+        let table_backup_promises = arrayutilities.map(table_definition_filenames, (table_definition_filename) => {
+          return () => this.backupTable(table_definition_filename);
+        });
+
+        return arrayutilities.serial(
+          table_backup_promises
+        ).then(() => {
+          return 'Complete';
+        });
+
+      });
+
+    }
+
+    backupTable(table_definition_filename) {
+
+      let table_definition = global.SixCRM.routes.include('tabledefinitions', table_definition_filename);
+
+      return this.tableExists(table_definition.Table.TableName).then((result) => {
+
+        if(objectutilities.isObject(result)){
+
+          return this.dynamodbutilities.createBackup(table_definition.Table.TableName).then((result) => {
+
+            du.highlight(table_definition.Table.TableName+' backup triggered.');
+
+            return true;
+
+          });
+
+        }
+
+        return true;
+
+      });
+
+    }
+
     seedTables() {
 
       du.debug('Seed Tables');
