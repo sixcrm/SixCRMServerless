@@ -13,6 +13,7 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 function getValidMessage(id){
 
@@ -166,10 +167,118 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
 
                   expect(rebill.state).to.equal('archived');
                   expect(rebill.previous_state).to.equal('recover');
-                  expect(timeSinceCreation).to.be.below(2);
+                  expect(timeSinceCreation).to.be.below(10);
 
               });
           });
+
+      });
+
+      it('properly handles errors from worker function', () => {
+
+          PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+
+          rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+          const message = getValidMessage(rebill_id);
+
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+              receiveMessages: ({queue, limit}) => {
+                  return Promise.resolve([message]);
+              },
+              sendMessage: ({message_body: body, queue: queue}) => {
+                  expect(queue).to.equal('recover_error');
+                  return Promise.resolve(true);
+              },
+              deleteMessage: ({queue, receipt_handle}) => {
+                  expect(queue).to.equal('recover');
+                  return Promise.resolve(true);
+              }
+          });
+
+          process.env.archivefilter = 'all';
+
+          mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/archive.js'), {
+              execute: (message) => {
+                  const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
+                  const response = new WorkerResponse('error');
+
+                  return Promise.resolve(response);
+              }
+          });
+
+          const RecoverToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToArchivedForwardMessage.js');
+          let recoverToArchiveController = new RecoverToArchiveController();
+
+          return recoverToArchiveController.execute().then(result => {
+              expect(result.response.code).to.equal('success');
+
+              let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+              return rebillController.get({id: rebill_id}).then((rebill) => {
+                  du.info(rebill);
+
+                  const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+
+                  expect(rebill.state).to.equal('recover_error');
+                  expect(rebill.previous_state).to.equal('recover');
+                  expect(timeSinceCreation).to.be.below(10);
+
+              });
+          })
+
+      });
+
+      it('properly handles failures from worker function', () => {
+
+          PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+
+          rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+          const message = getValidMessage(rebill_id);
+
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+              receiveMessages: ({queue, limit}) => {
+                  return Promise.resolve([message]);
+              },
+              sendMessage: ({message_body: body, queue: queue}) => {
+                  expect(queue).to.equal('recover_failed');
+                  return Promise.resolve(true);
+              },
+              deleteMessage: ({queue, receipt_handle}) => {
+                  expect(queue).to.equal('recover');
+                  return Promise.resolve(true);
+              }
+          });
+
+          process.env.archivefilter = 'all';
+
+          mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/archive.js'), {
+              execute: (message) => {
+                  const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
+                  const response = new WorkerResponse('fail');
+
+                  return Promise.resolve(response);
+              }
+          });
+
+          const RecoverToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToArchivedForwardMessage.js');
+          let recoverToArchiveController = new RecoverToArchiveController();
+
+          return recoverToArchiveController.execute().then(result => {
+              expect(result.response.code).to.equal('success');
+
+              let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+              return rebillController.get({id: rebill_id}).then((rebill) => {
+                  du.info(rebill);
+
+                  const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+
+                  expect(rebill.state).to.equal('recover_failed');
+                  expect(rebill.previous_state).to.equal('recover');
+                  expect(timeSinceCreation).to.be.below(10);
+
+              });
+          })
 
       });
 
