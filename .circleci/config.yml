@@ -412,6 +412,7 @@ workflows:
       - seed:
           requires:
             - purge
+            - post_deployment
       - entity_integration_tests:
           requires:
             - seed

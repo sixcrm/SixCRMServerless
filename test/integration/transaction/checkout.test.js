@@ -37,6 +37,7 @@ describe('Checkout Test', function() {
       du.highlight('Request Time: ', request_time);
       du.highlight('Signature: ', signature);
       du.highlight('Authorization String: ', authorization_string);
+      du.highlight('Endpoint: ', endpoint);
       du.output(appropriate_spacing+'Acquiring Token');
 
       let affiliate_id = random.createRandomString(10);
