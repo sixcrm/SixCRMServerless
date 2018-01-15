@@ -3,12 +3,6 @@ defaults: &job-defaults
     - image: circleci/node:7.10.0
       environment:
         - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
-deployment: &deployment
-  <<: *job-defaults
-  steps:
-    - run:
-        name: Add Deployment Keys
-        command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
 
 version: 2
 jobs:
@@ -54,14 +48,14 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
   pre_deploy:
-    <<: *deployment
+    <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Display
-          command: cat $BASH_ENV
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Verify Credentials
           command: echo $AWS_ACCOUNT;  echo $AWS_REGION; echo $AWS_ACCESS_KEY_ID; echo $AWS_SECRET_ACCESS_KEY;
