@@ -190,8 +190,6 @@ jobs:
           command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   purge:
     <<: *job-defaults
-    #more containers would be great
-    parallelism: 2
     steps:
       - checkout
       - restore_cache:
@@ -274,21 +272,21 @@ workflows:
             - build
           filters:
             branches:
-              ignore:
+              only:
                 - development
       - unit_tests:
           requires:
             - build
           filters:
             branches:
-              ignore:
+              only:
                 - development
       - functional_tests:
           requires:
             - build
           filters:
             branches:
-              ignore:
+              only:
                 - development
       - pre_deploy:
           requires:
