@@ -1,6 +1,6 @@
 #Todo:
 # Eliminate all of the AWS Credetial imports by adding the credetials to the image
-# Eliminate writes to S3 for the last successfult build.  Use cache instead
+# Eliminate writes to S3 for the last successful build.  Use cache instead
 # Integrate databackup before deployment
 # Increase the level of parallelism
 # Add Functional Tests
@@ -240,15 +240,23 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      #gross
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Deleteblock Integration Tests
-          command: npm run test-delteblocks
+          command: npm run test-deleteblocks
   entity_integration_tests:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      #gross
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Entity Integration Tests
           command: npm run test-entities
@@ -258,6 +266,10 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      #gross
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
@@ -267,6 +279,9 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
