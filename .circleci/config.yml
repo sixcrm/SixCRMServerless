@@ -207,21 +207,21 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      - run:
-          name: SQS Purge
-          command: node ./deployment/sqs/purge_queues.js
-      - run:
-          name: Cloudsearch Purge
-          command: node ./deployment/cloudsearch/purge.js
-      - run:
-          name: Elasticache Purge
-          command: node ./deployment/elasticache/purge.js
-      - run:
-          name: DynamoDB Purge
-          command: node ./deployment/dynamodb/purge_tables.js
+      #- run:
+      #    name: Add Deployment Keys
+      #    command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
+      #- run:
+      #    name: SQS Purge
+      #    command: node ./deployment/sqs/purge_queues.js
+      #- run:
+      #    name: Cloudsearch Purge
+      #    command: node ./deployment/cloudsearch/purge.js
+      #- run:
+      #    name: Elasticache Purge
+      #    command: node ./deployment/elasticache/purge.js
+      #- run:
+      #    name: DynamoDB Purge
+      #    command: node ./deployment/dynamodb/purge_tables.js
   seed:
     <<: *job-defaults
     steps:
