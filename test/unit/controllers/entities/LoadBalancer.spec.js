@@ -2,25 +2,10 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidLoadBalancer() {
-    return {
-        "id":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-        "name": "Seed load balancer",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "merchantproviders":[
-            {
-                "id":"6c40761d-8919-4ad6-884d-6a46a776cfb9",
-                "distribution":0.75
-            },
-            {
-                "id":"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
-                "distribution":0.25
-            }
-        ],
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidLoadBalancer()
 }
 
 describe('controllers/LoadBalancer.js', () => {
@@ -200,10 +185,29 @@ describe('controllers/LoadBalancer.js', () => {
             expect(loadBalancerController.getMerchantProviderConfigurations(load_balancer)).to.deep.equal([{
                 distribution: load_balancer.merchantproviders[0].distribution,
                 merchantprovider: load_balancer.merchantproviders[0].id
-            },{
-                distribution: load_balancer.merchantproviders[1].distribution,
-                merchantprovider: load_balancer.merchantproviders[1].id
             }]);
+        })
+    });
+
+    describe('getMerchantProviderConfiguration', () => {
+
+        it('retrieves merchant provider configuration', () => {
+            let merchant_provider_configuration = {
+                merchantprovider: 'dummy_id'
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProvider.js'), {
+                get: ({id}) => {
+                    expect(id).to.equal(merchant_provider_configuration.merchantprovider);
+                    return Promise.resolve('a_merchant_provider');
+                }
+            });
+
+            let loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+
+            return loadBalancerController.getMerchantProviderConfiguration(merchant_provider_configuration).then((result) => {
+                expect(result).to.deep.equal('a_merchant_provider');
+            });
         })
     });
 });

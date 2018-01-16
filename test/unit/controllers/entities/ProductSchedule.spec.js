@@ -2,31 +2,10 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidProductSchedule() {
-    return {
-        "id":"12529a17-ac32-4e46-b05b-83862843055d",
-        "name":"Product Schedule 1",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-        "schedule":[
-            {
-                "product_id":"616cc994-9480-4640-b26c-03810a679fe3",
-                "price":4.99,
-                "start":0,
-                "end":14,
-                "period":14
-            },
-            {
-                "product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
-                "price":34.99,
-                "start":14,
-                "period":30
-            }
-        ],
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidProductSchedule()
 }
 
 describe('controllers/ProductSchedule.js', () => {
@@ -47,14 +26,15 @@ describe('controllers/ProductSchedule.js', () => {
     describe('listByProduct', () => {
 
         it('lists product schedules by product', () => {
+
+            let product_schedule = getValidProductSchedule();
+
             let params = {
                 product: {
-                    id: '616cc994-9480-4640-b26c-03810a679fe3'
+                    id: product_schedule.schedule[0].product_id
                 },
                 pagination: 0
             };
-
-            let product_schedule = getValidProductSchedule();
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
@@ -278,7 +258,6 @@ describe('controllers/ProductSchedule.js', () => {
                 createINQueryParameters: (field, list_array) => {
                     expect(field).to.equal('id');
                     expect(list_array[0]).to.deep.equal(product_schedule.schedule[0].product_id);
-                    expect(list_array[1]).to.deep.equal(product_schedule.schedule[1].product_id);
                     return Promise.resolve({
                         filter_expression: 'a_filter',
                         expression_attribute_values: 'an_expression_values'

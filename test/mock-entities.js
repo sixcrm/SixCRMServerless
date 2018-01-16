@@ -12,6 +12,10 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
 
+  static getValidId(id) {
+    return (!_.isUndefined(id) && !_.isNull(id)) ? id : uuidV4();
+  }
+
   static getValidSchedule(ids){
 
     ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
@@ -43,7 +47,7 @@ class MockEntities {
     let schedule = this.getValidSchedule();
 
     return  {
-      id: uuidV4(),
+      id: this.getValidId(id),
       name: randomutilities.createRandomString(20),
       account: this.getTestAccountID(),
       loadbalancer: uuidV4(),
@@ -56,12 +60,10 @@ class MockEntities {
 
   static getValidMessage(id){
 
-    id = (!_.isUndefined(id) && !_.isNull(id))?id:uuidV4();
-
     return {
       MessageId:"someMessageID",
       ReceiptHandle:"SomeReceiptHandle",
-      Body: JSON.stringify({id:id}),
+      Body: JSON.stringify({id: this.getValidId(id)}),
       MD5OfBody:"SomeMD5"
     };
 
@@ -69,10 +71,8 @@ class MockEntities {
 
   static getValidMerchantProvider(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     return {
-      id: id,
+        id: this.getValidId(id),
   		account:this.getTestAccountID(),
   		name:randomutilities.createRandomString(20),
   		processor:{
@@ -112,10 +112,8 @@ class MockEntities {
 
   static getValidAccessKey(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     return {
-      id:id,
+      id: this.getValidId(id),
       account:this.getTestAccountID(),
       name:randomutilities.createRandomString(10),
       notes: 'This is a mock access key.',
@@ -155,23 +153,20 @@ class MockEntities {
 
   static getValidTransactionProduct(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
     return {
-      product: id,
+      product: this.getValidId(id),
       amount: randomutilities.randomDouble(1.0, 300.0, 2)
     };
   }
 
   static getValidCustomer(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     let firstname = randomutilities.createRandomName('first');
     let lastname = randomutilities.createRandomName('last');
     let email = firstname+'.'+lastname+'@'+randomutilities.createDomainName();
 
     let customer = {
-      id:id,
+      id: this.getValidId(id),
       account:this.getTestAccountID(),
       email: email,
       firstname: firstname,
@@ -199,10 +194,8 @@ class MockEntities {
 
   static getValidProduct(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     return {
-      id:id,
+      id: this.getValidId(id),
       name:randomutilities.createRandomString(20),
       sku:randomutilities.createRandomString(20),
       ship:randomutilities.randomBoolean(),
@@ -223,10 +216,8 @@ class MockEntities {
 
   static getValidFulfillmentProvider(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     return {
-      id:id,
+        id: this.getValidId(id),
   		account: this.getTestAccountID(),
       name: randomutilities.createRandomString(20),
   		provider:{
@@ -244,10 +235,8 @@ class MockEntities {
 
   static getValidShippingReceipt(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     return {
-      id:id,
+        id: this.getValidId(id),
   		account: this.getTestAccountID(),
       tracking:{
         carrier: 'UPS',
@@ -265,10 +254,8 @@ class MockEntities {
 
   static getValidTransaction(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     return {
-      id: id,
+      id: this.getValidId(id),
       amount: 14.99,
       alias:"T"+randomutilities.createRandomString(9),
       account: this.getTestAccountID(),
@@ -290,11 +277,9 @@ class MockEntities {
 
   static getValidRebill(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     return {
       bill_at: timestamp.getISO8601(),
-      id: id,
+      id: this.getValidId(id),
       account: this.getTestAccountID(),
       parentsession: uuidV4(),
       product_schedules: [uuidV4()],
@@ -307,10 +292,8 @@ class MockEntities {
 
   static getValidSession(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?uuidV4():id;
-
     return {
-      id: id,
+      id: this.getValidId(id),
       account:this.getTestAccountID(),
       customer: uuidV4(),
       campaign:uuidV4(),
@@ -373,9 +356,9 @@ class MockEntities {
 
     type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
 
-    name = (!_.isUndefined(name) && !_.isNull(name))?name:randomutilities.creatRandomName('full');
+    name = (!_.isUndefined(name) && !_.isNull(name))?name:randomutilities.createRandomName('full');
 
-    address = (!_.isUndefined(address) && !_.isNull(address))?address:this.createAddress();
+    address = (!_.isUndefined(address) && !_.isNull(address))?address:this.getValidAddress();
 
     return {
       name: name,
@@ -435,6 +418,259 @@ class MockEntities {
 
   }
 
+  static getValidCreditCard(id){
+
+    return {
+        id: this.getValidId(id),
+        account: this.getTestAccountID(),
+        address: this.getValidAddress(),
+        number: this.getValidCreditCardNumber(),
+        ccv: this.getValidCreditCardCCV(),
+        expiration: this.getValidCreditCardExpiration(),
+        name: randomutilities.createRandomName('full'),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidCustomerNotes(id) {
+
+    return {
+        id: this.getValidId(id),
+        account: this.getTestAccountID(),
+        customer: uuidV4(),
+        user:randomutilities.createRandomEmail(),
+        body: randomutilities.createRandomString(20),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidLoadBalancer(id) {
+
+    return {
+        id: this.getValidId(id),
+        account: this.getTestAccountID(),
+        name: randomutilities.createRandomName('full'),
+        merchantproviders: [{
+            id: uuidV4(),
+            distribution: 0.25
+        }],
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidNotification(id) {
+
+    return {
+        id: this.getValidId(id),
+        user: randomutilities.createRandomEmail(),
+        action: randomutilities.createRandomString(10),
+        account: this.getTestAccountID(),
+        title: randomutilities.createRandomString(10),
+        type: randomutilities.createRandomString(10),
+        category: randomutilities.createRandomString(10),
+        body: randomutilities.createRandomString(20),
+        expires_at: timestamp.getISO8601(),
+        read_at: timestamp.getISO8601(),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidUserSigningString(id) {
+
+    return {
+        id: this.getValidId(id),
+        user: randomutilities.createRandomEmail(),
+        name: randomutilities.createRandomName('full'),
+        signing_string: randomutilities.createRandomString(20),
+        used_at: timestamp.getISO8601(),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidUser(id) {
+
+    id = (_.isUndefined(id) || _.isNull(id)) ? randomutilities.createRandomEmail():id;
+
+    return {
+        id: id,
+        name: randomutilities.createRandomName('full'),
+        first_name: randomutilities.createRandomName('first'),
+        last_name: randomutilities.createRandomName('last'),
+        auth0_id: randomutilities.createRandomString(10),
+        active:randomutilities.randomBoolean(),
+        termsandconditions: randomutilities.createRandomString(10),
+        alias: randomutilities.createRandomString(40),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidUserACL(id) {
+
+    return {
+        id: this.getValidId(id),
+        account: this.getTestAccountID(),
+        user: randomutilities.createRandomEmail(),
+        role: uuidV4(),
+        pending: randomutilities.createRandomString(10),
+        termsandconditions: randomutilities.createRandomString(10),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidAffiliate(id) {
+
+    return {
+        id: this.getValidId(id),
+        account: this.getTestAccountID(),
+        name: randomutilities.createRandomName('full'),
+        affiliate_id: randomutilities.createRandomString(10),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidAccount(id) {
+
+    return {
+        id: this.getValidId(id),
+        name: randomutilities.createRandomName('full'),
+        active: randomutilities.randomBoolean(),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidRole(id) {
+
+    return {
+        id: this.getValidId(id),
+        name: randomutilities.createRandomName('full'),
+        active: randomutilities.randomBoolean(),
+        permissions: {
+          allow: [
+              randomutilities.createRandomString(10)
+          ],
+          deny: [
+              randomutilities.createRandomString(10)
+          ]
+        },
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidBill(id) {
+
+    return {
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      paid: randomutilities.randomBoolean(),
+      paid_result: randomutilities.createRandomString(10),
+      outstanding: randomutilities.randomBoolean(),
+      period_start_at: timestamp.getISO8601(),
+      period_end_at: timestamp.getISO8601(),
+      available_at: timestamp.getISO8601(),
+      detail: [{
+          created_at: timestamp.getISO8601(),
+          description: randomutilities.createRandomString(10),
+          amount: randomutilities.randomDouble(1, 200, 2)
+      }],
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidCampaign(id) {
+
+    return {
+        id: this.getValidId(id),
+        account: this.getTestAccountID(),
+        allow_prepaid: randomutilities.randomBoolean(),
+        show_prepaid: randomutilities.randomBoolean(),
+        name: randomutilities.createRandomName('full'),
+        productschedules: [
+            uuidV4()
+        ],
+        emailtemplates: [
+            uuidV4()
+        ],
+        affiliate_allow: [
+            uuidV4()
+        ],
+        affiliate_deny: [
+            uuidV4()
+        ],
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidTracker(id) {
+
+    let tracker_types = ["postback", "html"];
+
+    let event_type = ["click", "lead", "main", "upsell", "confirm"];
+
+    return {
+        id: this.getValidId(id),
+        affiliates: [
+            uuidV4()
+        ],
+        campaigns: [
+            uuidV4()
+        ],
+        account: this.getTestAccountID(),
+        type: randomutilities.selectRandomFromArray(tracker_types),
+        event_type: [
+            randomutilities.selectRandomFromArray(event_type)
+        ],
+        name: randomutilities.createRandomName('full'),
+        body: randomutilities.createRandomString(20),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidSMTPProvider(id) {
+
+    let random_hostname = randomutilities.createRandomString(5) + '.' + randomutilities.createDomainName();
+
+    return {
+        id: this.getValidId(id),
+        account: this.getTestAccountID(),
+        name: randomutilities.createRandomName('full'),
+        hostname: random_hostname,
+        username: randomutilities.createRandomString(10),
+        password: randomutilities.createRandomString(10),
+        port:randomutilities.randomInt(100,999),
+        from_email: randomutilities.createRandomEmail(),
+        from_name: randomutilities.createRandomName('full'),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
+
+  static getValidEmailTemplate(id) {
+
+    return {
+        id: this.getValidId(id),
+        account: this.getTestAccountID(),
+        name: randomutilities.createRandomName('full'),
+        body: randomutilities.createRandomString(20),
+        subject: randomutilities.createRandomString(10),
+        type: randomutilities.createRandomString(10),
+        smtp_provider: uuidV4(),
+        created_at: timestamp.getISO8601(),
+        updated_at: timestamp.getISO8601()
+    }
+  }
 }
 
 module.exports = MockEntities;
