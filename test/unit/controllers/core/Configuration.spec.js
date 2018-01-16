@@ -149,6 +149,9 @@ describe('controllers/core/Configuration.js', () => {
                 putObject: (parameters) => {
                     return Promise.resolve();
                 },
+                hasCredentials:() => {
+                  return true;
+                }
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
@@ -180,6 +183,9 @@ describe('controllers/core/Configuration.js', () => {
                 putObject: (parameters) => {
                     return Promise.resolve();
                 },
+                hasCredentials:() => {
+                  return true;
+                }
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
@@ -261,6 +267,9 @@ describe('controllers/core/Configuration.js', () => {
                 putObject: (parameters) => {
                     return Promise.resolve();
                 },
+                hasCredentials:() => {
+                  return true;
+                }
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
@@ -290,6 +299,9 @@ describe('controllers/core/Configuration.js', () => {
                     return Promise.resolve({
                         Body: 'an_unexpected_value'
                     });
+                },
+                hasCredentials:() => {
+                  return true;
                 }
             });
 
@@ -307,6 +319,9 @@ describe('controllers/core/Configuration.js', () => {
                 },
                 getObject: (parameters) => {
                     return Promise.resolve({});
+                },
+                hasCredentials:() => {
+                  return true;
                 }
             });
 
@@ -333,6 +348,9 @@ describe('controllers/core/Configuration.js', () => {
                 putObject: (parameters) => {
                     return Promise.resolve();
                 },
+                hasCredentials:() => {
+                  return true;
+                }
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
@@ -403,7 +421,23 @@ describe('controllers/core/Configuration.js', () => {
         });
     });
 
-    describe('propagateCache', () => {
+    it('gets s3 config when value exists', () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
+            objectExists: (parameters) => {
+                return Promise.resolve(true);
+            },
+            getObject: (parameters) => {
+                return Promise.resolve({
+                    Body: JSON.stringify({test_key: 'test_value'})
+                });
+            },
+            putObject: (parameters) => {
+                return Promise.resolve();
+            },
+            hasCredentials:() => {
+              return true;
+            }
+        });
 
         it('throws error when "source" is not a string', () => {
 
@@ -428,7 +462,23 @@ describe('controllers/core/Configuration.js', () => {
         });
     });
 
-    describe('propagateToRedisCache', () => {
+    it('gets redis config when value exists', () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
+            objectExists: (parameters) => {
+                return Promise.resolve(true);
+            },
+            getObject: (parameters) => {
+                return Promise.resolve({
+                    Body: JSON.stringify({})
+                });
+            },
+            putObject: (parameters) => {
+                return Promise.resolve();
+            },
+            hasCredentials:() => {
+              return true;
+            }
+        });
 
         it('throws error when "key" is not set', () => {
 
