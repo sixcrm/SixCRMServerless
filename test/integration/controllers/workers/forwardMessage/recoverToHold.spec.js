@@ -198,11 +198,11 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
           return Promise.resolve([message]);
         },
         sendMessage: ({message_body: body, queue: queue}) => {
-          expect(queue).to.equal('recover');
+          expect(queue).to.equal('recover_failed');
           return Promise.resolve(true);
         },
         deleteMessage: ({queue, receipt_handle}) => {
-          expect(queue).to.equal('bill');
+          expect(queue).to.equal('recover');
           return Promise.resolve(true);
         }
       });
