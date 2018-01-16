@@ -147,6 +147,22 @@ function getValidRebill(){
 
 }
 
+function getValidRebillWithMerchantProvider(){
+
+  return {
+    "bill_at": "2017-04-06T18:40:41.405Z",
+    "id": "70de203e-f2fd-45d3-918b-460570338c9b",
+    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "parentsession": "1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d",
+    "product_schedules": ["2200669e-5e49-4335-9995-9c02f041d91b"],
+    "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
+    "amount": 79.99,
+    "created_at":"2017-04-06T18:40:41.405Z",
+    "updated_at":"2017-04-06T18:41:12.521Z"
+  };
+
+}
+
 function getValidAmount(){
   return 79.99;
 }
@@ -1701,13 +1717,6 @@ describe('controllers/providers/Register.js', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
 
-        let mock_process = class {
-          constructor(){}
-          process({customer: customer, productschedule: productschedule, amount: amount}){
-            return Promise.resolve(getValidProcessResponse());
-          }
-        }
-
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           get: ({id}) => {
             return Promise.resolve(getValidTransactionObject())
@@ -1764,38 +1773,73 @@ describe('controllers/providers/Register.js', () => {
           removeFromSearchIndex(entity){
             return Promise.resolve(true);
           }
-        }
+        };
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-        let fake = class Reverse {
+        let mock_refund = class {
 
-            constructor(){
+          constructor(){}
 
-            }
-
-            reverse(){
-
-                return Promise.resolve({
-                    code: 'error',
-                    result:
-                        { response: '3',
-                            responsetext: 'Reverse amount may not exceed the transaction balance REFID:3220888806',
-                            authcode: '',
-                            transactionid: '',
-                            avsresponse: '',
-                            cvvresponse: '',
-                            orderid: '',
-                            type: 'refund',
-                            response_code: '300' },
-                    message: 'Reverse amount may not exceed the transaction balance REFID:3220888806'
-                });
-
-            }
-
+          reverse(){
+            return Promise.resolve(getValidProcessResponse());
+          }
         };
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Reverse.js'), fake);
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Reverse.js'), mock_refund);
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+          get: ({id}) => {
+            return Promise.resolve(getValidRebillWithMerchantProvider())
+          },
+          getMerchantProvider: (rebill) => {
+            return Promise.resolve(getValidMerchantProvider())
+          },
+          getParentSession: (rebill) => {
+            return Promise.resolve(getValidParentSession());
+          },
+          listProductSchedules: (rebill) => {
+            return Promise.resolve(getValidProductSchedules());
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), {
+          get: ({id}) => {
+            return Promise.resolve(getValidCustomer())
+          },
+          getCreditCards: (customer) => {
+            return Promise.resolve(getValidCreditCards())
+          }
+        });
+
+        let mock_productschedule = class {
+          constructor(){
+
+          }
+          getTransactionProducts({day, product_schedules}){
+            return Promise.resolve([]);
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), mock_productschedule);
+
+        let mock_rebill_helper = class {
+          constructor(){
+
+          }
+          calculateDayInCycle(session_created_at){
+            return Promise.resolve(5);
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+          putRecord: (table, object) => {
+            console.log(table, object);
+            return Promise.resolve({});
+          }
+        });
 
         PermissionTestGenerators.givenUserWithAllowed('*', '*');
 
@@ -1834,13 +1878,6 @@ describe('controllers/providers/Register.js', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
 
-        let mock_process = class {
-          constructor(){}
-          process({customer: customer, productschedule: productschedule, amount: amount}){
-            return Promise.resolve(getValidProcessResponse());
-          }
-        }
-
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           get: ({id}) => {
             return Promise.resolve(getValidTransactionObject())
@@ -1897,38 +1934,73 @@ describe('controllers/providers/Register.js', () => {
           removeFromSearchIndex(entity){
             return Promise.resolve(true);
           }
-        }
+        };
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-        let fake = class Refund {
+        let mock_refund = class {
 
-            constructor(){
-
-            }
+            constructor(){}
 
             refund(){
-
-                return Promise.resolve({
-                    code: 'error',
-                    result:
-                        { response: '3',
-                            responsetext: 'Refund amount may not exceed the transaction balance REFID:3220888806',
-                            authcode: '',
-                            transactionid: '',
-                            avsresponse: '',
-                            cvvresponse: '',
-                            orderid: '',
-                            type: 'refund',
-                            response_code: '300' },
-                    message: 'Refund amount may not exceed the transaction balance REFID:3220888806'
-                });
-
+                return Promise.resolve(getValidProcessResponse());
             }
-
         };
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Refund.js'), fake);
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Refund.js'), mock_refund);
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+          get: ({id}) => {
+            return Promise.resolve(getValidRebillWithMerchantProvider())
+          },
+          getMerchantProvider: (rebill) => {
+            return Promise.resolve(getValidMerchantProvider())
+          },
+          getParentSession: (rebill) => {
+            return Promise.resolve(getValidParentSession());
+          },
+          listProductSchedules: (rebill) => {
+            return Promise.resolve(getValidProductSchedules());
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), {
+          get: ({id}) => {
+            return Promise.resolve(getValidCustomer())
+          },
+          getCreditCards: (customer) => {
+            return Promise.resolve(getValidCreditCards())
+          }
+        });
+
+        let mock_productschedule = class {
+          constructor(){
+
+          }
+          getTransactionProducts({day, product_schedules}){
+            return Promise.resolve([]);
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), mock_productschedule);
+
+        let mock_rebill_helper = class {
+          constructor(){
+
+          }
+          calculateDayInCycle(session_created_at){
+            return Promise.resolve(5);
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+          putRecord: (table, object) => {
+            console.log(table, object);
+            return Promise.resolve({});
+          }
+        });
 
         PermissionTestGenerators.givenUserWithAllowed('*', '*');
 

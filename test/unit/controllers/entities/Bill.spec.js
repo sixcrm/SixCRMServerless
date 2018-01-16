@@ -3,37 +3,12 @@ let expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidBill() {
-    return {
-        "id":"b1624c17-15ad-442a-889d-1daf9278a9ae",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "paid":false,
-        "outstanding":false,
-        "period_start_at":"2017-03-01T00:00:00.001Z",
-        "period_end_at":"2017-04-01T00:00:00.000Z",
-        "available_at":"2017-04-01T00:00:00.000Z",
-        "detail":[
-            {
-                "created_at":"2017-03-12T00:00:00.001Z",
-                "description":"Some line item charge",
-                "amount": 9.99
-            },
-            {
-                "created_at":"2017-04-01T00:00:00.000Z",
-                "description":"Subscription",
-                "amount": 30.00
-            },
-            {
-                "created_at":"2017-04-01T00:00:00.000Z",
-                "description":"Transaction Fees",
-                "amount": 747.48
-            }
-        ],
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidBill()
 }
+
 describe('controllers/entities/Bill.js', () => {
 
     let account_copy;

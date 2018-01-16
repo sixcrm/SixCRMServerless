@@ -1402,4 +1402,520 @@ describe('controllers/EntityUtilities.js', () => {
             });
         });
     });
+
+    describe('buildTableKey', () => {
+
+        it('successfully builds table key', () => {
+
+            let a_name = 'any_name';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.buildTableKey(a_name))
+                .to.equal('any_names_table');
+        });
+    });
+
+    describe('buildTableName', () => {
+
+        it('successfully builds table name', () => {
+
+            let a_name = 'any_name';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.buildTableName(a_name))
+                .to.equal('any_names');
+        });
+    });
+
+    describe('setEnvironmentTableName', () => {
+
+        it('successfully sets environment table name', () => {
+
+            let a_name = 'any_name';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.setEnvironmentTableName(a_name);
+
+            expect(process.env['any_names_table']).to.equal('any_names');
+        });
+    });
+
+    describe('setTableName', () => {
+
+        it('successfully sets table name', () => {
+
+            let a_name = 'any_name';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.setEnvironmentTableName(a_name); //prepare process.env
+
+            entityUtilitiesController.setTableName(a_name);
+
+            expect(entityUtilitiesController.table_name).to.equal('any_names');
+        });
+    });
+
+    describe('setNames', () => {
+
+        it('successfully sets table name', () => {
+
+            let a_name = 'any_name';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.setNames(a_name);
+
+            expect(entityUtilitiesController.descriptive_name).to.equal('any_name');
+            expect(entityUtilitiesController.table_name).to.equal('any_names');
+            expect(process.env['any_names_table']).to.equal('any_names');
+        });
+    });
+
+    describe('setPrimaryKey', () => {
+
+        it('successfully sets primary key', () => {
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.setPrimaryKey();
+
+            expect(entityUtilitiesController.primary_key).to.equal('id');
+        });
+    });
+
+    describe('appendPagination', () => {
+
+        it('successfully appends limit without query parameters', () => {
+
+            let params = {
+                pagination: {
+                    limit: 5 //any number between 1 and 100 for limit
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+
+
+            expect(entityUtilitiesController.appendPagination(params)).to.deep.equal(params.pagination);
+        });
+
+        it('successfully appends limit with query parameters', () => {
+
+            let params = {
+                query_parameters: {
+                    any_params: 'any_params'
+                },
+                pagination: {
+                    limit: 5 //any number between 1 and 100 for limit
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendPagination(params)).to.deep.equal({
+                any_params: params.query_parameters.any_params,
+                limit: params.pagination.limit
+            });
+        });
+
+        it('successfully appends exclusive start key', () => {
+
+            let params = {
+                query_parameters: {
+                    any_params: 'any_params'
+                },
+                pagination: {
+                    exclusive_start_key: 'test@example.com'
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendPagination(params)).to.deep.equal({
+                ExclusiveStartKey: "test@example.com",
+                any_params: params.query_parameters.any_params
+            });
+        });
+
+        it('successfully appends exclusive start key', () => {
+
+            let params = {
+                query_parameters: {
+                    any_params: 'any_params'
+                },
+                pagination: {
+                    cursor: 'test@example.com'
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendPagination(params)).to.deep.equal({
+                ExclusiveStartKey: {
+                    id:"test@example.com"
+                },
+                any_params: params.query_parameters.any_params
+            });
+        });
+
+        it('returns unchanged query parameters when pagination is undefined', () => {
+
+            let params = {
+                query_parameters: {
+                    any_params: 'any_params'
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendPagination(params)).to.deep.equal(params.query_parameters);
+        });
+    });
+
+    describe('appendCursor', () => {
+
+        it('appends cursor when cursor is an email', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let cursor = 'test@example.com';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendCursor(query_parameters, cursor)).to.deep.equal({
+                any_params: query_parameters.any_params,
+                ExclusiveStartKey: {
+                    id: cursor
+                }
+            });
+        });
+
+        it('appends cursor when cursor is a uuid4', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let cursor = 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendCursor(query_parameters, cursor)).to.deep.equal({
+                any_params: query_parameters.any_params,
+                ExclusiveStartKey: {
+                    id: cursor
+                }
+            });
+        });
+
+        it('appends cursor when cursor is a "*"', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let cursor = '*';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendCursor(query_parameters, cursor)).to.deep.equal({
+                any_params: query_parameters.any_params,
+                ExclusiveStartKey: {
+                    id: cursor
+                }
+            });
+        });
+
+        it('successfully parses and appends cursor', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let cursor = '{ "test": "test@example.com"}';
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendCursor(query_parameters, cursor)).to.deep.equal({
+                any_params: query_parameters.any_params,
+                ExclusiveStartKey: {
+                    test: "test@example.com"
+                }
+            });
+        });
+
+        it('throws error when format is unrecognized', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let cursors = ['example', '123', '{}', '[]', '-123', '3xampl3']; //unexpected strings format
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            cursors.forEach(cursor => {
+                try{
+                    entityUtilitiesController.appendCursor(query_parameters, cursor)
+                }catch(error) {
+                    expect(error.message).to.equal('[500] Unrecognized format for Exclusive Start Key.');
+                }
+            });
+        });
+
+        it('throws error when cursor is not a string', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let cursors = [{}, [], () => {}, 123, 123.123, -123, -123.123]; //unexpected format
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            cursors.forEach(cursor => {
+                try{
+                    entityUtilitiesController.appendCursor(query_parameters, cursor)
+                }catch(error) {
+                    expect(error.message).to.equal('[500] Unrecognized format for Cursor.');
+                }
+            });
+        });
+
+        it('returns unchanged query parameters when cursor is undefined', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendCursor(query_parameters)).to.deep.equal(query_parameters);
+        });
+    });
+
+    describe('appendExclusiveStartKey', () => {
+
+        it('appends exclusive start key when it\'s an email', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let exclusive_start_key = 'test@example.com';
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExclusiveStartKey(query_parameters, exclusive_start_key)).to.deep.equal({
+                any_params: query_parameters.any_params,
+                ExclusiveStartKey: exclusive_start_key
+            });
+        });
+
+        it('appends exclusive start key when it\'s an uuid', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let exclusive_start_key = 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExclusiveStartKey(query_parameters, exclusive_start_key)).to.deep.equal({
+                any_params: query_parameters.any_params,
+                ExclusiveStartKey: exclusive_start_key
+            });
+        });
+
+        it('parses and appends exclusive start key', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let exclusive_start_key = '{ "test": "test@example.com"}';
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExclusiveStartKey(query_parameters, exclusive_start_key)).to.deep.equal({
+                any_params: query_parameters.any_params,
+                ExclusiveStartKey: {
+                    test: "test@example.com"
+                }
+            });
+        });
+
+        it('returns unchanged query parameters when exclusive start key is undefined', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExclusiveStartKey(query_parameters))
+                .to.deep.equal(query_parameters);
+        });
+
+        it('parses and appends exclusive start key', () => {
+
+            let query_parameters = {
+                any_params: 'any_params'
+            };
+
+            let exclusive_start_keys = [{}, [], () => {}, 123, 123.123, -123, -123.123]; //unexpected format
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            exclusive_start_keys.forEach(exclusive_start_key => {
+                try {
+                    entityUtilitiesController.appendExclusiveStartKey(query_parameters, exclusive_start_key)
+                }catch(error) {
+                    expect(error.message).to.equal('[400] Unrecognized Exclusive Start Key format.');
+                }
+            });
+        });
+    });
+
+    describe('appendSearchConditions', () => {
+
+        it('appends search conditions with "updated_at.after"', () => {
+
+            let params = {
+                query_parameters: {
+                    expression_attribute_names: {}
+                },
+                search: {
+                    updated_at: {
+                        after: ['any_data']
+                    }
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({
+                expression_attribute_names: {
+                    "#updated_at_after_k": "updated_at"
+                },
+                expression_attribute_values: {
+                    ":updated_at_after_v": ["any_data"]
+                },
+                filter_expression: "#updated_at_after_k > :updated_at_after_v"
+            });
+        });
+
+        it('appends search conditions with "updated_at.before"', () => {
+
+            let params = {
+                query_parameters: {
+                    expression_attribute_names: {}
+                },
+                search: {
+                    updated_at: {
+                        before: ['any_data']
+                    }
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({
+                expression_attribute_names: {
+                    "#updated_at_before_k": "updated_at"
+                },
+                expression_attribute_values: {
+                    ":updated_at_before_v": ["any_data"]
+                },
+                filter_expression: "#updated_at_before_k < :updated_at_before_v"
+            });
+        });
+
+        it('appends search conditions with "created_at.after"', () => {
+
+            let params = {
+                query_parameters: {
+                    expression_attribute_names: {}
+                },
+                search: {
+                    created_at: {
+                        after: ['any_data']
+                    }
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({
+                expression_attribute_names: {
+                    "#created_at_after_k": "created_at"
+                },
+                expression_attribute_values: {
+                    ":created_at_after_v": ["any_data"]
+                },
+                filter_expression: "#created_at_after_k > :created_at_after_v"
+            });
+        });
+
+        it('appends search conditions with "created_at.before"', () => {
+
+            let params = {
+                query_parameters: {
+                    expression_attribute_names: {}
+                },
+                search: {
+                    created_at: {
+                        before: ['any_data']
+                    }
+                }
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({
+                expression_attribute_names: {
+                    "#created_at_before_k": "created_at"
+                },
+                expression_attribute_values: {
+                    ":created_at_before_v": ["any_data"]
+                },
+                filter_expression: "#created_at_before_k < :created_at_before_v"
+            });
+        });
+    });
 });

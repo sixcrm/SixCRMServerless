@@ -2,47 +2,18 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidTracker() {
-    return {
-        "id":"8cf59d00-460b-42ad-b6be-d520975f27db",
-        "campaigns":["70a6689a-5814-438b-b9fd-dd484d0812f9"],
-        "affiliates":["6b6331f6-7f84-437a-9ac6-093ba301e455", "ad58ea78-504f-4a7e-ad45-128b6e76dc57"],
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "type":"postback",
-        "event_type":["lead", "main", "upsell"],
-        "name":"Testing Tracker 1",
-        "body":"http://whatever.com/{{transaction.id}}?c={{session.id}}",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidTracker()
 }
 
 function getValidAffiliate() {
-    return {
-        "id":"6b6331f6-7f84-437a-9ac6-093ba301e455",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "name": "Seed Affiliate",
-        "affiliate_id":"whatever",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidAffiliate()
 }
 
 function getValidCampaign() {
-    return {
-        "id":"70a6689a-5814-438b-b9fd-dd484d0812f9",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "name": "Example Campaign",
-        "allow_prepaid": false,
-        "show_prepaid": false,
-        "productschedules":["12529a17-ac32-4e46-b05b-83862843055d","8d1e896f-c50d-4a6b-8c84-d5661c16a046"],
-        "emailtemplates":["b44ce483-861c-4843-a7d6-b4c649d6bdde","8108d6a3-2d10-4013-9e8e-df71e2dc578b","102131a0-4cc4-4463-a614-e3157c3f03c2"],
-        "affiliate_allow":["ad58ea78-504f-4a7e-ad45-128b6e76dc57"],
-        "affiliate_deny":["*"],
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidCampaign()
 }
 
 describe('controllers/Tracker.js', () => {

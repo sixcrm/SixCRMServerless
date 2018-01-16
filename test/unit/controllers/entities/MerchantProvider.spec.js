@@ -1,25 +1,10 @@
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidLoadBalancer() {
-    return {
-        "id":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-        "name": "Seed load balancer",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "merchantproviders":[
-            {
-                "id":"6c40761d-8919-4ad6-884d-6a46a776cfb9",
-                "distribution":0.75
-            },
-            {
-                "id":"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
-                "distribution":0.25
-            }
-        ],
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidLoadBalancer()
 }
 
 describe('controllers/MerchantProvider.js', () => {

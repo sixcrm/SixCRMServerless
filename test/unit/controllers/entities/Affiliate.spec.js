@@ -1,17 +1,10 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidAffiliate() {
-    return {
-        "id":"6b6331f6-7f84-437a-9ac6-093ba301e455",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "name": "Seed Affiliate",
-        "affiliate_id":"whatever",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidAffiliate()
 }
 
 describe('controllers/Affiliate.js', () => {

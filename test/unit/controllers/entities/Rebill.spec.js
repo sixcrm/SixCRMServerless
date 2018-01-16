@@ -3,18 +3,10 @@ let expect = chai.expect;
 const mockery = require('mockery');
 let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidRebill() {
-    return {
-        "bill_at": "2017-04-06T18:40:41.405Z",
-        "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-        "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
-        "amount": 34.99,
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidRebill()
 }
 
 describe('controllers/Rebill.js', () => {
@@ -279,6 +271,8 @@ describe('controllers/Rebill.js', () => {
             const stamp = timestamp.createDate();
             const isoStamp = timestamp.castToISO8601(stamp);
 
+            let rebill = getValidRebill();
+
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
                     expect(table).to.equal('rebills');
@@ -290,7 +284,7 @@ describe('controllers/Rebill.js', () => {
 
                     return Promise.resolve({
                         Count: 1,
-                        Items: [getValidRebill()]
+                        Items: [rebill]
                     });
                 }
             });
@@ -303,7 +297,7 @@ describe('controllers/Rebill.js', () => {
 
             return rebillController.getRebillsAfterTimestamp(stamp).then((result) => {
                 expect(result.length).to.equal(1);
-                expect(result[0]).to.deep.equal(getValidRebill());
+                expect(result[0]).to.deep.equal(rebill);
             });
 
         });

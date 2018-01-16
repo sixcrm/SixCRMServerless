@@ -2,36 +2,14 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidFulfillmentProvider() {
-    return {
-        "id":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "name":"Hashtag Fulfillment Provider",
-        "provider":{
-            "name":"Hashtag",
-            "threepl_key":"{2b8d696e-9ee1-4a7d-8655-2e7979dfc7f3}",
-            "threepl_customer_id":10,
-            "username":"kristest",
-            "password":"kristest"
-        },
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidFulfillmentProvider()
 }
 
 function getValidProduct() {
-    return {
-        "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "name": "Test Product",
-        "sku":"123",
-        "ship":true,
-        "shipping_delay":3600,
-        "fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidProduct()
 }
 
 describe('controllers/Product.js', () => {

@@ -1181,6 +1181,53 @@ describe('controllers/Entity.js', () => {
             });
         });
 
+        it('list user with search parameters and reverse order', () => {
+
+            let params = {
+                pagination: {
+                    limit: 2
+                },
+                search: {
+                    updated_at: {
+                        after: ['any_data']
+                    }
+                },
+                reverse_order: true
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('entitys');
+                    expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
+                    expect(parameters.expression_attribute_names['#updated_at_after_k']).to.deep.equal('updated_at');
+                    expect(parameters.limit).to.equal(params.pagination.limit);
+                    expect(parameters.scan_index_forward).to.equal(false);
+                    expect(parameters.filter_expression).to.equal('#updated_at_after_k > :updated_at_after_v');
+                    return Promise.resolve({
+                        Count: 2,
+                        Items: [{}, {}]
+                    });
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listByUser(params).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+
         it('returns empty data when there are none', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
@@ -1227,6 +1274,53 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('entity');
 
             return entityController.listByAccount({pagination:{limit:2}}).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+
+        it('successfully lists by account with search and reverse order parameters', () => {
+
+            let params = {
+                pagination: {
+                    limit: 2
+                },
+                search: {
+                    updated_at: {
+                        after: ['any_data']
+                    }
+                },
+                reverse_order: true
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('entitys');
+                    expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
+                    expect(parameters.expression_attribute_names['#updated_at_after_k']).to.deep.equal('updated_at');
+                    expect(parameters.limit).to.equal(params.pagination.limit);
+                    expect(parameters.scan_index_forward).to.equal(false);
+                    expect(parameters.filter_expression).to.equal('#updated_at_after_k > :updated_at_after_v');
+                    return Promise.resolve({
+                        Count: 2,
+                        Items: [{}, {}]
+                    });
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listByAccount(params).then((response) => {
                 expect(response).to.deep.equal({
                     pagination: {
                         count: 2,
@@ -1291,6 +1385,55 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('entity');
 
             return entityController.getListByAccount({pagination:{limit:2}}).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+
+        it('retrieves list by account with specified query parameters', () => {
+
+            let params = {
+                query_parameters: {
+                    any_data: 'any_data'
+                },
+                pagination: {
+                    limit: 2
+                }
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('entitys');
+                    expect(index).to.equal('account-index');
+                    expect(parameters.any_data).to.equal(params.query_parameters.any_data);
+                    expect(parameters.filter_expression).to.equal('a_filter');
+                    return Promise.resolve({
+                        Count: 2,
+                        Items: [{}, {}]
+                    });
+                },
+                createINQueryParameters: (field, list_array) => {
+                    expect(field).to.equal('id');
+                    return {
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: {}
+                    }
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.getListByAccount(params).then((response) => {
                 expect(response).to.deep.equal({
                     pagination: {
                         count: 2,
@@ -1386,7 +1529,8 @@ describe('controllers/Entity.js', () => {
                     },
                     expression_attribute_names:{
                         expression_attribute_name:'expression_attribute_name'
-                    }
+                    },
+                    reverse_order: true
                 },
                 pagination:{limit:2},
                 index:'an_index'
@@ -1397,6 +1541,8 @@ describe('controllers/Entity.js', () => {
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
                     expect(index).to.equal(params.index);
+                    expect(table).to.equal('entitys');
+                    expect(parameters.scan_index_forward).to.equal(false);
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     expect(parameters).to.have.property('expression_attribute_names');
@@ -1506,6 +1652,85 @@ describe('controllers/Entity.js', () => {
 
             return entityController.checkAssociatedEntities({id:'dummy_id'}).then((result) => {
                 expect(result).to.be.true;
+            });
+        });
+    });
+
+    describe('getCount', () => {
+
+        it('successfully returns record count', () => {
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                countRecords: (table, additional_parameters, index) => {
+                    expect(table).to.equal('entitys');
+                    expect(additional_parameters).to.have.property('filter_expression');
+                    expect(additional_parameters).to.have.property('expression_attribute_values');
+                    return Promise.resolve({ Count: 1});
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.getCount({}).then((response) => {
+                expect(response).to.deep.equal({Count: 1});
+            });
+        });
+    });
+
+    describe('createINQueryParameters', () => {
+
+        it('successfully creates in query parameters', () => {
+
+            let params = {
+                field: 'a_field',
+                list_array: ['an_item']
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                createINQueryParameters: (field_name, in_array) => {
+                    expect(field_name).to.equal(params.field);
+                    expect(in_array).to.equal(params.list_array);
+                    return {
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: 'an_expression_values'
+                    };
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            expect(entityController.createINQueryParameters(params)).to.deep.equal({
+                filter_expression: 'a_filter',
+                expression_attribute_values: 'an_expression_values'
+            });
+        });
+    });
+
+    describe('appendDisjunctionQueryParameters', () => {
+
+        it('successfully creates in query parameters', () => {
+
+            let params = {
+                field_name: 'a_field',
+                array: ['an_item'],
+                query_parameters: {}
+            };
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            expect(entityController.appendDisjunctionQueryParameters(params)).to.deep.equal({
+                expression_attribute_names: {
+                    "#a_field": "a_field"
+                },
+                expression_attribute_values: {
+                    ":a_fieldv0": "an_item"
+                },
+                filter_expression: "(#a_field = :a_fieldv0)"
             });
         });
     });

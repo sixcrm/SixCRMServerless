@@ -2,34 +2,13 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidEmailTemplate() {
-    return {
-        "id": "b44ce483-861c-4843-a7d6-b4c649d6bdde",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "name": "Test Email 1",
-        "subject":"This is the subject line.",
-        "body":"This is the body.",
-        "smtp_provider":"18213d0b-cd6d-4cea-91b9-993d7443468b",
-        "type":"allorders",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidEmailTemplate()
 }
 function getValidSMTPProvider() {
-    return {
-        "id":"18213d0b-cd6d-4cea-91b9-993d7443468b",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "name":"Test SMTP Provider",
-        "hostname":"mail.reefbuzz.com",
-        "username":"kris@reefbuzz.com",
-        "password":"Kris123!!!",
-        "port":465,
-        "from_email":"donotreply@sixcrm.com",
-        "from_name":"Do Not Reply",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidSMTPProvider()
 }
 
 describe('controllers/EmailTemplate.js', () => {

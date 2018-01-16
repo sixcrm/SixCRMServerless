@@ -2,79 +2,22 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidSession() {
-    return {
-        "id": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "customer": "24f7c851-29d4-4af9-87c5-0298fa74c689",
-        "campaign":"70a6689a-5814-438b-b9fd-dd484d0812f9",
-        "product_schedules":[],
-        "completed": false,
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z",
-        "affiliate":	"332611c7-8940-42b5-b097-c49a765e055a",
-        "subaffiliate_1":	"6b6331f6-7f84-437a-9ac6-093ba301e455",
-        "subaffiliate_2":	"22524f47-9db7-42f9-9540-d34a8909b072",
-        "subaffiliate_3":	"fd2548db-66a8-481e-aacc-b2b76a88fea7",
-        "subaffiliate_4":	"d515c0df-f9e4-4a87-8fe8-c53dcace0995",
-        "subaffiliate_5":	"45f025bb-a9dc-45c7-86d8-d4b7a4443426",
-        "cid":"fb10d33f-da7d-4765-9b2b-4e5e42287726"
-    }
+    return MockEntities.getValidSession()
 }
 
 function getValidCustomer() {
-    return {
-        "id":"24f7c851-29d4-4af9-87c5-0298fa74c689",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "email":"rama@damunaste.org",
-        "firstname":"Rama",
-        "lastname":"Damunaste",
-        "phone":"1234567890",
-        "address":{
-            "line1":"10 Downing St.",
-            "city":"London",
-            "state":"OR",
-            "zip":"97213",
-            "country":"US"
-        },
-        "creditcards":["df84f7bb-06bd-4daa-b1a3-6a2c113edd72"],
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidCustomer()
 }
 
 function getValidCreditCards() {
-    return [{
-        "id": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "address": {
-            "city": "Portland",
-            "country": "US",
-            "line1": "10 Skid Rw.",
-            "line2": "Suite 100",
-            "state": "OR",
-            "zip": "97213"
-        },
-        "number": "4111111111111111",
-        "ccv": "999",
-        "expiration": "1025",
-        "name": "Rama Damunaste",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }]
+    return [MockEntities.getValidCreditCard()]
 }
 
 function getValidCustomerNotes() {
-    return [{
-        "id":"135295f3-b1b2-4724-8911-8cc6ab54a4a9",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "customer":"24f7c851-29d4-4af9-87c5-0298fa74c689",
-        "body":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam non venenatis lacus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed et consequat mi. Sed eu volutpat lectus, ut cursus purus. Maecenas ut convallis mi, ac venenatis nunc. Donec in ante vel lorem sodales ultricies. Aliquam vel ligula vitae lorem consequat placerat. Aenean mollis molestie mollis. Ut convallis a eros a sagittis. Etiam porttitor ultrices nibh, cursus blandit orci sollicitudin vel. Morbi non egestas nisl. Vivamus congue mauris arcu, eu sodales ex ultricies vel.",
-        "user":"customerservice.user@test.com",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }]
+    return [MockEntities.getValidCustomerNotes()]
 }
 
 describe('controllers/entities/Customer.js', () => {

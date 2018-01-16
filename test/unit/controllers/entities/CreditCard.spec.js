@@ -1,25 +1,9 @@
 let chai = require('chai');
 let expect = chai.expect;
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidCreditCard() {
-    return {
-        "id": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "address": {
-            "city": "Portland",
-            "country": "US",
-            "line1": "10 Skid Rw.",
-            "line2": "Suite 100",
-            "state": "OR",
-            "zip": "97213"
-        },
-        "number": "4111111111111111",
-        "ccv": "999",
-        "expiration": "1025",
-        "name": "Rama Damunaste",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidCreditCard()
 }
 
 describe('controllers/entities/CreditCard.js', () => {
@@ -56,6 +40,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCard = getValidCreditCard();
 
+            creditCard.number = '411111';
+
             let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
 
             expect(creditCardController.getBINNumber(creditCard)).to.equal('411111');
@@ -64,6 +50,8 @@ describe('controllers/entities/CreditCard.js', () => {
         it('returns credit card number', () => {
 
             let creditCard = getValidCreditCard();
+
+            creditCard.number = '411111';
 
             let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
 
@@ -122,7 +110,7 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCard = getValidCreditCard();
 
-            let testCreditCard = getValidCreditCard();
+            let testCreditCard = creditCard;
 
             let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
 
@@ -196,7 +184,7 @@ describe('controllers/entities/CreditCard.js', () => {
             try{
                 creditCardController.sameCard(creditCard, testCreditCard, true);
             }catch (error){
-                expect(error.message).to.equal('[500] Cards do not match.  Bad field: expiration')
+                expect(error.message).to.equal('[500] Cards do not match.  Bad field: id')
             }
         });
     });

@@ -198,11 +198,11 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
           return Promise.resolve([message]);
         },
         sendMessage: ({message_body: body, queue: queue}) => {
-          expect(queue).to.equal('recover');
+          expect(queue).to.equal('recover_failed');
           return Promise.resolve(true);
         },
         deleteMessage: ({queue, receipt_handle}) => {
-          expect(queue).to.equal('bill');
+          expect(queue).to.equal('recover');
           return Promise.resolve(true);
         }
       });
@@ -226,6 +226,60 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
 
     });
 
+    it('properly updates rebill if failure happens in worker function', () => {
+
+      rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+      const message = getValidMessage(rebill_id);
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        receiveMessages: ({queue, limit}) => {
+          return Promise.resolve([message]);
+        },
+        sendMessage: ({message_body: body, queue: queue}) => {
+          expect(queue).to.equal('recover_failed');
+          return Promise.resolve(true);
+        },
+        deleteMessage: ({queue, receipt_handle}) => {
+          expect(queue).to.equal('recover');
+          return Promise.resolve(true);
+        }
+      });
+
+      const register_mock = class {
+        constructor(){ }
+
+        processTransaction({rebill}) {
+          return Promise.resolve({
+            getCode: () => 'fail'
+          })
+        }
+
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), register_mock);
+
+      const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
+      const recoverToHoldForwardMessageController = new RecoverToHoldForwardMessageController();
+
+      return recoverToHoldForwardMessageController.execute().then((result) => {
+        expect(result.response.code).to.equal('success');
+
+        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+        return rebillController.get({id: rebill_id}).then((rebill) => {
+          du.info(rebill);
+
+          const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+
+          expect(rebill.state).to.equal('recover_failed');
+          expect(rebill.previous_state).to.equal('recover');
+          expect(rebill.second_attempt).to.equal('true');
+          expect(timeSinceCreation).to.be.below(10);
+
+        });
+      })
+
+    });
   });
 
 });
