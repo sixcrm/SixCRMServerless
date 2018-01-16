@@ -39,6 +39,7 @@ lambda:
 
 #Technical Debt:  Username and Password combinations need to be encrypted...
 redshift:
+  default_cluster_identifier: 'sixcrm'
   user: 'admin'
   database: 'analytics'
   password: 'Jagodica9'

@@ -18,6 +18,30 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
 
   }
 
+  backupCluster(configuration){
+
+    du.debug('Backup Cluster');
+
+    let parameters = {
+      ClusterIdentifier: global.SixCRM.configuration.site_config.redshift.default_cluster_identifier,
+      SnapshotIdentifier: global.SixCRM.configuration.site_config.redshift.default_cluster_identifier
+    }
+
+    if(_.has(configuration, 'branch')){
+      parameters.SnapshotIdentifier += '-'+configuration.branch;
+    }
+
+    if(_.has(configuration, 'version')){
+      parameters.SnapshotIdentifier += '-'+configuration.version;
+    }
+
+    return this.redshiftutilities.createClusterSnapshot(parameters).then(result => {
+
+      return result;
+    });
+
+  }
+
   deleteClusterAndWait() {
 
     du.debug('Delete Cluster and Wait');

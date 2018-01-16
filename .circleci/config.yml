@@ -68,8 +68,11 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Ideally...
-          command: echo "Ideally this would set a bunch of credentials for the deploy steps?"
+          name: Backup DynamoDB
+          command:  node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }}
+      - run:
+          name: Backup Redshift
+          command:  node ./deployment/redshift/backup_cluster.js --branch={{ .Branch }} --version={{ .Revision }}
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -130,9 +133,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Backup DynamoDB
-          command: ./tools/changesInDirectory.sh deployment/dynamodb/ && node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }} || echo "No changes, skipping."
       - run:
           name: DynamoDB Deploy Tables
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
@@ -312,22 +312,38 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
-          context: org-global
+          filters:
+            branches:
+              only:
+                - production
+                - development
       - deploy_serverless:
           requires:
             - pre_deploy
+            - lint
+            - unit_tests
+            - functional_tests
           context: org-global
       - deploy_security_groups:
           requires:
             - pre_deploy
+            - lint
+            - unit_tests
+            - functional_tests
           context: org-global
       - deploy_iam:
           requires:
             - pre_deploy
+            - lint
+            - unit_tests
+            - functional_tests
           context: org-global
       - deploy_s3:
           requires:
             - pre_deploy
+            - lint
+            - unit_tests
+            - functional_tests
           context: org-global
       - deploy_sqs:
           requires:
@@ -390,8 +406,20 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
+      - hold:
+          type: approval
+          requires:
+             - transactional_integration_tests
+             - entity_integration_tests
+             - deleteblock_integration_tests
+             - analytics_integration_tests
+          filters:
+            branches:
+              only:
+                - production
       - merge:
           requires:
+            - hold
             - transactional_integration_tests
             - entity_integration_tests
             - deleteblock_integration_tests

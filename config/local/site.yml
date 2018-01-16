@@ -36,6 +36,7 @@ lambda:
   endpoint: 'http://localhost:3000'
 
 redshift:
+  default_cluster_identifier: 'sixcrm'
   user: 'root'
   database: 'circle_test'
   password: ''
