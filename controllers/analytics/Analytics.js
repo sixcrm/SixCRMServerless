@@ -376,7 +376,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters, period_selection);
 
-        return this.getResults('reports/merchantprovider/merchantprovider_report', parameters, this.default_query_filters);
+        if(!_.has(parameters, 'product_schedule')){
+          return this.getResults('reports/merchantprovider/merchantprovider_report', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('reports/merchantprovider/merchantprovider_report_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 
