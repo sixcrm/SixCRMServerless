@@ -95,6 +95,8 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.validateAmount())
     .then(() => this.executeRefund())
     .then(() => this.issueReceipt())
+    .then(() => this.acquireRefundTransactionSubProperties())
+    .then(() => this.pushTransactionsRecordToRedshift())
     .then(() => this.transformResponse());
 
   }
@@ -131,6 +133,8 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.validateAmount())
     .then(() => this.executeReverse())
     .then(() => this.issueReceipt())
+    .then(() => this.acquireRefundTransactionSubProperties())
+    .then(() => this.pushTransactionsRecordToRedshift())
     .then(() => this.transformResponse());
 
   }
@@ -414,6 +418,32 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Validate Processor Response');
     //Technical Debt:  Flesh me out, possible JSON schema embellishment?
+
+  }
+
+  acquireRefundTransactionSubProperties() {
+
+    return Promise.resolve(this.setDependencies())
+      .then(() => this.acquireRebill())
+      .then(() => this.acquireRebillProperties())
+      .then(() => this.acquireRebillSubProperties())
+
+  }
+
+
+  acquireRebill(){
+
+    du.debug('Acquire Rebill');
+
+    const transaction = this.parameters.get('transaction');
+
+    return this.rebillController.get({id: transaction.rebill}).then((rebill) => {
+
+      this.parameters.set('rebill', rebill);
+
+      return true;
+
+    });
 
   }
 
