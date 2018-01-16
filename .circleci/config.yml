@@ -10,10 +10,10 @@ defaults: &job-defaults
     - image: circleci/node:7.10.0
       environment:
         - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
-        - AWS_ACCOUNT: 068070110666
-        - AWS_REGION: us-east-1
-        - AWS_ACCESS_KEY_ID: 'AKIAJDMBNSJLEZG4OIDQ'
-        - AWS_SECRET_ACCESS_KEY: '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'
+        - AWS_ACCOUNT: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY | jq '.aws_account'
+        - AWS_REGION: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY | jq '.aws_region'
+        - AWS_ACCESS_KEY_ID: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY | jq '.aws_access_key_id'
+        - AWS_SECRET_ACCESS_KEY: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY | jq '.aws_secret_access_key'
 
 version: 2
 jobs:
@@ -208,6 +208,10 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      #gross
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Deleteblock Integration Tests
           command: npm run test-deleteblocks
@@ -217,6 +221,10 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      #gross
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Entity Integration Tests
           command: npm run test-entities
@@ -226,6 +234,10 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      #gross
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
@@ -235,6 +247,9 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Add Deployment Keys
+          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
