@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+
 const AWSUtilities = global.SixCRM.routes.include('lib', 'aws-utilities.js');
 
 describe('lib/aws-utilities', () => {
@@ -76,4 +77,76 @@ describe('lib/aws-utilities', () => {
             }
         });
     });
+
+    describe('hasCredentials', () => {
+
+      beforeEach(() => {
+        process.env.AWS_ACCOUNT = '123';
+        process.env.AWS_REGION = '123';
+        process.env.AWS_ACCESS_KEY_ID = '123';
+        process.env.AWS_SECRET_ACCESS_KEY = '123';
+      });
+
+      afterEach(() => {
+        delete process.env.AWS_ACCOUNT;
+        delete process.env.AWS_REGION;
+        delete process.env.AWS_ACCESS_KEY_ID;
+        delete process.env.AWS_SECRET_ACCESS_KEY;
+      });
+
+      it('returns true when all credentials are present', () => {
+
+        const awsutilities = new AWSUtilities();
+
+        let result = awsutilities.hasCredentials();
+
+        expect(result).to.equal(true);
+
+      });
+
+      it('returns a error when some credentials are not present', () => {
+
+        delete process.env.AWS_ACCOUNT;
+
+        const awsutilities = new AWSUtilities();
+
+        try{
+          let result = awsutilities.hasCredentials();
+        }catch(error){
+          expect(error.message).to.equal('[500] Missing Credentials: AWS_ACCOUNT');
+        }
+
+      });
+
+      it('returns a error when all credentials are not present', () => {
+
+        delete process.env.AWS_ACCOUNT;
+        delete process.env.AWS_REGION;
+        delete process.env.AWS_ACCESS_KEY_ID;
+        delete process.env.AWS_SECRET_ACCESS_KEY;
+
+        const awsutilities = new AWSUtilities();
+
+        try{
+          let result = awsutilities.hasCredentials();
+        }catch(error){
+          expect(error.message).to.equal('[500] Missing Credentials: AWS_ACCOUNT, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY');
+        }
+
+      });
+
+      it('returns false when some credentials are not present and fatal is false', () => {
+
+        delete process.env.AWS_ACCOUNT;
+
+        const awsutilities = new AWSUtilities();
+
+        let result = awsutilities.hasCredentials(false);
+
+        expect(result).to.equal(false);
+
+      });
+
+    });
+
 });

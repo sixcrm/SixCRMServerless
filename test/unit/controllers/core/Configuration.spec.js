@@ -152,17 +152,20 @@ describe('controllers/core/Configuration.js', () => {
 
     it('gets environment config when value exists', () => {
         mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-            objectExists: (parameters) => {
-                return Promise.resolve(true);
-            },
-            getObject: (parameters) => {
-                return Promise.resolve({
-                    Body: JSON.stringify({test_key: 'test_value'})
-                });
-            },
-            putObject: (parameters) => {
-                return Promise.resolve();
-            },
+          objectExists: (parameters) => {
+              return Promise.resolve(true);
+          },
+          getObject: (parameters) => {
+              return Promise.resolve({
+                  Body: JSON.stringify({test_key: 'test_value'})
+              });
+          },
+          putObject: (parameters) => {
+              return Promise.resolve();
+          },
+          hasCredentials: () => {
+            return true;
+          }
         });
 
         mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
@@ -235,6 +238,9 @@ describe('controllers/core/Configuration.js', () => {
             putObject: (parameters) => {
                 return Promise.resolve();
             },
+            hasCredentials:() => {
+              return true;
+            }
         });
 
         mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
@@ -268,6 +274,9 @@ describe('controllers/core/Configuration.js', () => {
             putObject: (parameters) => {
                 return Promise.resolve();
             },
+            hasCredentials:() => {
+              return true;
+            }
         });
 
         mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
