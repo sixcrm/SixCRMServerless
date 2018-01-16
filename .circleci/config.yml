@@ -10,6 +10,10 @@ defaults: &job-defaults
     - image: circleci/node:7.10.0
       environment:
         - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+        - AWS_ACCOUNT: 821071795213
+        - AWS_REGION: us-east-1
+        - AWS_ACCESS_KEY_ID: 'AKIAIL2MNZBYLPCALGOQ'
+        - AWS_SECRET_ACCESS_KEY: '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'
 
 version: 2
 jobs:
@@ -46,9 +50,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      - run:
           name: 'Unit Tests'
           command: npm run test-unit
   functional_tests:
@@ -57,9 +58,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -76,9 +74,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      - run:
           name: Serveless Deploy
           command: node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
   deploy_security_groups:
@@ -87,9 +82,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: EC2 Security Groups
           command: node ./deployment/ec2/deploy_security_groups.js
@@ -100,9 +92,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      - run:
           name: S3 Buckets
           command: ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
   deploy_sqs:
@@ -111,9 +100,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: SQS
           command: ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
@@ -124,9 +110,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      - run:
           name: Elasticache
           command: ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/deploy.js || echo "No changes, skipping."
   deploy_iam:
@@ -136,9 +119,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      - run:
           name: IAM Deploy Roles
           command: node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
   deploy_dynamodb:
@@ -147,9 +127,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> ~/.circlerc
       - run:
           name: Backup DynamoDB
           command: ./tools/changesInDirectory.sh deployment/dynamodb/ && node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }} || echo "No changes, skipping."
@@ -166,9 +143,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      - run:
           name: Redshift Create Cluster
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
       - run:
@@ -181,9 +155,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      - run:
           name: Kinesis Deploy
           command: ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
   post_deployment:
@@ -192,9 +163,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Save Last Commit
           command: node deployment/circle/save_last_commit.js
@@ -207,18 +175,15 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      #- run:
-      #    name: Add Deployment Keys
-      #    command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
-      #- run:
-      #    name: SQS Purge
-      #    command: node ./deployment/sqs/purge_queues.js
-      #- run:
-      #    name: Cloudsearch Purge
-      #    command: node ./deployment/cloudsearch/purge.js
-      #- run:
-      #    name: Elasticache Purge
-      #    command: node ./deployment/elasticache/purge.js
+      - run:
+          name: SQS Purge
+          command: node ./deployment/sqs/purge_queues.js
+      - run:
+          name: Cloudsearch Purge
+          command: node ./deployment/cloudsearch/purge.js
+      - run:
+          name: Elasticache Purge
+          command: node ./deployment/elasticache/purge.js
       #- run:
       #    name: DynamoDB Purge
       #    command: node ./deployment/dynamodb/purge_tables.js
@@ -228,9 +193,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Redshift Referential Data
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
@@ -246,10 +208,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      #gross
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Deleteblock Integration Tests
           command: npm run test-deleteblocks
@@ -259,10 +217,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      #gross
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Entity Integration Tests
           command: npm run test-entities
@@ -272,10 +226,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      #gross
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
@@ -285,9 +235,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
