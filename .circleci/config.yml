@@ -10,10 +10,6 @@ defaults: &job-defaults
     - image: circleci/node:7.10.0
       environment:
         - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
-        - AWS_ACCOUNT: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_account'
-        - AWS_REGION: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_region'
-        - AWS_ACCESS_KEY_ID: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_access_key_id'
-        - AWS_SECRET_ACCESS_KEY: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_secret_access_key'
 
 version: 2
 jobs:
@@ -21,9 +17,6 @@ jobs:
     <<: *job-defaults
     steps:
       - run: sudo npm install -g npm@latest
-      - run:
-          name: Debugging
-          command: echo $AWS_ACCOUNT; echo $AWS_REGION;  echo $AWS_ACCESS_KEY_ID;  echo $AWS_SECRET_ACCESS_KEY;
   build:
     <<: *job-defaults
     steps:
@@ -68,14 +61,23 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Ideally...
-          command: echo "Ideally this would set a bunch of credentials for the deploy steps?"
+          name: Set Access Credentials
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
+      - run:
+          name: Backup DynamoDB
+          command:  node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }}
+      - run:
+          name: Backup Redshift
+          command:  node ./deployment/redshift/backup_cluster.js --branch={{ .Branch }} --version={{ .Revision }}
   deploy_serverless:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Set Access Credentials
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
       - run:
           name: Serveless Deploy
           command: node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
@@ -86,6 +88,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Set Access Credentials
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
+      - run:
           name: EC2 Security Groups
           command: node ./deployment/ec2/deploy_security_groups.js
   deploy_s3:
@@ -94,6 +99,9 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Set Access Credentials
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
       - run:
           name: S3 Buckets
           command: ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
@@ -130,9 +138,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Backup DynamoDB
-          command: ./tools/changesInDirectory.sh deployment/dynamodb/ && node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }} || echo "No changes, skipping."
       - run:
           name: DynamoDB Deploy Tables
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
@@ -312,22 +317,38 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
-          context: org-global
+          filters:
+            branches:
+              only:
+                - production
+                - development
       - deploy_serverless:
           requires:
             - pre_deploy
+            - lint
+            - unit_tests
+            - functional_tests
           context: org-global
       - deploy_security_groups:
           requires:
             - pre_deploy
+            - lint
+            - unit_tests
+            - functional_tests
           context: org-global
       - deploy_iam:
           requires:
             - pre_deploy
+            - lint
+            - unit_tests
+            - functional_tests
           context: org-global
       - deploy_s3:
           requires:
             - pre_deploy
+            - lint
+            - unit_tests
+            - functional_tests
           context: org-global
       - deploy_sqs:
           requires:
@@ -390,8 +411,20 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
+      - hold:
+          type: approval
+          requires:
+             - transactional_integration_tests
+             - entity_integration_tests
+             - deleteblock_integration_tests
+             - analytics_integration_tests
+          filters:
+            branches:
+              only:
+                - production
       - merge:
           requires:
+            - hold
             - transactional_integration_tests
             - entity_integration_tests
             - deleteblock_integration_tests

@@ -3,6 +3,61 @@ const expect = chai.expect;
 
 describe('lib/redshift-utilities', () => {
 
+  describe('createClusterSnapshot', () => {
+
+    it('successfully triggers a cluster snapshot with no arguments', () => {
+
+      const redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
+
+      let response = {
+        Snapshot:{
+          Status:'creating'
+        }
+      };
+
+      redshiftutilities.redshift = {
+          createClusterSnapshot: function(params, callback) {
+            callback(null, response);
+          }
+      };
+
+      return redshiftutilities.createClusterSnapshot().then(result => {
+        expect(result).to.deep.equal(response);
+      });
+
+    });
+
+    it('successfully triggers a cluster snapshot with arguments', () => {
+
+      const redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
+
+      let response = {
+        Snapshot:{
+          Status:'creating'
+        }
+      };
+
+      let parameters = {
+        ClusterIdentifier: 'testci',
+        SnapshotIdentifier: 'testci',
+      };
+
+      redshiftutilities.redshift = {
+          createClusterSnapshot: function(params, callback) {
+            expect(params.ClusterIdentifier).to.equal(parameters.ClusterIdentifier);
+            expect(params.ClusterIdentifier).to.equal(parameters.SnapshotIdentifier);
+            callback(null, response);
+          }
+      };
+
+      return redshiftutilities.createClusterSnapshot(parameters).then(result => {
+        expect(result).to.deep.equal(response);
+      });
+
+    });
+
+  });
+
     describe('clusterExists', () => {
 
         it('returns true when cluster array exists in data', () => {

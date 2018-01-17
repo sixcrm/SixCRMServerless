@@ -1,0 +1,17 @@
+{
+  "parent":"181111172466",
+  "deployment_accounts":{
+    "development":{
+      "external_id":"6899e28b-e580-4034-8b74-c0a2f60cb367",
+      "account_id":"068070110666"
+    },
+    "staging":{
+      "external_id":"b759c835-696e-4f00-8051-6f418232cf7c",
+      "account_id":"821071795213"
+    },
+    "production":{
+      "external_id":"db4d2ce6-b564-4099-a7f6-3c601fe7c926",
+      "account_id":"181111172466"
+    }
+  }
+}

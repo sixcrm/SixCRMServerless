@@ -2,6 +2,9 @@ aws:
   region: 'us-east-1'
   account: '068070110666'
 
+sts:
+  deployment_role_name: 'SixCRMDeployment'
+
 ses:
   hostname: email-smtp.us-east-1.amazonaws.com
   port: 465
@@ -36,6 +39,7 @@ lambda:
   endpoint: ''
 
 redshift:
+  default_cluster_identifier: 'sixcrm'
   user: 'admin'
   database: 'analytics'
   password: 'Jagodica9'
