@@ -62,10 +62,10 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Set Access Credentials
-          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }} && printenv
       - run:
           name: Backup DynamoDB
-          command:  node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }}
+          command:  printenv && node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }}
       - run:
           name: Backup Redshift
           command:  node ./deployment/redshift/backup_cluster.js --branch={{ .Branch }} --version={{ .Revision }}
