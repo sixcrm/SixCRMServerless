@@ -44,11 +44,11 @@ module.exports.graphObj = new GraphQLInputObjectType({
             description: 'The transaction summary subaffiliate 5 filter list.',
             type: new GraphQLList(GraphQLString)
         },
-        merchantprovider:{
+        merchant_provider:{
             description: 'The transaction summary merchant provider filter list.',
             type: new GraphQLList(GraphQLString)
         },
-        productschedule:{
+        product_schedule:{
             description: 'The transaction summary product schedule filter list.',
             type: new GraphQLList(GraphQLString)
         },

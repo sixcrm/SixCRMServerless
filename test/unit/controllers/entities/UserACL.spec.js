@@ -3,41 +3,18 @@ let expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidUserACL() {
-    return {
-        "id":"474e5f79-2662-49ab-a58e-8cc45e33159c",
-        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "user":"nikola.bosic@coingcs.com",
-        "role":"e09ac44b-6cde-4572-8162-609f6f0aeca8",
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidUserACL()
 }
 
 function getValidAccount() {
-    return {
-        "id":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-        "name": "E2E Test Acc",
-        "active":true,
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-
-    }
+    return MockEntities.getValidAccount()
 }
 
 function getValidRole() {
-    return {
-        "id":"e09ac44b-6cde-4572-8162-609f6f0aeca8",
-        "name": "No Permissions",
-        "active":true,
-        "permissions":{
-            "allow":[],
-            "deny":["*"]
-        },
-        "created_at":"2017-04-06T18:40:41.405Z",
-        "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    return MockEntities.getValidRole()
 }
 
 describe('controllers/entities/UserACL.js', () => {

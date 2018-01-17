@@ -8,7 +8,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 function getValidSelfSignedJWT(){
 
@@ -53,7 +52,7 @@ function getValidUserSigningStrings(){
 
 function getInvalidToken(){
 
-  return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im93bmVyLnVzZXJAdGVzdC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGljdHVyZSI6IiIsImlzcyI6Imh0dHBzOi8vc2l4Y3JtLmF1dGgwLmNvbS8iLCJzdWIiOiIiLCJhdWQiOiIiLCJleHAiOjE1MDkzMzM0NjgsImlhdCI6MTUwOTMyOTg2OH0.IPem1mYXoRgl4BTnHmtYIwl5MAVNXpMmtQG7glwGkW1';
+  return 'yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im93bmVyLnVzZXJAdGVzdC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGljdHVyZSI6IiIsImlzcyI6Imh0dHBzOi8vc2l4Y3JtLmF1dGgwLmNvbS8iLCJzdWIiOiIiLCJhdWQiOiIiLCJleHAiOjE1MDkzMzM0NjgsImlhdCI6MTUwOTMyOTg2OH0.IPem1mYXoRgl4BTnHmtYIwl5MAVNXpMmtQG7glwGkW1';
 
 }
 
@@ -347,8 +346,18 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
   describe('respond', () => {
 
-    it('', () => {
+    it('successfully returns an email from decoded token', () => {
 
+        let valid_token = getValidAuthorizationToken(getValidUser());
+
+        let decoded_token = getDecodedToken();
+
+        let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+
+        verifySiteJWTController.parameters.set('verified_authorization_token', valid_token);
+        verifySiteJWTController.parameters.set('decoded_authorization_token', decoded_token);
+
+        expect(verifySiteJWTController.respond()).to.equal(decoded_token.email);
     });
 
   });

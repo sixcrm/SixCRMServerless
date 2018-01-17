@@ -1,0 +1,51 @@
+let chai = require('chai');
+let expect = chai.expect;
+const mockery = require('mockery');
+
+describe('controllers/ShippingReceipt.js', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
+    describe('getFulfillmentProvider', () => {
+
+        it('returns a fulfillment provider', () => {
+            let shipping_receipt = {
+                fulfillment_provider: 'dummy_id'
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/FulfillmentProvider.js'), {
+                get: ({id}) => {
+                    expect(id).to.equal(shipping_receipt.fulfillment_provider);
+                    return Promise.resolve('a_fulfillment_provider')
+                }
+            });
+
+            let shippingReceiptController = global.SixCRM.routes.include('controllers','entities/ShippingReceipt.js');
+
+            return shippingReceiptController.getFulfillmentProvider(shipping_receipt).then((result) => {
+                expect(result).to.equal('a_fulfillment_provider');
+            });
+        });
+
+        it('returns null when shipping receipt does not have a fulfillment provider', () => {
+            let shipping_receipt = {};
+
+            let shippingReceiptController = global.SixCRM.routes.include('controllers','entities/ShippingReceipt.js');
+
+            return shippingReceiptController.getFulfillmentProvider(shipping_receipt).then((result) => {
+                expect(result).to.equal(null);
+            });
+        });
+    });
+});

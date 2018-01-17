@@ -5,9 +5,6 @@ let expect = chai.expect;
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 
 function getValidUserAlias(){
@@ -90,6 +87,44 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
         expect(result).to.equal(getValidUserAlias())
       });
 
+    });
+
+  });
+
+  describe('assureResources', () => {
+
+    let transaction_jwt_key_temp;
+
+    beforeEach(() => {
+        transaction_jwt_key_temp = process.env.transaction_jwt_secret_key;
+    });
+
+    afterEach(() => {
+        process.env.transaction_jwt_secret_key = transaction_jwt_key_temp;
+    });
+
+    it('throws error when JWT secret key is missing', () => {
+
+      delete process.env.transaction_jwt_secret_key;
+
+      let verifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+
+      try{
+          verifyTransactionJWTController.assureResources()
+      }catch (error) {
+          expect(error.message).to.equal('[500] Missing JWT secret key.')
+      }
+    });
+
+  });
+
+  describe('acquireToken', () => {
+
+    it('returns false when an event object is missing an authorization token', () => {
+
+      let verifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+
+        expect(verifyTransactionJWTController.acquireToken()).to.equal(false);
     });
 
   });

@@ -192,8 +192,13 @@ class AnalyticsController extends AnalyticsUtilities{
     getTransactionOverview(parameters){
 
         du.debug('Get Transaction Overview');
+        du.debug(parameters);
 
-        return this.getResults('transaction_summary', parameters.analyticsfilter, this.default_query_filters);
+        if(!_.has(parameters.analyticsfilter, 'product_schedule')){
+          return this.getResults('transaction_summary', parameters.analyticsfilter, this.default_query_filters);
+        } else {
+          return this.getResults('transaction_summary_product_schedule', parameters.analyticsfilter, this.default_query_filters);
+        }
 
     }
 
@@ -263,6 +268,8 @@ class AnalyticsController extends AnalyticsUtilities{
     }
 
     getQueueState(parameters) {
+
+      // Technical debt, need to change this into a query
 
       let obj = {};
 
@@ -370,11 +377,17 @@ class AnalyticsController extends AnalyticsUtilities{
 
         let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
 
+        du.debug('Get Merchant Report parameters');
+        du.debug(parameters);
+
         let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
 
         parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
         parameters = this.appendPeriod(parameters, period_selection);
+
+        du.debug('Get Merchant Report parameters after merge');
+        du.debug(parameters);
 
         if(!_.has(parameters, 'product_schedule')){
           return this.getResults('reports/merchantprovider/merchantprovider_report', parameters, this.default_query_filters);
