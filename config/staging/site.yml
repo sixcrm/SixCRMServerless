@@ -2,6 +2,9 @@ aws:
   region: 'us-east-1'
   account: '821071795213'
 
+sts:
+  deployment_role_name: 'SixCRMDeployment'
+  
 ses:
   hostname: email-smtp.us-east-1.amazonaws.com
   port: 465

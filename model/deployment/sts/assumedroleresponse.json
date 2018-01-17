@@ -1,0 +1,23 @@
+{
+  "id":"/deployment/sts/assumedroleresponse.json",
+  "title":"Assumed Role Response",
+  "type":"object",
+  "properties":{
+    "Credentials":{
+      "type":"object",
+      "properties":{
+        "AccessKeyId":{
+          "type":"string"
+        },
+        "SecretAccessKey":{
+          "type":"string"
+        },
+        "SessionToken":{
+          "type":"string"
+        }
+      },
+      "required":["AccessKeyId","SecretAccessKey","SessionToken"]
+    }
+  },
+  "required":["Credentials"]
+}

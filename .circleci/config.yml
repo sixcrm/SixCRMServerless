@@ -8,12 +8,8 @@
 defaults: &job-defaults
   docker:
     - image: circleci/node:7.10.0
-  environment:
-    - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
-    - AWS_ACCOUNT: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_account'
-    - AWS_REGION: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_region'
-    - AWS_ACCESS_KEY_ID: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_access_key_id'
-    - AWS_SECRET_ACCESS_KEY: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_secret_access_key'
+      environment:
+        - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
 
 version: 2
 jobs:
@@ -21,9 +17,6 @@ jobs:
     <<: *job-defaults
     steps:
       - run: sudo npm install -g npm@latest
-      - run:
-          name: Debugging
-          command: echo $AWS_ACCOUNT; echo $AWS_REGION;  echo $AWS_ACCESS_KEY_ID;  echo $AWS_SECRET_ACCESS_KEY;
   build:
     <<: *job-defaults
     steps:
@@ -68,6 +61,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Set Access Credentials
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
+      - run:
           name: Backup DynamoDB
           command:  node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }}
       - run:
@@ -80,6 +76,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Set Access Credentials
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
+      - run:
           name: Serveless Deploy
           command: node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
   deploy_security_groups:
@@ -89,6 +88,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Set Access Credentials
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
+      - run:
           name: EC2 Security Groups
           command: node ./deployment/ec2/deploy_security_groups.js
   deploy_s3:
@@ -97,6 +99,9 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Set Access Credentials
+          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
       - run:
           name: S3 Buckets
           command: ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."

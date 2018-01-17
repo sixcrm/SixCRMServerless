@@ -412,7 +412,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     }
 
-    if(this.s3utilities.hasCredentials(false) !== true){ return null; }
+    //if(this.s3utilities.hasCredentials(false) !== true){ return null; }
 
     return this.s3utilities.objectExists({Bucket: bucket, Key: this.s3_environment_configuration_file_key}).then((exists) => {
 
