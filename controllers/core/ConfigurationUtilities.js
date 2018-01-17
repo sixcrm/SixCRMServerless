@@ -6,6 +6,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class ConfigurationUtilities {
 
@@ -132,15 +133,29 @@ module.exports = class ConfigurationUtilities {
 
         stage = process.env.stage;
 
-        if(!_.contains(['local','development','staging','production'], stage)){
+        if(stage !== 'local'){
 
-          eu.throwError('Configuration.resolveStage unable to validate stage name: '+stage);
+          let stages = global.SixCRM.routes.include('config', 'stages.yml');
+
+          let stage_names = objectutilities.getKeys(stages);
+
+          if(!_.contains(stage_names, stage)){
+
+            eu.throwError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
+
+          }
 
         }
 
       }else{
 
         stage = this.determineStageFromAccountIdentifier();
+
+        if(_.isNull(stage)){
+
+          stage = this.determineStageFromBranchName();
+
+        }
 
       }
 
@@ -157,21 +172,71 @@ module.exports = class ConfigurationUtilities {
 
   }
 
-  determineStageFromAccountIdentifier(){
+  determineStageFromBranchName(fatal){
+
+    du.debug('Determine Stage From Branch Name');
+
+    fatal = (_.isUndefined(fatal))?true:fatal;
+
+    let branch_name = this.getBranchName();
+
+    if(!_.isNull(branch_name)){
+
+      let stages = global.SixCRM.routes.include('config','stages.yml');
+
+      let identified_stage = null;
+
+      objectutilities.map(stages, key => {
+        let stage = stages[key];
+
+        if(stage.branch_name == branch_name){
+          identified_stage = key
+        }
+      });
+
+      if(!_.isNull(identified_stage)){
+        return identified_stage;
+      }
+
+      if(fatal){
+        eu.throwError('server', 'Unrecognized branch_name in stage.yml: '+branch_name);
+      }
+
+    }
+
+    return null;
+
+  }
+
+  determineStageFromAccountIdentifier(fatal){
 
     du.debug('Determine Stage From Account Identifier');
 
-    let account_identifier = this.getAccountIdentifier();
+    fatal = (_.isUndefined(fatal))?true:fatal;
 
-    let stage = null
+    let account_identifier = this.getAccountIdentifier();
 
     if(!_.isNull(account_identifier)){
 
-      if(_.has(this.stages, account_identifier)){
-        return this.stages[account_identifier];
+      let stages = global.SixCRM.routes.include('config','stages.yml');
+
+      let identified_stage = null;
+
+      objectutilities.map(stages, key => {
+        let stage = stages[key];
+
+        if(stage.aws_account_id == account_identifier){
+          identified_stage = key
+        }
+      });
+
+      if(!_.isNull(identified_stage)){
+        return identified_stage;
       }
 
-      eu.throwError('server', 'Unrecognized account identifier: '+account_identifier);
+      if(fatal){
+        eu.throwError('server', 'Unrecognized account identifier in stage.yml: '+account_identifier);
+      }
 
     }
 
@@ -192,6 +257,28 @@ module.exports = class ConfigurationUtilities {
     }
 
     return account_identifier;
+
+  }
+
+  getBranchName(){
+
+    du.debug('Get Branch Name');
+
+    let branch_name = this.getBranchNameFromEnvironment();
+
+    return branch_name;
+
+  }
+
+  getBranchNameFromEnvironment(){
+
+    du.debug('Get Branch Name From Environment');
+
+    if(_.has(process.env, 'CIRCLE_BRANCH')){
+      return process.env.CIRCLE_BRANCH;
+    }
+
+    return null;
 
   }
 

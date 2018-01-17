@@ -80,6 +80,16 @@ describe('lib/aws-utilities', () => {
 
     describe('hasCredentials', () => {
 
+      let _process_env = null;
+
+      before(() => {
+        _process_env = process.env;
+      });
+
+      after(() => {
+        process.env = _process_env;
+      });
+
       beforeEach(() => {
         process.env.AWS_ACCOUNT = '123';
         process.env.AWS_REGION = '123';
@@ -113,7 +123,7 @@ describe('lib/aws-utilities', () => {
         try{
           let result = awsutilities.hasCredentials();
         }catch(error){
-          expect(error.message).to.equal('[500] Missing Credentials: AWS_ACCOUNT');
+          expect(error.message).to.equal('[500] Missing Credentials in process.env');
         }
 
       });
@@ -130,7 +140,7 @@ describe('lib/aws-utilities', () => {
         try{
           let result = awsutilities.hasCredentials();
         }catch(error){
-          expect(error.message).to.equal('[500] Missing Credentials: AWS_ACCOUNT, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY');
+          expect(error.message).to.equal('[500] Missing Credentials in process.env');
         }
 
       });

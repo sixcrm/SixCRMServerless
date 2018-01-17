@@ -1,7 +1,10 @@
 const chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
+const _ = require('underscore');
 
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const Configuration = global.SixCRM.routes.include('controllers','core/Configuration.js');
 
 describe('controllers/core/Configuration.js', () => {
@@ -25,16 +28,10 @@ describe('controllers/core/Configuration.js', () => {
     });
 
     it('instantiates', () => {
+
         let configuration = new Configuration();
 
-        let stage_names = [];
-
-        for (let stage in configuration.stages) {
-            stage_names.push(configuration.stages[stage]);
-        }
-
-        expect(stage_names).to.include.members(['development', 'staging', 'production']);
-        expect(configuration.stage).to.equal('local');
+        //expect(configuration.stage).to.equal('local');
         expect(configuration.serverless_config).not.to.be.undefined;
         expect(configuration.serverless_config).not.to.be.undefined;
         expect(configuration.environment_config).not.to.be.null;
@@ -54,44 +51,81 @@ describe('controllers/core/Configuration.js', () => {
 
     describe('getAccountIdentifier', () => {
 
-        it('determines account identifier', () => {
-            let configuration = new Configuration('development');
+      let _context = null;
+      let _process_env = null;
 
-            process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
+      before(() => {
+        _process_env = process.env;
+        _context = context;
+      });
 
-            expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
-        });
+      after(() => {
+        process.env = _process_env;
+        /* eslint-disable no-global-assign */
+        context = _context;
+      });
 
-        it('determines account identifier - fallback to lambda', () => {
-            delete process.env.AWS_ACCOUNT;
-            // eslint-disable-next-line no-global-assign
-            context = {invokedFunctionArn: DEVELOPMENT_ACCOUNT};
-            let configuration = new Configuration();
+      it('determines account identifier', () => {
+          let configuration = new Configuration('development');
 
-            expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
-        });
+          process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
+
+          expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
+      });
+
+      it('determines account identifier - fallback to lambda', () => {
+          delete process.env.AWS_ACCOUNT;
+          // eslint-disable-next-line no-global-assign
+          context = {invokedFunctionArn: DEVELOPMENT_ACCOUNT};
+          let configuration = new Configuration();
+
+          expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
+      });
+
     });
 
     describe('determineStageFromAccountIdentifier', () => {
 
-        it('determines stage from account identifier', () => {
-            let configuration = new Configuration();
+      let _process_env = null;
 
-            process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
+      before(() => {
+        _process_env = process.env;
+      });
 
-            expect(configuration.determineStageFromAccountIdentifier()).to.equal('development');
-        });
+      after(() => {
+        process.env = _process_env;
+      });
+
+      it('determines stage from account identifier', () => {
+          let configuration = new Configuration();
+
+          process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
+
+          expect(configuration.determineStageFromAccountIdentifier()).to.equal('development');
+      });
+
     });
 
     describe('getAccountIdentifierFromLambdaContext', () => {
 
-        it('determines account identifier from lambda context', () => {
-            // eslint-disable-next-line no-global-assign
-            context = {invokedFunctionArn: DEVELOPMENT_ACCOUNT};
-            let configuration = new Configuration();
+      let _context = null;
 
-            expect(configuration.getAccountIdentifierFromLambdaContext()).to.equal(DEVELOPMENT_ACCOUNT);
-        });
+      before(() => {
+        _context = context;
+      });
+
+      after(() => {
+        /* eslint-disable no-global-assign */
+        context = _context;
+      });
+
+      it('determines account identifier from lambda context', () => {
+          // eslint-disable-next-line no-global-assign
+          context = {invokedFunctionArn: DEVELOPMENT_ACCOUNT};
+          let configuration = new Configuration();
+
+          expect(configuration.getAccountIdentifierFromLambdaContext()).to.equal(DEVELOPMENT_ACCOUNT);
+      });
     });
 
     describe('getStatus', () => {
@@ -515,4 +549,71 @@ describe('controllers/core/Configuration.js', () => {
             })
         });
     });
+
+    describe('handleStage', () => {
+
+      let process_env = null;
+
+      before(() => {
+        process_env = process.env;
+      });
+
+      afterEach(() => {
+        process.env = process_env;
+      })
+
+      after(() => {
+        process.env = process_env;
+      });
+
+      it('successfully identifies the stage based on branch name', () => {
+
+        let stages = global.SixCRM.routes.include('config', 'stages.yml');
+
+        objectutilities.map(stages, key => {
+
+          let stage = stages[key];
+
+          if(!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)){
+            delete process.env.AWS_ACCOUNT;
+          }
+
+          if(!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)){
+            delete process.env.stage;
+          }
+
+          process.env.CIRCLE_BRANCH = stage.branch_name;
+
+          let configuration = new Configuration();
+
+          expect(configuration.stage).to.equal(key);
+
+        });
+
+      });
+
+      it('successfully identifies the stage (local) in absence of branch name or ', () => {
+
+        let stages = global.SixCRM.routes.include('config', 'stages.yml');
+
+        if(!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)){
+          delete process.env.AWS_ACCOUNT;
+        }
+
+        if(!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)){
+          delete process.env.stage;
+        }
+
+        if(!_.isUndefined(process.env.CIRCLE_BRANCH) && !_.isNull(process.env.CIRCLE_BRANCH)){
+          delete process.env.CIRCLE_BRANCH;
+        }
+
+        let configuration = new Configuration();
+
+        expect(configuration.stage).to.equal('local');
+
+      });
+
+    });
+
 });

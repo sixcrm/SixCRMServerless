@@ -29,9 +29,9 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
             process.env.AWS_ACCOUNT = aws_account ? aws_account : 'an_aws_account'; //invalid aws account value
 
             try{
-                configurationUtilities.determineStageFromAccountIdentifier();
+              configurationUtilities.determineStageFromAccountIdentifier();
             }catch (error) {
-                expect(error.message).to.equal('[500] Unrecognized account identifier: ' + process.env.AWS_ACCOUNT);
+              expect(error.message).to.equal('[500] Unrecognized account identifier in stage.yml: ' + process.env.AWS_ACCOUNT);
             }
         });
 

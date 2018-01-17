@@ -29,12 +29,6 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   setConfigurationInformation(){
 
-    this.stages = {
-      '068070110666':'development',
-      '821071795213':'staging',
-      '181111172466':'production'
-    }
-
     this.config_bucket_template = 'sixcrm-{{stage}}-configuration-master';
 
     this.s3_environment_configuration_file_key = 'config.json';
@@ -79,7 +73,6 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  //Technical Debt: Note that it will need to parse the references included therein...
   getServerlessConfig(){
 
     du.debug('Get Serverless Config');
@@ -412,7 +405,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     }
 
-    //if(this.s3utilities.hasCredentials(false) !== true){ return null; }
+    if(this.s3utilities.hasCredentials(false) !== true){ return null; }
 
     return this.s3utilities.objectExists({Bucket: bucket, Key: this.s3_environment_configuration_file_key}).then((exists) => {
 
@@ -463,8 +456,6 @@ module.exports = class Configuration extends ConfigurationUtilities {
           };
 
           return this.s3utilities.putObject(parameters).then((result) => {
-
-            //du.warning(result);
 
             return this.getS3EnvironmentConfiguration(field);
 
