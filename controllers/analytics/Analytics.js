@@ -54,6 +54,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         this.default_queue_filters = [
           'queuename',
+          'current_queuename',
           'account'
         ];
 
