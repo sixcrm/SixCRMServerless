@@ -54,7 +54,6 @@ class AnalyticsController extends AnalyticsUtilities{
 
         this.default_queue_filters = [
           'queuename',
-          'current_queuename',
           'account'
         ];
 
@@ -193,8 +192,13 @@ class AnalyticsController extends AnalyticsUtilities{
     getTransactionOverview(parameters){
 
         du.debug('Get Transaction Overview');
+        du.debug(parameters);
 
-        return this.getResults('transaction_summary', parameters.analyticsfilter, this.default_query_filters);
+        if(!_.has(parameters.analyticsfilter, 'product_schedule')){
+          return this.getResults('transaction_summary', parameters.analyticsfilter, this.default_query_filters);
+        } else {
+          return this.getResults('transaction_summary_product_schedule', parameters.analyticsfilter, this.default_query_filters);
+        }
 
     }
 
@@ -264,6 +268,8 @@ class AnalyticsController extends AnalyticsUtilities{
     }
 
     getQueueState(parameters) {
+
+      // Technical debt, need to change this into a query
 
       let obj = {};
 
