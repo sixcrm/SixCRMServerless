@@ -8,12 +8,12 @@
 defaults: &job-defaults
   docker:
     - image: circleci/node:7.10.0
-      environment:
-        - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
-        - AWS_ACCOUNT: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_account'
-        - AWS_REGION: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_region'
-        - AWS_ACCESS_KEY_ID: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_access_key_id'
-        - AWS_SECRET_ACCESS_KEY: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_secret_access_key'
+  environment:
+    - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+    - AWS_ACCOUNT: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_account'
+    - AWS_REGION: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_region'
+    - AWS_ACCESS_KEY_ID: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_access_key_id'
+    - AWS_SECRET_ACCESS_KEY: openssl aes-256-cbc -d -in ./deployment/config/aws.{{ .Branch }}.encrypted -k $SIX_SKELETON_KEY | jq '.aws_secret_access_key'
 
 version: 2
 jobs:
