@@ -5,8 +5,7 @@ WITH rebills_delta AS
    OVER (
      PARTITION BY id_rebill
      ORDER BY datetime ) delta_time
- FROM
-   f_rebills
+ FROM f_rebills fr
  WHERE 1=1
  {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}')

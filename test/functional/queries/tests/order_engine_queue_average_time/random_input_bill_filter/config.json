@@ -1,0 +1,12 @@
+{
+  "method": "getQueueAverageTime",
+  "test_case": "random input with bill filter",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-04-01T00:00:00.000Z",
+    "end": "2017-05-01T00:00:00.000Z" },
+    "queuename": "bill",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "summary",
+  "expect": [{"queuename":"","averagetime":{}}] 
+}

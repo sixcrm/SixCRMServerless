@@ -1,0 +1,13 @@
+{
+  "method": "getQueueRates",
+  "test_case": "random input with list filter",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-04-01T00:00:00.000Z",
+    "end": "2017-05-01T00:00:00.000Z" },
+    "queuename": ["bill","hold"],
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "summary",
+  "expect": [{"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"0","queuename":""},
+            {"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"1","queuename":"bill"}] 
+}
