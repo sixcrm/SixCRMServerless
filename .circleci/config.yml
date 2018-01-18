@@ -60,11 +60,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}
       - run:
           name: debugging
           command: printenv && echo $AWS_ACCESS_KEY_ID && echo $AWS_SECRET_ACCESS_KEY
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}
       - run:
           name: Set Access Credentials
           command: mkdir -p deployment_credentials/ && node ./deployment/sts/create_role_commands.js --branch {{ .Branch }} --output=deployment_credentials/stscredentials
@@ -320,21 +320,21 @@ workflows:
           filters:
             branches:
               only:
-                - development
+                - development2
       - unit_tests:
           requires:
             - build
           filters:
             branches:
               only:
-                - development
+                - development2
       - functional_tests:
           requires:
             - build
           filters:
             branches:
               only:
-                - development
+                - development2
       - pre_deploy:
           requires:
             - build
