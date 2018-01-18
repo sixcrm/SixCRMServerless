@@ -6,7 +6,12 @@ WITH rebills_delta AS
      PARTITION BY id_rebill
      ORDER BY datetime ) delta_time
  FROM
-   f_rebills
+ (
+   SELECT
+     fq.*,
+     current_queuename as queuename
+   FROM f_rebills fq
+   ) fr
  WHERE 1=1
  {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}')

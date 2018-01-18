@@ -54,6 +54,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
         this.default_queue_filters = [
           'queuename',
+          'current_queuename',
           'account'
         ];
 
@@ -231,12 +232,18 @@ class AnalyticsController extends AnalyticsUtilities{
     }
 
     getRebillSummary(parameters){
+
+      du.debug('Get Rebill Summary');
+
       const queue_name = parameters.queuename;
       const period = parameters.period;
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendCurrentQueueName(parameters, queue_name);
+      if(!_.isUndefined(queue_name)){
+        parameters = this.appendCurrentQueueName(parameters, queue_name);
+      }
+
       parameters = this.appendPeriod(parameters, {name: period});
 
       return this.getResults('order_engine/rebill_pagination', parameters, this.default_queue_filters);
@@ -250,7 +257,9 @@ class AnalyticsController extends AnalyticsUtilities{
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendCurrentQueueName(parameters, queue_name);
+      if(!_.isUndefined(queue_name)){
+        parameters = this.appendCurrentQueueName(parameters, queue_name);
+      }
 
       return this.getResults('order_engine/queue_rate', parameters, this.default_queue_filters);
     }
@@ -262,7 +271,9 @@ class AnalyticsController extends AnalyticsUtilities{
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendCurrentQueueName(parameters, queue_name);
+      if(!_.isUndefined(queue_name)){
+        parameters = this.appendCurrentQueueName(parameters, queue_name);
+      }
 
       return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_filters);
     }
