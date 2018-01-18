@@ -19,7 +19,7 @@
 		},
 		"username":{
 			"type":"string",
-			"minLength":3
+			"minLength":1
 		},
 		"password":{
 			"type":"string",
