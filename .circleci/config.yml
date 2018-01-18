@@ -91,10 +91,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Backup DynamoDB
-          command:  printenv && node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }}
+          command:  printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
       - run:
           name: Backup Redshift
-          command:  node ./deployment/redshift/backup_cluster.js --branch={{ .Branch }} --version={{ .Revision }}
+          command:  node ./deployment/redshift/backup_cluster.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -382,6 +382,10 @@ workflows:
       - backup_datastore:
           requires:
             - pre_deploy
+          filters:
+            branches:
+              ignore:
+                - development
       - deploy_serverless:
           requires:
             - pre_deploy
