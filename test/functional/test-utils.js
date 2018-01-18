@@ -41,9 +41,9 @@ class TestUtils {
 
         process.env.stage = 'local';
 
-        process.env.dynamo_endpoint = 'http://localhost:8001';
-        process.env.endpoint = 'http://localhost:8001';
-        process.env.dynamo_endpoint = 'http://localhost:8001';
+        //process.env.dynamo_endpoint = 'http://localhost:8001';
+        //process.env.endpoint = 'http://localhost:8001';
+        //process.env.dynamo_endpoint = 'http://localhost:8001';
         process.env.transaction_key = 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi';
         process.env.stage = 'local';
         process.env.AWS_PROFILE = 'six';

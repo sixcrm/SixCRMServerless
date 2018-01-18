@@ -147,7 +147,7 @@ describe('lib/aws-utilities', () => {
 
       it('returns false when some credentials are not present and fatal is false', () => {
 
-        delete process.env.AWS_ACCOUNT;
+        delete process.env.AWS_SECRET_ACCESS_KEY;
 
         const awsutilities = new AWSUtilities();
 

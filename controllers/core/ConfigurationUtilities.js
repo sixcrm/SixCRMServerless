@@ -149,11 +149,11 @@ module.exports = class ConfigurationUtilities {
 
       }else{
 
-        stage = this.determineStageFromAccountIdentifier();
+        stage = this.determineStageFromBranchName();
 
         if(_.isNull(stage)){
 
-          stage = this.determineStageFromBranchName();
+          stage = this.determineStageFromAccountIdentifier();
 
         }
 

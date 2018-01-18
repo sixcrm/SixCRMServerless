@@ -105,6 +105,8 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     du.debug('Set Environment Config');
 
+    du.info(key, value);
+
     if(this.isValidConfiguration(key, value)){
 
       return this.propagateCache('all', key, value);
@@ -119,20 +121,37 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   regenerateConfiguration(key) {
 
-    let regeneration_functions = {};
+    du.debug('Regenerate Configuration');
+
+    let regeneration_functions = {
+      'all': () => this.regenerateAllConfigurations()
+    };
 
     regeneration_functions[this.mandatory_config_names.redshift_host] = () => this.regenerateRedshiftConfiguration();
     regeneration_functions[this.mandatory_config_names.cloudsearch_domainendpoint] = () => this.regenerateCloudsearchConfiguration();
 
     if (key && _.isFunction(regeneration_functions[key])) {
 
-        return regeneration_functions[key]();
+      return regeneration_functions[key]();
 
     } else {
 
       du.warning(regeneration_functions[key] + ' is not a function.');
 
     }
+
+  }
+
+  regenerateAllConfigurations(){
+
+    du.debug('Regenerate All Configurations');
+
+    let promises = [
+      this.regenerateRedshiftConfiguration(),
+      this.regenerateCloudsearchConfiguration()
+    ];
+
+    return Promise.all(promises);
 
   }
 
@@ -263,14 +282,15 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         return this.getConfiguration('s3', field, use_cache).then((result) => {
 
-            if (_.isNull(result)) {
+          if (_.isNull(result)) {
 
-                return this.regenerateConfiguration(field);
+            return this.regenerateConfiguration(field);
 
-            } else {
+          } else {
 
-                return resolve(result);
-            }
+            return resolve(result);
+
+          }
 
         });
 
@@ -405,7 +425,9 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     }
 
-    if(this.s3utilities.hasCredentials(false) !== true){ return null; }
+    if(this.s3utilities.hasCredentials(false) !== true){
+      return Promise.resolve(null);
+    }
 
     return this.s3utilities.objectExists({Bucket: bucket, Key: this.s3_environment_configuration_file_key}).then((exists) => {
 

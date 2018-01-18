@@ -84,30 +84,28 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Debugging
-          command: printenv
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
-          name: Debugging 2
-          command: printenv && echo $AWS_ACCESS_KEY_ID && echo $AWS_SECRET_ACCESS_KEY && echo $AWS_SESSION_TOKEN;
-      - run: exit 1;
-      - run:
           name: Backup DynamoDB
-          command:  printenv && node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }}
+          command:  printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
       - run:
           name: Backup Redshift
-          command:  node ./deployment/redshift/backup_cluster.js --branch={{ .Branch }} --version={{ .Revision }}
+          command:  node ./deployment/redshift/backup_cluster.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
   deploy_serverless:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Serveless Deploy
           command: node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
@@ -117,6 +115,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: EC2 Security Groups
           command: node ./deployment/ec2/deploy_security_groups.js
@@ -126,9 +129,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
-          name: Set Access Credentials
-          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: S3 Buckets
           command: ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
@@ -138,6 +143,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: SQS
           command: ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
@@ -147,6 +157,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Elasticache
           command: ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/deploy.js || echo "No changes, skipping."
@@ -156,6 +171,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: IAM Deploy Roles
           command: node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
@@ -165,6 +185,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: DynamoDB Deploy Tables
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
@@ -177,6 +202,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Redshift Create Cluster
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
@@ -189,6 +219,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Kinesis Deploy
           command: ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
@@ -198,6 +233,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Save Last Commit
           command: node deployment/circle/save_last_commit.js
@@ -210,6 +250,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: SQS Purge
           command: node ./deployment/sqs/purge_queues.js
@@ -228,6 +273,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Redshift Referential Data
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
@@ -243,10 +293,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      #gross
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Deleteblock Integration Tests
           command: npm run test-deleteblocks
@@ -256,10 +302,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      #gross
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Entity Integration Tests
           command: npm run test-entities
@@ -269,10 +311,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      #gross
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
@@ -282,9 +320,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Add Deployment Keys
-          command: openssl aes-256-cbc -d -in ./deployment/config/aws.$CIRCLE_BRANCH.encrypted -k $SIX_SKELETON_KEY >> $BASH_ENV
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
@@ -323,21 +358,21 @@ workflows:
           filters:
             branches:
               only:
-                - development2
+                - development
       - unit_tests:
           requires:
             - build
           filters:
             branches:
               only:
-                - development2
+                - development
       - functional_tests:
           requires:
             - build
           filters:
             branches:
               only:
-                - development2
+                - development
       - pre_deploy:
           requires:
             - build
@@ -347,6 +382,10 @@ workflows:
       - backup_datastore:
           requires:
             - pre_deploy
+          filters:
+            branches:
+              ignore:
+                - development
       - deploy_serverless:
           requires:
             - pre_deploy
@@ -354,7 +393,6 @@ workflows:
             - unit_tests
             - functional_tests
             - backup_datastore
-          context: org-global
       - deploy_security_groups:
           requires:
             - pre_deploy
@@ -362,7 +400,6 @@ workflows:
             - unit_tests
             - functional_tests
             - backup_datastore
-          context: org-global
       - deploy_iam:
           requires:
             - pre_deploy
@@ -370,7 +407,6 @@ workflows:
             - unit_tests
             - functional_tests
             - backup_datastore
-          context: org-global
       - deploy_s3:
           requires:
             - pre_deploy
@@ -378,33 +414,26 @@ workflows:
             - unit_tests
             - functional_tests
             - backup_datastore
-          context: org-global
       - deploy_sqs:
           requires:
             - deploy_security_groups
             - deploy_iam
-          context: org-global
       - deploy_elasticache:
           requires:
             - deploy_security_groups
             - deploy_iam
-          context: org-global
       - deploy_dynamodb:
           requires:
             - deploy_security_groups
             - deploy_iam
-          context: org-global
       - deploy_redshift:
           requires:
             - deploy_security_groups
             - deploy_iam
-          context: org-global
       - deploy_kinesis:
           requires:
             - deploy_redshift
-          context: org-global
       - post_deployment:
-          context: org-global
           requires:
             - deploy_serverless
             - deploy_security_groups
@@ -418,7 +447,6 @@ workflows:
       - purge:
           requires:
             - post_deployment
-          context: org-global
           filters:
             branches:
               ignore:

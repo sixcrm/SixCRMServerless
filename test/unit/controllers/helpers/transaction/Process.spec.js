@@ -131,77 +131,21 @@ function getValidLoadBalancer(){
 
 }
 
-function getValidCreditCard(){
+function getValidCreditCard(id){
 
-    return {
-    	id: "df84f7bb-06bd-4daa-b1a3-6a2c113edd72",
-    	account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    	address: {
-    		city: "Portland",
-    		country: "US",
-    		line1: "10 Skid Rw.",
-    		line2: "Suite 100",
-    	  state: "OR",
-    		zip: "97213"
-    	},
-    	number: "4111111111111111",
-    	ccv: "999",
-    	expiration: "1025",
-    	name: "Rama Damunaste",
-    	created_at:"2017-04-06T18:40:41.405Z",
-    	updated_at:"2017-04-06T18:41:12.521Z"
-    };
+  return MockEntities.getValidCreditCard(id);
 
 }
 
-function getValidCustomer(){
+function getValidCustomer(id){
 
-    return {
-      id:"24f7c851-29d4-4af9-87c5-0298fa74c689",
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      email:"rama@damunaste.org",
-      firstname:"Rama",
-      lastname:"Damunaste",
-      phone:"1234567890",
-      address:{
-        line1:"10 Downing St.",
-        city:"London",
-        state:"OR",
-        zip:"97213",
-        country:"US"
-      },
-      creditcards:["df84f7bb-06bd-4daa-b1a3-6a2c113edd72"],
-      created_at:"2017-04-06T18:40:41.405Z",
-      updated_at:"2017-04-06T18:41:12.521Z"
-    };
+  return MockEntities.getValidCustomer(id);
 
 }
 
-function getValidProductSchedule(){
+function getValidProductSchedule(id){
 
-  return {
-    id:"12529a17-ac32-4e46-b05b-83862843055d",
-    name:"Product Schedule 1",
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-    schedule:[
-      {
-        product_id:"616cc994-9480-4640-b26c-03810a679fe3",
-        price:4.99,
-        start:0,
-        end:14,
-        period:14
-      },
-      {
-        product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-        price:34.99,
-        start:14,
-        period:30
-      }
-    ],
-    created_at:"2017-04-06T18:40:41.405Z",
-    updated_at:"2017-04-06T18:41:12.521Z"
-  };
+  return MockEntities.getValidProductSchedule(id);
 
 }
 
@@ -234,10 +178,9 @@ describe('helpers/transaction/Process.spec.js', () => {
       creditcard.properties = creditcard_properties;
 
       //Technical Debt:  This is bad.
-      process.env.stage = 'development';
+      //process.env.stage = 'development';
 
       let ph = new processHelperController();
-
 
       loadbalancer.monthly_sum = 4000.00;
       ph.parameters.set('selected_loadbalancer', loadbalancer);
@@ -1547,9 +1490,13 @@ describe('helpers/transaction/Process.spec.js', () => {
 
    it('processes a transaction', () => {
 
-      let customer = getValidCustomer();
-      let productschedule = getValidProductSchedule();
       let creditcard = getValidCreditCard();
+      let customer = getValidCustomer();
+
+      customer.creditcards = [creditcard.id];
+
+      let productschedule = getValidProductSchedule();
+
       let creditcards = [creditcard];
       let loadbalancer = getValidLoadBalancer();
       let merchantproviders = getValidMerchantProviders();

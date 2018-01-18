@@ -28,5 +28,5 @@
     }
 
   },
-  "required": ["service", "package", "provider", "plugins", "custom", "site_config", "functions", "resources"]
+  "required": ["service", "package", "provider", "plugins", "site_config", "functions", "resources"]
 }
