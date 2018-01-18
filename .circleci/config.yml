@@ -83,12 +83,15 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: dependency-cache-{{ checksum "package.json" }}
-      - restore_cache:
-          keys: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Debugging
-          command: printenv && cat deployment_credentials/stscredentials && cat /deployment_credentials/stscredentials >> $BASH_ENV
+          command: printenv
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Debugging 2
           command: printenv && echo $AWS_ACCESS_KEY_ID && echo $AWS_SECRET_ACCESS_KEY && echo $AWS_SESSION_TOKEN;
