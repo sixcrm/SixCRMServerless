@@ -40,12 +40,7 @@ FROM
 (
   SELECT fr.*,
          max(datetime) over (partition by id_rebill) as m_datetime
-  FROM (
-    SELECT
-      fq.*,
-      current_queuename as queuename
-    FROM f_rebills fq
-    ) fr
+  FROM f_rebills fr
 WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
