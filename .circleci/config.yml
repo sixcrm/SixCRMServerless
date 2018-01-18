@@ -59,17 +59,17 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - dependency-cache-{{ checksum "package.json" }}
-            - deployment-credentials-{{ .Branch }}
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: debugging
           command: printenv
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Set Access Credentials
           command: mkdir -p deployment_credentials/ && node ./deployment/sts/create_role_commands.js --branch {{ .Branch }} --output=deployment_credentials/stscredentials
       - save_cache:
-          key: deployment-credentials-{{ .Branch }}
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
           paths:
             - deployment_credentials
       - run:
@@ -83,9 +83,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - dependency-cache-{{ checksum "package.json" }}
-            - deployment-credentials-{{ .Branch }}
+          keys: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          keys: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Debugging
           command: printenv && cat deployment_credentials/stscredentials && cat /deployment_credentials/stscredentials >> $BASH_ENV
