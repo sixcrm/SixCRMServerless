@@ -14,6 +14,22 @@ module.exports = class AWSDeploymentUtilities {
 
   }
 
+  getRoleCredentials(environment_key){
+
+    du.debug('Get Role Credentials');
+
+    let assume_role_parameters = this.getEnvironmentAssumedRoleParameters(environment_key);
+
+    return this.stsutilities.assumeRole(assume_role_parameters).then(result => {
+
+      mvu.validateModel(result, global.SixCRM.routes.path('model', 'deployment/sts/assumedroleresponse.json'));
+
+      return result;
+
+    });
+
+  }
+
   setRole(environment_key){
 
     du.debug('Set Role');
@@ -24,6 +40,8 @@ module.exports = class AWSDeploymentUtilities {
 
       return this.setAssumedRoleProperties(result);
 
+    }).catch(error => {
+      du.error(error);
     });
 
   }
@@ -45,8 +63,6 @@ module.exports = class AWSDeploymentUtilities {
   getEnvironmentAssumedRoleParameters(environment_key){
 
     let environments_json = global.SixCRM.routes.include('deployment', 'sts/config/accounts.json');
-
-    du.info(environments_json, environment_key);
 
     if(!_.has(environments_json.deployment_accounts, environment_key)){
       eu.throwError('server', 'Unknown deployment environment: '+environment_key);

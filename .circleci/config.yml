@@ -60,9 +60,39 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}
+      - run:
+          name: debugging
+          command: printenv && echo $AWS_ACCESS_KEY_ID && echo $AWS_SECRET_ACCESS_KEY
       - run:
           name: Set Access Credentials
-          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }} && printenv
+          command: mkdir -p deployment_credentials/ && node ./deployment/sts/create_role_commands.js --branch {{ .Branch }} --output=deployment_credentials/stscredentials
+      - save_cache:
+          key: deployment-credentials-{{ .Branch }}
+          paths:
+            - deployment_credentials
+      - run:
+          name: set credentials
+          command: printenv && cat deployment_credentials/stscredentials && cat $BASH_ENV && cat /deployment_credentials/stscredentials >> $BASH_ENV && cat $BASH_ENV
+      - run:
+          name: Debugging 2
+          command: printenv && echo $AWS_ACCESS_KEY_ID && echo $AWS_SECRET_ACCESS_KEY && echo $AWS_SESSION_TOKEN;
+  backup_datastore:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}
+      - run:
+          name: Debugging
+          command: printenv && cat deployment_credentials/stscredentials && cat /deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Debugging 2
+          command: printenv && echo $AWS_ACCESS_KEY_ID && echo $AWS_SECRET_ACCESS_KEY && echo $AWS_SESSION_TOKEN;
+      - run: exit 1;
       - run:
           name: Backup DynamoDB
           command:  printenv && node ./deployment/dynamodb/backup_tables.js --branch={{ .Branch }} --version={{ .Revision }}
@@ -76,9 +106,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Set Access Credentials
-          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
-      - run:
           name: Serveless Deploy
           command: node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
   deploy_security_groups:
@@ -87,9 +114,6 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Set Access Credentials
-          command: node ./deployment/sts/assume_role.js --branch {{ .Branch }}
       - run:
           name: EC2 Security Groups
           command: node ./deployment/ec2/deploy_security_groups.js
@@ -317,17 +341,16 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
-          filters:
-            branches:
-              only:
-                - production
-                - development
+      - backup_datastore:
+          requires:
+            - pre_deploy
       - deploy_serverless:
           requires:
             - pre_deploy
             - lint
             - unit_tests
             - functional_tests
+            - backup_datastore
           context: org-global
       - deploy_security_groups:
           requires:
@@ -335,6 +358,7 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
+            - backup_datastore
           context: org-global
       - deploy_iam:
           requires:
@@ -342,6 +366,7 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
+            - backup_datastore
           context: org-global
       - deploy_s3:
           requires:
@@ -349,6 +374,7 @@ workflows:
             - lint
             - unit_tests
             - functional_tests
+            - backup_datastore
           context: org-global
       - deploy_sqs:
           requires:
