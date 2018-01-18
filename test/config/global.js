@@ -1,9 +1,6 @@
 require('../../SixCRM.js');
 
-const fs = require('fs');
-const yaml = require('js-yaml');
-
-global.integration_test_config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+process.env.stage+'.yml', 'utf8'));
+global.integration_test_config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
 
 let test_users = [
     {

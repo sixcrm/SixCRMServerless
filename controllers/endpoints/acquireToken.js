@@ -38,8 +38,6 @@ class AcquireTokenController extends transactionEndpointController {
         'redshifteventobject':global.SixCRM.routes.path('model', 'kinesisfirehose/events.json')
       };
 
-      this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
-
       this.initialize();
 
     }
@@ -66,6 +64,10 @@ class AcquireTokenController extends transactionEndpointController {
       du.debug('Validate Campaign');
 
       let event = this.parameters.get('event');
+
+      if(!_.has(this, 'campaignController')){
+        this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+      }
 
       return this.campaignController.get({id: event.campaign}).then((campaign) => {
 

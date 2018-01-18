@@ -147,10 +147,6 @@ describe('helpers/shipment/Fulfill.js', () => {
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();
@@ -224,6 +220,7 @@ describe('helpers/shipment/Fulfill.js', () => {
   });
 
   describe('hydrateRequestProperties', () => {
+
     it('successfully hydrates request properties', () => {
 
       let mock_shipment_utilities = class {
@@ -258,6 +255,7 @@ describe('helpers/shipment/Fulfill.js', () => {
       });
 
     });
+
   });
 
   describe('execute', () => {

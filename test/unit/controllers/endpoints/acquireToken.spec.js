@@ -16,6 +16,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidEventPrototype(){
 
@@ -61,7 +62,7 @@ function getValidEvent(){
       'CloudFront-Is-Tablet-Viewer': 'false',
       'CloudFront-Viewer-Country': 'US',
       'Content-Type': 'application/json',
-      Host: 'development-api.sixcrm.com',
+      Host: 'local-api.sixcrm.com',
       'User-Agent': 'node-superagent/2.3.0',
       Via: '1.1 e1fff2dee56e3b55796cc594a92413c0.cloudfront.net (CloudFront)',
       'X-Amz-Cf-Id': 'auxn3Iv21qv3qMmcsVjlQxF86zRvidB4jV2XkHx3rdJ94iRatjLc_A==',
@@ -77,7 +78,7 @@ function getValidEvent(){
       path: '/token/acquire/d3fa3bf3-7824-49f4-8261-87674482bf1c',
       accountId: '068070110666',
       resourceId: '7s02w8',
-      stage: 'development',
+      stage: 'local',
       authorizer: {
         principalId: 'user',
         user: '4ee23a8f5c8661612075a89e72a56a3c6d00df90'
@@ -116,21 +117,9 @@ function getValidEventBody(){
 
 }
 
-function getValidCampaign(){
+function getValidCampaign(id){
 
-  return {
-  	id:uuidV4(),
-  	account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  	name: "Example Campaign",
-  	allow_prepaid: false,
-  	show_prepaid: false,
-  	productschedules: getValidProductScheduleIDs(),
-  	emailtemplates:["b44ce483-861c-4843-a7d6-b4c649d6bdde","8108d6a3-2d10-4013-9e8e-df71e2dc578b","102131a0-4cc4-4463-a614-e3157c3f03c2"],
-  	affiliate_allow:["ad58ea78-504f-4a7e-ad45-128b6e76dc57"],
-  	affiliate_deny:["*"],
-  	created_at:timestamp.getISO8601(),
-  	updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidCampaign(id);
 
 }
 
@@ -143,88 +132,21 @@ function getValidProductScheduleIDs(){
 function getValidProductSchedules(){
 
   return [
-    {
-      id:uuidV4(),
-      name:"Product Schedule 1",
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-      schedule:[
-        {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
-          price:4.99,
-          start:0,
-          end:14,
-          period:14
-        },
-        {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-          price:34.99,
-          start:14,
-          end:28,
-          period:14
-        },
-        {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
-          price:34.99,
-          start:28,
-          period:28
-        }
-      ],
-      created_at:"2017-04-06T18:40:41.405Z",
-      updated_at:"2017-04-06T18:41:12.521Z"
-    },
-    {
-      id:uuidV4(),
-      name:"Product Schedule 2",
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
-      schedule:[
-        {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
-          price:4.99,
-          start:17,
-          end:23,
-          period:33
-        },
-        {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-          price:34.99,
-          start:51,
-          end:750,
-          period:13
-        },
-        {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
-          price:34.99,
-          start:908,
-          period:31
-        }
-      ],
-      created_at:"2017-04-06T18:40:41.405Z",
-      updated_at:"2017-04-06T18:41:12.521Z"
-    }
-  ]
+    getValidProductSchedule(),
+    getValidProductSchedule()
+  ];
+
 }
 
-function getValidSession(){
+function getValidProductSchedule(id){
 
-  return {
-    completed: false,
-    subaffiliate_5: '45f025bb-a9dc-45c7-86d8-d4b7a4443426',
-    created_at: timestamp.getISO8601(),
-    subaffiliate_2: '22524f47-9db7-42f9-9540-d34a8909b072',
-    subaffiliate_1: '6b6331f6-7f84-437a-9ac6-093ba301e455',
-    subaffiliate_4: 'd515c0df-f9e4-4a87-8fe8-c53dcace0995',
-    subaffiliate_3: 'fd2548db-66a8-481e-aacc-b2b76a88fea7',
-    product_schedules: [],
-    updated_at: timestamp.getISO8601(),
-    affiliate: '332611c7-8940-42b5-b097-c49a765e055a',
-    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    customer: '24f7c851-29d4-4af9-87c5-0298fa74c689',
-    campaign: '70a6689a-5814-438b-b9fd-dd484d0812f9',
-    id: uuidV4(),
-    cid: 'fb10d33f-da7d-4765-9b2b-4e5e42287726'
-  };
+  return MockEntities.getValidProductSchedule(id);
+
+}
+
+function getValidSession(id){
+
+  return MockEntities.getValidSession(id);
 
 }
 
@@ -298,16 +220,16 @@ describe('acquireToken', () => {
   describe('validateCampaign', () => {
 
     before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+      mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+      });
     });
 
     afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
+      mockery.resetCache();
+      mockery.deregisterAll();
     });
 
     it('successfully validates the campaign', () => {
@@ -321,9 +243,11 @@ describe('acquireToken', () => {
         }
       });
 
+      du.info(mockery);
       let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
 
       acquireTokenController.parameters.set('event', event);
+
       return acquireTokenController.validateCampaign().then(result => {
         expect(result).to.equal(true);
         expect(acquireTokenController.parameters.store['campaign']).to.deep.equal(campaign);
