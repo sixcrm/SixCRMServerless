@@ -1360,7 +1360,7 @@ describe('/helpers/entities/Rebill.js', () => {
     });
 
     beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     afterEach(() => {
@@ -1371,6 +1371,12 @@ describe('/helpers/entities/Rebill.js', () => {
     it('throws an error when new state is not defined', () => {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         update: ({entity}) => {
+          expect.fail();
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
           expect.fail();
         }
       });
@@ -1392,6 +1398,12 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
+          expect.fail();
+        }
+      });
+
       const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
       const rebillHelper = new RebillHelper();
       const rebill = getValidRebill();
@@ -1402,6 +1414,8 @@ describe('/helpers/entities/Rebill.js', () => {
     });
 
     it('updates rebill state when when rebill has no state (initial state)', () => {
+      const rebill = getValidRebillWithNoState();
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         update: ({entity}) => {
           return Promise.resolve(entity);
@@ -1411,9 +1425,19 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
+          expect(table).to.equal('rebills');
+          expect(object.id_rebill).to.equal(rebill.id);
+          expect(object.current_queuename).to.equal('hold');
+          expect(object.previous_queuename).to.equal(undefined);
+
+          return Promise.resolve();
+        }
+      });
+
       const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
       const rebillHelper = new RebillHelper();
-      const rebill = getValidRebillWithNoState();
 
       return rebillHelper.updateRebillState({rebill: rebill, new_state: 'hold'})
         .then((rebill) => {
@@ -1427,6 +1451,8 @@ describe('/helpers/entities/Rebill.js', () => {
     });
 
     it('updates previous state when when rebill state', () => {
+      const rebill = getValidRebillWithNoState();
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         update: ({entity}) => {
           return Promise.resolve(entity);
@@ -1436,13 +1462,23 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
+          expect(table).to.equal('rebills');
+          expect(object.id_rebill).to.equal(rebill.id);
+          expect(object.current_queuename).to.equal('shipped');
+          expect(object.previous_queuename).to.equal('hold');
+
+          return Promise.resolve();
+        }
+      });
+
       const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
       const rebillHelper = new RebillHelper();
-      const rebill = getValidRebillWithNoState();
 
       rebill.state = 'hold';
       rebill.state_changed_at = '2017-11-12T06:03:35.571Z';
-      rebill.history =  [
+      rebill.history = [
         {state: 'hold', entered_at: '2017-11-12T06:03:35.571Z'}
       ];
 
@@ -1460,6 +1496,8 @@ describe('/helpers/entities/Rebill.js', () => {
     });
 
     it('updates rebill state and history when rebill has history', () => {
+      const rebill = getValidRebill();
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         update: ({entity}) => {
           return Promise.resolve(entity);
@@ -1469,18 +1507,33 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
+          expect(table).to.equal('rebills');
+          expect(object.id_rebill).to.equal(rebill.id);
+          expect(object.current_queuename).to.equal('hold');
+          expect(object.previous_queuename).to.equal('bill');
+
+          return Promise.resolve();
+        }
+      });
+
       const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
       const rebillHelper = new RebillHelper();
-      const rebill = getValidRebill();
 
       rebill.state = 'hold';
       rebill.previous_state = 'bill';
       rebill.state_changed_at = '2017-11-12T06:03:35.571Z';
-      rebill.history =  [
+      rebill.history = [
         {state: 'bill', entered_at: '2017-11-12T06:03:35.571Z'}
       ];
 
-      return rebillHelper.updateRebillState({rebill: rebill, new_state: 'hold', previous_state: 'bill', error_message: 'errorMessage'})
+      return rebillHelper.updateRebillState({
+        rebill: rebill,
+        new_state: 'hold',
+        previous_state: 'bill',
+        error_message: 'errorMessage'
+      })
         .then((rebill) => {
           expect(rebill.previous_state).to.equal('bill');
           expect(rebill.state).to.equal('hold');
@@ -1496,6 +1549,8 @@ describe('/helpers/entities/Rebill.js', () => {
     });
 
     it('updates rebill state and history when rebill has more items in history', () => {
+      const rebill = getValidRebill();
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         update: ({entity}) => {
           return Promise.resolve(entity);
@@ -1505,19 +1560,34 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: (table, object) => {
+          expect(table).to.equal('rebills');
+          expect(object.id_rebill).to.equal(rebill.id);
+          expect(object.current_queuename).to.equal('pending');
+          expect(object.previous_queuename).to.equal('bill');
+
+          return Promise.resolve();
+        }
+      });
+
       const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
       const rebillHelper = new RebillHelper();
-      const rebill = getValidRebill();
 
       rebill.state = 'bill';
       rebill.previous_state = 'hold';
       rebill.state_changed_at = '2017-11-12T07:03:35.571Z';
-      rebill.history =  [
+      rebill.history = [
         {state: 'hold', entered_at: '2017-11-12T06:03:35.571Z', exited_at: '2017-11-12T07:03:35.571Z'},
         {state: 'bill', entered_at: '2017-11-12T07:03:35.571Z'}
       ];
 
-      return rebillHelper.updateRebillState({rebill: rebill, new_state: 'pending', previous_state: 'bill', error_message: 'errorMessage'})
+      return rebillHelper.updateRebillState({
+        rebill: rebill,
+        new_state: 'pending',
+        previous_state: 'bill',
+        error_message: 'errorMessage'
+      })
         .then((rebill) => {
           expect(rebill.previous_state).to.equal('bill');
           expect(rebill.state).to.equal('pending');
@@ -1537,421 +1607,419 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(rebill.history[2].error_message).to.equal('errorMessage');
         })
     });
+  });
 
-    describe('addRebillToQueue', () => {
+  describe('addRebillToQueue', () => {
 
-      it('successfully adds a rebill message to a specified queue', () => {
+    it('successfully adds a rebill message to a specified queue', () => {
 
-        let rebill = getValidRebill();
+      let rebill = getValidRebill();
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-          sendMessage:({message_body, queue_name}) => {
-            return Promise.resolve(true);
-          }
-        });
-
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          get: ({id}) => {
-            return Promise.resolve(rebill);
-          }
-        });
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        return rebillHelperController.addRebillToQueue({rebill: rebill, queue_name: 'hold'}).then(result => {
-          expect(result).to.equal(true);
-        });
-
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage:({message_body, queue_name}) => {
+          return Promise.resolve(true);
+        }
       });
 
-    });
-
-    describe('addQueueMessageToQueue', () => {
-      it('successfully adds a message to a queue', () => {
-
-        let queue_name = 'hold';
-        let queue_message_body_prototype = getValidQueueMessageBodyPrototype();
-
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-          sendMessage:({message_body, queue_name}) => {
-            return Promise.resolve(true);
-          }
-        });
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        rebillHelperController.parameters.set('queuename', queue_name);
-        rebillHelperController.parameters.set('queuemessagebodyprototype', queue_message_body_prototype);
-
-        return rebillHelperController.addQueueMessageToQueue().then(result => {
-          expect(result).to.equal(true);
-        });
-
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        get: ({id}) => {
+          return Promise.resolve(rebill);
+        }
       });
-    });
 
-    describe('createQueueMessageBodyPrototype', () => {
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
 
-      it('successfully creates a queue message body prototype from a rebill', () => {
-
-        let rebill = getValidRebill();
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        rebillHelperController.parameters.set('rebill', rebill);
-
-        let result = rebillHelperController.createQueueMessageBodyPrototype();
-
+      return rebillHelperController.addRebillToQueue({rebill: rebill, queue_name: 'hold'}).then(result => {
         expect(result).to.equal(true);
-        expect(rebillHelperController.parameters.store['queuemessagebodyprototype']).to.be.defined;
-
-        let parsed_queue_message_body_prototype = JSON.parse(rebillHelperController.parameters.store['queuemessagebodyprototype']);
-
-        expect(parsed_queue_message_body_prototype).to.deep.equal({id: rebill.id});
-
       });
 
     });
 
-    describe('getShippingReceipts', () => {
+  });
 
-      it('successfully retrieves shipping receipts associated with a rebill', () => {
+  describe('addQueueMessageToQueue', () => {
+    it('successfully adds a message to a queue', () => {
 
-        let rebill = getValidRebill();
-        let transactions = getValidTransactions();
-        let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
-        let shipping_receipts = getValidShippingReceipts();
+      let queue_name = 'hold';
+      let queue_message_body_prototype = getValidQueueMessageBodyPrototype();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          listTransactions: (rebill) => {
-            return Promise.resolve({transactions: transactions});
-          },
-          get: ({id}) => {
-            return Promise.resolve(rebill);
-          },
-          getResult:(result, field) => {
-            if(_.isUndefined(field)){
-              field = 'rebills';
-            }
-
-            if(_.has(result, field)){
-              return Promise.resolve(result[field]);
-            }else{
-              return Promise.resolve(null);
-            }
-          }
-        });
-
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-          getListByAccount: ({ids}) => {
-            return Promise.resolve({shippingreceipts: shipping_receipts});
-          },
-          getResult:(result, field) => {
-            if(_.isUndefined(field)){
-              field = 'shippingreceipts';
-            }
-
-            if(_.has(result, field)){
-              return Promise.resolve(result[field]);
-            }else{
-              return Promise.resolve(null);
-            }
-          }
-        });
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        return rebillHelperController.getShippingReceipts({rebill: rebill}).then(result => {
-          expect(result).to.deep.equal(shipping_receipts);
-        });
-
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+        sendMessage:({message_body, queue_name}) => {
+          return Promise.resolve(true);
+        }
       });
 
-      it('successfully returns a empty array', () => {
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
 
-        let rebill = getValidRebill();
-        let transactions = getValidTransactions();
+      rebillHelperController.parameters.set('queuename', queue_name);
+      rebillHelperController.parameters.set('queuemessagebodyprototype', queue_message_body_prototype);
 
-        delete transactions[0].products[0].shipping_receipt;
-        delete transactions[1].products[0].shipping_receipt;
+      return rebillHelperController.addQueueMessageToQueue().then(result => {
+        expect(result).to.equal(true);
+      });
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          listTransactions: (rebill) => {
-            return Promise.resolve({transactions: transactions});
-          },
-          get: ({id}) => {
-            return Promise.resolve(rebill);
-          },
-          getResult:(result, field) => {
-            if(_.isUndefined(field)){
-              field = 'rebills';
-            }
+    });
+  });
 
-            if(_.has(result, field)){
-              return Promise.resolve(result[field]);
-            }else{
-              return Promise.resolve(null);
-            }
+  describe('createQueueMessageBodyPrototype', () => {
+
+    it('successfully creates a queue message body prototype from a rebill', () => {
+
+      let rebill = getValidRebill();
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('rebill', rebill);
+
+      let result = rebillHelperController.createQueueMessageBodyPrototype();
+
+      expect(result).to.equal(true);
+      expect(rebillHelperController.parameters.store['queuemessagebodyprototype']).to.be.defined;
+
+      let parsed_queue_message_body_prototype = JSON.parse(rebillHelperController.parameters.store['queuemessagebodyprototype']);
+
+      expect(parsed_queue_message_body_prototype).to.deep.equal({id: rebill.id});
+
+    });
+
+  });
+
+  describe('getShippingReceipts', () => {
+
+    it('successfully retrieves shipping receipts associated with a rebill', () => {
+
+      let rebill = getValidRebill();
+      let transactions = getValidTransactions();
+      let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
+      let shipping_receipts = getValidShippingReceipts();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions: (rebill) => {
+          return Promise.resolve({transactions: transactions});
+        },
+        get: ({id}) => {
+          return Promise.resolve(rebill);
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'rebills';
           }
-        });
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-          getListByAccount: ({ids}) => {
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
             return Promise.resolve(null);
           }
-        });
+        }
+      });
 
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount: ({ids}) => {
+          return Promise.resolve({shippingreceipts: shipping_receipts});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'shippingreceipts';
+          }
 
-        return rebillHelperController.getShippingReceipts({rebill: rebill}).then(result => {
-          expect(result).to.deep.equal([]);
-        });
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
+      });
 
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      return rebillHelperController.getShippingReceipts({rebill: rebill}).then(result => {
+        expect(result).to.deep.equal(shipping_receipts);
       });
 
     });
 
-    describe('acquireTransactions', () => {
+    it('successfully returns a empty array', () => {
 
-      it('successfully retrieves transactions associated with a rebill', () => {
+      let rebill = getValidRebill();
+      let transactions = getValidTransactions();
 
-        let rebill = getValidRebill();
-        let transactions = getValidTransactions();
+      delete transactions[0].products[0].shipping_receipt;
+      delete transactions[1].products[0].shipping_receipt;
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          listTransactions: (rebill) => {
-            return Promise.resolve({transactions: transactions});
-          },
-          getResult:(result, field) => {
-            if(_.isUndefined(field)){
-              field = 'rebills';
-            }
-
-            if(_.has(result, field)){
-              return Promise.resolve(result[field]);
-            }else{
-              return Promise.resolve(null);
-            }
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions: (rebill) => {
+          return Promise.resolve({transactions: transactions});
+        },
+        get: ({id}) => {
+          return Promise.resolve(rebill);
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'rebills';
           }
-        });
 
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        rebillHelperController.parameters.set('rebill', rebill);
-
-        return rebillHelperController.acquireTransactions().then(result => {
-          expect(result).to.equal(true);
-          expect(rebillHelperController.parameters.store['transactions']).to.deep.equal(transactions);
-        });
-
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
       });
 
-      it('successfully handles the no-transactions case', () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount: ({ids}) => {
+          return Promise.resolve(null);
+        }
+      });
 
-        let rebill = getValidRebill();
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          listTransactions: (rebill) => {
-            return Promise.resolve({transactions: null});
-          },
-          getResult:(result, field) => {
-            if(_.isUndefined(field)){
-              field = 'rebills';
-            }
-
-            if(_.has(result, field)){
-              return Promise.resolve(result[field]);
-            }else{
-              return Promise.resolve(null);
-            }
-          }
-        });
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        rebillHelperController.parameters.set('rebill', rebill);
-
-        return rebillHelperController.acquireTransactions().then(result => {
-          expect(result).to.equal(true);
-          expect(rebillHelperController.parameters.store['transactions']).to.not.be.defined;
-        });
-
+      return rebillHelperController.getShippingReceipts({rebill: rebill}).then(result => {
+        expect(result).to.deep.equal([]);
       });
 
     });
 
-    describe('getShippingReceiptIDs', () => {
+  });
 
-      it('successfully parses shipping receipts ids from a transaction', () => {
+  describe('acquireTransactions', () => {
 
-        let transactions = getValidTransactions();
-        let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
+    it('successfully retrieves transactions associated with a rebill', () => {
 
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
+      let rebill = getValidRebill();
+      let transactions = getValidTransactions();
 
-        rebillHelperController.parameters.set('transactions', transactions);
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions: (rebill) => {
+          return Promise.resolve({transactions: transactions});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'rebills';
+          }
 
-        let result = rebillHelperController.getShippingReceiptIDs();
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('rebill', rebill);
+
+      return rebillHelperController.acquireTransactions().then(result => {
+        expect(result).to.equal(true);
+        expect(rebillHelperController.parameters.store['transactions']).to.deep.equal(transactions);
+      });
+
+    });
+
+    it('successfully handles the no-transactions case', () => {
+
+      let rebill = getValidRebill();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        listTransactions: (rebill) => {
+          return Promise.resolve({transactions: null});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'rebills';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('rebill', rebill);
+
+      return rebillHelperController.acquireTransactions().then(result => {
+        expect(result).to.equal(true);
+        expect(rebillHelperController.parameters.store['transactions']).to.not.be.defined;
+      });
+
+    });
+
+  });
+
+  describe('getShippingReceiptIDs', () => {
+
+    it('successfully parses shipping receipts ids from a transaction', () => {
+
+      let transactions = getValidTransactions();
+      let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('transactions', transactions);
+
+      let result = rebillHelperController.getShippingReceiptIDs();
+
+      expect(result).to.equal(true);
+      expect(rebillHelperController.parameters.store['shippingreceiptids']).to.deep.equal(shipping_receipt_ids);
+
+    });
+
+    it('successfully handles no transactions case', () => {
+
+      let transactions = getValidTransactions();
+      let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      let result = rebillHelperController.getShippingReceiptIDs();
+
+      expect(result).to.equal(true);
+      expect(rebillHelperController.parameters.store['shippingreceiptids']).to.not.be.defined;
+
+    });
+
+  });
+
+  describe('acquireShippingReceipts', () => {
+
+    it('successfully acquires shipping receipts given a list of shipping receipt IDs', () => {
+
+      let shipping_receipts = getValidShippingReceipts();
+      let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount: ({ids}) => {
+          return Promise.resolve({shippingreceipts: shipping_receipts});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'shippingreceipts';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);
+
+      return rebillHelperController.acquireShippingReceipts().then(result => {
+        expect(result).to.equal(true);
+        expect(rebillHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
+      });
+
+    });
+
+    it('successfully acquires shipping receipts given a list of shipping receipt IDs', () => {
+
+      let shipping_receipts = getValidShippingReceipts();
+      let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount: ({ids}) => {
+          return Promise.resolve({shippingreceipts: null});
+        },
+        getResult:(result, field) => {
+          if(_.isUndefined(field)){
+            field = 'shippingreceipts';
+          }
+
+          if(_.has(result, field)){
+            return Promise.resolve(result[field]);
+          }else{
+            return Promise.resolve(null);
+          }
+        }
+      });
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      rebillHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);
+
+      return rebillHelperController.acquireShippingReceipts().then(result => {
+        expect(result).to.equal(true);
+        expect(rebillHelperController.parameters.store['shippingreceipts']).to.not.be.defined;
+      });
+
+    });
+
+  });
+
+  describe('getBillableRebills', () => {
+
+    it('successfully retrieves billable rebills', () => {
+      const rebill = getValidRebill();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        getRebillsAfterTimestamp: (stamp) => {
+          expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
+
+          return Promise.resolve([rebill]);
+        }
+      });
+
+      PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      return rebillHelperController.getBillableRebills().then(result => {
+        const rebills = rebillHelperController.parameters.get('billablerebills');
 
         expect(result).to.equal(true);
-        expect(rebillHelperController.parameters.store['shippingreceiptids']).to.deep.equal(shipping_receipt_ids);
-
+        expect(rebills.length).to.equal(1);
+        expect(rebills[0]).to.deep.equal(rebill)
       });
 
-      it('successfully handles no transactions case', () => {
+    });
 
-        let transactions = getValidTransactions();
-        let shipping_receipt_ids = [transactions[0].products[0].shipping_receipt, transactions[1].products[0].shipping_receipt];
+    it('filters out rebills in process', () => {
+      const rebill = getValidRebill();
 
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
+      rebill.processing = true;
 
-        let result = rebillHelperController.getShippingReceiptIDs();
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        getRebillsAfterTimestamp: (stamp) => {
+          expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
+
+          return Promise.resolve([rebill]);
+        }
+      });
+
+      PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      return rebillHelperController.getBillableRebills().then(result => {
+        const rebills = rebillHelperController.parameters.get('billablerebills');
 
         expect(result).to.equal(true);
-        expect(rebillHelperController.parameters.store['shippingreceiptids']).to.not.be.defined;
-
+        expect(rebills.length).to.equal(0);
       });
 
     });
-
-    describe('acquireShippingReceipts', () => {
-
-      it('successfully acquires shipping receipts given a list of shipping receipt IDs', () => {
-
-        let shipping_receipts = getValidShippingReceipts();
-        let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
-
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-          getListByAccount: ({ids}) => {
-            return Promise.resolve({shippingreceipts: shipping_receipts});
-          },
-          getResult:(result, field) => {
-            if(_.isUndefined(field)){
-              field = 'shippingreceipts';
-            }
-
-            if(_.has(result, field)){
-              return Promise.resolve(result[field]);
-            }else{
-              return Promise.resolve(null);
-            }
-          }
-        });
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        rebillHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);
-
-        return rebillHelperController.acquireShippingReceipts().then(result => {
-          expect(result).to.equal(true);
-          expect(rebillHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
-        });
-
-      });
-
-      it('successfully acquires shipping receipts given a list of shipping receipt IDs', () => {
-
-        let shipping_receipts = getValidShippingReceipts();
-        let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
-
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-          getListByAccount: ({ids}) => {
-            return Promise.resolve({shippingreceipts: null});
-          },
-          getResult:(result, field) => {
-            if(_.isUndefined(field)){
-              field = 'shippingreceipts';
-            }
-
-            if(_.has(result, field)){
-              return Promise.resolve(result[field]);
-            }else{
-              return Promise.resolve(null);
-            }
-          }
-        });
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        rebillHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);
-
-        return rebillHelperController.acquireShippingReceipts().then(result => {
-          expect(result).to.equal(true);
-          expect(rebillHelperController.parameters.store['shippingreceipts']).to.not.be.defined;
-        });
-
-      });
-
-    });
-
-    describe('getBillableRebills', () => {
-
-      it('successfully retrieves billable rebills', () => {
-        const rebill = getValidRebill();
-
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          getRebillsAfterTimestamp: (stamp) => {
-            expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
-
-            return Promise.resolve([rebill]);
-          }
-        });
-
-        PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        return rebillHelperController.getBillableRebills().then(result => {
-          const rebills = rebillHelperController.parameters.get('billablerebills');
-
-          expect(result).to.equal(true);
-          expect(rebills.length).to.equal(1);
-          expect(rebills[0]).to.deep.equal(rebill)
-        });
-
-      });
-
-      it('filters out rebills in process', () => {
-        const rebill = getValidRebill();
-
-        rebill.processing = true;
-
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          getRebillsAfterTimestamp: (stamp) => {
-            expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
-
-            return Promise.resolve([rebill]);
-          }
-        });
-
-        PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
-
-        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-        let rebillHelperController = new RebillHelperController();
-
-        return rebillHelperController.getBillableRebills().then(result => {
-          const rebills = rebillHelperController.parameters.get('billablerebills');
-
-          expect(result).to.equal(true);
-          expect(rebills.length).to.equal(0);
-        });
-
-      });
-
-    });
-
 
   });
 

@@ -12,6 +12,7 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 
 const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 
@@ -83,6 +84,7 @@ module.exports = class RebillHelper {
       'amount': global.SixCRM.routes.path('model','definitions/currency.json'),
       'rebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/rebillprototype.json'),
       'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
+      'transformedrebill': global.SixCRM.routes.path('model', 'entities/transformedrebill.json'),
       'billablerebills':global.SixCRM.routes.path('model', 'helpers/rebill/billablerebills.json'),
       'spoofedrebillmessages': global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessages.json'),
       'queuename': global.SixCRM.routes.path('model', 'workers/queuename.json'),
@@ -512,7 +514,8 @@ module.exports = class RebillHelper {
     .then(() => this.acquireRebill())
     .then(() => this.setConditionalProperties())
     .then(() => this.buildUpdatedRebillPrototype())
-    .then(() => this.updateRebillFromUpdatedRebillPrototype());
+    .then(() => this.updateRebillFromUpdatedRebillPrototype())
+    .then(() => this.pushRebillStateChangeToRedshift());
 
   }
 
@@ -909,6 +912,46 @@ module.exports = class RebillHelper {
 
     });
 
+  }
+
+  pushRebillStateChangeToRedshift(){
+
+    du.debug('Pushing Rebill State Change To Redshift');
+
+    return this.transformRebill()
+      .then(() => this.pushToRedshift())
+      .then(() => this.parameters.get('rebill'))
+
+  }
+
+  transformRebill() {
+
+    const rebill = this.parameters.get('rebill');
+
+    const transformedRebill = {
+      id_rebill: rebill.id,
+      current_queuename: rebill.state,
+      previous_queuename: rebill.previous_state,
+      account: rebill.account,
+      datetime: rebill.state_changed_at
+    };
+
+    this.parameters.set('transformedrebill', transformedRebill);
+
+    return Promise.resolve();
+  }
+
+  pushToRedshift() {
+
+    const rebill = this.parameters.get('transformedrebill');
+
+    du.debug('Uploading Rebill State Change to Kinesis');
+
+    return kinesisfirehoseutilities.putRecord('rebills', rebill).then(() => {
+      du.debug('Rebill State Change Uploaded to Kinesis');
+
+      return Promise.resolve(true);
+    })
   }
 
   /*
