@@ -23,8 +23,9 @@
 		},
 		"queuename:":{
 			"type": "array",
-		  "enum": ["bill", "hold", "pending", "shipped", "delivered", "recover", "failed","fail_hold",
-				"pending", "fail_shipped", "fail_delivered", "fail_recover"
+		  "enum": ["bill", "hold", "pending", "shipped", "delivered","failed","recover",
+				"shipped_failed", "delivered_failed", "recover_failed","hold_failed","pending_failed",
+				"shipped_error", "delivered_error", "recover_error","hold_error","bill_error","pending_error"
 			]
 		}
 	},

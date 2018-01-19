@@ -16,14 +16,6 @@ module.exports.graphObj = new GraphQLInterfaceType({
       type: {
         type: new GraphQLNonNull(GraphQLString),
         description: 'The name of the provider gateway'
-      },
-      username: {
-        type: GraphQLString,
-        description: 'The name of the merchant provider gateway username.',
-      },
-      password: {
-        type: GraphQLString,
-        description: 'The name of the merchant provider gateway password.',
       }
     }),
     resolveType(gateway){

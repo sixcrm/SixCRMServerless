@@ -1,7 +1,7 @@
 # Failure movement query
 
 08.12.2017 A.Zelen
-
+19.01.2017 A.Zelen Changed the name of the failure queues
 ____
 
 ## Required query output:

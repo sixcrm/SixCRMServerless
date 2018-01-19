@@ -931,7 +931,7 @@ module.exports = class RebillHelper {
     const transformedRebill = {
       id_rebill: rebill.id,
       current_queuename: rebill.state,
-      previous_queuename: rebill.previous_state,
+      previous_queuename: rebill.previous_state || '',
       account: rebill.account,
       datetime: rebill.state_changed_at
     };

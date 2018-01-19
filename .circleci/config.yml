@@ -259,9 +259,9 @@ jobs:
       - run:
           name: SQS Purge
           command: node ./deployment/sqs/purge_queues.js
-      - run:
-          name: Cloudsearch Purge
-          command: node ./deployment/cloudsearch/purge.js
+#      - run:
+#          name: Cloudsearch Purge
+#          command: node ./deployment/cloudsearch/purge.js
       - run:
           name: Elasticache Purge
           command: node ./deployment/elasticache/purge.js
@@ -324,6 +324,15 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: npm run test-transactions
+  synchronize_index:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Synchronize Search Index With DynamoDB
+          command: node helper/searchindexfix.js --fix=true
   merge:
     <<: *job-defaults
     steps:
@@ -460,6 +469,12 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
+      - synchronize_index:
+          requires:
+             - transactional_integration_tests
+             - entity_integration_tests
+             - deleteblock_integration_tests
+             - analytics_integration_tests
       - hold:
           type: approval
           requires:

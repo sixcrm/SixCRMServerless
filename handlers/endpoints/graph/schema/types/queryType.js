@@ -979,6 +979,19 @@ module.exports.graphObj = new GraphQLObjectType({
                 return emailTemplateController.listByAccount({pagination: emailtemplates.pagination, fatal:list_fatal, search: emailtemplates.search});
             }
         },
+        emailtemplatelistbysmtpprovider: {
+          type: emailTemplateListType.graphObj,
+          args: {
+            smtpprovider: {type: new GraphQLNonNull(GraphQLString)},
+            pagination: {type: paginationInputType.graphObj},
+            search: {type: entitySearchInputType.graphObj}
+          },
+          resolve: function(root, args){
+            const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+
+            return emailTemplateController.listBySMTPProvider({smtpprovider: args.smtpprovider, pagination: args.pagination});
+          }
+        },
         smtpproviderlist: {
             type: SMTPProviderListType.graphObj,
             args: {

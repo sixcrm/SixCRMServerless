@@ -15,12 +15,13 @@ class searchController extends authenticatedController {
 	//Technical Debt:  This needs to be configured.
       this.entity_types = {
         product: 'product',
+        affiliate: 'affiliate',
         campaign: 'campaign',
-        creditcard: 'credit_card',
+        creditcard: 'creditcard',
         customer: 'customer',
-        productschedule: 'product_schedule',
-        merchantprovider: 'merchant_provider',
-        shippingreceipt: 'shipping_receipt',
+        productschedule: 'productschedule',
+        merchantprovider: 'merchantprovider',
+        shippingreceipt: 'shippingreceipt',
         transaction: 'transaction'
       };
 
