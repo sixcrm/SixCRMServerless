@@ -239,9 +239,6 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
-          name: Synchronize Search Index With DynamoDB
-          command: node helper/searchindexfix.js --fix=true
-      - run:
           name: Save Last Commit
           command: node deployment/circle/save_last_commit.js
       - run:
@@ -317,15 +314,15 @@ jobs:
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
-  transactional_integration_tests:
+  synchronize_index:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Transactional Integration Tests
-          command: npm run test-transactions
+          name: Synchronize Search Index With DynamoDB
+          command: node helper/searchindexfix.js --fix=true
   merge:
     <<: *job-defaults
     steps:
@@ -471,6 +468,12 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
+      - synchronize_index:
+          requires:
+             - transactional_integration_tests
+             - entity_integration_tests
+             - deleteblock_integration_tests
+             - analytics_integration_tests
       - hold:
           type: approval
           requires:
