@@ -18,18 +18,6 @@ module.exports.graphObj = new GraphQLObjectType({
         type: new GraphQLNonNull(GraphQLString),
         description: 'The name of the provider gateway'
         //Technical Debt:  Enumerate
-      },
-      username: {
-        type: new GraphQLNonNull(GraphQLString),
-        description: 'The name of the merchant provider gateway username.',
-      },
-      password: {
-        type: new GraphQLNonNull(GraphQLString),
-        description: 'The name of the merchant provider gateway password.',
-      },
-      processor_id: {
-        type: GraphQLString,
-        description: 'The name of the merchant provider processor_id.',
       }
     })
 });
