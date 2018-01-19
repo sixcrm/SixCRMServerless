@@ -4,6 +4,8 @@
 # Integrate databackup before deployment
 # Increase the level of parallelism
 # Add Functional Tests
+functional_tests_default: &functional-tests-default
+  machine: true;
 
 defaults: &job-defaults
   docker:
@@ -49,11 +51,23 @@ jobs:
           name: 'Unit Tests'
           command: npm run test-unit
   functional_tests:
-    <<: *job-defaults
+    <<: *functional-tests-default
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install Docker Compose
+          command: |
+            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      - setup_remote_docker
+      - run:
+          name: Start container and verify it's working
+          command: |
+            set -x
+            docker-compose up -d
   pre_deploy:
     <<: *job-defaults
     steps:

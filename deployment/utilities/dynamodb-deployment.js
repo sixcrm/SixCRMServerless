@@ -264,7 +264,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
             du.warning('Unable to trigger backup.');
             du.info(result);
-            
+
             return false;
 
           });

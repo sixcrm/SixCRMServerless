@@ -245,30 +245,37 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       }
 
-      if(use_cache){
+      return this.getConfiguration('local', field, use_cache)
+      .then((result) => {
 
-        return this.getConfiguration('native', field, use_cache).then((result) => {
+        if(!_.isNull(result)){ return resolve(result); }
 
-          if(!_.isNull(result)){ return resolve(result); }
+        if(use_cache){
 
-          return this.getConfiguration('localcache', field, use_cache).then((result) => {
+          return this.getConfiguration('native', field, use_cache).then((result) => {
 
             if(!_.isNull(result)){ return resolve(result); }
 
-            return this.getConfiguration('redis', field, use_cache).then((result) => {
+            return this.getConfiguration('localcache', field, use_cache).then((result) => {
 
               if(!_.isNull(result)){ return resolve(result); }
 
-              return this.getConfiguration('s3', field, use_cache).then((result) => {
+              return this.getConfiguration('redis', field, use_cache).then((result) => {
 
-                if (_.isNull(result)) {
+                if(!_.isNull(result)){ return resolve(result); }
 
-                  return this.regenerateConfiguration(field);
+                return this.getConfiguration('s3', field, use_cache).then((result) => {
 
-                } else {
+                  if (_.isNull(result)) {
 
-                    return resolve(result);
-                }
+                    return this.regenerateConfiguration(field);
+
+                  } else {
+
+                      return resolve(result);
+                  }
+
+                });
 
               });
 
@@ -276,25 +283,31 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
           });
 
-        });
+        }else{
 
-      }else{
+          return this.getConfiguration('local', field, use_cache).then((result) => {
 
-        return this.getConfiguration('s3', field, use_cache).then((result) => {
+            if(!_.isNull(result)){ return resolve(result); }
 
-          if (_.isNull(result)) {
+            return this.getConfiguration('s3', field, use_cache).then((result) => {
 
-            return this.regenerateConfiguration(field);
+              if (_.isNull(result)) {
 
-          } else {
+                return this.regenerateConfiguration(field);
 
-            return resolve(result);
+              } else {
 
-          }
+                return resolve(result);
 
-        });
+              }
 
-      }
+            });
+
+          });
+
+        }
+
+      });
 
     });
 
@@ -324,6 +337,10 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       }else if(source == 'localcache'){
 
+        return this.getLocalCacheEnvironmentConfiguration(field).then((result) => resolve(result));
+
+      }else if(source == 'local'){
+
         return this.getLocalEnvironmentConfiguration(field).then((result) => resolve(result));
 
       }else{
@@ -333,6 +350,26 @@ module.exports = class Configuration extends ConfigurationUtilities {
       }
 
     });
+
+  }
+
+  getLocalEnvironmentConfiguration(field){
+
+    du.debug('Get Local Environent Configuration');
+
+    let local_environment_configuration = null;
+
+    try{
+
+      local_environment_configuration = global.SixCRM.routes.include('config', this.stage+'/environment.yml');
+
+    }catch(error){
+
+      du.warning('no local environment configuration');
+
+    }
+
+    return Promise.resolve(local_environment_configuration);
 
   }
 
@@ -363,9 +400,9 @@ module.exports = class Configuration extends ConfigurationUtilities {
   }
 
 
-  getLocalEnvironmentConfiguration(field){
+  getLocalCacheEnvironmentConfiguration(field){
 
-    du.debug('Get Local Environment Configuration');
+    du.debug('Get Local Cache Environment Configuration');
 
     let result = null;
 
