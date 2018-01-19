@@ -5,7 +5,7 @@
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",
     "end": "2017-01-13T00:00:00.000Z",
-    "merchantprovider": ["6c40761d-8919-4ad6-884d-6a46a776cfb9"],
+    "merchant_provider": ["6c40761d-8919-4ad6-884d-6a46a776cfb9"],
     "period": "day"  }
   },
   "result_name": "undefined",

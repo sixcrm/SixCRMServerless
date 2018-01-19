@@ -8,7 +8,8 @@
     "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
   "result_name": "summary",
   "expect": [{"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"0","queuename":""},
-            {"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"0","queuename":"bill"},
-            {"failure_percentage":"1","error_rate":"0","success_rate":"0","expired_rate":"0","queuename":"hold"},
-            {"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"1","queuename":"shipped"}]
+    {"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"0","queuename":"bill"},
+    {"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"0","queuename":"hold"},
+    {"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"0","queuename":"pending"},
+    {"failure_percentage":"0","error_rate":"0","success_rate":"1","expired_rate":"1","queuename":"shipped"}]
 }
