@@ -5,7 +5,7 @@
 # Increase the level of parallelism
 # Add Functional Tests
 functional_tests_default: &functional-tests-default
-  machine: true;
+  machine: true
 
 defaults: &job-defaults
   docker:
