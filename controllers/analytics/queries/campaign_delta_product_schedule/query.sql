@@ -1,4 +1,4 @@
-SELECT
+ SELECT
   campaign,
   percent_change_amount,
   percent_change_count

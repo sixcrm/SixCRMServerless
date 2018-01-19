@@ -136,8 +136,8 @@
 		},
 		"facet":{
 			"type": "string",
-			"enum": ["account","campaign","merchant_provider","type","subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
+			"enum": ["account","campaign","merchant_provider","product_schedule","type","subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
 		}
 	},
-	"required":["start", "end", "facet", "order", "limit", "offset"]
+	"required":["start", "end", "facet", "order", "limit", "offset", "product_schedule"]
 }

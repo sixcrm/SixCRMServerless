@@ -190,7 +190,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         merged_parameters.facet = parameters.facet;
 
-        return this.getResults('transactions_by_facet', merged_parameters, this.default_query_filters);
+        if(!_.has(parameters.analyticsfilter, 'product_schedule')){
+          return this.getResults('transactions_by_facet', merged_parameters, this.default_query_filters);
+        } else {
+          return this.getResults('transactions_by_facet_product_schedule', parameters.analyticsfilter, this.default_query_filters);
+        }
 
     }
 
@@ -217,7 +221,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
-        return this.getResults('aggregation_processor_amount', parameters, this.default_query_filters);
+        if(!_.has(parameters.analyticsfilter, 'product_schedule')){
+          return this.getResults('aggregation_processor_amount', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('aggregation_processor_amount_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 

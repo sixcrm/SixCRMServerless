@@ -89,13 +89,13 @@ These queries are used
 analytics
 listactivitybyidentifier -> getMerchantProviderSummaries -> merchant_provider_summary
 campaignsbyamount -> getCampaignsByAmount -> campaigns_by_amount +
-eventsummary -> getEventSummary -> aggregation_event_type_count
-eventsbyfacet -> getEventsByFacet -> events_by_facet
-eventfunnel -> getEventFunnel -> event_funnel
-campaigndelta -> getCampaignDelta -> campaign_delta
-transactionsbyfacet -> getTransactionsByFacet -> transactions_by_facet
-transactionoverview -> getTransactionOverview -> transaction_summary
-transactionsummary -> getTransactionSummary -> aggregation_processor_amount
+eventsummary -> getEventSummary -> aggregation_event_type_count +
+eventsbyfacet -> getEventsByFacet -> events_by_facet +
+eventfunnel -> getEventFunnel -> event_funnel +
+campaigndelta -> getCampaignDelta -> campaign_delta +
+transactionsbyfacet -> getTransactionsByFacet -> transactions_by_facet +
+transactionoverview -> getTransactionOverview -> transaction_summary +
+transactionsummary -> getTransactionSummary -> aggregation_processor_amount +
 
 queue
 rebillsummary -> getRebillSummary -> order_engine/rebill_pagination
