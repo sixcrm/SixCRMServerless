@@ -101,7 +101,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
       }
 
-      return this.getResults('merchant_provider_summary', parameters, arrayutilities.merge(this.default_query_filters));
+      if(!_.has(parameters, 'product_schedule')){
+        return this.getResults('merchant_provider_summary', parameters, arrayutilities.merge(this.default_query_filters));
+      } else {
+        return this.getResults('merchant_provider_summary_product_schedules', parameters, arrayutilities.merge(this.default_query_filters));
+      }
 
     }
 

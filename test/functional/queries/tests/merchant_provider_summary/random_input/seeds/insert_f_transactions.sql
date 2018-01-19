@@ -2,7 +2,7 @@ INSERT INTO public.f_transactions (id, datetime, customer, creditcard, merchant_
   ((
       SELECT
      '99999999-999e-44aa-999e-aaa9a99a9989',
-     timestamp'2017-01-02T08:40:00.405Z',
+     current_date-1,
      '99999999-999e-44aa-999e-aaa9a99a9999',
      '99999999-999e-44aa-999e-aaa9a99a9999',
      '6c40761d-8919-4ad6-884d-6a46a776cfb9',
@@ -22,7 +22,7 @@ INSERT INTO public.f_transactions (id, datetime, customer, creditcard, merchant_
      UNION ALL
      SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
-      timestamp'2017-01-03T21:40:41.405Z',
+      current_date-2,
       '99999999-999e-44aa-999e-aaa9a99a9999',
       '99999999-999e-44aa-999e-aaa9a99a9999',
       '6c40761d-8919-4ad6-884d-6a46a776cfb9',
@@ -42,7 +42,7 @@ INSERT INTO public.f_transactions (id, datetime, customer, creditcard, merchant_
      UNION ALL
      SELECT
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
-      timestamp'2017-01-02T18:40:41.405Z',
+      current_date-3,
       '24f7c851-29d4-4af9-87c5-0298fa74c689',
       'df84f7bb-06bd-4daa-b1a3-6a2c113edd72',
       '6c40761d-8919-4ad6-884d-6a46a776cfb9',
