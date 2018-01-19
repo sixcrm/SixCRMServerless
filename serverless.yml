@@ -206,6 +206,13 @@ functions:
     environment:
       observations: 1
 
+  reindex:
+    handler: handlers/workers/reindex/handler.reindex
+    events:
+      - schedule:
+          rate: rate(60 minutes)
+          enabled: true
+
   #sesnotifications:
   #  handler: handlers/workers/sesnotifications/handler.sesnotifications
   #  events:
