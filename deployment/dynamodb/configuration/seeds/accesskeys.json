@@ -1,22 +1,22 @@
 [{
-    "id":"82478014-c96f-49ef-b31c-5408e99df66e",
-    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    "name":"Access Key 1",
-    "notes":"This access key is used on funnel site 1",
-    "access_key": "13edf909931d0f37000e438e9d67a2e165fad5d0",
-    "secret_key": "Y3VzdG9tZXJzZXJ2aWNlLnVzZXJAdGVzdC5jb20=",
-    "created_at":"2017-04-06T18:40:41.405Z",
-    "updated_at":"2017-04-06T18:41:12.521Z"
+  "id":"06409c9b-f269-42db-8276-0a2b7f83c793",
+  "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+  "name":"Access Key 1",
+  "notes":"This access key is used on funnel site 1",
+  "access_key": "XTP3YD8Z66KXJTNS2KKHQXYJWT2SQT6XZ9P34ARQ",
+  "secret_key": "85b1083dc24baea07ed931a677335c11d65176cf",
+  "created_at":"2017-04-06T18:40:41.405Z",
+  "updated_at":"2017-04-06T18:41:12.521Z"
 },
 {
-    "id":"4b6b3ddc-a7b7-40e0-bc9b-02b425370448",
-    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    "name":"Access Key 2",
-    "notes":"This access key is used on funnel site 2",
-    "access_key": "1ud98uhc9h989811ud01yd81u2d1289duu1du1a0d9uula",
-    "secret_key": "c3VwZXIudXNlckB0ZXN0LmNvbQ==",
-    "created_at":"2017-04-06T18:40:41.405Z",
-    "updated_at":"2017-04-06T18:41:12.521Z"
+  "id":"9f036cf5-85ce-4d6e-8a74-bdf5376e1385",
+  "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+  "name":"Access Key 2",
+  "notes":"This access key is used on funnel site 2",
+  "access_key": "KB8FH7EWEWDK9EYRHXTZV6NS4DGD6RLZX8Z2UY1B",
+  "secret_key": "fbedd93890bca2948e4c08b0ac809e90d74016ee",
+  "created_at":"2017-04-06T18:40:41.405Z",
+  "updated_at":"2017-04-06T18:41:12.521Z"
 },
 {
   "access_key": "8SUJAY9BR17LN2QUJAMLQ6NDXZ8RTCQ7SS42RTAE",
