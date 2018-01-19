@@ -314,6 +314,15 @@ jobs:
       - run:
           name: Analytics Integration Tests
           command: npm run test-analytics
+  transactional_integration_tests:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Transactional Integration Tests
+          command: npm run test-transactions
   synchronize_index:
     <<: *job-defaults
     steps:
