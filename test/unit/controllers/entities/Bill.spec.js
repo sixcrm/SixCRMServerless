@@ -120,7 +120,6 @@ describe('controllers/entities/Bill.js', () => {
                 saveRecord: (tableName, entity, callback) => {
                     expect(entity).to.have.property('created_at');
                     expect(entity).to.have.property('updated_at');
-                    expect(entity).to.have.property('id');
                     expect(entity.created_at).not.to.be.equal(entity.updated_at);
                     return Promise.resolve(entity);
                 }
@@ -185,7 +184,6 @@ describe('controllers/entities/Bill.js', () => {
                 saveRecord: (tableName, entity, callback) => {
                     expect(entity).to.have.property('created_at');
                     expect(entity).to.have.property('updated_at');
-                    expect(entity).to.have.property('id');
                     expect(entity.created_at).not.to.be.equal(entity.updated_at);
                     return Promise.resolve(entity);
                 }
@@ -220,9 +218,7 @@ describe('controllers/entities/Bill.js', () => {
                 },
                 saveRecord: (tableName, entity, callback) => {
                     expect(entity).to.have.property('created_at');
-                    expect(entity).to.have.property('updated_at');
                     expect(entity).to.have.property('id');
-                    expect(entity.created_at).to.be.equal(entity.updated_at);
                     return Promise.resolve(entity);
                 }
             });
@@ -268,8 +264,6 @@ describe('controllers/entities/Bill.js', () => {
                 saveRecord: (tableName, entity, callback) => {
                     expect(entity).to.have.property('created_at');
                     expect(entity).to.have.property('updated_at');
-                    expect(entity).to.have.property('id');
-                    expect(entity.created_at).to.be.equal(entity.updated_at);
                     return Promise.resolve(entity);
                 }
             });
