@@ -125,5 +125,5 @@
 			}
 		}
 	},
-	"required":["start", "end", "merchantprovider"]
+	"required":["start", "end", "merchant_provider"]
 }

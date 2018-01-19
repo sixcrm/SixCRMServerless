@@ -54,10 +54,10 @@ describe('Get '+test_name+' Test', function() {
 				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 				.end(function(err, response){
     if(err){
-						//du.warning(err);
+		    du.warning(err);
     }
 
-					//du.debug(response.body);
+					du.debug(response.body);
 
     assert.isObject(response.body.response, JSON.stringify(response.body));
 
