@@ -1,17 +1,18 @@
 {
   "method": "getMerchantProviderSummaries",
-  "test_case": "random input with mixed transaction type",
+  "test_case": "random input with mixed transaction type and product schedule filtering",
   "input": {
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",
     "end": "2017-01-13T00:00:00.000Z",
     "merchantprovider": ["6c40761d-8919-4ad6-884d-6a46a776cfb9"],
+    "product_schedule": ["12529a17-ac32-4e46-b05b-83862843055d"],
     "period": "day"  }
   },
   "result_name": "undefined",
   "expect": {"merchantproviders":[{"merchantprovider":{"id":"6c40761d-8919-4ad6-884d-6a46a776cfb9"},
     "summary":{"today":{"count":0,"amount":"0.00"},
-    "thisweek":{"count":2,"amount":"379.99"},
-    "thismonth":{"count":2,"amount":"379.99"}}}],
+    "thisweek":{"count":0,"amount":"0.00"},
+    "thismonth":{"count":1,"amount":"139.99"}}}],
     "pagination":{"order":"desc","limit":50,"offset":0,"count":1}} 
 }

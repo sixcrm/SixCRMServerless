@@ -1,0 +1,20 @@
+{
+  "method": "getTransactionsByFacet",
+  "test_case": "random input with product schedule filter",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-13T00:00:00.000Z",
+    "product_schedule": ["12529a17-ac32-4e46-b05b-83862843055d"] },
+    "facet": "affiliate",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "facets",
+  "expect": [{"facet":"99999999-999e-44aa-999e-aaa9a99a9999",
+    "count":1,"count_percentage":"100.00%",
+    "amount":0,"amount_percentage":"0.00%"},
+    {"facet":"6b6331f6-7f84-437a-9ac6-093ba301e455",
+      "count":4,
+      "count_percentage":"400.00%",
+      "amount":633.96,
+      "amount_percentage":"63396.00%"}]
+}

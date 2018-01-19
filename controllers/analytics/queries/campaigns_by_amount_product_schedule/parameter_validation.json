@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/AggregationProcessorAmountInput",
+	"id":"/CampaignsByAmountParameterValidation",
 	"type": "object",
 	"definitions": {
 		"UUIDv4": {
@@ -15,6 +15,14 @@
 	"properties": {
 		"start": {"$ref": "#/definitions/ISO8601"},
 		"end": {"$ref": "#/definitions/ISO8601"},
+		"period":{
+			"type":"string",
+			"enum": ["minute", "hour","day","week","month","quarter","year"]
+		},
+		"order":{
+			"type":"string",
+			"enum": ["desc","asc"]
+		},
 		"account":{
 			"type": "array",
 			"minItems": 1,
@@ -118,26 +126,15 @@
 			"items": {
 				"type":"string",
 				"enum": ["main", "upsell"]
+			},
+			"limit":{
+				"type": ["integer"],
+				"minimum": 0,
+	  		"maximum": 100,
+				"exclusiveMaximum": false,
+				"exclusiveMinimum": true
 			}
-		},
-		"limit":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": false
-		},
-		"offset":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": false
-		},
-		"facet":{
-			"type": "string",
-			"enum": ["account","campaign","merchant_provider","type","subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
 		}
 	},
-	"required":["start", "end", "facet", "order", "limit", "offset"]
+	"required":["start", "end", "limit","product_schedule"]
 }

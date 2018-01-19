@@ -15,6 +15,18 @@
 	"properties": {
 		"start": {"$ref": "#/definitions/ISO8601"},
 		"end": {"$ref": "#/definitions/ISO8601"},
+		"period":{
+			"type":"string",
+			"enum": ["minute", "hour","day","week","month","quarter","year"]
+		},
+		"order":{
+					"type":"string",
+					"enum": ["asc", "desc"]
+		},
+		"order_field":{
+			"type":"string",
+			"enum": ["merchant_provider","num_transactions_today", "num_transactions_week","num_transactions_month","amount_transactions_today","amount_transactions_week","amount_transactions_month"]
+		},
 		"account":{
 			"type": "array",
 			"minItems": 1,
@@ -125,19 +137,13 @@
 			"minimum": 0,
 			"maximum": 100,
 			"exclusiveMaximum": false,
-			"exclusiveMinimum": false
+			"exclusiveMinimum": true
 		},
 		"offset":{
 			"type": ["integer"],
 			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
 			"exclusiveMinimum": false
-		},
-		"facet":{
-			"type": "string",
-			"enum": ["account","campaign","merchant_provider","type","subtype","processor_result","affiliate","subaffiliate_1","subaffiliate_2","subaffiliate_3","subaffiliate_4","subaffiliate_5"]
 		}
 	},
-	"required":["start", "end", "facet", "order", "limit", "offset"]
+	"required":["limit", "offset", "order", "order_field", "product_schedule"]
 }

@@ -76,5 +76,5 @@
 			"exclusiveMinimum": false
 		}
 	},
-	"required":["start", "end", "order", "limit", "offset"]
+	"required":["start", "end", "order", "limit", "offset", "product_schedule"]
 }

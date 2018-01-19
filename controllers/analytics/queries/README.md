@@ -84,9 +84,10 @@ As requested there is a need to filter based on product_schedules, this neccesit
 
 ## Query usage :
 
-These queries are used
+These queries are used as of 10.01.2018
 
 analytics
+`All have product_schedules filtering`
 listactivitybyidentifier -> getMerchantProviderSummaries -> merchant_provider_summary
 campaignsbyamount -> getCampaignsByAmount -> campaigns_by_amount
 eventsummary -> getEventSummary -> aggregation_event_type_count
@@ -97,13 +98,14 @@ transactionsbyfacet -> getTransactionsByFacet -> transactions_by_facet
 transactionoverview -> getTransactionOverview -> transaction_summary
 transactionsummary -> getTransactionSummary -> aggregation_processor_amount
 
-queue rebillsummary -> getRebillSummary -> order_engine/rebill_pagination
+queue
+rebillsummary -> getRebillSummary -> order_engine/rebill_pagination
 queuestate -> getQueueState -> order_engine/rebill_pagination | order_engine/queue_rate | order_engine/queue_average_time
 
 reports
 affiliatereportsubaffiliates -> getAffiliateReportSubaffiliates -> reports/affiliate/affiliate_report_subaffiliates
 affiliatereport -> getAffiliateReport -> reports/affiliate/affiliate_report
 affiliatereportsummary -> getAffiliateReportSummary -> reports/affiliate/affiliate_report_summary
-merchantreport -> getMerchantReport -> reports/merchantprovider/merchantprovider_report | reports/merchantprovider/merchantprovider_report_product_schedule
-transactionsummaryreportsummary -> getTransactionSummaryReportSummary -> reports/transactionsummary/transaction_summary_report_summary transactionsummaryreport -> getTransactionSummaryReport -> reports/transactionsummary/transaction_summary_report_summary
-transactionsreport -> getTransactionsReport -> reports/transactions/transactions_report
+merchantreport -> getMerchantReport -> reports/merchantprovider/merchantprovider_report | reports/merchantprovider/merchantprovider_report_product_schedule +
+transactionsummaryreportsummary -> getTransactionSummaryReportSummary -> reports/transactionsummary/transaction_summary_report_summary transactionsummaryreport -> getTransactionSummaryReport -> reports/transactionsummary/transaction_summary_report +
+transactionsreport -> getTransactionsReport -> reports/transactions/transactions_report +

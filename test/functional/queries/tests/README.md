@@ -39,3 +39,4 @@ Other queries that are found in the analytics directory
 * merchant_report_summary
 * sessions
 * sub_affiliates_overview
+hd

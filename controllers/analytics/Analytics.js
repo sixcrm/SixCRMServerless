@@ -101,7 +101,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
       }
 
-      return this.getResults('merchant_provider_summary', parameters, arrayutilities.merge(this.default_query_filters));
+      if(!_.has(parameters, 'product_schedule')){
+        return this.getResults('merchant_provider_summary', parameters, arrayutilities.merge(this.default_query_filters));
+      } else {
+        return this.getResults('merchant_provider_summary_product_schedules', parameters, arrayutilities.merge(this.default_query_filters));
+      }
 
     }
 
@@ -131,7 +135,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
-        return this.getResults('campaigns_by_amount', parameters, this.default_query_filters);
+        if(!_.has(parameters, 'product_schedule')){
+          return this.getResults('campaigns_by_amount', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('campaigns_by_amount_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 
@@ -186,7 +194,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         merged_parameters.facet = parameters.facet;
 
-        return this.getResults('transactions_by_facet', merged_parameters, this.default_query_filters);
+        if(!_.has(parameters.analyticsfilter, 'product_schedule')){
+          return this.getResults('transactions_by_facet', merged_parameters, this.default_query_filters);
+        } else {
+          return this.getResults('transactions_by_facet_product_schedule', parameters.analyticsfilter, this.default_query_filters);
+        }
 
     }
 
@@ -213,7 +225,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
-        return this.getResults('aggregation_processor_amount', parameters, this.default_query_filters);
+        if(!_.has(parameters.analyticsfilter, 'product_schedule')){
+          return this.getResults('aggregation_processor_amount', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('aggregation_processor_amount_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 
@@ -416,7 +432,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
-        return this.getResults('reports/transactionsummary/transaction_summary_report_summary', parameters, this.default_query_filters);
+        if(!_.has(parameters, 'product_schedule')){
+          return this.getResults('reports/transactionsummary/transaction_summary_report_summary', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('reports/transactionsummary/transaction_summary_report_summary_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 
@@ -450,7 +470,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      return this.getResults('reports/transactions/transactions_report', parameters, this.default_query_filters);
+      if(!_.has(parameters, 'product_schedule')){
+        return this.getResults('reports/transactions/transactions_report', parameters, this.default_query_filters);
+      } else {
+        return this.getResults('reports/transactions/transactions_report_product_schedule', parameters, this.default_query_filters);
+      }
 
     }
     /* End Report Pages */
@@ -461,7 +485,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
-        return this.getResults('campaign_delta', parameters, this.default_query_filters);
+        if(!_.has(parameters, 'product_schedule')){
+          return this.getResults('campaign_delta', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('campaign_delta_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 
