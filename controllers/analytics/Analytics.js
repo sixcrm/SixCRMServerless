@@ -131,7 +131,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({limit: 10, order: 'desc'}));
 
-        return this.getResults('campaigns_by_amount', parameters, this.default_query_filters);
+        if(!_.has(parameters, 'product_schedule')){
+          return this.getResults('campaigns_by_amount', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('campaigns_by_amount_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 
