@@ -244,6 +244,7 @@ jobs:
       - run:
           name: AWS Services Available
           command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+  #Eh... not very useful currently        
   purge:
     <<: *job-defaults
     steps:
@@ -444,17 +445,8 @@ workflows:
             - deploy_dynamodb
             - deploy_redshift
             - deploy_kinesis
-      - purge:
-          requires:
-            - post_deployment
-          filters:
-            branches:
-              ignore:
-                - production
-                - staging
       - seed:
           requires:
-            - purge
             - post_deployment
       - entity_integration_tests:
           requires:
