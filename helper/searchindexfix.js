@@ -131,4 +131,6 @@ arrayutilities.serial(promises).then(() => {
 
 }).then(() => {
     du.output('Finished');
+
+    process.exit();
 });

@@ -239,6 +239,9 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
+          name: Synchronize Search Index With DynamoDB
+          command: node helper/searchindexfix.js --fix=true
+      - run:
           name: Save Last Commit
           command: node deployment/circle/save_last_commit.js
       - run:
@@ -258,9 +261,9 @@ jobs:
       - run:
           name: SQS Purge
           command: node ./deployment/sqs/purge_queues.js
-      - run:
-          name: Cloudsearch Purge
-          command: node ./deployment/cloudsearch/purge.js
+#      - run:
+#          name: Cloudsearch Purge
+#          command: node ./deployment/cloudsearch/purge.js
       - run:
           name: Elasticache Purge
           command: node ./deployment/elasticache/purge.js
