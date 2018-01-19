@@ -432,7 +432,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
-        return this.getResults('reports/transactionsummary/transaction_summary_report_summary', parameters, this.default_query_filters);
+        if(!_.has(parameters, 'product_schedule')){
+          return this.getResults('reports/transactionsummary/transaction_summary_report_summary', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('reports/transactionsummary/transaction_summary_report_summary_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 
@@ -466,7 +470,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      return this.getResults('reports/transactions/transactions_report', parameters, this.default_query_filters);
+      if(!_.has(parameters, 'product_schedule')){
+        return this.getResults('reports/transactions/transactions_report', parameters, this.default_query_filters);
+      } else {
+        return this.getResults('reports/transactions/transactions_report_product_schedule', parameters, this.default_query_filters);
+      }
 
     }
     /* End Report Pages */

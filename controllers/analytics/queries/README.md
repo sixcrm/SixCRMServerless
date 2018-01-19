@@ -84,7 +84,7 @@ As requested there is a need to filter based on product_schedules, this neccesit
 
 ## Query usage :
 
-These queries are used
+These queries are used as of 10.01.2018
 
 analytics
 `All have product_schedules filtering`
@@ -106,6 +106,6 @@ reports
 affiliatereportsubaffiliates -> getAffiliateReportSubaffiliates -> reports/affiliate/affiliate_report_subaffiliates
 affiliatereport -> getAffiliateReport -> reports/affiliate/affiliate_report
 affiliatereportsummary -> getAffiliateReportSummary -> reports/affiliate/affiliate_report_summary
-merchantreport -> getMerchantReport -> reports/merchantprovider/merchantprovider_report | reports/merchantprovider/merchantprovider_report_product_schedule
-transactionsummaryreportsummary -> getTransactionSummaryReportSummary -> reports/transactionsummary/transaction_summary_report_summary transactionsummaryreport -> getTransactionSummaryReport -> reports/transactionsummary/transaction_summary_report_summary
-transactionsreport -> getTransactionsReport -> reports/transactions/transactions_report
+merchantreport -> getMerchantReport -> reports/merchantprovider/merchantprovider_report | reports/merchantprovider/merchantprovider_report_product_schedule +
+transactionsummaryreportsummary -> getTransactionSummaryReportSummary -> reports/transactionsummary/transaction_summary_report_summary transactionsummaryreport -> getTransactionSummaryReport -> reports/transactionsummary/transaction_summary_report +
+transactionsreport -> getTransactionsReport -> reports/transactions/transactions_report +
