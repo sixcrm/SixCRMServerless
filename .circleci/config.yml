@@ -244,7 +244,7 @@ jobs:
       - run:
           name: AWS Services Available
           command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
-  #Eh... not very useful currently        
+  #Eh... not very useful currently
   purge:
     <<: *job-defaults
     steps:
