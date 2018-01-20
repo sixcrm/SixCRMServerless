@@ -52,8 +52,6 @@ describe('Graph '+entity+' Test', function() {
 
             var query = tu.getQuery(test.query);
 
-            du.info('Account: '+account, 'JWT: '+test_jwt, 'Query: '+query);
-
             this_request.post('graph/'+account)
             .set('Authorization', test_jwt)
             .send(query)
@@ -66,7 +64,6 @@ describe('Graph '+entity+' Test', function() {
 
               if(err){du.error(err);}
 
-              du.output(response.body);
               tu.assertResultSetAsync(response, test_user.role, test.name, done);
 
             });

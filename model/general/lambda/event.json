@@ -15,7 +15,9 @@
 		},
 		"body":{
 			"anyOf":[
-				{"type":"string"},
+				{"$ref":"../../definitions/stringifiedjson.json"},
+				{"$ref":"../../definitions/graphqlquery.json"},
+				{"type":"object"},
 				{"type":"null"}
 			]
 		},
