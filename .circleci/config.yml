@@ -84,7 +84,7 @@ jobs:
           command: mkdir -p deployment_credentials/
       - run:
           name: Debugging
-          command: find ./deployment_credentials/ -type f -maxdepth 1  && echo $CIRCLE_BRANCH
+          command: find -type f -maxdepth 1 ./deployment_credentials/ && printenv
       - run:
           name: Create Credentials
           command: node ./deployment/sts/create_role_commands.js --branch $CIRCLE_BRANCH --output=deployment_credentials/stscredentials
