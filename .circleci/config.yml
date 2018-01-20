@@ -81,7 +81,13 @@ jobs:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Set Access Credentials
-          command: mkdir -p deployment_credentials/ && node ./deployment/sts/create_role_commands.js --branch $CIRCLE_BRANCH --output=deployment_credentials/stscredentials
+          command: mkdir -p deployment_credentials/
+      - run:
+          name: Debugging
+          command: find ./deployment_credentials/ -type f -maxdepth 1  && echo $CIRCLE_BRANCH
+      - run:
+          name: Create Credentials
+          command: node ./deployment/sts/create_role_commands.js --branch $CIRCLE_BRANCH --output=deployment_credentials/stscredentials
       - save_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
           paths:
