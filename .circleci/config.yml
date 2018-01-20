@@ -87,7 +87,7 @@ jobs:
           command: find ./deployment_credentials/ -type f && printenv
       - run:
           name: Create Credentials
-          command: node ./deployment/sts/create_role_commands.js --branch $CIRCLE_BRANCH --output=deployment_credentials/stscredentials
+          command: SIX_VERBOSE=2 && node ./deployment/sts/create_role_commands.js --branch $CIRCLE_BRANCH --output=deployment_credentials/stscredentials
       - save_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
           paths:

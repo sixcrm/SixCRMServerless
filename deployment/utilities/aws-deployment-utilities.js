@@ -18,8 +18,12 @@ module.exports = class AWSDeploymentUtilities {
 
     du.debug('Get Role Credentials');
 
+    du.debug('Environment Key: '+environment_key);
+
     let assume_role_parameters = this.getEnvironmentAssumedRoleParameters(environment_key);
 
+    du.debug('Role Parameters: ', assume_role_parameters);
+    
     return this.stsutilities.assumeRole(assume_role_parameters).then(result => {
 
       mvu.validateModel(result, global.SixCRM.routes.path('model', 'deployment/sts/assumedroleresponse.json'));
