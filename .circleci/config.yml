@@ -229,7 +229,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Redshift Create Cluster
-          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
+          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
       - run:
           name: Redshift Create Tables
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
@@ -285,9 +285,9 @@ jobs:
       - run:
           name: Elasticache Purge
           command: node ./deployment/elasticache/purge.js
-      #- run:
-      #    name: DynamoDB Purge
-      #    command: node ./deployment/dynamodb/purge_tables.js
+#     - run:
+#         name: DynamoDB Purge
+#         command: node ./deployment/dynamodb/purge_tables.js
   seed:
     <<: *job-defaults
     steps:
@@ -299,12 +299,6 @@ jobs:
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Redshift Referential Data
-          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_referential.js || echo "No changes, skipping."
-      - run:
-          name: Redshift Table Data
-          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
       - run:
           name: Entity Seed
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
@@ -494,11 +488,6 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
-          filters:
-            branches:
-              #hack
-              ignore:
-                - staging
       - synchronize_index:
           requires:
              - transactional_integration_tests
