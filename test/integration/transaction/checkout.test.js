@@ -21,7 +21,7 @@ var endpoint = config.endpoint;
 var appropriate_spacing = '        ';
 
 describe('Checkout Test', function() {
-  describe('Confirms a sales in a single transaction', function() {
+  describe('Confirms a sale in a single transaction', function() {
     it('Returns a confirmed sale', function (done) {
 
     	let request_time = new Date().getTime();
@@ -73,6 +73,8 @@ describe('Checkout Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS, POST')
 			.expect('Access-Control-Allow-Headers','Content-Type, X-Amz-Date,Authorization, X-Api-Key, X-Amz-Security-Token')
 			.end(function(err, response){
+
+        du.debug(response.body)
 
         tu.assertSuccessfulResponse(response.body, 'graph');
 
@@ -126,6 +128,8 @@ describe('Checkout Test', function() {
           }
         };
 
+        du.info(endpoint+'checkout/'+account, post_body, jwt);
+
         this_request.post('checkout/'+account)
 				.send(post_body)
 				.set('Content-Type', 'application/json')
@@ -136,6 +140,7 @@ describe('Checkout Test', function() {
 				.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 				.end(function(err, response){
+          du.debug(response.body)
           du.debug('Confirming results', response.body);
           assert.property(response.body, "success");
           assert.equal(response.body.success, true);

@@ -307,6 +307,7 @@ functions:
 
   checkout:
     handler: handlers/endpoints/checkout/handler.checkout
+    timeout: 29
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -317,6 +318,7 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
+
 
 ########################
 # Resource definitions for required system resources
