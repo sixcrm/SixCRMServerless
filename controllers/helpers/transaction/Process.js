@@ -700,17 +700,29 @@ module.exports = class Process extends TransactionUtilities{
       }
 
       let amount = this.parameters.get('amount');
-      let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        //Technical Debt:  Lets abstract this to a different function
-        let proposed_total = (parseFloat(merchant_provider.summary.summary.thismonth.amount) + parseFloat(amount));
-        let cap = parseFloat(merchant_provider.processing.monthly_cap);
+      merchant_providers = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        return !(proposed_total >= cap);
+        if(objectutilities.hasRecursive(merchant_provider, 'processing.monthly_cap') && !_.isNull(merchant_provider.processing.monthly_cap)){
+
+          //Technical Debt:  Lets abstract this to a different function
+          let proposed_total = (parseFloat(merchant_provider.summary.summary.thismonth.amount) + parseFloat(amount));
+          let cap = parseFloat(merchant_provider.processing.monthly_cap);
+
+          if((proposed_total >= cap)){
+            du.warning('CAP Shortage')
+            du.info(merchant_provider, amount);
+            return false;
+          }
+
+        }
+
+        return true;
 
       });
 
-      return Promise.resolve(return_array);
+
+      return Promise.resolve(merchant_providers);
 
     }
 
@@ -724,22 +736,40 @@ module.exports = class Process extends TransactionUtilities{
 
       let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 
-        if(parseInt(merchant_provider.summary.summary.today.count) >= parseInt(merchant_provider.processing.transaction_counts.daily)){
-          du.warning('Daily Count Shortage');
-          return false;
+        let return_value = true;
+
+        if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.daily') && !_.isNull(merchant_provider.processing.transaction_counts.daily)){
+
+          if(parseInt(merchant_provider.summary.summary.today.count) >= parseInt(merchant_provider.processing.transaction_counts.daily)){
+            du.warning('Daily Count Shortage');
+            return_value = false;
+          }
+
         }
 
-        if(parseInt(merchant_provider.summary.summary.thisweek.count) >= parseInt(merchant_provider.processing.transaction_counts.weekly)){
-          du.warning('Weekly Count Shortage');
-          return false;
+        if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.weekly') && !_.isNull(merchant_provider.processing.transaction_counts.weekly)){
+
+          if(parseInt(merchant_provider.summary.summary.thisweek.count) >= parseInt(merchant_provider.processing.transaction_counts.weekly)){
+            du.warning('Weekly Count Shortage');
+            return_value = false;
+          }
+
         }
 
-        if(parseInt(merchant_provider.summary.summary.thismonth.count) >= parseInt(merchant_provider.processing.transaction_counts.monthly)){
-          du.warning('Monthly Count Shortage');
-          return false;
+        if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.monthly') && !_.isNull(merchant_provider.processing.transaction_counts.monthly)){
+
+          if(parseInt(merchant_provider.summary.summary.thismonth.count) >= parseInt(merchant_provider.processing.transaction_counts.monthly)){
+            du.warning('Monthly Count Shortage');
+            return_value = false;
+          }
+
         }
 
-        return true;
+        if(return_value == false){
+          du.info(merchant_provider);
+        }
+
+        return return_value;
 
       });
 

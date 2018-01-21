@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/merchantproviders.json",
+	"id":"/transaction/merchantproviders.json",
 	"title": "Merchant Providers",
 	"type":"array",
-	"items":{"$ref": "/merchantprovider.json"}
+	"items":{"$ref": "./merchantprovider.json"}
 }

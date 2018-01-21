@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/merchantprovidersummary.json",
+	"id":"/transaction/merchantprovidersummary.json",
 	"title": "Merchant Provider Summary",
 	"type": "object",
 	"properties": {

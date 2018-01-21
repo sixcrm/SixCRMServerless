@@ -27,7 +27,12 @@
 		"processing":{
 			"type":"object",
 			"properties":{
-				"monthly_cap": {"$ref": "../definitions/currency.json"},
+				"monthly_cap": {
+					"anyOf":[
+						{"$ref": "../definitions/currency.json"},
+						{"type":"null"}
+					]
+				},
 				"discount_rate":{"$ref": "../definitions/percentage.json"},
 				"transaction_fee":{"$ref": "../definitions/currency.json"},
 				"reserve_rate": {"$ref": "../definitions/percentage.json"},
@@ -35,9 +40,24 @@
 				"transaction_counts":{
 					"type":"object",
 					"properties":{
-						"daily":{"$ref": "../definitions/nonnegativeinteger.json"},
-						"weekly":{"$ref": "../definitions/nonnegativeinteger.json"},
-						"monthly":{"$ref": "../definitions/nonnegativeinteger.json"}
+						"daily":{
+							"anyOf":[
+								{"$ref": "../definitions/nonnegativeinteger.json"},
+								{"type":"null"}
+							]
+						},
+						"weekly":{
+							"anyOf":[
+								{"$ref": "../definitions/nonnegativeinteger.json"},
+								{"type":"null"}
+							]
+						},
+						"monthly":{
+							"anyOf":[
+								{"$ref": "../definitions/nonnegativeinteger.json"},
+								{"type":"null"}
+							]
+						}
 					}
 				}
 			},

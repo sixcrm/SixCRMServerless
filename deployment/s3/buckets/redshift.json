@@ -21,6 +21,9 @@
     "Bucket": "kinesis-rebills"
   },
   {
+    "Bucket": "kinesis-product-schedule"
+  },
+  {
     "Bucket": "manual-upload"
   },
   {
