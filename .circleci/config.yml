@@ -343,7 +343,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Transactional Integration Tests
-          command: npm run test-transactions
+          command: export SIX_VERBOSE=2; npm run test-transactions
   synchronize_index:
     <<: *job-defaults
     steps:
@@ -489,6 +489,11 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
+          filters:
+            branches:
+              #hack
+              ignore:
+                - staging
       - synchronize_index:
           requires:
              - transactional_integration_tests
