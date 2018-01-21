@@ -1,9 +1,6 @@
 'use strict';
-global.SixCRM = {}; //hacks
-const SixCRM = require('../../SixCRM.js');
+require('../../SixCRMLite.js');
 
-global.SixCRM = new SixCRM();
-global.SixCRM.instantiate();
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
