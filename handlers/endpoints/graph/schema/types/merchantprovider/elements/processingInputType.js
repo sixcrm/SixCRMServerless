@@ -9,7 +9,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'MerchantProviderProcessingInput',
     fields: () => ({
       monthly_cap: {
-        type: new GraphQLNonNull(GraphQLFloat),
+        type: GraphQLFloat,
         description: 'The monthly maximum dollar amount that the merchant provider instance may process.'
       },
       discount_rate:{
