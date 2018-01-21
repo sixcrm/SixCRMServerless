@@ -156,7 +156,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: S3 Buckets
-          command: ./tools/changesInDirectory.sh deployment/s3 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
+          command: node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
   deploy_sqs:
     <<: *job-defaults
     steps:
@@ -246,7 +246,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Kinesis Deploy
-          command: ./tools/changesInDirectory.sh deployment/kinesis && node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
+          command: node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
   post_deployment:
     <<: *job-defaults
     steps:
@@ -523,3 +523,7 @@ workflows:
             - entity_integration_tests
             - deleteblock_integration_tests
             - analytics_integration_tests
+          filters:
+            branches:
+              ignore:
+                - production
