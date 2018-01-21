@@ -306,7 +306,7 @@ jobs:
           name: Redshift Table Data
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/seed_tables.js || echo "No changes, skipping."
       - run:
-          name: Environment
+          name: Entity Seed
           command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
   deleteblock_integration_tests:
     <<: *job-defaults

@@ -2,7 +2,6 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/graphqlquery.json",
   "title": "GraphQL Query",
-  "description": "A GraphQL Query",
-  "type":"string",
-  "pattern":"^\\s*(mutation|query)*\\s*{.*}\\s*$"
+  "description": "A GraphQL Query Complete this...",
+  "type":"string"
 }
