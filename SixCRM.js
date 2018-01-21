@@ -2,7 +2,7 @@
 require('./routes.js');
 const _ = require('underscore');
 
-class SixCRM {
+const Six = class SixCRM {
 
   constructor(){
 
@@ -18,6 +18,10 @@ class SixCRM {
     this.configuration = new Configuration();
     this.localcache = new LocalCache();
 
+  }
+
+  setConfigurationFile(){
+
     this.configuration.setEnvironmentConfigurationFile();
 
   }
@@ -25,6 +29,9 @@ class SixCRM {
 }
 
 if(!_.has(global, 'SixCRM')){
-  global.SixCRM = new SixCRM();
+  global.SixCRM = new Six();
   global.SixCRM.instantiate();
+  global.SixCRM.setConfigurationFile();
 }
+
+module.exports = Six;

@@ -675,6 +675,8 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     return this.getS3EnvironmentConfiguration('all').then((result) => {
 
+      du.debug('S3 environment configuration:', result);
+
       if(_.isNull(result)){ result = {}; }
 
       if(_.isNull(value) && !_.has(result, key)){
@@ -683,7 +685,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       }else{
 
-        if(_.isNull(value)){
+        if(_.isNull(value) && _.has(result, key)){
 
           delete result[key];
 
@@ -693,9 +695,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         }
 
+        du.debug(this.config_bucket_template, {stage: this.stage});
+
         let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
 
         let body =  JSON.stringify(result);
+
+        du.debug({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}, process.env);
 
         return this.s3utilities.putObject({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}).then((result) => {
 
