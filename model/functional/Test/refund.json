@@ -1,5 +1,5 @@
 {
-	"title": "NMI Merchant Provider Refund Object",
+	"title": "Test Merchant Provider Refund Object",
 	"type": "object",
 	"properties": {
 		"type":{
@@ -25,5 +25,5 @@
 			"minLength":1
 		}
 	},
-	"required":["type", "username", "password", "endpoint", "transactionid"]
+	"required":["type", "endpoint", "transactionid"]
 }

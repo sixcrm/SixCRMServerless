@@ -1,5 +1,5 @@
 {
-	"title": "NMI Configuration",
+	"title": "Test Configuration",
 	"type": "object",
 	"properties": {
 		"endpoint":{
