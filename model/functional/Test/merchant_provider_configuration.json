@@ -1,5 +1,5 @@
 {
-	"title": "NMI Merchant Provider Configuration",
+	"title": "Test Merchant Provider Configuration",
 	"type": "object",
 	"properties": {
 		"username":{
@@ -12,5 +12,5 @@
       "type":"string"
     }
 	},
-	"required":["username", "password"]
+	"required":[]
 }
