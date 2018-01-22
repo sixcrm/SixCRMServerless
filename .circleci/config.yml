@@ -1,9 +1,8 @@
 #Todo:
-# Eliminate all of the AWS Credetial imports by adding the credetials to the image
 # Eliminate writes to S3 for the last successful build.  Use cache instead
-# Integrate databackup before deployment
 # Increase the level of parallelism
-# Add Functional Tests
+# Add Blue/Green for Production
+
 functional_tests_default: &functional-tests-default
   machine: true
 
@@ -68,6 +67,9 @@ jobs:
             set -x
             docker-compose --file tools/docker/docker-compose.yml up -d
             docker ps
+      - run:
+          name: Execute Functional Connectivity Test
+          command: npm run test-functional-connectivity
   pre_deploy:
     <<: *job-defaults
     steps:

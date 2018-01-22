@@ -1,7 +1,6 @@
 'use strict';
 require('../../SixCRMLite.js');
 
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');

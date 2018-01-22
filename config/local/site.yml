@@ -30,6 +30,7 @@ dynamodb:
 sqs:
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
+  endpoint: http://localhost:9324
 
 cloudsearch:
   domainname: 'sixcrm'
@@ -40,11 +41,11 @@ lambda:
 
 redshift:
   default_cluster_identifier: 'sixcrm'
-  user: 'root'
-  database: 'circle_test'
+  user: 'postgres'
+  database: 'postgres'
   password: ''
-  host: 'localhost'
-  port: 5432
+  host: 0.0.0.0
+  port: 5439
   max: 10
   idle_timeout: 30000
   randomdata:

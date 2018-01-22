@@ -3,7 +3,6 @@ const expect = chai.expect;
 
 const region = global.SixCRM.configuration.site_config.aws.region;
 const account = global.SixCRM.configuration.site_config.aws.account;
-const localhost_endpoint = 'http://localhost:9324';
 
 describe('lib/sqs-utilities', () => {
 
@@ -102,13 +101,17 @@ describe('lib/sqs-utilities', () => {
 
             process.env.stage = 'local';
 
+            let endpoint = global.SixCRM.configuration.site_config.sqs.endpoint;
             let input = 'example';
-
             const queue = '/queue/';
 
-            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+            let expected_result = endpoint+queue+input;
 
-            expect(sqsutilities.getQueueURL(input)).to.equal(localhost_endpoint + queue + input);
+            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+            let queue_url = sqsutilities.getQueueURL(input);
+
+            expect(queue_url).to.equal(expected_result);
+
         });
     });
 
