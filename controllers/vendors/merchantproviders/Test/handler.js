@@ -22,10 +22,10 @@ class TestController extends MerchantProvider {
 
       this.merchant_provider_parameters = {
         required: {
-          username: 'username',
-          password:'password',
         },
         optional: {
+          username: 'username',
+          password:'password',
           processor_id: 'processor_id'
         }
       };
