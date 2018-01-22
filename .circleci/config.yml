@@ -61,17 +61,11 @@ jobs:
             curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
             chmod +x ~/docker-compose
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - restore_cache:
-          key: dockerimage-cache-{{ checksum "tools/docker/docker-compose.yml" }}
       - run:
           name: Start container and verify it's working
           command: |
             set -x
             docker-compose --file tools/docker/docker-compose.yml up -d
-      - save_cache:
-          key: dockerimage-cache-{{ checksum "tools/docker/docker-compose.yml" }}
-          paths:
-            - /var/lib/docker
       - run: sleep 20
       - run: docker info
       - run: docker ps
