@@ -1,3 +1,6 @@
+'use strict'
+require('../../SixCRMLite.js');
+
 const expect = require('chai').expect;
 const TestUtils = require('./test-utils.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
