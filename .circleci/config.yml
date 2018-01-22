@@ -69,7 +69,7 @@ jobs:
             docker ps
       - run:
           name: Execute Functional Connectivity Test
-          command: npm run test-functional-connectivity
+          command: export SIX_VERBOSE=2 && printenv && docker ps && npm run test-functional-connectivity
   pre_deploy:
     <<: *job-defaults
     steps:
