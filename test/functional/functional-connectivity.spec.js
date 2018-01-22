@@ -43,7 +43,7 @@ describe('Test connections to Docker Services', () => {
 
   describe('Redshift Query Utilities', () => {
 
-    it('successfully connects to the Docker Redshift Instance', () => {
+    xit('successfully connects to the Docker Redshift Instance', () => {
 
       let redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 
