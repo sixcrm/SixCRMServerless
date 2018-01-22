@@ -82,10 +82,7 @@ module.exports.graphObj = new GraphQLObjectType({
         },
         usersetting: {
             type: userSettingType.graphObj,
-            description: 'User setting.',
-            resolve: (user) => {
-                return userSettingController.get({id: user.id});
-            }
+            description: 'User setting.'
         },
         created_at: {
 	        type: new GraphQLNonNull(GraphQLString),

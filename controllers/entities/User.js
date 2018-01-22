@@ -208,6 +208,7 @@ class userController extends entityController {
                   global.user.termsandconditions_outdated = true;
                 }
 
+                return Promise.resolve();
               })
               .then(() => termsAndConditionsController.getLatestTermsAndConditions('owner'))
               .then(owner_terms_and_conditions => {
@@ -223,6 +224,31 @@ class userController extends entityController {
                 });
 
                 global.user.acl = acls;
+
+                return Promise.resolve();
+              })
+              .then(() => {
+                this.disableACLs();
+
+                // Technical Debt: get rid of enable/disable ACLs
+                return this.executeAssociatedEntityFunction('userSettingController', 'get', {id: global.user.id})
+                  .then((settings) => {
+
+                    this.enableACLs();
+
+                    return settings;
+
+                  }).catch((error) => {
+
+                    this.enableACLs();
+
+                    return reject(error);
+
+                  });
+
+              })
+              .then((settings) => {
+                global.user.usersetting = settings;
 
                 return resolve(global.user);
               })

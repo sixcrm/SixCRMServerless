@@ -5,8 +5,8 @@
 		}
 	},
 	"pathParameters":{
-		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+		"account": "*"
 	},
-	"body":"{userintrospection {id,name,auth0_id,active,termsandconditions,termsandconditions_outdated,acl {account {id,name,active},role {id,name,active},termsandconditions_outdated,},address {line1,line2,city,state,zip,country},usersetting {timezone}created_at,updated_at}}"
+	"body":"{userintrospection {id,name,auth0_id,active,termsandconditions,termsandconditions_outdated,acl {account {id,name,active},role {id,name,active},termsandconditions_outdated,},address {line1,line2,city,state,zip,country},usersetting {timezone, language}, created_at,updated_at}}"
 }
 
