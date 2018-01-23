@@ -11,6 +11,7 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidReferenceNumber(){
 
@@ -18,46 +19,16 @@ function getValidReferenceNumber(){
 
 }
 
-function getValidFulfillmentProvider(){
+function getValidFulfillmentProvider(id){
 
-  return {
-    id:uuidV4(),
-		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		name: randomutilities.createRandomString(20),
-		username: randomutilities.createRandomString(10),
-		password: randomutilities.createRandomString(10),
-		provider: {
-      name: "Hashtag",
-      threepl_key: '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
-      username:'kristest',
-      password:'kristest',
-      threepl_customer_id: 10
-    },
-		created_at: timestamp.getISO8601(),
-		updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidFulfillmentProvider(id);
 
 }
 
-function getValidCustomer(){
-  return {
-    updated_at: '2017-10-31T20:10:05.380Z',
-    lastname: 'Damunaste',
-    created_at: '2017-10-14T16:15:19.506Z',
-    creditcards: [ 'df84f7bb-06bd-4daa-b1a3-6a2c113edd72' ],
-    firstname: 'Rama',
-    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    address:{
-      zip: '97213',
-      country: 'US',
-      state: 'OR',
-      city: 'London',
-      line1: '10 Downing St.'
-    },
-    id: '24f7c851-29d4-4af9-87c5-0298fa74c689',
-    email: 'rama@damunaste.org',
-    phone: '1234567890'
-  };
+function getValidCustomer(id){
+
+  return MockEntities.getValidCustomer(id);
+
 }
 
 function getValidProducts(product_ids){
@@ -69,18 +40,7 @@ function getValidProducts(product_ids){
   }
 
   return arrayutilities.map(product_ids, product_id => {
-    return {
-      id:product_id,
-  		name:randomutilities.createRandomString(20),
-  		sku:randomutilities.createRandomString(20),
-  		ship:true,
-      shipping_delay:3600,
-  		fulfillment_provider:uuidV4(),
-  		default_price:39.99,
-  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  		created_at:timestamp.getISO8601(),
-  		updated_at:timestamp.getISO8601()
-    };
+    return MockEntities.getValidProduct(product_id);
   });
 
 }
@@ -173,10 +133,15 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 
       let fulfillment_provider = getValidFulfillmentProvider();
       let three_pl_response = getValidThreePLResponse('FindOrders');
+      let response_object = {
+        error: null,
+        response: three_pl_response,
+        body: three_pl_response.body
+      };
 
-      mockery.registerMock('request', {
-        post: (request_options, callback) => {
-         callback(null, three_pl_response);
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        post:(options) => {
+          return Promise.resolve(response_object);
         }
       });
 
@@ -204,9 +169,15 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       fulfillment_provider.provider.username = 'badusername';
       let three_pl_response = getInvalidThreePLResponse('FindOrders').bad_credentials;
 
-      mockery.registerMock('request', {
-        post: (request_options, callback) => {
-         callback(null, three_pl_response);
+      let response_object = {
+        error: null,
+        response: three_pl_response,
+        body: three_pl_response.body
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        post:(options) => {
+          return Promise.resolve(response_object);
         }
       });
 
@@ -233,9 +204,15 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       fulfillment_provider.provider.threepl_id = 'garbage';
       let three_pl_response = getInvalidThreePLResponse('FindOrders').bad_threepl_id;
 
-      mockery.registerMock('request', {
-        post: (request_options, callback) => {
-         callback(null, three_pl_response);
+      let response_object = {
+        error: null,
+        response: three_pl_response,
+        body: three_pl_response.body
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        post:(options) => {
+          return Promise.resolve(response_object);
         }
       });
 
@@ -266,13 +243,17 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       let fulfillment_provider = getValidFulfillmentProvider();
       let three_pl_response = getValidThreePLResponse('FindOrders');
 
-      /*
-      mockery.registerMock('request', {
-        post: (request_options, callback) => {
-         callback(null, three_pl_response);
+      let response_object = {
+        error: null,
+        response: three_pl_response,
+        body: three_pl_response.body
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        post:(options) => {
+          return Promise.resolve(response_object);
         }
       });
-      */
 
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});
@@ -302,13 +283,17 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       let fulfillment_provider = getValidFulfillmentProvider();
       let three_pl_response = getValidThreePLResponse('CreateOrders');
 
-      /*
-      mockery.registerMock('request', {
-        post: (request_options, callback) => {
-         callback(null, three_pl_response);
+      let response_object = {
+        error: null,
+        response: three_pl_response,
+        body: three_pl_response.body
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        post:(options) => {
+          return Promise.resolve(response_object);
         }
       });
-      */
 
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});
@@ -333,9 +318,15 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       let fulfillment_provider = getValidFulfillmentProvider();
       let three_pl_response = getInvalidThreePLResponse('CreateOrders');
 
-      mockery.registerMock('request', {
-        post: (request_options, callback) => {
-         callback(null, three_pl_response);
+      let response_object = {
+        error: null,
+        response: three_pl_response,
+        body: three_pl_response.body
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        post:(options) => {
+          return Promise.resolve(response_object);
         }
       });
 

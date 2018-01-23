@@ -175,9 +175,7 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 
     parsed_response = xmlutilities.parse(parsed_response['soap:Envelope']['soap:Body'][0].FindOrders[0]['_']);
 
-    return arrayutilities.map(parsed_response.orders, order => {
-
-      order = order[0];
+    return arrayutilities.map(parsed_response.orders.order, order => {
 
       return {
         customer: this.createCustomer(order),

@@ -3,10 +3,13 @@ const _ = require('underscore');
 const js2xmlparser = require("js2xmlparser2");
 const request = require('request');
 const uuidV4 = require('uuid/v4');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
+
 const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
 
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider');
@@ -471,7 +474,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
     let soap_action = this.parameters.get('soapaction');
 
     var options = {
-      uri: 'http://secure-wms.com/webserviceexternal/contracts.asmx',
+      url: 'http://secure-wms.com/webserviceexternal/contracts.asmx',
       headers: {
         'Content-Type': 'text/xml; charset=utf-8',
         'Content-Length': soap_parameters.length.toString(),
@@ -479,25 +482,13 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
         'Host': 'secure-wms.com',
         'Connection': 'keep-alive'
       },
-      method: 'POST',
+      method: 'post',
       body: soap_parameters
     };
 
-    return new Promise((resolve) => {
+    return httputilities.post(options).then((result) => {
 
-      request.post(options, (error, response) => {
-        if(error){
-          du.error(error);
-          return resolve({error: error, body:null, response: null});
-        }
-
-        return resolve({error: null, body: response.body, response: response});
-
-      });
-
-    }).then((result_object) => {
-
-      this.parameters.set('vendorresponse', result_object);
+      this.parameters.set('vendorresponse', result);
 
       return true;
 

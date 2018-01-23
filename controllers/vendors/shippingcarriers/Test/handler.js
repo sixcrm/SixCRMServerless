@@ -5,6 +5,7 @@ var request = require('request');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parseString = require('xml2js').parseString;
+const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 
 const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/components/ShippingCarrier.js');
 
@@ -90,26 +91,20 @@ module.exports = class TestController extends ShippingCarrierController {
       let request_uri = this.parameters.get('requesturi');
       let request_json = this.parameters.get('requestjson');
 
-      return new Promise((resolve) => {
+      let parameters = {
+        body: request_json,
+        url: request_uri
+      }
 
-        let options = {
-          method: 'post',
-          body: request_json,
-          json: true,
-          url: request_uri
+      return httputilities.postJSON(parameters).then(response => {
+
+        if(response.error){
+          eu.throw(response.error);
         }
 
-        request(options, (error, response, body) => {
+        this.parameters.set('vendorresponse', response.response);
 
-          if(error){
-            eu.throw(error);
-          }
-
-          this.parameters.set('vendorresponse', response);
-
-          return resolve(true);
-
-        });
+        return true;
 
       });
 

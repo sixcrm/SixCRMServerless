@@ -63,6 +63,36 @@ describe('helpers/shippingcarriers/Info.js', () => {
         carrier:'Test'
       };
 
+      let json_response = {
+        tracking_number: shipping_receipt.tracking.id,
+        status:'delivered',
+        address:{
+          name: 'John Doe',
+          line1: '54321 Shrinking Lane',
+          city:'Miniapolis',
+          state: 'IN',
+          zip: '54321',
+          country: 'US'
+        },
+        detail:{
+          detail:"Delivered to front porch",
+          delivered_at: timestamp.getISO8601()
+        }
+      };
+
+      let vendor_response = {
+        statusCode: 200,
+        body: {
+          response: json_response
+        }
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        postJSON: () => {
+          return Promise.resolve({error: null, response: vendor_response, body: json_response});
+        }
+      });
+
       let InfoController = global.SixCRM.routes.include('helpers', 'shippingcarriers/Info.js');
       let infoController = new InfoController();
 

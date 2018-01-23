@@ -169,24 +169,10 @@ function getValidRebill(id){
 
 }
 
-function getValidTransaction(){
-  return {
-    amount: 34.99,
-    id: uuidV4(),
-    alias:'T'+randomutilities.createRandomString(9),
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    rebill: uuidV4(),
-    processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-    merchant_provider: uuidV4(),
-    products:[{
-      product:uuidV4(),
-      amount:34.99
-    }],
-    type:"sale",
-    result:"success",
-    created_at:timestamp.getISO8601(),
-    updated_at:timestamp.getISO8601()
-  };
+function getValidTransaction(id){
+
+  return MockEntities.getValidTransaction(id);
+
 }
 
 function getValidTransactions(){
@@ -902,6 +888,18 @@ describe('controllers/providers/terminal/Terminal.js', function () {
         }
       });
 
+      let response_body = getValidVendorResponseBody();
+      let vendor_response = {
+        statusCode: 200,
+        body: response_body
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        post: () => {
+          return Promise.resolve({error: null, response: vendor_response, body: response_body});
+        }
+      });
+
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
 
@@ -947,6 +945,18 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
+
+      let response_body = getValidVendorResponseBody();
+      let vendor_response = {
+        statusCode: 200,
+        body: response_body
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        post: () => {
+          return Promise.resolve({error: null, response: vendor_response, body: response_body});
+        }
+      });
 
       return terminalController.test({fulfillment_provider_id: fulfillment_provider.id}).then(result => {
 
