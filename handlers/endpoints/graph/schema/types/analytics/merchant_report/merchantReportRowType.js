@@ -5,12 +5,20 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
+
+const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+const merchantProviderType = require('./../../merchantprovider/merchantProviderType');
+
 module.exports.graphObj = new GraphQLObjectType({
     name: 'MerchantReportRowType',
     description: 'Merchant Report Row',
     fields: () => ({
       merchant_provider: {
-        type: GraphQLString
+        type: merchantProviderType.graphObj,
+        description: 'The merchant provider',
+        resolve: (row) => {
+          return merchantProviderController.get({id: row.merchant_provider});
+        }
       },
       sale_count: {
         type: GraphQLString
