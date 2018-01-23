@@ -553,7 +553,13 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
                 }else{
 
-                    query_parameters['ExclusiveStartKey'] =  JSON.parse(exclusive_start_key);
+                    let key_object = JSON.parse(exclusive_start_key);
+
+                    if (this.getAccountFilterIfPresent(query_parameters)) {
+                      key_object['account'] = this.getAccountFilterIfPresent(query_parameters);
+                    }
+
+                    query_parameters['ExclusiveStartKey'] =  key_object;
 
                 }
 
@@ -567,6 +573,14 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
         return query_parameters;
 
+    }
+
+    getAccountFilterIfPresent(query_parameters) {
+      if (query_parameters.expression_attribute_values && query_parameters.expression_attribute_values[':accountv']) {
+        return query_parameters.expression_attribute_values[':accountv'];
+      }
+
+      return null;
     }
 
 
@@ -584,15 +598,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
                 if(this.isEmail(cursor) || this.isUUID(cursor) || cursor == '*'){
 
-                    let new_cursor = {
-                        id: cursor
-                    };
-
-                    if (query_parameters.ExpressionAttributeValues && query_parameters.ExpressionAttributeValues[':accountv']) {
-                        new_cursor.account = query_parameters.ExpressionAttributeValues[':accountv'];
-                    }
-
-                    query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify(new_cursor));
+                  query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify({id: cursor}));
 
                   //query_parameters['ExclusiveStartKey'] = { id: cursor };
 
