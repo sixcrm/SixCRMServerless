@@ -539,7 +539,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     appendExclusiveStartKey(query_parameters, exclusive_start_key){
 
-        du.debug('Append Exclusive Start Key');
+        du.debug('Append Exclusive Start Key', query_parameters, exclusive_start_key);
 
         query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
@@ -584,7 +584,15 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
                 if(this.isEmail(cursor) || this.isUUID(cursor) || cursor == '*'){
 
-                    query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify({id: cursor}));
+                    let new_cursor = {
+                        id: cursor
+                    };
+
+                    if (query_parameters.ExpressionAttributeValues && query_parameters.ExpressionAttributeValues[':accountv']) {
+                        new_cursor.account = query_parameters.ExpressionAttributeValues[':accountv'];
+                    }
+
+                    query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify(new_cursor));
 
                   //query_parameters['ExclusiveStartKey'] = { id: cursor };
 
