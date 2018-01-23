@@ -48,6 +48,7 @@ class accountController extends entityController {
 
         query_parameters = this.appendFilterExpression(query_parameters, 'id = :accountv');
         query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
+        pagination = null;
 
       }
 
