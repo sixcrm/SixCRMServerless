@@ -1774,6 +1774,28 @@ describe('controllers/EntityUtilities.js', () => {
             });
         });
 
+        it('parses and appends exclusive start key when there is an accountv property', () => {
+
+            let query_parameters = {
+                any_params: 'any_params',
+                expression_attribute_values: {':accountv': 'testaccount'}
+            };
+
+            let exclusive_start_key = '{ "test": "test@example.com"}';
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendExclusiveStartKey(query_parameters, exclusive_start_key)).to.deep.equal({
+                any_params: query_parameters.any_params,
+                expression_attribute_values: {':accountv': 'testaccount'},
+                ExclusiveStartKey: {
+                    test: "test@example.com",
+                    account: "testaccount"
+                }
+            });
+        });
+
         it('returns unchanged query parameters when exclusive start key is undefined', () => {
 
             let query_parameters = {
