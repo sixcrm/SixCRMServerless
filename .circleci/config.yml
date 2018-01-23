@@ -66,6 +66,7 @@ jobs:
           command: |
             set -x
             docker-compose --file tools/docker/docker-compose.yml up -d
+      - run: echo "Pausing to allow Redshift to catch up..." && sleep 30
       - run:
           name: Execute Functional Connectivity Test
           command: npm run test-functional-connectivity
