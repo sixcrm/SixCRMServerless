@@ -25,4 +25,4 @@ module.exports = function(results, parameters){
 
   return Promise.resolve(return_object);
 
-}
+};
