@@ -1228,6 +1228,53 @@ describe('controllers/Entity.js', () => {
             });
         });
 
+        it('list user, filter by account', () => {
+
+            let params = {
+                pagination: {
+                    limit: 2
+                },
+                search: {
+                    updated_at: {
+                        after: ['any_data']
+                    }
+                },
+                reverse_order: true,
+                append_account_filter: true
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('entitys');
+                    expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
+                    expect(parameters.expression_attribute_names['#updated_at_after_k']).to.deep.equal('updated_at');
+                    expect(parameters.limit).to.equal(params.pagination.limit);
+                    expect(parameters.expression_attribute_values[':accountv']).to.equal(global.account);
+                    return Promise.resolve({
+                        Count: 2,
+                        Items: [{}, {}]
+                    });
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listByUser(params).then((response) => {
+                expect(response).to.deep.equal({
+                    pagination: {
+                        count: 2,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entitys: [{},{}]
+                });
+            });
+        });
+
         it('returns empty data when there are none', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
