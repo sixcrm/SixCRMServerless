@@ -398,6 +398,18 @@ module.exports.graphObj = new GraphQLObjectType({
               return campaignController.listCampaignsByProduct({product: args.product, pagination: args.pagination, fatal: list_fatal});
             }
         },
+        campaignlistbyaffiliateallowed: {
+          type: campaignListType.graphObj,
+          args: {
+            affiliate: {type: new GraphQLNonNull(GraphQLString)},
+            pagination: {type: paginationInputType.graphObj}
+          },
+          resolve: function(root, args){
+            const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+
+            return campaignController.listByAffiliateAllow({affiliate: args.affiliate, pagination: args.pagination});
+          }
+        },
         notificationcount: {
   	       type: notificationCountType.graphObj,
             resolve: function() {
