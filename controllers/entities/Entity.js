@@ -168,7 +168,7 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //NOTE:  Cheap!  Complete!
-    listByUser({query_parameters, user, pagination, reverse_order, fatal, search}){
+    listByUser({query_parameters, user, pagination, reverse_order, fatal, search, append_account_filter}){
 
       du.debug('List By User');
 
@@ -185,6 +185,10 @@ module.exports = class entityController extends entityUtilitiesController {
 
         if(search){
           query_parameters = this.appendSearchConditions({query_parameters: query_parameters, search: search});
+        }
+
+        if (append_account_filter) {
+            query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
         }
 
         return query_parameters;

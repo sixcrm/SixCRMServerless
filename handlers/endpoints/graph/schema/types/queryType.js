@@ -443,7 +443,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, notification) {
                 const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-                return notificationController.listByUser({pagination: notification.pagination, reverse_order: true, fatal: list_fatal, search: notification.search});
+                return notificationController.listByUser({pagination: notification.pagination, reverse_order: true, fatal: list_fatal, search: notification.search, append_account_filter: true});
             }
         },
         notificationsettingdefault: {
