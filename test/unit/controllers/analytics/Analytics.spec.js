@@ -241,6 +241,48 @@ describe('controllers/Analytics.js', () => {
         });
     });
 
+    describe('getTransactionOverviewWithRebills', () => {
+
+        it('successfully returns transaction overview wit rebills', () => {
+
+            const start_iso = '2018-01-20T23:59:59Z';
+            const end_iso = '2018-01-25T00:00:00Z';
+
+            let params = {
+                analyticsfilter: {start: start_iso, end: end_iso}
+            };
+
+            let mock_analytics_utilities = class {
+                constructor(){}
+
+                getResults(query_name, parameters, query_filters) {
+                    expect(query_name).to.equal('transaction_summary');
+                    expect(parameters).to.equal(params.analyticsfilter);
+                    expect(query_filters).to.be.defined;
+
+                    return Promise.resolve({overview: {something: 'something'}})
+                }
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
+                getRebillsBetween: ({start, end}) => {
+                    expect(start).to.equal(start_iso);
+                    expect(end).to.equal(end_iso);
+
+                    return Promise.resolve([{amount: 5.1}, {amount: 6.24}]);
+                }
+            });
+
+            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+            return analyticsController.getTransactionOverviewWithRebills(params).then((result) => {
+                expect(result).to.deep.equal(
+                  {overview: {something: 'something', rebill: {count: 2, amount: 11.34}}});
+            });
+        });
+    });
+
     describe('getTransactionsByFacet', () => {
 
         it('successfully returns transaction by facet', () => {

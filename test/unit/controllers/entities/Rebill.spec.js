@@ -302,4 +302,42 @@ describe('controllers/Rebill.js', () => {
 
         });
     });
+
+    describe('getRebillsBetween', () => {
+
+        it('successfully lists rebills between two dates', () => {
+            const start = '2018-01-20T00:00:00Z';
+            const end = '2018-01-25T23:59:59Z';
+
+            let rebill = getValidRebill();
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('rebills');
+                    expect(parameters).to.have.property('expression_attribute_names');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.expression_attribute_values[':start_iso8601v']).to.equal(start);
+                    expect(parameters.expression_attribute_values[':end_iso8601v']).to.equal(end);
+
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [rebill]
+                    });
+                }
+            });
+
+            const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+
+            return rebillController.getRebillsBetween({start: start, end: end}).then((result) => {
+                expect(result.length).to.equal(1);
+                expect(result[0]).to.deep.equal(rebill);
+            });
+
+        });
+    });
 });

@@ -215,6 +215,26 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    getTransactionOverviewWithRebills(parameters){
+
+      du.debug('Get Transaction Overview With Rebills');
+
+      return this.getTransactionOverview(parameters)
+        .then((result) => {
+          const rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+
+          return rebillController.getRebillsBetween(parameters.analyticsfilter)
+            .then((rebills) => {
+              const count = rebills.length;
+              const amount = rebills.map(r => r.amount).reduce((a, b) => a + b, 0).toFixed(2);
+
+              result.overview.rebill = {count: +count, amount: +amount};
+
+              return result;
+            })
+        })
+    }
+
     getTransactionSummary(parameters){
 
         du.debug('Get Transaction Summary');

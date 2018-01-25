@@ -128,6 +128,27 @@ class rebillController extends entityController {
 
     }
 
+    getRebillsBetween({start, end}){
+
+      const query_parameters = {
+        filter_expression: '#bill_at >= :start_iso8601v AND #bill_at <= :end_iso8601v',
+        expression_attribute_values: {
+          ':start_iso8601v': start,
+          ':end_iso8601v': end
+        },
+        expression_attribute_names: {
+          '#bill_at': 'bill_at'
+        }
+      };
+
+      return this.listByAccount({query_parameters: query_parameters}).then((data) => {
+
+        return data.rebills || [];
+
+      });
+
+    }
+
     listByState({state, state_changed_after, state_changed_before, pagination}){
 
       du.debug('List By State');
