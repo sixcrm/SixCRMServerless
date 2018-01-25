@@ -4,7 +4,7 @@
 TABLE_VERSION 1
 */
 
-DROP TABLE IF EXISTS agg_merchant_provider_transactions;
+DROP TABLE IF EXISTS aggregation_dm.agg_merchant_provider_transactions;
 
 DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='agg_merchant_provider_transactions';
 
@@ -12,7 +12,7 @@ INSERT INTO sys_sixcrm.sys_table_version
      SELECT 'agg_merchant_provider_transactions',1,getdate();
 
 
-CREATE TABLE IF NOT EXISTS agg_merchant_provider_transactions
+CREATE TABLE IF NOT EXISTS aggregation_dm.agg_merchant_provider_transactions
 (
   merchant_provider VARCHAR(36)  NOT NULL ENCODE ZSTD,
   account VARCHAR(36)  NOT NULL ENCODE RUNLENGTH,
@@ -22,4 +22,4 @@ CREATE TABLE IF NOT EXISTS agg_merchant_provider_transactions
   )
     INTERLEAVED SORTKEY (account, datetime);
 
-COMMENT ON TABLE agg_merchant_provider_transactions IS 'Aggregated table for merchant provider transactions on everyday';
+COMMENT ON TABLE aggregation_dm.agg_merchant_provider_transactions IS 'Aggregated table for merchant provider transactions on everyday';

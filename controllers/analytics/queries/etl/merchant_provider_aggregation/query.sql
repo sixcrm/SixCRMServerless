@@ -1,4 +1,4 @@
-INSERT INTO agg_merchant_provider_transactions
+INSERT INTO aggregation_dm.agg_merchant_provider_transactions
 SELECT t.merchant_provider,
        account,
        date_trunc('day',CURRENT_TIMESTAMP) as datetime,
