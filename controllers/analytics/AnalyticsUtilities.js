@@ -466,7 +466,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
         du.debug('Append Queue Name', parameters, queue_name);
 
-        parameters['queuename'] = `'${queue_name}'`;
+        parameters['queue_name'] = `'${queue_name}'`;
 
         return parameters;
 

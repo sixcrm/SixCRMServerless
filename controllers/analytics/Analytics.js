@@ -58,6 +58,10 @@ class AnalyticsController extends AnalyticsUtilities{
           'account'
         ];
 
+        this.default_queue_account_filter = [
+          'account'
+        ];
+
     }
 
     getBINList(parameters){
@@ -257,12 +261,12 @@ class AnalyticsController extends AnalyticsUtilities{
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
       if(!_.isUndefined(queue_name)){
-        parameters = this.appendCurrentQueueName(parameters, queue_name);
+        parameters = this.appendQueueName(parameters, queue_name);
       }
 
       parameters = this.appendPeriod(parameters, {name: period});
 
-      return this.getResults('order_engine/rebill_pagination', parameters, this.default_queue_filters);
+      return this.getResults('order_engine/rebill_pagination', parameters, this.default_queue_account_filter);
 
     }
 
@@ -288,10 +292,12 @@ class AnalyticsController extends AnalyticsUtilities{
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
       if(!_.isUndefined(queue_name)){
-        parameters = this.appendCurrentQueueName(parameters, queue_name);
+        parameters = this.appendQueueName(parameters, queue_name);
       }
 
-      return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_filters);
+      du.debug(parameters)
+
+      return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_account_filter);
     }
 
     getQueueState(parameters) {

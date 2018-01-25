@@ -21,7 +21,7 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"queuename:":{
+		"queue_name:":{
 			"type": "array",
 		  "enum": ["bill", "hold", "pending", "shipped", "delivered","failed","recover",
 				"shipped_failed", "delivered_failed", "recover_failed","hold_failed","pending_failed",
@@ -29,5 +29,5 @@
 			]
 		}
 	},
-	"required":["start", "end"]
+	"required":["start", "end", "queue_name"]
 }

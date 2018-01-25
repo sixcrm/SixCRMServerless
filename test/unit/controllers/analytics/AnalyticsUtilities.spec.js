@@ -52,7 +52,7 @@ describe('controllers/AnalyticsUtilities.js', () => {
             let analyticsUtilitiesController = new AnalyticsUtilitiesController();
 
             expect(analyticsUtilitiesController.appendQueueName(params, queue_name)).to.deep.equal({
-                queuename: "'" + queue_name + "'"
+                queue_name: "'" + queue_name + "'"
             });
         });
     });
