@@ -38,5 +38,17 @@
         },
         "created_at":"2017-04-06T18:40:41.405Z",
         "updated_at":"2017-04-06T18:41:12.521Z"
+    },
+    {
+        "id":"741df434-c160-477d-9818-884b1dba7439",
+        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        "name":"ShipStation Fulfillment Provider",
+        "provider":{
+          "name":"ShipStation",
+          "api_key":"Test",
+          "api_secret":"Test"
+        },
+        "created_at":"2017-04-06T18:40:41.405Z",
+        "updated_at":"2017-04-06T18:41:12.521Z"
     }
 ]

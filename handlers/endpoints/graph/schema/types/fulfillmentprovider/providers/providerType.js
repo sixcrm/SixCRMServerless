@@ -20,7 +20,8 @@ module.exports.graphObj = new GraphQLInterfaceType({
       let providertypes = {
         'Hashtag':require('./HashtagType'),
         'ThreePL':require('./ThreePLType'),
-        'Test':require('./TestFulfillmentProviderType')
+        'Test':require('./TestFulfillmentProviderType'),
+        'ShipStation':require('./ShipStationType')
       };
 
       if(_.has(providertypes, provider.name)){
