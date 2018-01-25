@@ -29,7 +29,7 @@
 			"items": {"$ref": "#/definitions/UUIDv4"},
 			"uniqueItems": true
 		},
-		"queue_name:":{
+		"queuename:":{
 			"type": "array",
 		  "enum": ["bill", "hold", "pending", "shipped", "delivered","failed","recover",
 				"shipped_failed", "delivered_failed", "recover_failed","hold_failed","pending_failed",
@@ -51,5 +51,5 @@
 			"exclusiveMinimum": false
 		}
 	},
-	"required":["start", "end", "order", "limit", "offset", "period", "queue_name"]
+	"required":["start", "end", "order", "limit", "offset", "period", "queuename"]
 }

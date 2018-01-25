@@ -261,11 +261,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
       du.debug('Get Queue Summary');
 
-      const queue_name = parameters.queuename;
+      const queuename = parameters.queuename;
 
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
-      parameters = this.appendQueueName(parameters, queue_name);
+      parameters = this.appendQueueName(parameters, queuename);
 
       return this.getResults('order_engine/queue_pagination', parameters, this.default_queue_filters);
 
@@ -278,6 +278,7 @@ class AnalyticsController extends AnalyticsUtilities{
       const queue_name = parameters.queuename;
       const period = parameters.period;
 
+      du.debug(parameters);
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
       if(!_.isUndefined(queue_name)){
@@ -285,7 +286,7 @@ class AnalyticsController extends AnalyticsUtilities{
       }
 
       parameters = this.appendPeriod(parameters, {name: period});
-
+      du.debug(parameters);
       return this.getResults('order_engine/rebill_pagination', parameters, this.default_queue_account_filter);
 
     }
@@ -314,9 +315,7 @@ class AnalyticsController extends AnalyticsUtilities{
       if(!_.isUndefined(queue_name)){
         parameters = this.appendQueueName(parameters, queue_name);
       }
-
-      du.debug(parameters)
-
+      du.debug(queue_name)
       return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_account_filter);
     }
 

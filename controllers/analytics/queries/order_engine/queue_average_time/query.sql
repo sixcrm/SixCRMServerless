@@ -8,7 +8,7 @@ WITH rebills_delta AS
       FROM f_rebills fr
       WHERE 1=1 {{filter}}
         AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}' ) fr
-   WHERE queue_name IN ({{queue_name}}) ),
+   WHERE queue_name IN ({{queuename}}) ),
      base AS
   (SELECT queue_name,
           coalesce(avg(delta_time), INTERVAL '0 second') AS average_time
@@ -18,7 +18,7 @@ WITH rebills_delta AS
   (SELECT queue_name,
           average_time
    FROM base
-   UNION SELECT {{queue_name}} AS queue_name,INTERVAL '0 second' AS average_time)
-SELECT max(queue_name) AS queue_name,
+   UNION SELECT {{queuename}} AS queue_name,INTERVAL '0 second' AS average_time)
+SELECT max(queue_name) AS queuename,
        max(average_time) AS average_time
 FROM RESULT;

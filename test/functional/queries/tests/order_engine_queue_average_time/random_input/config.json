@@ -4,13 +4,8 @@
   "input": {
     "analyticsfilter":
   { "start": "2017-04-01T00:00:00.000Z",
-    "end": "2017-05-01T00:00:00.000Z" },
+    "end": "2017-05-01T00:00:00.000Z"},"queuename": "pending",
     "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
   "result_name": "summary",
-  "expect": [{"queuename":"pending","averagetime":{"hours":23}},
-             {"queuename":"shipped","averagetime":{"days":2}},
-             {"queuename":"","averagetime":{}},
-             {"queuename":"bill","averagetime":{"days":1}},
-             {"queuename":"hold","averagetime":{"hours":1}}
-]
+  "expect": [{"queuename":"pending","averagetime":0}]
 }

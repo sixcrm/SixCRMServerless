@@ -4,8 +4,8 @@
   "input": {
     "analyticsfilter":
   { "start": "2017-04-01T00:00:00.000Z",
-    "end": "2017-05-01T00:00:00.000Z" },
+    "end": "2017-05-01T00:00:00.000Z"},    "queuename": "hold"  ,
     "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
   "result_name": "summary",
-  "expect":  [{"queuename":"hold","averagetime":{}}]
+  "expect":   [{"queuename":"hold","averagetime":0}] 
 }

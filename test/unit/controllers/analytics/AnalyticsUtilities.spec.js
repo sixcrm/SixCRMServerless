@@ -46,13 +46,13 @@ describe('controllers/AnalyticsUtilities.js', () => {
 
             let params = {};
 
-            let queue_name = 'a_queue_name';
+            let queuename = 'a_queue_name';
 
             let AnalyticsUtilitiesController = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
             let analyticsUtilitiesController = new AnalyticsUtilitiesController();
 
-            expect(analyticsUtilitiesController.appendQueueName(params, queue_name)).to.deep.equal({
-                queue_name: "'" + queue_name + "'"
+            expect(analyticsUtilitiesController.appendQueueName(params, queuename)).to.deep.equal({
+                queuename: "'" + queuename + "'"
             });
         });
     });
