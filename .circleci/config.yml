@@ -70,6 +70,9 @@ jobs:
       - run:
           name: Execute Functional Connectivity Test
           command: npm run test-functional-connectivity
+      - run:
+          name: Execute State Machine Tests
+          command: npm run test-functional-state-machine
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -337,6 +340,15 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: export SIX_VERBOSE=2; npm run test-transactions
+  state_machine_tests:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: State Machine Tests
+          command: export SIX_VERBOSE=2; npm run test-functional-state-machine
   synchronize_index:
     <<: *job-defaults
     steps:
