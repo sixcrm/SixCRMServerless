@@ -51,6 +51,8 @@ class SQSDeployment extends AWSDeploymentUtilities{
 
       du.debug('Deploy Queues');
 
+      let number_of_created_queues = 0;
+
       return this.getQueueDefinitions().then((queue_definitions) => {
 
         let create_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
@@ -65,7 +67,12 @@ class SQSDeployment extends AWSDeploymentUtilities{
 
             return this.createQueue(queue_definition).then((result) => {
 
-              if(result == false){ du.highlight('Queue Exists'); }else{ du.highlight('Queue Created'); }
+              if(result == false){
+                du.highlight('Queue Exists');
+              } else {
+                du.highlight('Queue Created');
+                number_of_created_queues++;
+              }
 
               return true;
 
@@ -79,7 +86,13 @@ class SQSDeployment extends AWSDeploymentUtilities{
 
           du.highlight('Pausing to allow AWS to catch up...');
 
-          return timestamp.delay(60000)().then(() => { return 'Complete'; });
+          if (number_of_created_queues > 0) {
+              return timestamp.delay(60000)().then(() => {
+                  return 'Complete';
+              });
+          } else {
+              return 'Complete';
+          }
 
         });
 

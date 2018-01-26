@@ -2,6 +2,7 @@ const expect = require('chai').expect;
 const mockery = require('mockery');
 const SqSTestUtils = require('./sqs-test-utils');
 const TestUtils = require('./test-utils');
+const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
@@ -36,7 +37,8 @@ describe('stateMachine', () => {
         TestUtils.setGlobalUser();
         TestUtils.setEnvironmentVariables();
         configureLambdas();
-        SqSTestUtils.purgeAllQueues().then(() => done());
+
+        SQSDeployment.deployQueues().then(() => SqSTestUtils.purgeAllQueues()).then(() => done());
     });
 
     beforeEach((done) => {
@@ -315,7 +317,14 @@ describe('stateMachine', () => {
     describe('Flushing queue twice', () => {
 
         let tests = [
-            {from: 'bill', to: 'hold', eventually: 'pending', worker: 'processBilling.js', status: 'success', messages: 1}
+            {
+                from: 'bill',
+                to: 'hold',
+                eventually: 'pending',
+                worker: 'processBilling.js',
+                status: 'success',
+                messages: 1
+            }
         ];
 
         arrayutilities.map(tests, (test) => {
@@ -336,7 +345,7 @@ describe('stateMachine', () => {
                         SqSTestUtils.messageCountInQueue(test.to)]))
                     .then((counts) => expect(counts).to.deep.equal(
                         [expected_number_in_input, expected_number_in_output], error_message))
-                    .then(() => timestamp.delay(32*1000)())
+                    .then(() => timestamp.delay(32 * 1000)())
                     .then(() => flushStateMachine())
                     .then(() => Promise.all([
                         SqSTestUtils.messageCountInQueue(test.from),
@@ -354,11 +363,12 @@ describe('stateMachine', () => {
         let all_function_executions = arrayutilities.map(lambdas, (lambda) => {
             let function_name = Object.keys(lambda); // function is the first property of the handler
 
-            return lambda[function_name](null, null, () => {})
+            return lambda[function_name](null, null, () => {
+            })
         });
 
         return Promise.all(all_function_executions).then((results) => {
-            return timestamp.delay(0.3*1000)().then(() => results);
+            return timestamp.delay(0.3 * 1000)().then(() => results);
         });
     }
 
@@ -392,17 +402,17 @@ describe('stateMachine', () => {
         });
     }
 
-    function getRebill(status){
+    function getRebill(status) {
 
         return {
             "bill_at": "2017-04-06T18:40:41.405Z",
             "id": "70de203e-f2fd-45d3-918b-460570338c9b",
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
             "parentsession": "1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d",
             "product_schedules": ["2200669e-5e49-4335-9995-9c02f041d91b"],
             "amount": 79.99,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z",
+            "created_at": "2017-04-06T18:40:41.405Z",
+            "updated_at": "2017-04-06T18:41:12.521Z",
             "return_status": status
         };
 
