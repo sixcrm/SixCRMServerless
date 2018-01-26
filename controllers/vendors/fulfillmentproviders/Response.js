@@ -73,7 +73,6 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
       if(_.isFunction(this.determineResultCode)){
 
-
         let vendor_response = this.parameters.get('vendorresponse');
         let response = vendor_response.response;
         let body = vendor_response.body;
@@ -99,6 +98,8 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
         this.setCode(result_code);
         this.setMessage(result_message);
 
+      }else{
+        //does anything happen here?
       }
 
     }

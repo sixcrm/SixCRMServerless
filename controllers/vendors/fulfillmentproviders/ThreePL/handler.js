@@ -1,8 +1,8 @@
 'use strict';
 const _ = require('underscore');
+
+//Technical Debt:  need a "XML-Helper" class
 const js2xmlparser = require("js2xmlparser2");
-const request = require('request');
-const uuidV4 = require('uuid/v4');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
