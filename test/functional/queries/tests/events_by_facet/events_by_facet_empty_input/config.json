@@ -1,0 +1,12 @@
+{
+  "method": "getEventsByFacet",
+  "test_case": "empty input",
+  "input": {
+    "analyticsfilter":
+  { "start": "2018-01-21T00:00:00.000Z",
+    "end": "2018-01-23T00:00:00.000Z" },
+    "facet": "affiliate",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "facets",
+  "expect": []
+}

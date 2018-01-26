@@ -58,6 +58,7 @@ FROM
                 sum(amount) AS transactions_amount
               FROM f_transactions
               WHERE 1 = 1
+                    {{filter}}
                     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
                     AND {{facet}} IS NOT NULL
               GROUP BY {{facet}}
@@ -75,6 +76,7 @@ FROM
        sum(amount) AS all_transactions_amount
      FROM f_transactions
      WHERE 1 = 1
+           {{filter}}
            AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
            AND {{facet}} IS NULL
      GROUP BY {{facet}}
