@@ -144,6 +144,24 @@ describe('lib/timestamp', () => {
             }
         });
 
+        it('should calculate difference between two dates in milliseconds', () => {
+
+            let start = frozenNow + 1; //increase by any number
+
+            let end = frozenNow;
+
+            expect(Timestamp.differenceInMiliseconds(start, end)).to.equal(1);
+        });
+
+        it('should calculate difference between two ISO8601 dates in milliseconds', () => {
+
+            let start = '2017-02-22T14:03:19.196Z'; //any date in ISO8601 format
+
+            let end = frozenNowAsISO8601;
+
+            expect(Timestamp.differenceInMiliseconds(start, end)).to.equal(3600000);
+        });
+
         function givenTimeIsFrozen() {
             Date.now = () => {
                 return frozenNow;

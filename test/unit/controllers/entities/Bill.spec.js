@@ -1,9 +1,9 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const uuidV4 = require('uuid/v4');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 function getValidBill() {
     return MockEntities.getValidBill()
@@ -74,7 +74,7 @@ describe('controllers/entities/Bill.js', () => {
                     expect(entity).to.have.property('created_at');
                     expect(entity).to.have.property('updated_at');
                     expect(entity).to.have.property('id');
-                    expect(entity.created_at).not.to.be.equal(entity.updated_at);
+                    expect(timestamp.differenceInMiliseconds(entity.created_at, entity.updated_at)).to.be.below(5);
                     return Promise.resolve(entity);
                 }
             });
@@ -113,18 +113,6 @@ describe('controllers/entities/Bill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'bill', '*');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    return Promise.resolve({Items: [entity]});
-                },
-                saveRecord: (tableName, entity, callback) => {
-                    expect(entity).to.have.property('created_at');
-                    expect(entity).to.have.property('updated_at');
-                    expect(entity.created_at).not.to.be.equal(entity.updated_at);
-                    return Promise.resolve(entity);
-                }
-            });
-
             //prepare permissions
             global.account = '*';
 
@@ -154,7 +142,7 @@ describe('controllers/entities/Bill.js', () => {
                     expect(entity).to.have.property('created_at');
                     expect(entity).to.have.property('updated_at');
                     expect(entity).to.have.property('id');
-                    expect(entity.created_at).not.to.be.equal(entity.updated_at);
+                    expect(timestamp.differenceInMiliseconds(entity.created_at, entity.updated_at)).to.be.below(5);
                     return Promise.resolve(entity);
                 }
             });
@@ -176,18 +164,6 @@ describe('controllers/entities/Bill.js', () => {
             delete entity.id;
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'bill', '*');
-
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    return Promise.resolve({Items: [entity]});
-                },
-                saveRecord: (tableName, entity, callback) => {
-                    expect(entity).to.have.property('created_at');
-                    expect(entity).to.have.property('updated_at');
-                    expect(entity.created_at).not.to.be.equal(entity.updated_at);
-                    return Promise.resolve(entity);
-                }
-            });
 
             //prepare permissions
             global.account = '*';
@@ -256,17 +232,6 @@ describe('controllers/entities/Bill.js', () => {
             delete entity.id;
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'bill', '*');
-
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
-                    return Promise.resolve([]);
-                },
-                saveRecord: (tableName, entity, callback) => {
-                    expect(entity).to.have.property('created_at');
-                    expect(entity).to.have.property('updated_at');
-                    return Promise.resolve(entity);
-                }
-            });
 
             //prepare permissions
             global.account = '*';

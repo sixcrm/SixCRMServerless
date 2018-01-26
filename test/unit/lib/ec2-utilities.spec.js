@@ -1,7 +1,24 @@
 const chai = require('chai');
 const expect = chai.expect;
+const mockery = require('mockery');
 
 describe('lib/ec2-utilities', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    after(() => {
+        mockery.deregisterAll();
+    });
 
     describe('describeSecurityGroups', () => {
 
@@ -39,6 +56,14 @@ describe('lib/ec2-utilities', () => {
     describe('securityGroupExists', () => {
 
         it('returns false when security group is not found', () => {
+
+            //timestamp mocked to reduce test execution time
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'timestamp.js'), {
+                delay: () => {
+                    return Promise.resolve();
+                }
+            });
+
             const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
             const ec2utilities = new EC2Utilities();
 
