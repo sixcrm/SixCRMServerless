@@ -192,6 +192,26 @@ class MockEntities {
 
   }
 
+  static getValidProducts(ids){
+
+    ids = (arrayutilities.isArray(ids) && arrayutilities.nonEmpty(ids))?ids:[];
+
+    if(!arrayutilities.nonEmpty(ids)){
+
+      let product_count = randomutilities.randomInt(1,5);
+
+      for(var i = 0; i < product_count; i++){
+
+        ids.push(uuidV4());
+
+      }
+
+    }
+
+    return arrayutilities.map(ids, id => this.getValidProduct(id));
+
+  }
+
   static getValidProduct(id){
 
     return {
@@ -214,19 +234,50 @@ class MockEntities {
     return "d3fa3bf3-7824-49f4-8261-87674482bf1c";
   }
 
-  static getValidFulfillmentProvider(id){
+  static getValidFulfillmentProviderProvider(type){
+
+    let providers = {
+      Hashtag: {
+        name: 'Hashtag',
+        username: randomutilities.createRandomString(20),
+        password: randomutilities.createRandomString(20),
+        threepl_customer_id: randomutilities.randomInt(),
+        threepl_key: '{'+uuidV4()+'}'
+      },
+      ThreePL:{
+        name: 'ThreePL',
+        username: randomutilities.createRandomString(20),
+        password: randomutilities.createRandomString(20),
+        threepl_customer_id: randomutilities.randomInt(),
+        threepl_key: '{'+uuidV4()+'}',
+        threepl_id: randomutilities.randomInt(),
+        threepl_facility_id: randomutilities.randomInt()
+      },
+      Test: {
+        name: 'Test'
+      },
+      ShipStation:{
+        name: 'ShipStation',
+        api_key: randomutilities.createRandomString(20),
+        api_secret: randomutilities.createRandomString(20)
+      }
+    };
+
+    return providers[type];
+
+  }
+
+  static getValidFulfillmentProvider(id, type){
+
+    type = (_.isUndefined(type) || !_.contains(['ShipStation', 'Hashtag', 'ThreePL', 'Test'], type))?'Hashtag':type;
+
+    let provider = this.getValidFulfillmentProviderProvider(type);
 
     return {
-        id: this.getValidId(id),
+      id: this.getValidId(id),
   		account: this.getTestAccountID(),
       name: randomutilities.createRandomString(20),
-  		provider:{
-        name:"Hashtag",
-        username: randomutilities.createRandomString(10),
-    		password: randomutilities.createRandomString(10),
-        threepl_key:'{'+uuidV4()+'}',
-        threepl_customer_id: randomutilities.randomInt(1,9999999)
-      },
+  		provider: provider,
   		created_at: timestamp.getISO8601(),
   		updated_at:timestamp.getISO8601()
     };

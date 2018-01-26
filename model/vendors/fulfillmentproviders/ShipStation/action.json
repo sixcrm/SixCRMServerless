@@ -1,0 +1,6 @@
+{
+  "id":"/vendors/fulfillmentproviders/ShipStation/action.json",
+  "title":"ShipStation Actio",
+  "type":"string",
+  "enum":["fulfill","info","test"]
+}

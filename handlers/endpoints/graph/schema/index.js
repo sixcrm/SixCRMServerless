@@ -13,6 +13,7 @@ let GatewayType = require('./types/merchantprovider/gateways/gatewayType');
 let HashtagType = require('./types/fulfillmentprovider/providers/HashtagType');
 let ThreePLType = require('./types/fulfillmentprovider/providers/ThreePLType');
 let TestFulfillmentProviderType = require('./types/fulfillmentprovider/providers/TestFulfillmentProviderType');
+let ShipStationType = require('./types/fulfillmentprovider/providers/ShipStationType');
 let providerType = require('./types/fulfillmentprovider/providers/providerType');
 
 module.exports = new GraphQLSchema({
@@ -25,6 +26,7 @@ module.exports = new GraphQLSchema({
     GatewayType.graphObj,
     HashtagType.graphObj,
     ThreePLType.graphObj,
+    ShipStationType.graphObj,
     TestFulfillmentProviderType.graphObj,
     providerType.graphObj
   ]

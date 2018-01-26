@@ -11,6 +11,14 @@ module.exports.graphObj = new GraphQLInputObjectType({
       type: new GraphQLNonNull(GraphQLString),
       description: 'The name of the fulfillment provider.',
     },
+    api_key: {
+      type: GraphQLString,
+      description: 'The fulfillment provider instance api_key.',
+    },
+    api_secret: {
+      type: GraphQLString,
+      description: 'The fulfillment provider instance api_secret.',
+    },
     username: {
       type: GraphQLString,
       description: 'The fulfillment provider instance username.',

@@ -1,0 +1,18 @@
+{
+  "id":"/vendors/fulfillmentproviders/ShipStation/response.json",
+  "title":"ShipStation Response",
+  "type":"object",
+  "properties":{
+    "statusCode":{"$ref":"../../../definitions/httpcode.json"},
+    "body":{
+      "anyOf":[
+        {"type":"string"},
+        {
+          "type":"object"
+        }
+      ]
+
+    }
+  },
+  "required":["statusCode", "body"]
+}

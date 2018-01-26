@@ -21,7 +21,7 @@ function getValidReferenceNumber(){
 
 function getValidFulfillmentProvider(id){
 
-  return MockEntities.getValidFulfillmentProvider(id);
+  return MockEntities.getValidFulfillmentProvider(id, 'ThreePL');
 
 }
 
@@ -258,6 +258,7 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
       const ThreePLController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/handler.js');
       let threePLController = new ThreePLController({fulfillment_provider: fulfillment_provider});
 
+      //bad argumentation...
       return threePLController.info({reference_number: reference_number}).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('ThreePLResponse');
         expect(result.getCode()).to.equal('success');
