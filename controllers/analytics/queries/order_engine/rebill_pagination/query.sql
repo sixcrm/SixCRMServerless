@@ -1,17 +1,17 @@
 SELECT
-  DATE_TRUNC('day',datetime) AS datetime,
+  DATE_TRUNC('{{period}}',datetime) AS datetime,
   sum(queue) AS count
 FROM
   (
 SELECT
-  datetime,
-  case when current_queuename = {{queuename}} then  1 else 0 end queue,
-  case when current_queuename = lead(previous_queuename,1,null) over (partition by id_rebill order by datetime) then 1 else 0 end queue_moved_on
+  fr.datetime,
+  case when fr.current_queuename = {{queuename}} then  1 else 0 end queue,
+  case when fr.current_queuename = lead(previous_queuename,1) over (partition by fr.id_rebill order by datetime) then 1 else 0 end queue_moved_on
 FROM
-  f_rebills
+  f_rebills fr
 WHERE 1=1
   {{filter}}
-  AND (current_queuename = {{queuename}}  OR previous_queuename = {{queuename}} )
+  AND (fr.current_queuename = {{queuename}}  OR fr.previous_queuename = {{queuename}} )
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
 ) ft
 WHERE 1=1
