@@ -1,6 +1,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 describe('controllers/Analytics.js', () => {
 
@@ -266,9 +267,8 @@ describe('controllers/Analytics.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                getRebillsBetween: ({start, end}) => {
-                    expect(start).to.equal(start_iso);
-                    expect(end).to.equal(end_iso);
+                getRebillsBilledAfter: (after) => {
+                    expect(timestamp.getSecondsDifference(after)).to.be.below(2);
 
                     return Promise.resolve([{amount: 5.1}, {amount: 6.24}]);
                 }

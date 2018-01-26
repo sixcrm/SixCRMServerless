@@ -303,11 +303,10 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
-    describe('getRebillsBetween', () => {
+    describe('getRebillsBilledAfter', () => {
 
-        it('successfully lists rebills between two dates', () => {
-            const start = '2018-01-20T00:00:00Z';
-            const end = '2018-01-25T23:59:59Z';
+        it('successfully lists rebills billed at after', () => {
+            const after = '2018-01-20T00:00:00Z';
 
             let rebill = getValidRebill();
 
@@ -317,8 +316,7 @@ describe('controllers/Rebill.js', () => {
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
-                    expect(parameters.expression_attribute_values[':start_iso8601v']).to.equal(start);
-                    expect(parameters.expression_attribute_values[':end_iso8601v']).to.equal(end);
+                    expect(parameters.expression_attribute_values[':after_iso8601v']).to.equal(after);
 
                     return Promise.resolve({
                         Count: 1,
@@ -333,7 +331,7 @@ describe('controllers/Rebill.js', () => {
 
             let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
 
-            return rebillController.getRebillsBetween({start: start, end: end}).then((result) => {
+            return rebillController.getRebillsBilledAfter(after).then((result) => {
                 expect(result.length).to.equal(1);
                 expect(result[0]).to.deep.equal(rebill);
             });

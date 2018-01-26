@@ -3,6 +3,7 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 
 const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
@@ -227,7 +228,7 @@ class AnalyticsController extends AnalyticsUtilities{
         .then((result) => {
           const rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
 
-          return rebillController.getRebillsBetween(parameters.analyticsfilter)
+          return rebillController.getRebillsBilledAfter(timestamp.getISO8601())
             .then((rebills) => {
               const count = rebills.length;
               const amount = rebills.map(r => r.amount).reduce((a, b) => a + b, 0).toFixed(2);
