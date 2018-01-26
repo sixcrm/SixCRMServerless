@@ -69,6 +69,7 @@
     "test-unit": "stage=local istanbul cover node_modules/.bin/_mocha --bail --require test/unit/dependencies.js --recursive './test/unit/**/*.spec.js'",
     "test-local-integration": "ENV=local mocha ./test/integration/local/createOrder/createOrder.test.js",
     "test-functional": "ENV=local stage=local AWS_PROFILE=six istanbul cover node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/*.test.js'",
+    "test-functional-state-machine": "ENV=local stage=local AWS_PROFILE=six node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js ./test/functional/stateMachine.test.js",
     "test-functional-connectivity": "ENV=local stage=local AWS_PROFILE=six node ./node_modules/mocha/bin/mocha --retries 3 ./test/functional/functional-connectivity.spec.js",
     "test-queries": "ENV=local stage=local AWS_PROFILE=six istanbul cover node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/queries/**/*.test.js'",
     "test-workers": "istanbul cover node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",

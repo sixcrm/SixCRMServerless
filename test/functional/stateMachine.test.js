@@ -14,7 +14,6 @@ describe('stateMachine', () => {
         'billtohold',
         'recovertohold',
         'holdtopending',
-        'pendingfailedtopending',
         'pendingtoshipped',
         'shippedtodelivered',
         'deliveredtoarchive',
@@ -92,7 +91,6 @@ describe('stateMachine', () => {
             {from: 'hold', to: 'hold_failed', worker: 'shipProduct.js', status: 'fail', messages: 1},
             {from: 'hold', to: 'hold', worker: 'shipProduct.js', status: 'noaction', messages: 5},
             {from: 'pending', to: 'shipped', worker: 'confirmShipped.js', status: 'success', messages: 1},
-            {from: 'pending_failed', to: 'pending', worker: 'shipProduct.js', status: 'success', messages: 1},
             {from: 'recover', to: 'hold', worker: 'recoverBilling.js', status: 'success', messages: 1},
             {from: 'shipped', to: 'delivered', worker: 'confirmDelivered.js', status: 'success', messages: 1}
         ];
@@ -287,7 +285,7 @@ describe('stateMachine', () => {
 
     describe('Incorrect message', () => {
 
-        it(`valid JSON moves forward`, () => {
+        it(`valid JSON stays in the queue`, () => {
 
             let message = JSON.stringify({not_a_rebill: 'but still valid JSON'});
 
@@ -296,10 +294,10 @@ describe('stateMachine', () => {
                 .then((count) => expect(count).to.equal(1, 'Message(es) not delivered to input queue.'))
                 .then(() => flushStateMachine())
                 .then(() => SqSTestUtils.messageCountInQueue('bill'))
-                .then((count) => expect(count).to.equal(0))
+                .then((count) => expect(count).to.equal(1, 'Message(es) no longer in the input queue.'))
         });
 
-        it(`invalid JSON stays in the queue`, () => {
+        it(`invalid JSON also stays in the queue`, () => {
 
             let message = "abc123";
 
@@ -308,7 +306,7 @@ describe('stateMachine', () => {
                 .then((count) => expect(count).to.equal(1, 'Message(es) not delivered to input queue.'))
                 .then(() => flushStateMachine())
                 .then(() => SqSTestUtils.messageCountInQueue('bill'))
-                .then((count) => expect(count).to.equal(1))
+                .then((count) => expect(count).to.equal(1, 'Message(es) no longer in the input queue.'))
         });
 
 
@@ -360,7 +358,7 @@ describe('stateMachine', () => {
         });
 
         return Promise.all(all_function_executions).then((results) => {
-            return timestamp.delay(0.2*1000)().then(() => results);
+            return timestamp.delay(0.3*1000)().then(() => results);
         });
     }
 
