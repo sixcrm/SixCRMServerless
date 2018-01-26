@@ -34,6 +34,10 @@ module.exports.graphObj = new GraphQLInputObjectType({
     product_id: {
       type: GraphQLString,
       description: 'The merchant provider product_id.',
+    },
+    api_key: {
+      type: GraphQLString,
+      description: 'The merchant provider api_key.',
     }
   })
 });

@@ -23,7 +23,8 @@ module.exports.graphObj = new GraphQLInterfaceType({
       let gatewaytypes = {
         'NMI':require('./NMIType'),
         'Innovio':require('./InnovioType'),
-        'Test':require('./TestMerchantProviderType')
+        'Test':require('./TestMerchantProviderType'),
+        'Stripe':require('./StripeType'),
       };
 
       if(_.has(gatewaytypes, gateway.type)){
