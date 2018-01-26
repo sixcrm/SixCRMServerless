@@ -1,15 +1,15 @@
 'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLList = require('graphql').GraphQLList;
 
-const eventFunnelGroupType = require('./eventFunnelGroupType');
+const eventFunnelGroupResponseType = require('./eventFunnelGroupResponseType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'eventFunnelType',
     description: 'Event Funnel',
     fields: () => ({
         funnel: {
-            type: eventFunnelGroupType.graphObj,
+            type: new GraphQLList(eventFunnelGroupResponseType.graphObj),
             description: 'The event funnel groups',
         }
     }),

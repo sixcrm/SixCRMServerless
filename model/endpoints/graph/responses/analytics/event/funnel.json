@@ -2,25 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/funnel",
   "title": "Funnel",
-  "type": "object",
-  "properties": {
-
-    "click": {
-      "type": "object"
-    },
-    "lead": {
-      "type": "object"
-    },
-    "main": {
-      "type": "object"
-    },
-    "upsell": {
-      "type": "object"
-    },
-    "confirm": {
-      "type": "object"
-    }
-
-  },
-  "required":[]
+  "type": "array",
+  "minItems": "5",
+  "maxItems": "5"
 }

@@ -13,33 +13,38 @@ module.exports = function(results, parameters){
     let confirm = results[0].count_confirm;
 
     let return_object = {
-        funnel: {
-            click: {
+        funnel: [
+            {
+                name: 'click',
                 count: click,
                 percentage: mathutilities.safePercentage(click, click),
                 relative_percentage: mathutilities.safePercentage(0, click)
             },
-            lead: {
+            {
+                name: 'lead',
                 count: lead,
                 percentage: mathutilities.safePercentage(lead, click),
                 relative_percentage: mathutilities.safePercentage(lead, click)
             },
-            main: {
+            {
+                name: 'main',
                 count: main,
                 percentage: mathutilities.safePercentage(main, click),
                 relative_percentage: mathutilities.safePercentage(main, lead)
             },
-            upsell: {
+            {
+                name: 'upsell',
                 count: upsell,
                 percentage: mathutilities.safePercentage(upsell, click),
                 relative_percentage: mathutilities.safePercentage(upsell, main),
             },
-            confirm: {
+            {
+                name: 'confirm',
                 count: results[0].count_confirm,
                 percentage: mathutilities.safePercentage(confirm, click),
                 relative_percentage: mathutilities.safePercentage(confirm, main),
             }
-        }
+        ]
     };
 
     return return_object;

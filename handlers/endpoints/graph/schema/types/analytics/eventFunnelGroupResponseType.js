@@ -9,6 +9,10 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'EventFunnelGroupResponseType',
     description: 'Event funnel group response',
     fields: () => ({
+        name: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The name of funnel.'
+        },
         count: {
             type: new GraphQLNonNull(GraphQLInt),
             description: 'The numerical count.'
