@@ -3,7 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('lib/slack-notification-provider', () => {
+describe('controllers/providers/notification/slack-notification-provider', () => {
 
     before(() => {
         mockery.enable({
@@ -80,6 +80,20 @@ describe('lib/slack-notification-provider', () => {
 
     });
 
+    describe('formatMessage', () => {
 
+        it('returns abbreviated sms body if it\'s longer than limit', () => {
+
+            let notification_object = valid_notification_object;
+
+            notification_object.title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mauris " +
+                "elit, varius quis vestibulum nec, pretium in felis. In eget mollis tellus.";
+
+            let SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
+
+            expect(SlackNotificationProvider.formatMessage(notification_object))
+                .to.equal('SixCRM notification: "' + notification_object.title + '".');
+        });
+    });
 
 });

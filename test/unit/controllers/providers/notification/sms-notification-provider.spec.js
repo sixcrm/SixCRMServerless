@@ -3,7 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('lib/sms-notification-provider', () => {
+describe('controllers/providers/notification/sms-notification-provider', () => {
 
     before(() => {
         mockery.enable({
@@ -81,6 +81,42 @@ describe('lib/sms-notification-provider', () => {
 
     });
 
+    describe('getInternationalPhoneNumber', () => {
 
+        it('returns international phone number', () => {
 
+            let sms_number = '+381630000000'; //any number starting with +
+
+            let SmsNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/sms-notification-provider.js');
+
+            expect(SmsNotificationProvider.getInternationalPhoneNumber(sms_number)).to.equal(sms_number);
+        });
+
+        it('appends "+1" to international phone number', () => {
+
+            let sms_number = '0630000000'; //any number not starting with "+"
+
+            let SmsNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/sms-notification-provider.js');
+
+            expect(SmsNotificationProvider.getInternationalPhoneNumber(sms_number)).to.equal('+1' + sms_number);
+        })
+    });
+
+    describe('formatSmsBody', () => {
+
+        it('returns abbreviated sms body if it\'s longer than limit', () => {
+
+            let notification_object = valid_notification_object;
+
+            //any text longer than limit (140)
+            notification_object.title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mauris " +
+                "elit, varius quis vestibulum nec, pretium in felis. In eget mollis tellus.";
+
+            let SmsNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/sms-notification-provider.js');
+
+            expect(SmsNotificationProvider.formatSmsBody(notification_object))
+                .to.equal('SixCRM notification: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean' +
+                ' mauris elit, varius quis vestibulum nec, pretium in...');
+        });
+    });
 });

@@ -40,7 +40,7 @@ function getValidUserSettings(){
     }
 }
 
-describe('lib/notification-provider', () => {
+describe('controllers/providers/notification/notification-provider', () => {
 
     before(() => {
         mockery.enable({
@@ -107,6 +107,8 @@ describe('lib/notification-provider', () => {
             // when
             delete notification_object.account;
 
+            let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
+
             try {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
             } catch(error) {
@@ -121,6 +123,8 @@ describe('lib/notification-provider', () => {
 
             // when
             delete notification_object.type;
+
+            let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
 
             try {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
@@ -137,6 +141,8 @@ describe('lib/notification-provider', () => {
             // when
             delete notification_object.action;
 
+            let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
+
             try {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
             } catch(error) {
@@ -151,6 +157,8 @@ describe('lib/notification-provider', () => {
 
             // when
             delete notification_object.body;
+
+            let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
 
             try {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
@@ -167,6 +175,8 @@ describe('lib/notification-provider', () => {
             // when
             delete notification_object.category;
 
+            let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
+
             try {
                 return NotificationProvider.validateCreateNotificationObject(notification_object);
             } catch(error) {
@@ -176,6 +186,9 @@ describe('lib/notification-provider', () => {
         });
 
         it('should allow valid object', () => {
+
+            let NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider.js');
+
             return NotificationProvider.validateCreateNotificationObject(valid_object).then((result) => {
                 expect(result).to.be.defined;
             });

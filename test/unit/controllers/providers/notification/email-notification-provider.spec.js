@@ -3,7 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('lib/notification-provider', () => {
+describe('controllers/providers/notification/email-notification-provider', () => {
 
     before(() => {
         mockery.enable({
@@ -84,6 +84,20 @@ describe('lib/notification-provider', () => {
 
     });
 
+    describe('formatEmailBody', () => {
 
+        it('returns formatted email body', () => {
+
+            let notification_object = valid_notification_object;
+
+            notification_object.body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mauris " +
+                "elit, varius quis vestibulum nec, pretium in felis. In eget mollis tellus.";
+
+            let EmailNotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/email-notification-provider.js');
+
+            expect(EmailNotificationProvider.formatEmailBody(notification_object))
+                .to.equal('You received a notification with body "' + notification_object.body + '". Thanks for using SixCRM!');
+        });
+    });
 
 });
