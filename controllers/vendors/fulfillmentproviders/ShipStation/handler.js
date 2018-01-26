@@ -24,7 +24,16 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
       info: 'ListFulfillments'
     };
 
-    this.parameter_validation = {};
+    this.parameter_validation = {
+      'vendorresponse':global.SixCRM.routes.path('model','vendors/fulfillmentproviders/ShipStation/vendorresponse.json'),
+      'action': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ShipStation/action.json'),
+      'method': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ShipStation/method.json'),
+      'parametersobject': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ShipStation/parametersobject.json'),
+      'customer':global.SixCRM.routes.path('model','entities/customer.json'),
+      'products':global.SixCRM.routes.path('model', 'entities/components/products.json'),
+      'shippingreceipt':global.SixCRM.routes.path('model','entities/shippingreceipt.json'),
+      'referencenumber':global.SixCRM.routes.path('model', 'definitions/uuidv4.json')
+    };
 
     this.parameter_definition = {
       fulfill:{

@@ -1,9 +1,9 @@
 {
-  "id":"/vendors/fulfillmentproviders/ThreePL/parametersobject.json",
-  "title":"ThreePL Parameters Object",
+  "id":"/vendors/fulfillmentproviders/ShipStation/parametersobject.json",
+  "title":"ShipStation Parameters Object",
   "type":"object",
   "anyOf":[
-    {"$ref":"findordersparametersobject.json"},
-    {"$ref":"createordersparametersobject.json"}
+    {"$ref":"listfulfillmentsparametersobject.json"},
+    {"$ref":"createorderparametersobject.json"}
   ]
 }

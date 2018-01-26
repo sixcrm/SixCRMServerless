@@ -11,6 +11,7 @@
     },
     "body":{
       "anyOf":[
+        {"type":"object"},
         {"type":"string"},
         {"type":"null"}
       ]
@@ -22,7 +23,12 @@
           "type":"object",
           "properties":{
             "body":{
-              "type":"string"
+              "anyOf":[
+                {"type":"string"},
+                {"type":"object"},
+                {"type":"null"}
+              ]
+
             },
             "statusCode":{"$ref":"../../../definitions/httpcode.json"}
           },

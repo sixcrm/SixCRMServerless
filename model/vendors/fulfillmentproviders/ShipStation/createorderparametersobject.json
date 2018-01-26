@@ -1,0 +1,8 @@
+{
+  "id":"/vendors/fulfillmentproviders/ShipStation/createordersparametersobject.json",
+  "title":"ShipStation Create Orders Parameters Object",
+  "type":"object",
+  "properties":{
+
+  }
+}

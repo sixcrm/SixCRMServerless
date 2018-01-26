@@ -49,6 +49,17 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
   }
 
+  augmentParameters(){
+
+    du.debug('Augment Parameters');
+
+    this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
+    this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
+
+    return true;
+
+  }
+
   getFulfillmentProviderName(){
 
     du.debug('Get Fulfillment Provider Name');
@@ -98,8 +109,6 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
         this.setCode(result_code);
         this.setMessage(result_message);
 
-      }else{
-        //does anything happen here?
       }
 
     }
