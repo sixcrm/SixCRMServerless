@@ -126,6 +126,7 @@ module.exports = class forwardMessageController extends RelayController {
       mvu.validateModel(compound_worker_response_object, global.SixCRM.routes.path('model', 'workers/forwardmessage/compoundworkerresponseobject.json'));
 
       if(objectutilities.getClassName(compound_worker_response_object.worker_response_object) !== 'WorkerResponse'){
+        du.error('Unrecognized worker response:', compound_worker_response_object.worker_response_object);
         eu.throwError('server', 'Unrecognized worker response: '+compound_worker_response_object.worker_response_object);
       }
 
