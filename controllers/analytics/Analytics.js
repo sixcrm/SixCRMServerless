@@ -374,7 +374,7 @@ class AnalyticsController extends AnalyticsUtilities{
         // return this.getResults('order_engine/', parameters, this.default_query_filters);
 
         // Technical Debt: finish
-        return Promise.resolve([]);
+        return Promise.resolve(['55c103b4-670a-439e-98d4-5a2834bb5fc3']);
 
     }
 

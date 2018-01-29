@@ -582,7 +582,8 @@ module.exports.graphObj = new GraphQLObjectType({
                 queuename: {
                     description: 'Name of a queue',
                     type: new GraphQLNonNull(GraphQLString)
-                }
+                },
+                pagination: {type: analyticsPaginationInputType.graphObj}
             },
             resolve: function(root, args){
                 const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
