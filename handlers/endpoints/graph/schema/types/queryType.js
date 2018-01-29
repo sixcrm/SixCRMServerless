@@ -145,6 +145,8 @@ let cacheInputType = require('./cache/cacheInputType');
 let queueSummaryType = require('./analytics/order_engine/queuesummary/queueSummaryType');
 let queueStateType = require('./analytics/order_engine/queuesummary/queueStateType');
 
+let rebillsInQueueType = require('./analytics/order_engine/queuesummary/rebillsInQueueType');
+
 /* End State machine */
 
 let listQueueMessageType = require('./queue/listQueueMessageType');
@@ -573,6 +575,20 @@ module.exports.graphObj = new GraphQLObjectType({
 
             return analyticsController.executeAnalyticsFunction(args, 'getRebillSummary');
           }
+        },
+        rebillsinqueue: {
+            type: rebillsInQueueType.graphObj,
+            args: {
+                queuename: {
+                    description: 'Name of a queue',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: function(root, args){
+                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+                return analyticsController.executeAnalyticsFunction(args, 'getRebillsInQueue');
+            }
         },
         queuestate: {
           type: queueStateType.graphObj,

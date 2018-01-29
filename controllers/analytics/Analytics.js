@@ -359,6 +359,25 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    getRebillsInQueue(parameters){
+
+        const queue_name = parameters.queuename;
+
+        du.debug('Get Rebills In Queue', queue_name);
+
+        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+        if(!_.isUndefined(queue_name)){
+            parameters = this.appendQueueName(parameters, queue_name);
+        }
+
+        // return this.getResults('order_engine/', parameters, this.default_query_filters);
+
+        // Technical Debt: finish
+        return Promise.resolve([]);
+
+    }
+
     /* Report Pages */
 
     getAffiliateReportSubaffiliates(parameters){
