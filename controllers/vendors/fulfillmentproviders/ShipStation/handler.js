@@ -20,8 +20,8 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
     this.methods = {
       fulfill: 'CreateOrder',
-      test: 'ListFulfillments',
-      info: 'ListFulfillments'
+      test: 'ListOrders',
+      info: 'ListOrders'
     };
 
     this.parameter_validation = {
@@ -201,12 +201,12 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
   }
 
-  getListFulfillmentsMethodParameters(){
+  getListOrdersMethodParameters(){
 
-    du.debug('Get List Fulfillments Method Parameters');
+    du.debug('Get List Orders Method Parameters');
 
     return {
-      path: 'fulfillments'
+      path: 'orders'
     };
 
   }
@@ -235,9 +235,9 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
   }
 
-  getListFulfillmentsRequestParameters(){
+  getListOrdersRequestParameters(){
 
-    du.debug('Get ListFulfillments Request Parameters');
+    du.debug('Get List Orders Request Parameters');
 
     let fulfillment_provider = this.parameters.get('fulfillmentprovider');
 
@@ -370,7 +370,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
   issueCreateOrderRequest(){
 
-    du.debug('Issue ListFulfillments Request');
+    du.debug('Issue Create Order Request');
 
     let parameters = this.parameters.get('parametersobject');
 
@@ -400,9 +400,9 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
   }
 
 
-  issueListFulfillmentsRequest(){
+  issueListOrdersRequest(){
 
-    du.debug('Issue ListFulfillments Request');
+    du.debug('Issue ListOrders Request');
 
     let parameters = this.parameters.get('parametersobject');
 

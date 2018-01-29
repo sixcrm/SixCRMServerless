@@ -2,5 +2,5 @@
   "id":"/vendors/fulfillmentproviders/ShipStation/method.json",
   "title":"ShipStation Method",
   "type":"string",
-  "enum":["ListFulfillments","CreateOrder"]
+  "enum":["ListOrders","CreateOrder"]
 }

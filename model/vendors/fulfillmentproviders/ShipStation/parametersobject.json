@@ -3,7 +3,7 @@
   "title":"ShipStation Parameters Object",
   "type":"object",
   "anyOf":[
-    {"$ref":"listfulfillmentsparametersobject.json"},
+    {"$ref":"listordersparametersobject.json"},
     {"$ref":"createorderparametersobject.json"}
   ]
 }
