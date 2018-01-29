@@ -40,6 +40,7 @@ FROM
                 OVER ( )    AS all_events_count
               FROM f_events
               WHERE 1 = 1
+                    {{filter}}
                     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
                     AND {{facet}} IS NOT NULL
               GROUP BY {{facet}}
@@ -55,6 +56,7 @@ FROM
        {{offset}}           AS all_events_count
      FROM f_events
      WHERE 1 = 1
+           {{filter}}
            AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
            AND {{facet}} IS NULL
      GROUP BY {{facet}}

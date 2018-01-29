@@ -1,0 +1,13 @@
+{
+  "method": "getRebillSummary",
+  "test_case": "input from the development database 26.01.2017 with changed account hour",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-10-26T00:00:00.000Z",
+    "end": "2018-01-26T00:00:00.000Z"
+    },"queuename":"pending" ,
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 },
+  "period":"hour" },
+  "result_name": "summary",
+  "expect":  [{"datetime":"2018-01-09T17:00:00.000Z","count":"1"},{"datetime":"2018-01-09T18:00:00.000Z","count":"1"},{"datetime":"2018-01-09T19:00:00.000Z","count":"20"}] 
+}

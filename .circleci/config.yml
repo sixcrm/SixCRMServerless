@@ -71,11 +71,17 @@ jobs:
           name: Execute Functional Connectivity Test
           command: npm run test-functional-connectivity
       - run:
-          name: Seed Local Dynamo
-          command: stage=local stage=local node ./deployment/dynamodb/deploy_tables.js && stage=local node ./deployment/dynamodb/deploy_seeds.js
+          name: Deploy Local Dynamo
+          command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_tables.js
       - run:
-          name: Execute State Machine Tests
-          command: npm run test-functional-state-machine
+          name: Deploy Local SQS
+          command: SIX_VERBOSE=2 stage=local node ./deployment/sqs/deploy_queues.js
+      - run:
+          name: Seed Local Dynamo
+          command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_seeds.js
+#      - run:
+#          name: Execute State Machine Tests
+#          command: npm run test-functional-state-machine
   pre_deploy:
     <<: *job-defaults
     steps:
