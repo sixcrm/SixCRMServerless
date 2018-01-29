@@ -371,10 +371,7 @@ class AnalyticsController extends AnalyticsUtilities{
             parameters = this.appendQueueName(parameters, queue_name);
         }
 
-        // return this.getResults('order_engine/', parameters, this.default_query_filters);
-
-        // Technical Debt: finish
-        return Promise.resolve(['55c103b4-670a-439e-98d4-5a2834bb5fc3']);
+        return this.getResults('order_engine/rebills_in_queue', parameters, this.default_query_filters);
 
     }
 

@@ -13,11 +13,12 @@
 		}
 	},
 	"properties": {
-    	"id_rebill":{"$ref": "#/definitions/UUIDv4"},
+    "id_rebill":{"$ref": "#/definitions/UUIDv4"},
 		"current_queuename":{"type":"string"},
-    	"previous_queuename":{"type":"string"},
+    "previous_queuename":{"type":"string"},
 		"account":{"$ref": "#/definitions/UUIDv4"},
-		"datetime": {"$ref": "#/definitions/ISO8601"}
+		"datetime": {"$ref": "#/definitions/ISO8601"},
+		"amount":{"$ref": "../definitions/currency.json"}
 	},
 	"required":["id_rebill","current_queuename","account","previous_queuename","datetime"]
 }

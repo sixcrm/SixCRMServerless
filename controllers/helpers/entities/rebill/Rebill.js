@@ -927,13 +927,14 @@ module.exports = class RebillHelper {
   transformRebill() {
 
     const rebill = this.parameters.get('rebill');
-
+    // Need to add amount from rebill
     const transformedRebill = {
       id_rebill: rebill.id,
       current_queuename: rebill.state,
       previous_queuename: rebill.previous_state || '',
       account: rebill.account,
-      datetime: rebill.state_changed_at
+      datetime: rebill.state_changed_at,
+      amount: 0
     };
 
     this.parameters.set('transformedrebill', transformedRebill);

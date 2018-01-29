@@ -1,0 +1,18 @@
+{
+  "method": "getRebillsInQueue",
+  "test_case": "random input with development data ascending",
+  "input": {
+    "queuename":"hold",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "summary",
+  "expect":  [{"id_rebill":"4bf9da4f-6458-4684-aff6-7b9599453f56","amount":"0.00"},
+              {"id_rebill":"52763833-02cc-43f7-8e05-34d8071a1d94","amount":"0.00"},
+              {"id_rebill":"068d1965-bc27-4003-976e-1b62279882e6","amount":"0.00"},
+              {"id_rebill":"210e89d6-d827-4a85-8b17-36e4e8c6cdaf","amount":"0.00"},
+              {"id_rebill":"0eae2610-24cb-41fd-b6dc-79b461e72a8c","amount":"0.00"},
+              {"id_rebill":"519078eb-0cda-4d7e-a846-6eddb5bdc463","amount":"0.00"},
+              {"id_rebill":"1fe08dad-ca7a-4e3f-8b45-119cbd79215f","amount":"0.00"},
+              {"id_rebill":"37e3354c-93f5-4aef-b321-82b691371981","amount":"0.00"},
+              {"id_rebill":"4565b326-081c-4e9a-93cb-37b471c9c5ca","amount":"0.00"},
+              {"id_rebill":"55ad1d33-bd31-4fdd-bae6-3831279735cf","amount":"0.00"}]
+}
