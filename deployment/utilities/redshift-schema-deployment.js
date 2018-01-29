@@ -24,6 +24,8 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     this.versioned_table_directories = ['tables'];
 
+    this.migration_scripts_directories = ['migration'];
+
   }
 
   deployTables() {
@@ -64,6 +66,35 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     });
 
     return Promise.all(deployment_promises);
+
+  }
+
+  deployForwardMigrationScripts(){
+
+    du.debug('Deploy Forward Migration Scripts');
+
+    let deployment_promises = arrayutilities.map(this.migration_scripts_directories, (directory) => {
+
+      return this.deployDirectoryForwardMigrationScripts(directory);
+
+    });
+
+    return Promise.all(deployment_promises);
+
+  }
+
+  deployDirectoryForwardMigrationScripts(directory){
+
+    du.debug('Deploy Versioned Tables Directory');
+
+    return this.getDirectorySQLFilepaths(directory)
+    .then((filepaths) => this.getScriptQueries(filepaths))
+    .then((queries) => this.executeQueries(queries))
+    .then((result) => {
+
+      return result;
+
+    });
 
   }
 
@@ -122,6 +153,24 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  getScriptQueries(query_filepaths) {
+
+    du.debug('Get Queries');
+
+    let queries = [];
+
+    let query_promises = arrayutilities.map(query_filepaths, (filepath) => {
+      return () => this.getScriptQueryFromPath(filepath).then((query) => {
+        queries.push(query);
+      });
+    });
+
+    return arrayutilities.serial(query_promises).then(() => {
+      return queries;
+    })
+
+  }
+
   getQueryFromPath(filepath, versioned) {
 
     du.debug('Get Query From Path');
@@ -140,6 +189,36 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       }
 
       return this.determineTableVersion(filepath).then((versions) => {
+
+        let version_in_database = versions[0];
+        let local_version = versions[1];
+
+        du.debug(
+            'filepath: ' + filepath,
+            'Database Version Number: ' + version_in_database,
+            'File Version Number ' + local_version);
+
+        if (version_in_database < local_version) {
+
+            return Promise.resolve(query);
+
+        }
+
+        return Promise.resolve('');
+
+      });
+
+    });
+
+  }
+
+  getScriptQueryFromPath(filepath) {
+
+    du.debug('Get Script Query From Path');
+
+    return fileutilities.getFileContents(filepath).then((query) => {
+
+      return this.determineScriptVersion(filepath).then((versions) => {
 
         let version_in_database = versions[0];
         let local_version = versions[1];
@@ -567,6 +646,25 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  determineScriptVersion(filepath) {
+
+    du.debug('Determine Script Version');
+
+    let filename = fileutilities.getFilenameFromPath(filepath);
+
+    let version_promises = [
+      this.getRemoteMigrationScriptVersion(filename),
+      this.getVersionNumberFromFile(filepath)
+    ];
+
+    return Promise.all(version_promises).then(version_promises => {
+
+      return version_promises;
+
+    });
+
+  }
+
   getVersionNumberFromFile(filepath) {
 
     du.debug('Get Version Number From File');
@@ -608,6 +706,32 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
           sys_sixcrm.sys_table_version \
         WHERE \
           table_name = \'' + table_name + '\'';
+
+    return this.execute(version_query).then((result) => {
+
+      if (result && result.length > 0) {
+        return result[0].version;
+      }
+
+      return 0;
+
+    });
+
+  }
+
+  getRemoteMigrationScriptVersion(filename) {
+
+    du.debug('Get Remote Table Version');
+
+    let script_name = this.getTableNameFromFilename(filename);
+
+    let version_query = '\
+        SELECT \
+          change_number \
+        FROM  \
+          sys_sixcrm.sys_change_log \
+        WHERE \
+          description = \'' + script_name + '\'';
 
     return this.execute(version_query).then((result) => {
 

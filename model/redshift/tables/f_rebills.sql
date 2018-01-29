@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS f_rebills (
   previous_queuename    VARCHAR(20) NOT NULL ENCODE ZSTD,
   account  VARCHAR(36) NOT NULL ENCODE RUNLENGTH,
   datetime TIMESTAMP ENCODE DELTA,
-  amount              NUMERIC(8, 2)
+  amount             NUMERIC(8, 2)
 ) INTERLEAVED SORTKEY (account, id_rebill,datetime);
 
 COMMENT ON TABLE f_rebills IS 'Fact table with information about rebills (orders)';

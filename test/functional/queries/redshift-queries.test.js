@@ -104,6 +104,10 @@ describe('queries/redshift-queries.js', () => {
             function createTables() {
                 return redshiftSchemaDeployment.deployTables();
             }
+
+            function deployMigration() {
+                return redshiftSchemaDeployment.deployForwardMigrationScripts();
+            }
         });
 
     });
