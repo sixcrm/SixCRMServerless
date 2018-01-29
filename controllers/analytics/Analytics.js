@@ -301,6 +301,7 @@ class AnalyticsController extends AnalyticsUtilities{
 
       if(!_.isUndefined(queue_name)){
         parameters = this.appendCurrentQueueName(parameters, queue_name);
+        delete parameters['queuename'];
       }
 
       return this.getResults('order_engine/queue_rate', parameters, this.default_queue_filters);
