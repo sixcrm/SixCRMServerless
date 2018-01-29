@@ -7,7 +7,7 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 class accessKeyController extends entityController {
 
     constructor(){
-        super('accesskey'); ß
+        super('accesskey');
     }
 
     create({entity: entity}){
@@ -17,7 +17,6 @@ class accessKeyController extends entityController {
       const accesskey_helper = global.SixCRM.routes.include('helpers', 'accesskey/AccessKey.js');
 
       //Note:  This caused issues with seeding...
-      
       if(!_.has(entity, 'access_key')){
         entity.access_key = accesskey_helper.generateAccessKey();
       }
