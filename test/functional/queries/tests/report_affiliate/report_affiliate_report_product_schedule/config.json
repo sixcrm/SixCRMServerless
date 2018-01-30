@@ -1,0 +1,24 @@
+{
+  "method": "getAffiliateReport",
+  "test_case": "random input with product schedule filtering",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-13T00:00:00.000Z",
+    "product_schedule": ["12529a17-ac32-4e46-b05b-83862843055d"]  },
+    "period":"day",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "affiliates",
+  "expect": [{"affiliate":"d26c1887-7ad4-4a44-be0b-e80dbce22774",
+    "count_click":"0",
+    "count_partials":"0",
+    "partials_percent":"0",
+    "decline_count":"0",
+    "declines_percent":"0",
+    "count_sales":"0",
+    "sales_percent":"0",
+    "count_upsell":"0",
+    "upsell_percent":"0",
+    "sum_upsell":"359.94",
+    "sum_amount":"359.94"}]
+}
