@@ -14,15 +14,14 @@ module.exports.graphObj = new GraphQLObjectType({
         rebills: {
             type: new GraphQLList(rebillType.graphObj),
             description: 'The rebills',
-            resolve: (rebill_ids) => {
+            resolve: (analytics_response) => {
                 let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-                let rebills = [];
 
-                if (rebill_ids) {
-                    rebills = rebill_ids.map((rebilll_id) => rebillController.get({id: rebilll_id}));
+                if (!analytics_response || !analytics_response.summary) {
+                    return Promise.resolve([]);
                 }
 
-                return Promise.all(rebills);
+                return Promise.all(analytics_response.summary.map((item) => rebillController.get({id: item.id_rebill})));
             }
         },
         pagination: {
