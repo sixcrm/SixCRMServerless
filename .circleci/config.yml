@@ -349,6 +349,15 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: export SIX_VERBOSE=2; npm run test-transactions
+  forward_message_integration_tests:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: RecoverToArchive Integration Tests
+          command: export SIX_VERBOSE=2; node ./node_modules/mocha/bin/mocha --require test/config/global.js test/integration/controllers/workers/forwardMessage/recoverToArchive.spec.js --rebill=ab9194c5-1d15-4df9-99bb-85d7c3e15bff
   synchronize_index:
     <<: *job-defaults
     steps:
@@ -499,6 +508,13 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
+      - forward_message_integration_tests:
+          requires:
+            - seed
+          filters:
+            branches:
+              only:
+                - development
       - synchronize_index:
           requires:
              - transactional_integration_tests
