@@ -77,7 +77,7 @@ describe('stateMachine', () => {
 
     });
 
-    describe('Moving messages', () => {
+    xdescribe('Moving messages', () => {
 
         let tests = [
             {from: 'bill', to: 'hold', worker: 'processBilling.js', status: 'success', messages: 0},

@@ -14,7 +14,7 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
 
     handleWorkerResponseObject(worker_response_object){
 
-      du.debug('Forward Rebill Message Controller: Handle Worker Response Object');
+      du.debug('Forward Rebill Message Controller: Handle Worker Response Object', worker_response_object);
 
       return this.updateRebillState(worker_response_object)
       .then(() => { return super.handleWorkerResponseObject(worker_response_object); });
