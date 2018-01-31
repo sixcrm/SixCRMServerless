@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/sixcrmimage.json",
+  "title": "SixCRM Image",
+  "type":"object",
+  "properties":{
+    "path":{
+      "type":"string"
+    },
+    "dimensions":{
+      "type":"object",
+      "properties":{
+        "width":{"type":"../../definitions/nonnegativeinteger.json"},
+        "height":{"type":"../../definitions/nonnegativeinteger.json"}
+      },
+      "required":["width","height"]
+    },
+    "format":{"type":"string"},
+    "name":{"type":"string"},
+    "description":{"type":"string"}
+  },
+  "required":["path"]
+}

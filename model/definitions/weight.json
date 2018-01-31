@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/weight.json",
+  "title": "Weight",
+  "type":"object",
+  "properties":{
+    "unitofmeasururement":{
+      "type":"string",
+      "enum":["pounds","kilos"]
+    },
+    "units":{"$ref":"./nonnegativefloat.json"}
+  },
+  "required":["unitofmeasurement","units"]
+}

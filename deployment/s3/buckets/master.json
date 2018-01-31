@@ -1,5 +1,8 @@
 [
   {
     "Bucket": "configuration-master"
+  },
+  {
+    "Bucket": "account-resources"
   }
 ]

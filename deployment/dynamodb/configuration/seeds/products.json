@@ -7,6 +7,38 @@
 		"ship":true,
 		"shipping_delay":3600,
 		"fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
+		"attributes":{
+			"weight":{
+				"units":2.5,
+				"unitofmeasurement":"pounds"
+			},
+			"dimensions":{
+				"width":{
+					"units": 3.2,
+					"unitofmeasurement":"inches"
+				},
+				"length":{
+					"units": 33,
+					"unitofmeasurement":"inches"
+				},
+				"height":{
+					"units": 4.78,
+					"unitofmeasurement":"inches"
+				}
+			},
+			"images":[
+				{
+					"path":"somepath",
+					"dimensions":{
+						"width":400,
+						"height":300
+					},
+					"name":"testimage",
+					"description": "This is a test image",
+					"format":"jpeg"
+				}
+			]
+		},
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},

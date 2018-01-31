@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/linearmeasurement.json",
+  "title": "Linear Measurement",
+  "type":"object",
+  "properties":{
+    "units":{"$ref":"./nonnegativefloat.json"},
+    "unitofmeasurement":{
+      "type":"string",
+      "enum":["inches","feet","yards","meters","centimeters","millimeters"]
+    }
+  },
+  "required":["units","unitofmeasurement"]
+}

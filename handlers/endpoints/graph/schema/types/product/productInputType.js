@@ -6,6 +6,8 @@ const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
+let attributesInputType = require('./components/attributesInputType');
+
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'ProductInput',
     fields: () => ({
@@ -15,6 +17,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         ship:					{ type: GraphQLBoolean },
         shipping_delay: 		{ type: GraphQLInt },
         fulfillment_provider: 	{ type: GraphQLString },
-        default_price:       	{ type: GraphQLFloat }
+        default_price:       	{ type: GraphQLFloat },
+        attributes: {type: attributesInputType.graphObj}
     })
 });

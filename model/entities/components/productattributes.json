@@ -1,0 +1,15 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/entities/components/productattributes.json",
+	"title": "Product Attributes",
+	"description": "Product Attribution",
+	"type":"object",
+	"properties":{
+		"images":{
+			"type":"array",
+			"items":{"$ref":"../../definitions/sixcrmimage.json"}
+		},
+		"dimensions":{"$ref":"../../definitions/3ddimensions.json"},
+		"weight":{"$ref":"../../definitions/weight.json"}
+	}
+}

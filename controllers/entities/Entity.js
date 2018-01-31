@@ -384,6 +384,10 @@ module.exports = class entityController extends entityUtilitiesController {
       })
       .then((data) => this.getItems(data))
       .then(items => this.assureSingular(items))
+      .then((item) => {
+        du.info(item);
+        return item;
+      })
       .catch((error) => {
         return this.handleErrors(error, fatal)
       });
