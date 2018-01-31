@@ -411,7 +411,11 @@ class AnalyticsController extends AnalyticsUtilities{
 
         parameters = this.appendPeriod(parameters, period_selection);
 
-        return this.getResults('reports/affiliate/affiliate_report_subaffiliates_overview', parameters, this.default_query_filters);
+        if(!_.has(parameters, 'product_schedule')){
+          return this.getResults('reports/affiliate/affiliate_report_subaffiliates_overview', parameters, this.default_query_filters);
+        } else {
+          return this.getResults('reports/affiliate/affiliate_report_subaffiliates_overview_product_schedule', parameters, this.default_query_filters);
+        }
 
     }
 

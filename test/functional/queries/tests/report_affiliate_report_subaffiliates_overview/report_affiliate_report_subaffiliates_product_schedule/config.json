@@ -1,0 +1,13 @@
+{
+  "method": "getAffiliateReportSubaffiliatesOverview",
+  "test_case": "random input with dev dataset where we do not filter with product schedule",
+  "input": {
+    "analyticsfilter":
+  { "start": "2018-01-01T00:00:00.000Z",
+    "end": "2018-01-23T00:00:00.000Z",
+    "product_schedule": ["034087fc-73a1-4594-86de-8490c4db2025"]   },
+    "period":"day",
+    "pagination": { "limit": 5, "order": "asc", "offset": 0 } },
+  "result_name": "undefined",
+  "expect": {"count":1,"affiliates":[{"subaffiliate":"d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f","amount":"120.98"}]} 
+}

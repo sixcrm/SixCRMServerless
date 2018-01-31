@@ -1,4 +1,4 @@
-# Redshift query templates used in SixCRM frontend
+# Redshift query templates used in SixCRM
 
 --------------------------------------------------------------------------------
 
@@ -86,8 +86,7 @@ As requested there is a need to filter based on product_schedules, this neccesit
 
 These queries are used as of 10.01.2018
 
-analytics
-`All have product_schedules filtering`
+### analytics
 listactivitybyidentifier -> getMerchantProviderSummaries -> merchant_provider_summary
 campaignsbyamount -> getCampaignsByAmount -> campaigns_by_amount
 eventsummary -> getEventSummary -> aggregation_event_type_count
@@ -98,11 +97,11 @@ transactionsbyfacet -> getTransactionsByFacet -> transactions_by_facet
 transactionoverview -> getTransactionOverview -> transaction_summary
 transactionsummary -> getTransactionSummary -> aggregation_processor_amount
 
-queue
+### queue
 rebillsummary -> getRebillSummary -> order_engine/rebill_pagination
 queuestate -> getQueueState -> order_engine/rebill_pagination | order_engine/queue_rate | order_engine/queue_average_time
 
-reports
+### reports
 affiliatereportsubaffiliates -> getAffiliateReportSubaffiliates -> reports/affiliate/affiliate_report_subaffiliates
 affiliatereport -> getAffiliateReport -> reports/affiliate/affiliate_report
 affiliatereportsummary -> getAffiliateReportSummary -> reports/affiliate/affiliate_report_summary
