@@ -10,7 +10,7 @@ FROM
      count(*)              num_of_rebills_from_queue,
      sum(
          CASE
-         WHEN current_queuename LIKE '%failed' or current_queuename LIKE '%recover'
+         WHEN current_queuename LIKE '%failed' or current_queuename LIKE '%recover' or  current_queuename LIKE '%error'
            THEN 1
          ELSE 0
          END
