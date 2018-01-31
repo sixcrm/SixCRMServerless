@@ -71,7 +71,7 @@ class InfoController extends transactionEndpointController{
 
       let event = this.parameters.get('event');
 
-      if(!_.has(event, 'products')){ return null; }
+      if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
 
       return this.productController.getListByAccount({ids: event.products}).then(result => {
         this.parameters.set('products', result.products);
@@ -85,7 +85,7 @@ class InfoController extends transactionEndpointController{
 
       let event = this.parameters.get('event');
 
-      if(!_.has(event, 'productschedules')){ return null; }
+      if(!_.has(event, 'productschedules') || !arrayutilities.nonEmpty(event.productschedules)){ return null; }
 
       const ProductScheduleHelper = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
       let productScheduleHelper = new ProductScheduleHelper();
@@ -116,7 +116,7 @@ class InfoController extends transactionEndpointController{
 
       if(_.has(event, 'products')){
 
-        let products = this.parameters.get('products');
+        let products = this.parameters.get('products', false, null);
 
         response_object.products = products;
 
@@ -124,7 +124,7 @@ class InfoController extends transactionEndpointController{
 
       if(_.has(event, 'productschedules')){
 
-        let product_schedules = this.parameters.get('productschedules');
+        let product_schedules = this.parameters.get('productschedules', false, null);
 
         response_object.productschedules = product_schedules;
 
