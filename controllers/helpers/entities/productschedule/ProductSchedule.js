@@ -20,6 +20,12 @@ module.exports = class ProductScheduleHelper {
 
   }
 
+  getProducts({product_schedule}){
+
+    du.debug('Get Products');
+
+  }
+
   //Tested
   marryProductsToSchedule({product_schedule, products}){
 
