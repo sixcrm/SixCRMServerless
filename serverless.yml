@@ -292,6 +292,19 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
+  info:
+    handler: handlers/endpoints/info/handler.info
+    events:
+      - http:
+         #note:  Account shouldn't be necessary here...
+         path: info/{account}
+         method: post
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
   tracking:
     handler: handlers/endpoints/tracking/handler.tracking
     events:
