@@ -21,7 +21,9 @@ module.exports.graphObj = new GraphQLObjectType({
                     return Promise.resolve([]);
                 }
 
-                return Promise.all(analytics_response.summary.map((item) => rebillController.get({id: item.id_rebill})));
+                return Promise.all(analytics_response.summary.map((item) => rebillController.get({id: item.id_rebill})))
+                    .then((rebills) => rebills.filter(item => item !== null))
+
             }
         },
         pagination: {
