@@ -2,21 +2,26 @@
 	"title": "Innovio Merchant Provider Configuration",
 	"type": "object",
 	"properties": {
-		"username":{
-      "type":"string"
-    },
-		"password":{
-      "type":"string"
-    },
-		"product_id":{
-      "type":"string"
-    },
-		"site_id":{
-			"type":"string"
-		},
-		"merchant_account_id":{
-			"type":"string"
+		"gateway":{
+			"properties":{
+				"username":{
+		      "type":"string"
+		    },
+				"password":{
+		      "type":"string"
+		    },
+				"product_id":{
+		      "type":"string"
+		    },
+				"site_id":{
+					"type":"string"
+				},
+				"merchant_account_id":{
+					"type":"string"
+				}
+			},
+			"required":["username", "password","site_id","merchant_account_id","product_id"]
 		}
 	},
-	"required":["username", "password", "site_id", "merchant_account_id", "product_id"]
+	"required":"gateway"
 }

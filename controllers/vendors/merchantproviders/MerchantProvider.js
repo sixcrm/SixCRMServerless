@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const request = require('request');
 const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
@@ -8,11 +7,43 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const httputilities = global.SixCRM.routes.include('lib','http-utilities.js');
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+
 
 module.exports = class MerchantProvider {
 
     constructor(){
 
+      this.parameter_validation = {
+        'merchantprovider':global.SixCRM.routes.path('model','entities/merchantprovider.json')
+      };
+
+      this.parameter_definition = {
+        construct:{
+          required:{
+            merchantprovider: 'merchant_provider'
+          },
+          optional:{
+
+          }
+        }
+      };
+
+      this.parameters = new Parameters({definition: this.parameter_definition, validation: this.parameter_validation});
+
+      this.parameters.setParameters({argumentation: arguments[0], action: 'construct'});
+
+    }
+
+    augmentParameters(){
+
+      du.debug('Augment Parameters');
+
+      this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
+      this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
+
+      return true;
 
     }
 
@@ -70,14 +101,13 @@ module.exports = class MerchantProvider {
     		  body: parameter_querystring
         };
 
-        request.post(request_options, (error, response, body) => {
+        return httputilities.post(request_options).then(response => {
 
-          du.warning(error);
-          if(_.isError(error)){
-            reject(error);
+          if(_.isError(response.error)){
+            reject(response.error);
           }
 
-          resolve({response: response, body: body});
+          resolve({response: response.response, body: response.body});
 
         });
 
@@ -127,7 +157,7 @@ module.exports = class MerchantProvider {
 
     }
 
-    configure(merchant_provider_parameters){
+    configure(merchant_provider){
 
       du.debug('Configure');
 
@@ -135,7 +165,7 @@ module.exports = class MerchantProvider {
 
       this.setVendorConfiguration();
 
-      this.setMerchantProviderParametersObject(merchant_provider_parameters);
+      this.setMerchantProviderParametersObject(merchant_provider);
 
     }
 
@@ -163,19 +193,25 @@ module.exports = class MerchantProvider {
 
       if(this.has('VendorConfigurationPath')){
 
-        this.set('VendorConfiguration', global.SixCRM.routes.include('config', this.get('VendorConfigurationPath')));
+        let vendor_configuration = global.SixCRM.routes.include('config', this.get('VendorConfigurationPath'));
 
-        mvu.validateModel(this.get('VendorConfiguration'), this.getVendorConfigurationValidationModelPath());
+        if(!_.isNull(vendor_configuration) && !_.isUndefined(vendor_configuration)){
+
+          this.set('VendorConfiguration', global.SixCRM.routes.include('config', this.get('VendorConfigurationPath')));
+
+          mvu.validateModel(this.get('VendorConfiguration'), this.getVendorConfigurationValidationModelPath());
+
+        }
 
       }
 
     }
 
-    setMerchantProviderParametersObject(merchant_provider_parameters){
+    setMerchantProviderParametersObject(merchant_provider){
 
       du.debug('Set Merchant Provider Parameters');
 
-      this.set('MerchantProviderParameters', merchant_provider_parameters);
+      this.set('MerchantProviderParameters', merchant_provider);
 
       mvu.validateModel(this.get('MerchantProviderParameters'), this.getMerchantProviderConfigurationValidationModelPath());
 
@@ -229,15 +265,22 @@ module.exports = class MerchantProvider {
 
     }
 
-    getResponseObject({error, response, body}){
+    respond({additional_parameters}){
 
-      du.debug('Build Response Object');
+      du.debug('Respond');
 
-      const ResponseObject = global.SixCRM.routes.include('vendors', 'merchantproviders/'+this.get('MerchantProviderName')+'/Response.js');
+      let vendor_response = this.parameters.get('vendorresponse');
+      let action = this.parameters.get('action');
 
-      let response_object = new ResponseObject(arguments[0]);
+      const VendorResponseClass = global.SixCRM.routes.include('vendors', 'merchantproviders/'+this.getVendorName()+'/Response.js');
 
-      return response_object.getResultJSON();
+      let response_object = {vendor_response: vendor_response, action: action};
+
+      if(!_.isNull(additional_parameters) && !_.isUndefined(additional_parameters)){
+        response_object['additional_parameters'] = additional_parameters;
+      }
+
+      return new VendorResponseClass(response_object);
 
     }
 
@@ -269,6 +312,116 @@ module.exports = class MerchantProvider {
       }
 
       return null;
+
+    }
+
+    /* New Shit */
+    setMethod(){
+
+      du.debug('Set Method');
+
+      let action = this.parameters.get('action');
+      let method = this.methods[action];
+
+      this.parameters.set('method', method);
+
+      return true;
+
+    }
+
+    createParametersObject(){
+
+      du.debug('Create Parameters Object');
+
+      let parameters_object = objectutilities.merge({}, this.getVendorParameters());
+
+      parameters_object = objectutilities.merge(parameters_object, this.getMerchantProviderParameters());
+      parameters_object = objectutilities.merge(parameters_object, this.getMethodParameters());
+      parameters_object = objectutilities.merge(parameters_object, this.getRequestParameters());
+
+      this.parameters.set('parametersobject', parameters_object);
+
+      return true;
+
+    }
+
+    getVendorParameters(){
+
+      du.debug('Get Vendor Parameters');
+
+      let vendor_name = this.getVendorName();
+
+      let vendor_parameters = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/merchantproviders/'+vendor_name+'.yml');
+
+      if(!_.isNull(vendor_parameters) && !_.isUndefined(vendor_parameters)){
+        return vendor_parameters;
+      }
+
+      return {};
+
+    }
+
+    getVendorName(){
+
+      du.debug('Get Vendor Name');
+
+      return objectutilities.getClassName(this).replace('Controller', '');
+
+    }
+
+    issueRequest(){
+
+      du.debug('Issue Request');
+
+      let method = this.parameters.get('method');
+
+      if(_.isFunction(this['issue'+method+'Request'])){
+        return this['issue'+method+'Request']();
+      }
+
+      eu.throwError('server', 'Missing Isssue Request method: "'+method+'".');
+
+    }
+
+    getMethodParameters(){
+
+      du.debug('Get Method Parameters');
+
+      let method = this.parameters.get('method');
+
+      if(_.isFunction(this['get'+method+'MethodParameters'])){
+        return this['get'+method+'MethodParameters']();
+      }
+
+      return {};
+
+    }
+
+    getRequestParameters(){
+
+      du.debug('Get Request Parameters');
+
+      let method = this.parameters.get('method');
+
+      if(_.isFunction(this['get'+method+'RequestParameters'])){
+        return this['get'+method+'RequestParameters']();
+      }
+
+      return {};
+
+    }
+
+    getMerchantProviderParameters(){
+
+      du.debug('Get Merchant Provider Parameters');
+
+      let method = this.parameters.get('method');
+
+      if(_.isFunction(this['get'+method+'MerchantProviderParameters'])){
+        return this['get'+method+'MerchantProviderParameters']();
+      }
+
+      return {};
 
     }
 

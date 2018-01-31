@@ -1,0 +1,11 @@
+{
+	"title": "Stripe Configuration",
+	"type": "object",
+	"properties": {
+		"endpoint":{
+			"type":"string",
+			"format":"uri"
+		}
+	},
+	"required":["endpoint"]
+}

@@ -13,7 +13,7 @@ describe('/controllers/vendors/merchantproviders/NMI/Response.js', () => {
 
   describe('getTransactionID', () => {
 
-    it('successfully returns the transaction ID (results)', () => {
+    xit('successfully returns the transaction ID (results)', () => {
 
       let transaction = MockEntities.getValidTransaction();
       let transaction_id = JSON.parse(transaction.processor_response).result.transactionid;
@@ -31,7 +31,7 @@ describe('/controllers/vendors/merchantproviders/NMI/Response.js', () => {
 
     });
 
-    it('successfully returns the transaction ID (result)', () => {
+    xit('successfully returns the transaction ID (result)', () => {
 
       let transaction = MockEntities.getValidTransaction();
       let processor_response = JSON.parse(transaction.processor_response);

@@ -19,37 +19,67 @@ module.exports = class InnovioResponse extends Response {
 
   }
 
-  mapResponseCode({parsed_response}){
+  determineResultCode({response, body, action}){
 
-    du.debug('Map Response Code');
+    du.debug('Determine Result Code');
 
-    if(parsed_response.TRANS_STATUS_NAME == 'APPROVED'){
-      return 'success';
-    }else if(parsed_response.TRANS_STATUS_NAME == 'DECLINED'){
-      return 'declined';
+    if(action == 'process'){
+
+      if(response.statusCode !== 200){
+        return 'error';
+      }
+
+      if(response.statusMessage !== 'OK'){
+        return 'error';
+      }
+
+      body = this.parseBody(body);
+
+      if(!_.has(body, 'TRANS_STATUS_NAME')){
+
+        return 'error';
+
+      }
+
+      if(body.TRANS_STATUS_NAME == 'APPROVED'){
+        return 'success';
+      }
+
+      return 'fail';
+
+    }else if(_.contains(['reverse','refund'], action)){
+
+      body = this.parseBody(body);
+
+      if(!_.has(body, 'TRANS_STATUS_NAME')){
+
+        return 'error';
+
+      }
+
+      if(response.statusCode == 200 && response.statusMessage == 'OK' && body.TRANS_STATUS_NAME == 'APPROVED'){
+        return 'success';
+      }
+
+      return 'fail';
+
+    }else if( action == 'test'){
+
+      body = this.parseBody(body);
+
+      if(response.statusCode == 200 && response.statusMessage == 'OK' && body.SERVICE_ADVICE == 'User Authorized'){
+        return 'success';
+      }
+
+      return 'fail';
+
     }
 
     return 'error';
 
   }
 
-  mapResponseMessage({parsed_response}){
-
-    du.debug('Map Response Message');
-
-    if(_.has(parsed_response, 'TRANS_STATUS_NAME') && stringutilities.nonEmpty(parsed_response.TRANS_STATUS_NAME)){
-      return parsed_response.TRANS_STATUS_NAME;
-    }
-
-    if(_.has(parsed_response, 'SERVICE_ADVICE') && stringutilities.nonEmpty(parsed_response.SERVICE_ADVICE)){
-      return parsed_response.SERVICE_ADVICE;
-    }
-
-    return null;
-
-  }
-
-  parseResponse({response:response, body:body}){
+  parseBody(body){
 
     du.debug('Parse Response');
 

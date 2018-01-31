@@ -69,16 +69,75 @@ class MockEntities {
 
   }
 
-  static getValidMerchantProvider(id){
+  static getValidMerchantProviderGateway(processor){
+
+    processor = (_.isUndefined(processor) || _.isNull(processor))?'NMI':processor;
+
+    let gateways = {
+      'NMI': {
+        name:"NMI",
+        username:randomutilities.createRandomString(20),
+        password:randomutilities.createRandomString(20),
+        processor_id:randomutilities.randomInt(1,100).toString()
+      },
+      'Innovio':{
+        name: 'Innovio',
+        username:randomutilities.createRandomString(20),
+        password:randomutilities.createRandomString(20),
+        site_id: '0',
+        merchant_account_id: '100',
+        product_id: '1001'
+      },
+      'Test':{
+        name: 'Test',
+        username:'demo',
+        password:'password',
+        processor_id:'0'
+      },
+      'Stripe':{
+        name: 'Stripe',
+        api_key: randomutilities.createRandomString(20)
+      }
+    };
+
+    return gateways[processor];
+
+  }
+
+  static getValidMerchantProviderProcessor(processor){
+
+    processor = (_.isUndefined(processor) || _.isNull(processor))?'NMI':processor;
+
+    let processors = {
+      'NMI': {
+        name: 'NMA',
+        id: 'deprecated?'
+      },
+      'Innovio':{
+        name: 'Humbolt',
+        id: 'deprecated?'
+      },
+      'Test':{
+        name: 'Test',
+        id: 'deprecated?'
+      },
+      'Stripe':{
+        name: 'Stripe',
+        id: 'deprecated?'
+      }
+    };
+
+    return processors[processor];
+
+  }
+
+  static getValidMerchantProvider(id, processor){
 
     return {
-        id: this.getValidId(id),
+      id: this.getValidId(id),
   		account:this.getTestAccountID(),
   		name:randomutilities.createRandomString(20),
-  		processor:{
-  			name:"NMA",
-  			id:"someIDValue"
-  		},
+  		processor:this.getValidMerchantProviderProcessor(processor),
   		processing:{
   			monthly_cap: 50000.00,
   			discount_rate:0.9,
@@ -92,17 +151,13 @@ class MockEntities {
   			}
   		},
   		enabled:true,
-  		gateway: {
-  			name:"NMI",
-  			username:"demo",
-  			password:"password"
-  		},
+  		gateway: this.getValidMerchantProviderGateway(processor),
   		allow_prepaid:true,
   		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
   		customer_service:{
   			email:"customer.service@mid.com",
   			url:"http://mid.com",
-  			description:"Some string here..."
+  			description:randomutilities.createRandomString(20)
   		},
   		created_at:timestamp.getISO8601(),
       updated_at:timestamp.getISO8601()

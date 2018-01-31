@@ -5,13 +5,14 @@
 		"api_version":{
       "type":"string"
     },
-		"response_format":{
-      "type":"string"
+		"request_response_format":{
+      "type":"string",
+			"enum":["JSON","XML"]
     },
 		"endpoint":{
 			"type":"string",
 			"format":"uri"
 		}
 	},
-	"required":["api_version", "response_format", "endpoint"]
+	"required":["api_version", "request_response_format", "endpoint"]
 }

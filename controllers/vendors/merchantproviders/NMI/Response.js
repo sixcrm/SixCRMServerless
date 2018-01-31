@@ -18,6 +18,83 @@ module.exports = class NMIResponse extends Response {
 
   }
 
+  determineResultCode({response, body, action}){
+
+    du.debug('Determine Result Code');
+
+    body = this.parseBody(body);
+
+    if(action == 'process'){
+
+      if(response.statusCode !== 200){
+        return 'error';
+      }
+
+      if(response.statusMessage !== 'OK'){
+        return 'error';
+      }
+
+      if(!_.has(body, 'response')){
+
+        return 'error';
+
+      }
+
+      if(body.response == '1'){
+        return 'success';
+      }
+
+      return 'fail';
+
+    }else if(_.contains(['reverse','refund'], action)){
+
+      if(response.statusCode == 200 && response.statusMessage == 'OK' && body.response == '1'){
+        return 'success';
+      }
+
+      return 'fail';
+
+    }else if(action == 'test'){
+
+      if(response.statusCode == 200 && response.statusMessage == 'OK' && body.response == '3'){
+
+        if(~body.responsetext.indexOf('The ccnumber field is required')){
+          return 'success';
+        }
+
+      }
+
+      return 'fail';
+
+    }
+
+    return 'error';
+
+  }
+
+  parseBody(body){
+
+    du.debug('Parse Body');
+
+    let parsed_body = null;
+
+    try{
+
+      parsed_body = querystring.parse(body);
+
+    }catch(error){
+
+      du.error(error);
+
+      this.handleError(error);
+
+    }
+
+    return parsed_body;
+
+  }
+
+
   getTransactionID(transaction){
 
     du.debug('Get Transaction ID');
@@ -42,54 +119,6 @@ module.exports = class NMIResponse extends Response {
     }
 
     eu.throwError('server', 'Unable to identify the Transaction ID');
-
-  }
-
-  mapResponseCode({parsed_response}){
-
-    du.debug('Map Response Code');
-
-    if(parsed_response.response == '1'){
-      return 'success';
-    }else if(parsed_response.response == '2'){
-      return 'declined';
-    }
-
-    return 'error';
-
-  }
-
-  mapResponseMessage({parsed_response}){
-
-    du.debug('Map Response Message');
-
-    if(_.has(parsed_response, 'responsetext')){
-      return parsed_response.responsetext;
-    }
-
-    return null;
-
-  }
-
-  parseResponse({response: response, body:body}){
-
-    du.debug('Parse Response');
-
-    let parsed_response = null;
-
-    try{
-
-      parsed_response = querystring.parse(body);
-
-    }catch(error){
-
-      du.error(error);
-
-      this.handleError(error);
-
-    }
-
-    return parsed_response;
 
   }
 

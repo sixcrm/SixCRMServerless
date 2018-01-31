@@ -1,0 +1,6 @@
+{
+  "id":"/vendors/merchantproviders/action.json",
+  "title":"Action",
+  "type":"string",
+  "enum":["process","refund","reverse","test"]
+}

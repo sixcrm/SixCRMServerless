@@ -72,7 +72,7 @@ module.exports = class TransactionUtilities {
 
       const GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+selected_merchantprovider.gateway.name+'/handler.js');
 
-      let gateway = new GatewayController(selected_merchantprovider.gateway);
+      let gateway = new GatewayController({merchant_provider: selected_merchantprovider});
 
       this.parameters.set('instantiated_gateway', gateway);
 

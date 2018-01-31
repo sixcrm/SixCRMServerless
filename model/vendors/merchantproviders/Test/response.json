@@ -1,0 +1,16 @@
+{
+  "id":"/vendors/merchantproviders/Test/response.json",
+  "title":"Test Response",
+  "type":"object",
+  "properties":{
+    "statusCode":{"$ref":"../../../definitions/httpcode.json"},
+    "body":{
+      "anyOf":[
+        {"type":"string"},
+        {"type":"object"},
+        {"type":"null"}
+      ]
+    }
+  },
+  "required":["statusCode", "body"]
+}

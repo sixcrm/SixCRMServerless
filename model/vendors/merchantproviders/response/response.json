@@ -1,5 +1,5 @@
 {
-  "id":"/vendors/fulfillmentproviders/response/response.json",
+  "id":"/vendors/merchantproviders/response/response.json",
   "title":"Response",
   "type":"object",
   "properties":{

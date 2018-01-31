@@ -1,0 +1,16 @@
+{
+	"title": "Stripe Merchant Provider Configuration",
+	"type": "object",
+	"properties": {
+		"gateway":{
+			"type":"object",
+			"properties":{
+				"api_key":{
+					"type":"string"
+				}
+			},
+			"required":"api_key"
+		}
+	},
+	"required":["gateway"]
+}

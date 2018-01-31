@@ -8,17 +8,18 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
 
 class TestController extends MerchantProvider {
 
     //Technical Debt:  Need to make use of processor_id somewhere...
-    constructor(merchant_provider_parameters){
+    constructor({merchant_provider}){
 
-      super();
+      super(arguments[0]);
 
-      this.configure(merchant_provider_parameters);
+      this.configure(merchant_provider.gateway);
 
       this.merchant_provider_parameters = {
         required: {
@@ -99,12 +100,23 @@ class TestController extends MerchantProvider {
 
       du.debug('Process');
 
+      this.parameters.set('action', 'process');
+
       const method_parameters = {
         path: 'authorize'
       };
 
       return this.postToProcessor({action: 'process', method_parameters: method_parameters, request_parameters: request_parameters})
-      .then((response_object) => this.getResponseObject(response_object));
+      .then(result => {
+        let response_object = {
+          error: null,
+          response: result.response,
+          body: result.response.body
+        };
+
+        this.parameters.set('vendorresponse', response_object);
+      })
+      .then(() => this.respond({}));
 
     }
 
@@ -135,35 +147,32 @@ class TestController extends MerchantProvider {
 
       du.debug('Post To Processor');
 
-      return new Promise((resolve, reject) => {
+      let parameters = this.createParameterObject();
 
-        let parameters = this.createParameterObject();
+      let endpoint = this.createEndpoint(method_parameters);
 
-        let endpoint = this.createEndpoint(method_parameters);
+      parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
 
-        parameters = this.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters});
+      parameters = this.setRequestParameters({type: action, request_parameters: request_parameters, return_parameters: parameters});
 
-        parameters = this.setRequestParameters({type: action, request_parameters: request_parameters, return_parameters: parameters});
+      this.validateRequestParameters(action, parameters);
 
-        this.validateRequestParameters(action, parameters);
+      var request_options = {
+        body: parameters,
+        url: endpoint
+      }
 
-        var request_options = {
-          method: 'post',
-          body: parameters,
-          json: true,
-          url: endpoint
+      return httputilities.postJSON(request_options).then(result => {
+
+        if(_.isError(result.error)){
+          du.error(result.error);
+          return Promise.reject(result.error);
         }
 
-        request(request_options, (error, response, body) => {
-
-          if(_.isError(error)){
-            du.error(error);
-            reject(error);
-          }
-
-          resolve({response: response, body: body});
-
-        });
+        return {
+          response: result.response,
+          body: result.body
+        };
 
       });
 

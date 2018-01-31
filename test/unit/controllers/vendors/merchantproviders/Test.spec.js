@@ -6,18 +6,17 @@ const mockery = require('mockery');
 let querystring = require('querystring');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-function getValidMerchantProviderConfiguation(){
-  return {
-    username:"demo",
-    password:"password",
-    processor_id:"0"
-  };
+function getValidMerchantProvider(id){
+
+  return MockEntities.getValidMerchantProvider(id, 'Test');
+
 }
 
 function getValidParametersObject(){
   return objectutilities.merge(
-    getValidMerchantProviderConfiguation(),
+    getValidMerchantProvider().gateway,
     {
       endpoint: 'https://testmerchantprovider.sixcrm.com/'
     }
@@ -33,34 +32,7 @@ function getValidMethodParametersObject(){
 function getValidReverseRequestParametersObject(){
 
   return {
-    transaction:{
-      "amount": 34.99,
-      "id": "e624af6a-21dc-4c64-b310-3b0523f8ca42",
-      "alias":"T56S2HJO32",
-      "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      "rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-      "processor_response": {
-        "message":"Success",
-        "result":{
-          "response":"1",
-          "responsetext":"SUCCESS",
-          "authcode":"123456",
-          "transactionid":"3448894418",
-          "avsresponse":"N",
-          "cvvresponse":"",
-          "orderid":"",
-          "type":"sale",
-          "response_code":"100"
-        }
-      },
-      "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
-      "products":[{
-        "product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
-        "amount":34.99
-      }],
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-    }
+    transaction: MockEntities.getValidTransaction()
   };
 
 }
@@ -68,34 +40,7 @@ function getValidReverseRequestParametersObject(){
 function getValidRefundRequestParametersObject(){
 
   return {
-    transaction:{
-      "amount": 34.99,
-      "id": "e624af6a-21dc-4c64-b310-3b0523f8ca42",
-      "alias":"T56S2HJO32",
-      "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      "rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-      "processor_response": {
-        "message":"Success",
-        "result":{
-          "response":"1",
-          "responsetext":"SUCCESS",
-          "authcode":"123456",
-          "transactionid":"3448894418",
-          "avsresponse":"N",
-          "cvvresponse":"",
-          "orderid":"",
-          "type":"sale",
-          "response_code":"100"
-        }
-      },
-      "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
-      "products":[{
-        "product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
-        "amount":34.99
-      }],
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-    },
+    transaction: MockEntities.getValidTransaction(),
     amount: 34.99
   };
 
@@ -169,7 +114,7 @@ describe('vendors/merchantproviders/Test.js', () => {
       mockery.deregisterAll();
   });
 
-  it('Should fail due to missing properties', () => {
+ it('Should fail due to missing properties', () => {
 
     const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
 
@@ -179,31 +124,30 @@ describe('vendors/merchantproviders/Test.js', () => {
 
     }catch(error){
 
-      expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+      expect(error.message).to.have.string('[500] Missing source object field: "merchant_provider".');
 
     }
 
   });
 
-  it('Should Instantiate the Test Controller', () => {
+ it('Should Instantiate the Test Controller', () => {
 
-    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+    let merchant_provider = getValidMerchantProvider();
 
     const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
 
-    let test_controller = new TestController(merchant_provider_configuration);
+    let test_controller = new TestController({merchant_provider: merchant_provider});
 
     expect(test_controller.constructor.name).to.equal('TestController');
 
   });
 
-  it('Should set vendor and merchant_provider parameters in request object', () => {
+ it('Should set vendor and merchant_provider parameters in request object', () => {
 
-    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+    let merchant_provider = getValidMerchantProvider();
 
     const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
-
-    let test_controller = new TestController(merchant_provider_configuration);
+    let test_controller = new TestController({merchant_provider: merchant_provider});
 
     let parameters_object = test_controller.createParameterObject();
 
@@ -220,13 +164,13 @@ describe('vendors/merchantproviders/Test.js', () => {
 
   });
 
-  it('Should set method parameters in request object', () => {
+ it('Should set method parameters in request object', () => {
 
-    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+    let merchant_provider = getValidMerchantProvider();
 
     const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
 
-    let test_controller = new TestController(merchant_provider_configuration);
+    let test_controller = new TestController({merchant_provider: merchant_provider});
 
     let parameters_object = getValidParametersObject();
 
@@ -247,13 +191,12 @@ describe('vendors/merchantproviders/Test.js', () => {
 
   });
 
-  it('Should set request parameters in request object', () => {
+ it('Should set request parameters in request object', () => {
 
-    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+    let merchant_provider = getValidMerchantProvider();
 
     const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
-
-    let test_controller = new TestController(merchant_provider_configuration);
+    let test_controller = new TestController({merchant_provider: merchant_provider});
 
     let parameters_object = getValidParametersObject();
 
@@ -289,22 +232,18 @@ describe('vendors/merchantproviders/Test.js', () => {
 
   });
 
-  it('Should complete a "process" request', () => {
+ it('Should complete a "process" request', () => {
 
-    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+    let merchant_provider = getValidMerchantProvider();
 
     const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
-
-    let test_controller = new TestController(merchant_provider_configuration);
+    let test_controller = new TestController({merchant_provider: merchant_provider});
 
     let parameters_object = getValidParametersObject();
-
     let method_parameters = getValidMethodParametersObject();
-
     let request_parameters = getValidRequestParametersObject();
 
     parameters_object = test_controller.setMethodParameters({method_parameters: method_parameters, return_parameters: parameters_object});
-
     parameters_object = test_controller.setRequestParameters({type: 'process', request_parameters: request_parameters, return_parameters: parameters_object});
 
     test_controller.validateRequestParameters('process', parameters_object);
@@ -313,30 +252,38 @@ describe('vendors/merchantproviders/Test.js', () => {
 
   });
 
-  it('Should process a transaction', () => {
+ it('Should process a transaction', () => {
 
-    /*
-    mockery.registerMock('request', {
-      post: (request_options, callback) => {
-        du.warning(request_options);  process.exit();
-        callback(null, null, getMockResponse());
+    let merchant_provider = getValidMerchantProvider();
+
+    let body = ''
+    let response = {
+      response:{
+        statusMessage:'OK',
+        statusCode: 200,
+        body: body
+      },
+      body: body
+    };
+
+    mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+      postJSON:() => {
+        return Promise.resolve(response);
       }
     });
-    */
-
-    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
 
     const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
-
-    let test_controller = new TestController(merchant_provider_configuration);
+    let test_controller = new TestController({merchant_provider: merchant_provider});
 
     let request_parameters = getValidRequestParametersObject();
 
-    return test_controller.process(request_parameters).then(response => {
+    return test_controller.process(request_parameters).then(result => {
 
-      expect(response).to.have.property('code');
-      expect(response).to.have.property('message');
-      expect(response).to.have.property('result');
+      expect(result.getResult()).to.have.property('code');
+      expect(result.getResult()).to.have.property('message');
+      expect(result.getResult()).to.have.property('response');
+      expect(result.getResult().code).to.equal('success');
+      expect(result.getResult().message).to.equal('Success');
 
     });
 
@@ -351,20 +298,20 @@ describe('vendors/merchantproviders/Test.js', () => {
       }
     });
 
-    let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+    let merchant_provider = getValidMerchantProvider();
 
     const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
-
-    let test_controller = new TestController(merchant_provider_configuration);
+    let test_controller = new TestController({merchant_provider: merchant_provider});
 
     let request_parameters = getValidReverseRequestParametersObject();
 
-    return test_controller.reverse(request_parameters).then(response => {
+    return test_controller.reverse(request_parameters).then(result => {
 
-      du.warning(response);
-      expect(response).to.have.property('code');
-      expect(response).to.have.property('message');
-      expect(response).to.have.property('result');
+      expect(result.getResult()).to.have.property('code');
+      expect(result.getResult()).to.have.property('message');
+      expect(result.getResult()).to.have.property('response');
+      expect(result.getResult().code).to.equal('success');
+      expect(result.getResult().message).to.equal('Success');
 
     });
 
@@ -378,20 +325,21 @@ describe('vendors/merchantproviders/Test.js', () => {
         }
       });
 
-      let merchant_provider_configuration = getValidMerchantProviderConfiguation();
+      let merchant_provider = getValidMerchantProvider();
 
       const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');
 
-      let test_controller = new TestController(merchant_provider_configuration);
+      let test_controller = new TestController({merchant_provider: merchant_provider});
 
       let request_parameters = getValidRefundRequestParametersObject();
 
-      return test_controller.refund(request_parameters).then(response => {
+      return test_controller.refund(request_parameters).then(result => {
 
-        du.warning(response);
-        expect(response).to.have.property('code');
-        expect(response).to.have.property('message');
-        expect(response).to.have.property('result');
+        expect(result.getResult()).to.have.property('code');
+        expect(result.getResult()).to.have.property('message');
+        expect(result.getResult()).to.have.property('response');
+        expect(result.getResult().code).to.equal('success');
+        expect(result.getResult().message).to.equal('Success');
 
       });
 

@@ -14,11 +14,11 @@ const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantprovid
 class NMIController extends MerchantProvider {
 
     //Technical Debt:  Need to make use of processor_id somewhere...
-    constructor(merchant_provider_parameters){
+    constructor({merchant_provider}){
 
-      super();
+      super(arguments[0]);
 
-      this.configure(merchant_provider_parameters);
+      this.configure(merchant_provider.gateway);
 
       this.merchant_provider_parameters = {
         required: {
@@ -79,6 +79,9 @@ class NMIController extends MerchantProvider {
           required:{
             transactionid:'transaction.processor_response.result.transactionid'
           }
+        },
+        validate:{
+          required:{}
         }
       };
 
@@ -88,10 +91,20 @@ class NMIController extends MerchantProvider {
 
       du.debug('Refund');
 
+      this.parameters.set('action','refund');
       const method_parameters = {type: 'refund'};
 
       return this.postToProcessor({action: 'refund', method_parameters: method_parameters, request_parameters: request_parameters})
-      .then((response_object) => this.getResponseObject(response_object));
+      .then(result => {
+        let response_object = {
+          error: null,
+          response: result.response,
+          body: result.response.body
+        };
+
+        this.parameters.set('vendorresponse', response_object);
+      })
+      .then(() => this.respond({}));
 
     }
 
@@ -99,10 +112,22 @@ class NMIController extends MerchantProvider {
 
       du.debug('Reverse');
 
+      this.parameters.set('action','reverse');
       const method_parameters = {type: 'void'};
 
       return this.postToProcessor({action: 'reverse', method_parameters: method_parameters, request_parameters: request_parameters})
-      .then((response_object) => this.getResponseObject(response_object));
+      .then(result => {
+        let response_object = {
+          error: null,
+          response: result.response,
+          body: result.response.body
+        };
+
+        this.parameters.set('vendorresponse', response_object);
+      })
+      .then(() => this.respond({}));
+
+      //.then((response_object) => this.getResponseObject(response_object));
 
     }
 
@@ -110,10 +135,41 @@ class NMIController extends MerchantProvider {
 
       du.debug('Process');
 
+      this.parameters.set('action', 'process');
       const method_parameters = {type: 'sale'};
 
       return this.postToProcessor({action: 'process', method_parameters: method_parameters, request_parameters: request_parameters})
-      .then((response_object) => this.getResponseObject(response_object));
+      .then(result => {
+        let response_object = {
+          error: null,
+          response: result.response,
+          body: result.response.body
+        };
+
+        this.parameters.set('vendorresponse', response_object);
+      })
+      .then(() => this.respond({}));
+
+    }
+
+    test(request_parameters){
+
+      du.debug('Test');
+
+      this.parameters.set('action', 'test');
+      const method_parameters = {type: 'validate'};
+
+      return this.postToProcessor({action: 'validate', method_parameters: method_parameters, request_parameters: request_parameters})
+      .then(result => {
+        let response_object = {
+          error: null,
+          response: result.response,
+          body: result.response.body
+        };
+
+        this.parameters.set('vendorresponse', response_object);
+      })
+      .then(() => this.respond({}));
 
     }
 

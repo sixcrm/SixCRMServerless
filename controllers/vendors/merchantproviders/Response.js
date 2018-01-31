@@ -6,13 +6,44 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
-//Technical Debt:  This needs to extend the Response Provider
-module.exports = class Response {
+module.exports = class MerchantProviderResponse extends Response{
 
-  constructor(){
+  constructor({vendor_response, action, additional_parameters}){
 
-    this.allowed_codes = ['success', 'declined', 'error'];
+    super();
+
+    this.parameter_definition = {
+      handleResponse:{
+        required: {
+          vendorresponse:'vendor_response',
+          action:'action'
+        },
+        optional:{
+          additionalparameters: 'additional_parameters'
+        }
+      }
+    };
+
+    this.parameter_validation = {
+      'vendorresponse':global.SixCRM.routes.path('model','vendors/merchantproviders/response/vendorresponse.json'),
+      'action':global.SixCRM.routes.path('model', 'vendors/merchantproviders/action.json'),
+      'additionalparameters': global.SixCRM.routes.path('model', 'vendors/merchantproviders/response/additionalparameters.json'),
+      //Technical Debt:  Bad Paths...
+      'code': global.SixCRM.routes.path('model','vendors/merchantproviders/response/code.json'),
+      'result': global.SixCRM.routes.path('model','vendors/merchantproviders/response/result.json'),
+      'message': global.SixCRM.routes.path('model','vendors/merchantproviders/response/message.json'),
+      'parsedresponse':global.SixCRM.routes.path('model','vendors/merchantproviders/response/parsedresponse.json')
+    };
+
+    this.result_messages = {
+      'success':'Success',
+      'fail': 'Failed',
+      'error': 'Error'
+    };
+
+    this.initialize();
 
     this.handleResponse(arguments[0]);
 
@@ -20,33 +51,54 @@ module.exports = class Response {
 
   getMerchantProviderName(){
 
-    du.debug('Set Merchant Provider Name');
+    du.debug('Get Merchant Provider Name');
 
     return objectutilities.getClassName(this).replace('Response', '');
 
   }
 
-  handleResponse({error, response, body}){
+  handleResponse(){
 
     du.debug('Handle Response');
 
-    //du.info(arguments); exit();
+    this.parameters.setParameters({argumentation: arguments[0], action: 'handleResponse'});
 
-    if(!_.isUndefined(error) && !_.isNull(error)){
+    let error = this.parameters.get('error', null, false);
+
+    if(!_.isNull(error)){
 
       this.handleError(error);
 
     }else{
 
-      let parsed_response = this.parseResponse({response: response, body: body});
+      if(_.isFunction(this.determineResultCode)){
 
-      du.highlight(parsed_response);
+        let vendor_response = this.parameters.get('vendorresponse');
+        let action = this.parameters.get('action');
 
-      if(this.validateResponse(parsed_response)){
+        let response = vendor_response.response;
+        let body = vendor_response.body;
 
-        this.setResult(parsed_response);
+        this.parameters.set('response', response);
+        this.parameters.set('body', body);
 
-        this.setResponseProperties(parsed_response);
+        this.validateVendorResponse();
+
+        let result_code = this.determineResultCode({response: response, body: body, action: action});
+        let result_message = this.determineResultMessage(result_code);
+
+        if(_.isFunction(this.translateResponse)){
+
+          let parsed_response = this.translateResponse(response);
+
+          if(!_.isNull(parsed_response)){
+            this.parameters.set('parsedresponse', parsed_response);
+          }
+
+        }
+
+        this.setCode(result_code);
+        this.setMessage(result_message);
 
       }
 
@@ -54,35 +106,72 @@ module.exports = class Response {
 
   }
 
-  setResponseProperties(parsed_response){
+  getParsedResponse(){
 
-    du.debug('Set Response Properties');
+    du.debug('Get Parsed Response');
 
-    this.setCode(this.mapResponseCode({parsed_response: parsed_response}));
-
-    this.setMessage(this.mapResponseMessage({parsed_response: parsed_response}));
+    return this.parameters.get('parsedresponse', null, false);
 
   }
 
-  validateResponse(parsed_response){
+  setResponse(response){
 
-    du.debug('Validate Response');
+    du.debug('Set Response');
 
-    let validated = true;
+    this.parameters.set('response', response);
 
-    try{
+  }
 
-      mvu.validateModel(parsed_response, global.SixCRM.routes.path('model', 'functional/'+this.getMerchantProviderName()+'/response.json'));
+  setAllProperties({code, message, response}){
 
-    }catch(error){
+    du.debug('Set All Properties');
 
-      validated = false;
+    this.setCode(code);
 
-      this.handleError(error);
+    this.setMessage(message);
+
+    //this.setResponse(response);
+
+  }
+
+  determineResultCode({response: response, body: body}){
+
+    du.debug('Determine Result');
+
+    if(_.has(response, 'statusCode')){
+
+      if(response.statusCode == 200){
+
+        return 'success';
+
+      }
+
+      return 'fail';
 
     }
 
-    return validated;
+    return 'error';
+
+  }
+
+  determineResultMessage(result_code){
+
+    du.debug('Determine Result Message');
+
+    return this.result_messages[result_code];
+
+  }
+
+  validateVendorResponse(){
+
+    du.debug('Validate Provider Response');
+
+    let merchant_provider_name = this.getMerchantProviderName();
+    let response = this.parameters.get('response');
+
+    mvu.validateModel(response, global.SixCRM.routes.path('model', 'vendors/merchantproviders/'+merchant_provider_name+'/response.json'));
+
+    return true;
 
   }
 
@@ -94,57 +183,9 @@ module.exports = class Response {
 
     if(_.has(error, 'message')){
       this.setMessage(error.message);
-    }
-
-    this.setResult(error);
-
-  }
-
-  setCode(code){
-
-    du.debug('SetCode');
-
-    if(_.contains(this.allowed_codes, code)){
-      this.code = code;
     }else{
-      eu.throwError('server', 'Unrecognized code: "'+code+'".');
+      this.setMessage(this.determineResultMessage('error'));
     }
-
-  }
-
-  setMessage(message){
-
-    du.debug('Set Message');
-
-    this.message = message;
-
-  }
-
-  setResult(result){
-
-    du.debug('Set Result');
-
-    this.result = result;
-
-  }
-
-  getResultJSON(){
-
-    du.debug('Get Result JSON');
-
-    return {
-      code: this.getCode(),
-      result: this.getResult(),
-      message: this.getMessage()
-    };
-
-  }
-
-  getCode(){
-
-    du.debug('Get Code');
-
-    return this.code;
 
   }
 
@@ -152,7 +193,29 @@ module.exports = class Response {
 
     du.debug('Get Result');
 
-    return this.result;
+    return {
+      code: this.getCode(),
+      response: this.getResponse(),
+      message: this.getMessage()
+    };
+
+  }
+
+  getResponse(){
+
+    du.debug('Get Response');
+
+    return this.parameters.get('response', null, false);
+
+  }
+
+  setMessage(message){
+
+    du.debug('Set Message');
+
+    this.parameters.set('message', message);
+
+    return true;
 
   }
 
@@ -160,7 +223,31 @@ module.exports = class Response {
 
     du.debug('Get Message');
 
-    return this.message;
+    return this.parameters.get('message')
+
+  }
+
+  setCode(code){
+
+    du.debug('Set Code');
+
+    this.parameters.set('code', code);
+
+    return true;
+
+  }
+
+  getCode(){
+
+    du.debug('Get Code');
+
+    let code = this.parameters.get('code', null, false);
+
+    if(_.isNull(code)){
+      return super.getCode();
+    }
+
+    return code;
 
   }
 

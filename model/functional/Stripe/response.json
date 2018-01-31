@@ -1,0 +1,6 @@
+{
+	"title": "Stripe Merchant Provider Response Object",
+	"type": "object",
+	"properties": {
+	}
+}

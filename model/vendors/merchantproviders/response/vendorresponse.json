@@ -1,0 +1,41 @@
+{
+  "id":"/vendors/merchantproviders/vendorresponse.json",
+  "title":"Vendor Response",
+  "type":"object",
+  "properties":{
+    "error":{
+      "anyOf":[
+        {"type":"null"},
+        {"type":"object"}
+      ]
+    },
+    "body":{
+      "anyOf":[
+        {"type":"object"},
+        {"type":"string"},
+        {"type":"null"}
+      ]
+    },
+    "response":{
+      "anyOf":[
+        {"type":"null"},
+        {
+          "type":"object",
+          "properties":{
+            "body":{
+              "anyOf":[
+                {"type":"string"},
+                {"type":"object"},
+                {"type":"null"}
+              ]
+
+            },
+            "statusCode":{"$ref":"../../../definitions/httpcode.json"}
+          },
+          "required":["body","statusCode"]
+        }
+      ]
+    }
+  },
+  "required":["body","error","response"]
+}
