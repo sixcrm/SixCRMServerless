@@ -1,4 +1,4 @@
-# Activity paging
+# Activity pagination
 
 ____
 
@@ -23,7 +23,7 @@ ____
 ---
 ### Query notes
 
-Query returns dataset offset by some value from the beginning of the dataset 
+Query returns dataset offset by some value from the beginning of the dataset
 
 ---
 ## Results:

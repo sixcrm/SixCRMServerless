@@ -1,4 +1,4 @@
-# Events paging
+# Events pagination
 
 ____
 

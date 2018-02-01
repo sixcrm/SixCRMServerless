@@ -1,0 +1,9 @@
+{
+  "method": "getRebillsInQueue",
+  "test_case": "Runing on empty data",
+  "input": {
+    "queuename":"hold",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "summary",
+  "expect":  []
+}
