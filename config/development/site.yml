@@ -2,6 +2,9 @@ aws:
   region: 'us-east-1'
   account: '068070110666'
 
+s3:
+  account_resources_bucket: 'account-resources'
+
 sts:
   deployment_role_name: 'SixCRMDeployment'
 

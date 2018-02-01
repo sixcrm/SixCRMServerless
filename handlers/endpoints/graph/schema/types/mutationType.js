@@ -102,6 +102,9 @@ let reverseInputType = require('./register/reverse/reverseInputType');
 let SMTPValidationInputType = require('./smtpvalidation/SMTPValidationInputType')
 let SMTPValidationType = require('./smtpvalidation/SMTPValidationType');
 
+let accountImageType = require('./accountimage/accountImageType');
+let accountImageInputType = require('./accountimage/accountImageInputType');
+
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
@@ -109,6 +112,23 @@ const GraphQLString = require('graphql').GraphQLString;
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
+    createaccountimage: {
+			type: accountImageType.graphObj,
+			description: 'creates a account image',
+			args: {
+				accountimage: {
+          type: accountImageInputType.graphObj
+        }
+			},
+			resolve: (value, accountimage) => {
+				const AccountImageHelperController = global.SixCRM.routes.include('helpers', 'resources/accountimage/AccountImage.js');
+				let accountImageHelperController = new accountImageHelperController();
+
+				return accountImageHelperController.uploadImageToS3({
+          data: accountimage.accountimage.data
+        });
+			}
+		},
     markchargeback:{
       type: transactionType.graphObj,
       description: 'Sets the chargeback status of a customer transaction record.',

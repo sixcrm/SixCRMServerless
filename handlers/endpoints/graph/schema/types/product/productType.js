@@ -21,6 +21,10 @@ module.exports.graphObj = new GraphQLObjectType({
           type: new GraphQLNonNull(GraphQLString),
           description: 'The name of the product.',
       },
+      description: {
+          type: GraphQLString,
+          description: 'The product description.',
+      },
       sku: {
           type: new GraphQLNonNull(GraphQLString),
           description: 'The product SKU',

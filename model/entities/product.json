@@ -10,6 +10,9 @@
 			"type":"string",
 			"minLength":3
 		},
+		"description":{
+			"type":"string"
+		},
 		"sku":{
 			"type":"string",
 			"minLength":3
