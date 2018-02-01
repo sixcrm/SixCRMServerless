@@ -159,5 +159,5 @@
       "exclusiveMinimum": false
     }
   },
-  "required": ["start", "end"]
+  "required": ["start", "end" ]
 }

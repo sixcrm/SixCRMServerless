@@ -5,6 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
 const RelayController = global.SixCRM.routes.include('controllers', 'workers/components/relay.js');
 
@@ -21,13 +22,20 @@ module.exports = class forwardMessageController extends RelayController {
     //Technical Debt: Test this
     execute(){
 
+      permissionutilities.disableACLs();
+
       return this.validateEnvironment()
       .then(() => this.getMessages())
       .then(() => this.invokeAdditionalLambdas())
       .then(() => this.forwardMessagesToWorkers())
       .then(() => this.handleWorkerResponseObjects())
       .then(() => this.respond('success'))
+      .then((response) => {
+          permissionutilities.enableACLs();
+          return response;
+      })
       .catch((error) => {
+        permissionutilities.enableACLs();
         du.error(error);
         return this.respond('error');
       });

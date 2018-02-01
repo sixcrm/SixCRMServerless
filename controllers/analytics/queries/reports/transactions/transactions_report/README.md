@@ -1,4 +1,4 @@
-# Transactions paging query tied to the transactions Summary (revenue) report
+# Transactions pagination query tied to the transactions Summary (revenue) report
 
 26.09.2017 A.Zelen
 

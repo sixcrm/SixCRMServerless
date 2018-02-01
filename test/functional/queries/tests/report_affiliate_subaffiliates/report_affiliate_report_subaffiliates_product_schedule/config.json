@@ -1,0 +1,25 @@
+{
+  "method": "getAffiliateReportSubaffiliates",
+  "test_case": "random input of get affiliate report subaffiliates with product schedule filter",
+  "input": {
+    "analyticsfilter":
+  { "start": "2018-01-22T00:00:00.000Z",
+    "end": "2018-01-23T00:00:00.000Z",
+    "product_schedule": ["034087fc-73a1-4594-86de-8490c4db2025"],
+    "affiliate": "'d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f'" },
+    "period":"day",
+    "pagination": { "limit": 2, "order": "asc", "offset": 0 } },
+  "result_name": "subaffiliates",
+  "expect": [{"affiliate":"d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f",
+             "count_click":"0",
+             "count_partials":"0",
+             "partials_percent":"0",
+             "decline_count":"0",
+             "declines_percent":"0",
+             "count_sales":"0",
+             "sales_percent":"0",
+             "count_upsell":"0",
+             "upsell_percent":"0",
+             "sum_upsell":"0",
+             "sum_amount":"120.98"}]
+}

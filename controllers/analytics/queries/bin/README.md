@@ -9,14 +9,13 @@ ____
 ---
 ### Query notes
 
-Based on the input number identificator we return the result set of on row.
+Based on the input number identificator we return the result set of rows.
 Basic look-up table.
 
 Query returns  :
 * `campaign` -  a array of UUIDv4 strings
 * `percent_change_count` - percent of change in the transaction count
 * `percent_change_amount`- percent of change in the transaction amount
-
 * `binnumber` - Identifier
 * `brand` - Brand of credit card
 * `bank` - Bank of credit card

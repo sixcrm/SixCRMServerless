@@ -1,4 +1,4 @@
-# Activity paging
+# Activity pagination
 
 ____
 

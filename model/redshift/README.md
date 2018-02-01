@@ -11,9 +11,9 @@ ____
 * `f_events` - fact table of events types holds data on events level of granularity
 * `f_activity` - fact table of activities
 * `f_sessions` - fact table of sessions
-* `f_product_schedules` - fact table of product schedules
-* `f_queue_count` - fact table of queue counts
-
+* `f_product_schedules` - fact table of product schedules, copy of transactions but with multiple product schedules per transaction
+* `f_queue_count` - fact table of queue counts (depriciated)
+* `f_rebills` - fact table of rebills, their current queue and previous queue
 
 Transactional tables are defined with the distribution key based on the account.
 Sort key is chosen to be date.
@@ -24,12 +24,20 @@ Sort key is chosen to be date.
 * `d_processor_result` - Dimensional table of processor results [`success`, `decline`, `error`]
 * `d_merchant_provider` - Dimensional table of merchant processors
 
+### Aggregation tables
+At the beginning of the project the decision was made to keep the model small and not expand it.
+Few days prior to demo on 22.01.2018 a green light was given for expansion of model to aid performance.
+These are aggregation tables where data is pre-aggregated in batch manner on a recurring basis.
+
+* `agg_merchant_provider_transactions` - We should fill this daily to aid performance of merchant_provider_summary. The query for filling this is in queries/etl folder. It should be automated
+
 ### System table
 * `sys_sixcrm.sys_table_version` - System table of versions of tables in the model necessary for idempotency of the database model
+* `sys_sixcrm.sys_change_log` - System table of versions of migration scripts
 ---
 ## Loading scripts
 
-Redshift is a pure column store analytical database and as such lacks fatures for procedural control and optimal data generation. It is intended to be filled from external source. Optimal way of filling Redshift is via S3 buckets.
+Redshift is a pure column store analytical database and as such lacks features for procedural control and optimal data generation. It is intended to be filled from external source. Optimal way of "filling" Redshift is via pregenerated data in S3 buckets.
 
 ### Loading scripts
 * `loading_f_transacions.sql` - script for loading fixed csv file from S3 bucket to  `f_transactions`
@@ -49,8 +57,6 @@ Redshift is a pure column store analytical database and as such lacks fatures fo
 * `f_events.sql` - fact table of events creation
 * `d_datetimes.sql` - dimensional table creation
 * `d_resultimes.sql` - dimensional table creation and row insertion
-
-**IN WORK** Change the compression type on columns for better performance
 
 ## Folder structure:
 
@@ -73,8 +79,8 @@ Seeds needed for sanity checks,structural checks etc..
 
 ### System
 
-Contains "system" tables needed from normal functionality of continuous integration
+Contains "system" tables, needed from normal functionality of continuous integration
 
 ### Tables
 
-Contains tables of the SixCRM Redshift analytical database model 
+Contains tables of the SixCRM Redshift analytical database model

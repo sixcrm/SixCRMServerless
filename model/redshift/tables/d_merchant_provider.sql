@@ -1,6 +1,7 @@
 /*
 14.06.2017 A.Zelen Merchant provider types. Dimensional table is needed for faster upload.
 05.07.2017 A.Zelen Logic from idempotent versioning
+31.01.2018 A.Zelen This table is depreciated as there is no kinesis filling it
 
 TABLE_VERSION 1
 */
