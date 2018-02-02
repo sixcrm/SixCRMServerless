@@ -3,4 +3,4 @@
 29.07.2017 A.Zelen Moved to own directory
 */
 
-create schema if not exists backup;
+CREATE SCHEMA IF NOT EXISTS backup;
