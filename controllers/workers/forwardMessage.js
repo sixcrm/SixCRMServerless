@@ -22,8 +22,6 @@ module.exports = class forwardMessageController extends RelayController {
     //Technical Debt: Test this
     execute(){
 
-      permissionutilities.disableACLs();
-
       return this.validateEnvironment()
       .then(() => this.getMessages())
       .then(() => this.invokeAdditionalLambdas())
@@ -31,11 +29,9 @@ module.exports = class forwardMessageController extends RelayController {
       .then(() => this.handleWorkerResponseObjects())
       .then(() => this.respond('success'))
       .then((response) => {
-          permissionutilities.enableACLs();
           return response;
       })
       .catch((error) => {
-        permissionutilities.enableACLs();
         du.error(error);
         return this.respond('error');
       });
