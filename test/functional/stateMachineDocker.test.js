@@ -173,6 +173,74 @@ describe('stateMachineDocker', () => {
 
     });
 
+    describe('Hold To Pending', () => {
+
+        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebill = {
+            bill_at: timestamp.getISO8601(),
+            id: uuidV4(),
+            state: 'hold',
+            processing: true,
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
+        before((done) => {
+            Promise.all([
+                rebillController.create({entity: rebill}),
+                SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}')
+            ]).then(() => done());
+        });
+
+        it('rebill should move from hold to pending and update its state', () => {
+
+            return rebillController.get({id: rebill.id})
+                .then(rebill => expect(rebill.state).to.equal('hold'))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('pending'))
+        });
+
+    });
+
+    describe('Shipped To Delivered', () => {
+
+        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebill = {
+            bill_at: timestamp.getISO8601(),
+            id: uuidV4(),
+            state: 'shipped',
+            processing: true,
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
+        before((done) => {
+            Promise.all([
+                rebillController.create({entity: rebill}),
+                SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill.id +'"}')
+            ]).then(() => done());
+        });
+
+        it('rebill should move from shipped to shipped_error when missing transactions', () => {
+
+            return rebillController.get({id: rebill.id})
+                .then(rebill => expect(rebill.state).to.equal('shipped'))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('shipped_error'))
+        });
+
+    });
+
     describe('Delivered To Archive', () => {
 
         let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -211,6 +279,23 @@ describe('stateMachineDocker', () => {
                 .then((messages) => expect(messages.length).to.equal(0))
                 .then(() => sqsutilities.receiveMessages({queue: 'delivered_error'}))
                 .then((messages) => expect(messages.length).to.equal(0))
+        });
+
+        it('rebill should stay in delivered if filter is noship and product is ship (noaction)', () => {
+
+            process.env.archivefilter = 'noship';
+
+            return Promise.all([
+                rebillController.update({entity: rebill}),
+                SqSTestUtils.sendMessageToQueue('delivered', '{"id":"' + rebill.id +'"}')
+            ])
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('delivered'))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('delivered'))
+                .then(() => SqSTestUtils.messageCountInQueue('delivered'))
+                .then((count) => expect(count).to.equal(1, 'Message should stay in the queue.'))
         });
 
     });
