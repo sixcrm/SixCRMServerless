@@ -1,5 +1,6 @@
 'use strict'
 const _ = require('underscore');
+const uuidV4 = require('uuid/v4');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -723,8 +724,11 @@ module.exports = class RebillHelper {
     let body = JSON.stringify({id: rebill.id});
 
     let spoofed_message = {
+      MessageId: uuidV4(),
+      MD5OfBody: "",
+      ReceiptHandle: "",
       Body: body,
-      spoof: true
+      spoofed: true
     };
 
     return spoofed_message;
