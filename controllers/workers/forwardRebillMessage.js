@@ -60,7 +60,12 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
       .then((rebill) => {
         let rebillHelperController = new RebillHelperController();
 
-        return rebillHelperController.updateRebillState({rebill: rebill, new_state: new_state, previous_state: previous_state});
+        let update_parameters = {rebill: rebill, new_state: new_state};
+        if (previous_state) {
+            update_parameters.previous_state = previous_state;
+        }
+
+        return rebillHelperController.updateRebillState(update_parameters);
       });
 
     }
