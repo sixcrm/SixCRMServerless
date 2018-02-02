@@ -268,6 +268,10 @@ module.exports = class forwardMessageController extends RelayController {
 
       let params = this.parameters.get('params');
 
+      if(!params.origin_queue) {
+        return Promise.resolve(true);
+      }
+
       mvu.validateModel(messages, global.SixCRM.routes.path('model','workers/sqsmessages.json'));
 
       let message_delete_promises = arrayutilities.map(messages, message => {
