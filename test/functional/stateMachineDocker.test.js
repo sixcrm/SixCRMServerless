@@ -13,8 +13,9 @@ const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-schema-deployment.js');
 
-describe.only('stateMachineDocker', () => {
+describe('stateMachineDocker', () => {
     let lambdas = [];
     let lambda_names = [
         'pickrebillstobill',
@@ -33,18 +34,16 @@ describe.only('stateMachineDocker', () => {
         process.env.require_local = true;
         process.env.stage = 'local';
 
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-
         configureLambdas();
 
-        DynamoDbDeployment.deployTables()
+        DynamoDbDeployment.destroyTables()
+            .then(() => DynamoDbDeployment.deployTables())
             .then(() => SQSDeployment.deployQueues())
-            .then(() => SqSTestUtils.purgeAllQueues())
+            .then(() => SQSDeployment.purgeQueues())
             .then(() => DynamoDbDeployment.seedTables())
+            // .then(() => redshiftSchemaDeployment.destroy())
+            // .then(() => redshiftSchemaDeployment.deployTables())
+            // .then(() => redshiftSchemaDeployment.seed())
             .then(() => done());
 
     });
@@ -52,13 +51,16 @@ describe.only('stateMachineDocker', () => {
     beforeEach(() => {
     });
 
-    afterEach(() => {
-        delete require.cache[require.resolve(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'))];
+    afterEach((done) => {
+        SQSDeployment.purgeQueues().then(() => done());
     });
 
 
     after((done) => {
-        SqSTestUtils.purgeAllQueues().then(() => done());
+        Promise.all([
+            SQSDeployment.purgeQueues(),
+            DynamoDbDeployment.destroyTables()
+        ]).then(() => done());
     });
 
     describe('Database is ready', () => {
@@ -95,6 +97,7 @@ describe.only('stateMachineDocker', () => {
 
         it('should put a message in queue', () => {
             let body = '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}';
+
             return SqSTestUtils.sendMessageToQueue('bill', body)
                 .then(() => sqsutilities.receiveMessages({queue: 'bill'}))
                 .then((messages) => expect(messages[0].Body).to.deep.equal(body))
@@ -118,6 +121,7 @@ describe.only('stateMachineDocker', () => {
         };
 
         before((done) => {
+
             Promise.all([
                 rebillController.create({entity: rebill}),
             ]).then(() => done());
@@ -130,11 +134,13 @@ describe.only('stateMachineDocker', () => {
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('bill'))
+                .then(() => SqSTestUtils.messageCountInQueue('bill'))
+                .then((count) => expect(count).to.be.above(0, 'No message in bill queue.'))
         });
 
     });
 
-    xdescribe('Bill To Hold', () => {
+    describe('Bill To Hold', () => {
 
         let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
         let rebill = {
@@ -156,13 +162,140 @@ describe.only('stateMachineDocker', () => {
             ]).then(() => done());
         });
 
-        it('rebill should moved from bill to hold and updated', () => {
+        it('rebill should move from bill to hold and update its state', () => {
 
             return rebillController.get({id: rebill.id})
                 .then(rebill => expect(rebill.state).to.equal('bill'))
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('hold'))
+        });
+
+    });
+
+    describe('Delivered To Archive', () => {
+
+        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebill = {
+            bill_at: timestamp.getISO8601(),
+            id: uuidV4(),
+            state: 'delivered',
+            processing: true,
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
+        before((done) => {
+            Promise.all([
+                rebillController.create({entity: rebill}),
+                SqSTestUtils.sendMessageToQueue('delivered', '{"id":"' + rebill.id +'"}')
+            ]).then(() => done());
+        });
+
+        it('rebill should move from delivered and be archived', () => {
+
+            process.env.archivefilter = 'all';
+
+            return rebillController.get({id: rebill.id})
+                .then(rebill => expect(rebill.state).to.equal('delivered'))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('archived'))
+                .then(() => sqsutilities.receiveMessages({queue: 'delivered'}))
+                .then((messages) => expect(messages.length).to.equal(0))
+                .then(() => sqsutilities.receiveMessages({queue: 'delivered_failed'}))
+                .then((messages) => expect(messages.length).to.equal(0))
+                .then(() => sqsutilities.receiveMessages({queue: 'delivered_error'}))
+                .then((messages) => expect(messages.length).to.equal(0))
+        });
+
+    });
+
+    describe('Hold To Archive', () => {
+
+        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebill = {
+            bill_at: timestamp.getISO8601(),
+            id: uuidV4(),
+            state: 'hold',
+            processing: true,
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
+        before((done) => {
+            Promise.all([
+                rebillController.create({entity: rebill}),
+                SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}')
+            ]).then(() => done());
+        });
+
+        it('rebill should move from hold and be archived', () => {
+
+            process.env.archivefilter = 'all';
+
+            return rebillController.get({id: rebill.id})
+                .then(rebill => expect(rebill.state).to.equal('hold'))
+                .then(() => flushStateMachine())
+                .then(() => timestamp.delay(2 * 1000)())
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('archived'))
+                .then(() => sqsutilities.receiveMessages({queue: 'hold'}))
+                .then((messages) => expect(messages.length).to.equal(0))
+                .then(() => sqsutilities.receiveMessages({queue: 'hold_failed'}))
+                .then((messages) => expect(messages.length).to.equal(0))
+                .then(() => sqsutilities.receiveMessages({queue: 'hold_error'}))
+                .then((messages) => expect(messages.length).to.equal(0))
+        });
+
+    });
+
+    describe('Recover To Archive', () => {
+
+        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebill = {
+            bill_at: timestamp.getISO8601(),
+            id: uuidV4(),
+            state: 'recover',
+            processing: true,
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
+        before((done) => {
+            Promise.all([
+                rebillController.create({entity: rebill}),
+                SqSTestUtils.sendMessageToQueue('recover', '{"id":"' + rebill.id +'"}')
+            ]).then(() => done());
+        });
+
+        it('rebill should move from recover and be archived', () => {
+
+            process.env.archivefilter = 'all';
+
+            return rebillController.get({id: rebill.id})
+                .then(rebill => expect(rebill.state).to.equal('recover'))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('archived'))
+                .then(() => sqsutilities.receiveMessages({queue: 'recover'}))
+                .then((messages) => expect(messages.length).to.equal(0))
+                .then(() => sqsutilities.receiveMessages({queue: 'recover_failed'}))
+                .then((messages) => expect(messages.length).to.equal(0))
+                .then(() => sqsutilities.receiveMessages({queue: 'recover_error'}))
+                .then((messages) => expect(messages.length).to.equal(0))
         });
 
     });

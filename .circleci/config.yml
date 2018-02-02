@@ -81,10 +81,10 @@ jobs:
           command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_seeds.js
       - run:
           name: Execute State Machine Tests
-          command: SIX_VERBOSE=2 stage=local npm run test-functional-state-machine || echo "Optional"
+          command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine || echo "Optional"
       - run:
           name: Execute State Machine Tests In Docker
-          command: SIX_VERBOSE=2 stage=local npm run test-functional-state-machine-docker || echo "Optional"
+          command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine-docker || echo "Optional"
   pre_deploy:
     <<: *job-defaults
     steps:
