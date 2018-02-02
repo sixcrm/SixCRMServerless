@@ -530,7 +530,7 @@ module.exports = class RebillHelper {
 
     let rebill = this.parameters.get('rebill');
 
-    if(!this.parameters.isSet('previousstate') && !_.isUndefined(rebill.state)){
+    if(!this.parameters.isSet('previousstate') && !_.isUndefined(rebill.state) && rebill.state){
       this.parameters.set('previousstate', rebill.state);
     }
 
