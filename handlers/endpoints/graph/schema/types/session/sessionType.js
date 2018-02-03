@@ -11,6 +11,7 @@ let affiliateType = require('../affiliate/affiliateType');
 let rebillType = require('../rebill/rebillType');
 let productScheduleType = require('../productschedule/productScheduleType');
 let customerType = require('../customer/customerType');
+let watermarkType = require('./watermark/watermarkType');
 
 const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
@@ -26,6 +27,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: customerType.graphObj,
             description: 'The customer record that the session references.',
             resolve: session => sessionController.getCustomer(session),
+        },
+        watermark:{
+          type: watermarkType.graphObj,
+          description: 'The session watermark'
         },
         product_schedules: {
             type: new GraphQLList(productScheduleType.graphObj),

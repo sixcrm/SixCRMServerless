@@ -1,24 +1,37 @@
 {
-  "id":"/entities/components/watermark.json",
+  "id":"/entities/components/watermark/watermark.json",
   "title":"A session watermark",
   "type":"object",
   "properties":{
     "product_schedules":{
       "type":"array",
       "items":{
-        "anyOf":[
-          {"$ref":"../productschedule.json"},
-          {"$ref":"./watermarkproductschedule.json"}
-        ]
+        "type":"object",
+        "properties":{
+          "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
+          "product_schedule":{
+            "anyOf":[
+              {"$ref":"../../productschedule.json"},
+              {"$ref":"./watermarkproductschedule.json"}
+            ]
+          }
+        }
       }
     },
     "products":{
       "type":"array",
       "items":{
-        "anyOf":[
-          {"$ref":"../product.json"},
-          {"$ref":"./watermarkproduct.json"}
-        ]
+        "type":"object",
+        "properties":{
+          "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
+          "price":{"$ref":"../../../definitions/currency.json"},
+          "product":{
+            "anyOf":[
+              {"$ref":"../../product.json"},
+              {"$ref":"./watermarkproduct.json"}
+            ]
+          }
+        }
       }
     }
   }

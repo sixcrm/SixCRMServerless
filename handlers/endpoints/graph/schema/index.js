@@ -3,6 +3,10 @@ const GraphQLSchema = require('graphql').GraphQLSchema;
 let mutationType = require('./types/mutationType');
 let queryType = require('./types/queryType');
 
+//let ProductScheduleType = require('./types/productschedule/productScheduleType');
+//let WatermarkProductScheduleType = require('./types/session/watermark/watermarkProductScheduleType');
+//let TransactionalProductScheduleType = require('./types/session/watermark/transactionalProductScheduleType');
+
 //Technical Debt:  Hack!
 let NMIType = require('./types/merchantprovider/gateways/NMIType');
 let TestMerchantProviderType = require('./types/merchantprovider/gateways/TestMerchantProviderType');
@@ -30,6 +34,7 @@ module.exports = new GraphQLSchema({
     ThreePLType.graphObj,
     ShipStationType.graphObj,
     TestFulfillmentProviderType.graphObj,
-    providerType.graphObj
+    providerType.graphObj,
+    //TransactionalProductScheduleType.graphObj
   ]
 });

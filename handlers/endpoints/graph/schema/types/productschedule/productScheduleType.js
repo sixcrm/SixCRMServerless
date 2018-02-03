@@ -11,41 +11,41 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'ProductSchedule',
     description: 'A product schedule.',
     fields: () => ({
-        id: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The id of product schedule.',
-        },
-        name: {
-            type: GraphQLString,
-            description: 'The name of product schedule.',
-        },
-        schedule: {
-      	  type: new GraphQLList(scheduleType.graphObj),
-            description:'The schedules associated with the product schedule',
-      	  resolve: (product_schedule) => {
-            const ProductScheduleHelperController = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
-            let productScheduleHelperController = new ProductScheduleHelperController();
+      id: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: 'The id of product schedule.',
+      },
+      name: {
+        type: GraphQLString,
+        description: 'The name of product schedule.',
+      },
+      schedule: {
+    	  type: new GraphQLList(scheduleType.graphObj),
+        description:'The schedules associated with the product schedule',
+    	  resolve: (product_schedule) => {
+          const ProductScheduleHelperController = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
+          let productScheduleHelperController = new ProductScheduleHelperController();
 
-            return productScheduleHelperController.getSchedule({product_schedule: product_schedule});
-          }
-        },
-        loadbalancer:{
-            type: loadBalancerType.graphObj,
-            description: 'The load balancer associated with the product schedule.',
-            resolve: (productschedule) => {
-                var productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule');
-
-                return productScheduleController.getLoadBalancer(productschedule);
-            }
-        },
-        created_at: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'ISO8601 datetime when the entity was created.',
-        },
-        updated_at: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'ISO8601 datetime when the entity was updated.',
+          return productScheduleHelperController.getSchedule({product_schedule: product_schedule});
         }
+      },
+      loadbalancer:{
+        type: loadBalancerType.graphObj,
+        description: 'The load balancer associated with the product schedule.',
+        resolve: (productschedule) => {
+          let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule');
+
+          return productScheduleController.getLoadBalancer(productschedule);
+        }
+      },
+      created_at: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: 'ISO8601 datetime when the entity was created.',
+      },
+      updated_at: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: 'ISO8601 datetime when the entity was updated.',
+      }
     }),
     interfaces: []
 });
