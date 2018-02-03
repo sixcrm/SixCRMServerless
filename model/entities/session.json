@@ -19,6 +19,7 @@
 				{"$ref": "./campaign.json"}
 			]
     },
+    "watermark":{"$ref":"./components/watermark/watermark.json"},
 		"product_schedules":{
 			"type": "array",
 			"items":{

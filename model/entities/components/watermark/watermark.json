@@ -1,0 +1,25 @@
+{
+  "id":"/entities/components/watermark.json",
+  "title":"A session watermark",
+  "type":"object",
+  "properties":{
+    "product_schedules":{
+      "type":"array",
+      "items":{
+        "anyOf":[
+          {"$ref":"../productschedule.json"},
+          {"$ref":"./watermarkproductschedule.json"}
+        ]
+      }
+    },
+    "products":{
+      "type":"array",
+      "items":{
+        "anyOf":[
+          {"$ref":"../product.json"},
+          {"$ref":"./watermarkproduct.json"}
+        ]
+      }
+    }
+  }
+}
