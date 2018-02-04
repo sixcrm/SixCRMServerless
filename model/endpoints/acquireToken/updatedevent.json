@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/updatedevent.json",
+	"id":"/endpoints/acquireToken/updatedevent.json",
 	"title": "Event",
 	"type":"object",
 	"properties": {

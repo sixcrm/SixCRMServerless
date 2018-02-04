@@ -144,21 +144,21 @@ function getValidProductSchedules(){
       loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
       schedule:[
         {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          product:"616cc994-9480-4640-b26c-03810a679fe3",
           price:4.99,
           start:0,
           end:14,
           period:14
         },
         {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:14,
           end:28,
           period:14
         },
         {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:28,
           period:28
@@ -174,21 +174,21 @@ function getValidProductSchedules(){
       loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
       schedule:[
         {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          product:"616cc994-9480-4640-b26c-03810a679fe3",
           price:4.99,
           start:17,
           end:23,
           period:33
         },
         {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:51,
           end:750,
           period:13
         },
         {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:908,
           period:31

@@ -341,21 +341,21 @@ describe('/helpers/entities/Rebill.js', () => {
 
       product_schedule.schedule = [
         {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          product:"616cc994-9480-4640-b26c-03810a679fe3",
           price:4.99,
           start:0,
           end:14,
           period:14
         },
         {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:14,
           end:28,
           period:14
         },
         {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:28,
           period:28
@@ -434,21 +434,21 @@ describe('/helpers/entities/Rebill.js', () => {
 
       product_schedule.schedule = [
         {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          product:"616cc994-9480-4640-b26c-03810a679fe3",
           price:4.99,
           start:17,
           end:23,
           period:33
         },
         {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:51,
           end:750,
           period:13
         },
         {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:908,
           period:31
@@ -548,21 +548,21 @@ describe('/helpers/entities/Rebill.js', () => {
 
       product_schedule.schedule = [
         {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          product:"616cc994-9480-4640-b26c-03810a679fe3",
           price:4.99,
           start:0,
           end:14,
           period:14
         },
         {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:14,
           end:28,
           period:14
         },
         {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:28,
           period:28
@@ -615,21 +615,21 @@ describe('/helpers/entities/Rebill.js', () => {
 
       product_schedule.schedule = [
         {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          product:"616cc994-9480-4640-b26c-03810a679fe3",
           price:4.99,
           start:17,
           end:23,
           period:33
         },
         {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:51,
           end:750,
           period:13
         },
         {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:908,
           period:31
@@ -676,21 +676,21 @@ describe('/helpers/entities/Rebill.js', () => {
 
       product_schedule.schedule = [
         {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          product:"616cc994-9480-4640-b26c-03810a679fe3",
           price:4.99,
           start:17,
           end:23,
           period:33
         },
         {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:51,
           end:750,
           period:13
         },
         {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:908,
           period:31
@@ -756,7 +756,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(result).to.equal(true);
           expect(rebillHelper.parameters.store['transactionproducts']).to.deep.equal([
             {
-              product: product_schedule.schedule[1].product_id,
+              product: product_schedule.schedule[1].product,
               amount: product_schedule.schedule[1].price}
           ]);
 
@@ -984,21 +984,21 @@ describe('/helpers/entities/Rebill.js', () => {
 
         product_schedule.schedule = [
           {
-            product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+            product:"616cc994-9480-4640-b26c-03810a679fe3",
             price:4.99,
             start:0,
             end:14,
             period:14
           },
           {
-            product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+            product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
             price:34.99,
             start:14,
             end:28,
             period:14
           },
           {
-            product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+            product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
             price:34.99,
             start:28,
             period:28
@@ -1015,7 +1015,7 @@ describe('/helpers/entities/Rebill.js', () => {
         let expected_day_number = 0;
         let expected_schedule_elements = [product_schedule.schedule[0]];
         let expected_transaction_products = [{
-          product:product_schedule.schedule[0].product_id,
+          product:product_schedule.schedule[0].product,
           amount:product_schedule.schedule[0].price
         }];
         let expected_amount = product_schedule.schedule[0].price;
@@ -1049,21 +1049,21 @@ describe('/helpers/entities/Rebill.js', () => {
 
       product_schedules[0].schedule = [
         {
-          product_id:"616cc994-9480-4640-b26c-03810a679fe3",
+          product:"616cc994-9480-4640-b26c-03810a679fe3",
           price:4.99,
           start:0,
           end:14,
           period:14
         },
         {
-          product_id:"be992cea-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:14,
           end:28,
           period:14
         },
         {
-          product_id:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
+          product:"be992ceb-e4be-4d3e-9afa-8e020340ed16",
           price:34.99,
           start:28,
           period:28
@@ -1175,7 +1175,7 @@ describe('/helpers/entities/Rebill.js', () => {
           product_schedules: product_schedule_ids,
           products: [
             {
-              product: product_schedules[0].schedule[0].product_id,
+              product: product_schedules[0].schedule[0].product,
               amount: product_schedules[0].schedule[0].price
             }
           ]
@@ -1214,7 +1214,7 @@ describe('/helpers/entities/Rebill.js', () => {
           product_schedules: [product_schedules[0].id],
           products: [
             {
-              product: product_schedules[0].schedule[1].product_id,
+              product: product_schedules[0].schedule[1].product,
               amount: product_schedules[0].schedule[1].price
             }
           ]
@@ -1250,7 +1250,7 @@ describe('/helpers/entities/Rebill.js', () => {
           product_schedules: [product_schedules[0].id],
           products: [
             {
-              product: product_schedules[0].schedule[2].product_id,
+              product: product_schedules[0].schedule[2].product,
               amount: product_schedules[0].schedule[2].price
             }
           ]
@@ -1286,7 +1286,7 @@ describe('/helpers/entities/Rebill.js', () => {
           product_schedules: [product_schedules[0].id],
           products: [
             {
-              product: product_schedules[0].schedule[2].product_id,
+              product: product_schedules[0].schedule[2].product,
               amount: product_schedules[0].schedule[2].price
             }
           ]
@@ -1322,7 +1322,7 @@ describe('/helpers/entities/Rebill.js', () => {
           product_schedules: [product_schedules[0].id],
           products: [
             {
-              product: product_schedules[0].schedule[2].product_id,
+              product: product_schedules[0].schedule[2].product,
               amount: product_schedules[0].schedule[2].price
             }
           ]

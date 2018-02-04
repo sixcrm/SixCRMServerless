@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/components/customer",
+	"id":"/endpoints/components/customer.json",
 	"title": "Customer",
 	"type": "object",
 	"properties": {
@@ -19,10 +19,10 @@
 		"phone":{
 			"type":{"$ref":"../../definitions/phone.json"}
 		},
-		"address":{"$ref": "/address"},
+		"address":{"$ref": "../../definitions/address.json"},
 		"creditcards":{
 			"type":"array",
-			"items":{"$ref": "/creditcard"}
+			"items":{"$ref": "./creditcard.json"}
 		}
 	},
 	"required":["email", "firstname", "lastname", "address"]

@@ -390,8 +390,17 @@ module.exports = class Register extends PermissionedController {
     let processController = new ProcessController();
 
     return processController.process(argument_object).then(result => {
-      this.parameters.set('processorresponse', result);
+
+      this.parameters.set('processorresponse', {
+        code: result.getCode(),
+        message: result.getMessage(),
+        result: result.getResult(),
+        merchant_provider: result.merchant_provider,
+        creditcard: result.creditcard
+      });
+
       return true;
+
     });
 
   }

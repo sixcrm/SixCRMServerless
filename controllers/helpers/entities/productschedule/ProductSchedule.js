@@ -35,21 +35,19 @@ module.exports = class ProductScheduleHelper {
 
       if(arrayutilities.nonEmpty(products)){
 
-        for(var i = 0; i < product_schedule.schedule.length; i++){
+        arrayutilities.map(product_schedule.schedule, (schedule_element, index) => {
 
-          arrayutilities.map(products, product => {
+          let found_product = arrayutilities.find(products, product => {
 
-            if(product_schedule.schedule[i].product_id == product.id){
-
-              product_schedule.schedule[i].product = product;
-
-              delete product_schedule.schedule[i].product_id;
-
-            }
+            return (product.id == schedule_element.product);
 
           });
 
-        }
+          if(!_.isNull(found_product)){
+            product_schedule.schedule[index].product = found_product;
+          }
+
+        });
 
       }
 
@@ -160,7 +158,7 @@ module.exports = class ProductScheduleHelper {
 
       transaction_products.push({
         amount: parseFloat(schedule_element.price),
-        product: schedule_element.product_id
+        product: schedule_element.product
       });
 
     });
@@ -246,7 +244,7 @@ module.exports = class ProductScheduleHelper {
       price: schedule_element.price,
       start: schedule_element.start,
       period: schedule_element.period,
-      product: schedule_element.product_id
+      product: schedule_element.product
     };
 
     if(_.has(schedule_element, 'end')){

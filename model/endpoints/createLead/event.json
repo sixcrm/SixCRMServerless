@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/event",
+	"id":"/endpoints/createLead/event.json",
 	"title": "Event",
 	"type":"object",
 	"properties": {

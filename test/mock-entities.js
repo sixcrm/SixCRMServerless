@@ -31,7 +31,7 @@ class MockEntities {
       start = (this_start + period);
 
       return {
-        product_id: id,
+        product: id,
         price:randomutilities.randomDouble(1.00, 100.00, 2),
         start:this_start,
         end:end,

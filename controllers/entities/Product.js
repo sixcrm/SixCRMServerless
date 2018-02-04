@@ -66,6 +66,16 @@ class ProductController extends entityController {
 
     }
 
+    getLoadBalancer(product){
+
+      du.debug('Get Load Balancer');
+
+      if(!_.has(product, 'loadbalancer')){ return Promise.resolve(null); }
+
+      return this.executeAssociatedEntityFunction('loadBalancerController', 'get', {id: product.loadbalancer});
+
+    }
+
     getFulfillmentProvider(product){
 
       du.debug('Get Fulfillment Provider');
@@ -74,7 +84,9 @@ class ProductController extends entityController {
           return Promise.resolve(null); //fulfillment_provider is optional
       }
 
-      return this.executeAssociatedEntityFunction('fulfillmentProviderController', 'get', {id: product.fulfillment_provider});
+      let fulfillment_provider =  this.executeAssociatedEntityFunction('fulfillmentProviderController', 'get', {id: product.fulfillment_provider});
+
+      return fulfillment_provider;
 
     }
 

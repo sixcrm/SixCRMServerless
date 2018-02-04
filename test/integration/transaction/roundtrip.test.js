@@ -50,13 +50,13 @@ describe('Transaction Round Trip Test',() => {
       var post_body = {
           "campaign":campaign_id,
           "affiliates":{
-              "affiliate":affiliate_id,
-              "subaffiliate_1":subaffiliate_1_id,
-              "subaffiliate_2":subaffiliate_2_id,
-              "subaffiliate_3":subaffiliate_3_id,
-              "subaffiliate_4":subaffiliate_4_id,
-              "subaffiliate_5":subaffiliate_5_id,
-              "cid":cid
+            "affiliate":affiliate_id,
+            "subaffiliate_1":subaffiliate_1_id,
+            "subaffiliate_2":subaffiliate_2_id,
+            "subaffiliate_3":subaffiliate_3_id,
+            "subaffiliate_4":subaffiliate_4_id,
+            "subaffiliate_5":subaffiliate_5_id,
+            "cid":cid
           }
       };
 

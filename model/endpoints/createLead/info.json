@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/event",
-	"title": "Event",
+	"id":"/endpoints/createLead/info.json",
+	"title": "Info",
 	"type":"object",
 	"properties": {
 		"session":{"$ref":"../../entities/session.json"},

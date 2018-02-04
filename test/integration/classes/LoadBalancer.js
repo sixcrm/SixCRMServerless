@@ -48,7 +48,7 @@ module.exports = class LoadBalancerTest extends IntegrationTest {
 
     du.output('Create Product Schedule');
 
-    let emailtemplate_create_query = `mutation { createproductschedule ( productschedule: { id: "`+productschedule_id+`", name:"Testing Name", loadbalancer:"`+loadbalancer_id+`", schedule: [{ product_id:"668ad918-0d09-4116-a6fe-0e7a9eda36f8", start:0, end:30, price:49.00, period:30 }]}) { id } }`;
+    let emailtemplate_create_query = `mutation { createproductschedule ( productschedule: { id: "`+productschedule_id+`", name:"Testing Name", loadbalancer:"`+loadbalancer_id+`", schedule: [{ product:"668ad918-0d09-4116-a6fe-0e7a9eda36f8", start:0, end:30, price:49.00, period:30 }]}) { id } }`;
 
     return this.executeQuery(emailtemplate_create_query);
 

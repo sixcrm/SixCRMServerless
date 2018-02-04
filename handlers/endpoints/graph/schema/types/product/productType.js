@@ -2,8 +2,11 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLFloat = require('graphql').GraphQLFloat;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
+const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
 
+let loadBalancerType = require('../loadbalancer/loadBalancerType');
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
 let productAttributesType = require('./components/attributesType');
 
@@ -26,15 +29,15 @@ module.exports.graphObj = new GraphQLObjectType({
           description: 'The product description.',
       },
       sku: {
-          type: new GraphQLNonNull(GraphQLString),
+          type: GraphQLString,
           description: 'The product SKU',
       },
       ship: {
-          type: GraphQLString,
+          type: GraphQLBoolean,
           description: 'The product ship, no-ship status.',
       },
       shipping_delay: {
-          type: GraphQLString,
+          type: GraphQLInt,
           description: 'The number of seconds to delay shipping after a transaction.',
       },
       default_price: {
@@ -46,17 +49,22 @@ module.exports.graphObj = new GraphQLObjectType({
           description: 'The session associated with the transaction.',
           resolve: product => productController.getFulfillmentProvider(product),
       },
+      loadbalancer:{
+        type: loadBalancerType.graphObj,
+        description: 'The load balancer associated with the product.',
+        resolve: product => productController.getLoadBalancer(product)
+      },
       attributes:{
         type: productAttributesType.graphObj,
         description: 'The attributes associated with the product.'
       },
       created_at: {
-      type: new GraphQLNonNull(GraphQLString),
-          description: 'ISO8601 datetime when the entity was created.',
+        type: GraphQLString,
+        description: 'ISO8601 datetime when the entity was created.',
       },
       updated_at: {
-          type: new GraphQLNonNull(GraphQLString),
-          description: 'ISO8601 datetime when the entity was updated.',
+        type: GraphQLString,
+        description: 'ISO8601 datetime when the entity was updated.',
       }
     }),
     interfaces: []

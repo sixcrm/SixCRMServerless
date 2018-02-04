@@ -34,7 +34,7 @@ module.exports.graphObj = new GraphQLObjectType({
             var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
             return productScheduleController.getProduct(schedule)
-        }
+          }
         },
         created_at: {
 	        type: new GraphQLNonNull(GraphQLString),
