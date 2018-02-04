@@ -9,13 +9,9 @@
         "type":"object",
         "properties":{
           "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
-          "product_schedule":{
-            "anyOf":[
-              {"$ref":"../../productschedule.json"},
-              {"$ref":"./watermarkproductschedule.json"}
-            ]
-          }
-        }
+          "product_schedule":{"$ref":"./watermarkproductschedule.json"}
+        },
+        "required":["quantity","product_schedule"]
       }
     },
     "products":{
@@ -25,13 +21,9 @@
         "properties":{
           "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
           "price":{"$ref":"../../../definitions/currency.json"},
-          "product":{
-            "anyOf":[
-              {"$ref":"../../product.json"},
-              {"$ref":"./watermarkproduct.json"}
-            ]
-          }
-        }
+          "product":{"$ref":"./watermarkproduct.json"}
+        },
+        "required":["quantity", "product"]
       }
     }
   }

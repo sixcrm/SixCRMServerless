@@ -177,7 +177,7 @@ function getValidProductSchedules(){
           start: 0,
           period: 30,
           price: 79.99,
-          product_id: '6d90346a-5547-454c-91fe-9d101a08f68f'
+          product: '6d90346a-5547-454c-91fe-9d101a08f68f'
         }
       ],
       created_at: '2017-04-06T18:40:41.405Z',

@@ -5,14 +5,14 @@
 	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
 	"schedule":[
 		{
-			"product_id":"616cc994-9480-4640-b26c-03810a679fe3",
+			"product":"616cc994-9480-4640-b26c-03810a679fe3",
 			"price":4.99,
 			"start":0,
 			"end":14,
 			"period":14
 		},
 		{
-			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
+			"product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
 			"price":34.99,
 			"start":14,
 			"period":30
@@ -28,14 +28,14 @@
 	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
 	"schedule":[
 		{
-			"product_id":"616cc994-9480-4640-b26c-03810a679fe3",
+			"product":"616cc994-9480-4640-b26c-03810a679fe3",
 			"price":4.99,
 			"start":0,
 			"end":14,
 			"period":14
 		},
 		{
-			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
+			"product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
 			"price":34.99,
 			"start":14,
 			"period":30
@@ -51,7 +51,7 @@
 	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
 	"schedule":[
 		{
-			"product_id":"be992cea-e4be-4d3e-9afa-8e020340ed16",
+			"product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
 			"price":79.99,
 			"start":0,
 			"end":30,
@@ -68,7 +68,7 @@
 	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
 	"schedule":[
 		{
-			"product_id":"6d90346a-5547-454c-91fe-9d101a08f68f",
+			"product":"6d90346a-5547-454c-91fe-9d101a08f68f",
 			"price":79.99,
 			"start":0,
 			"period":30
@@ -84,7 +84,7 @@
 	"loadbalancer":"45367480-f1c1-4f61-a3d6-413c22a44dc3",
 	"schedule":[
 		{
-			"product_id":"b0b93fba-faff-4215-bb55-3ada6b298e17",
+			"product":"b0b93fba-faff-4215-bb55-3ada6b298e17",
 			"price":19.99,
 			"start":0,
 			"period":30

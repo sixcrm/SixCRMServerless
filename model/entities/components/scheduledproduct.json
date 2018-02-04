@@ -4,11 +4,11 @@
   "title":"Scheduled Product",
   "type":"object",
   "properties":{
-    "product_id":{"$ref": "../../definitions/uuidv4.json"},
+    "product":{"$ref": "../../definitions/uuidv4.json"},
     "price":{"$ref": "../../definitions/currency.json"},
     "start":{"$ref": "../../definitions/nonnegativeinteger.json"},
     "end":{"$ref": "../../definitions/nonnegativeinteger.json"},
     "period":{"$ref": "../../definitions/nonnegativeinteger.json"}
   },
-  "required":["product_id", "price", "start", "period"]
+  "required":["product", "price", "start", "period"]
 }

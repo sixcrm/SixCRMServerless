@@ -31,7 +31,7 @@ describe('controllers/ProductSchedule.js', () => {
 
             let params = {
                 product: {
-                    id: product_schedule.schedule[0].product_id
+                    id: product_schedule.schedule[0].product
                 },
                 pagination: 0
             };
@@ -156,7 +156,7 @@ describe('controllers/ProductSchedule.js', () => {
 
             let product_schedule = getValidProductSchedule();
 
-            product_schedule.schedule[0].product_id = 'dummy_id';
+            product_schedule.schedule[0].product = 'dummy_id';
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
@@ -257,7 +257,7 @@ describe('controllers/ProductSchedule.js', () => {
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 createINQueryParameters: (field, list_array) => {
                     expect(field).to.equal('id');
-                    expect(list_array[0]).to.deep.equal(product_schedule.schedule[0].product_id);
+                    expect(list_array[0]).to.deep.equal(product_schedule.schedule[0].product);
                     return Promise.resolve({
                         filter_expression: 'a_filter',
                         expression_attribute_values: 'an_expression_values'

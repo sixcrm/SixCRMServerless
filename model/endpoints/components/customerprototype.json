@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/components/customerprototype.json",
-	"title": "Customer",
+	"id":"/endpoints/components/customerprototype.json",
+	"title": "Customer Prototype",
 	"type": "object",
 	"properties": {
 		"email":{
