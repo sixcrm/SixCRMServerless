@@ -129,7 +129,7 @@ describe('calculateNextBillingInSchedule', () => {
 
 describe('marryProductsToSchedule', () => {
 
-  it.only('successfully marries products to product schedules', () => {
+  it('successfully marries products to product schedules', () => {
     let test_cases = [
       {
         products: [
