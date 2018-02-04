@@ -300,11 +300,10 @@ class AnalyticsController extends AnalyticsUtilities{
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
       if(!_.isUndefined(queue_name)){
-        parameters = this.appendCurrentQueueName(parameters, queue_name);
-        delete parameters['queuename'];
+        parameters = this.appendQueueName(parameters, queue_name);
       }
 
-      return this.getResults('order_engine/queue_rate', parameters, this.default_queue_filters);
+      return this.getResults('order_engine/queue_rate', parameters, this.default_queue_account_filter);
     }
 
     getQueueAverageTime(parameters){
