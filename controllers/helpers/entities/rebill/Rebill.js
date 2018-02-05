@@ -431,26 +431,30 @@ module.exports = class RebillHelper {
 
     du.debug('Get Schedule Elements On Bill Day');
 
-    du.debug('here!');  process.exit();
-
-    let product_schedules = this.parameters.get('productschedules');
+    let normalized_product_schedules = this.parameters.get('normalizedproductschedules');
     let bill_day = this.parameters.get('nextproductschedulebilldaynumber');
 
-    if(!_.has(this, 'productScheduleHelper')){
-      this.productScheduleHelper = new ProductScheduleHelper();
-    }
+    this.assureProductScheduleHelperController();
 
-    let schedule_elements = arrayutilities.map(product_schedules, product_schedule => {
-      return this.productScheduleHelper.getScheduleElementOnDayInSchedule({day: bill_day, product_schedule: product_schedule});
+    let schedule_elements = arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
+
+      return {
+        quantity: normalized_product_schedule.quantity,
+        schedule_element: this.productScheduleHelperController.getScheduleElementOnDayInSchedule({day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
+      };
+
     });
 
     schedule_elements = arrayutilities.filter(schedule_elements, (schedule_element) => {
-      return objectutilities.isObject(schedule_element);
+      return objectutilities.isObject(schedule_element.schedule_element);
     })
 
     if(arrayutilities.nonEmpty(schedule_elements)){
+
       this.parameters.set('scheduleelementsonbillday', schedule_elements);
+
       return Promise.resolve(true);
+
     }
 
     return Promise.resolve(false);
@@ -467,7 +471,11 @@ module.exports = class RebillHelper {
 
       let products = arrayutilities.map(schedule_elements, schedule_element => {
 
-        return {product: schedule_element.product, amount: schedule_element.price};
+        return {
+          product: schedule_element.schedule_element.product,
+          amount: schedule_element.schedule_element.price,
+          quantity: schedule_element.quantity
+        };
 
       });
 
@@ -488,7 +496,7 @@ module.exports = class RebillHelper {
     let products = this.parameters.get('transactionproducts', null, false);
 
     let amount = arrayutilities.reduce(products, (sum, object) => {
-      return (parseFloat(sum) + parseFloat(object.amount));
+      return (parseFloat(sum) + parseFloat(object.amount * object.quantity));
     });
 
     this.parameters.set('amount', amount);
@@ -521,9 +529,29 @@ module.exports = class RebillHelper {
 
     du.debug('Build Rebill Prototype');
 
-    let product_schedule_ids = arrayutilities.map(this.parameters.get('productschedules'), product_schedule => {
-      return product_schedule.id;
-    });
+    let  normalized_product_schedules = this.parameters.get('normalizedproductschedules', null, false);
+
+    let product_schedules = null;
+    let watermark_product_schedules = null;
+
+    if(!_.isNull(normalized_product_schedules)){
+      let grouped_normalized_product_schedules = arrayutilities.group(normalized_product_schedules, normalized_product_schedule => {
+
+        if(objectutilities.hasRecursive(normalized_product_schedule, 'product_schedule.id')){
+          return 'product_schedule';
+        }
+
+        return 'watermark_product_schedule';
+
+      });
+
+      if(arrayutilities.nonEmpty(grouped_normalized_product_schedules['product_schedule'])){
+        product_schedules = arrayutilities.map(grouped_normalized_product_schedules['product_schedule'], product_schedule => {
+          return product_schedule.product_schedule.id;
+        });
+      }
+
+    }
 
     let rebill_prototype = {
       account: this.parameters.get('session').account,
@@ -531,7 +559,7 @@ module.exports = class RebillHelper {
       products: this.parameters.get('transactionproducts'),
       bill_at: this.parameters.get('billdate'),
       amount: this.parameters.get('amount'),
-      product_schedules: product_schedule_ids
+      product_schedules: product_schedules
     };
 
     this.parameters.set('rebillprototype', rebill_prototype);
