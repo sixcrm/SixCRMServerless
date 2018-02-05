@@ -132,7 +132,8 @@ class productScheduleController extends entityController {
       if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
         let product_ids = arrayutilities.map(product_schedule.schedule, (schedule_element) => {
-          return schedule_element.product;
+          //Technical Debt:  Addresses legacy data.  Remove at earliest convenience...
+          return (_.has(schedule_element, 'product'))?schedule_element.product:schedule_element.product_id;
         });
 
         if(arrayutilities.nonEmpty(product_ids)){
