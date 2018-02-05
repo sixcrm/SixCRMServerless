@@ -25,21 +25,21 @@ function getValidProductSchedules(){
       loadbalancer:uuidV4(),
       schedule:[
         {
-          product_id:uuidV4(),
+          product:uuidV4(),
           price:4.99,
           start:0,
           end:14,
           period:14
         },
         {
-          product_id:uuidV4(),
+          product:uuidV4(),
           price:34.99,
           start:14,
           end:28,
           period:14
         },
         {
-          product_id:uuidV4(),
+          product:uuidV4(),
           price:34.99,
           start:28,
           period:28
@@ -149,13 +149,13 @@ describe('marryProductsToSchedule', () => {
         product_schedule: {
           schedule:[
             {
-              product_id:"3ed6a87d-30ea-42ef-963b-9ac6b5d2dde6"
+              product:"3ed6a87d-30ea-42ef-963b-9ac6b5d2dde6"
             },
             {
-              product_id:"868b5200-cd3c-4a88-9877-564995de69ca"
+              product:"868b5200-cd3c-4a88-9877-564995de69ca"
             },
             {
-              product_id:"e6721cc4-9702-4e2f-bb4f-668abbda6610"
+              product:"e6721cc4-9702-4e2f-bb4f-668abbda6610"
             }
           ]
         },
@@ -406,7 +406,7 @@ describe('getNextScheduleElementStartDayNumber', () => {
           day: 0,
           expect:[
             {
-              product: product_schedules[0].schedule[0].product_id,
+              product: product_schedules[0].schedule[0].product,
               amount: product_schedules[0].schedule[0].price,
             }
           ]
@@ -416,7 +416,7 @@ describe('getNextScheduleElementStartDayNumber', () => {
           day: 1,
           expect:[
             {
-              product: product_schedules[0].schedule[0].product_id,
+              product: product_schedules[0].schedule[0].product,
               amount: product_schedules[0].schedule[0].price,
             }
           ]
@@ -426,7 +426,7 @@ describe('getNextScheduleElementStartDayNumber', () => {
           day: 14,
           expect:[
             {
-              product: product_schedules[0].schedule[1].product_id,
+              product: product_schedules[0].schedule[1].product,
               amount: product_schedules[0].schedule[1].price,
             }
           ]
@@ -436,7 +436,7 @@ describe('getNextScheduleElementStartDayNumber', () => {
           day: 28,
           expect:[
             {
-              product: product_schedules[0].schedule[2].product_id,
+              product: product_schedules[0].schedule[2].product,
               amount: product_schedules[0].schedule[2].price,
             }
           ]

@@ -4,14 +4,12 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
-var authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
-
-//Technical Debt:  This needs to exist as a helper.
-class searchController extends authenticatedController {
+class searchController {
 
     constructor(){
 
       super();
+
 	//Technical Debt:  This needs to be configured.
       this.entity_types = {
         product: 'product',

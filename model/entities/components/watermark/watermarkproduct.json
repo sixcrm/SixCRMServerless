@@ -19,9 +19,13 @@
 			"type":"boolean"
 		},
 		"shipping_delay":{"$ref": "../../../definitions/nonnegativeinteger.json"},
+    "loadbalancer":{"$ref": "../../../definitions/uuidv4.json"},
 		"fulfillment_provider":{"$ref": "../../../definitions/uuidv4.json"},
 		"default_price":{"$ref": "../../../definitions/currency.json"},
-		"attributes":{"$ref": "../productattributes.json"}
+		"attributes":{"$ref": "../productattributes.json"},
+    "account":{"$ref": "../../../definitions/sixcrmaccountidentifier.json"},
+		"created_at":{"$ref": "../../../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../../../definitions/iso8601.json"}
   },
   "required":["id","name"]
 }

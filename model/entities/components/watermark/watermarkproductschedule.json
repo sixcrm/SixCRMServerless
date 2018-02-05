@@ -22,7 +22,10 @@
 			  },
 			  "required":["product", "price", "start", "period"]
 			}
-		}
+		},
+    "account":{"$ref": "../../../definitions/sixcrmaccountidentifier.json"},
+		"created_at":{"$ref": "../../../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../../../definitions/iso8601.json"}
   },
   "required":["name", "schedule"]
 }

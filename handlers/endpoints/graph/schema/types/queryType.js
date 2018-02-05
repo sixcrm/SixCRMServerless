@@ -168,7 +168,7 @@ module.exports.graphObj = new GraphQLObjectType({
               cache: {type: cacheInputType.graphObj}
   	        },
         	  resolve: function(root, search){
-              const searchController = global.SixCRM.routes.include('controllers', 'endpoints/search.js');
+              const searchController = global.SixCRM.routes.include('controllers', 'providers/search/search.js');
 
               return searchController.search(search.search);
         	  }
@@ -181,7 +181,7 @@ module.exports.graphObj = new GraphQLObjectType({
             cache: {type: cacheInputType.graphObj}
       	  },
       	  resolve: function(root, suggest){
-            const suggestController = global.SixCRM.routes.include('controllers', 'endpoints/suggest.js');
+            const suggestController = global.SixCRM.routes.include('controllers', 'providers/search/suggest.js');
 
             return suggestController.suggest(suggest.suggest);
       	  }

@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/components/creditcard",
+	"id":"/endpoints/components/creditcard.json",
 	"title": "Credit Card",
 	"type": "object",
 	"properties": {

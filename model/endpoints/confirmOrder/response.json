@@ -1,5 +1,5 @@
 {
-	"id":"/response.json",
+	"id":"/endpoints/confirmOrder/response.json",
 	"title": "Response",
 	"type": "object",
 	"properties": {

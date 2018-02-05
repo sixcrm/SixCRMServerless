@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/sessionprototype.json",
+	"id":"/endpoints/createLead/sessionprototype.json",
 	"title": "Session Prototype",
 	"type":"object",
 	"properties": {

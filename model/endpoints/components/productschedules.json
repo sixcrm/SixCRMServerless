@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/components/product_schedules",
+	"id":"/endpoints/components/productschedules.json",
 	"title": "Product Schedules",
 	"type":"array",
 	"items":{

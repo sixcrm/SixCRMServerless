@@ -11,7 +11,7 @@ const productScheduleProductConfigurationInputType = require('./productScheduleP
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'ProductScheduleProductConfigurationInputType',
     fields: () => ({
-        product_id:		{ type: new GraphQLNonNull(GraphQLString) },
+        product:		{ type: new GraphQLNonNull(GraphQLString) },
         price:				{ type: new GraphQLNonNull(GraphQLFloat) },
         start:				{ type: new GraphQLNonNull(GraphQLInt) },
         period:				{ type: new GraphQLNonNull(GraphQLInt) },

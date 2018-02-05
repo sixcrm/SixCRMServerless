@@ -467,7 +467,7 @@ module.exports = class RebillHelper {
 
       let products = arrayutilities.map(schedule_elements, schedule_element => {
 
-        return {product: schedule_element.product_id, amount: schedule_element.price};
+        return {product: schedule_element.product, amount: schedule_element.price};
 
       });
 

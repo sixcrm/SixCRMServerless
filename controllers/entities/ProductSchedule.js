@@ -84,7 +84,7 @@ class productScheduleController extends entityController {
             if(arrayutilities.nonEmpty(productschedule.schedule)){
 
               let found = arrayutilities.find(productschedule.schedule, (schedule) => {
-                return (_.has(schedule, 'product_id') && schedule.product_id == product_id);
+                return (_.has(schedule, 'product') && schedule.product == product_id);
               });
 
               if(!_.isUndefined(found)){
@@ -132,7 +132,7 @@ class productScheduleController extends entityController {
       if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
         let product_ids = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
-          return product_schedule.product_id;
+          return product_schedule.product;
         });
 
         if(arrayutilities.nonEmpty(product_ids)){
