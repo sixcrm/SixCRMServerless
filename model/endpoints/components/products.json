@@ -1,20 +1,21 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/components/product_schedules",
-	"title": "Product Schedules",
+	"id":"/endpoints/components/products.json",
+	"title": "Products",
 	"type":"array",
 	"items":{
 		"type":"object",
 		"properties":{
 			"quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
-			"product_schedule":{
+			"price":{"$ref":"../../definitions/currency.json"},
+			"product":{
 				"anyOf":[
 					{"$ref":"../../definitions/uuidv4.json"},
-					{"$ref":"../../entities/components/watermark/watermarkproductschedule.json"}
+					{"$ref":"../../entities/components/watermark/watermarkproduct.json"}
 				]
 			}
 		},
-		"required":["quantity", "product_schedule"]
+		"required":["quantity", "price", "product"]
 	},
 	"minItems":1
 }

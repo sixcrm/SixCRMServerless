@@ -20,9 +20,21 @@ module.exports = class ProductScheduleHelper {
 
   }
 
-  getProducts({product_schedule}){
+  getHydrated({id}){
 
-    du.debug('Get Products');
+    du.debug('Get Hydrated');
+
+    let productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+
+    return productScheduleController.get({id: id}).then(product_schedule => {
+
+      return productScheduleController.getProducts(product_schedule).then(products => {
+
+        return this.marryProductsToSchedule({product_schedule: product_schedule, products: products.products});
+
+      });
+
+    });
 
   }
 

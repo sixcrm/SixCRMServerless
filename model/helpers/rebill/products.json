@@ -1,15 +1,16 @@
 {
   "$schema": "http://json-schema.org/schema#",
-	"id":"/helpers/rebill/productschedules.json",
-	"title": "Product Schedules",
+	"id":"/helpers/rebill/products.json",
+	"title": "Products",
   "type":"array",
   "items":{
     "properties":{
       "quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
-      "product_schedule":{
+      "price":{"$ref":"../../definitions/currency.json"},
+      "product":{
         "oneOf":[
           {"$ref":"../../definitions/uuidv4.json"},
-          {"$ref":"../../entities/components/watermark/watermarkproductschedule.json"}
+          {"$ref":"../../entities/components/watermark/watermarkproduct.json"}
         ]
       }
     }

@@ -270,10 +270,26 @@ class CreateOrderController extends transactionEndpointController{
     let campaign = this.parameters.get('campaign');
     let product_schedules = this.parameters.get('productschedules');
 
-    arrayutilities.map(product_schedules, product_schedule => {
-      if(!_.contains(campaign.productschedules, product_schedule)){
-        eu.throwError('bad_request', 'The product schedule provided is not a part of the campaign.');
+    arrayutilities.map(product_schedules, product_schedule_group => {
+
+      if(_.isString(product_schedule_group.product_schedule)){
+
+        if(!_.contains(campaign.productschedules, product_schedule_group.product_schedule)){
+          eu.throwError('bad_request', 'The product schedule provided is not a part of the campaign.');
+        }
+
+      }else if(_.isObject(product_schedule_group.product_schedule)){
+
+        arrayutilities.map(product_schedule_group.product_schedule.schedule, schedule_element => {
+          //Technical Debt:  What if I create the product at purchase time?
+          if(!_.contains(campaign.products, schedule_element.product)){
+            eu.throwError('bad_request', 'The product contained in the watermark schedule provided is not a part of the campaign.');
+          }
+
+        });
+
       }
+
     });
 
     return true;
@@ -319,9 +335,24 @@ class CreateOrderController extends transactionEndpointController{
     du.debug('Create Rebill');
 
     let session = this.parameters.get('session');
-    let product_schedules = this.parameters.get('productschedules');
+    let product_schedules = this.parameters.get('productschedules', null, false);
+    let products = this.parameters.get('products', null, false);
 
-    return this.rebillHelperController.createRebill({session: session, product_schedules: product_schedules, day: -1})
+    let argumentation = {
+      session: session,
+      day: -1
+    };
+
+    if(!_.isNull(product_schedules)){
+      argumentation.product_schedules = product_schedules;
+    }
+
+    if(!_.isNull(products)){
+      argumentation.products = products;
+    }
+
+  //du.info(product_schedules);  process.exit();
+    return this.rebillHelperController.createRebill(argumentation)
     .then(rebill => {
 
       this.parameters.set('rebill', rebill);
