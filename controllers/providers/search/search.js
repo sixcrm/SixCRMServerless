@@ -8,8 +8,6 @@ class searchController {
 
     constructor(){
 
-      super();
-
 	//Technical Debt:  This needs to be configured.
       this.entity_types = {
         product: 'product',
