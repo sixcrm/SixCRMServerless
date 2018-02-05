@@ -155,20 +155,30 @@ describe('stateMachineDocker', () => {
             updated_at:timestamp.getISO8601()
         };
 
+        let non_existant_id = '5e595e15-e0d9-4f9a-a381-484594820d34'; //this is not in the system
+
         before((done) => {
             Promise.all([
                 rebillController.create({entity: rebill}),
-                SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + rebill.id +'"}')
+                SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + rebill.id +'"}'),
+                SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + non_existant_id +'"}')
             ]).then(() => done());
         });
 
-        it('rebill should move from bill to hold and update its state', () => {
+        xit('rebill should move from bill to hold and update its state', () => {
 
             return rebillController.get({id: rebill.id})
                 .then(rebill => expect(rebill.state).to.equal('bill'))
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('hold'))
+        });
+
+        it('missing rebill should cause the message to go to error', () => {
+
+            return () => flushStateMachine()
+                .then(() => SqSTestUtils.messageCountInQueue('bill_error'))
+                .then((count) => expect(count).to.be.above(0, 'No message in bill_error queue.'))
         });
 
     });
@@ -189,20 +199,30 @@ describe('stateMachineDocker', () => {
             updated_at:timestamp.getISO8601()
         };
 
+        let non_existant_id = '5e595e15-e0d9-4f9a-a381-484594820d34'; //this is not in the system
+
         before((done) => {
             Promise.all([
                 rebillController.create({entity: rebill}),
-                SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}')
+                SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}'),
+                SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + non_existant_id +'"}')
             ]).then(() => done());
         });
 
-        it('rebill should move from hold to pending and update its state', () => {
+        xit('rebill should move from hold to pending and update its state', () => {
 
             return rebillController.get({id: rebill.id})
                 .then(rebill => expect(rebill.state).to.equal('hold'))
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('pending'))
+        });
+
+        it('missing rebill should cause the message to go to error', () => {
+
+            return () => flushStateMachine()
+                .then(() => SqSTestUtils.messageCountInQueue('hold_error'))
+                .then((count) => expect(count).to.be.above(0, 'No message in hold_error queue.'))
         });
 
     });
@@ -223,10 +243,13 @@ describe('stateMachineDocker', () => {
             updated_at:timestamp.getISO8601()
         };
 
+        let non_existant_id = '5e595e15-e0d9-4f9a-a381-484594820d34'; //this is not in the system
+
         before((done) => {
             Promise.all([
                 rebillController.create({entity: rebill}),
-                SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + rebill.id +'"}')
+                SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + rebill.id +'"}'),
+                SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + non_existant_id +'"}')
             ]).then(() => done());
         });
 
@@ -237,6 +260,13 @@ describe('stateMachineDocker', () => {
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('pending_error'))
+        });
+
+        it('missing rebill should cause the message to go to error', () => {
+
+            return () => flushStateMachine()
+                .then(() => SqSTestUtils.messageCountInQueue('pending_error'))
+                .then((count) => expect(count).to.be.above(0, 'No message in pending_error queue.'))
         });
 
     });
@@ -257,10 +287,13 @@ describe('stateMachineDocker', () => {
             updated_at:timestamp.getISO8601()
         };
 
+        let non_existant_id = '5e595e15-e0d9-4f9a-a381-484594820d34'; //this is not in the system
+
         before((done) => {
             Promise.all([
                 rebillController.create({entity: rebill}),
-                SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill.id +'"}')
+                SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill.id +'"}'),
+                SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + non_existant_id +'"}')
             ]).then(() => done());
         });
 
@@ -273,6 +306,11 @@ describe('stateMachineDocker', () => {
                 .then(rebill => expect(rebill.state).to.equal('shipped_error'))
         });
 
+        it('missing rebill should cause the message to go to error', () => {
+            return () => flushStateMachine()
+                .then(() => SqSTestUtils.messageCountInQueue('shipped_error'))
+                .then((count) => expect(count).to.be.above(0, 'No message in shipped_error queue.'))
+        });
     });
 
     describe('Delivered To Archive', () => {
