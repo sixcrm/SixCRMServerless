@@ -93,6 +93,7 @@ class InfoController extends transactionEndpointController{
       return this.productScheduleController.getListByAccount({ids: event.productschedules}).then(product_schedules_result => {
 
         let hydrated_product_schedules_promises = arrayutilities.map(product_schedules_result.productschedules, product_schedule => {
+
           return this.productScheduleController.getProducts(product_schedule).then(products_result => {
             return productScheduleHelper.marryProductsToSchedule({product_schedule: product_schedule, products: products_result.products});
           });
