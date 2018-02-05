@@ -207,6 +207,40 @@ describe('stateMachineDocker', () => {
 
     });
 
+    describe('Pending To Shipped', () => {
+
+        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebill = {
+            bill_at: timestamp.getISO8601(),
+            id: uuidV4(),
+            state: 'pending',
+            processing: true,
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
+        before((done) => {
+            Promise.all([
+                rebillController.create({entity: rebill}),
+                SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + rebill.id +'"}')
+            ]).then(() => done());
+        });
+
+        it('rebill should move from pending to pending_error when transactions are missing', () => {
+
+            return rebillController.get({id: rebill.id})
+                .then(rebill => expect(rebill.state).to.equal('pending'))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('pending_error'))
+        });
+
+    });
+
     describe('Shipped To Delivered', () => {
 
         let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -230,7 +264,7 @@ describe('stateMachineDocker', () => {
             ]).then(() => done());
         });
 
-        it('rebill should move from shipped to shipped_error when missing transactions', () => {
+        it('rebill should move from shipped to shipped_error when transactions are missing', () => {
 
             return rebillController.get({id: rebill.id})
                 .then(rebill => expect(rebill.state).to.equal('shipped'))
