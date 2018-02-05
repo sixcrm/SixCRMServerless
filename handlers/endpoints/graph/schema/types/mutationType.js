@@ -121,10 +121,10 @@ module.exports.graphObj = new GraphQLObjectType({
         }
 			},
 			resolve: (value, accountimage) => {
-				const AccountImageHelperController = global.SixCRM.routes.include('helpers', 'resources/accountimage/AccountImage.js');
+				const AccountImageHelperController = global.SixCRM.routes.include('helpers', 'resources/accountimages/AccountImages.js');
 				let accountImageHelperController = new AccountImageHelperController();
 
-				return accountImageHelperController.uploadImageToS3({
+				return accountImageHelperController.upload({
           data: accountimage.accountimage.data
         });
 			}
