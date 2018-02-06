@@ -272,6 +272,20 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    getCurrentQueueSummary(parameters){
+
+      du.debug('Get Rebills current queue summary');
+
+      const queuename = parameters.queuename;
+
+      parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
+
+      parameters = this.appendQueueName(parameters, queuename);
+
+      return this.getResults('order_engine/rebills_current_summary', parameters, this.default_queue_account_filter);
+
+    }
+
     getRebillSummary(parameters){
 
       du.debug('Get Rebill Summary');

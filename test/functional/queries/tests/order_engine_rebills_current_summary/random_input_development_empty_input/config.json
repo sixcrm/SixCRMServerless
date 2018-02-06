@@ -1,0 +1,9 @@
+{
+  "method": "getCurrentQueueSummary",
+  "test_case": "Runing on empty data",
+  "input": {
+    "queuename":"hold",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "summary",
+  "expect":  [{"queuename":"hold","avg_time":{},"number_of_rebills":"0","failure_rate":"0"}] 
+}
