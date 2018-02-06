@@ -6,7 +6,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const ShippingStatusController = global.SixCRM.routes.include('controllers', 'helpers/shippingcarriers/ShippingStatus.js');
 
-class confirmDeliveredController extends workerController {
+module.exports = class confirmDeliveredController extends workerController {
 
     constructor(){
 
@@ -170,5 +170,3 @@ class confirmDeliveredController extends workerController {
     }
 
 }
-
-module.exports = new confirmDeliveredController();

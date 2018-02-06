@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
-class PickRebillsController extends workerController {
+module.exports = class PickRebillsController extends workerController {
 
   constructor(){
 
@@ -65,5 +65,3 @@ class PickRebillsController extends workerController {
   }
 
 }
-
-module.exports = new PickRebillsController();

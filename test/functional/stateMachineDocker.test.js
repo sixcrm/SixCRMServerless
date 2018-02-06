@@ -207,7 +207,7 @@ describe('stateMachineDocker', () => {
                 .then((count) => expect(count).to.be.equal(0, 'No message should be in bill queue.'))
         });
 
-        xit('updates rebill processing', () => {
+        it('updates rebill processing', () => {
 
             return rebillController.get({id: rebill.id})
                 .then(rebill => expect(rebill.processing).to.equal(true))

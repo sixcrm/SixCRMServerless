@@ -7,7 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
-class archiveController extends workerController {
+module.exports = class archiveController extends workerController {
 
   constructor(){
 
@@ -197,5 +197,3 @@ class archiveController extends workerController {
   }
 
 }
-
-module.exports = new archiveController();
