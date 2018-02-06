@@ -151,6 +151,8 @@ let rebillsInQueueType = require('./analytics/order_engine/queuesummary/rebillsI
 
 let listQueueMessageType = require('./queue/listQueueMessageType');
 
+let secondaryIdentifierInputType = require('./general/secondaryIdentifierInputType');
+
 let list_fatal = true;
 let get_fatal = true;
 
@@ -296,6 +298,29 @@ module.exports.graphObj = new GraphQLObjectType({
 
               return transactionsController.listByCustomer({customer: transaction.customer, pagination: transaction.pagination, fatal: list_fatal});
             }
+        },
+        sessionbycustomerandsecondaryidentifier:{
+          type: sessionType.graphObj,
+          args: {
+            customer: {
+              description: 'The customer identifier',
+              type: new GraphQLNonNull(GraphQLString)
+            },
+            secondary_identifier: {
+              type: secondaryIdentifierInputType.graphObj,
+              description: 'The secondary identifier'
+            },
+            pagination: {type: paginationInputType.graphObj}
+          },
+          resolve: function(root, args){
+            const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
+            let customerHelperController = new CustomerHelperController();
+
+            return customerHelperController.customerSessionBySecondaryIdentifier({
+              customer: args.customer,
+              secondary_identifier: args.secondary_identifier
+            });
+          }
         },
         sessionlistbycustomer: {
             type: sessionListType.graphObj,
