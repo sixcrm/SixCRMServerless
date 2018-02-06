@@ -23,6 +23,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the session.',
         },
+        alias:{
+          type: GraphQLString,
+          description: 'The alias of the session'
+        },
         customer: {
             type: customerType.graphObj,
             description: 'The customer record that the session references.',

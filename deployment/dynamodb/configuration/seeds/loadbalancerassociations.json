@@ -1,0 +1,10 @@
+[{
+	"id":"2102d7ca-0c1a-4a27-a174-4836cec7d2e3",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"loadbalancer":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+	"campaign":"70a6689a-5814-438b-b9fd-dd484d0812f9",
+	"entity":"668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+	"entity_type":"product",
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
+}]
