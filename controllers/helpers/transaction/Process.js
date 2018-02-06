@@ -21,7 +21,6 @@ module.exports = class Process extends TransactionUtilities{
       this.parameter_definitions = {
         required:{
           customer:'customer',
-          productschedule:'productschedule',
           amount:'amount'
         },
         optional:{
@@ -210,19 +209,13 @@ module.exports = class Process extends TransactionUtilities{
       let promises = [];
 
       let customer = this.parameters.get('customer');
-      let productschedule = this.parameters.get('productschedule');
-
       let customer_id = this.customerController.getID(customer);
-      let productschedule_id = this.productScheduleController.getID(productschedule);
 
       promises.push(this.customerController.get({id: customer_id}));
-      promises.push(this.productScheduleController.get({id: productschedule_id}));
 
       return Promise.all(promises).then((promises) => {
 
         this.parameters.set('customer', promises[0]);
-
-        this.parameters.set('productschedule', promises[1]);
 
         return promises;
 
@@ -557,6 +550,8 @@ module.exports = class Process extends TransactionUtilities{
     getLoadBalancer(){
 
       du.debug('Get Loadbalancer');
+
+      du.info(this.parameters.store); process.exit();
 
       let productschedule = this.parameters.get('productschedule');
 

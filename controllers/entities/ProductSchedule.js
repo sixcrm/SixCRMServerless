@@ -139,6 +139,7 @@ class productScheduleController extends entityController {
 
           let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_ids});
 
+          du.warning(query_parameters);
           return this.executeAssociatedEntityFunction('productController', 'listByAccount', {query_parameters: query_parameters});
 
         }

@@ -168,7 +168,7 @@
 		"enabled":true,
 		"gateway": {
 			"type":"Stripe",
-			"name":"Some Name",
+			"name":"Stripe",
 			"api_key":"sk_test_BQokikJOvBiI2HlWgH4olfQ2"
 		},
 		"allow_prepaid":true,

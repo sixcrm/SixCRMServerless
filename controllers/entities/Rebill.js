@@ -36,6 +36,20 @@ class rebillController extends entityController {
 
     }
 
+    getMerchantProvider(rebill){
+
+      du.debug('Get Merchant Provider');
+
+      if(_.has(rebill, 'merchant_provider')){
+
+        return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: rebill.merchant_provider});
+
+      }
+
+      return null;
+
+    }
+
 	  //Note: rebills don't get product associations, only product schedules
     //Technical Debt:  Is this deprecated?
     getProducts(rebill){

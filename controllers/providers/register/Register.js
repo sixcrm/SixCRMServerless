@@ -101,25 +101,6 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  processTransaction({rebill}){
-
-    du.debug('Process Transaction');
-
-    return this.can({action: 'process', object: 'register', fatal: true})
-    .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
-    .then(() => this.setDependencies('process'))
-    .then(() => this.acquireRebillProperties())
-    .then(() => this.validateRebillForProcessing())
-    .then(() => this.acquireRebillSubProperties())
-    .then(() => this.calculateAmount())
-    .then(() => this.executeProcess())
-    .then(() => this.executePostProcess())
-    .then(() => this.issueReceipt())
-    .then(() => this.pushTransactionsRecordToRedshift())
-    .then(() => this.transformResponse());
-
-  }
-
   reverseTransaction({transaction}){
 
     du.debug('Reverse Transaction');
@@ -134,6 +115,25 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.executeReverse())
     .then(() => this.issueReceipt())
     .then(() => this.acquireRefundTransactionSubProperties())
+    .then(() => this.pushTransactionsRecordToRedshift())
+    .then(() => this.transformResponse());
+
+  }
+
+  processTransaction({rebill}){
+
+    du.debug('Process Transaction');
+
+    return this.can({action: 'process', object: 'register', fatal: true})
+    .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
+    .then(() => this.setDependencies('process'))
+    .then(() => this.acquireRebillProperties())
+    .then(() => this.validateRebillForProcessing())
+    .then(() => this.acquireRebillSubProperties())
+    .then(() => this.calculateAmount())
+    .then(() => this.executeProcess())
+    .then(() => this.executePostProcess())
+    .then(() => this.issueReceipt())
     .then(() => this.pushTransactionsRecordToRedshift())
     .then(() => this.transformResponse());
 
@@ -296,6 +296,7 @@ module.exports = class Register extends PermissionedController {
     const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
     let registerReceiptController = new RegisterReceiptController();
 
+    //Technical Debt: fix this
     return registerReceiptController.issueReceipt({argumentation: this.parameters.getAll()}).then(receipt_transaction => {
       this.parameters.set('receipttransaction', receipt_transaction);
     });
@@ -374,17 +375,58 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Execute Process');
 
+    let rebill = this.parameters.get('rebill');
     let customer = this.parameters.get('customer');
-
-    let productschedule = this.parameters.get('productschedule');
     let amount = this.parameters.get('amount');
     let merchant_provider = this.parameters.get('merchantprovider', null, false);
 
-    let argument_object = {customer: customer, productschedule: productschedule, amount: amount};
-
-    if(!_.isNull(merchant_provider)){
-      argument_object.merchantprovider = merchant_provider;
+    let merchant_provider_groups;
+    if(_.isNull(merchant_provider)){
+      merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+    }else{
+      merchant_provider_groups = [merchant_provider];
     }
+
+    let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
+
+      return this.processMerchantProviderGroup({customer: customer, merchant_provider: merchant_provider, products: products})
+      .then((result) => this.executePostProcess(result))
+      .then(() => this.issueReceipt())
+      .then(() => this.pushTransactionsRecordToRedshift())
+
+    });
+    //do it...
+
+
+
+    const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
+    let processController = new ProcessController();
+
+    du.info(this.parameters.store);  process.exit();
+
+    return processController.process(argument_object).then(result => {
+
+      this.parameters.set('processorresponse', {
+        code: result.getCode(),
+        message: result.getMessage(),
+        result: result.getResult(),
+        merchant_provider: result.merchant_provider,
+        creditcard: result.creditcard
+      });
+
+      return true;
+
+    });
+
+  }
+
+  processMerchantProviderGroup({customer, merchant_provider, products}){
+
+    let argument_object = {
+      customer: customer,
+      amount: amount,
+      merchant_provider: merchant_provider
+    };
 
     const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let processController = new ProcessController();
@@ -405,16 +447,17 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  executePostProcess(){
+  executePostProcess(processor_response){
 
     du.debug('Execute Post Process');
 
-    this.validateProcessorResponse();
+    //this.validateProcessorResponse();
 
-    let processor_response = this.parameters.get('processorresponse');
+    //let processor_response = this.parameters.get('processorresponse');
 
     return this.merchantProviderController.get({id: processor_response.merchant_provider}).then(merchant_provider => {
 
+      //add this to the object
       this.parameters.set('merchantprovider', merchant_provider);
 
       return true;
@@ -463,18 +506,11 @@ module.exports = class Register extends PermissionedController {
     let rebill = this.parameters.get('rebill');
 
     var promises = [];
-
-    promises.push(this.rebillController.listProductSchedules(rebill));
     promises.push(this.rebillController.getParentSession(rebill));
 
     return Promise.all(promises).then((promises) => {
 
-      this.parameters.set('productschedules', promises[0]);
-
-      //Technical Debt: Hotwired
-      this.parameters.set('productschedule', promises[0][0]);
-
-      this.parameters.set('parentsession', promises[1]);
+      this.parameters.set('parentsession', promises[0]);
 
       return true;
 
@@ -563,7 +599,7 @@ module.exports = class Register extends PermissionedController {
     du.debug('Acquire Rebill Sub-Properties');
 
     let promises = [
-      this.acquireProducts(),
+      //this.acquireProducts(),
       this.acquireCustomer(),
       this.acquireMerchantProvider()
     ];
@@ -579,13 +615,15 @@ module.exports = class Register extends PermissionedController {
     du.debug('Acquire Products');
 
     let parentsession = this.parameters.get('parentsession');
-    let productschedules = this.parameters.get('productschedules');
+    let product_schedules = this.parameters.get('productschedules');
 
     let productScheduleHelperController = new ProductScheduleHelperController();
     let rebillHelperController = new RebillHelperController();
 
     let day_in_cycle = rebillHelperController.calculateDayInCycle(parentsession.created_at);
-    let transaction_products = productScheduleHelperController.getTransactionProducts({day: day_in_cycle, product_schedules: productschedules});
+    du.info(day_in_cycle, product_schedules);
+    let transaction_products = productScheduleHelperController.getTransactionProducts({day: day_in_cycle, product_schedules: product_schedules});
+    du.info(transaction_products);  process.exit();
 
     this.parameters.set('transactionproducts', transaction_products);
 
@@ -621,6 +659,15 @@ module.exports = class Register extends PermissionedController {
 
       });
 
+    }else{
+
+      const MerchantProviderSelectorHelperController = global.SixCRM.routes.include('helpers','transaction/MerchantProviderSelector.js');
+      let merchantProviderSelectorHelperController = new MerchantProviderSelectorHelperController();
+
+      return merchantProviderSelectorHelperController.selectMerchantProviders({rebill:rebill}).then(merchant_providers => {
+        this.parameters.set('merchantprovidergroups', merchant_providers);
+      });
+
     }
 
   }
@@ -645,15 +692,9 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Calculate Amount');
 
-    let transactionproducts = this.parameters.get('transactionproducts');
+    let rebill = this.parameters.get('rebill');
 
-    let product_amounts = arrayutilities.map(transactionproducts, product => {
-      return parseFloat(product.amount);
-    })
-
-    let amount = mathutilities.sum(product_amounts);
-
-    this.parameters.set('amount', amount);
+    this.parameters.set('amount', rebill.amount);
 
     return Promise.resolve(true);
 

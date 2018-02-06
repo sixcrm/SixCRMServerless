@@ -371,6 +371,8 @@ class CreateOrderController extends transactionEndpointController{
 
     return registerController.processTransaction({rebill: rebill}).then((register_response) =>{
 
+      du.info(register_response);  process.exit();
+      
       this.parameters.set('creditcard', register_response.getCreditCard());
       this.parameters.set('transaction', register_response.parameters.get('transaction'));
       this.parameters.set('result', register_response.getProcessorResponse().code);
