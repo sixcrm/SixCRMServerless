@@ -7,6 +7,7 @@
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
     "account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+    "alias":{"$ref":"../definitions/sessionalias.json"},
 		"customer":{
 			"anyOf":[
 				{"$ref": "../definitions/uuidv4.json"},

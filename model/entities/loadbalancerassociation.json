@@ -1,0 +1,20 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/entities/loadbalancerassociation.jsn",
+	"title": "Load Balancer Association",
+	"type": "object",
+	"properties": {
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+		"loadbalancer":{"$ref": "../definitions/uuidv4.json"},
+		"campaign":{"$ref": "../definitions/uuidv4.json"},
+		"entity":{"$ref": "../definitions/uuidv4.json"},
+		"entity_type":{
+			"type":"string",
+			"enum":["product","product_schedule","campaign"]
+		},
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
+	},
+	"required":["account", "loadbalancer", "campaign", "entity", "entity_type", "created_at", "updated_at"]
+}

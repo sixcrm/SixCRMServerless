@@ -45,6 +45,12 @@ module.exports = class CustomerHelperController {
 
           return sessionHelperController.getSessionByCustomerAndID({customer: customer, id: secondary_identifier.value});
         },
+        'session.alias':() => {
+          const SessionHelperController = global.SixCRM.routes.include('helpers','entities/session/Session.js');
+          let sessionHelperController = new SessionHelperController();
+
+          return sessionHelperController.getSessionByCustomerAndAlias({customer: customer, alias: secondary_identifier.value});
+        },
         'transaction.alias':() => this.sessionController.getSessionByCustomentAndTransactionAlias({customer: customer, transaction_alias: secondary_identifier.value}),
         'creditcard.number':() => this.sessionController.getSessionByCustomerAndCreditCardNumber({customer: customer, lastfour: secondary_identifier.value})
       }

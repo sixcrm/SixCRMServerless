@@ -43,4 +43,39 @@ module.exports = class SessionHelperController {
 
   }
 
+  getSessionByCustomerAndAlias({customer, alias}){
+
+    du.debug('Get Session By Customer and Alias');
+
+    if(!_.has(this, 'customerController')){
+      this.customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+    }
+
+    return this.customerController.getCustomerByEmail(customer).then(customer_result => {
+
+      if(_.isNull(customer_result)){ return null; }
+
+      customer = customer_result;
+
+      return this.customerController.getCustomerSessions(customer)
+      .then(sessions => {
+
+        if(!arrayutilities.nonEmpty(sessions)){ return null; }
+
+        let matching_session = arrayutilities.find(sessions, session => {
+          return session.alias == alias;
+        });
+
+        if(_.isObject(matching_session)){
+          return matching_session;
+        }
+
+        return null;
+
+      });
+
+    });
+
+  }
+
 }
