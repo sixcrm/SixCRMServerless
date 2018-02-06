@@ -3,6 +3,7 @@
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
+const _ = require('underscore');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
 module.exports = function(results, parameters){
@@ -13,8 +14,13 @@ module.exports = function(results, parameters){
 
   arrayutilities.map(results, (result) => {
 
-    let average_time = 0;
-    if (numberutilities.isNumber(result.average_time)) {
+    let average_time = {
+            "days": 0,
+            "hours": 0,
+            "seconds": 0
+          }
+
+    if ( !_.isEmpty(result.average_time) ) {
         average_time = result.average_time
     }
 
