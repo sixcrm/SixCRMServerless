@@ -116,7 +116,8 @@ describe('controllers/workers/indexEntities', () => {
 
 	describe('constructor', () => {
     it('successfully constructs', () => {
-      let indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      let indexEntitiesController = new IndexEntitiesController();
 
       expect(objectutilities.getClassName(indexEntitiesController)).to.equal('IndexEntitiesController');
     });
@@ -127,7 +128,8 @@ describe('controllers/workers/indexEntities', () => {
     it('successfully creates a indexing document', () => {
 
       let index_elements =  getValidIndexElements();
-      let indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      let indexEntitiesController = new IndexEntitiesController();
 
       indexEntitiesController.parameters.set('parsedmessagebodies', index_elements);
 
@@ -171,7 +173,8 @@ describe('controllers/workers/indexEntities', () => {
 
       let indexing_document = getValidIndexingDocument();
 
-      let indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      let indexEntitiesController = new IndexEntitiesController();
 
       indexEntitiesController.parameters.set('indexingdocument', indexing_document);
 
@@ -194,7 +197,8 @@ describe('controllers/workers/indexEntities', () => {
 
 
       arrayutilities.map(cloudsearch_responses, cloudsearch_response => {
-        let indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      let indexEntitiesController = new IndexEntitiesController();
 
         indexEntitiesController.parameters.set('cloudsearchresponse', cloudsearch_response);
         return indexEntitiesController.setResponseCode().then(result => {
@@ -217,7 +221,8 @@ describe('controllers/workers/indexEntities', () => {
 
       arrayutilities.map(worker_response_types, worker_response_type => {
 
-        let indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      let indexEntitiesController = new IndexEntitiesController();
 
         indexEntitiesController.parameters.set('responsecode', worker_response_type);
         let response_object = indexEntitiesController.respond();
@@ -233,7 +238,8 @@ describe('controllers/workers/indexEntities', () => {
     it('successfully parses lambda messages', () => {
       let lambda_messages = getValidLambdaMessages();
 
-      let indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      let indexEntitiesController = new IndexEntitiesController();
 
       indexEntitiesController.parameters.set('messages', lambda_messages);
 
@@ -271,7 +277,8 @@ describe('controllers/workers/indexEntities', () => {
         }
       });
 
-      let indexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+      let indexEntitiesController = new IndexEntitiesController();
 
       return indexEntitiesController.execute(lambda_messages).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');

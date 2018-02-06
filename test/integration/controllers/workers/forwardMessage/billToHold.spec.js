@@ -27,7 +27,7 @@ process.argv.forEach((val, index, array) => {
   }
 });
 
-describe('controllers/workers/forwardmessage/billToHoldForwardMessage.js', () => {
+describe('controllers/workers/forwardmessage/billToHold.js', () => {
 
   describe('execute', () => {
 

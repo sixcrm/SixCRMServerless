@@ -38,9 +38,10 @@ describe('controllers/workers/recoverBilling', () => {
       rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
       let message = getValidMessage(rebill_id);
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      let recoverBillingController = new RecoverBillingController();
 
-      return shipProductController.execute(message).then(result => {
+      return recoverBillingController.execute(message).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
         du.info(result, result.getCode());
         expect(result.getCode()).to.equal('success');

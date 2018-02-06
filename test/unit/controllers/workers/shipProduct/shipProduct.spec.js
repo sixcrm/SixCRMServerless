@@ -69,7 +69,8 @@ describe('controllers/workers/shipProduct', function () {
 
     it('successfully constructs', () => {
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      const ShipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      let shipProductController = new ShipProductController();
 
       expect(objectutilities.getClassName(shipProductController)).to.equal('shipProductController');
 
@@ -95,7 +96,8 @@ describe('controllers/workers/shipProduct', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Terminal.js'), terminal_mock);
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      const ShipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      let shipProductController = new ShipProductController();
 
       shipProductController.parameters.set('rebill', rebill);
 
@@ -114,7 +116,8 @@ describe('controllers/workers/shipProduct', function () {
 
       let terminal_response = getValidTerminalResponse();
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      const ShipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      let shipProductController = new ShipProductController();
 
       shipProductController.parameters.set('terminalresponse', terminal_response);
 
@@ -155,7 +158,8 @@ describe('controllers/workers/shipProduct', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Terminal.js'), terminal_mock);
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      const ShipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      let shipProductController = new ShipProductController();
 
       return shipProductController.execute(message).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');

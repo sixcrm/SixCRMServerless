@@ -38,7 +38,8 @@ describe('controllers/workers/shipProduct', () => {
       rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
       let message = getValidMessage(rebill_id);
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      const ShipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
+      let shipProductController = new ShipProductController();
 
       return shipProductController.execute(message).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
