@@ -25,7 +25,7 @@ module.exports = function(results, parameters){
 
     result_array.push({
       queuename: result.queuename,
-      avg_time: result.avg_time,
+      avg_time: avg_time,
       number_of_rebills: result.number_of_rebills,
       failure_rate: result.failure_rate
     });
