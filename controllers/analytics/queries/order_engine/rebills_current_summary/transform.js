@@ -17,7 +17,7 @@ module.exports = function(results, parameters){
             "days": 0,
             "hours": 0,
             "seconds": 0
-          }
+          };
 
     if ( !_.isEmpty(result.avg_time) ) {
         avg_time = result.avg_time
@@ -25,7 +25,7 @@ module.exports = function(results, parameters){
 
     result_array.push({
       queuename: result.queuename,
-      avg_time: avg_time,
+      avg_time: avg_time.days * 86400 + avg_time.hours * 3600 + avg_time.seconds,
       number_of_rebills: result.number_of_rebills,
       failure_rate: result.failure_rate
     });

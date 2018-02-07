@@ -143,7 +143,7 @@ let cacheInputType = require('./cache/cacheInputType');
 /* Start state machine */
 
 let queueSummaryType = require('./analytics/order_engine/queuesummary/queueSummaryType');
-let queueStateType = require('./analytics/order_engine/queuesummary/queueStateType');
+let currentQueueSummary = require('./analytics/order_engine/queuesummary/currentQueueSummaryType');
 
 let rebillsInQueueType = require('./analytics/order_engine/queuesummary/rebillsInQueueType');
 
@@ -616,24 +616,19 @@ module.exports.graphObj = new GraphQLObjectType({
                 return analyticsController.executeAnalyticsFunction(args, 'getRebillsInQueue');
             }
         },
-        queuestate: {
-          type: queueStateType.graphObj,
+        currentqueuesummary: {
+          type: currentQueueSummary.graphObj,
           args: {
-            analyticsfilter: { type: analyticsFilterInputType.graphObj },
             pagination: {type: analyticsPaginationInputType.graphObj},
             queuename: {
               description: 'Name of a queue',
-              type: new GraphQLNonNull(GraphQLString)
-            },
-            period: {
-              description: 'Period of granularity',
               type: new GraphQLNonNull(GraphQLString)
             }
           },
           resolve: function(root, args){
             const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.executeAnalyticsFunction(args, 'getQueueState');
+            return analyticsController.executeAnalyticsFunction(args, 'getCurrentQueueSummary');
           }
         },
         transactionsummaryreportsummary: {
