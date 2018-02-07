@@ -128,6 +128,10 @@ module.exports = class TerminalController extends TerminalUtilities  {
       response = 'success'
     }
 
+    if (!arrayutilities.nonEmpty(compound_fulfillment_responses)) {
+        response = 'noaction'
+    }
+
     let is_error = arrayutilities.find(compound_fulfillment_responses, compound_fulfillment_response => {
       return (compound_fulfillment_response.vendor_response_class.getCode() == 'error');
     });
