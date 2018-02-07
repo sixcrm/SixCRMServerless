@@ -24,18 +24,28 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
             creditcard: 'creditcard'
           },
           optional:{}
+        },
+        selectMerchantProvider:{
+          required:{
+            'smp.loadbalancerid':'loadbalancer_id',
+            'smp.amount':'amount',
+            'smp.creditcard':'creditcard'
+          },
+          optional:{}
         }
       };
 
       this.parameter_validation = {
         'rebill': global.SixCRM.routes.path('model','entities/rebill.json'),
-        'session': global.SixCRM.routes.path('model','entities/session.json')
+        'session': global.SixCRM.routes.path('model','entities/session.json'),
+        'creditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json')
       };
 
       this.instantiateParameters();
 
       this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
       this.loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+      this.creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 
     }
 
@@ -47,6 +57,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'buildMerchantProviderGroups'}))
       .then(() => this.acquireRebillProperties())
       .then(() => this.acquireLoadBalancerAssociations())
+      .then(() => this.acquireCreditCardProperties())
       .then(() => this.sortRebillProductsByLoadBalancerAssociations())
       .then(() => this.transformLoadBalancersToMerchantProviders())
       .then(() => {
@@ -54,6 +65,16 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
         process.exit();
 
       })
+
+    }
+
+    acquireCreditCardProperties(){
+
+      du.debug('Acquire CreditCard Properties');
+
+      return this.acquireCreditCard()
+      .then(() => this.setCreditCardBINNumber())
+      .then(() => this.getCreditCardProperties());
 
     }
 
@@ -69,19 +90,236 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
         let amount = this.calculateAmount(sorted_married_product_groups[loadbalancer]);
 
-        return this.selectMerchantProvider({loadbalancer: loadbalancer, amount: amount, creditcard: creditcard});
+        return this.selectMerchantProviderFromLoadBalancer({loadbalancer_id: loadbalancer, amount: amount, creditcard: creditcard});
 
       });
 
     }
 
-    selectMerchantProvider({loadbalancer, amount, creditcard}){
+    selectMerchantProviderFromLoadBalancer({loadbalancer_id, amount, creditcard}){
 
       du.debug('Select Merchant Provider');
 
-      //get creditcardproperties
-      //select
-      //return
+      return Promise.resolve()
+      .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'selectMerchantProvider'}))
+      .then(() => this.getLoadBalancer())
+      .then(() => this.getMerchantProviders())
+      .then(() => this.getMerchantProviderSummaries())
+      .then(() => this.marryMerchantProviderSummaries())
+      .then(() => this.getLoadBalancerSummary())
+      .then(() => this.filterMerchantProviders())
+      .then(() => this.selectMerchantProviderWithDistributionLeastSumOfSquares())
+      .then((merchantprovider) => {
+
+        this.parameters.set('selected_merchantprovider', merchantprovider);
+
+        return merchantprovider;
+
+      });
+
+    }
+
+    getLoadBalancer(){
+
+      du.debug('Get Loadbalancer');
+
+      let loadbalancer_id = this.parameters.get('smp.loadbalancer_id');
+
+      return this.loadBalancerController.get({id:loadbalancer_id}).then((loadbalancer) => {
+
+        this.parameters.set('smp.loadbalancer', loadbalancer);
+
+        return true;
+
+      });
+
+    }
+
+    getLoadBalancerSummary(){
+
+      du.debug('Get Loadbalancer Summary');
+
+      let loadbalancer = this.parameters.get('smp.loadbalancer_id');
+      let merchant_providers
+
+      let monthly_summary = arrayutilities.serial(loadbalancer.merchantproviders, (current, next) => {
+
+          let merchant_provider = arrayutilities.find(merchant_providers, merchant_provider => {
+            return (merchant_provider.id == next.id);
+          });
+
+          current += merchant_provider.summary.summary.thismonth.amount;
+
+          return current;
+
+        },
+        0.0
+      );
+
+      du.info(monthly_summary);  process.exit();
+    }
+
+    getMerchantProviders(){
+
+      du.debug('Get Merchant Providers');
+
+      let loadbalancer = this.parameters.get('smp.loadbalancer');
+
+      return this.loadBalancerController.getMerchantProviders(loadbalancer).then((merchant_providers) => {
+
+        this.parameters.set('smp.merchantproviders', merchant_providers);
+
+        return true;
+
+      });
+
+    }
+
+    getMerchantProviderSummaries(){
+
+      du.debug('Get Merchant Provider Summaries');
+
+      let merchant_providers = this.parameters.get('smp.merchantproviders');
+
+      let merchant_provider_ids = arrayutilities.map(merchant_providers, merchant_provider => merchant_provider.id);
+
+      let parameters = {
+        analyticsfilter:{
+          merchantprovider: merchant_provider_ids
+        }
+      };
+
+      return this.analyticsController.getMerchantProviderSummaries(parameters).then(results => {
+
+        this.parameters.set('smp.merchantprovidersummaries', results.merchantproviders);
+
+        return true;
+
+      });
+
+    }
+
+    marryMerchantProviderSummaries(){
+
+      du.debug('Marry Merchant Provider Summaries');
+
+      let merchant_provider_summaries = this.parameters.get('smp.merchantprovidersummaries');
+      let merchant_providers = this.parameters.get('smp.merchantproviders');
+
+      arrayutilities.map(merchant_provider_summaries, (summary) => {
+
+        arrayutilities.filter(merchant_providers, (merchant_provider, index) => {
+
+          if(merchant_provider.id == summary.merchantprovider.id){
+            merchant_providers[index].summary = summary;
+          }
+
+        });
+
+      });
+
+      this.parameters.set('smp.merchantproviders', merchant_providers);
+
+      return Promise.resolve(true);
+
+    }
+
+    filterMerchantProviders(){
+
+      du.debug('Filter Merchant Providers');
+
+      let merchant_providers = this.parameters.get('smp.merchantproviders');
+      let creditcard = this.parameters.get('smp.creditcard');
+      let amount = this.parameters.get('smp.amount');
+
+      const MerchantProviderGeneralFilter = global.SixCRM.routes.include('helpers','transaction/filters/MerchantProviderGeneralFilter.js');
+      const MerchantProviderLSSFilter = global.SixCRM.routes.include('helpers','transaction/filters/MerchantProviderLSSFilter.js');
+
+
+      return MerchantProviderGeneralFilter.filter({merchant_providers:merchant_providers, creditcard:creditcard, amount:amount})
+      .then((merchant_providers) => MerchantProviderLSSFilter.filter({merchant_providers: merchant_providers, creditcard: creditcard, amount: amount}))
+      .then(merchant_providers => {
+        this.parameters.set('smp.merchantproviders', merchant_providers);
+      });
+
+    }
+
+    pickMerchantProvider(){
+
+      du.debug('Pick Merchant Provider');
+
+    }
+
+    acquireCreditCard(){
+
+      du.debug('Acquire Credit Card');
+
+      let creditcard = this.parameters.get('creditcard');
+
+      return this.creditCardController.get({id:creditcard}).then(result => {
+
+        this.parameters.set('creditcard', result);
+
+        return true;
+
+      });
+
+    }
+
+    setCreditCardBINNumber(){
+
+      du.debug('Set CreditCard BIN Number');
+
+      let creditcard = this.parameters.get('creditcard');
+
+      let binnumber = this.creditCardController.getBINNumber(creditcard.number);
+
+      if(_.isNull(binnumber)){
+
+        eu.throwError('server', 'Unable to determine BIN Number.');
+
+      }
+
+      creditcard.bin = binnumber;
+
+      this.parameters.set('creditcard', creditcard);
+
+      return true;
+
+    }
+
+    getCreditCardProperties(){
+
+      du.debug('Get Credit Card Properties');
+
+      let creditcard = this.parameters.get('creditcard');
+
+      let analytics_parameters = {
+        binfilter: {
+          binnumber:[parseInt(creditcard.bin)]
+        }
+      };
+
+      return this.analyticsController.getBINList(analytics_parameters).then((properties) => {
+
+        if(_.isNull(properties)){
+          eu.throwError('not_found', 'Unable to identify credit card properties.');
+        }
+
+        if(_.has(properties, 'bins') && arrayutilities.nonEmpty(properties.bins)){
+
+          creditcard.properties = properties.bins[0];
+
+          this.parameters.set('creditcard', creditcard);
+
+          return true;
+
+        }
+
+        return false;
+
+      });
+
 
     }
 
@@ -170,7 +408,5 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       });
 
     }
-
-
 
 }

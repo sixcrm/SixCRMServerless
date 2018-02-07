@@ -479,7 +479,7 @@ module.exports = class Register extends RegisterUtilities {
     du.debug('Acquire Merchant Provider Groups');
 
     let rebill =  this.parameters.get('rebill');
-    let creditcard = this.parameters.get('selected_creditcard');
+    let creditcard = this.parameters.get('creditcard');
 
     if(_.has(rebill, 'merchant_provider')){
 

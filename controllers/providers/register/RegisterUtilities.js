@@ -152,7 +152,9 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     let selected_creditcard = null;
 
-    let creditcards = this.parameters.get('customer', ['creditcards']).creditcards;
+    let creditcards = this.parameters.get('creditcards');
+
+    du.info(creditcards);  process.exit();
 
     arrayutilities.map(creditcards, (credit_card) => {
 
