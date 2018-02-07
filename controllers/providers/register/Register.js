@@ -70,6 +70,7 @@ module.exports = class Register extends RegisterUtilities {
       'productschedules':global.SixCRM.routes.path('model', 'workers/processBilling/productschedules.json'),
       'parentsession': global.SixCRM.routes.path('model', 'entities/session.json'),
       'creditcards': global.SixCRM.routes.path('model', 'workers/processBilling/creditcards.json'),
+      'selectedcreditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json'),
       'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json'),
       'merchantprovider':global.SixCRM.routes.path('model', 'entities/merchantprovider.json')
     };
@@ -479,7 +480,7 @@ module.exports = class Register extends RegisterUtilities {
     du.debug('Acquire Merchant Provider Groups');
 
     let rebill =  this.parameters.get('rebill');
-    let creditcard = this.parameters.get('creditcard');
+    let creditcard = this.parameters.get('selectedcreditcard');
 
     if(_.has(rebill, 'merchant_provider')){
 

@@ -16,17 +16,18 @@ module.exports =  class MerchantProvidersLSSFilter {
 
     du.debug('Select Merchant Provider With Distribution Least Sum of Squares');
 
-    if(arrayutilities.nonEmpty(merchantproviders)){
+    this.loadbalancer = loadbalancer;
 
-      if(merchantproviders.length == 1){
+    if(arrayutilities.nonEmpty(merchant_providers)){
 
-        return Promise.resolve(merchantproviders[0]);
+      if(merchant_providers.length == 1){
+
+        return Promise.resolve(merchant_providers[0]);
 
       }else{
 
-        return this.calculateMerchantProvidersSum()
-        .then(() => this.calculateDistributionTargetsArray())
-        .then(() => this.calculateHypotheticalBaseDistributionArray())
+        return this.calculateDistributionTargetsArray({merchant_providers: merchant_providers})
+        .then((distribution_targets) => this.calculateHypotheticalBaseDistributionArray())
         .then(() => this.selectMerchantProviderFromLSS());
 
       }
@@ -37,13 +38,14 @@ module.exports =  class MerchantProvidersLSSFilter {
 
   }
 
-  calculateMerchantProvidersSum(){
+  /*
+  calculateMerchantProvidersSum({merchant_providers}){
 
     du.debug('Calculate Loadbalancer Sum');
 
-    let sum_array = arrayutilities.map(merchantproviders, lb_merchantprovider => {
+    let sum_array = arrayutilities.map(merchant_providers, lb_merchantprovider => {
 
-      let merchantprovider = arrayutilities.find(merchantproviders, (merchantprovider => {
+      let merchantprovider = arrayutilities.find(merchant_providers, (merchantprovider => {
         return (merchantprovider.id == lb_merchantprovider.id);
       }));
 
@@ -75,20 +77,17 @@ module.exports =  class MerchantProvidersLSSFilter {
     return Promise.resolve(sum);
 
   }
+  */
 
-  calculateDistributionTargetsArray(){
+  calculateDistributionTargetsArray({merchant_providers}){
 
     du.debug('Calculate Distribution Targets Array');
 
-    let merchantproviders = this.parameters.get('merchantproviders');
-
-    let distribution_targets_array = arrayutilities.map(merchantproviders, (merchantprovider) => {
-      return this.getMerchantProviderTargetDistribution(merchantprovider);
+    let distribution_targets_array = arrayutilities.map(merchant_providers, (merchant_provider) => {
+      return this.getMerchantProviderTargetDistribution({merchant_provider: merchant_provider});
     });
 
     return Promise.all(distribution_targets_array).then(distribution_targets_array => {
-
-      this.parameters.set('target_distribution_array', distribution_targets_array);
 
       return distribution_targets_array;
 
@@ -96,18 +95,16 @@ module.exports =  class MerchantProvidersLSSFilter {
 
   }
 
-  getMerchantProviderTargetDistribution(merchantprovider){
+  getMerchantProviderTargetDistribution({merchant_provider}){
 
     du.debug('Get Merchant Provider');
 
-    let selected_loadbalancer = this.parameters.get('selected_loadbalancer', ['merchantproviders']);
-
-    if(!arrayutilities.nonEmpty(selected_loadbalancer.merchantproviders)){
+    if(!arrayutilities.nonEmpty(loadbalancer.merchantproviders)){
       eu.throwError('server','Process.getMerchantProviderTarget assumes that the selected_loadbalancer.merchantproviders an array and has length greater than 0');
     }
 
-    let loadbalancer_mp = arrayutilities.find(selected_loadbalancer.merchantproviders, (lb_mp) => {
-      return (lb_mp.id == merchantprovider.id);
+    let loadbalancer_mp = arrayutilities.find(this.loadbalancer.merchantproviders, (lb_mp) => {
+      return (lb_mp.id == merchant_provider.id);
     });
 
     if(!_.has(loadbalancer_mp, 'id') || !_.has(loadbalancer_mp, 'distribution')){

@@ -1,0 +1,21 @@
+{
+  "id":"/helpers/transaction/merchantproviderselector/sortedmarriedproductgroups.json",
+  "title":"Sorted Married Product Groups",
+  "type":"object",
+  "patternProperties": {
+    "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$": {
+      "type":"array",
+      "items":{
+        "type":"object",
+        "properties":{
+          "product":{"$ref":"../../../entities/product.json"},
+          "amount":{"$ref":"../../../definitions/currency.json"},
+          "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
+          "loadbalancerassociation":{"$ref":"../../../entities/loadbalancerassociation.json"}
+        },
+        "required":["product", "amount", "quantity","loadbalancerassociation"]
+      },
+      "minItems":1
+    }
+  }
+}

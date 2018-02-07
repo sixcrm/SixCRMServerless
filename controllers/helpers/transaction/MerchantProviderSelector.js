@@ -25,7 +25,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
           },
           optional:{}
         },
-        selectMerchantProvider:{
+        selectMerchantProviderFromLoadBalancer:{
           required:{
             'smp.loadbalancerid':'loadbalancer_id',
             'smp.amount':'amount',
@@ -38,14 +38,20 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       this.parameter_validation = {
         'rebill': global.SixCRM.routes.path('model','entities/rebill.json'),
         'session': global.SixCRM.routes.path('model','entities/session.json'),
-        'creditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json')
+        'creditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json'),
+        'sortedmarriedproductgroups': global.SixCRM.routes.path('model','helpers/transaction/merchantproviderselector/sortedmarriedproductgroups.json'),
+        'smp.loadbalancerid':global.SixCRM.routes.path('model','definitions/uuidv4.json'),
+        'smp.amount':global.SixCRM.routes.path('model','definitions/currency.json'),
+        'smp.creditcard':global.SixCRM.routes.path('model','entities/creditcard.json')
       };
 
       this.instantiateParameters();
 
       this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+      this.loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
       this.loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
       this.creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+      this.analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
     }
 
@@ -83,16 +89,22 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       du.debug('Transform Load Balancers To Merchant Providers');
 
       let creditcard = this.parameters.get('creditcard');
+      let sorted_married_product_groups = this.parameters.get('sortedmarriedproductgroups');
 
-      let sorted_married_product_groups = this.parameters.get('soretedmarriedproductgroups');
-
-      return objectutilities.map(sorted_married_product_groups, loadbalancer => {
+      let transformed_married_product_groups_promises = objectutilities.map(sorted_married_product_groups, loadbalancer => {
 
         let amount = this.calculateAmount(sorted_married_product_groups[loadbalancer]);
 
         return this.selectMerchantProviderFromLoadBalancer({loadbalancer_id: loadbalancer, amount: amount, creditcard: creditcard});
 
       });
+
+      return Promise.all(transformed_married_product_groups_promises).then(results => {
+
+        du.info(results);  process.exit();
+
+      });
+
 
     }
 
@@ -101,7 +113,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       du.debug('Select Merchant Provider');
 
       return Promise.resolve()
-      .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'selectMerchantProvider'}))
+      .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'selectMerchantProviderFromLoadBalancer'}))
       .then(() => this.getLoadBalancer())
       .then(() => this.getMerchantProviders())
       .then(() => this.getMerchantProviderSummaries())
@@ -123,7 +135,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       du.debug('Get Loadbalancer');
 
-      let loadbalancer_id = this.parameters.get('smp.loadbalancer_id');
+      let loadbalancer_id = this.parameters.get('smp.loadbalancerid');
 
       return this.loadBalancerController.get({id:loadbalancer_id}).then((loadbalancer) => {
 
@@ -139,8 +151,8 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       du.debug('Get Loadbalancer Summary');
 
-      let loadbalancer = this.parameters.get('smp.loadbalancer_id');
-      let merchant_providers
+      let loadbalancer = this.parameters.get('smp.loadbalancer');
+      let merchant_providers = this.parameters.get('smp.merchantproviders');
 
       let monthly_summary = arrayutilities.serial(loadbalancer.merchantproviders, (current, next) => {
 
@@ -148,7 +160,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
             return (merchant_provider.id == next.id);
           });
 
-          current += merchant_provider.summary.summary.thismonth.amount;
+          current = current + parseFloat(merchant_provider.summary.summary.thismonth.amount);
 
           return current;
 
@@ -156,7 +168,14 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
         0.0
       );
 
-      du.info(monthly_summary);  process.exit();
+      loadbalancer.summary = {
+        month:{
+          sum: monthly_summary
+        }
+      };
+
+      this.parameters.set('loadbalancer', loadbalancer);
+
     }
 
     getMerchantProviders(){
@@ -231,10 +250,10 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       let merchant_providers = this.parameters.get('smp.merchantproviders');
       let creditcard = this.parameters.get('smp.creditcard');
       let amount = this.parameters.get('smp.amount');
+      let loadbalancer = this.parameters.get('smp.loadbalancer');
 
       const MerchantProviderGeneralFilter = global.SixCRM.routes.include('helpers','transaction/filters/MerchantProviderGeneralFilter.js');
       const MerchantProviderLSSFilter = global.SixCRM.routes.include('helpers','transaction/filters/MerchantProviderLSSFilter.js');
-
 
       return MerchantProviderGeneralFilter.filter({merchant_providers:merchant_providers, creditcard:creditcard, amount:amount})
       .then((merchant_providers) => MerchantProviderLSSFilter.filter({merchant_providers: merchant_providers, creditcard: creditcard, amount: amount}))
@@ -360,7 +379,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
         return married_product_group.loadbalancerassociation.loadbalancer;
       });
 
-      this.parameters.set('soretedmarriedproductgroups', sorted_product_groups);
+      this.parameters.set('sortedmarriedproductgroups', sorted_product_groups);
 
       return true;
 

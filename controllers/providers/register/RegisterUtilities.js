@@ -154,8 +154,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     let creditcards = this.parameters.get('creditcards');
 
-    du.info(creditcards);  process.exit();
-
     arrayutilities.map(creditcards, (credit_card) => {
 
       if(_.has(credit_card, 'default') && credit_card.default == true){
@@ -178,9 +176,9 @@ module.exports = class RegisterUtilities extends PermissionedController {
       eu.throwError('server', 'Unable to set credit card for customer');
     }
 
-    this.parameters.set('selected_creditcard', selected_creditcard);
+    this.parameters.set('selectedcreditcard', selected_creditcard);
 
-    return Promise.resolve(selected_creditcard);
+    return Promise.resolve(true);
 
   }
 

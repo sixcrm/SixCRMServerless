@@ -83,7 +83,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
   }
 
-  filterCAPShortageMerchantProviders(merchant_providers, amount){
+  static filterCAPShortageMerchantProviders(merchant_providers, amount){
 
     du.debug('Filter CAP Shortage Merchant Providers');
 
@@ -164,6 +164,22 @@ module.exports = class MerchantProviderGeneralFilter {
     });
 
     return Promise.resolve(return_array);
+
+  }
+
+  static makeGeneralBrandString(a_string){
+
+    du.debug('Make General Brand String');
+
+    stringutilities.isString(a_string, true);
+
+    let transformed_string = stringutilities.removeWhitespace(a_string).toLowerCase();
+
+    if(_.has(this.brandaliases, transformed_string)){
+      return this.brandaliases[transformed_string];
+    }
+
+    return transformed_string;
 
   }
 
