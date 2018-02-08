@@ -819,6 +819,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
         resolve_object = secondary_function(resolve_object);
       }
 
+      du.info(resolve_object); 
       return resolve_object;
 
     }
