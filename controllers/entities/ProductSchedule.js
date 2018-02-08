@@ -119,9 +119,12 @@ class productScheduleController extends entityController {
 
     getProduct(scheduled_product){
 
-      du.debug('Get Product');
+			du.debug('Get Product');
 
-      return this.executeAssociatedEntityFunction('productController', 'get', {id: scheduled_product.product});
+			//Techincal Debt: accounting for legacy deta, remove at earliest convenience
+			let product_id = _.has(scheduled_product, 'product') ? scheduled_product.product : scheduled_product.product_id;
+
+      return this.executeAssociatedEntityFunction('productController', 'get', {id: product_id});
 
     }
 

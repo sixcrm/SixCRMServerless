@@ -6,145 +6,244 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-class S3Deployment extends AWSDeploymentUtilities{
+class S3Deployment extends AWSDeploymentUtilities {
 
-    constructor() {
+	constructor() {
 
-      super();
+		super();
 
-      this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+		this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+		this.iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
 
-      this.bucket_name_template = 'sixcrm-{{stage}}-{{bucket_name}}';
+		this.bucket_name_template = 'sixcrm-{{stage}}-{{bucket_name}}';
 
-    }
 
-    createBuckets(){
+	}
 
-      du.debug('Create Buckets');
+	createBuckets() {
 
-      let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','s3/buckets'));
+		du.debug('Create Buckets');
 
-      if(!_.isArray(bucket_group_files)){
-        eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.');
-      }
+		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets'));
 
-      let bucket_promises = [];
+		if (!_.isArray(bucket_group_files)) {
+			eu.throwError('server', 'S3Deployment.createBuckets assumes that the bucket_group_files is an array of file names.');
+		}
 
-      bucket_group_files.forEach((bucket_group_file) => {
+		let bucket_promises = [];
 
-        du.info(bucket_group_file);
+		bucket_group_files.forEach((bucket_group_file) => {
 
-        let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/'+bucket_group_file);
+			du.info(bucket_group_file);
 
-        if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
+			let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/' + bucket_group_file);
 
-        bucket_promises.push(this.createBucketFromGroupFileDefinition(bucket_group_file_contents));
+			if (!_.isArray(bucket_group_file_contents)) { eu.throwError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
 
-      });
+			bucket_promises.push(this.createBucketFromGroupFileDefinition(bucket_group_file_contents));
 
-      return Promise.all(bucket_promises).then(() => {
+		});
 
-        return 'Complete';
+		return Promise.all(bucket_promises).then(() => {
 
-      });
+			return 'Complete';
 
-    }
+		});
 
-    destroyBuckets(){
+	}
+	createBackupBuckets() {
 
-      du.debug('Destroy Buckets');
+		du.debug('Create Backup Buckets');
 
-      let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','s3/buckets'));
+		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets_backup'));
 
-      if(!_.isArray(bucket_group_files)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.'); }
+		if (!_.isArray(bucket_group_files)) {
+			eu.throwError('server', 'S3Deployment.createBackupBuckets assumes that the bucket_group_files is an array of file names.');
+		}
 
-      let bucket_promises = [];
+		let bucket_promises = [];
 
-      bucket_group_files.forEach((bucket_group_file) => {
+		bucket_group_files.forEach((bucket_group_file) => {
 
-        let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/'+bucket_group_file);
+			du.info(bucket_group_file);
 
-        if(!_.isArray(bucket_group_file_contents)){ eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
+			let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/' + bucket_group_file);
 
-        bucket_promises.push(this.deleteBucketFromGroupFileDefinition(bucket_group_file_contents));
+			if (!_.isArray(bucket_group_file_contents)) { eu.throwError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
 
-      });
+			bucket_promises.push(this.createBucketFromGroupFileDefinition(bucket_group_file_contents));
 
-      return Promise.all(bucket_promises).then(() => {
+		});
 
-        return 'Complete';
+		return Promise.all(bucket_promises).then(() => {
 
-      });
+			return 'Complete';
 
-    }
+		});
 
-    createBucketPath(bucket_name, prepended_path){
+	}
 
-      let return_path = bucket_name;
+	destroyBuckets() {
 
-      if(!_.isUndefined(prepended_path)){
+		du.debug('Destroy Buckets');
 
-        return_path = prepended_path+'/'+return_path;
+		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets'));
 
-      }
+		if (!_.isArray(bucket_group_files)) { eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.'); }
 
-      return return_path;
+		let bucket_promises = [];
 
-    }
+		bucket_group_files.forEach((bucket_group_file) => {
 
-    createBucketFromGroupFileDefinition(group_file_definition){
+			let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/' + bucket_group_file);
 
-      du.debug('Create Bucket From Group File Definition');
+			if (!_.isArray(bucket_group_file_contents)) { eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
 
-      let group_file_definition_promises = group_file_definition.map((sub_definition) => {
+			bucket_promises.push(this.deleteBucketFromGroupFileDefinition(bucket_group_file_contents));
 
-        let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
+		});
 
-        return this.s3utilities.assureBucket(bucket_name);
+		return Promise.all(bucket_promises).then(() => {
 
-      });
+			return 'Complete';
 
-      return Promise.all(group_file_definition_promises);
+		});
 
-    }
+	}
 
-    deleteBucketFromGroupFileDefinition(group_file_definition){
+	createBucketPath(bucket_name, prepended_path) {
 
-      let group_file_definition_promises = group_file_definition.map((sub_definition) => {
+		let return_path = bucket_name;
 
-        let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
+		if (!_.isUndefined(prepended_path)) {
 
-        return this.s3utilities.assureDelete(bucket_name);
+			return_path = prepended_path + '/' + return_path;
 
-      });
+		}
 
-      return Promise.all(group_file_definition_promises);
+		return return_path;
 
-    }
+	}
 
-    bucketExists(parameters){
+	createBucketFromGroupFileDefinition(group_file_definition) {
 
-       var param = {
-           Bucket: parameters.Bucket
-       };
+		du.debug('Create Bucket From Group File Definition');
 
-       return new Promise((resolve) => {
-           this.s3.headBucket(param, (error) => {
-               if (error) {
-                   return resolve(false);
-               } else {
-                   return resolve(true);
-               }
-           });
-       });
+		let group_file_definition_promises = group_file_definition.map((sub_definition) => {
 
-    }
+			let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
 
-    createEnvironmentSpecificBucketName(bucket_name){
+			return this.s3utilities.assureBucket(bucket_name);
 
-      return parserutilities.parse(this.bucket_name_template, {stage: process.env.stage, bucket_name: bucket_name});
+		});
 
-    }
+		return Promise.all(group_file_definition_promises);
+
+	}
+
+	deleteBucketFromGroupFileDefinition(group_file_definition) {
+
+		let group_file_definition_promises = group_file_definition.map((sub_definition) => {
+
+			let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
+
+			return this.s3utilities.assureDelete(bucket_name);
+
+		});
+
+		return Promise.all(group_file_definition_promises);
+
+	}
+
+	bucketExists(parameters) {
+
+		var param = {
+			Bucket: parameters.Bucket
+		};
+
+		return new Promise((resolve) => {
+			this.s3.headBucket(param, (error) => {
+				if (error) {
+					return resolve(false);
+				} else {
+					return resolve(true);
+				}
+			});
+		});
+
+	}
+
+	createEnvironmentSpecificBucketName(bucket_name) {
+
+		return parserutilities.parse(this.bucket_name_template, { stage: process.env.stage, bucket_name: bucket_name });
+
+	}
+
+	configureBackups() {
+
+		du.debug('Configure Bucket Backup');
+
+		let bucket_replication_promises = [];
+
+		let backup_definitions = global.SixCRM.routes.include('deployment', 's3/configuration/backup_defintions.json');
+
+		if (!_.isArray(backup_definitions)) { eu.throwError('server', 'S3Deployment.configureBucketBackup assumes that the JSON files are arrays.'); }
+
+		backup_definitions.forEach((backup_definition) => {
+
+			bucket_replication_promises.push(this.executeConfigureBackups(backup_definition));
+
+		});
+
+		return Promise.all(bucket_replication_promises).then(() => {
+
+			return 'Complete';
+
+		});
+	}
+
+	executeConfigureBackups(backup_definition) {
+
+		du.debug('Execute Bucket Backup');
+
+		let source_bucket = this.createEnvironmentSpecificBucketName(backup_definition.source);
+		let destination_bucket = this.createEnvironmentSpecificBucketName(backup_definition.destination);
+
+
+		return this.s3utilities.putBucketVersioning(source_bucket)
+			.then(() => this.s3utilities.putBucketVersioning(destination_bucket))
+			.then(() => this.getReplicationRole())
+			.then(replication_role => this.s3utilities.putBucketReplication({
+				source: source_bucket,
+				destination: destination_bucket,
+				role: replication_role.Role.Arn
+			}))
+		// .then(() => this.s3utilities.putBucketLifecycleConfiguration(backup_definition.destination));
+
+	}
+
+	getReplicationRole() {
+
+		du.debug('Get Replication Role');
+
+		let role_definition = global.SixCRM.routes.include('deployment', 'iam/roles/s3_replication.json');
+
+		du.warning(role_definition);
+
+		return this.iamutilities.roleExists({ RoleName: role_definition[0].RoleName })
+			.then(result => {
+
+				if (result == false) {
+
+					eu.throwError('server', 'Role does not exist: ' + role_definition[0].RoleName);
+
+				}
+
+				return Promise.resolve(result);
+
+			});
+
+	}
 
 }
 

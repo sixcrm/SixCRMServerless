@@ -10,6 +10,7 @@ function getValidBucketObjects() {
 describe('lib/s3-utilities', () => {
 
     let test_mode;
+
     before(() => {
         test_mode = process.env.TEST_MODE;
         process.env.TEST_MODE = 'false';
@@ -689,5 +690,42 @@ describe('lib/s3-utilities', () => {
             });
         });
 
-    });
+		});
+
+    describe('putBucketLifecycleConfiguration', () => {
+
+			xit('sets lifecycle settings on a bucket', () => {
+
+					const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+
+					s3utilities.s3 = {
+						putBucketLifecycleConfiguration: (params, callback) => {
+									callback(null, 'sample lifecycle data');
+							}
+					};
+
+					return s3utilities.putBucketLifecycleConfiguration('a bucket').then((result) => {
+							return expect(result).to.equal('sample lifecycle data');
+					});
+			});
+
+			xit('returns error when object data is not retrieved', () => {
+
+					const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+
+					s3utilities.s3 = {
+						putBucketLifecycleConfiguration: (params, callback) => {
+									callback(new Error('fail'), null);
+							}
+					};
+
+					return s3utilities.putBucketLifecycleConfiguration('a_bucket').catch((error) => {
+							expect(error.message).to.equal(false);
+					});
+			});
+
+	});
+
+
+
 });
