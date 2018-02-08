@@ -32,9 +32,13 @@ class StateMachineTestUtils {
         ];
     }
 
-    flush() {
+    flush(filter) {
+        let lambda_names = this.lambda_names;
+        if (filter) {
+            lambda_names = this.lambda_names.filter(name => filter.includes(name));
+        }
 
-        let all_function_executions = arrayutilities.map(this.lambda_names, (lambda_name) => {
+        let all_function_executions = arrayutilities.map(lambda_names, (lambda_name) => {
             let lambda = lambdautilities.getLambdaInstance(lambda_name);
             let function_name = Object.keys(lambda); // function is the first property of the handler
 

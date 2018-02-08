@@ -32,6 +32,7 @@ describe('pickRebillToBill', () => {
             let test = { seeds: {}, expectations: {} };
             test.description = config.description;
             test.path = test_path;
+            test.lambda_filter = config.lambda_filter;
 
 
             if (fileutilities.fileExists(test_path + '/seeds')) {
@@ -80,10 +81,9 @@ describe('pickRebillToBill', () => {
     arrayutilities.map(tests, (test) => {
         it(test.description, () => {
             return beforeTest(test)
-                .then(() => StateMachine.flush())
+                .then(() => StateMachine.flush(test.lambda_filter))
                 .then(() => verifyRebills(test))
                 .then(() => verifySqs(test))
-                // .catch(e => done(e));
         })
     });
 
