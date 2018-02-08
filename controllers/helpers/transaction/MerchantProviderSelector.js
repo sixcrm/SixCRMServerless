@@ -65,12 +65,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       .then(() => this.acquireLoadBalancerAssociations())
       .then(() => this.acquireCreditCardProperties())
       .then(() => this.sortRebillProductsByLoadBalancerAssociations())
-      .then(() => this.transformLoadBalancersToMerchantProviders())
-      .then(() => {
-
-        process.exit();
-
-      })
+      .then(() => this.transformLoadBalancersToMerchantProviders());
 
     }
 
@@ -95,13 +90,29 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
         let amount = this.calculateAmount(sorted_married_product_groups[loadbalancer]);
 
-        return this.selectMerchantProviderFromLoadBalancer({loadbalancer_id: loadbalancer, amount: amount, creditcard: creditcard});
+        return this.selectMerchantProviderFromLoadBalancer({loadbalancer_id: loadbalancer, amount: amount, creditcard: creditcard})
+        .then((selected_merchant_provider) => {
+          return {
+            merchant_provider: selected_merchant_provider.id,
+            product_group: sorted_married_product_groups[loadbalancer]
+          }
+        });
 
       });
 
       return Promise.all(transformed_married_product_groups_promises).then(results => {
 
-        du.info(results);  process.exit();
+        return arrayutilities.reduce(results, (return_object, result) => {
+
+          if(!_.has(return_object, result.merchant_provider)){
+            return_object[result.merchant_provider] = [];
+          }
+
+          return_object[result.merchant_provider].push(result.product_group);
+
+          return return_object;
+
+        }, {});
 
       });
 
@@ -120,12 +131,10 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       .then(() => this.marryMerchantProviderSummaries())
       .then(() => this.getLoadBalancerSummary())
       .then(() => this.filterMerchantProviders())
-      .then(() => this.selectMerchantProviderWithDistributionLeastSumOfSquares())
-      .then((merchantprovider) => {
+      .then(() => {
 
-        this.parameters.set('selected_merchantprovider', merchantprovider);
-
-        return merchantprovider;
+        let merchant_provider = this.parameters.get('smp.merchantprovider');
+        return merchant_provider;
 
       });
 
@@ -255,10 +264,11 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       const MerchantProviderGeneralFilter = global.SixCRM.routes.include('helpers','transaction/filters/MerchantProviderGeneralFilter.js');
       const MerchantProviderLSSFilter = global.SixCRM.routes.include('helpers','transaction/filters/MerchantProviderLSSFilter.js');
 
-      return MerchantProviderGeneralFilter.filter({merchant_providers:merchant_providers, creditcard:creditcard, amount:amount, loadbalancer: loadbalancer})
+      return MerchantProviderGeneralFilter.filter({merchant_providers: merchant_providers, creditcard:creditcard, amount:amount})
       .then((merchant_providers) => MerchantProviderLSSFilter.filter({merchant_providers: merchant_providers, creditcard: creditcard, amount: amount, loadbalancer: loadbalancer}))
-      .then(merchant_providers => {
-        this.parameters.set('smp.merchantproviders', merchant_providers);
+      .then(merchant_provider => {
+        this.parameters.set('smp.merchantprovider', merchant_provider);
+        return true;
       });
 
     }

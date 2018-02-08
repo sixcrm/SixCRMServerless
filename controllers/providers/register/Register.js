@@ -132,8 +132,8 @@ module.exports = class Register extends RegisterUtilities {
     .then(() => this.acquireRebillProperties())
     .then(() => this.validateRebillForProcessing())
     .then(() => this.acquireRebillSubProperties())
-    .then(() => this.calculateAmount())
-    .then(() => this.executeProcess())
+    .then(() => this.executeProcesses())
+    /* here */
     .then(() => this.executePostProcess())
     .then(() => this.issueReceipt())
     .then(() => this.pushTransactionsRecordToRedshift())
@@ -373,39 +373,59 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  executeProcess(){
+  executeProcess({merchant_provider: merchant_provider, amount: amount}){
 
-    du.debug('Execute Process');
-
-    let rebill = this.parameters.get('rebill');
     let customer = this.parameters.get('customer');
+
+    return processMerchantProviderGroup({customer: customer, merchant_provider: merchant_provider, amount: amount})
+    .then((result) => {
+
+      const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
+      let registerReceiptController = new RegisterReceiptController();
+
+      let argumentation_object = {
+        rebill:this.parameters.get('rebill'),
+        amount:amount,
+        transactiontype:'sale',
+        processorresponse:result
+      }
+
+      return registerReceiptController.issueReceipt({argumentation: argumentation_object).
+      then((receipt_transaction) => {
+        this.pushTransactionRecordToRedshift();
+        this.parameters.set('receipttransactions', receipt_transaction);
+      });
+
+    })
+    .then((result) => this.pushTransactionRecordToRedshift());
+
+    /*
+    return this.acquireMerchantProvider({merchant_provider: merchant_provider})
+    this.processMerchantProviderGroup({customer: customer, merchant_provider: merchant_provider, products: products})
+    .then((result) => this.executePostProcess(result))
+    .then(() => this.issueReceipt())
+    .then(() => this.pushTransactionsRecordToRedshift())
+    */
+
+  }
+
+  executeProcesses(){
+
+    du.debug('Execute Processes');
+
     let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 
     let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
 
-      return this.acquireMerchantProvider({merchant_provider: merchant_provider})
-      this.processMerchantProviderGroup({customer: customer, merchant_provider: merchant_provider, products: products})
-      .then((result) => this.executePostProcess(result))
-      .then(() => this.issueReceipt())
-      .then(() => this.pushTransactionsRecordToRedshift())
+      let amount = this.calculateAmountFromProductGroups(merchant_provider_groups[merchant_provider]);
+
+      return this.executeProcess({merchant_provider: merchant_provider, amount: amount});
 
     });
-    //do it...
 
+    return Promise.all(process_promises).then(results => {
 
-
-    const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
-    let processController = new ProcessController();
-
-    return processController.process(argument_object).then(result => {
-
-      this.parameters.set('processorresponse', {
-        code: result.getCode(),
-        message: result.getMessage(),
-        result: result.getResult(),
-        merchant_provider: result.merchant_provider,
-        creditcard: result.creditcard
-      });
+      this.parameters.set('processorresults', results);
 
       return true;
 
@@ -413,47 +433,36 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  processMerchantProviderGroup({customer, merchant_provider, products}){
+  calculateAmountFromProductGroups(product_groups){
 
-    let argument_object = {
-      customer: customer,
-      amount: amount,
-      merchant_provider: merchant_provider
-    };
+    du.debug('Calculate Amount From Product Groups');
+
+    return arrayutilities.reduce(product_groups, (sum, product_group) => {
+
+      let subtotal = arrayutilities.reduce(product_group, (subtotal, product) => {
+        return (subtotal + (product.amount * product.quantity));
+      }, 0.0);
+
+      return (sum + subtotal);
+
+    }, 0.0);
+
+  }
+
+  processMerchantProviderGroup({customer, merchant_provider, amount}){
 
     const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let processController = new ProcessController();
 
-    return processController.process(argument_object).then(result => {
+    return processController.process(arguments[0]).then(result => {
 
-      this.parameters.set('processorresponse', {
+      return {
         code: result.getCode(),
         message: result.getMessage(),
         result: result.getResult(),
         merchant_provider: result.merchant_provider,
         creditcard: result.creditcard
-      });
-
-      return true;
-
-    });
-
-  }
-
-  executePostProcess(processor_response){
-
-    du.debug('Execute Post Process');
-
-    //this.validateProcessorResponse();
-
-    //let processor_response = this.parameters.get('processorresponse');
-
-    return this.merchantProviderController.get({id: processor_response.merchant_provider}).then(merchant_provider => {
-
-      //add this to the object
-      this.parameters.set('merchantprovider', merchant_provider);
-
-      return true;
+      };
 
     });
 
@@ -495,11 +504,11 @@ module.exports = class Register extends RegisterUtilities {
     }else{
 
 
-
       const MerchantProviderSelectorHelperController = global.SixCRM.routes.include('helpers','transaction/MerchantProviderSelector.js');
       let merchantProviderSelectorHelperController = new MerchantProviderSelectorHelperController();
 
-      return merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill:rebill, creditcard: creditcard}).then(merchant_provider_groups => {
+      return merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill: rebill, creditcard: creditcard})
+      .then((merchant_provider_groups) => {
 
         this.parameters.set('merchantprovidergroups', merchant_provider_groups);
 
@@ -508,18 +517,6 @@ module.exports = class Register extends RegisterUtilities {
       });
 
     }
-
-  }
-
-  calculateAmount(){
-
-    du.debug('Calculate Amount');
-
-    let rebill = this.parameters.get('rebill');
-
-    this.parameters.set('amount', rebill.amount);
-
-    return Promise.resolve(true);
 
   }
 
