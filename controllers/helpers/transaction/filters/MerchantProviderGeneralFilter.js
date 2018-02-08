@@ -9,25 +9,58 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const Parameters = global.SixCRM.routes.include('providers','Parameters.js');
 
-module.exports = class MerchantProviderGeneralFilter {
+class MerchantProviderGeneralFilter {
 
-  static filter({merchant_providers, creditcard, amount}){
+  constructor(){
 
-    du.debug('Filter Merchant Providers');
+    this.parameter_validation = {
+      'creditcard':global.SixCRM.routes.path('model','entities/creditcard.json'),
+      'merchantproviders':global.SixCRM.routes.path('model','entities/components/merchantproviders.json'),
+      'amount':global.SixCRM.routes.path('model','definitions/currency.json'),
+    };
 
-    return this.filterInvalidMerchantProviders(merchant_providers)
-    .then((merchant_providers) => this.filterDisabledMerchantProviders(merchant_providers))
-    .then((merchantproviders) => this.filterTypeMismatchedMerchantProviders(merchantproviders, creditcard))
-    .then((merchantproviders) => this.filterCAPShortageMerchantProviders(merchantproviders, amount))
-    .then((merchantproviders) => this.filterCountShortageMerchantProviders(merchantproviders))
-    .then((merchantproviders) => {
-      return merchantproviders;
-    });
+    this.parameter_definition = {
+      filter:{
+        required:{
+          merchantproviders:'merchant_providers',
+          creditcard: 'creditcard',
+          amount: 'amount'
+        },
+        optional:{}
+      }
+    };
+
+    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
   }
 
-  static filterInvalidMerchantProviders(merchant_providers){
+  filter({merchant_providers, creditcard, amount}){
+
+    du.debug('Filter Merchant Providers');
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'filter'}))
+    .then(() => this.executeFilter());
+
+  }
+
+  executeFilter(){
+
+    du.debug('Execute Filter');
+
+    let merchant_providers = this.parameters.get('merchantproviders');
+
+    return this.filterInvalidMerchantProviders({merchant_providers: merchant_providers})
+    .then((result) => this.filterDisabledMerchantProviders({merchant_providers: result}))
+    .then((result) => this.filterTypeMismatchedMerchantProviders({merchant_providers: result}))
+    .then((result) => this.filterCAPShortageMerchantProviders({merchant_providers: result}))
+    .then((result) => this.filterCountShortageMerchantProviders({merchant_providers: result}));
+
+  }
+
+  filterInvalidMerchantProviders({merchant_providers}){
 
     du.debug('Filter Invalid Merchant Providers');
 
@@ -45,7 +78,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
   }
 
-  static filterDisabledMerchantProviders(merchant_providers){
+  filterDisabledMerchantProviders({merchant_providers}){
 
     du.debug('Filter Disabled Merchant Providers');
 
@@ -61,9 +94,11 @@ module.exports = class MerchantProviderGeneralFilter {
 
   }
 
-  static filterTypeMismatchedMerchantProviders(merchant_providers, creditcard){
+  filterTypeMismatchedMerchantProviders({merchant_providers}){
 
     du.debug('Filter Type Mismatched Merchant Providers');
+
+    let creditcard = this.parameters.get('creditcard');
 
     if(!arrayutilities.nonEmpty(merchant_providers)){
       eu.throwError('server', 'No merchant providers to select from.');
@@ -83,9 +118,11 @@ module.exports = class MerchantProviderGeneralFilter {
 
   }
 
-  static filterCAPShortageMerchantProviders(merchant_providers, amount){
+  filterCAPShortageMerchantProviders({merchant_providers}){
 
     du.debug('Filter CAP Shortage Merchant Providers');
+
+    let amount = this.parameters.get('amount');
 
     if(!arrayutilities.nonEmpty(merchant_providers)){
       eu.throwError('server', 'No merchant providers to select from.');
@@ -116,7 +153,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
   }
 
-  static filterCountShortageMerchantProviders(merchant_providers){
+  filterCountShortageMerchantProviders({merchant_providers}){
 
     du.debug('Filter Count Shortage Merchant Providers');
 
@@ -167,7 +204,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
   }
 
-  static makeGeneralBrandString(a_string){
+  makeGeneralBrandString(a_string){
 
     du.debug('Make General Brand String');
 
@@ -184,3 +221,5 @@ module.exports = class MerchantProviderGeneralFilter {
   }
 
 }
+
+module.exports = new MerchantProviderGeneralFilter();
