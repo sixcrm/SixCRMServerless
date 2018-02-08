@@ -14,19 +14,31 @@ module.exports = function(results, parameters){
 
   arrayutilities.map(results, (result) => {
 
-    let average_time = {
+    let avg_time = {
             "days": 0,
             "hours": 0,
             "seconds": 0
-          }
+          };
 
-    if ( !_.isEmpty(result.average_time) ) {
-        average_time = result.average_time
-    }
+    if ( !_.isEmpty(result.avg_time) ) {
+        avg_time = result.avg_time
+    };
+
+    if ( _.isUndefined(avg_time.days) ) {
+        avg_time.days = 0
+    };
+
+    if ( _.isUndefined(avg_time.hours) ) {
+        avg_time.hours = 0
+    };
+
+    if ( _.isUndefined(avg_time.seconds) ) {
+        avg_time.seconds = 0
+    };
 
     result_array.push({
       queuename: result.queuename,
-      averagetime: average_time
+      averagetime: avg_time.days * 86400 + avg_time.hours * 3600 + avg_time.seconds,
     });
 
   });

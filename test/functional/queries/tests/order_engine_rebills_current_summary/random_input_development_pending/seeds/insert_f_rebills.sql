@@ -1,0 +1,3 @@
+INSERT INTO public.f_rebills (id_rebill, current_queuename, previous_queuename, account, datetime, amount) VALUES ('f4cc615b-4e0b-4789-b887-ea2ebd7579a7', 'pending', 'hold', 'eefdeca6-41bc-4af9-a561-159acb449b5e', '2018-01-09 20:19:16.000000', 0.00);
+INSERT INTO public.f_rebills (id_rebill, current_queuename, previous_queuename, account, datetime, amount) VALUES ('f4cc615b-4e0b-4789-b887-ea2ebd7579a7', 'pending', 'hold', 'd26c1887-7ad4-4a44-be0b-e80dbce22774', '2018-01-10 21:08:20.821693', 0.00);
+INSERT INTO public.f_rebills (id_rebill, current_queuename, previous_queuename, account, datetime, amount) VALUES ('f4cc615b-4e0b-4789-b887-ea2ebd7579a7', 'bill', 'pending_error', 'd26c1887-7ad4-4a44-be0b-e80dbce22774', '2018-01-11 21:08:31.548028', 0.00);

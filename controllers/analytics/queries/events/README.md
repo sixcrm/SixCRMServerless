@@ -27,7 +27,9 @@ ____
 ---
 ### Query notes
 
-Query returns dataset offset by some value from the beginning of the dataset
+Query returns dataset offset by some value from the beginning of the dataset.
+Events can have no product_schedule feed.
+Events can have no affiliates feed.
 
 ---
 ## Results:
