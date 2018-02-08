@@ -5,5 +5,5 @@
     "queuename":"bill",
     "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
   "result_name": "summary",
-  "expect": [{"queuename":"bill","avg_time":{"days":1,"hours":12},"number_of_rebills":"8","failure_rate":"0"}] 
+  "expect": [{"queuename":"bill","avg_time":129600,"number_of_rebills":"8","failure_rate":"0"}] 
 }

@@ -17,7 +17,9 @@ ____
 ---
 ### Query notes
 
-Straight forward aggregation on the transactional table
+Straight forward aggregation on the transactional table.
+Events can have no product_schedule feed.
+Events can have no affiliates feed.
 
 
 ## Results:

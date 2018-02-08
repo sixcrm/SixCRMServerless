@@ -19,7 +19,9 @@ ____
 ---
 ### Query notes
 
-Create a query which returns the following information from the events table given the filter settings:
+Create a query which returns the following information from the events table given the filter settings.
+Events can have no product_schedule feed.
+Events can have no affiliates feed.
 
 For a given period, return the count, percentage and relative percentage of the following events:
 
