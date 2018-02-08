@@ -2,6 +2,7 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 let imageDimensionsType = require('./imageDimensionsType');
 
@@ -20,6 +21,10 @@ module.exports.graphObj = new GraphQLObjectType({
       name: {
         type: GraphQLString,
         description: 'The image name'
+      },
+      default_image: {
+        type: GraphQLBoolean,
+        description: 'Is image default'
       },
       description: {
         type: GraphQLString,
