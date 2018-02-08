@@ -527,7 +527,7 @@ class RandomRedshiftData extends workerController {
 
         du.debug('Push to S3');
 
-        return s3utilities.assureBucket(this.s3_bucket)
+        return s3utilities.assureBucket({Bucket: this.s3_bucket})
         .then(() => {
 
             let promises = [];
@@ -751,6 +751,7 @@ class RandomRedshiftData extends workerController {
         let period_length = end_time_seconds - start_time_seconds;
         let random_uniform_scalar = randomutilities.randomDouble(0, 1, 5);
         let new_timestamp = period_length * random_uniform_scalar + parseInt(start_time_seconds);
+
         new_timestamp = Math.min(100000000000000,new_timestamp);
 
         du.highlight(timestamp.toISO8601(new_timestamp));

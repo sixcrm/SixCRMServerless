@@ -4,5 +4,11 @@
   },
   {
     "Bucket": "account-resources"
+	},
+	{
+		"Bucket": "account-resources-backup",
+		"CreateBucketConfiguration": {
+			"LocationConstraint": "us-west-1"
+		}
   }
 ]

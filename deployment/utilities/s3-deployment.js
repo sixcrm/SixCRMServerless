@@ -133,7 +133,9 @@ class S3Deployment extends AWSDeploymentUtilities {
 
 			let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
 
-			return this.s3utilities.assureBucket(bucket_name);
+			sub_definition.Bucket = bucket_name;
+
+			return this.s3utilities.assureBucket(sub_definition);
 
 		});
 
@@ -218,7 +220,7 @@ class S3Deployment extends AWSDeploymentUtilities {
 				destination: destination_bucket,
 				role: replication_role.Role.Arn
 			}))
-		// .then(() => this.s3utilities.putBucketLifecycleConfiguration(backup_definition.destination));
+		.then(() => this.s3utilities.putBucketLifecycleConfiguration(destination_bucket));
 
 	}
 

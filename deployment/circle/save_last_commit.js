@@ -7,7 +7,7 @@ const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 let last_commit = exec(`git rev-parse --verify HEAD`).toString().replace(/\r?\n|\r/g,'');
 let bucket_name = 'sixcrm-' + global.SixCRM.configuration.stage + '-resources';
 
-return s3utilities.assureBucket(bucket_name)
+return s3utilities.assureBucket({Bucket: bucket_name})
     .then(() => {
 
         let parameters = {

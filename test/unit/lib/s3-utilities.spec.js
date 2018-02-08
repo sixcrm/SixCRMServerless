@@ -336,7 +336,7 @@ describe('lib/s3-utilities', () => {
 
             s3utilities.bucket_list = ['a_bucket', 'a_bucket2'];
 
-            return s3utilities.assureBucket('a_bucket').then((result) => {
+            return s3utilities.assureBucket({Bucket: 'a_bucket'}).then((result) => {
                 return expect(result).to.be.true;
             });
         });
@@ -353,7 +353,7 @@ describe('lib/s3-utilities', () => {
                 }
             };
 
-            return s3utilities.assureBucket('new_bucket').then((result) => {
+            return s3utilities.assureBucket({Bucket: 'new_bucket'}).then((result) => {
                 return expect(result).to.be.true;
             });
         });
@@ -369,7 +369,7 @@ describe('lib/s3-utilities', () => {
                     callback('fail', null);
                 }
             };
-            return s3utilities.assureBucket('new_bucket').catch((error) => {
+            return s3utilities.assureBucket({Bucket: 'new_bucket'}).catch((error) => {
                 expect(error).to.equal('fail');
             });
         });
