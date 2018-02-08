@@ -10,7 +10,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
-describe('pickRebillToBill', () => {
+describe('deliveredToArchive', () => {
 
     let tests = [];
     let test_dirs = fileutilities.getDirectoryList(__dirname);
@@ -92,7 +92,7 @@ describe('pickRebillToBill', () => {
 
     function seedDynamo(test) {
         if (!test.seeds.dynamodb) {
-          return Promise.resolve();
+            return Promise.resolve();
         }
 
         permissionutilities.disableACLs();
@@ -114,8 +114,24 @@ describe('pickRebillToBill', () => {
             .catch(() => permissionutilities.enableACLs());
     }
 
-    function seedSqs() {
-        return Promise.resolve();
+    function seedSqs(test) {
+        if (!test.seeds.sqs) {
+            return Promise.resolve();
+        }
+
+        let promises = [];
+        test.seeds.sqs.forEach(seed => {
+            let queue_name = seed.replace('.json', '');
+            let seed_file_path = test.path + '/seeds/sqs/' + seed;
+            let messages = require(seed_file_path);
+
+            messages.forEach(message => {
+                promises.push(SqSTestUtils.sendMessageToQueue(queue_name, JSON.stringify(message)));
+            });
+
+        });
+
+        return Promise.all(promises);
     }
 
     function rebills() {
@@ -153,6 +169,7 @@ describe('pickRebillToBill', () => {
     function verifyRebills(test) {
         return rebills()
             .then((rebills) => {
+                rebills = rebills || [];
                 let expected = require(test.path + '/expectations/dynamodb/rebills.json');
 
                 expected.sort((a,b) => a.id < b.id);
