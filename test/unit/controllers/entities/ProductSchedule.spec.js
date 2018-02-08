@@ -235,14 +235,14 @@ describe('controllers/ProductSchedule.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), {
                 get: ({id}) => {
-                    expect(id).to.equal(product_schedule.product);
+                    expect(id).to.equal(product_schedule.schedule[0].product);
                     return Promise.resolve('a_product');
                 }
             });
 
             let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
 
-            return productScheduleController.getProduct(product_schedule).then((result) => {
+            return productScheduleController.getProduct(product_schedule.schedule[0]).then((result) => {
                 expect(result).to.equal('a_product');
             });
         });
