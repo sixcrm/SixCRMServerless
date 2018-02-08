@@ -18,7 +18,6 @@ const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'uti
 class StateMachineTestUtils {
 
     constructor() {
-        this.lambdas = [];
         this.lambda_names = [
             'pickrebillstobill',
             'billtohold',
@@ -31,15 +30,12 @@ class StateMachineTestUtils {
             'rebilltoarchive',
             'recovertoarchive'
         ];
-
-        arrayutilities.map(this.lambda_names, (lambda_name) => {
-            this.lambdas.push(lambdautilities.getLambdaInstance(lambda_name));
-        });
     }
 
     flush() {
 
-        let all_function_executions = arrayutilities.map(this.lambdas, (lambda) => {
+        let all_function_executions = arrayutilities.map(this.lambda_names, (lambda_name) => {
+            let lambda = lambdautilities.getLambdaInstance(lambda_name);
             let function_name = Object.keys(lambda); // function is the first property of the handler
 
             return lambda[function_name](null, null, () => {

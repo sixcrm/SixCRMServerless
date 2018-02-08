@@ -79,17 +79,22 @@ describe('pickRebillToBill', () => {
 
     arrayutilities.map(tests, (test) => {
         it(test.description, () => {
-            let rebills_after = [];
-
-            return DynamoDbDeployment.purgeTables()
-                .then(() => seedDynamo(test))
-                .then(() => seedSqs(test))
+            return beforeTest(test)
                 .then(() => StateMachine.flush())
-                .then(() => rebills())
-                .then((rebills) => rebills_after = rebills)
-                .then(() => compareRebills(rebills_after, test));
+                .then(() => verifyRebills(test))
+                .then(() => verifySqs(test))
+                // .catch(e => done(e));
         })
     });
+
+    function beforeTest(test) {
+        return Promise.resolve()
+            .then(() => SQSDeployment.purgeQueues())
+            .then(() => DynamoDbDeployment.destroyTables())
+            .then(() => DynamoDbDeployment.deployTables())
+            .then(() => seedDynamo(test))
+            .then(() => seedSqs(test))
+    }
 
     function seedDynamo(test) {
         if (!test.seeds.dynamodb) {
@@ -129,17 +134,45 @@ describe('pickRebillToBill', () => {
             });
     }
 
-    function compareRebills(rebills, test) {
-        let expected = require(test.path + '/expectations/dynamodb/rebills.json').sort();
+    function verifySqs(test) {
 
-        expected.sort((a,b) => a.id < b.id);
-        rebills.sort((a,b) => a.id < b.id);
+        if (test.expectations.sqs) {
 
-        for (let i = 0; i < expected.length; i++) {
-            for(let key in expected[i]) {
-                expect(rebills[i][key]).to.deep.equal(expected[i][key], key + ' is not the same in rebill with id '+ rebills[i].id);
-            }
+            let comparations = [];
+
+            test.expectations.sqs.forEach(queue_definition => {
+                let expected_queue = require(test.path + '/expectations/sqs/' + queue_definition);
+                let queue_name = queue_definition.replace('.json', '');
+
+                comparations.push(SqSTestUtils.messageCountInQueue(queue_name)
+                    .then(count => {
+                        return expect(count).to.equal(expected_queue.length, `Expected ${expected_queue.length} messages in ${queue_name} but got ${count}`);
+                    }));
+            });
+            return Promise.all(comparations);
+        } else {
+            return Promise.resolve();
         }
+
+    }
+
+    function verifyRebills(test) {
+        return rebills()
+            .then((rebills) => {
+                let expected = require(test.path + '/expectations/dynamodb/rebills.json');
+
+                expected.sort((a,b) => a.id < b.id);
+                rebills.sort((a,b) => a.id < b.id);
+
+                for (let i = 0; i < expected.length; i++) {
+                    for(let key in expected[i]) {
+                        expect(rebills[i][key]).to.deep.equal(
+                            expected[i][key],
+                            '"' + key + '" is not the same in rebill with id '+ rebills[i].id);
+                    }
+                }
+            })
+
     }
 
 });
