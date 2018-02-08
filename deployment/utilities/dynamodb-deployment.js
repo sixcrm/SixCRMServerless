@@ -369,6 +369,10 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       du.debug('Initialize Controllers');
 
+      if (this.controllers.length > 0) {
+          return Promise.resolve();
+      }
+
       return this.getControllerFilenames().then((filenames) => {
 
         filenames.forEach((filename) => {
