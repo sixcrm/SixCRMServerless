@@ -173,7 +173,7 @@ jobs:
           command: node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
       - run:
           name: S3 Backups
-          command: node ./deployment/s3/deploy_baclups.js || echo "No changes, skipping."
+          command: node ./deployment/s3/deploy_backups.js || echo "No changes, skipping."
   deploy_sqs:
     <<: *job-defaults
     steps:
