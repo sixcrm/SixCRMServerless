@@ -694,7 +694,7 @@ describe('lib/s3-utilities', () => {
 
     describe('putBucketLifecycleConfiguration', () => {
 
-			it('sets lifecycle settings on a bucket', () => {
+			xit('sets lifecycle settings on a bucket', () => {
 
 					const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
@@ -709,7 +709,7 @@ describe('lib/s3-utilities', () => {
 					});
 			});
 
-			it('returns error when object data is not retrieved', () => {
+			xit('returns error when object data is not retrieved', () => {
 
 					const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
