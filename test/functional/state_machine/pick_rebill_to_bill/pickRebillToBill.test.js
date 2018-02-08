@@ -1,22 +1,13 @@
 const expect = require('chai').expect;
 const mockery = require('mockery');
-const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('../../sqs-test-utils');
-const TestUtils = require('../../test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
-const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-schema-deployment.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
 describe('pickRebillToBill', () => {
@@ -33,6 +24,7 @@ describe('pickRebillToBill', () => {
             test.description = config.description;
             test.path = test_path;
             test.lambda_filter = config.lambda_filter;
+            test.order = config.order || Number.MAX_SAFE_INTEGER;
 
 
             if (fileutilities.fileExists(test_path + '/seeds')) {
@@ -59,6 +51,7 @@ describe('pickRebillToBill', () => {
         }
 
     });
+    tests.sort((a, b) => a.order - b.order);
 
     before((done) => {
         process.env.require_local = true;
@@ -70,10 +63,6 @@ describe('pickRebillToBill', () => {
             .then(() => DynamoDbDeployment.deployTables())
             .then(() => SQSDeployment.deployQueues())
             .then(() => SQSDeployment.purgeQueues())
-            // .then(() => DynamoDbDeployment.seedTables())
-            // .then(() => redshiftSchemaDeployment.destroy())
-            // .then(() => redshiftSchemaDeployment.deployTables())
-            // .then(() => redshiftSchemaDeployment.seed())
             .then(() => done());
 
     });

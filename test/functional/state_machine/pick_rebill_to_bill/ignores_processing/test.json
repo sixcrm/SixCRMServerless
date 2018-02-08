@@ -1,3 +1,4 @@
 {
-  "description": "Rebill with processing:true should not be picked up"
+  "description": "Rebill with processing:true should not be picked up",
+  "order": 40
 }

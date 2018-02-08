@@ -1,3 +1,4 @@
 {
-  "description": "Rebill with bill date in the future will not be picked up"
+  "description": "Rebill with bill date in the future will not be picked up",
+  "order": 30
 }
