@@ -27,7 +27,38 @@ class S3Deployment extends AWSDeploymentUtilities {
 		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets'));
 
 		if (!_.isArray(bucket_group_files)) {
-			eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.');
+			eu.throwError('server', 'S3Deployment.createBuckets assumes that the bucket_group_files is an array of file names.');
+		}
+
+		let bucket_promises = [];
+
+		bucket_group_files.forEach((bucket_group_file) => {
+
+			du.info(bucket_group_file);
+
+			let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/' + bucket_group_file);
+
+			if (!_.isArray(bucket_group_file_contents)) { eu.throwError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
+
+			bucket_promises.push(this.createBucketFromGroupFileDefinition(bucket_group_file_contents));
+
+		});
+
+		return Promise.all(bucket_promises).then(() => {
+
+			return 'Complete';
+
+		});
+
+	}
+	createBackupBuckets() {
+
+		du.debug('Create Backup Buckets');
+
+		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets_backup'));
+
+		if (!_.isArray(bucket_group_files)) {
+			eu.throwError('server', 'S3Deployment.createBackupBuckets assumes that the bucket_group_files is an array of file names.');
 		}
 
 		let bucket_promises = [];

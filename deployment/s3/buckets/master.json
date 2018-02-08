@@ -4,8 +4,5 @@
   },
   {
     "Bucket": "account-resources"
-  },
-  {
-    "Bucket": "account-resources-backup"
   }
 ]
