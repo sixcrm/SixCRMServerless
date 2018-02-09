@@ -434,9 +434,6 @@ module.exports = class entityController extends entityUtilitiesController {
       }
 
       return this.can({action: 'update', object: this.descriptive_name, id: entity[this.primary_key], fatal: true})
-      .then(() => {
-        entity = this.assignAccount(entity);
-      })
       .then(() => this.exists({entity: entity, return_entity: true}))
       .then((existing_entity) => {
 
@@ -448,6 +445,10 @@ module.exports = class entityController extends entityUtilitiesController {
 
       })
       .then((existing_entity) => {
+        if (existing_entity.account) {
+          entity.account = existing_entity.account;
+        }
+        entity = this.assignAccount(entity);
         entity = this.persistCreatedUpdated(entity, existing_entity);
         entity = this.setUpdatedAt(entity);
       })
