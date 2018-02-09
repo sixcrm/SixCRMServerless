@@ -278,8 +278,6 @@ class AnalyticsController extends AnalyticsUtilities{
 
       const queuename = parameters.queuename;
 
-      parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
       parameters = this.appendQueueName(parameters, queuename);
 
       return this.getResults('order_engine/rebills_current_summary', parameters, this.default_queue_account_filter);

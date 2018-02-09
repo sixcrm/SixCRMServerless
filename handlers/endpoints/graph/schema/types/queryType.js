@@ -619,7 +619,6 @@ module.exports.graphObj = new GraphQLObjectType({
         currentqueuesummary: {
           type: currentQueueSummary.graphObj,
           args: {
-            pagination: {type: analyticsPaginationInputType.graphObj},
             queuename: {
               description: 'Name of a queue',
               type: new GraphQLNonNull(GraphQLString)

@@ -19,10 +19,6 @@
 			"type":"string",
 			"enum": ["minute", "hour","day","week","month","quarter","year"]
 		},
-		"order":{
-			"type":"string",
-			"enum": ["asc", "desc"]
-		},
 		"account:":{
 			"type": "array",
 			"minItems": 1,
@@ -35,21 +31,7 @@
 				"shipped_failed", "delivered_failed", "recover_failed","hold_failed","pending_failed",
 				"shipped_error", "delivered_error", "recover_error","hold_error","bill_error","pending_error"
 			]
-		},
-		"limit":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": false,
-			"exclusiveMinimum": true
-		},
-		"offset":{
-			"type": ["integer"],
-			"minimum": 0,
-			"maximum": 100,
-			"exclusiveMaximum": true,
-			"exclusiveMinimum": false
 		}
 	},
-	"required":["order", "limit", "offset", "queuename"]
+	"required":[ "queuename"]
 }
