@@ -39,7 +39,9 @@ module.exports = class ProductScheduleHelper {
 
           let found_product = arrayutilities.find(products, product => {
 
-            return (product.id == schedule_element.product);
+            // Technical Debt: accounting for legacy data ('product_id' exists in legacy data, switched to 'product')
+            // Remove at earliest convenience
+            return (product.id == schedule_element.product || product.id == schedule_element.product_id);
 
           });
 
