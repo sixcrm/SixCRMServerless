@@ -24,6 +24,7 @@ class checkoutController extends transactionEndpointController{
       'creditcard/read',
       'productschedule/read',
       'loadbalancer/read',
+      'loadbalancerassociation/read',
       'rebill/read',
       'rebill/create',
       'rebill/update',

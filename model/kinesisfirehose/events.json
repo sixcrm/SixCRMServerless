@@ -7,15 +7,15 @@
 		"campaign":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"product_schedules":{
-			"oneOf":[
+			"anyOf":[
 				{"$ref": "../general/uuidv4list.json"},
-				{"type":"array", "maxItems":0, "minItems":0}
+				{"type":"array"}
 			]
 		},
 		"products":{
-			"oneOf":[
+			"anyOf":[
 				{"$ref": "../general/uuidv4list.json"},
-				{"type":"array", "maxItems":0, "minItems":0}
+				{"type":"array"}
 			]
 		},
 		"affiliate":{"$ref": "../definitions/uuidv4.json"},

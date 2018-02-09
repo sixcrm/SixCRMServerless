@@ -154,6 +154,8 @@ module.exports = class RebillHelper {
 
     if(_.isNull(products) && _.isNull(product_schedules)){
 
+      //Note: State Machine
+
       if(!_.has(this, 'sessionController')){
         this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
       }
@@ -169,6 +171,10 @@ module.exports = class RebillHelper {
         }
         eu.throwError('server', 'Session does not have product schedules.');
       });
+
+    }else{
+
+      //Note:  Transaction Endpoint
 
     }
 
@@ -189,20 +195,6 @@ module.exports = class RebillHelper {
 
   }
 
-  assureProductScheduleHelperController(){
-
-    du.debug('Assure Product Schedule Helper Controller');
-
-    if(!_.has(this, 'productScheduleHelperController')){
-      const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-
-      this.productScheduleHelperController = new ProductScheduleHelperController();
-    }
-
-    return true;
-
-  }
-
   normalizeProductSchedules(){
 
     du.debug('Normalize Product Schedules');
@@ -213,18 +205,18 @@ module.exports = class RebillHelper {
 
       this.assureProductScheduleHelperController();
 
-      let normalized_product_schedules = arrayutilities.map(product_schedules, product_schedule => {
+      let normalized_product_schedules = arrayutilities.map(product_schedules, product_schedule_group => {
 
-        if(_.isString(product_schedule.product_schedule)){
+        if(_.isString(product_schedule_group.product_schedule)){
 
-          return this.productScheduleHelperController.getHydrated({id: product_schedule.product_schedule}).then(result => {
+          return this.productScheduleHelperController.getHydrated({id: product_schedule_group.product_schedule}).then(result => {
 
-            product_schedule.product_schedule = result;
-            return product_schedule;
+            product_schedule_group.product_schedule = result;
+            return product_schedule_group;
 
           });
 
-        }else if(_.isObject(product_schedule.product_schedule)){
+        }else if(_.isObject(product_schedule_group.product_schedule)){
 
           //Watermark/On-Demand product schedule
           return Promise.resolve(product_schedule);
@@ -256,19 +248,19 @@ module.exports = class RebillHelper {
         this.productController = global.SixCRM.routes.include('entities', 'Product.js');
       }
 
-      let normalized_products = arrayutilities.map(products, product => {
+      let normalized_products = arrayutilities.map(products, product_group => {
 
-        if(this.productController.isUUID(product.product)){
+        if(this.productController.isUUID(product_group.product)){
 
-          return this.productController.get({id: product.product}).then(result => {
-            product.product = result;
-            return product;
+          return this.productController.get({id: product_group.product}).then(result => {
+            product_group.product = result;
+            return product_group;
           });
 
-        }else if(_.isObject(product.product)){
+        }else if(_.isObject(product_group.product)){
 
           //Watermark/On-Demand Product
-          return Promise.resolve(product);
+          return Promise.resolve(product_group);
 
         }
 
@@ -356,6 +348,7 @@ module.exports = class RebillHelper {
     return this.getNextProductScheduleBillDayNumber()
     .then(() => this.getScheduleElementsOnBillDay())
     .then(() => this.getScheduleElementsProducts())
+    .then(() => this.addProductsToTransactionProducts())
     .then(() => this.calculateAmount())
     .then(() => this.calculateBillAt());
 
@@ -431,8 +424,10 @@ module.exports = class RebillHelper {
 
     du.debug('Get Schedule Elements On Bill Day');
 
-    let normalized_product_schedules = this.parameters.get('normalizedproductschedules');
+    let normalized_product_schedules = this.parameters.get('normalizedproductschedules', null, false);
     let bill_day = this.parameters.get('nextproductschedulebilldaynumber');
+
+    if(_.isNull(normalized_product_schedules)){ return Promise.resolve(true); }
 
     this.assureProductScheduleHelperController();
 
@@ -479,6 +474,40 @@ module.exports = class RebillHelper {
 
       });
 
+      let transaction_products = this.parameters.get('transactionproducts', null, false);
+      transaction_products = (_.isNull(transaction_products))?[]:transaction_products;
+      transaction_products.push(products);
+      this.parameters.set('transactionproducts', products);
+
+      return Promise.resolve(true);
+
+    }
+
+    return Promise.resolve(false);
+
+  }
+
+  addProductsToTransactionProducts(){
+
+    du.debug('Add Products To Transaction Products');
+
+    let normalized_products = this.parameters.get('normalizedproducts', null, false);
+
+    if(arrayutilities.nonEmpty(normalized_products)){
+
+      let products = arrayutilities.map(normalized_products, product_group => {
+
+        return {
+          product: product_group.product,
+          amount: product_group.price,
+          quantity: product_group.quantity
+        };
+
+      });
+
+      let transaction_products = this.parameters.get('transactionproducts', null, false);
+      transaction_products = (_.isNull(transaction_products))?[]:transaction_products;
+      transaction_products.push(products);
       this.parameters.set('transactionproducts', products);
 
       return Promise.resolve(true);
@@ -529,25 +558,23 @@ module.exports = class RebillHelper {
 
     du.debug('Build Rebill Prototype');
 
-    let  normalized_product_schedules = this.parameters.get('normalizedproductschedules', null, false);
+    let normalized_product_schedules = this.parameters.get('normalizedproductschedules', null, false);
 
     let product_schedules = null;
     let watermark_product_schedules = null;
 
     if(!_.isNull(normalized_product_schedules)){
-      let grouped_normalized_product_schedules = arrayutilities.group(normalized_product_schedules, normalized_product_schedule => {
 
-        if(objectutilities.hasRecursive(normalized_product_schedule, 'product_schedule.id')){
+      let grouped_normalized_product_schedules = arrayutilities.group(normalized_product_schedules, normalized_product_schedule_group => {
+        if(objectutilities.hasRecursive(normalized_product_schedule_group, 'product_schedule.id')){
           return 'product_schedule';
         }
-
         return 'watermark_product_schedule';
-
       });
 
       if(arrayutilities.nonEmpty(grouped_normalized_product_schedules['product_schedule'])){
-        product_schedules = arrayutilities.map(grouped_normalized_product_schedules['product_schedule'], product_schedule => {
-          return product_schedule.product_schedule.id;
+        product_schedules = arrayutilities.map(grouped_normalized_product_schedules['product_schedule'], product_schedule_group => {
+          return product_schedule_group.product_schedule.id;
         });
       }
 
@@ -558,9 +585,16 @@ module.exports = class RebillHelper {
       parentsession: this.parameters.get('session').id,
       products: this.parameters.get('transactionproducts'),
       bill_at: this.parameters.get('billdate'),
-      amount: this.parameters.get('amount'),
-      product_schedules: product_schedules
+      amount: this.parameters.get('amount')
     };
+
+    if(!_.isNull(product_schedules)){
+      rebill_prototype.product_schedules = product_schedules;
+    }
+
+    if(this.parameters.get('nextproductschedulebilldaynumber') == 0){
+      rebill_prototype.processing = true;
+    }
 
     this.parameters.set('rebillprototype', rebill_prototype);
 
@@ -579,11 +613,8 @@ module.exports = class RebillHelper {
     let prototype_rebill = this.parameters.get('rebillprototype');
 
     return this.rebillController.create({entity: prototype_rebill}).then(rebill => {
-
       this.parameters.set('rebill', rebill);
-
       return true;
-
     });
 
   }
@@ -1111,6 +1142,30 @@ module.exports = class RebillHelper {
 
       return Promise.resolve(true);
     })
+  }
+
+  assureProductScheduleHelperController(){
+
+    du.debug('Assure Product Schedule Helper Controller');
+
+    if(!_.has(this, 'productScheduleHelperController')){
+      const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
+
+      this.productScheduleHelperController = new ProductScheduleHelperController();
+    }
+
+    return true;
+
+  }
+
+  isAvailable({rebill}){
+
+    du.debug('Is Available');
+
+    let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
+
+    return !(timestamp.getTimeDifference(bill_at_timestamp) < 0);
+
   }
 
   /*

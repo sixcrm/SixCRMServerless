@@ -25,6 +25,7 @@ class ConfirmOrderController extends transactionEndpointController{
       'creditcard/read',
       'productschedule/read',
       'loadbalancer/read',
+      'loadbalancerassociation/read',
       'product/read',
       'affiliate/read',
       'transaction/read',

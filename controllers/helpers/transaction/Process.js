@@ -67,11 +67,8 @@ module.exports = class Process extends TransactionUtilities{
       let merchant_provider_id = this.parameters.get('merchantproviderid');
 
       return this.merchantProviderController.get({id:merchant_provider_id}).then(merchant_provider => {
-
         this.parameters.set('merchantprovider', merchant_provider);
-
         return true;
-
       });
 
     }
@@ -90,26 +87,7 @@ module.exports = class Process extends TransactionUtilities{
 
         return instantiated_gateway.process(processing_parameters);
 
-      })
-      .then((response) => {
-
-
-        /*
-        let vendor_response = response.parameters.get('vendorresponse');
-        vendor_response = httputilities.removeIrrelevantFields(vendor_response.response);
-        response.parameters.set('vendorresponse', vendor_response);
-        
-        let a_response = response.parameters.get('response');
-        a_response = httputilities.removeIrrelevantFields(a_response);
-        response.parameters.set('response', a_response);
-
-        du.info(response); process.exit();
-        */
-
-        return response;
-
-      })
-      .then((response) => {
+      }).then((response) => {
 
         let merchantprovider = this.parameters.get('merchantprovider');
         let creditcard = this.parameters.get('creditcard');

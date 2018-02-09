@@ -7,7 +7,10 @@
     "bill_at":{"$ref":"../../definitions/iso8601.json"},
     "product_schedules":{"$ref":"../../general/uuidv4list.json"},
     "amount":{"$ref":"../../definitions/currency.json"},
-    "products":{"$ref":"./transactionproducts.json"}
+    "products":{"$ref":"./transactionproducts.json"},
+    "processing":{
+      "type":"boolean"
+    }
   },
-  "required":["bill_at","product_schedules","amount","products"]
+  "required":["bill_at","amount","products"]
 }

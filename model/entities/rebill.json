@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/rebill",
+	"id":"/entities/rebill.json",
 	"title": "Rebill",
 	"type": "object",
 	"description": "A rebill",
@@ -20,6 +20,10 @@
 			"type":"array",
 			"items":{"$ref": "../definitions/uuidv4.json"}
 		},
+		"products":{
+			"type":"array",
+			"items":{"$ref":"./components/transactionproduct.json"}
+		},
 		"state":{"type":"string"},
 		"previous_state":{"type":"string"},
 		"state_changed_at":{"$ref": "../definitions/iso8601.json"},
@@ -31,5 +35,5 @@
 			"type":"boolean"
 		}
 	},
-	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession", "product_schedules"]
+	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession"]
 }

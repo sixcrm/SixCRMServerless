@@ -8,8 +8,6 @@ const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 
-const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -22,6 +20,12 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     super();
 
+    const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+    this.rebillHelperController = new RebillHelperController();
+
+    //const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
+    //this.productScheduleHelperController = new ProductScheduleHelperController();
+
   }
 
   acquireRebillProperties(){
@@ -30,16 +34,10 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     let rebill = this.parameters.get('rebill');
 
-    var promises = [];
-    promises.push(this.rebillController.getParentSession(rebill));
-
-    return Promise.all(promises).then((promises) => {
-
-      this.parameters.set('parentsession', promises[0]);
-
+    return this.rebillController.getParentSession(rebill).then(result => {
+      this.parameters.set('parentsession', result);
       return true;
-
-    });
+    })
 
   }
 
@@ -79,9 +77,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     let parentsession = this.parameters.get('parentsession');
 
-    let rebillHelperController = new RebillHelperController();
-
-    let day_in_cycle = rebillHelperController.calculateDayInCycle(parentsession.created_at);
+    let day_in_cycle = this.rebillHelperController.calculateDayInCycle(parentsession.created_at);
 
     if(!_.isNumber(day_in_cycle) || day_in_cycle < 0){
       eu.throwError('server', 'Invalid day in cycle returned for session.');
@@ -125,10 +121,8 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     let rebill = this.parameters.get('rebill');
 
-    let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
-
-    if(timestamp.getTimeDifference(bill_at_timestamp) < 0){
-      eu.throwError('server', 'Rebill is not eligible for processing at this time (rebill.bill_at: '+rebill.bill_at+')');
+    if(!this.rebillHelperController.isAvailable({rebill: rebill})){
+      eu.throwError('server', 'Rebill is not eligible for processing at this time.');
     }
 
     return Promise.resolve(true);
@@ -143,6 +137,41 @@ module.exports = class RegisterUtilities extends PermissionedController {
     .then(() => this.acquireCustomerCreditCards())
     .then(() => this.selectCustomerCreditCard())
     .then(() => this.acquireMerchantProviderGroups());
+
+  }
+
+  acquireMerchantProviderGroups(){
+
+    du.debug('Acquire Merchant Provider Groups');
+
+    let rebill =  this.parameters.get('rebill');
+    let creditcard = this.parameters.get('selectedcreditcard');
+
+    if(_.has(rebill, 'merchant_provider')){
+
+      //Note:  Merchant Provider is provided in the rebill so, we're hotwiring the SOB
+      let merchant_provider_groups = {};
+      merchant_provider_groups[rebill.merchant_provider] = rebill.products;
+
+      this.parameters.set('merchantprovidergroups', merchant_provider_groups);
+
+      return Promise.resolve(true);
+
+    }else{
+
+      const MerchantProviderSelectorHelperController = global.SixCRM.routes.include('helpers','transaction/MerchantProviderSelector.js');
+      let merchantProviderSelectorHelperController = new MerchantProviderSelectorHelperController();
+
+      return merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill: rebill, creditcard: creditcard})
+      .then((merchant_provider_groups) => {
+
+        this.parameters.set('merchantprovidergroups', merchant_provider_groups);
+
+        return true;
+
+      });
+
+    }
 
   }
 
@@ -166,27 +195,29 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     du.debug('Select Customer Credit Card');
 
-    let selected_creditcard = null;
-
     let creditcards = this.parameters.get('creditcards');
 
-    arrayutilities.map(creditcards, (credit_card) => {
+    let selected_creditcard = arrayutilities.reduce(
+      creditcards,
+      (selected_creditcard, creditcard) => {
 
-      if(_.has(credit_card, 'default') && credit_card.default == true){
+        if(_.isNull(selected_creditcard)){
+          return creditcard;
+        }
 
-        selected_creditcard = credit_card;
+        if(_.has(creditcard, 'default') && creditcard.default == true){
+          return creditcard;
+        }
 
-      }else if(_.isNull(selected_creditcard)){
+        if(creditcard.updated_at > selected_creditcard.updated_at){
+          return creditcard;
+        }
 
-        selected_creditcard = credit_card;
+        return selected_creditcard;
 
-      }else if(!_.has(selected_creditcard, 'default') && credit_card.updated_at > selected_creditcard.updated_at){
-
-        selected_creditcard = credit_card;
-
-      }
-
-    });
+      },
+      null
+    );
 
     if(_.isNull(selected_creditcard)){
       eu.throwError('server', 'Unable to set credit card for customer');

@@ -20,10 +20,6 @@
 			"type":"string",
 			"minLength":3
 		},
-		"productschedules":{
-			"type":"array",
-			"items":{"$ref": "../definitions/uuidv4.json"}
-		},
 		"emailtemplates":{
 			"type":"array",
 			"items":{"$ref": "../definitions/uuidv4.json"}
