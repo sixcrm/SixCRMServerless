@@ -2,10 +2,13 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
 
-let addressType = require('../address/addressType')
+let addressType = require('../address/addressType');
+let customerType = require('../customer/customerType');
 
 const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'CreditCard',
@@ -35,6 +38,16 @@ module.exports.graphObj = new GraphQLObjectType({
             type: addressType.graphObj,
             description: 'The customer\'s shipping address.',
             resolve: creditcard => creditCardController.getAddress(creditcard),
+        },
+        customers: {
+            type: new GraphQLList(customerType.graphObj),
+            description: 'The credit cards\'s customers.',
+            resolve: (creditcard) => {
+
+              return customerController.listByCreditCard({creditcard: creditcard})
+                .then(object => object.customers)
+
+            }
         },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),
