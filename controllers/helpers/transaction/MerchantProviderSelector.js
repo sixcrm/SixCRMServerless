@@ -134,6 +134,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       .then(() => {
 
         let merchant_provider = this.parameters.get('smp.merchantprovider');
+
         return merchant_provider;
 
       });
@@ -371,6 +372,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       du.debug('sortRebillProductsByLoadBalancerAssociations');
 
       let rebill = this.parameters.get('rebill');
+      let campaign_id = this.parameters.get('session').campaign;
       let associated_load_balancers = this.parameters.get('loadbalancerassociations');
 
       let married_product_groups = arrayutilities.map(rebill.products, product_group => {
@@ -378,6 +380,18 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
         let associated_load_balancer = arrayutilities.find(associated_load_balancers, associated_load_balancer => {
           return (associated_load_balancer.entity == product_group.product.id);
         });
+
+        if(_.isNull(associated_load_balancer) || _.isUndefined(associated_load_balancer)){
+
+          associated_load_balancer = arrayutilities.find(associated_load_balancers, associated_load_balancer => {
+            return (associated_load_balancer.entity == campaign_id);
+          });
+
+        }
+
+        if(_.isNull(associated_load_balancer) || _.isUndefined(associated_load_balancer)){
+          eu.throwError('server', 'Unable to establish a loadbalancer association with product: '+product_group.product.id);
+        }
 
         product_group.loadbalancerassociation = associated_load_balancer;
 
@@ -420,21 +434,46 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       du.debug('Acquire Load Balancer Associations');
 
       let rebill = this.parameters.get('rebill');
-
-      let product_ids = arrayutilities.map(rebill.products, product_group => {
-        return product_group.product.id;
-      });
-
       let campaign_id = this.parameters.get('session').campaign;
 
-      return this.loadBalancerAssociationController.listByEntitiesAndCampaign({entities: product_ids, campaign: campaign_id})
-      .then(result => this.loadBalancerAssociationController.getResult(result, 'loadbalancerassociations'))
-      .then(result => {
+      let product_ids = arrayutilities.map(rebill.products, product_group => product_group.product.id);
 
-        this.parameters.set('loadbalancerassociations', result);
+      let promises = [
+        this.getLoadBalancersByEntityAndCampaign({entities: product_ids, campaign: campaign_id}),
+        this.getLoadBalancersByCampaign({campaign: campaign_id})
+      ]
+
+      return Promise.all(promises).then(promises => {
+
+        arrayutilities.map(promises, promise => {
+          if(arrayutilities.nonEmpty(promise)){
+            arrayutilities.map(promise, loadbalancer => {
+              this.parameters.push('loadbalancerassociations', loadbalancer);
+            });
+          }
+        });
+
         return true;
 
       });
+
+    }
+
+    getLoadBalancersByEntityAndCampaign({entities, campaign}){
+
+      du.debug('Get Loadbalancers By Entity And Campaign');
+
+      return this.loadBalancerAssociationController.listByEntitiesAndCampaign({entities: entities, campaign: campaign})
+      .then(result => this.loadBalancerAssociationController.getResult(result, 'loadbalancerassociations'));
+
+    }
+
+    getLoadBalancersByCampaign({campaign}){
+
+      du.debug('Get Loadbalancers By Campaign');
+
+      return this.loadBalancerAssociationController.listByCampaign({campaign: campaign})
+      .then(result => this.loadBalancerAssociationController.getResult(result, 'loadbalancerassociations'));
 
     }
 

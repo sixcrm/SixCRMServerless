@@ -5,6 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 
@@ -444,10 +445,7 @@ module.exports = class Register extends RegisterUtilities {
         merchant_provider: merchant_provider
       }).then((transaction_receipt) => {
 
-        let transaction_receipts = this.parameters.get('transactionreceipts', null, false);
-        transaction_receipts = (_.isNull(transaction_receipts))?[]:transaction_receipts;
-        transaction_receipts.push(transaction_receipt);
-        this.parameters.set('transactionreceipts', transaction_receipts);
+        this.parameters.push('transactionreceipts', transaction_receipt);
 
         return transaction_receipt;
 
@@ -486,6 +484,7 @@ module.exports = class Register extends RegisterUtilities {
     }).then((result) => {
 
       let processor_responses = this.parameters.get('processorresponses', null, false);
+
       processor_responses = (_.isNull(processor_responses))?[]:processor_responses;
       processor_responses.push(result);
       this.parameters.set('processorresponses', processor_responses);
@@ -501,11 +500,23 @@ module.exports = class Register extends RegisterUtilities {
     du.debug('Calculate Amount From Product Groups');
 
     return arrayutilities.reduce(
-      product_groups, (sum, product_group) => {
-        let subtotal = arrayutilities.reduce(product_group, (subtotal, product) => {
-          return (subtotal + (product.amount * product.quantity));
-        }, 0.0);
-        return (sum + subtotal);
+      product_groups,
+      (sum, product_group) => {
+
+        let subtotal = arrayutilities.reduce(
+          product_group,
+          (subtotal, product) => {
+
+            let product_group_total = numberutilities.formatFloat((product.amount * product.quantity), 2);
+
+            return (subtotal + product_group_total);
+
+          },
+          0.0
+        );
+
+        return (sum + numberutilities.formatFloat(subtotal, 2));
+
       },
       0.0
     );
@@ -551,7 +562,7 @@ module.exports = class Register extends RegisterUtilities {
     merchant_provider = (!_.isUndefined(merchant_provider) && !_.isNull(merchant_provider))?this.parameters.get('merchantprovider'):merchant_provider;
     amount = (!_.isUndefined(amount) && !_.isNull(amount))?this.parameters.get('amount'):amount;
 
-    merchant_provider_id = (_.isObject(merchant_provider) && _.has(merchant_provider, 'id'))?merchant_provider.id:merchant_provider;
+    let merchant_provider_id = (_.isObject(merchant_provider) && _.has(merchant_provider, 'id'))?merchant_provider.id:merchant_provider;
 
     let transaction_object = {
       id: transaction_receipt.id,

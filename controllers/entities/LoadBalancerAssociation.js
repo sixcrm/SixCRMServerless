@@ -22,7 +22,21 @@ class loadBalancerAssociationController extends entityController {
 
     query_parameters.filter_expression += ' AND #campaign = :campaignv';
     query_parameters.expression_attribute_names = {'#campaign': 'campaign'};
-    query_parameters.expression_attribute_values[':campaignv'] = campaign;
+    query_parameters.expression_attribute_values[':campaignv'] = this.getID(campaign);
+
+    return this.listByAccount({query_parameters: query_parameters});
+
+  }
+
+  listByCampaign({campaign}){
+
+    du.debug('List Load Balancers By Campaign');
+
+    let query_parameters = {
+      filter_expression:'#campaign = :campaignv',
+      expression_attribute_names: {'#campaign': 'campaign'},
+      expression_attribute_values: {':campaignv': this.getID(campaign)}
+    };
 
     return this.listByAccount({query_parameters: query_parameters});
 

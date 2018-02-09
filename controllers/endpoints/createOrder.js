@@ -76,13 +76,20 @@ class CreateOrderController extends transactionEndpointController{
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
+    const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+
+    this.rebillCreatorHelperController = new RebillCreatorHelperController();
+
     const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+
     this.rebillHelperController = new RebillHelperController();
 
     const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+
     this.transactionHelperController = new TransactionHelperController();
 
     const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
+
     this.sessionHelperController = new SessionHelperController();
 
     this.initialize(() => {
@@ -385,9 +392,7 @@ class CreateOrderController extends transactionEndpointController{
       argumentation.products = products;
     }
 
-    du.info(argumentation);  process.exit();
-
-    return this.rebillHelperController.createRebill(argumentation)
+    return this.rebillCreatorHelperController.createRebill(argumentation)
     .then(rebill => {
       this.parameters.set('rebill', rebill);
       return true;
@@ -399,8 +404,9 @@ class CreateOrderController extends transactionEndpointController{
 
     du.debug('Process Rebill');
 
-    let registerController = new RegisterController();
     let rebill = this.parameters.get('rebill');
+
+    let registerController = new RegisterController();
 
     return registerController.processTransaction({rebill: rebill}).then((register_response) =>{
 
@@ -433,11 +439,13 @@ class CreateOrderController extends transactionEndpointController{
     };
 
     let product_schedules = this.parameters.get('productschedules', null, false);
+
     if(!_.isNull(product_schedules)){
       info.product_schedules = product_schedules;
     }
 
     let products = this.parameters.get('products', null, false);
+
     if(!_.isNull(products)){
       info.products = products;
     }
