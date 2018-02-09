@@ -52,6 +52,10 @@ module.exports = class archiveController extends workerController {
     .then(() => this.setArchiveFilter())
     .then(() => this.archive())
     .then(() => this.respond())
+    .catch(error => {
+        du.error(error);
+        return super.respond('error', error.message);
+    })
 
   }
 

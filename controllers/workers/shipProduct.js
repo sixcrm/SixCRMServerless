@@ -37,7 +37,11 @@ module.exports = class shipProductController extends workerController {
 
     return this.preamble(message)
     .then(() => this.ship())
-    .then(() => this.respond());
+    .then(() => this.respond())
+    .catch(error => {
+        du.error(error);
+        return super.respond('error', error.message);
+    })
 
   }
 
