@@ -155,8 +155,8 @@ describe('pickRebillToBill', () => {
             .then((rebills) => {
                 let expected = require(test.path + '/expectations/dynamodb/rebills.json');
 
-                expected.sort((a,b) => a.id < b.id);
-                rebills.sort((a,b) => a.id < b.id);
+                expected.sort((a,b) => a.id.localeCompare(b.id));
+                rebills.sort((a,b) => a.id.localeCompare(b.id));
 
                 for (let i = 0; i < expected.length; i++) {
                     for(let key in expected[i]) {
