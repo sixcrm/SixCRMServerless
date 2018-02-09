@@ -370,7 +370,7 @@ class sessionController extends entityController {
 
       du.debug('List By Customer');
 
-      return this.listBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index', pagination: pagination});
+      return this.queryBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index', pagination: pagination});
 
     }
 
