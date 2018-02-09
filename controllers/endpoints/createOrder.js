@@ -77,8 +77,10 @@ class CreateOrderController extends transactionEndpointController{
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
     const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-
     this.rebillHelperController = new RebillHelperController();
+
+    const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+    this.transactionHelperController = new TransactionHelperController();
 
     this.initialize(() => {
       this.parameters.set('sessionlength', global.SixCRM.configuration.site_config.jwt.transaction.expiration);
@@ -105,7 +107,7 @@ class CreateOrderController extends transactionEndpointController{
     .then(() => this.validateEventProperties())
     .then(() => this.createRebill())
     .then(() => this.processRebill())
-    .then(() => this.updateEntities())
+    //.then(() => this.updateEntities())
     .then(() => this.buildInfoObject())
     .then(() => this.postProcessing())
     .then(() => {
@@ -371,45 +373,10 @@ class CreateOrderController extends transactionEndpointController{
 
     return registerController.processTransaction({rebill: rebill}).then((register_response) =>{
 
-      du.info(register_response);  process.exit();
-      
       this.parameters.set('creditcard', register_response.getCreditCard());
-      this.parameters.set('transaction', register_response.parameters.get('transaction'));
-      this.parameters.set('result', register_response.getProcessorResponse().code);
-      this.parameters.set('processorresponse', register_response.getProcessorResponse());
-      this.parameters.set('amount', register_response.parameters.get('transaction').amount);
-
-      return true;
-
-    });
-
-  }
-
-  updateEntities() {
-
-    du.debug('Update Entities');
-
-    let transaction = this.parameters.get('transaction');
-    let rebill = this.parameters.get('rebill');
-    let session = this.parameters.get('session');
-    let product_schedules = this.parameters.get('productschedules');
-
-    if(_.has(session, 'product_schedules')){
-      session.product_schedules = arrayutilities.merge(session.product_schedules, product_schedules);
-    }else{
-      session.product_schedules = product_schedules;
-    }
-
-    let promises = [
-      this.sessionController.update({entity: session}).then(session => {
-        this.parameters.set('session', session);
-      }),
-      this.rebillController.update({entity: rebill}).then(rebill => {
-        this.parameters.set('rebill', rebill);
-      })
-    ];
-
-    return Promise.all(promises).then(() => {
+      this.parameters.set('transactions', register_response.parameters.get('transactions'));
+      this.parameters.set('result', register_response.parameters.get('response_type'));
+      this.parameters.set('amount', this.transactionHelperController.getTransactionsAmount(register_response.parameters.get('transactions')));
 
       return true;
 
@@ -423,7 +390,7 @@ class CreateOrderController extends transactionEndpointController{
 
     let info = {
       amount: this.parameters.get('amount'),
-      transaction: this.parameters.get('transaction'),
+      transactions: this.parameters.get('transactions'),
       product_schedules: this.parameters.get('productschedules'),
       customer: this.parameters.get('customer'),
       rebill: this.parameters.get('rebill'),
@@ -460,8 +427,19 @@ class CreateOrderController extends transactionEndpointController{
 
     du.debug('Add Rebill To State Machine');
 
-    return this.updateRebillState()
+    if(this.parameters.get('result') == 'success'){
+
+      return this.updateRebillState()
       .then(() => this.addRebillToQueue())
+
+    }else{
+
+      //Technical Debt: cleanup?
+
+    }
+
+    return Promise.resolve(false);
+
   }
 
   addRebillToQueue(){
@@ -469,9 +447,6 @@ class CreateOrderController extends transactionEndpointController{
     du.debug('Add Rebill To Queue');
 
     let rebill = this.parameters.get('rebill');
-
-    //Critical
-    //Technical Debt:  This depends on result of the transaction...
 
     return this.rebillHelperController.addRebillToQueue({rebill: rebill, queue_name: 'hold'}).then(() => {
       return true;
@@ -496,9 +471,32 @@ class CreateOrderController extends transactionEndpointController{
     du.debug('Push Events Record');
 
     let session = this.parameters.get('session');
-    let product_schedules = this.parameters.get('productschedules');
+    let product_schedules = this.parameters.get('productschedules', null, false);
+    let products = this.parameters.get('products', null, false);
 
-    return this.pushEventToRedshift({event_type: 'order', session: session, product_schedules: product_schedules}).then(() => {
+    if(_.isArray(product_schedules)){
+      product_schedules = arrayutilities.map(product_schedules, product_schedule_group => {
+        return product_schedule_group.product_schedule.id
+      });
+    }else{
+      product_schedules = [];
+    }
+
+    if(_.isArray(products)){
+      products = arrayutilities.map(products, product_group => {
+        return product_group.product.id
+      });
+    }else{
+      products = [];
+    }
+
+    //Technical Debt:  Note that this is missing the result of the transactions...
+    return this.pushEventToRedshift({
+      event_type: 'order',
+      session: session,
+      product_schedules: product_schedules,
+      products: products
+    }).then(() => {
 
       return true;
 

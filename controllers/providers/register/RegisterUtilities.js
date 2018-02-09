@@ -146,6 +146,22 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
   }
 
+  hydrateTransaction(){
+
+    du.debug('Hydrate Transaction');
+
+    let transaction = this.parameters.get('transaction');
+
+    return this.transactionController.get({id: transaction, fatal: true}).then(transaction => {
+
+      this.parameters.set('associatedtransaction', transaction);
+
+      return transaction;
+
+    })
+
+  }
+
   selectCustomerCreditCard(){
 
     du.debug('Select Customer Credit Card');

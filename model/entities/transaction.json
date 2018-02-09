@@ -11,15 +11,7 @@
 		"alias":{"$ref": "../definitions/transactionalias.json"},
 		"products":{
 			"type":"array",
-			"items":{
-				"type": "object",
-				"description": "A connection between transaction and a product",
-				"properties": {
-					"product":{"$ref": "../definitions/uuidv4.json"},
-					"amount":{"$ref": "../definitions/currency.json"}
-				},
-				"required":["product", "amount"]
-			}
+			"items":{"$ref":"./components/transactionproduct.json"}
 		},
 		"processor_response":{
 			"type":"string"

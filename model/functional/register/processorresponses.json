@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/functional/register/processorresponses.json",
+	"title": "Processor Response",
+	"type":"array",
+	"items":{"$ref":"./processorresponse.json"}
+}

@@ -4,6 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
 module.exports = class TransactionHelperController {
 
@@ -197,4 +198,13 @@ module.exports = class TransactionHelperController {
 
   }
 
+  getTransactionsAmount(transactions){
+
+    du.debug('Get Transactions Amount');
+
+    return arrayutilities.reduce(transactions, (sum, transaction) => {
+      return (sum + numberutilities.toNumber(transaction.amount));
+    }, 0.0);
+
+  }
 }

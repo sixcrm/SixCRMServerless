@@ -133,27 +133,7 @@ module.exports = class Register extends RegisterUtilities {
     .then(() => this.validateRebillForProcessing())
     .then(() => this.acquireRebillSubProperties())
     .then(() => this.executeProcesses())
-    /* here */
-    .then(() => this.executePostProcess())
-    .then(() => this.issueReceipt())
-    .then(() => this.pushTransactionsRecordToRedshift())
     .then(() => this.transformResponse());
-
-  }
-
-  hydrateTransaction(){
-
-    du.debug('Hydrate Transaction');
-
-    let transaction = this.parameters.get('transaction');
-
-    return this.transactionController.get({id: transaction, fatal: true}).then(transaction => {
-
-      this.parameters.set('associatedtransaction', transaction);
-
-      return transaction;
-
-    })
 
   }
 
@@ -298,8 +278,10 @@ module.exports = class Register extends RegisterUtilities {
     const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
     let registerReceiptController = new RegisterReceiptController();
 
-    //Technical Debt: fix this
-    return registerReceiptController.issueReceipt({argumentation: this.parameters.getAll()}).then(receipt_transaction => {
+    //fix!
+    let argumentation_object = {};
+
+    return registerReceiptController.issueReceipt().then(receipt_transaction => {
       this.parameters.set('receipttransaction', receipt_transaction);
     });
 
@@ -307,9 +289,10 @@ module.exports = class Register extends RegisterUtilities {
 
   pushTransactionsRecordToRedshift(){
 
+    /*
     du.debug('Push Transactions Record');
 
-    let transaction_redshift_obj = this.generateTransactionObject();
+    let transaction_redshift_obj = this.generateTransactionObject({});
     let product_schedules_redshift_obj = this.generateProductScheduleObjects();
 
     let promises = arrayutilities.map(product_schedules_redshift_obj, (schedule) => {
@@ -319,33 +302,25 @@ module.exports = class Register extends RegisterUtilities {
     promises.push(kinesisfirehoseutilities.putRecord('transactions', transaction_redshift_obj));
 
     return Promise.all(promises).then(() => true);
+    */
+
   }
 
   transformResponse(){
 
     du.debug('Transform Response');
 
-    let receipttransaction = this.parameters.get('receipttransaction', null, false);
-    let processor_response = this.parameters.get('processorresponse');
+    let transaction_receipts = this.parameters.get('transactionreceipts');
+    let processor_responses = this.parameters.get('processorresponses');
+    let creditcard = this.parameters.get('selectedcreditcard');
     let response_category = this.getProcessorResponseCategory();
 
-    let merge_object = {};
-
-    if(_.has(processor_response, 'creditcard')){
-
-      merge_object = {creditcard: processor_response.creditcard};
-      delete processor_response.creditcard;
-
+    let response_prototype = {
+      transactions: transaction_receipts,
+      processor_responses: processor_responses,
+      response_type: response_category,
+      creditcard: creditcard
     }
-
-    let response_prototype = objectutilities.merge(
-      {
-        transaction: receipttransaction,
-        processor_response: processor_response,
-        response_type: response_category
-      },
-      merge_object
-    );
 
     let register_response = new RegisterResponse(response_prototype);
 
@@ -357,55 +332,110 @@ module.exports = class Register extends RegisterUtilities {
 
     du.debug('Get Processor Response Category');
 
-    let processor_response_code = this.getProcessorResponseCode();
+    let processor_responses = this.parameters.get('processorresponses');
 
-    objectutilities.hasRecursive(this, 'processor_response_map.'+processor_response_code, true);
+    let successful = arrayutilities.find(processor_responses, processor_response => {
+      return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.success);
+    });
 
-    return this.processor_response_map[processor_response_code];
+    if(successful){
+      return this.processor_response_map.success;
+    }
 
-  }
+    let error = arrayutilities.find(processor_responses, processor_response => {
+      return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.error);
+    });
 
-  getProcessorResponseCode(){
+    if(successful){
+      return this.processor_response_map.error;
+    }
 
-    du.debug('Get Processor Response');
-
-    return this.parameters.get('processorresponse').code;
+    return this.processor_response_map.decline;
 
   }
 
   executeProcess({merchant_provider: merchant_provider, amount: amount}){
 
+    du.debug('Execute Process');
+
     let customer = this.parameters.get('customer');
+    let creditcard = this.parameters.get('selectedcreditcard');
 
-    return processMerchantProviderGroup({customer: customer, merchant_provider: merchant_provider, amount: amount})
-    .then((result) => {
+    return this.processMerchantProviderGroup({customer: customer, creditcard: creditcard, merchant_provider: merchant_provider, amount: amount})
+    .then((processor_result) => {
 
-      const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
-      let registerReceiptController = new RegisterReceiptController();
+      return this.issueProductGroupReceipt({
+        amount: amount,
+        processor_result: processor_result,
+        transaction_type: 'sale',
+        merchant_provider: merchant_provider
+      }).then((transaction_receipt) => {
 
-      let argumentation_object = {
-        rebill:this.parameters.get('rebill'),
-        amount:amount,
-        transactiontype:'sale',
-        processorresponse:result
-      }
+        let transaction_receipts = this.parameters.get('transactionreceipts', null, false);
+        transaction_receipts = (_.isNull(transaction_receipts))?[]:transaction_receipts;
 
-      return registerReceiptController.issueReceipt({argumentation: argumentation_object).
-      then((receipt_transaction) => {
-        this.pushTransactionRecordToRedshift();
-        this.parameters.set('receipttransactions', receipt_transaction);
+        transaction_receipts.push(transaction_receipt);
+        this.parameters.set('transactionreceipts', transaction_receipts);
+
+        return transaction_receipt;
+
+      }).then(transaction_receipt => {
+
+        this.pushTransactionsRecordToRedshift({
+          processor_result: processor_result,
+          transaction_receipt: transaction_receipt,
+          merchant_provider: merchant_provider,
+          amount: amount
+        });
+
       });
 
-    })
-    .then((result) => this.pushTransactionRecordToRedshift());
+    });
 
-    /*
-    return this.acquireMerchantProvider({merchant_provider: merchant_provider})
-    this.processMerchantProviderGroup({customer: customer, merchant_provider: merchant_provider, products: products})
-    .then((result) => this.executePostProcess(result))
-    .then(() => this.issueReceipt())
-    .then(() => this.pushTransactionsRecordToRedshift())
-    */
+  }
+
+  issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider}){
+
+    du.debug('Issue Product Group Receipt');
+
+    const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
+    let registerReceiptController = new RegisterReceiptController();
+
+    let rebill = this.parameters.get('rebill');
+    let transaction_products = this.getTransactionProductsFromMerchantProviderGroup({merchant_provider: merchant_provider});
+
+    let argumentation_object = {
+      rebill: rebill,
+      amount: amount,
+      transactiontype: transaction_type,
+      processorresponse: processor_result,
+      merchant_provider: merchant_provider,
+      transaction_products: transaction_products
+    };
+
+    return registerReceiptController.issueReceipt(argumentation_object);
+
+  }
+
+  getTransactionProductsFromMerchantProviderGroup({merchant_provider}){
+
+    du.debug('getTransactionProductsFromMerchantProviderGroup');
+
+    let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+
+    let return_object = [];
+
+    if(_.has(merchant_provider_groups, merchant_provider)){
+
+      arrayutilities.map(merchant_provider_groups[merchant_provider], merchant_provider_group => {
+        arrayutilities.map(merchant_provider_group, product_group => {
+          return_object.push(product_group);
+        });
+      });
+
+    }
+
+    return return_object;
 
   }
 
@@ -424,8 +454,6 @@ module.exports = class Register extends RegisterUtilities {
     });
 
     return Promise.all(process_promises).then(results => {
-
-      this.parameters.set('processorresults', results);
 
       return true;
 
@@ -449,7 +477,7 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  processMerchantProviderGroup({customer, merchant_provider, amount}){
+  processMerchantProviderGroup({customer, creditcard, merchant_provider, amount}){
 
     const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let processController = new ProcessController();
@@ -463,6 +491,16 @@ module.exports = class Register extends RegisterUtilities {
         merchant_provider: result.merchant_provider,
         creditcard: result.creditcard
       };
+
+    }).then((result) => {
+
+      let processor_responses = this.parameters.get('processorresponses', null, false);
+      processor_responses = (_.isNull(processor_responses))?[]:processor_responses;
+
+      processor_responses.push(result);
+      this.parameters.set('processorresponses', processor_responses);
+
+      return result;
 
     });
 
@@ -544,20 +582,30 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  generateTransactionObject(){
+  generateTransactionObject({transaction_receipt, processor_response, merchant_provider, amount}){
 
     du.debug('Generate Transaction Object');
 
+    let customer = this.parameters.get('customer');
+    let session = this.parameters.get('session');
+
+    transaction_receipt = (!_.isUndefined(transaction_receipt) && !_.isNull(transaction_receipt))?transaction_receipt:this.parameters.get('receipttransaction');
+    processor_response = (!_.isUndefined(processor_response) && !_.isNull(processor_response))?this.parameters.get('processorresponse'):processor_response;
+    merchant_provider = (!_.isUndefined(merchant_provider) && !_.isNull(merchant_provider))?this.parameters.get('merchantprovider'):merchant_provider;
+    amount = (!_.isUndefined(amount) && !_.isNull(amount))?this.parameters.get('amount'):amount;
+
+    merchant_provider_id = (_.isObject(merchant_provider) && _.has(merchant_provider, 'id'))?merchant_provider.id:merchant_provider;
+
     let transaction_object = {
-      id: this.parameters.get('receipttransaction').id,
-      datetime: this.parameters.get('receipttransaction').created_at,
-      customer: this.parameters.get('customer').id,
-      creditcard: this.parameters.get('processorresponse').creditcard.id,
-      merchant_provider: this.parameters.get('merchantprovider').id,
-      campaign: this.parameters.get('parentsession').campaign,
-      amount: this.parameters.get('amount'),
-      processor_result: this.parameters.get('processorresponse').code,
-      account: this.parameters.get('receipttransaction').account,
+      id: transaction_receipt.id,
+      datetime: transaction_receipt.created_at,
+      customer: customer.id,
+      creditcard: processor_response.creditcard.id,
+      merchant_provider: merchant_provider_id,
+      campaign: session.campaign,
+      amount: amount,
+      processor_result: processor_response.code,
+      account: transaction_receipt.account,
       type: 'new',
       subtype: 'main'
     };
@@ -566,7 +614,7 @@ module.exports = class Register extends RegisterUtilities {
       this.affiliateHelperController = new AffiliateHelperController();
     }
 
-    return this.affiliateHelperController.transcribeAffiliates(this.parameters.get('parentsession'), transaction_object);
+    return this.affiliateHelperController.transcribeAffiliates(session, transaction_object);
 
   }
 
