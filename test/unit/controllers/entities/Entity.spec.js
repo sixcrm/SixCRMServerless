@@ -289,7 +289,28 @@ describe('controllers/Entity.js', () => {
                 saveRecord: (tableName, entity) => {
                     return Promise.resolve(entity);
                 }
+						});
+
+						let mock_preindexing_helper = class {
+              constructor(){
+
+              }
+              addToSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
             });
+
 
             const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
             let entityController = new EC('product');
