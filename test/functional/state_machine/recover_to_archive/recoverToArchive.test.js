@@ -10,7 +10,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
-describe('holdToArchive', () => {
+describe('recoverToArchive', () => {
 
     let tests = [];
     let test_dirs = fileutilities.getDirectoryList(__dirname);

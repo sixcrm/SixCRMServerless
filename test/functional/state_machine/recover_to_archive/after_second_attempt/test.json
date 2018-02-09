@@ -1,0 +1,8 @@
+{
+  "description": "Rebill is archived after second attempts",
+  "order": 10,
+  "lambda_filter": ["recovertoarchive"],
+  "env": {
+    "archivefilter": "twoattempts"
+  }
+}
