@@ -1,0 +1,59 @@
+{
+	"requestContext":{
+		"authorizer":{
+			"user":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37693"
+		}
+	},
+	"pathParameters":{
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+	},
+	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2RldmVsb3BtZW50LWFwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNTE3NzE4ODA5LCJleHAiOjE1MTc3MjI0MDksInVzZXJfYWxpYXMiOiI2MGZjOGNjYzg1ZDhiN2U2ZWFhZTMzM2JiMjBkMmRiNTFhYTM3NjkzIn0.55k5yQNf-5nsUDwFiG8I57Z40KKXiLWXdNG9Wijf5IU",
+	"body":{
+		"session":"6c5aef99-3fd0-4e9a-b734-a7609b7f624a",
+		"product_schedules":[
+			{
+				"quantity": 2,
+				"product_schedule":"12529a17-ac32-4e46-b05b-83862843055d"
+			},
+			{
+				"quantity":1,
+				"product_schedule":{
+					"schedule":[
+						{
+							"product":{
+								"id":"d745496e-b3c8-4d33-9cff-60541c1e88d5",
+								"name":"Shipping & Handling"
+							},
+					    "price":24.12,
+					    "start":0,
+					    "end":30,
+					    "period":30
+						}
+					]
+				}
+			}
+		],
+		"products":[
+			{
+				"quantity":2,
+				"product":"668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+				"price":6.66
+			}
+		],
+		"creditcard":{
+			"number":"4111111111111111",
+			"expiration":"1025",
+			"ccv":"999",
+			"name":"RamaDamunaste",
+			"address":{
+				"line1":"10 Skid Rw.",
+				"line2":"Suite 100",
+				"city":"Portland",
+				"state":"OR",
+				"zip":"97213",
+				"country":"US"
+			}
+		},
+		"transaction_subtype":"main"
+	}
+}

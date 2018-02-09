@@ -77,19 +77,15 @@ class CreateOrderController extends transactionEndpointController{
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
     const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
-
     this.rebillCreatorHelperController = new RebillCreatorHelperController();
 
     const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-
     this.rebillHelperController = new RebillHelperController();
 
     const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
-
     this.transactionHelperController = new TransactionHelperController();
 
     const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
-
     this.sessionHelperController = new SessionHelperController();
 
     this.initialize(() => {
@@ -285,6 +281,7 @@ class CreateOrderController extends transactionEndpointController{
 
   }
 
+  /*
   hasCampaignProductParity(){
 
     du.debug('Has Campaign Product Parity');
@@ -340,6 +337,8 @@ class CreateOrderController extends transactionEndpointController{
     return true;
 
   }
+
+  */
 
   isCompleteSession(){
 
@@ -461,6 +460,7 @@ class CreateOrderController extends transactionEndpointController{
     du.debug('Post Processing');
 
     let promises = [
+      this.updateSessionWithWatermark(),
       this.pushEventsRecord(),
       this.addRebillToStateMachine()
     ];
@@ -469,6 +469,40 @@ class CreateOrderController extends transactionEndpointController{
 
       return true;
 
+    });
+
+  }
+
+  updateSessionWithWatermark(){
+
+    du.debug('Update Session With Watermark');
+
+    let session = this.parameters.get('session');
+    if(!_.has(session, 'watermark')){
+      session.watermark = {
+        products:[],
+        product_schedules:[]
+      }
+    };
+
+    let product_schedules = this.parameters.get('productschedules', null, false);
+    let products = this.parameters.get('products', null, false);
+
+    if(arrayutilities.nonEmpty(product_schedules)){
+      arrayutilities.map(product_schedules, product_schedule_group => {
+        session.watermark.product_schedules.push(product_schedule_group);
+      });
+    }
+
+    if(arrayutilities.nonEmpty(products)){
+      arrayutilities.map(products, product_group => {
+        session.watermark.products.push(product_group);
+      });
+    }
+
+    return this.sessionController.update({entity: session}).then(result => {
+      this.parameters.set('session', result);
+      return true;
     });
 
   }

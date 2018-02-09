@@ -8,7 +8,7 @@
       "items":{
         "type":"object",
         "properties":{
-          "product":{"$ref":"../../../entities/product.json"},
+          "product":{"$ref":"../../../entities/components/watermark/watermarkproduct.json"},
           "amount":{"$ref":"../../../definitions/currency.json"},
           "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
           "loadbalancerassociation":{"$ref":"../../../entities/loadbalancerassociation.json"}

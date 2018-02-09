@@ -176,14 +176,14 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
         }else if(_.isObject(product_schedule_group.product_schedule)){
 
-          //Watermark/On-Demand product schedule
-          return Promise.resolve(product_schedule_group.product_schedule);
+          return Promise.resolve(product_schedule_group);
 
         }
 
       });
 
       return Promise.all(normalized_product_schedules).then(result => {
+
         this.parameters.set('normalizedproductschedules', result);
         return true;
       });
