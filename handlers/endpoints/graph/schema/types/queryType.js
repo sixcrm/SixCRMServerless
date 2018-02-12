@@ -1,6 +1,7 @@
 'use strict';
 const _  = require('underscore');
 
+const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
@@ -694,11 +695,25 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: analyticsPaginationInputType.graphObj}
             },
             resolve: function(root, args){
-              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+              const binsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-              return analyticsController.executeAnalyticsFunction(args, 'getBINList');
+              return binsController.executeAnalyticsFunction(args, 'getBINList');
             }
-        },
+				},
+				bin: {
+					type: analyticsBINFilterInputType.graphObj,
+					args: {
+							binnumber: { type: new GraphQLNonNull(GraphQLInt) },
+							cache: {type: cacheInputType.graphObj},
+							pagination: {type: analyticsPaginationInputType.graphObj}
+					},
+					resolve: function(root, args){
+
+						const binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
+
+						return binController.getCreditCardProperties({binnumber: args.binnumber });
+					}
+				},
         transactionsummary: {
             type: transactionSummaryType.graphObj,
             args: {

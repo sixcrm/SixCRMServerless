@@ -1,0 +1,10 @@
+[
+  {
+		"id": "source-redshift",
+		"type": "source"
+  },
+  {
+		"id": "target-dynamodb",
+		"type": "target"
+	}
+]
