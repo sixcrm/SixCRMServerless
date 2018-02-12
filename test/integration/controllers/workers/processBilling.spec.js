@@ -38,9 +38,10 @@ describe('controllers/workers/processBilling', () => {
       rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
       let message = getValidMessage(rebill_id);
 
-      let shipProductController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+      const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+      let processBillingController = new ProcessBillingController();
 
-      return shipProductController.execute(message).then(result => {
+      return processBillingController.execute(message).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
         du.info(result, result.getCode());
         expect(result.getCode()).to.equal('success');

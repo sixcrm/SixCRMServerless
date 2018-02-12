@@ -1,0 +1,9 @@
+{
+  "method": "getCurrentQueueSummary",
+  "test_case": "random input with development data with pending filtering",
+  "input": {
+    "queuename":"pending",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "summary",
+  "expect": [{"queuename":"pending","avg_time":68410,"number_of_rebills":"22","failure_rate":"1"}]
+}

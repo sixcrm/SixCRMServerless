@@ -51,8 +51,8 @@ describe('stateMachineDocker', () => {
     beforeEach(() => {
     });
 
-    afterEach((done) => {
-        SQSDeployment.purgeQueues().then(() => done());
+    afterEach(() => {
+        // SQSDeployment.purgeQueues().then(() => done());
     });
 
 
@@ -120,6 +120,29 @@ describe('stateMachineDocker', () => {
             updated_at:timestamp.getISO8601()
         };
 
+        let rebill_processing = {
+            bill_at: timestamp.getISO8601(),
+            id: uuidV4(),
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            processing: 'true',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
+        let rebill_in_past = {
+            bill_at: timestamp.convertToISO8601(timestamp.yesterday()),
+            id: uuidV4(),
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
         before((done) => {
 
             Promise.all([
@@ -127,15 +150,67 @@ describe('stateMachineDocker', () => {
             ]).then(() => done());
         });
 
-        it('rebill should be picked from dynamo and moved to bill', () => {
+        console.log('REBILL ID ' + rebill.id);
 
-            return rebillController.get({id: rebill.id})
-                .then(rebill => expect(rebill.state).to.equal(undefined))
+        it('15 rebills should be picked from dynamo and moved to bill', () => {
+
+            let create_rebills = [];
+
+            for (let i = 0; i < 15; i++) {
+                create_rebills.push(rebillController.create({ entity: {
+                    bill_at: timestamp.getISO8601(),
+                    id: uuidV4(),
+                    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+                    parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+                    product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+                    amount: randomutilities.randomDouble(1, 200, 2),
+                    created_at:timestamp.getISO8601(),
+                    updated_at:timestamp.getISO8601()
+                } }));
+            }
+
+            return Promise.all(create_rebills)
+                .then(() => timestamp.delay(2 * 1000)())
                 .then(() => flushStateMachine())
+                .then(() => SqSTestUtils.messageCountInQueue('bill'))
+                .then((count) => expect(count).to.be.above(14, 'No messages in bill queue.'))
+        });
+
+        it('1 rebill should be picked from dynamo and moved to bill', () => {
+
+            return flushStateMachine()
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('bill'))
                 .then(() => SqSTestUtils.messageCountInQueue('bill'))
                 .then((count) => expect(count).to.be.above(0, 'No message in bill queue.'))
+        });
+
+        it('ignores rebills that are already in state `processing`', () => {
+
+            return SQSDeployment.purgeQueues()
+                .then(() => rebillController.create({entity: rebill_processing}))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill_processing.id}))
+                .then(rebill => expect(rebill.state).to.equal(undefined))
+                .then(() => SqSTestUtils.messageCountInQueue('bill'))
+                .then((count) => expect(count).to.be.equal(0, 'No message should be in bill queue.'))
+        });
+
+        it('ignores rebills in past', () => {
+
+            return SQSDeployment.purgeQueues()
+                .then(() => rebillController.create({entity: rebill_in_past}))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill_processing.id}))
+                .then(rebill => expect(rebill.state).to.equal(undefined))
+                .then(() => SqSTestUtils.messageCountInQueue('bill'))
+                .then((count) => expect(count).to.be.equal(0, 'No message should be in bill queue.'))
+        });
+
+        it('updates rebill processing', () => {
+
+            return rebillController.get({id: rebill.id})
+                .then(rebill => expect(rebill.processing).to.equal(true))
         });
 
     });
@@ -155,20 +230,30 @@ describe('stateMachineDocker', () => {
             updated_at:timestamp.getISO8601()
         };
 
+        let non_existant_id = '5e595e15-e0d9-4f9a-a381-484594820d34'; //this is not in the system
+
         before((done) => {
             Promise.all([
                 rebillController.create({entity: rebill}),
-                SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + rebill.id +'"}')
+                SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + rebill.id +'"}'),
+                SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + non_existant_id +'"}')
             ]).then(() => done());
         });
 
-        it('rebill should move from bill to hold and update its state', () => {
+        xit('rebill should move from bill to hold and update its state', () => {
 
             return rebillController.get({id: rebill.id})
                 .then(rebill => expect(rebill.state).to.equal('bill'))
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('hold'))
+        });
+
+        it('missing rebill should cause the message to go to error', () => {
+
+            return () => flushStateMachine()
+                .then(() => SqSTestUtils.messageCountInQueue('bill_error'))
+                .then((count) => expect(count).to.be.above(0, 'No message in bill_error queue.'))
         });
 
     });
@@ -189,20 +274,74 @@ describe('stateMachineDocker', () => {
             updated_at:timestamp.getISO8601()
         };
 
+        let non_existant_id = '5e595e15-e0d9-4f9a-a381-484594820d34'; //this is not in the system
+
         before((done) => {
             Promise.all([
                 rebillController.create({entity: rebill}),
-                SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}')
+                SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}'),
+                SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + non_existant_id +'"}')
             ]).then(() => done());
         });
 
-        it('rebill should move from hold to pending and update its state', () => {
+        xit('rebill should move from hold to pending and update its state', () => {
 
             return rebillController.get({id: rebill.id})
                 .then(rebill => expect(rebill.state).to.equal('hold'))
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('pending'))
+        });
+
+        it('missing rebill should cause the message to go to error', () => {
+
+            return () => flushStateMachine()
+                .then(() => SqSTestUtils.messageCountInQueue('hold_error'))
+                .then((count) => expect(count).to.be.above(0, 'No message in hold_error queue.'))
+        });
+
+    });
+
+    describe('Pending To Shipped', () => {
+
+        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebill = {
+            bill_at: timestamp.getISO8601(),
+            id: uuidV4(),
+            state: 'pending',
+            processing: true,
+            account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+            parentsession: '1fc8a2ef-0db7-4c12-8ee9-fcb7bc6b075d',
+            product_schedules: ["2200669e-5e49-4335-9995-9c02f041d91b"],
+            amount: randomutilities.randomDouble(1, 200, 2),
+            created_at:timestamp.getISO8601(),
+            updated_at:timestamp.getISO8601()
+        };
+
+        let non_existant_id = '5e595e15-e0d9-4f9a-a381-484594820d34'; //this is not in the system
+
+        before((done) => {
+            Promise.all([
+                rebillController.create({entity: rebill}),
+                SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + rebill.id +'"}'),
+                SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + non_existant_id +'"}')
+            ]).then(() => done());
+        });
+
+        it('rebill should move from pending to pending_error when transactions are missing', () => {
+
+            return rebillController.get({id: rebill.id})
+                .then(rebill => expect(rebill.state).to.equal('pending'))
+                .then(() => flushStateMachine())
+                .then(() => rebillController.get({id: rebill.id}))
+                .then(rebill => expect(rebill.state).to.equal('pending_error'))
+        });
+
+        it('missing rebill should cause the message to go to error', () => {
+
+            return () => flushStateMachine()
+                .then(() => SqSTestUtils.messageCountInQueue('pending_error'))
+                .then((count) => expect(count).to.be.above(0, 'No message in pending_error queue.'))
         });
 
     });
@@ -223,14 +362,17 @@ describe('stateMachineDocker', () => {
             updated_at:timestamp.getISO8601()
         };
 
+        let non_existant_id = '5e595e15-e0d9-4f9a-a381-484594820d34'; //this is not in the system
+
         before((done) => {
             Promise.all([
                 rebillController.create({entity: rebill}),
-                SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill.id +'"}')
+                SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill.id +'"}'),
+                SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + non_existant_id +'"}')
             ]).then(() => done());
         });
 
-        it('rebill should move from shipped to shipped_error when missing transactions', () => {
+        it('rebill should move from shipped to shipped_error when transactions are missing', () => {
 
             return rebillController.get({id: rebill.id})
                 .then(rebill => expect(rebill.state).to.equal('shipped'))
@@ -239,6 +381,11 @@ describe('stateMachineDocker', () => {
                 .then(rebill => expect(rebill.state).to.equal('shipped_error'))
         });
 
+        it('missing rebill should cause the message to go to error', () => {
+            return () => flushStateMachine()
+                .then(() => SqSTestUtils.messageCountInQueue('shipped_error'))
+                .then((count) => expect(count).to.be.above(0, 'No message in shipped_error queue.'))
+        });
     });
 
     describe('Delivered To Archive', () => {

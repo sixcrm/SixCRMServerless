@@ -789,6 +789,20 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
     });
 
+    it('successfully evaluates fulfillment responses (noaction)', () => {
+
+        const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+        let terminalController = new TerminalController();
+
+        terminalController.parameters.set('compoundfulfillmentresponses', []);
+
+        let response = terminalController.transformFulfillResponses();
+
+        expect(response).to.equal(true);
+        expect(terminalController.parameters.store['responsecode']).to.equal('noaction');
+
+    });
+
   });
 
   describe('respond', () => {
@@ -982,6 +996,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
       arrayutilities.map(transactions, transaction => {
         arrayutilities.map(transaction.products, transaction_product => {
+          delete transaction_product.shipping_receipt;
+
           return product_ids.push(transaction_product.product);
         })
       });

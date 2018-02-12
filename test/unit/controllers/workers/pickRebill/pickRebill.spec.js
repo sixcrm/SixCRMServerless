@@ -57,7 +57,8 @@ describe('controllers/workers/pickRebills.js', function () {
 
       it('successfully constructs',  () => {
 
-        let pickRebillsController = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+        const PickRebillsController = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+        let pickRebillsController = new PickRebillsController();
 
         expect(objectutilities.getClassName(pickRebillsController)).to.equal('PickRebillsController');
 
@@ -89,7 +90,8 @@ describe('controllers/workers/pickRebills.js', function () {
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), rebill_helper_mock);
 
         let message = getValidSpoofedRebillMessage();
-        let pickRebills = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+        const PickRebills = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+        let pickRebills = new PickRebills();
 
         return pickRebills.execute(message).then(result => {
           expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
@@ -119,7 +121,8 @@ describe('controllers/workers/pickRebills.js', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), rebill_helper_mock);
 
-      let pickRebillsController = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+      const PickRebillsController = global.SixCRM.routes.include('controllers', 'workers/pickRebills.js');
+      let pickRebillsController = new PickRebillsController();
 
       pickRebillsController.parameters.set('rebill', rebill);
 

@@ -12,7 +12,7 @@ const workerController = global.SixCRM.routes.include('controllers', 'workers/co
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 //Technical Debt:  Need to either mark the rebill with the attempt number or update the method which checks the rebill for existing failed attempts (better idea.)
-class processBillingController extends workerController {
+module.exports = class processBillingController extends workerController {
 
   constructor(){
 
@@ -79,5 +79,3 @@ class processBillingController extends workerController {
   }
 
 }
-
-module.exports = new processBillingController();

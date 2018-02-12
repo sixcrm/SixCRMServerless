@@ -590,7 +590,11 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
   transformRebill() {
 
     const rebill = this.parameters.get('rebill');
-    // Need to add amount from rebill
+
+    // A.Zelen
+    // For summary amounts in queries we need amount of rebills to be feed here
+    // I hard-coded zero
+
     const transformedRebill = {
       id_rebill: rebill.id,
       current_queuename: rebill.state,

@@ -3,7 +3,7 @@
 ____
 
 The syntax of queries where changed to be compliant on PostgreSQL database as well as Redshift
-Typical changes where :
+Typical changes are :
 
 (Redshift) WHERE 1 to (PostgreSQL) WHERE 1=1
 (Redshift) nvl to (PostgreSQL) coalesce
@@ -11,6 +11,9 @@ Typical changes where :
 
 All queries that are integrated in the *Analytics.js* class are/will be covered with test, be there integrated via GraphQL or not.
 All queries are covered with multiple tests whose specifics are described in the config.json of the respectfully test.
+
+The docker image that is used is : circleci/postgres:9.6
+It is important to use a modern PostgreSQL version that has IF EXISTS for Creating and IF NOT EXISTS for destroying as this makes queries idempotent.
 
 ## Tests
 

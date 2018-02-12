@@ -265,6 +265,61 @@ describe('controllers/Entity.js', () => {
                     ' with ID: "' + anEntity.id + '" -  record doesn\'t exist.');
             });
         });
+
+        it('master account does not hijack ownership', () => {
+            // given
+            let anEntity = {
+                "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+                "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+                "name": "Test Product",
+                "description":"This is a test description",
+                "sku":"123",
+                "ship":true,
+                "created_at":"2017-04-06T18:40:41.405Z",
+                "updated_at":"2017-04-06T18:40:41.405Z"
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+            global.account = '*';
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    return Promise.resolve({Items: [anEntity]});
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+						});
+
+						let mock_preindexing_helper = class {
+              constructor(){
+
+              }
+              addToSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(entity){
+                return Promise.resolve(true);
+              }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('product');
+
+            // when
+            return entityController.update({entity: anEntity}).then((updatedEntity) => {
+                expect(updatedEntity.account).to.equal('d3fa3bf3-7824-49f4-8261-87674482bf1c');
+            });
+        });
     });
 
     describe('delete', () => {

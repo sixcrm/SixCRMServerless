@@ -506,7 +506,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       }else{
 
-        return this.s3utilities.assureBucket(bucket).then(() => {
+        return this.s3utilities.assureBucket({Bucket: bucket}).then(() => {
 
           let parameters = {
             Bucket: bucket,

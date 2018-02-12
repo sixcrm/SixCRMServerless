@@ -12,7 +12,7 @@ const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utili
 
 var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
-class sendNotificationsController extends workerController {
+module.exports = class sendNotificationsController extends workerController {
 
   constructor(){
     super();
@@ -93,5 +93,3 @@ class sendNotificationsController extends workerController {
   }
 
 }
-
-module.exports = new sendNotificationsController();

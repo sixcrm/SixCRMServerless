@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/loadbalancer",
-	"title": "Load Balancer",
+	"id":"/entities/loadbalancerassociation.jsn",
+	"title": "Load Balancer Association",
 	"type": "object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},

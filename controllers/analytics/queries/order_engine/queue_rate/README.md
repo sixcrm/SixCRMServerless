@@ -18,9 +18,9 @@ ____
 ### Required
 * `start` - a ISO-8601 datetime
 * `end` - a ISO-8601 datetime
+* `previous_queuename` - name of the queue
 
 ### Optional
-* `current_queuename` - name of the queue
 * `account` - a UUIDv4
 
 ---

@@ -138,7 +138,8 @@ describe('controllers/workers/recoverBilling', () => {
 
     it('instantiates the recoverBillingController class', () => {
 
-      let recoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      let recoverBillingController = new RecoverBillingController();
 
       expect(objectutilities.getClassName(recoverBillingController)).to.equal('recoverBillingController');
 
@@ -161,7 +162,8 @@ describe('controllers/workers/recoverBilling', () => {
         }
       });
 
-      let recoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      let recoverBillingController = new RecoverBillingController();
 
       recoverBillingController.parameters.set('rebill', rebill);
       recoverBillingController.parameters.set('registerresponsecode', 'fail');
@@ -185,7 +187,8 @@ describe('controllers/workers/recoverBilling', () => {
         }
       });
 
-      let recoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      let recoverBillingController = new RecoverBillingController();
 
       recoverBillingController.parameters.set('rebill', rebill);
       recoverBillingController.parameters.set('registerresponsecode', 'success');
@@ -209,7 +212,8 @@ describe('controllers/workers/recoverBilling', () => {
         }
       });
 
-      let recoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      let recoverBillingController = new RecoverBillingController();
 
       recoverBillingController.parameters.set('rebill', rebill);
       recoverBillingController.parameters.set('registerresponsecode', 'error');
@@ -241,7 +245,8 @@ describe('controllers/workers/recoverBilling', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), register_mock);
 
-      let recoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      let recoverBillingController = new RecoverBillingController();
 
       recoverBillingController.parameters.set('rebill', rebill);
 
@@ -281,7 +286,8 @@ describe('controllers/workers/recoverBilling', () => {
       });
 
       let message = getValidMessages()[0];
-      let recoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+      let recoverBillingController = new RecoverBillingController();
 
       return recoverBillingController.execute(message).then(result => {
         expect(recoverBillingController.parameters.store['registerresponsecode']).to.equal(response_code);

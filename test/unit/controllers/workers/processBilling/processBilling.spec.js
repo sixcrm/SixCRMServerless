@@ -138,7 +138,8 @@ describe('controllers/workers/processBilling', () => {
 
     it('instantiates the processBillingController class', () => {
 
-      let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+      const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+      let processBillingController = new ProcessBillingController();
 
       expect(objectutilities.getClassName(processBillingController)).to.equal('processBillingController');
 
@@ -164,7 +165,8 @@ describe('controllers/workers/processBilling', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), register_mock);
 
-      let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+      const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+      let processBillingController = new ProcessBillingController();
 
       processBillingController.parameters.set('rebill', rebill);
 
@@ -204,7 +206,8 @@ describe('controllers/workers/processBilling', () => {
       });
 
       let message = getValidMessages()[0];
-      let processBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+      const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+      let processBillingController = new ProcessBillingController();
 
       return processBillingController.execute(message).then(result => {
         expect(processBillingController.parameters.store['registerresponsecode']).to.equal(response_code);

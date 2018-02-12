@@ -18,7 +18,7 @@ Note, not all transaction_products will have shipping receipts -  many are no-sh
 
 */
 
-class confirmShippedController extends workerController {
+module.exports = class confirmShippedController extends workerController {
 
     constructor(){
 
@@ -333,4 +333,3 @@ class confirmShippedController extends workerController {
 
 }
 
-module.exports = new confirmShippedController();

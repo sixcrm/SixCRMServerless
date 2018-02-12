@@ -106,7 +106,8 @@ describe('controllers/workers/confirmShipped', () => {
 
     it('instantiates the confirmShippedController class', () => {
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       expect(objectutilities.getClassName(confirmedShippedController)).to.equal('confirmShippedController');
 
@@ -130,7 +131,8 @@ describe('controllers/workers/confirmShipped', () => {
         }
       });
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       confirmedShippedController.parameters.set('rebill', rebill);
 
@@ -163,7 +165,8 @@ describe('controllers/workers/confirmShipped', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       confirmedShippedController.parameters.set('transactions', transactions);
 
@@ -190,7 +193,8 @@ describe('controllers/workers/confirmShipped', () => {
         }
       });
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       confirmedShippedController.parameters.set('shippedtransactionproducts', transaction_products);
 
@@ -218,7 +222,8 @@ describe('controllers/workers/confirmShipped', () => {
         }
       });
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       confirmedShippedController.parameters.set('shippingreceipts', shipping_receipts);
 
@@ -239,7 +244,8 @@ describe('controllers/workers/confirmShipped', () => {
 
       let rebill_shipped_status = true;
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       confirmedShippedController.parameters.set('rebillshippedstatus', rebill_shipped_status);
 
@@ -254,7 +260,8 @@ describe('controllers/workers/confirmShipped', () => {
 
       let rebill_shipped_status = false;
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       confirmedShippedController.parameters.set('rebillshippedstatus', rebill_shipped_status);
 
@@ -313,7 +320,8 @@ describe('controllers/workers/confirmShipped', () => {
         }
       });
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       return confirmedShippedController.execute(message).then((response) => {
 
@@ -370,7 +378,8 @@ describe('controllers/workers/confirmShipped', () => {
         }
       });
 
-      let confirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+      let confirmedShippedController = new ConfirmedShippedController();
 
       return confirmedShippedController.execute(message).then((response) => {
 

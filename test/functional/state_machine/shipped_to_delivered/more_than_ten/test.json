@@ -1,0 +1,8 @@
+{
+  "description": "11 rebills go from shipped to delivered",
+  "order": 30,
+  "lambda_filter": ["shippedtodelivered"],
+  "env": {
+    "archivefilter": "all"
+  }
+}

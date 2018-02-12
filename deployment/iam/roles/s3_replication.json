@@ -1,0 +1,21 @@
+[
+	{
+		"AssumeRolePolicyDocument": {
+			"Version": "2012-10-17",
+			"Statement": [
+				{
+					"Effect": "Allow",
+					"Principal": {
+						"Service": "s3.amazonaws.com"
+					},
+					"Action": "sts:AssumeRole"
+				}
+			]
+		},
+		"RoleName": "sixcrm_s3_replication_role",
+		"Description": "The role used by s3 to replicate files to backup bucket",
+		"ManagedPolicies": [
+			"arn:aws:iam::aws:policy/AmazonS3FullAccess"
+		]
+	}
+]

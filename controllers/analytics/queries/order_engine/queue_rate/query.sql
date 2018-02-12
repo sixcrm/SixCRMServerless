@@ -31,7 +31,7 @@ FROM
      )                     num_of_success_rebills,
      sum(
          CASE
-         WHEN m_datetime = datetime and datetime < CURRENT_DATE + interval '14 days'
+         WHEN m_datetime = datetime and datetime < CURRENT_DATE - interval '14 days'
            THEN 1
          ELSE 0
          END
@@ -43,6 +43,6 @@ FROM
   FROM f_rebills fr
 WHERE 1=1
   {{filter}}
-  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
-  AND previous_queuename NOT LIKE '%failed' and previous_queuename != 'recover' ) rebill_sub_1
+  AND previous_queuename = {{queuename}}
+  AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}' ) rebill_sub_1
 GROUP BY previous_queuename) rebill_sub_2;

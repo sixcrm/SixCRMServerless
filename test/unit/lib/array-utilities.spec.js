@@ -75,9 +75,16 @@ describe('lib/array-utilities', () => {
             expect(error.message).to.equal('[500] ArrayUtilities.every function argument is not a function.');
         }
 
-        arrayutilities.every([1], (value) => {
-            expect(value).to.equal(1);
-        });
+        //returns true when array is empty
+        expect(arrayutilities.every([], () => {})).to.equal(true);
+
+        expect(arrayutilities.every([1, 2, 3, 5, 9], (value) => {
+            return value < 10
+        })).to.equal(true);
+
+        expect(arrayutilities.every([1, 2, 3, 5, 20], (value) => {
+            return value < 10
+        })).to.equal(false);
 
     });
 

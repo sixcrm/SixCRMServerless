@@ -6,6 +6,7 @@ var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 var arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 var objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const random = global.SixCRM.routes.include('lib', 'random.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -57,6 +58,30 @@ class sessionController extends entityController {
         };
 
         return this.listByAccount({query_parameters: scan_parameters, pagination: pagination});
+
+    }
+
+    create({entity}){
+
+      du.debug('Create (Session Update)');
+
+      if(!_.has(entity, 'alias')){
+        entity.alias = this.createAlias();
+      }
+
+      return super.create({entity: entity});
+
+    }
+
+    update({entity}){
+
+      du.debug('Update (Session Update)');
+
+      if(!_.has(entity, 'alias')){
+        entity.alias = this.createAlias();
+      }
+
+      return super.update({entity: entity});
 
     }
 
@@ -345,7 +370,7 @@ class sessionController extends entityController {
 
       du.debug('List By Customer');
 
-      return this.listBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index', pagination: pagination});
+      return this.queryBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index', pagination: pagination});
 
     }
 
@@ -513,6 +538,15 @@ class sessionController extends entityController {
         });
 
       }
+
+    createAlias(){
+
+      let alias = random.createRandomString(9);
+
+      return 'S'+alias;
+
+    }
+
 }
 
 module.exports = new sessionController();

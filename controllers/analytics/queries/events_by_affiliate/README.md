@@ -28,6 +28,8 @@ ____
 
 For the current analytics filters and datetime ranging parameters, query generates a ordered percentage of events by affiliate.
 The results is displayed as both count and percentage. A "no-affiliate" group is included as a empty string.
+Events can have no product_schedule feed.
+Events can have no affiliates feed.
 
 ---
 ## Results:

@@ -1,0 +1,185 @@
+const expect = require('chai').expect;
+const mockery = require('mockery');
+const SqSTestUtils = require('../../sqs-test-utils');
+const StateMachine = require('../state-machine-test-utils.js');
+const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
+const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+
+describe('pendingToShipped', () => {
+
+    let tests = [];
+    let test_dirs = fileutilities.getDirectoryList(__dirname);
+
+    arrayutilities.map(test_dirs, (test_dir) => {
+        let test_path = __dirname + '/' + test_dir;
+
+        if (fileutilities.fileExists(test_path + '/test.json')) {
+            let config = require(test_path + '/test.json');
+            let test = { seeds: {}, expectations: {} };
+            test.description = config.description;
+            test.path = test_path;
+            test.lambda_filter = config.lambda_filter;
+            test.order = config.order || Number.MAX_SAFE_INTEGER;
+
+
+            if (fileutilities.fileExists(test_path + '/seeds')) {
+                if (fileutilities.fileExists(test_path + '/seeds/dynamodb')) {
+                    test.seeds.dynamodb = fileutilities.getDirectoryFilesSync(test_path + '/seeds/dynamodb');
+                }
+                if (fileutilities.fileExists(test_path + '/seeds/sqs')) {
+                    test.seeds.sqs = fileutilities.getDirectoryFilesSync(test_path + '/seeds/sqs');
+                }
+            }
+
+            if (fileutilities.fileExists(test_path + '/expectations')) {
+                if (fileutilities.fileExists(test_path + '/expectations/dynamodb')) {
+                    test.expectations.dynamodb = fileutilities.getDirectoryFilesSync(test_path + '/expectations/dynamodb');
+                }
+                if (fileutilities.fileExists(test_path + '/expectations/sqs')) {
+                    test.expectations.sqs = fileutilities.getDirectoryFilesSync(test_path + '/expectations/sqs');
+                }
+            }
+
+            tests.push(test);
+        } else {
+            console.log('Ignoring ' + test_path);
+        }
+
+    });
+    tests.sort((a, b) => a.order - b.order);
+
+    before((done) => {
+        process.env.require_local = true;
+        process.env.stage = 'local';
+
+        Promise.resolve()
+            .then(() => DynamoDbDeployment.initializeControllers())
+            .then(() => DynamoDbDeployment.destroyTables())
+            .then(() => DynamoDbDeployment.deployTables())
+            .then(() => SQSDeployment.deployQueues())
+            .then(() => SQSDeployment.purgeQueues())
+            .then(() => done());
+
+    });
+
+    arrayutilities.map(tests, (test) => {
+        it(test.description, () => {
+            return beforeTest(test)
+                .then(() => StateMachine.flush(test.lambda_filter))
+                .then(() => verifyRebills(test))
+                .then(() => verifySqs(test))
+        })
+    });
+
+    function beforeTest(test) {
+        return Promise.resolve()
+            .then(() => SQSDeployment.purgeQueues())
+            .then(() => DynamoDbDeployment.destroyTables())
+            .then(() => DynamoDbDeployment.deployTables())
+            .then(() => seedDynamo(test))
+            .then(() => seedSqs(test))
+    }
+
+    function seedDynamo(test) {
+        if (!test.seeds.dynamodb) {
+          return Promise.resolve();
+        }
+
+        permissionutilities.disableACLs();
+
+        let promises = [];
+        test.seeds.dynamodb.forEach(seed => {
+            let table_name = seed.replace('.json', '');
+            let seed_file_path = test.path + '/seeds/dynamodb/' + seed;
+            promises.push(DynamoDbDeployment.executeSeedViaController(
+                { Table: {
+                    TableName: table_name
+                }},
+                require(seed_file_path)
+            ));
+        });
+
+        return Promise.all(promises)
+            .then(() => permissionutilities.enableACLs())
+            .catch(() => permissionutilities.enableACLs());
+    }
+
+    function seedSqs(test) {
+        if (!test.seeds.sqs) {
+            return Promise.resolve();
+        }
+
+        let promises = [];
+        test.seeds.sqs.forEach(seed => {
+            let queue_name = seed.replace('.json', '');
+            let seed_file_path = test.path + '/seeds/sqs/' + seed;
+            let messages = require(seed_file_path);
+
+            messages.forEach(message => {
+                promises.push(SqSTestUtils.sendMessageToQueue(queue_name, JSON.stringify(message)));
+            });
+
+        });
+
+        return Promise.all(promises);
+    }
+
+    function rebills() {
+        permissionutilities.disableACLs();
+
+        return rebillController.list({pagination:{limit: 100}})
+            .then((response) => {
+                permissionutilities.enableACLs();
+                return response.rebills;
+            });
+    }
+
+    function verifySqs(test) {
+
+        if (test.expectations.sqs) {
+
+            let comparations = [];
+
+            test.expectations.sqs.forEach(queue_definition => {
+                let expected_queue = require(test.path + '/expectations/sqs/' + queue_definition);
+                let queue_name = queue_definition.replace('.json', '');
+
+                comparations.push(SqSTestUtils.messageCountInQueue(queue_name)
+                    .then(count => {
+                        return expect(count).to.equal(expected_queue.length, `Expected ${expected_queue.length} messages in ${queue_name} but got ${count}`);
+                    }));
+            });
+            return Promise.all(comparations);
+        } else {
+            return Promise.resolve();
+        }
+
+    }
+
+    function verifyRebills(test) {
+        return rebills()
+            .then((rebills) => {
+                rebills = rebills || [];
+                let expected = require(test.path + '/expectations/dynamodb/rebills.json');
+
+                expected.sort((a,b) => a.id.localeCompare(b.id));
+                rebills.sort((a,b) => a.id.localeCompare(b.id));
+
+                for (let i = 0; i < expected.length; i++) {
+                    for(let key in expected[i]) {
+                        expect(rebills[i][key]).to.deep.equal(
+                            expected[i][key],
+                            '"' + key + '" is not the same in rebill with id '+ rebills[i].id);
+                    }
+                }
+            })
+
+    }
+
+});
+

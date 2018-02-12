@@ -55,7 +55,8 @@ describe('controllers/workers/getRebills', () => {
 
     it('instantiates the createRebillsController class', () => {
 
-      let createRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      let createRebillsController = new CreateRebillsController();
 
       expect(objectutilities.getClassName(createRebillsController)).to.equal('createRebillsController');
 
@@ -78,7 +79,8 @@ describe('controllers/workers/getRebills', () => {
         }
       });
 
-      let createRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      let createRebillsController = new CreateRebillsController();
 
       createRebillsController.parameters.set('message', message);
 
@@ -109,7 +111,8 @@ describe('controllers/workers/getRebills', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper_controller);
 
-      let createRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      let createRebillsController = new CreateRebillsController();
 
       createRebillsController.parameters.set('session', session);
 
@@ -128,7 +131,8 @@ describe('controllers/workers/getRebills', () => {
 
       let rebill = getValidRebill();
 
-      let createRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      let createRebillsController = new CreateRebillsController();
 
       createRebillsController.parameters.set('rebill', rebill);
 
@@ -167,7 +171,8 @@ describe('controllers/workers/getRebills', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper_controller);
 
-      let createRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+      let createRebillsController = new CreateRebillsController();
 
       return createRebillsController.execute(message).then(result => {
         expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');

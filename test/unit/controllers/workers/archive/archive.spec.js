@@ -168,7 +168,8 @@ describe('controllers/workers/archive', function () {
 
         let rebill = getValidRebill();
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('rebill', rebill);
 
@@ -185,7 +186,8 @@ describe('controllers/workers/archive', function () {
 
         rebill.second_attempt = true;
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('rebill', rebill);
 
@@ -211,7 +213,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('rebill', rebill);
 
@@ -237,7 +240,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('transactions', transactions);
 
@@ -257,7 +261,8 @@ describe('controllers/workers/archive', function () {
         let archive_filter = 'all';
 
         process.env.archivefilter = archive_filter;
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
         let result = archiveController.setArchiveFilter();
 
         expect(result).to.equal(true);
@@ -273,7 +278,8 @@ describe('controllers/workers/archive', function () {
 
         let products = getValidProducts();
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('products', products);
 
@@ -290,7 +296,8 @@ describe('controllers/workers/archive', function () {
         products[0].ship = false;
         products[1].ship = false;
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('products', products);
 
@@ -325,7 +332,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('rebill', rebill);
 
@@ -357,7 +365,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('rebill', rebill);
 
@@ -376,7 +385,8 @@ describe('controllers/workers/archive', function () {
 
         let archivefilter = 'all';
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('archivefilter', archivefilter);
 
@@ -409,7 +419,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('archivefilter', archivefilter);
         archiveController.parameters.set('rebill', rebill);
@@ -440,7 +451,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('archivefilter', archivefilter);
         archiveController.parameters.set('rebill', rebill);
@@ -456,7 +468,8 @@ describe('controllers/workers/archive', function () {
         let archivefilter = 'twoattempts';
         let rebill = getValidRebill();
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('archivefilter', archivefilter);
         archiveController.parameters.set('rebill', rebill);
@@ -474,7 +487,8 @@ describe('controllers/workers/archive', function () {
 
         rebill.second_attempt = true;
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('archivefilter', archivefilter);
         archiveController.parameters.set('rebill', rebill);
@@ -491,7 +505,8 @@ describe('controllers/workers/archive', function () {
 
       it('Successfully responds (success)', () => {
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('responsecode', 'success');
 
@@ -504,7 +519,8 @@ describe('controllers/workers/archive', function () {
 
       it('Successfully responds (success)', () => {
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('responsecode', 'noaction');
 
@@ -517,7 +533,8 @@ describe('controllers/workers/archive', function () {
 
       it('Successfully responds (success)', () => {
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         archiveController.parameters.set('responsecode', 'error');
 
@@ -558,7 +575,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         return archiveController.execute(message).then(result => {
           expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
@@ -596,7 +614,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         return archiveController.execute(message).then(result => {
           expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
@@ -631,7 +650,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         return archiveController.execute(message).then(result => {
           expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
@@ -669,7 +689,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         return archiveController.execute(message).then(result => {
           expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
@@ -705,7 +726,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         return archiveController.execute(message).then(result => {
           expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
@@ -739,7 +761,8 @@ describe('controllers/workers/archive', function () {
           }
         });
 
-        const archiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+        let archiveController = new ArchiveController();
 
         return archiveController.execute(message).then(result => {
           expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');

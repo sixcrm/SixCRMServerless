@@ -20,5 +20,5 @@ WITH rebills_delta AS
    FROM base
    UNION SELECT {{queuename}} AS queue_name,INTERVAL '0 second' AS average_time)
 SELECT max(queue_name) AS queuename,
-       max(average_time) AS average_time
+       max(average_time) AS avg_time
 FROM RESULT;

@@ -112,19 +112,19 @@ const GraphQLString = require('graphql').GraphQLString;
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
-    createaccountimage: {
+    putaccountimage: {
 			type: accountImageType.graphObj,
-			description: 'creates a account image',
+			description: 'puts a account image',
 			args: {
 				accountimage: {
           type: accountImageInputType.graphObj
         }
 			},
 			resolve: (value, accountimage) => {
-				const AccountImageHelperController = global.SixCRM.routes.include('helpers', 'resources/accountimage/AccountImage.js');
-				let accountImageHelperController = new accountImageHelperController();
+				const AccountImageHelperController = global.SixCRM.routes.include('helpers', 'resources/accountimages/AccountImages.js');
+				let accountImageHelperController = new AccountImageHelperController();
 
-				return accountImageHelperController.uploadImageToS3({
+				return accountImageHelperController.upload({
           data: accountimage.accountimage.data
         });
 			}

@@ -65,6 +65,10 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
             update_parameters.previous_state = previous_state;
         }
 
+        if (!rebill) {
+            return Promise.resolve();
+        }
+
         return rebillHelperController.updateRebillState(update_parameters);
       });
 

@@ -51,7 +51,9 @@ module.exports = class ProductScheduleHelper {
 
           let found_product = arrayutilities.find(products, product => {
 
-            return (product.id == schedule_element.product);
+            // Technical Debt: accounting for legacy data ('product_id' exists in legacy data, switched to 'product')
+            // Remove at earliest convenience
+            return (product.id == schedule_element.product || product.id == schedule_element.product_id);
 
           });
 
@@ -255,9 +257,10 @@ module.exports = class ProductScheduleHelper {
     let return_object = {
       price: schedule_element.price,
       start: schedule_element.start,
-      period: schedule_element.period,
-      product: schedule_element.product
-    };
+			period: schedule_element.period,
+			//Techincal Debt: accounting for legacy deta, remove at earliest convenience
+			product: _.has(schedule_element, 'product') ? schedule_element.product : schedule_element.product_id
+		};
 
     if(_.has(schedule_element, 'end')){
       return_object.end = schedule_element.end;

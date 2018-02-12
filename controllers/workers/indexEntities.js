@@ -7,7 +7,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
-class IndexEntitiesController extends workerController {
+module.exports = class IndexEntitiesController extends workerController {
 
     constructor(){
 
@@ -155,5 +155,3 @@ class IndexEntitiesController extends workerController {
     }
 
 }
-
-module.exports = new IndexEntitiesController();

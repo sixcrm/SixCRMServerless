@@ -1,13 +1,22 @@
 'use strict'
-const _ = require('underscore');
 
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-module.exports = class SessionHelper {
+module.exports = class SessionHelperController {
 
   constructor(){
+
+    this.parameter_definition = {};
+
+    this.parameter_validation = {};
+
+    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+
+    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
   }
 
@@ -35,4 +44,63 @@ module.exports = class SessionHelper {
 
   }
 
-};
+  getSessionByCustomerAndID({customer, id}){
+
+    du.debug('Get Session By Customer and ID');
+
+    if(!_.has(this, 'sessionController')){
+      this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+    }
+
+    return this.sessionController.get({id:id}).then(session => {
+
+      if(_.isNull(session)){ return null; }
+
+      return this.sessionController.getCustomer(session).then(customer_result => {
+
+        if(_.has(customer_result, 'email') && (customer == customer_result.email)){ return session; }
+
+        return null;
+
+      });
+
+    });
+
+  }
+
+  getSessionByCustomerAndAlias({customer, alias}){
+
+    du.debug('Get Session By Customer and Alias');
+
+    if(!_.has(this, 'customerController')){
+      this.customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+    }
+
+    return this.customerController.getCustomerByEmail(customer).then(customer_result => {
+
+      if(_.isNull(customer_result)){ return null; }
+
+      customer = customer_result;
+
+      return this.customerController.getCustomerSessions(customer)
+      .then(sessions => {
+
+        if(!arrayutilities.nonEmpty(sessions)){ return null; }
+
+        let matching_session = arrayutilities.find(sessions, session => {
+          return session.alias == alias;
+        });
+
+        if(_.isObject(matching_session)){
+          return matching_session;
+        }
+
+        return null;
+
+      });
+
+    });
+
+  }
+
+}

@@ -1,0 +1,20 @@
+{
+  "id":"/helpers/entities/customer/secondaryidentifier.json",
+  "title":"Secondary Identifier",
+  "type":"object",
+  "properties":{
+    "type":{
+      "type":"string",
+      "enum":["session.id", "session.alias", "transaction.alias", "creditcard.number"]
+    },
+    "value":{
+      "anyOf":[
+        {"$ref":"../../../definitions/uuidv4.json"},
+        {"$ref":"../../../definitions/transactionalias.json"},
+        {"$ref":"../../../definitions/sessionalias.json"},
+        {"$ref":"../../../definitions/creditcardnumber.json"}
+      ]
+    }
+  },
+  "required":["type","value"]
+}

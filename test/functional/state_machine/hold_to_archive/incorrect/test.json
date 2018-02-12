@@ -1,0 +1,8 @@
+{
+  "description": "Invalid message goes to error",
+  "order": 100,
+  "lambda_filter": ["holdtoarchive"],
+  "env": {
+    "archivefilter": "noship"
+  }
+}

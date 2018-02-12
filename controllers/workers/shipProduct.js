@@ -8,7 +8,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
 
-class shipProductController extends workerController {
+module.exports = class shipProductController extends workerController {
 
   constructor(){
 
@@ -37,7 +37,11 @@ class shipProductController extends workerController {
 
     return this.preamble(message)
     .then(() => this.ship())
-    .then(() => this.respond());
+    .then(() => this.respond())
+    .catch(error => {
+        du.error(error);
+        return super.respond('error', error.message);
+    })
 
   }
 
@@ -70,5 +74,3 @@ class shipProductController extends workerController {
   }
 
 }
-
-module.exports = new shipProductController();

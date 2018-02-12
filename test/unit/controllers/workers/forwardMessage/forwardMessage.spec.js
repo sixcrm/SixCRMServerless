@@ -68,7 +68,7 @@ function getValidMockWorker(){
     }
   }
 
-  return new aWorker();
+  return aWorker;
 
 }
 

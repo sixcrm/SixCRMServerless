@@ -1,0 +1,8 @@
+{
+  "description": "5 rebills are archived and updated",
+  "order": 20,
+  "lambda_filter": ["deliveredtoarchive"],
+  "env": {
+    "archivefilter": "all"
+  }
+}

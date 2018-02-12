@@ -30,6 +30,8 @@ ____
 ### Query notes
 
 Displays the number of distinct facets,facets themselves and number of all transactions
+Events can have no product_schedule feed.
+Events can have no affiliates feed.
 
 ---
 ## Results:

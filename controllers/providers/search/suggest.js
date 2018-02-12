@@ -7,8 +7,6 @@ class suggestController {
 
     constructor(){
 
-        super();
-        
     }
 
     suggest(suggestion_parameters){

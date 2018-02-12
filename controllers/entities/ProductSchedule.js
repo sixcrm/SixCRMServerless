@@ -119,9 +119,14 @@ class productScheduleController extends entityController {
 
     getProduct(scheduled_product){
 
-      du.debug('Get Product');
+			du.debug('Get Product');
 
-      return this.executeAssociatedEntityFunction('productController', 'get', {id: scheduled_product.product});
+			let product_id = _.has(scheduled_product, 'product') ? scheduled_product.product : scheduled_product.product_id;
+
+      //Technical Debt: Hack
+      if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) };
+
+      return this.executeAssociatedEntityFunction('productController', 'get', {id: product_id});
 
     }
 
@@ -132,7 +137,10 @@ class productScheduleController extends entityController {
       if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
         let product_ids = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
-          return product_schedule.product;
+
+					//Techincal Debt: accounting for legacy deta, remove at earliest convenience
+					return _.has(product_schedule, 'product') ? product_schedule.product : product_schedule.product_id;
+
         });
 
         if(arrayutilities.nonEmpty(product_ids)){

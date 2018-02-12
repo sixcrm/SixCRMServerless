@@ -81,7 +81,7 @@ module.exports = class forwardMessageController extends RelayController {
 
       let WorkerController = global.SixCRM.routes.include('workers', params.workerfunction);
 
-      return WorkerController.execute(message).then(response => {
+      return new WorkerController().execute(message).then(response => {
 
         if(params.bulk){
           return {worker_response_object: response, messages: message};

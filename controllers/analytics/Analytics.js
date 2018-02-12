@@ -272,6 +272,18 @@ class AnalyticsController extends AnalyticsUtilities{
 
     }
 
+    getCurrentQueueSummary(parameters){
+
+      du.debug('Get Rebills current queue summary');
+
+      const queuename = parameters.queuename;
+
+      parameters = this.appendQueueName(parameters, queuename);
+
+      return this.getResults('order_engine/rebills_current_summary', parameters, this.default_queue_account_filter);
+
+    }
+
     getRebillSummary(parameters){
 
       du.debug('Get Rebill Summary');
@@ -300,11 +312,10 @@ class AnalyticsController extends AnalyticsUtilities{
       parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
 
       if(!_.isUndefined(queue_name)){
-        parameters = this.appendCurrentQueueName(parameters, queue_name);
-        delete parameters['queuename'];
+        parameters = this.appendQueueName(parameters, queue_name);
       }
 
-      return this.getResults('order_engine/queue_rate', parameters, this.default_queue_filters);
+      return this.getResults('order_engine/queue_rate', parameters, this.default_queue_account_filter);
     }
 
     getQueueAverageTime(parameters){
@@ -319,44 +330,6 @@ class AnalyticsController extends AnalyticsUtilities{
       }
       du.debug(queue_name)
       return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_account_filter);
-    }
-
-    getQueueState(parameters) {
-
-      // Technical debt, need to change this into a query
-
-      let obj = {};
-
-      return this.getRebillSummary(parameters)
-        .then((result) => {
-          const count = result.summary[0] || {count: 0};
-
-          obj = {count: count.count};
-
-          return Promise.resolve();
-        })
-        .then(() => this.getQueueRates(parameters)
-          .then((result) => {
-            const rates = result.summary[0] || {failure_percentage: 0, success_rate: 0, expired_rate: 0, error_rate: 0};
-
-            obj.failure_rate = rates.failure_percentage;
-            obj.success_rate = rates.success_rate;
-            obj.expired_rate = rates.expired_rate;
-            obj.error_rate = rates.error_rate;
-            obj.failure_rate_color= rates.failure_percentage < 5 ? 'GREEN' : (rates.failure_percentage > 8 ? 'RED' : 'ORANGE');
-
-            return Promise.resolve();
-          }))
-        .then(() => this.getQueueAverageTime(parameters)
-          .then((result) => {
-            const average_time = result.summary[0] || {averagetime: 0};
-
-            obj.average_time = average_time.averagetime;
-            obj.average_time_color = average_time.averagetime < 300 ? 'GREEN' : (average_time.averagetime > 400 ? 'RED' : 'ORANGE');
-
-            return obj;
-          }));
-
     }
 
     getRebillsInQueue(parameters){
