@@ -1,6 +1,6 @@
 {
   "description": "Rebill remains in recover state when there wasn't a second attempt",
-  "order": 10,
+  "order": 40,
   "lambda_filter": ["recovertoarchive"],
   "env": {
     "archivefilter": "twoattempts"

@@ -1,0 +1,8 @@
+{
+  "description": "2 rebills without product and 2 without transaction, 3 missing, 1 with shipping product and 3 that are archived",
+  "order": 90,
+  "lambda_filter": ["holdtoarchive"],
+  "env": {
+    "archivefilter": "noship"
+  }
+}

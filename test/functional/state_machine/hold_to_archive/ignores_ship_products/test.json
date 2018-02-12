@@ -1,6 +1,6 @@
 {
   "description": "Rebill is not archived when products should be shipped",
-  "order": 10,
+  "order": 60,
   "lambda_filter": ["holdtoarchive"],
   "env": {
     "archivefilter": "noship"
