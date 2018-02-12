@@ -30,6 +30,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: GraphQLString,
             description: 'Language.',
         },
+        column_preferences: {
+            type: new GraphQLList(GraphQLString),
+            description: 'Users column preferences'
+        },
         notifications: {
             type: new GraphQLList(userNotificationSettingType.graphObj),
             description:'The settings for notifications.'
