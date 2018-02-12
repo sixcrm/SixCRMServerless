@@ -1,10 +1,14 @@
 [
-  {
-		"id": "source-redshift",
-		"type": "source"
-  },
-  {
-		"id": "target-dynamodb",
-		"type": "target"
+	{
+		"source": {
+			"id": "source-redshift",
+			"type": "source",
+			"engine": "redshift"
+		},
+		"target": {
+			"id": "target-dynamodb",
+			"type": "target",
+			"engine": "dynamodb"
+		}
 	}
 ]

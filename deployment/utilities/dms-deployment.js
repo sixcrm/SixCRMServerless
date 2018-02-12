@@ -22,41 +22,53 @@ class DMSDeployment extends AWSDeploymentUtilities {
 		let params = { apiVersion: '2016-01-01' }
 
 		this.endpoint_id_template = 'sixcrm-{{stage}}-{{endpoint_id}}';
+		this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 
 		this.dms = new AWS.DMS(params);
 	}
 
 	executeMigration() {
 
-		return this.getEndpointIds()
-			.then(endpoint_ids => this.createEndpoints({ endpoint_ids: endpoint_ids }))
+		return this.getEndpointPairs()
+			.then(endpoint_pairs => this.createEndpoints({ endpoint_pairs: endpoint_pairs }))
 
 
 	}
 
-	getEndpointIds() {
+	getEndpointPairs() {
 
-		'Get Endpoint Ids'
+		du.debug('Get Endpoint Pairs')
 
-		let endpoints = global.SixCRM.routes.include('deployment', 'dms/configuration/endpoints.json');
+		let endpoint_pairs = global.SixCRM.routes.include('deployment', 'dms/configuration/endpoints.json');
 
-		if (!_.isArray(endpoints)) { eu.throwError('server', 'DMSDeployment.getEndpointData assumes that the JSON files are arrays.'); }
+		if (!_.isArray(endpoint_pairs)) { eu.throwError('server', 'DMSDeployment.getEndpointData assumes that the JSON files are arrays.'); }
 
-		return Promise.resolve(endpoints);
+		return Promise.resolve(endpoint_pairs);
 
 	}
 
-	createEndpoints({ endpoint_ids }) {
+	createEndpoints({ endpoint_pairs }) {
 
 		du.debug('Create Endpoints');
 
 		let endpoint_promises = [];
 
-		endpoint_ids.map(subdefinition => {
+		endpoint_pairs.map(endpoint_pair => {
 
-			let endpoint_id = this.createEnvironmentSpecificEndpointName(subdefinition.id)
+			//Technical Debt: This is ugly validation
+			if (!objectutilities.has(endpoint_pair, 'target') || !objectutilities.has(endpoint_pair, 'source')) {
 
-			endpoint_promises.push(this.assureEndpoint({ endpoint_id: endpoint_id, type: subdefinition.type }))
+				eu.throwError('server', 'DMSDeployment.createEndpoints assumes that the endpoint pair object has a target and a source.');
+
+			}
+
+			objectutilities.map(endpoint_pair, key => {
+
+				var endpoint_id = this.createEnvironmentSpecificEndpointName(endpoint_pair[key].id)
+
+				endpoint_promises.push(this.assureEndpoint({ endpoint_id: endpoint_id, endpoint_type: endpoint_pair[key].type, engine_name: endpoint_pair[key].engine }))
+
+			})
 
 		});
 
@@ -67,21 +79,26 @@ class DMSDeployment extends AWSDeploymentUtilities {
 		});
 	}
 
-	assureEndpoint({ endpoint_id, type }) {
+	assureEndpoint({ endpoint_id, endpoint_type, engine_name }) {
 
 		du.debug('Assure Endpoint');
 
 		return new Promise((resolve, reject) => {
 
-			this.describeEndpoint({ id: endpoint_id, type: type })
+			//Does endpoint exist?
+			this.describeEndpoint({ id: endpoint_id, type: endpoint_type })
 				.then(result => {
 
+					//If not...
 					if (!result) {
 
 						du.output(endpoint_id + ' endpoint not found, creating');
 
-
-						return resolve(true);
+						//Build endpoint params
+						this.buildEndpointParameters({ endpoint_id, endpoint_type, engine_name })
+							.then(params => {
+								du.warning(params);
+							});
 
 					} else {
 
@@ -94,7 +111,7 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 				}).catch((error) => {
 
-					du.warning('DMS error (describeEndpoint bucket): ', error);
+					du.warning('DMS error (describeEndpoint): ', error);
 
 					return reject(error);
 
@@ -102,6 +119,51 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 
 		});
+
+	}
+
+	buildEndpointParameters({ endpoint_id, endpoint_type, engine_name }) {
+
+		var parameters = {
+			EndpointIdentifier: `${endpoint_id}`, /* required */
+			EndpointType: `${endpoint_type}`, /* required */
+			EngineName: `${engine_name}`,
+
+		}
+
+		du.warning(global.SixCRM.configuration.site_config.redshift);
+
+
+		switch (engine_name) {
+
+			case 'dynamodb': {
+
+				//Technical DebtNeed to figure out best way to access this arn.
+				parameters.DynamoDbSettings = {};
+				parameters.DynamoDbSettings.ServiceAccessRoleArn = '?';
+
+				return Promise.resolve(parameters);
+			}
+
+			case 'redshift': {
+
+				return this.redshiftqueryutilities.getHost().then(host => {
+
+					parameters.ServerName = host;
+					parameters.UserName = global.SixCRM.configuration.site_config.redshift.user;
+					parameters.password = global.SixCRM.configuration.site_config.redshift.password;
+					parameters.port = global.SixCRM.configuration.site_config.redshift.port;
+					parameters.DatabaseName = global.SixCRM.configuration.site_config.redshift.database;
+					return parameters;
+
+				});
+
+			}
+
+			default: return eu.throwError('server', 'Invalid Endpoint Engine Type during DMS migration');
+
+
+		}
 
 	}
 
@@ -113,32 +175,30 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	describeEndpoint({ id, type,  }) {
+	describeEndpoint({ id, type, engine }) {
 
 		du.debug('Describe Endpoint');
-
-		var parameters = {
-			Filters: [
-				{
-					Name: 'endpoint-id',
-					Values: [ `${id}` ]
-				},
-				{
-					Name: 'endpoint-type',
-					Values: [ `${type}` ]
-				},
-			],
-		};
-
-
 		return new Promise((resolve, reject) => {
 
-			this.dms.describeEndpoints(parameters, (error, data) => {
-				if (error){
+			var parameters = {
+				Filters: [
+					{
+						Name: 'endpoint-id',
+						Values: [`${id}`]
+					},
+					{
+						Name: 'endpoint-type',
+						Values: [`${type}`]
+					},
+				],
+			};
 
+			this.dms.describeEndpoints(parameters, (error, data) => {
+				if (error) {
 
 					//Technical Debt: This is ugly, assumes if there's an error that the endpoints don't exist. Need to find a way to verify endpoint existence without this call, possibly with tag creation / list tags
 					du.info(parameters);
+					du.error(error)
 					return resolve(false);
 
 				} else {
@@ -150,33 +210,7 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 		});
 
-
 	}
-
-
-
-	// createEndpoint(params) {
-
-	// 	this.dms.createEndpoint(params, function (err, data) {
-	// 		if (err) console.log(err, err.stack); // an error occurred
-	// 		Promise.resolve(data);         // successful response
-	// 		/*
-	// 		data = {
-	// 		 Endpoint: {
-	// 			EndpointArn: "arn:aws:dms:us-east-1:123456789012:endpoint:RAAR3R22XSH46S3PWLC3NJAWKM",
-	// 			EndpointIdentifier: "test-endpoint-1",
-	// 			EndpointType: "source",
-	// 			EngineName: "mysql",
-	// 			KmsKeyId: "arn:aws:kms:us-east-1:123456789012:key/4c1731d6-5435-ed4d-be13-d53411a7cfbd",
-	// 			Port: 3306,
-	// 			ServerName: "mydb.cx1llnox7iyx.us-west-2.rds.amazonaws.com",
-	// 			Status: "active",
-	// 			Username: "username"
-	// 		 }
-	// 		}
-	// 		*/
-	// 	});
-	// }
 
 }
 
