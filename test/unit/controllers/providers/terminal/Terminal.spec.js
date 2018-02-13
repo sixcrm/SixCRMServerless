@@ -213,7 +213,7 @@ function getValidProducts(product_ids){
 
 }
 
-describe('controllers/providers/terminal/Terminal.js', function () {
+xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
   before(() => {
     mockery.enable({

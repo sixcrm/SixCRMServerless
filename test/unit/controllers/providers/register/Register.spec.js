@@ -320,7 +320,7 @@ function assumePermissionedRole(){
 }
 
 
-describe('controllers/providers/Register.js', () => {
+xdescribe('controllers/providers/Register.js', () => {
 
   before(() => {
       mockery.enable({

@@ -56,7 +56,7 @@ function getValidAugmentedTransactionProducts(){
 
 }
 
-describe('/providers/terminal/Receipt.js', () => {
+xdescribe('/providers/terminal/Receipt.js', () => {
 
   before(() => {
     mockery.enable({

@@ -144,7 +144,7 @@ function getValidTransactions(){
 
 }
 
-describe('controllers/workers/archive', function () {
+xdescribe('controllers/workers/archive', function () {
 
     before(() => {
         mockery.enable({

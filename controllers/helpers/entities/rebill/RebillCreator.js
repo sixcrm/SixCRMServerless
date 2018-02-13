@@ -78,6 +78,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
     du.debug('Create Rebill');
 
+
     return this.setParameters({argumentation: arguments[0], action: 'createRebill'})
     .then(() => this.hydrateArguments())
     .then(() => this.normalizeArguments())
@@ -291,6 +292,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     if(!_.isNull(normalized_product_schedules)){
 
       let start_day_numbers = arrayutilities.map(normalized_product_schedules, product_schedule_group => {
+        du.info(product_schedule_group);
         return this.productScheduleHelperController.getNextScheduleElementStartDayNumber({day: day, product_schedule: product_schedule_group.product_schedule});
       });
 

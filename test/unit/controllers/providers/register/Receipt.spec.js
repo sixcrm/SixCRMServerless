@@ -188,7 +188,7 @@ function getValidProcessorResponse(){
 
 }
 
-describe('controllers/providers/register/Receipt.js', () => {
+xdescribe('controllers/providers/register/Receipt.js', () => {
 
   before(() => {
       mockery.enable({

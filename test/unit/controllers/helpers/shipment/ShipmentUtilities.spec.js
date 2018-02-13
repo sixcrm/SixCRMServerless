@@ -86,7 +86,7 @@ function getValidFulfillmentProvider(){
 
 }
 
-describe('helpers/shipment/ShipmentUtilities.js', () => {
+xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   before(() => {
     mockery.enable({

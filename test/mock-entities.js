@@ -16,7 +16,9 @@ class MockEntities {
     return (!_.isUndefined(id) && !_.isNull(id)) ? id : uuidV4();
   }
 
-  static getValidSchedule(ids){
+  static getValidSchedule(ids, expanded){
+
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
 
     ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
 
@@ -31,7 +33,7 @@ class MockEntities {
       start = (this_start + period);
 
       return {
-        product: id,
+        product: this.getValidProduct(id, true),
         price:randomutilities.randomDouble(1.00, 100.00, 2),
         start:this_start,
         end:end,
@@ -42,9 +44,64 @@ class MockEntities {
 
   }
 
-  static getValidProductSchedule(id){
+  static getValidProductScheduleGroups(ids, expanded){
 
-    let schedule = this.getValidSchedule();
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+
+    let product_schedules = this.getValidProductSchedules(ids);
+
+    return arrayutilities.map(product_schedules, product_schedule => {
+      return {
+        quantity: randomutilities.randomInt(1,10),
+        product_schedule: (expanded)?product_schedule:product_schedule.id
+      }
+    });
+
+  }
+
+  static getValidTransactionProducts(ids, expanded){
+
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+
+    let products = this.getValidProducts(ids);
+
+    return arrayutilities.map(products, product => {
+      return {
+        quantity: randomutilities.randomInt(1,10),
+        product: (expanded)?product:product.id,
+        amount: randomutilities.randomDouble(1.00, 100.00)
+      }
+    });
+
+  }
+
+  static getValidProductSchedules(ids, expanded){
+
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+
+    return arrayutilities.map(ids, (id, index) => {
+      return this.getValidProductSchedule(id, expanded);
+    });
+
+  }
+
+  static getValidProducts(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+
+    return arrayutilities.map(ids, (id, index) => {
+      return this.getValidProduct(id);
+    });
+
+  }
+
+  static getValidProductSchedule(id, expanded){
+
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+
+    let schedule = this.getValidSchedule(null, expanded);
 
     return  {
       id: this.getValidId(id),
@@ -247,26 +304,6 @@ class MockEntities {
 
   }
 
-  static getValidProducts(ids){
-
-    ids = (arrayutilities.isArray(ids) && arrayutilities.nonEmpty(ids))?ids:[];
-
-    if(!arrayutilities.nonEmpty(ids)){
-
-      let product_count = randomutilities.randomInt(1,5);
-
-      for(var i = 0; i < product_count; i++){
-
-        ids.push(uuidV4());
-
-      }
-
-    }
-
-    return arrayutilities.map(ids, id => this.getValidProduct(id));
-
-  }
-
   static getValidProduct(id){
 
     return {
@@ -358,7 +395,19 @@ class MockEntities {
 
   }
 
-  static getValidTransaction(id){
+  static getValidTransactions(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+
+    return arrayutilities.map(ids, (id, index) => {
+      return this.getValidTransaction(id);
+    });
+
+  }
+
+  static getValidTransaction(id, extended){
+
+    let products = this.getValidProducts();
 
     return {
       id: this.getValidId(id),
@@ -368,11 +417,13 @@ class MockEntities {
       rebill: uuidV4(),
       processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894419\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
       merchant_provider: uuidV4(),
-      products:[{
-        product:uuidV4(),
-        amount:14.99,
-        shipping_receipt: uuidV4()
-      }],
+      products:arrayutilities.map(products, product => {
+        return {
+          product: product,
+          quantity: randomutilities.randomInt(1,10),
+          amount: randomutilities.randomDouble(1.00, 100.00)
+        }
+      }),
       type:"sale",
       result:"success",
       created_at:timestamp.getISO8601(),
@@ -389,6 +440,7 @@ class MockEntities {
       account: this.getTestAccountID(),
       parentsession: uuidV4(),
       product_schedules: [uuidV4()],
+      products: this.getValidTransactionProducts(null, true),
       amount: randomutilities.randomDouble(1, 200, 2),
       created_at:timestamp.getISO8601(),
       updated_at:timestamp.getISO8601()

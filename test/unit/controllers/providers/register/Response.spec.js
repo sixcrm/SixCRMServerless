@@ -52,7 +52,7 @@ function getValidProcessorResponse(){
 
 }
 
-describe('controllers/providers/register/Response.js', () => {
+xdescribe('controllers/providers/register/Response.js', () => {
 
   describe('constructor', () => {
     it('successfully executes the constructor', () => {

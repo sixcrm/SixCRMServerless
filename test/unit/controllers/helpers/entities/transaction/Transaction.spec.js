@@ -136,7 +136,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
   });
 
-  describe('updateTransactionProductsPrototype', () => {
+  xdescribe('updateTransactionProductsPrototype', () => {
 
     it('successfully updates the local transaction model with a new transaction prototype', () => {
 

@@ -5,6 +5,8 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
+
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class ConfirmOrderController extends transactionEndpointController{
@@ -60,7 +62,10 @@ class ConfirmOrderController extends transactionEndpointController{
     };
 
     this.transactionHelperController = new TransactionHelperController();
+    this.sessionHelperController = new SessionHelperController();
+
     this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+
 
     this.initialize();
 
@@ -115,8 +120,7 @@ class ConfirmOrderController extends transactionEndpointController{
 
     let session = this.parameters.get('session');
 
-    //Technical Debt:  Session Helper
-    if(session.completed == true){
+    if(this.sessionHelperController.isComplete({session: session})){
       eu.throwError('bad_request', 'The specified session is already complete.');
     }
 

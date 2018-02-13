@@ -6,7 +6,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
+//const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
@@ -77,15 +77,19 @@ class CreateOrderController extends transactionEndpointController{
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
     const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+
     this.rebillCreatorHelperController = new RebillCreatorHelperController();
 
     const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+
     this.rebillHelperController = new RebillHelperController();
 
     const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+
     this.transactionHelperController = new TransactionHelperController();
 
     const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
+
     this.sessionHelperController = new SessionHelperController();
 
     this.initialize(() => {
@@ -274,71 +278,9 @@ class CreateOrderController extends transactionEndpointController{
     this.isCurrentSession();
     this.isCompleteSession();
 
-    //this.hasCampaignProductScheduleParity();
-    //this.hasCampaignProductParity();
-
     return Promise.resolve(true);
 
   }
-
-  /*
-  hasCampaignProductParity(){
-
-    du.debug('Has Campaign Product Parity');
-
-    let campaign = this.parameters.get('campaign');
-    let products = this.parameters.get('products', null, false);
-
-    if(arrayutilities.nonEmpty(products)){
-
-      arrayutilities.map(products, product_group => {
-        //Technical Debt:  Some manner of validation
-      });
-
-    }
-
-    return true;
-
-  }
-
-  hasCampaignProductScheduleParity(){
-
-    du.debug('Has Campaign ProductSchedule Parity');
-
-    let campaign = this.parameters.get('campaign');
-    let product_schedules = this.parameters.get('productschedules', null, false);
-
-    if(arrayutilities.nonEmpty(product_schedules)){
-
-      arrayutilities.map(product_schedules, product_schedule_group => {
-
-        if(_.isString(product_schedule_group.product_schedule)){
-
-          if(!_.contains(campaign.productschedules, product_schedule_group.product_schedule)){
-            eu.throwError('bad_request', 'The product schedule provided is not a part of the campaign.');
-          }
-
-        }else if(_.isObject(product_schedule_group.product_schedule)){
-
-          arrayutilities.map(product_schedule_group.product_schedule.schedule, schedule_element => {
-            //Technical Debt:  What if I create the product at purchase time?
-            if(!_.contains(campaign.products, schedule_element.product)){
-              eu.throwError('bad_request', 'The product contained in the watermark schedule provided is not a part of the campaign.');
-            }
-
-          });
-
-        }
-
-      });
-
-    }
-
-    return true;
-
-  }
-
-  */
 
   isCompleteSession(){
 
@@ -390,6 +332,7 @@ class CreateOrderController extends transactionEndpointController{
     if(!_.isNull(products)){
       argumentation.products = products;
     }
+
 
     return this.rebillCreatorHelperController.createRebill(argumentation)
     .then(rebill => {
@@ -478,6 +421,7 @@ class CreateOrderController extends transactionEndpointController{
     du.debug('Update Session With Watermark');
 
     let session = this.parameters.get('session');
+
     if(!_.has(session, 'watermark')){
       session.watermark = {
         products:[],

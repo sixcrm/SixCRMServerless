@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-	"id":"/billablerebills.json",
+	"id":"/helpers/rebill/billablerebills.json",
 	"title": "Billable Rebills",
   "allOf":[
     {"$ref":"../../entities/components/rebills.json"},

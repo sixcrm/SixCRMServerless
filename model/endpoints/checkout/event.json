@@ -8,7 +8,11 @@
 		"affiliates": {"$ref":"../components/affiliatesprototype.json"},
 		"customer":{"$ref":"../components/customerprototype.json"},
 		"product_schedules":{"$ref": "../components/productschedules.json"},
+		"products":{"$ref":"../components/products.json"},
 		"creditcard":{"$ref": "../components/creditcard.json"}
 	},
-	"required":["campaign", "customer", "product_schedules", "creditcard"]
+	"anyOf":[
+		{"required":["campaign", "customer", "creditcard", "products"]},
+		{"required":["campaign", "customer", "creditcard", "product_schedules"]}
+	]
 }
