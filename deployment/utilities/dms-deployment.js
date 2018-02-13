@@ -13,6 +13,9 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const AWS = require("aws-sdk");
 
+
+//Technical Debt: need to introduce parameter class to simplify this
+
 class DMSDeployment extends AWSDeploymentUtilities {
 
 	constructor() {
@@ -23,11 +26,14 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 		this.endpoint_id_template = 'sixcrm-{{stage}}-{{endpoint_id}}';
 		this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
+		this.iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
 
 		this.dms = new AWS.DMS(params);
 	}
 
 	executeMigration() {
+
+		du.debug('Execute Migration');
 
 		return this.getEndpointPairs()
 			.then(endpoint_pairs => this.createEndpoints({ endpoint_pairs: endpoint_pairs }))
@@ -77,6 +83,7 @@ class DMSDeployment extends AWSDeploymentUtilities {
 			return 'Complete';
 
 		});
+
 	}
 
 	assureEndpoint({ endpoint_id, endpoint_type, engine_name }) {
@@ -94,11 +101,9 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 						du.output(endpoint_id + ' endpoint not found, creating');
 
-						//Build endpoint params
-						this.buildEndpointParameters({ endpoint_id, endpoint_type, engine_name })
-							.then(params => {
-								du.warning(params);
-							});
+						//Build endpoint params + create endpoint
+						return this.buildEndpointParameters({ endpoint_id, endpoint_type, engine_name })
+							.then(parameters => this.createEndpoint({ parameters: parameters }));
 
 					} else {
 
@@ -108,7 +113,6 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 					}
 
-
 				}).catch((error) => {
 
 					du.warning('DMS error (describeEndpoint): ', error);
@@ -117,12 +121,57 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 				});
 
+		});
+
+	}
+
+	createEndpoint({ parameters }) {
+
+		du.debug('Create Endpoint');
+
+		return new Promise((resolve, reject) => {
+
+			du.warning(parameters);
+
+			this.dms.createEndpoint(parameters, function (err, data) {
+
+				if (err) {
+					du.warning('error', err.stack);
+					return false;
+				} else {
+
+					du.warning('created endpoint data', data);
+
+					return data;
+
+				}        // successful response
+
+			});
+
+		});
+	}
+
+	getDynamoRole() {
+
+		du.debug('Get Autoscaling Role');
+
+		let role_definition = global.SixCRM.routes.include('deployment', 'dynamodb/configuration/autoscalingrole.json');
+
+		return this.iamutilities.roleExists(role_definition).then(result => {
+
+			if (result == false) {
+				eu.throwError('server', 'Role does not exist: ' + role_definition.RoleName);
+			}
+
+			return result;
 
 		});
 
 	}
 
 	buildEndpointParameters({ endpoint_id, endpoint_type, engine_name }) {
+
+		du.debug('Build Endpoint Parameters');
 
 		var parameters = {
 			EndpointIdentifier: `${endpoint_id}`, /* required */
@@ -131,28 +180,32 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 		}
 
-		du.warning(global.SixCRM.configuration.site_config.redshift);
-
-
 		switch (engine_name) {
 
+			//Technical Debt: this currently only supports dynamo and postgres
 			case 'dynamodb': {
 
-				//Technical DebtNeed to figure out best way to access this arn.
-				parameters.DynamoDbSettings = {};
-				parameters.DynamoDbSettings.ServiceAccessRoleArn = '?';
+				return this.getDynamoRole()
+					.then(dynamo_role => {
 
-				return Promise.resolve(parameters);
+						du.warning(dynamo_role);
+
+						parameters.DynamoDbSettings = {};
+						parameters.DynamoDbSettings.ServiceAccessRoleArn = dynamo_role.Role.Arn;
+						return parameters;
+
+					});
+
 			}
 
-			case 'redshift': {
+			case 'postgres': {
 
 				return this.redshiftqueryutilities.getHost().then(host => {
 
 					parameters.ServerName = host;
-					parameters.UserName = global.SixCRM.configuration.site_config.redshift.user;
-					parameters.password = global.SixCRM.configuration.site_config.redshift.password;
-					parameters.port = global.SixCRM.configuration.site_config.redshift.port;
+					parameters.Username = global.SixCRM.configuration.site_config.redshift.user;
+					parameters.Password = global.SixCRM.configuration.site_config.redshift.password;
+					parameters.Port = global.SixCRM.configuration.site_config.redshift.port;
 					parameters.DatabaseName = global.SixCRM.configuration.site_config.redshift.database;
 					return parameters;
 
@@ -161,7 +214,6 @@ class DMSDeployment extends AWSDeploymentUtilities {
 			}
 
 			default: return eu.throwError('server', 'Invalid Endpoint Engine Type during DMS migration');
-
 
 		}
 
@@ -175,9 +227,10 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	describeEndpoint({ id, type, engine }) {
+	describeEndpoint({ id, type }) {
 
 		du.debug('Describe Endpoint');
+
 		return new Promise((resolve, reject) => {
 
 			var parameters = {
@@ -194,14 +247,20 @@ class DMSDeployment extends AWSDeploymentUtilities {
 			};
 
 			this.dms.describeEndpoints(parameters, (error, data) => {
+
+
+				du.warning(error);
+				du.warning(data);
+
+
 				if (error) {
 
 					//Technical Debt: This is ugly, assumes if there's an error that the endpoints don't exist. Need to find a way to verify endpoint existence without this call, possibly with tag creation / list tags
 					du.info(parameters);
-					du.error(error)
 					return resolve(false);
 
 				} else {
+
 
 					return resolve(data);
 

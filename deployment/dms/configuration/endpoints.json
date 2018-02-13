@@ -3,7 +3,7 @@
 		"source": {
 			"id": "source-redshift",
 			"type": "source",
-			"engine": "redshift"
+			"engine": "postgres"
 		},
 		"target": {
 			"id": "target-dynamodb",
