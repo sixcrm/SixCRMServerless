@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/dmsendpoint.json",
+  "title": "AWS DMS Endpoint",
+  "type":"object",
+	"properties": {
+		"id": {
+			"type": "string"
+		},
+		"type": {
+			"type": "string"
+		},
+		"engine": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"id", "type", "engine"
+	]
+}

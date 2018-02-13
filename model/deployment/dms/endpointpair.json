@@ -1,0 +1,11 @@
+{
+	"id": "/deployment/dms/endpointpair.json",
+	"title": "DMS endpoint pair",
+	"type": "object",
+	"properties": {
+		"target": {"$ref":"../../definitions/dmsendpoint.json"},
+		"source": {"$ref":"../../definitions/dmsendpoint.json"}
+
+	},
+	"required": ["source","target"]
+}

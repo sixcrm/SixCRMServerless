@@ -5,17 +5,13 @@ require('../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const AWS = require("aws-sdk");
 
 
 //Technical Debt: need to introduce parameter class to simplify this
-
 class DMSDeployment extends AWSDeploymentUtilities {
 
 	constructor() {
@@ -28,6 +24,17 @@ class DMSDeployment extends AWSDeploymentUtilities {
 		this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 		this.iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
 
+		this.parameter_validation = {
+			'dynamodbrole': global.SixCRM.routes.path('model', 'deployment/dms/role.json'),
+			'endpointpair': global.SixCRM.routes.path('model', 'deployment/dms/endpointpair.json'),
+		};
+
+		this.parameter_definition = {};
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+
+		this.parameters = new Parameters({ validation: this.parameter_validation, definition: this.parameter_definition });
+
+
 		this.dms = new AWS.DMS(params);
 	}
 
@@ -35,48 +42,43 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 		du.debug('Execute Migration');
 
-		return this.getEndpointPairs()
-			.then(endpoint_pairs => this.createEndpoints({ endpoint_pairs: endpoint_pairs }))
-
+		return this.getEndpointPair()
+			.then(() => this.createEndpoints())
+			.then(() => {
+				return du.warning('this is done');
+			})
 
 	}
 
-	getEndpointPairs() {
+	getEndpointPair() {
 
 		du.debug('Get Endpoint Pairs')
 
-		let endpoint_pairs = global.SixCRM.routes.include('deployment', 'dms/configuration/endpoints.json');
+		let endpoint_pair = global.SixCRM.routes.include('deployment', 'dms/configuration/endpoints.json');
 
-		if (!_.isArray(endpoint_pairs)) { eu.throwError('server', 'DMSDeployment.getEndpointData assumes that the JSON files are arrays.'); }
+		if (!_.isObject(endpoint_pair)) { eu.throwError('server', 'DMSDeployment.getendpointpair assumes that the JSON is an object.'); }
 
-		return Promise.resolve(endpoint_pairs);
+		this.parameters.set('endpointpair', endpoint_pair);
+
+		return Promise.resolve(true);
 
 	}
 
-	createEndpoints({ endpoint_pairs }) {
+	createEndpoints() {
 
 		du.debug('Create Endpoints');
 
 		let endpoint_promises = [];
 
-		endpoint_pairs.map(endpoint_pair => {
+		let endpoint_pair = this.parameters.get('endpointpair');
 
-			//Technical Debt: This is ugly validation
-			if (!objectutilities.has(endpoint_pair, 'target') || !objectutilities.has(endpoint_pair, 'source')) {
+		objectutilities.map(endpoint_pair, key => {
 
-				eu.throwError('server', 'DMSDeployment.createEndpoints assumes that the endpoint pair object has a target and a source.');
+			var endpoint_id = this.createEnvironmentSpecificEndpointName(endpoint_pair[key].id)
 
-			}
+			endpoint_promises.push(this.assureEndpoint({ endpoint_id: endpoint_id, endpoint_type: endpoint_pair[key].type, engine_name: endpoint_pair[key].engine }))
 
-			objectutilities.map(endpoint_pair, key => {
-
-				var endpoint_id = this.createEnvironmentSpecificEndpointName(endpoint_pair[key].id)
-
-				endpoint_promises.push(this.assureEndpoint({ endpoint_id: endpoint_id, endpoint_type: endpoint_pair[key].type, engine_name: endpoint_pair[key].engine }))
-
-			})
-
-		});
+		})
 
 		return Promise.all(endpoint_promises).then(() => {
 
@@ -86,6 +88,7 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 	}
 
+	//Technical Debt: gross.
 	assureEndpoint({ endpoint_id, endpoint_type, engine_name }) {
 
 		du.debug('Assure Endpoint');
@@ -142,7 +145,9 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 					du.warning('created endpoint data', data);
 
-					return data;
+					this.paramaeters.set('endpointdata', data);
+
+					return true;
 
 				}        // successful response
 
@@ -151,19 +156,25 @@ class DMSDeployment extends AWSDeploymentUtilities {
 		});
 	}
 
+	assureReplicationInstance() {
+
+	}
+
 	getDynamoRole() {
 
 		du.debug('Get Autoscaling Role');
 
-		let role_definition = global.SixCRM.routes.include('deployment', 'dynamodb/configuration/autoscalingrole.json');
+		let role_definition = global.SixCRM.routes.include('deployment', 'iam/roles/dynamodb_dms.json');
 
-		return this.iamutilities.roleExists(role_definition).then(result => {
+		return this.iamutilities.roleExists({ RoleName: role_definition[0].RoleName }).then(role => {
 
-			if (result == false) {
+			if (role == false) {
 				eu.throwError('server', 'Role does not exist: ' + role_definition.RoleName);
 			}
 
-			return result;
+			this.parameters.set('dynamodbrole', role)
+
+			return true;
 
 		});
 
@@ -182,19 +193,20 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 		switch (engine_name) {
 
-			//Technical Debt: this currently only supports dynamo and postgres
+			//Technical Debt: this currently only supports dynamo and postgres endpoint engines
 			case 'dynamodb': {
 
-				return this.getDynamoRole()
-					.then(dynamo_role => {
+				return this.getDynamoRole().then(() => {
 
-						du.warning(dynamo_role);
+					let dynamo_role = this.parameters.get('dynamodbrole');
 
-						parameters.DynamoDbSettings = {};
-						parameters.DynamoDbSettings.ServiceAccessRoleArn = dynamo_role.Role.Arn;
-						return parameters;
+					du.warning(dynamo_role);
 
-					});
+					parameters.DynamoDbSettings = {};
+					parameters.DynamoDbSettings.ServiceAccessRoleArn = dynamo_role.Role.Arn;
+					return parameters;
+
+				});
 
 			}
 
@@ -248,11 +260,6 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 			this.dms.describeEndpoints(parameters, (error, data) => {
 
-
-				du.warning(error);
-				du.warning(data);
-
-
 				if (error) {
 
 					//Technical Debt: This is ugly, assumes if there's an error that the endpoints don't exist. Need to find a way to verify endpoint existence without this call, possibly with tag creation / list tags
@@ -260,7 +267,6 @@ class DMSDeployment extends AWSDeploymentUtilities {
 					return resolve(false);
 
 				} else {
-
 
 					return resolve(data);
 
