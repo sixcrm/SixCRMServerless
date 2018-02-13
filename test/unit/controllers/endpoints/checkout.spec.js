@@ -88,14 +88,14 @@ function getValidEvent(){
 
 }
 
-function getValidEventBody(){
+function getValidEventBody(ids, expanded){
 
   return {
     customer: getValidCustomerPrototype(),
     affiliates: getValidAffiliatesPrototype(),
     campaign: getValidCampaign().id,
-    product_schedules: arrayutilities.map(MockEntities.getValidProductSchedules(), product_schedule => {
-      return {quantity: 1, product_schedule: product_schedule.id};
+    product_schedules: arrayutilities.map(MockEntities.getValidProductSchedules(ids, expanded), product_schedule => {
+      return {quantity: 1, product_schedule: product_schedule};
     }),
     creditcard: getValidCreditCardPrototype()
   };
@@ -363,18 +363,19 @@ describe('checkout', function () {
 
   });
 
-  xdescribe('createOrder', () => {
+  describe('createOrder', () => {
 
     it('successfully creates a order', () => {
 
-      let event = getValidEventBody();
+      let event = getValidEventBody(null, true);
       let session = getValidSession();
 
       session.completed = false;
       let campaign = getValidCampaign();
       let customer = getValidCustomer();
       let creditcard = getValidCreditCard();
-      let product_schedule = getValidProductSchedule(null, true);
+      let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
+      let product_schedule = getValidProductSchedule(product_schedule_ids, true);
 
       event.session = session.id;
       customer.creditcards = [creditcard.id];
@@ -613,13 +614,14 @@ describe('checkout', function () {
 
   describe('execute', () => {
 
-    xit('successfully executes a checkout event', () => {
+    it('successfully executes a checkout event', () => {
 
       let event = getValidEvent();
       let affiliates = getValidAffiliates();
       let campaign = getValidCampaign();
       let session = getValidSession();
 
+      //event.body = JSON.stringify(getValidEventBody(null, true));
       session.completed = false;
       let customer = getValidCustomer();
 
@@ -627,8 +629,7 @@ describe('checkout', function () {
 
       let creditcard = getValidCreditCard();
       let rebill = getValidRebill();
-      let transaction = getValidTransaction();
-      let transactions = [transaction];
+      let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
       let product_schedules = getValidProductSchedules(null, true);
@@ -636,6 +637,12 @@ describe('checkout', function () {
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
         getHydrated({id}){
           return Promise.resolve(product_schedules);
+        }
+        getNextScheduleElementStartDayNumber(){
+            return 0;
+        }
+        getScheduleElementOnDayInSchedule({product_schedule, day}){
+            return product_schedule[0];
         }
       });
 
@@ -745,6 +752,13 @@ describe('checkout', function () {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
+          constructor(){}
+          createRebill(){
+              return Promise.resolve(rebill);
+          }
+      });
+
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
         assureCreditCard: (creditcard) => {
           return Promise.resolve(objectutilities.merge(creditcard, {
@@ -765,7 +779,7 @@ describe('checkout', function () {
         processTransaction({rebill: rebill}){
           const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
           let register_response = new RegisterResponse({
-            transaction: transaction,
+            transactions: transactions,
             processor_response: processor_response,
             response_type: response_type,
             creditcard: creditcard

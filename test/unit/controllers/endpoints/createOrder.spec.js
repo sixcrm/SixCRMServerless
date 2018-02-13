@@ -83,8 +83,8 @@ function getValidProductScheduleIDs(){
   return arrayutilities.map(getValidProductSchedules(), product_schedule => { return product_schedule.id; });
 }
 
-function getValidProductSchedules(ids){
-  return MockEntities.getValidProductSchedules(ids);
+function getValidProductSchedules(ids, expanded){
+  return MockEntities.getValidProductSchedules(ids, expanded);
 }
 
 function getValidProductScheduleGroups(ids, expanded){
@@ -200,13 +200,18 @@ function getValidEvent(){
 
 }
 
-function getValidEventBody(){
+function getValidEventBody(ids, expanded){
 
   return {
     session: getValidSession().id,
-    product_schedules: getValidProductScheduleGroups(),
+    product_schedules: getValidProductScheduleGroups(ids, expanded),
     creditcard: getValidCreditCardPrototype(),
-    transaction_subtype:'main'
+    transaction_subtype:'main',
+    products: [{
+      quantity: randomutilities.randomInt(1, 10),
+      price: randomutilities.randomDouble(1.00, 100.00, 2),
+      product: MockEntities.getValidProduct()
+    }]
   };
 
 }
@@ -214,7 +219,7 @@ function getValidEventBody(){
 describe('createOrder', function () {
 
   describe('constructor', () => {
-    xit('successfully constructs', () => {
+    it('successfully constructs', () => {
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
       expect(objectutilities.getClassName(createOrderController)).to.equal('CreateOrderController');
@@ -238,17 +243,19 @@ describe('createOrder', function () {
         mockery.deregisterAll();
     });
 
-    xit('successfully runs execute method', () => {
+    it('successfully runs execute method', () => {
 
       let event = getValidEvent();
       let session = getValidSession();
       let campaign = getValidCampaign();
 
-      campaign.productschedules = arrayutilities.merge(campaign.productschedules, JSON.parse(event.body).product_schedules);
+      session.completed = false;
+      event.body = JSON.stringify(getValidEventBody(null, true));
+
       let customer = getValidCustomer();
       let creditcard = getValidCreditCard();
       let rebill = getValidRebill();
-      let transaction = getValidTransaction();
+      let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
 
@@ -306,6 +313,13 @@ describe('createOrder', function () {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
+          constructor(){}
+          createRebill({session, product_schedules, products, day}){
+              return Promise.resolve(rebill);
+          }
+      });
+
       let mock_rebill_helper = class {
 
         constructor(){
@@ -339,7 +353,7 @@ describe('createOrder', function () {
         processTransaction({rebill: rebill}){
           const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
           let register_response = new RegisterResponse({
-            transaction: transaction,
+            transactions: transactions,
             processor_response: processor_response,
             response_type: response_type,
             creditcard: creditcard
@@ -369,20 +383,23 @@ describe('createOrder', function () {
       });
     });
 
-    xit('successfully runs execute method in the absence of a event creditcard (upsell)', () => {
+    it('successfully runs execute method in the absence of a event creditcard (upsell)', () => {
 
       let event = getValidEvent();
 
       delete event.creditcard;
       event.transaction_subtype = 'upsell';
+      event.body = JSON.stringify(getValidEventBody(null, true));
+
       let session = getValidSession();
       let campaign = getValidCampaign();
 
+      session.completed = false;
       campaign.productschedules = arrayutilities.merge(campaign.productschedules, JSON.parse(event.body).product_schedules);
       let customer = getValidCustomer();
       let creditcard = getValidCreditCard();
       let rebill = getValidRebill();
-      let transaction = getValidTransaction();
+      let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
 
@@ -411,6 +428,13 @@ describe('createOrder', function () {
         update:({entity}) => {
           return Promise.resolve(entity);
         }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
+          constructor(){}
+          createRebill({session, product_schedules, products, day}){
+              return Promise.resolve(rebill);
+          }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
@@ -473,7 +497,7 @@ describe('createOrder', function () {
         processTransaction({rebill: rebill}){
           const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
           let register_response = new RegisterResponse({
-            transaction: transaction,
+            transactions: transactions,
             processor_response: processor_response,
             response_type: response_type,
             creditcard: creditcard
@@ -1481,11 +1505,11 @@ describe('createOrder', function () {
         mockery.deregisterAll();
     });
 
-    xit('successfully creates a order', () => {
+    it('successfully creates a order', () => {
 
-      let event = getValidEventBody();
+      let event = getValidEventBody(null, true);
       let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
-      let product_schedules = getValidProductSchedules(product_schedule_ids);
+      let product_schedules = getValidProductSchedules(product_schedule_ids, true);
       let session = getValidSession();
 
       session.completed = false;

@@ -19,7 +19,6 @@ const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
-
 function getValidCustomerPrototype(){
 
   return {
@@ -44,8 +43,8 @@ function getValidCustomer(){
 
 }
 
-function getValidTransactionProducts(){
-  return MockEntities.getValidTransactionProducts();
+function getValidTransactionProducts(ids, expanded){
+  return MockEntities.getValidTransactionProducts(ids, expanded);
 }
 
 function getValidTransaction(){
@@ -135,7 +134,7 @@ function getValidSession(){
 describe('confirmOrder', function () {
 
   describe('constructor', () => {
-    xit('successfully constructs', () => {
+    it('successfully constructs', () => {
       let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 
       expect(objectutilities.getClassName(confirmOrderController)).to.equal('ConfirmOrderController');
@@ -159,7 +158,7 @@ describe('confirmOrder', function () {
       mockery.deregisterAll();
     });
 
-    xit('successfully hydrates a session', () => {
+    it('successfully hydrates a session', () => {
 
       let event = getValidEventBody();
       let session = getValidSession();
@@ -185,9 +184,11 @@ describe('confirmOrder', function () {
 
   describe('validateSession', () => {
 
-    xit('successfully validates a session', () => {
+    it('successfully validates a session', () => {
 
       let session = getValidSession();
+
+      session.completed = false;
 
       let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 
@@ -199,7 +200,7 @@ describe('confirmOrder', function () {
 
     });
 
-    xit('successfully throws an error when a session does not validate', () => {
+    it('successfully throws an error when a session does not validate', () => {
 
       let session = getValidSession();
 
@@ -235,12 +236,12 @@ describe('confirmOrder', function () {
       mockery.deregisterAll();
     });
 
-    xit('successfully hydrates session properties', () => {
+    it('successfully hydrates session properties', () => {
 
       let session = getValidSession();
       let customer = getValidCustomer();
       let transactions = getValidTransactions();
-      let products = getValidTransactionProducts();
+      let products = getValidTransactionProducts(null, true);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
         getCustomer:(session) => {
@@ -294,7 +295,7 @@ describe('confirmOrder', function () {
       mockery.deregisterAll();
     });
 
-    xit('successfully closes a session', () => {
+    it('successfully closes a session', () => {
 
       let session = getValidSession();
 
@@ -333,11 +334,11 @@ describe('confirmOrder', function () {
       mockery.deregisterAll();
     });
 
-    xit('successfully builds a response', () => {
+    it('successfully builds a response', () => {
 
       let session = getValidSession();
       let transactions = getValidTransactions();
-      let products = getValidTransactionProducts();
+      let products = getValidTransactionProducts(null, true);
       let customer = getValidCustomer();
 
       let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
@@ -349,6 +350,10 @@ describe('confirmOrder', function () {
 
       return confirmOrderController.buildResponse().then(result => {
         expect(result).to.equal(true);
+        expect(confirmOrderController.parameters.store['response'].session).to.deep.equal(session);
+        expect(confirmOrderController.parameters.store['response'].transactions).to.deep.equal(transactions);
+        expect(confirmOrderController.parameters.store['response'].transaction_products).to.deep.equal(products);
+        expect(confirmOrderController.parameters.store['response'].customer).to.deep.equal(customer);
       });
 
     });
@@ -370,7 +375,7 @@ describe('confirmOrder', function () {
       mockery.deregisterAll();
     });
 
-    xit('successfully pushes to Redshift', () => {
+    it('successfully pushes to Redshift', () => {
 
       let session = getValidSession();
 
@@ -406,7 +411,7 @@ describe('confirmOrder', function () {
       mockery.deregisterAll();
     });
 
-    xit('successfully executes post processing', () => {
+    it('successfully executes post processing', () => {
 
       let session = getValidSession();
 
@@ -442,13 +447,15 @@ describe('confirmOrder', function () {
       mockery.deregisterAll();
     });
 
-    xit('successfully executes', () => {
+    it('successfully executes', () => {
 
       let event = getValidEvent();
       let session = getValidSession();
       let transactions = getValidTransactions();
-      let products = getValidTransactionProducts();
+      let products = getValidTransactionProducts(null, true);
       let customer = getValidCustomer();
+
+      session.completed = false;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
         get:({id}) => {
@@ -526,13 +533,15 @@ describe('confirmOrder', function () {
       mockery.deregisterAll();
     });
 
-    xit('successfully executes', () => {
+    it('successfully executes', () => {
 
       let event = getValidEventBody();
       let session = getValidSession();
       let transactions = getValidTransactions();
-      let products = getValidTransactionProducts();
+      let products = getValidTransactionProducts(null, true);
       let customer = getValidCustomer();
+
+      session.completed = false;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
         get:({id}) => {
