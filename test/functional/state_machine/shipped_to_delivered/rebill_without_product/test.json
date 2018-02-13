@@ -1,0 +1,8 @@
+{
+  "description": "Rebill without products goes to error.",
+  "order": 80,
+  "lambda_filter": ["shippedtodelivered"],
+  "env": {
+    "archivefilter": "all"
+  }
+}
