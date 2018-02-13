@@ -9,7 +9,9 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 class creditCardController extends entityController {
 
     constructor(){
-        super('creditcard');
+
+				super('creditcard');
+
     }
 
     associatedEntitiesCheck({id}){

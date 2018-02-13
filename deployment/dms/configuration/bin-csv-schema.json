@@ -1,0 +1,85 @@
+{
+	"TableCount": "1",
+	"Tables": [
+		{
+			"TableName": "bins",
+			"TablePath": "analytics/bin/",
+			"TableOwner": "analytics",
+			"TableColumns": [
+				{
+					"ColumnName": "binnumber",
+					"ColumnType": "INT8",
+					"ColumnNullable": "false",
+					"ColumnIsPk": "true"
+				},
+				{
+					"ColumnName": "brand",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "false"
+				},
+				{
+					"ColumnName": "bank",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "false"
+				},
+				{
+					"ColumnName": "type",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "true"
+				},
+				{
+					"ColumnName": "level",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "true"
+				},
+				{
+					"ColumnName": "country",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "false"
+				},
+				{
+					"ColumnName": "info",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "false"
+				},
+				{
+					"ColumnName": "country_iso",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "false"
+				},
+				{
+					"ColumnName": "country2_iso",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "false"
+				},
+				{
+					"ColumnName": "country3_iso",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "true"
+				},
+				{
+					"ColumnName": "webpage",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "true"
+				},
+				{
+					"ColumnName": "phone",
+					"ColumnType": "STRING",
+					"ColumnLength": "128",
+					"ColumnNullable": "true"
+				}
+			],
+			"TableColumnsTotal": "12"
+		}
+	]
+}
