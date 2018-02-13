@@ -10,7 +10,6 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const AWS = require("aws-sdk");
 
-
 //Technical Debt: need to introduce parameter class to simplify this
 class DMSDeployment extends AWSDeploymentUtilities {
 
@@ -21,6 +20,7 @@ class DMSDeployment extends AWSDeploymentUtilities {
 		let params = { apiVersion: '2016-01-01' }
 
 		this.endpoint_id_template = 'sixcrm-{{stage}}-{{endpoint_id}}';
+		this.replication_instance_id_template = 'sixcrm-{{stage}}-replication-instance';
 		this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 		this.iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
 
@@ -42,10 +42,11 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 		du.debug('Execute Migration');
 
-		return this.getEndpointPair()
+		return this.assureReplicationInstance()
+			.then(() => this.getEndpointPair())
 			.then(() => this.createEndpoints())
 			.then(() => {
-				return du.warning('this is done');
+				return du.warning('Complete');
 			})
 
 	}
@@ -74,7 +75,7 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 		objectutilities.map(endpoint_pair, key => {
 
-			var endpoint_id = this.createEnvironmentSpecificEndpointName(endpoint_pair[key].id)
+			var endpoint_id = this.createEnvironmentSpecificEndpointId(endpoint_pair[key].id)
 
 			endpoint_promises.push(this.assureEndpoint({ endpoint_id: endpoint_id, endpoint_type: endpoint_pair[key].type, engine_name: endpoint_pair[key].engine }))
 
@@ -136,8 +137,8 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 			du.warning(parameters);
 
-			this.dms.createEndpoint(parameters, function (err, data) {
-
+			this.dms.createEndpoint(parameters, (err, data) => {
+				//Technical Debt: need better error handling here
 				if (err) {
 					du.warning('error', err.stack);
 					return false;
@@ -145,11 +146,9 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 					du.warning('created endpoint data', data);
 
-					this.paramaeters.set('endpointdata', data);
+					return data;
 
-					return true;
-
-				}        // successful response
+				}
 
 			});
 
@@ -157,6 +156,99 @@ class DMSDeployment extends AWSDeploymentUtilities {
 	}
 
 	assureReplicationInstance() {
+
+		var instance_id = this.createEnvironmentSpecificInstanceId(this.replication_instance_id_template);
+
+		du.warning(instance_id);
+
+		//Does replication instance exist?
+		return this.describeReplicationInstance({ replication_instance_id: instance_id })
+			.then(result => {
+				//if it doesnt..
+				if (!result) {
+
+					du.output(instance_id + ' instance not found, creating');
+
+					//create instance
+					return this.createReplicationInstsance({ replication_instance_id: instance_id });
+
+				} else {
+					//if it does...
+					du.output(instance_id + ' instance found, skipping');
+					//continue
+					return Promise.resolve(true);
+				}
+
+			});
+
+	}
+
+	describeReplicationInstance({ replication_instance_id }) {
+
+		du.debug('Describe Replication Instance');
+
+		return new Promise((resolve, reject) => {
+
+			let parameters = {
+				Filters: [
+					{
+						Name: 'replication-instance-id',
+						Values: [`${replication_instance_id}`]
+					}
+				]
+			};
+
+			this.dms.describeReplicationInstances(parameters, (error, data) => {
+
+				if (error) {
+
+					//Technical Debt: This is ugly, assumes if there's an error that the endpoints don't exist. Need to find a way to verify endpoint existence without this call, possibly with tag creation / list tags
+					du.info(parameters);
+					du.warning(error);
+					return resolve(false);
+
+				} else {
+
+					du.warning(data);
+					this.replication_instance_arn = data.ReplicationInstance.ReplicationInstanceArn;
+
+					return resolve(data);
+
+				}
+
+			});
+
+		});
+
+	}
+
+	createReplicationInstsance({ replication_instance_id }) {
+
+		du.warning('getting here');
+
+		return new Promise((resolve, reject) => {
+			let parameters = {
+				ReplicationInstanceClass: 'dms.t2.small', /* required */
+				ReplicationInstanceIdentifier: `${replication_instance_id}`, /* required */
+			}
+
+			this.dms.createReplicationInstance(parameters, (error, data) => {
+				if (error) {
+					du.error(error);
+					eu.throwError('server', error)
+				} else {
+
+					du.warning('created replication instance data', data);
+
+					//technical debt: move this to parameters
+					this.replication_instance_arn = data.ReplicationInstance.ReplicationInstanceArn;
+
+					return resolve(data);
+				}
+
+			});
+
+		});
 
 	}
 
@@ -200,8 +292,6 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 					let dynamo_role = this.parameters.get('dynamodbrole');
 
-					du.warning(dynamo_role);
-
 					parameters.DynamoDbSettings = {};
 					parameters.DynamoDbSettings.ServiceAccessRoleArn = dynamo_role.Role.Arn;
 					return parameters;
@@ -231,9 +321,17 @@ class DMSDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	createEnvironmentSpecificEndpointName(endpoint_id) {
+	createEnvironmentSpecificInstanceId() {
 
 		du.debug('Create Environment Specific Endpoint Name');
+
+		return parserutilities.parse(this.replication_instance_id_template, { stage: process.env.stage });
+
+	}
+
+	createEnvironmentSpecificEndpointId(endpoint_id) {
+
+		du.debug('Create Environment Specific Endpoint Id');
 
 		return parserutilities.parse(this.endpoint_id_template, { stage: process.env.stage, endpoint_id: endpoint_id });
 
@@ -271,6 +369,7 @@ class DMSDeployment extends AWSDeploymentUtilities {
 					return resolve(data);
 
 				}
+
 			});
 
 		});

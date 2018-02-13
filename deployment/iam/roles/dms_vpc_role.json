@@ -1,0 +1,19 @@
+[{
+  "AssumeRolePolicyDocument":{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+					"Service": "dms.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "RoleName":"dms-vpc-role",
+  "Description": "The role used by SixCRM DMS for vpc generation.",
+  "ManagedPolicies":[
+    "arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole"
+  ]
+}]
