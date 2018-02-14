@@ -15,7 +15,7 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'BINs';
 var tests = [{
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getBIN.json')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getBin.json')
 }];
 
 let this_request = request(endpoint);
