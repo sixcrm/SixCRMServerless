@@ -35,7 +35,7 @@ describe('Graph '+entity+' Test', function() {
 					//let account = tu.getAccount(test.query);
               let account = test_account.id;
 
-              it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
+              xit('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
                   var query = tu.getQuery(test.query);
 
                   this_request.post('graph/'+account)
