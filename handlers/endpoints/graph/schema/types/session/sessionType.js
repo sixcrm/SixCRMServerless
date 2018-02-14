@@ -12,7 +12,7 @@ let rebillType = require('../rebill/rebillType');
 let productScheduleType = require('../productschedule/productScheduleType');
 let customerType = require('../customer/customerType');
 let watermarkType = require('./watermark/watermarkType');
-let sessionCancelType = require('./session')
+let sessionCancelType = require('./sessionCancelType')
 
 const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
@@ -105,9 +105,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 return sessionController.getAffiliate(session, 'cid');
             }
 				},
-				cancelled: {
+				canceled: {
 					type: sessionCancelType.graphObj,
-					description: 'A an object with information about the sessions cancelled state, who cancelled and when.',
+					description: 'A an object with information about the sessions canceled state, who canceled and when.',
 				},
         completed: {
             type: new GraphQLNonNull(GraphQLBoolean),

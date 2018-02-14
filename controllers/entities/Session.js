@@ -551,15 +551,24 @@ class sessionController extends entityController {
 
       du.debug('Get User');
 
-      return this.executeAssociatedEntityFunction('userController', 'get', {id: session.cancelled_by});
+      return this.executeAssociatedEntityFunction('userController', 'get', {id: session.canceled_by}).then(data => {
+				du.error('cancelled_by', data)
+				return data;
+			})
 
 		}
 
-		cancelSession(session){
+		cancelSession({entity}){
 
+			du.debug('Cancel Session');
 
-			du.warning('cancelled', session);
-			return Promise.resolve(true);
+			du.warning('canceled', entity);
+			return this.executeAssociatedEntityFunction('sessionController', 'get', {id: entity.id}).then(session => {
+
+				du.warning(session);
+
+			});
+
 
 		}
 

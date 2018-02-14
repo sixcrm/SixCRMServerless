@@ -4,6 +4,8 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 let userType = require('../user/userType');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+
 
 let sessionController =  global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
@@ -11,20 +13,25 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'SessionCancel',
     description: 'A record denoting a customer, a group of products and corresponding transactions.',
     fields: () => ({
-			cancelled: {
+			canceled: {
 				type: new GraphQLNonNull(GraphQLBoolean),
-				description: 'A boolean denoting the cancelled state of the session'
+				description: 'A boolean denoting the canceled state of the session'
 			},
-			cancelled_by: {
+			canceled_by: {
 				type: userType.graphObj,
-				description: 'The user that cancelled the session.',
+				description: 'The user that canceled the session.',
 				resolve: (session) => {
+
+					du.error('get user');
+
+					du.error(session)
+
 					return sessionController.getUser(session);
 				}
 			},
-			cancelled_at: {
+			canceled_at: {
 				type: new GraphQLNonNull(GraphQLString),
-				description: 'ISO8601 datetime when the session was cancelled.',
+				description: 'ISO8601 datetime when the session was canceled.',
 
 			}
 		})

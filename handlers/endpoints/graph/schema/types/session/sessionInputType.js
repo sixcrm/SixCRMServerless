@@ -22,7 +22,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
       subaffiliate_3:			{ type: GraphQLString },
       subaffiliate_4:			{ type: GraphQLString },
 			subaffiliate_5:			{ type: GraphQLString },
-			cancelled: { type: sesssionCancelInputType.graphObj},
+			canceled: { type: sesssionCancelInputType.graphObj},
       cid:			{ type: GraphQLString },
       product_schedules:	{
         type: new GraphQLList(GraphQLString)
