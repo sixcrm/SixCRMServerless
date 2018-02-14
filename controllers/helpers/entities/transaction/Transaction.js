@@ -148,9 +148,9 @@ module.exports = class TransactionHelperController {
 
     let missed_transaction_products = arrayutilities.filter(updated_transaction_products, updated_transaction_product => {
 
-      let found_product = arrayutilities.find(transaction.products, (transaction_product, index) => {
+      let found_product = arrayutilities.find(transaction.products, (transaction_product_group, index) => {
 
-        if(transaction_product.product == updated_transaction_product.product && transaction_product.amount == updated_transaction_product.amount){
+        if(transaction_product_group.product.id == updated_transaction_product.product && transaction_product_group.amount == updated_transaction_product.amount){
 
           transaction.products[index].shipping_receipt = updated_transaction_product.shipping_receipt;
 

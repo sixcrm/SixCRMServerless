@@ -325,7 +325,13 @@ module.exports = class Register extends RegisterUtilities {
       creditcard: creditcard
     }
 
-    let register_response = new RegisterResponse(response_prototype);
+    let register_response = new RegisterResponse({
+      transactions: transaction_receipts,
+      processor_responses: processor_responses,
+      response_type: response_category,
+      creditcard: creditcard
+    });
+
 
     return Promise.resolve(register_response);
 
@@ -349,11 +355,11 @@ module.exports = class Register extends RegisterUtilities {
       return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.error);
     });
 
-    if(successful){
+    if(error){
       return this.processor_response_map.error;
     }
 
-    return this.processor_response_map.decline;
+    return this.processor_response_map.declined;
 
   }
 
@@ -390,7 +396,9 @@ module.exports = class Register extends RegisterUtilities {
 
     if(_.has(merchant_provider_groups, merchant_provider)){
 
+      du.warning(merchant_provider_groups[merchant_provider]);
       arrayutilities.map(merchant_provider_groups[merchant_provider], merchant_provider_group => {
+
         arrayutilities.map(merchant_provider_group, product_group => {
           return_object.push(product_group);
         });
@@ -471,7 +479,7 @@ module.exports = class Register extends RegisterUtilities {
     const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let processController = new ProcessController();
 
-    return processController.process(arguments[0]).then(result => {
+    return processController.process(arguments[0]).then((result) => {
 
       return {
         code: result.getCode(),
@@ -483,11 +491,7 @@ module.exports = class Register extends RegisterUtilities {
 
     }).then((result) => {
 
-      let processor_responses = this.parameters.get('processorresponses', null, false);
-
-      processor_responses = (_.isNull(processor_responses))?[]:processor_responses;
-      processor_responses.push(result);
-      this.parameters.set('processorresponses', processor_responses);
+      this.parameters.push('processorresponses', result);
 
       return result;
 
@@ -507,6 +511,7 @@ module.exports = class Register extends RegisterUtilities {
           product_group,
           (subtotal, product) => {
 
+            du.info(product);
             let product_group_total = numberutilities.formatFloat((product.amount * product.quantity), 2);
 
             return (subtotal + product_group_total);

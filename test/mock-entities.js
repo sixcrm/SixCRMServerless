@@ -188,6 +188,20 @@ class MockEntities {
 
   }
 
+  static getValidMerchantProviderGroups(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4()]:ids;
+
+    let return_object = {};
+
+    arrayutilities.map(ids, id => {
+      return_object[id] = this.getValidTransactionProducts();
+    });
+
+    return return_object;
+
+  }
+
   static getValidMerchantProvider(id, processor){
 
     return {

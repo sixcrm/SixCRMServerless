@@ -1,6 +1,7 @@
 'use strict'
 const _ = require('underscore');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
@@ -30,9 +31,8 @@ module.exports = class RegisterResponse extends Response {
 
     this.initialize();
 
-    if(objectutilities.nonEmpty(arguments)){
-      this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
-    }
+    this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
+
 
   }
 
