@@ -280,7 +280,7 @@ class MockEntities {
   static getValidTransactionProduct(id, extended){
 
     extended = (_.isUndefined(extended) || _.isNull(extended))?false:extended;
-    let product = (extended)?this.getValidId(id):this.getValidProduct(id);
+    let product = (extended)?this.getValidProduct(id):this.getValidId(id);
 
     return {
       product: product,
