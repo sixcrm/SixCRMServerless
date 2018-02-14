@@ -81,7 +81,10 @@ describe('Checkout Test', function() {
         var jwt = response.body.response;
 
         var post_body = {
-    		  "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
+					"product_schedules": [{
+						"product_schedule": "12529a17-ac32-4e46-b05b-83862843055d",
+						"quantity":2
+					}],
           "campaign":campaign_id,
           "affiliates":{
             "affiliate":affiliate_id,

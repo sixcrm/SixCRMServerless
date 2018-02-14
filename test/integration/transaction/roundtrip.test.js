@@ -141,7 +141,10 @@ describe('Transaction Round Trip Test',() => {
             assert.property(response.body.response, "subaffiliate_5");
 
             var session_id = response.body.response.id;
-					  var product_schedules = ["12529a17-ac32-4e46-b05b-83862843055d"];
+					  var product_schedules = [{
+							"product_schedule": "12529a17-ac32-4e46-b05b-83862843055d",
+							"quantity":2
+						}];
 
 					  var order_create = {
               "session":session_id,
