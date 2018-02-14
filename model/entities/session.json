@@ -62,6 +62,7 @@
 		"cid":{"$ref": "../definitions/uuidv4.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"},
+		"cancelled":{"$ref":"./components/cancelsession.json"},
 		"completed":{
 			"type":"boolean"
 		}

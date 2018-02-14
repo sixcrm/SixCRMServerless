@@ -90,6 +90,7 @@ let userSigningStringInputType = require('./usersigningstring/userSigningStringI
 
 let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
+let sessionCancelInputType = require('./session/sessionCancelInputType');
 
 let identifierInputType = require('./general/identifierInputType');
 
@@ -1125,7 +1126,19 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return sessionController.delete({id:id});
             }
-        },
+				},
+				cancelsession: {
+					type: sessionType.graphObj,
+					description: 'Sets session to cancelled',
+					args: {
+						session: {type: sessionCancelInputType.graphObj}
+					},
+					resolve: (value, session) => {
+						const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+
+						return sessionController.cancelSession({entity:session.session});
+					}
+				},
         createshippingreceipt:{
             type: shippingReceiptType.graphObj,
             description: 'Adds a new shippingreceipt.',
