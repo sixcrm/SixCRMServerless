@@ -112,12 +112,12 @@ function getValidCustomer(id){
   return MockEntities.getValidCustomer(id);
 }
 
-function getValidGroupedShipableTransactionProducts(){
+function getValidGroupedShipableTransactionProducts(ids, extended){
 
   let return_object = {};
 
-  return_object[uuidV4()] = getValidAugmentedTransactionProducts();
-  return_object[uuidV4()] = getValidAugmentedTransactionProducts();
+  return_object[uuidV4()] = getValidAugmentedTransactionProducts(ids, extended);
+  return_object[uuidV4()] = getValidAugmentedTransactionProducts(ids, extended);
 
   return return_object;
 
@@ -147,15 +147,15 @@ function getValidFulfillmentProvider(){
 
 }
 
-function getValidShippableTransactionProductGroup(){
+function getValidShippableTransactionProductGroup(ids, extended){
 
-  return getValidAugmentedTransactionProducts();
+  return getValidAugmentedTransactionProducts(ids, extended);
 
 }
 
-function getValidAugmentedTransactionProducts(){
+function getValidAugmentedTransactionProducts(ids, extended){
 
-  let transaction_products = getValidTransactionProducts();
+  let transaction_products = getValidTransactionProducts(ids, extended);
 
   return arrayutilities.map(transaction_products, transaction_product => {
     return objectutilities.merge(transaction_product, {transaction: getValidTransaction()});
@@ -184,18 +184,9 @@ function getValidTransactions(){
 
 }
 
-function getValidTransactionProducts(){
+function getValidTransactionProducts(ids, expanded){
 
-  return [
-    {
-      amount: 34.99,
-      product: uuidV4()
-    },
-    {
-      amount: 34.99,
-      product: uuidV4()
-    }
-  ];
+  return MockEntities.getValidTransactionProducts(ids, expanded);
 
 }
 
@@ -213,7 +204,7 @@ function getValidProducts(product_ids){
 
 }
 
-xdescribe('controllers/providers/terminal/Terminal.js', function () {
+describe('controllers/providers/terminal/Terminal.js', function () {
 
   before(() => {
     mockery.enable({
@@ -318,7 +309,7 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
     it('successfully sets augmented transaction products', () => {
 
       let transactions = getValidTransactions();
-      let transaction_products = getValidTransactionProducts();
+      let transaction_products = getValidTransactionProducts(null, true);
 
       let mock_transaction_helper_controller = class {
         constructor(){
@@ -352,7 +343,7 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully acquires products', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let products = getValidProducts();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
@@ -457,9 +448,9 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully creates a shipable transaction product group', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product;
+        return augmented_transaction_product.product.id;
       });
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
@@ -477,11 +468,13 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully creates a shipable transaction product group (subset)', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product;
+        return augmented_transaction_product.product.id;
       });
 
+      shipable_product_ids.pop();
+      shipable_product_ids.pop();
       shipable_product_ids.pop();
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
@@ -499,11 +492,13 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully creates a shipable transaction product group (subset-2)', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product;
+        return augmented_transaction_product.product.id;
       });
 
+      shipable_product_ids.shift();
+      shipable_product_ids.shift();
       shipable_product_ids.shift();
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
@@ -515,15 +510,17 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
       let result = terminalController.createShipableTransactionProductGroup();
 
       expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[1]]);
+      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[3]]);
 
     });
 
     it('successfully creates a shipable transaction product group (none)', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let shipable_product_ids = [];
 
+      shipable_product_ids.pop();
+      shipable_product_ids.pop();
       shipable_product_ids.pop();
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
@@ -541,12 +538,14 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully creates a shipable transaction product group (subset - shipping_receipt)', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product;
+        return augmented_transaction_product.product.id;
       });
 
       augmented_transaction_products[0].shipping_receipt = uuidV4();
+      augmented_transaction_products[2].shipping_receipt = uuidV4();
+      augmented_transaction_products[3].shipping_receipt = uuidV4();
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
@@ -563,13 +562,15 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully creates a shipable transaction product group (subset2 - shipping_receipt)', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product;
+        return augmented_transaction_product.product.id;
       });
 
       augmented_transaction_products[0].shipping_receipt = uuidV4();
       augmented_transaction_products[1].shipping_receipt = uuidV4();
+      augmented_transaction_products[2].shipping_receipt = uuidV4();
+      augmented_transaction_products[3].shipping_receipt = uuidV4();
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
@@ -586,12 +587,14 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully creates a shipable transaction product group (subset - no_ship)', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product;
+        return augmented_transaction_product.product.id;
       });
 
       augmented_transaction_products[0].no_ship = true;
+      augmented_transaction_products[2].no_ship = true;
+      augmented_transaction_products[3].no_ship = true;
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
@@ -608,13 +611,15 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully creates a shipable transaction product group (none - no_ship)', () => {
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product;
+        return augmented_transaction_product.product.id;
       });
 
       augmented_transaction_products[0].no_ship = true;
       augmented_transaction_products[1].no_ship = true;
+      augmented_transaction_products[2].no_ship = true;
+      augmented_transaction_products[3].no_ship = true;
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
       let terminalController = new TerminalController();
@@ -635,7 +640,7 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully groups shipable products by fulfillment providers (empty)', () => {
 
-      let shippable_transaction_product_group = getValidShippableTransactionProductGroup();
+      let shippable_transaction_product_group = getValidShippableTransactionProductGroup(null, true);
       let products = getValidProducts();
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
@@ -654,14 +659,14 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully groups shipable products by fulfillment providers (one group)', () => {
 
-      let shipable_transaction_product_group = getValidShippableTransactionProductGroup();
+      let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
       let products = getValidProducts();
 
-      products[0].id = shipable_transaction_product_group[0].product;
-      products[1].id = shipable_transaction_product_group[1].product;
+      products[0].id = shipable_transaction_product_group[0].product.id;
+      products[1].id = shipable_transaction_product_group[1].product.id;
       products[1].fulfillment_provider = products[0].fulfillment_provider;
 
-      let grouped_products = {}
+      let grouped_products = {};
 
       grouped_products[products[1].fulfillment_provider] = shipable_transaction_product_group;
 
@@ -681,11 +686,11 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully groups shipable products by fulfillment providers (one group)', () => {
 
-      let shipable_transaction_product_group = getValidShippableTransactionProductGroup();
+      let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
       let products = getValidProducts();
 
-      products[0].id = shipable_transaction_product_group[0].product;
-      products[1].id = shipable_transaction_product_group[1].product;
+      products[0].id = shipable_transaction_product_group[0].product.id;
+      products[1].id = shipable_transaction_product_group[1].product.id;
       products[1].fulfillment_provider = products[0].fulfillment_provider;
 
       let grouped_products = {}
@@ -708,11 +713,11 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully groups shipable products by fulfillment providers (two groups)', () => {
 
-      let shipable_transaction_product_group = getValidShippableTransactionProductGroup();
+      let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
       let products = getValidProducts();
 
-      products[0].id = shipable_transaction_product_group[0].product;
-      products[1].id = shipable_transaction_product_group[1].product;
+      products[0].id = shipable_transaction_product_group[0].product.id;
+      products[1].id = shipable_transaction_product_group[1].product.id;
 
       let grouped_products = {}
 
@@ -998,7 +1003,7 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
         arrayutilities.map(transaction.products, transaction_product => {
           delete transaction_product.shipping_receipt;
 
-          return product_ids.push(transaction_product.product);
+          return product_ids.push(transaction_product.product.id);
         })
       });
 
@@ -1108,7 +1113,7 @@ xdescribe('controllers/providers/terminal/Terminal.js', function () {
 
     it('successfully executes', () => {
 
-      let grouped_shipable_transaction_products = getValidGroupedShipableTransactionProducts();
+      let grouped_shipable_transaction_products = getValidGroupedShipableTransactionProducts(null, true);
 
       let mocked_fulfillment_class = class {
         constructor(){
