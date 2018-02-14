@@ -26,6 +26,8 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       super();
 
+      this.searchFields = [];
+
       const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
 
       this.preIndexingHelperController = new PreIndexingHelperController();
@@ -396,6 +398,18 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       }
       */
+
+      if(objectutilities.hasRecursive(search, 'name') && this.searchFields && this.searchFields.length > 0){
+        let filterExpression = '';
+
+        this.searchFields.forEach(field => {
+          filterExpression += (filterExpression ? ' OR ' : '') + `contains(#search_${field}, :${field}_v)`;
+          query_parameters = this.appendExpressionAttributeNames(query_parameters, `#search_${field}`, field);
+          query_parameters = this.appendExpressionAttributeValues(query_parameters, `:${field}_v`, search.name);
+        });
+
+        query_parameters = this.appendFilterExpression(query_parameters, filterExpression);
+      }
 
       if(objectutilities.hasRecursive(search, 'updated_at.after')){
         query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_after_k > :updated_at_after_v');

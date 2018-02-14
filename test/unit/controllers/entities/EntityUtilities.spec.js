@@ -1939,5 +1939,66 @@ describe('controllers/EntityUtilities.js', () => {
                 filter_expression: "#created_at_before_k < :created_at_before_v"
             });
         });
+
+        it('does not append search conditions with "name" if no search field is defined', () => {
+
+            let params = {
+                query_parameters: {},
+                search: {name: 'some_name'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({});
+        });
+
+        it('appends search conditions with "name" if search field is defined', () => {
+
+            let params = {
+                query_parameters: {},
+                search: {name: 'some_value'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.searchFields = ['name'];
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({
+                expression_attribute_names: {
+                    "#search_name": "name"
+                },
+                expression_attribute_values: {
+                    ":name_v": "some_value"
+                },
+                filter_expression: "contains(#search_name, :name_v)"
+            });
+        });
+
+        it('appends search conditions with "name" if multiple search fields are defined', () => {
+
+            let params = {
+                query_parameters: {},
+                search: {name: 'some_value'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.searchFields = ['name', 'other'];
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({
+                expression_attribute_names: {
+                    "#search_name": "name",
+                    "#search_other": "other"
+                },
+                expression_attribute_values: {
+                    ":name_v": "some_value",
+                    ":other_v": "some_value"
+                },
+                filter_expression: "contains(#search_name, :name_v) OR contains(#search_other, :other_v)"
+            });
+        });
     });
 });
