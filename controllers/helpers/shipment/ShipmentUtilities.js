@@ -259,7 +259,7 @@ module.exports = class ShipmentUtilities {
     let hydrated_augmented_transaction_products = arrayutilities.map(augmented_transaction_products, (augmented_transaction_product, index) => {
 
       let hydrated_product = arrayutilities.find(products, (product) => {
-        return (product.id == augmented_transaction_product.product);
+        return (product.id == augmented_transaction_product.product.id);
       });
 
       augmented_transaction_product.product = hydrated_product;
