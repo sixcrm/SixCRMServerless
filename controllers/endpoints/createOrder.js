@@ -433,15 +433,26 @@ class CreateOrderController extends transactionEndpointController{
     let products = this.parameters.get('products', null, false);
 
     if(arrayutilities.nonEmpty(product_schedules)){
+
+      if(!_.has(session.watermark, 'product_schedules')){
+        session.watermark.product_schedules = [];
+      }
+
       arrayutilities.map(product_schedules, product_schedule_group => {
         session.watermark.product_schedules.push(product_schedule_group);
       });
     }
 
     if(arrayutilities.nonEmpty(products)){
+
+      if(!_.has(session.watermark, 'products')){
+        session.watermark.products = [];
+      }
+
       arrayutilities.map(products, product_group => {
         session.watermark.products.push(product_group);
       });
+
     }
 
     return this.sessionController.update({entity: session}).then(result => {

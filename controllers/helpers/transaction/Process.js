@@ -43,8 +43,6 @@ module.exports = class Process extends TransactionUtilities{
       };
 
       this.merchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
-      this.customerController = global.SixCRM.routes.include('entities','Customer.js');
-      this.creditCardController = global.SixCRM.routes.include('entities','CreditCard.js');
 
       this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
@@ -108,7 +106,6 @@ module.exports = class Process extends TransactionUtilities{
       let merchant_provider = this.parameters.get('merchantprovider');
 
       const GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+merchant_provider.gateway.name+'/handler.js');
-
       let gateway = new GatewayController({merchant_provider: merchant_provider});
 
       this.parameters.set('instantiated_gateway', gateway);

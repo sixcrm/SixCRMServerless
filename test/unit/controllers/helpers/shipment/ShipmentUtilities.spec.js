@@ -16,21 +16,15 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
 function getValidShippingReceipt(){
-
   return MockEntities.getValidShippingReceipt();
-
 }
 
 function getValidRebill(){
-
   return MockEntities.getValidRebill();
-
 }
 
 function getValidSession(){
-
   return MockEntities.getValidSession();
-
 }
 
 function getValidCustomer(){
@@ -38,18 +32,7 @@ function getValidCustomer(){
 }
 
 function getValidTransactionProducts(){
-
-  return [
-    {
-      amount: 34.99,
-      product: uuidV4()
-    },
-    {
-      amount: 34.99,
-      product: uuidV4()
-    }
-  ];
-
+  return MockEntities.getValidTransactionProducts(null, true);
 }
 
 function getValidTransaction(){
@@ -81,12 +64,10 @@ function getValidProducts(product_ids){
 }
 
 function getValidFulfillmentProvider(){
-
   return MockEntities.getValidFulfillmentProvider();
-
 }
 
-xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
+describe('helpers/shipment/ShipmentUtilities.js', () => {
 
   before(() => {
     mockery.enable({
@@ -109,7 +90,7 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   describe('hydrateFulfillmentProviders', () => {
 
-    it('successfully hydrates fulfillment providers', () => {
+   it('successfully hydrates fulfillment providers', () => {
 
       let fulfillment_provider = getValidFulfillmentProvider();
 
@@ -134,7 +115,7 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   describe('hydrateProducts', () => {
 
-    it('successfully hydrates products', () => {
+   it('successfully hydrates products', () => {
 
       let augmented_transaction_products = getValidAugmentedTransactionProducts();
       let products = getValidProducts();
@@ -169,37 +150,9 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   });
 
-  describe('marryProductsToAugmentedTransactionProducts', () => {
-
-    it('successfully marrys products to augmented transaction products', () => {
-
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
-      let products = getValidProducts();
-
-      augmented_transaction_products = arrayutilities.map(augmented_transaction_products, (augmented_transaction_product, index) => {
-        let updated_augmented_transaction_product = objectutilities.clone(augmented_transaction_product);
-
-        updated_augmented_transaction_product.product = products[index % products.length].id;
-        return updated_augmented_transaction_product;
-      });
-
-      let shipmentUtilitiesController = new ShipmentUtilitiesController();
-
-      shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      shipmentUtilitiesController.parameters.set('products', products);
-
-      let result = shipmentUtilitiesController.marryProductsToAugmentedTransactionProducts();
-
-      expect(result).to.equal(true);
-      expect(shipmentUtilitiesController.parameters.store['hydratedaugmentedtransactionproducts']).to.be.defined;
-
-    });
-
-  });
-
   describe('acquireCustomerFromSession', () => {
 
-    it('successfully acquires a customer from a session', () => {
+   it('successfully acquires a customer from a session', () => {
 
       let session = getValidSession();
       let customer = getValidCustomer();
@@ -218,19 +171,21 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
         expect(result).to.equal(true);
         expect(shipmentUtilitiesController.parameters.store['customer']).to.equal(customer);
       });
+
     });
 
   });
 
   describe('acquireRebillFromTransactions', () => {
 
-    it('successfully acquires a rebill from transactions', () => {
+   it('successfully acquires a rebill from transactions', () => {
 
       let rebill = getValidRebill();
       let augmented_transaction_products = getValidAugmentedTransactionProducts();
 
-      augmented_transaction_products[0].transaction.rebill = rebill.id;
-      augmented_transaction_products[1].transaction.rebill = rebill.id;
+      arrayutilities.map(augmented_transaction_products, (atp, index) => {
+        augmented_transaction_products[index].transaction.rebill = rebill.id
+      });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
         get:({id}) => {
@@ -253,7 +208,7 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   describe('acquireRebill', () => {
 
-    it('successfully acquires a rebill', () => {
+   it('successfully acquires a rebill', () => {
 
       let rebill = getValidRebill();
 
@@ -278,7 +233,7 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   describe('acquireSessionFromRebill', () => {
 
-    it('successfully acquires a session from a rebill', () => {
+   it('successfully acquires a session from a rebill', () => {
 
       let rebill = getValidRebill();
       let session = getValidSession();
@@ -304,7 +259,7 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   describe('acquireCustomerFromSession', () => {
 
-    it('successfully acquires a customer from a session', () => {
+   it('successfully acquires a customer from a session', () => {
 
       let session = getValidSession();
       let customer = getValidCustomer();
@@ -330,16 +285,16 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   describe('acquireCustomer', () => {
 
-    it('successfully acquires a customer', () => {
+   it('successfully acquires a customer', () => {
 
       let rebill = getValidRebill();
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
-
-      augmented_transaction_products[0].transaction.rebill = rebill.id;
-      augmented_transaction_products[1].transaction.rebill = rebill.id;
-
       let session = getValidSession();
       let customer = getValidCustomer();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+
+      arrayutilities.map(augmented_transaction_products, (atp, index) => {
+        augmented_transaction_products[index].transaction.rebill = rebill.id
+      });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
         getCustomer:({session}) => {
@@ -371,7 +326,7 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   describe('markTransactionProductsWithShippingReceipt', () => {
 
-    it('successfully marks transaction products with a shipping receipt', () => {
+   it('successfully marks transaction products with a shipping receipt', () => {
 
       let shipping_receipt = getValidShippingReceipt();
       let augmented_transaction_products = getValidAugmentedTransactionProducts();
@@ -404,7 +359,7 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
   });
 
   describe('instantiateFulfillmentProviderClass', () => {
-    it('successfully instantiates a fulfillment provider class', () => {
+   it('successfully instantiates a fulfillment provider class', () => {
 
       let fulfillment_provider = getValidFulfillmentProvider();
 
@@ -433,7 +388,7 @@ xdescribe('helpers/shipment/ShipmentUtilities.js', () => {
 
   describe('issueReceipts', () => {
 
-    it('successfully issues a shipping receipt', () => {
+   it('successfully issues a shipping receipt', () => {
 
       let shipping_receipt = getValidShippingReceipt();
 

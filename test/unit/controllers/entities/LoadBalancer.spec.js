@@ -3,9 +3,11 @@ let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 
 function getValidLoadBalancer() {
-    return MockEntities.getValidLoadBalancer()
+  return MockEntities.getValidLoadBalancer();
 }
 
 describe('controllers/LoadBalancer.js', () => {
@@ -177,16 +179,23 @@ describe('controllers/LoadBalancer.js', () => {
 
     describe('getMerchantProviderConfigurations', () => {
 
-        it('successfully retrieves merchant provider configurations', () => {
-            let load_balancer = getValidLoadBalancer();
+      it('successfully retrieves merchant provider configurations', () => {
 
-            let loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+        let loadbalancer = getValidLoadBalancer();
 
-            expect(loadBalancerController.getMerchantProviderConfigurations(load_balancer)).to.deep.equal([{
-                distribution: load_balancer.merchantproviders[0].distribution,
-                merchantprovider: load_balancer.merchantproviders[0].id
-            }]);
-        })
+        let loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+
+        let merchant_provider_configurations = loadBalancerController.getMerchantProviderConfigurations(loadbalancer);
+
+        expect(merchant_provider_configurations).to.deep.equal(arrayutilities.map(loadbalancer.merchantproviders, merchant_provider_configuration => {
+          return {
+            merchantprovider: merchant_provider_configuration.id,
+            distribution: merchant_provider_configuration.distribution
+          }
+        }));
+
+      });
+
     });
 
     describe('getMerchantProviderConfiguration', () => {

@@ -395,7 +395,7 @@ describe('createOrder', function () {
       let campaign = getValidCampaign();
 
       session.completed = false;
-      campaign.productschedules = arrayutilities.merge(campaign.productschedules, JSON.parse(event.body).product_schedules);
+
       let customer = getValidCustomer();
       let creditcard = getValidCreditCard();
       let rebill = getValidRebill();
@@ -1084,29 +1084,15 @@ describe('createOrder', function () {
         }
       });
 
-      let mock_rebill_helper = class {
-
-        constructor(){
-
-        }
-
-        createRebill({session, product_schedules, day}){
-          rebill.product_schedules = product_schedules;
-          rebill.parentsession = session.id
-          return Promise.resolve(rebill);
-        }
-
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
+        constructor(){}
         addRebillToQueue({rebill, queue_name}){
           return Promise.resolve(true);
         }
-
         updateRebillState({rebill, state}){
           return Promise.resolve(true);
         }
-
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
+      });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
         putRecord: (table, object) => {
