@@ -15,18 +15,18 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 const FulfillController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
 
-function getValidTransactionProducts(){
+function getValidTransactionProducts(ids, extended){
 
   return [
-    MockEntities.getValidTransactionProduct(),
-    MockEntities.getValidTransactionProduct()
+    MockEntities.getValidTransactionProduct(ids, extended),
+    MockEntities.getValidTransactionProduct(ids, extended)
   ];
 
 }
 
-function getValidAugmentedTransactionProducts(){
+function getValidAugmentedTransactionProducts(ids, extended){
 
-  let transaction_products = getValidTransactionProducts();
+  let transaction_products = getValidTransactionProducts(ids, extended);
 
   return arrayutilities.map(transaction_products, transaction_product => {
     return objectutilities.merge(transaction_product, {transaction: getValidTransaction()});
@@ -259,15 +259,15 @@ describe('helpers/shipment/Fulfill.js', () => {
   });
 
   describe('execute', () => {
-    xit('successfully executes a fulfill', () => {
+    it('successfully executes a fulfill', () => {
 
       let session = getValidSession();
       let rebill = getValidRebill();
       let fulfillment_provider = getValidFulfillmentProvider();
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let products = arrayutilities.map(augmented_transaction_products, (augmented_transaction_product, index) => {
         augmented_transaction_products[index].transaction.rebill = rebill.id;
-        return MockEntities.getValidProduct(augmented_transaction_product.product);
+        return MockEntities.getValidProduct(augmented_transaction_product.product.id);
       });
 
       let vendor_response = getValidVendorResponse();

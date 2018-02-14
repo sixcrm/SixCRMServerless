@@ -223,7 +223,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
         return false;
       }
 
-      return _.contains(shipable_product_ids, augmented_transaction_product.product);
+      return _.contains(shipable_product_ids, augmented_transaction_product.product.id);
 
     });
 
@@ -243,7 +243,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
     let grouped_shipable_transaction_products_object = arrayutilities.group(shipable_transaction_products, (shipable_transaction_product) => {
 
       let matching_product = arrayutilities.find(products, product => {
-        return (product.id == shipable_transaction_product.product);
+        return (product.id == shipable_transaction_product.product.id);
       });
 
       if(_.has(matching_product, 'fulfillment_provider')){

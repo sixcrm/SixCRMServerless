@@ -10,141 +10,44 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidMessage(){
 
-  return {
-    MessageId:"someMessageID",
-    ReceiptHandle:"SomeReceiptHandle",
-    Body: JSON.stringify({id:"00c103b4-670a-439e-98d4-5a2834bb5f00"}),
-    MD5OfBody:"SomeMD5"
-  };
+  return MockEntities.getValidMessage();
 
 }
 
 function getValidProducts(){
 
-  return [
-    {
-      id:uuidV4(),
-  		name:randomutilities.createRandomString(20),
-  		sku:randomutilities.createRandomString(20),
-  		ship:true,
-  		shipping_delay:300,
-  		fulfillment_provider:uuidV4(),
-  		default_price:34.99,
-  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  		created_at:timestamp.getISO8601(),
-  		updated_at:timestamp.getISO8601()
-    },
-    {
-      id:uuidV4(),
-  		name:randomutilities.createRandomString(20),
-  		sku:randomutilities.createRandomString(20),
-  		ship:true,
-  		shipping_delay:300,
-  		fulfillment_provider:uuidV4(),
-  		default_price:34.99,
-  		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  		created_at:timestamp.getISO8601(),
-  		updated_at:timestamp.getISO8601()
-    }
-  ];
+  return MockEntities.getValidProducts();
 
 }
 
 function getValidProductsForArchive(){
 
-    return [
-        {
-            product:{
-                id:uuidV4(),
-                name:randomutilities.createRandomString(20),
-                sku:randomutilities.createRandomString(20),
-                ship:true,
-                shipping_delay:300,
-                fulfillment_provider:uuidV4(),
-                default_price:34.99,
-                account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-                created_at:timestamp.getISO8601(),
-                updated_at:timestamp.getISO8601()
-            }
-        },
-        {
-            product:{
-                id:uuidV4(),
-                name:randomutilities.createRandomString(20),
-                sku:randomutilities.createRandomString(20),
-                ship:true,
-                shipping_delay:300,
-                fulfillment_provider:uuidV4(),
-                default_price:34.99,
-                account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-                created_at:timestamp.getISO8601(),
-                updated_at:timestamp.getISO8601()
-            }
-        }
-    ];
+    return [{
+        product: MockEntities.getValidProduct()
+    },
+    {
+        product: MockEntities.getValidProduct()
+    }];
 
 }
 
 function getValidRebill(){
 
-  return {
-    id: uuidV4(),
-    bill_at: timestamp.getISO8601(),
-    account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    parentsession: uuidV4(),
-    product_schedules: [uuidV4()],
-    amount: 79.99,
-    created_at:timestamp.getISO8601(),
-    updated_at:timestamp.getISO8601()
-  };
+  return MockEntities.getValidRebill();
 
 }
 
 function getValidTransactions(){
 
-  return [
-    {
-      amount: 34.99,
-      id: "d376f777-3e0b-43f7-a5eb-98ee109fa2c5",
-      alias:"T56S2HJ922",
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      rebill: "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-      processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-      merchant_provider: "6c40761d-8919-4ad6-884d-6a46a776cfb9",
-      products:[{
-        product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-        amount:34.99
-      }],
-      type:"reverse",
-      result:"success",
-      created_at:"2017-04-06T18:40:41.405Z",
-      updated_at:"2017-04-06T18:41:12.521Z"
-    },
-    {
-      amount: 13.22,
-      id: "d376f777-3e0b-43f7-a5eb-98ee109fa2c5",
-      alias:"T56S2HJ922",
-      account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      rebill: "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-      processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-      merchant_provider: "6c40761d-8919-4ad6-884d-6a46a776cfb9",
-      products:[{
-        product:"be992cea-e4be-4d3e-9afa-8e020340ed16",
-        amount:34.99
-      }],
-      type:"refund",
-      result:"success",
-      created_at:"2017-04-06T18:40:41.405Z",
-      updated_at:"2017-04-06T18:41:12.521Z"
-    }
-  ];
+  return MockEntities.getValidTransactions();
 
 }
 
-xdescribe('controllers/workers/archive', function () {
+describe('controllers/workers/archive', function () {
 
     before(() => {
         mockery.enable({
@@ -278,6 +181,10 @@ xdescribe('controllers/workers/archive', function () {
 
         let products = getValidProducts();
 
+        products.forEach(product => {
+            product.ship = true;
+        });
+
         const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
         let archiveController = new ArchiveController();
 
@@ -293,8 +200,9 @@ xdescribe('controllers/workers/archive', function () {
 
         let products = getValidProducts();
 
-        products[0].ship = false;
-        products[1].ship = false;
+        products.forEach(product => {
+            product.ship = false;
+        });
 
         const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
         let archiveController = new ArchiveController();
@@ -350,8 +258,9 @@ xdescribe('controllers/workers/archive', function () {
         let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
-        products[0].product.ship = false;
-        products[1].product.ship = false;
+        products.forEach(products => {
+            products.product.ship = false;
+        });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           getProducts: (transaction) => {
@@ -404,8 +313,9 @@ xdescribe('controllers/workers/archive', function () {
         let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
 
-        products[0].product.ship = false;
-        products[1].product.ship = false;
+        products.forEach(products => {
+            products.product.ship = false;
+        });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           getProducts: (transaction) => {
@@ -438,6 +348,10 @@ xdescribe('controllers/workers/archive', function () {
         let rebill = getValidRebill();
         let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
+
+        products.forEach(products => {
+            products.product.ship = true;
+        });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           getProducts: (transaction) => {
@@ -480,7 +394,7 @@ xdescribe('controllers/workers/archive', function () {
         });
       });
 
-      it('Successfully runs archive (twoattempts, noaction)', () => {
+      it('Successfully runs archive (twoattempts, success)', () => {
 
         let archivefilter = 'twoattempts';
         let rebill = getValidRebill();
@@ -553,12 +467,16 @@ xdescribe('controllers/workers/archive', function () {
 
         let archive_filter = 'noship';
 
-        process.env.archivefilter = archive_filter
+        process.env.archivefilter = archive_filter;
 
         let message = getValidMessage();
         let rebill = getValidRebill();
         let products = getValidProductsForArchive();
         let transactions = getValidTransactions();
+
+        products.forEach(products => {
+            products.product.ship = true;
+        });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
           getProducts: (transaction) => {
@@ -595,8 +513,10 @@ xdescribe('controllers/workers/archive', function () {
         let rebill = getValidRebill();
         let products = getValidProductsForArchive();
 
-        products[0].product.ship = false;
-        products[1].product.ship = false;
+        products.forEach(products => {
+            products.product.ship = false;
+        });
+
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
