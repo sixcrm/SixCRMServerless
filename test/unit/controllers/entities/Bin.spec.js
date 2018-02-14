@@ -5,21 +5,19 @@ let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/pe
 
 describe('controllers/entities/Bin.js', () => {
 
-
-	before(() => {
-		mockery.enable({
-			useCleanCache: true,
-			warnOnReplace: true,
-			warnOnUnregistered: false
-		});
-	});
-
-	afterEach(() => {
-		mockery.resetCache();
-		mockery.deregisterAll();
-	});
 	describe('getCreditCard', () => {
+		before(() => {
+			mockery.enable({
+				useCleanCache: true,
+				warnOnReplace: true,
+				warnOnUnregistered: false
+			});
+		});
 
+		afterEach(() => {
+			mockery.resetCache();
+			mockery.deregisterAll();
+		});
 		it('successfully retrieves credit card propetires from bin', () => {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -44,14 +42,14 @@ describe('controllers/entities/Bin.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
 				queryRecords: (table, parameters, index) => {
-					return Promise.resolve({Items: [mockedCreditCardProperties]});
+					return Promise.resolve({ Items: [mockedCreditCardProperties] });
 				}
-		});
+			});
 
 			const binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
 
 
-			return binController.getCreditCardProperties({binnumber: binnumber}).then((result) => {
+			return binController.getCreditCardProperties({ binnumber: binnumber }).then((result) => {
 				expect(result).to.equal(mockedCreditCardProperties);
 			});
 		});

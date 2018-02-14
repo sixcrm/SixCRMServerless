@@ -872,9 +872,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let cc_properties= getValidCreditCardProperties();
 
-      mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), {
-          getBINList: (parameters) => {
-              return Promise.resolve({bins:[cc_properties], pagination: {}});
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Bin.js'), {
+          getCreditCardProperties: (parameters) => {
+              return Promise.resolve(cc_properties);
           }
       });
 
@@ -1511,10 +1511,13 @@ describe('helpers/transaction/Process.spec.js', () => {
 
       let cc_properties= getValidCreditCardProperties();
 
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Bin.js'), {
+				getCreditCardProperties: (parameters) => {
+						return Promise.resolve(cc_properties);
+				}
+			});
+
       mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), {
-        getBINList: (parameters) => {
-          return Promise.resolve({bins:[cc_properties], pagination: {}});
-        },
         getMerchantProviderSummaries: (parameters) => {
           return Promise.resolve({merchantproviders: merchantprovider_summaries});
         },
