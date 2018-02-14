@@ -15,7 +15,7 @@
 				]
 			}
 		},
-		"required":["quantity", "price", "product"]
+		"required":["quantity", "product"]
 	},
 	"minItems":1
 }

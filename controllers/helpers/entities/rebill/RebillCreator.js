@@ -417,7 +417,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
         let transaction_product = {
           product: product_group.product,
-          amount: product_group.price,
+          amount: this.getPriceFromProductGroup(product_group),
           quantity: product_group.quantity
         };
 
@@ -430,6 +430,21 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     }
 
     return Promise.resolve(false);
+
+  }
+
+  getPriceFromProductGroup(product_group){
+
+    //Technical Debt:  Need to check that the product allows overrides
+    if(_.has(product_group, 'price')){
+      return product_group.price;
+    }
+
+    if(objectutilities.hasRecursive(product_group, 'product.default_price')){
+      return product_group.product.default_price;
+    }
+
+    eu.throwError('server', 'Unable to identify price for product: '+product_group.product.id);
 
   }
 

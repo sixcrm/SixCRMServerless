@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/endpoints/checkout/response.json",
+	"title": "Checkout Response",
+	"type":"object",
+	"properties": {
+		"success":{"type":"boolean"},
+		"code":{"$ref":"../../definitions/httpcode.json"},
+		"response":{
+			"type":"object",
+			"properties":{
+				"session":{"$ref":"../../entities/session.json"},
+				"customer":{"$ref": "../../entities/customer.json"},
+				"transasctions":{"$ref": "../../entities/components/transactions.json"},
+				"transasction_products":{"$ref": "../../entities/components/transactionproducts.json"}
+			},
+			"required":["session","customer","transactions","transaction_products"]
+		}
+	},
+	"required":["success","code","response"]
+}
