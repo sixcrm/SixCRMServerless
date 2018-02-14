@@ -819,7 +819,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
         resolve_object = secondary_function(resolve_object);
       }
 
-      du.info(resolve_object); 
+      du.info(resolve_object);
       return resolve_object;
 
     }
@@ -894,7 +894,11 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
             return null;
 
-        }
+        } else if(_.isNumber(object)){
+
+					return object;
+
+				}
 
         //du.warning('here');
         eu.throwError('bad_request','Could not determine identifier.');

@@ -12,7 +12,10 @@ class binController extends entityController {
 
 		du.debug('Get Credit Card Properties');
 
-		return this.executeAssociatedEntityFunction('binController', 'get', { binnumber: binnumber });
+		//Technical Debt: this could use some validation
+		this.primary_key = 'binnumber';
+
+		return this.get({ id: binnumber });
 
 	}
 

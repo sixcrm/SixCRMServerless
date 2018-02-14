@@ -54,5 +54,5 @@
 			"minLength":3
 		}
 	},
-	"required":["binnumber", "brannd", "bank", "country", "info", "country_iso","country_iso2" ]
+	"required":["binnumber", "brand", "country", "info", "country_iso","country_iso2" ]
 }
