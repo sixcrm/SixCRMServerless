@@ -64,6 +64,8 @@ module.exports = class AffiliateHelperController {
 
       }
 
+      return Promise.resolve(event);
+
     }else{
 
       return Promise.resolve(event);
