@@ -46,8 +46,6 @@ class productScheduleController extends entityController {
           });
         }
 
-        //du.warning(return_array); process.exit();
-
         return return_array;
 
       });

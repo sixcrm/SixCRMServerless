@@ -147,32 +147,6 @@ module.exports = class confirmShippedController extends workerController {
 
       return true;
 
-      /*
-      du.warning(no_tracking);  process.exit();
-
-      if(!_.has(this, 'shippingStatusController')){
-        const ShippingStatusController = global.SixCRM.routes.include('controllers', 'helpers/shippingcarriers/ShippingStatus.js');
-        this.shippingStatusController = new ShippingStatusController();
-      }
-
-      let shipped_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
-
-        return this.shippingStatusController.getStatus({shipping_receipt: shipping_receipt}).then(result => {
-          return _.contains(['in-transit', 'delivered'], result.getStatus());
-        });
-
-      });
-
-      return Promise.all(shipped_stati).then(shipped_stati => {
-
-        du.warning(shipped_stati);  process.exit();
-        this.parameters.set('productshippedstati', shipped_stati);
-
-        return true;
-
-      });
-      */
-
     }
 
     getTrackingInformation(){
@@ -332,4 +306,3 @@ module.exports = class confirmShippedController extends workerController {
     }
 
 }
-

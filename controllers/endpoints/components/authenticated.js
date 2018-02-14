@@ -27,11 +27,7 @@ module.exports = class AuthenticatedController extends endpointController {
       .then((event) => this.validateEvent(event))
 			.then((event) => this.acquireAccount(event))
 			.then((event) => this.acquireUser(event))
-			.then((event) => this.validateRequiredPermissions(event))
-      .then((event) => {
-        //du.info(event); process.exit();
-        return event;
-      });
+			.then((event) => this.validateRequiredPermissions(event));
 
     }
 

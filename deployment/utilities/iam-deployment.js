@@ -169,8 +169,6 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
             let detach_parameters = {RoleName: role_definition.RoleName, PolicyArn: attached_policy.PolicyArn};
 
-            //du.warning(detach_parameters);  process.exit();
-
             return this.iamutilities.detachRolePolicy(detach_parameters);
 
           });

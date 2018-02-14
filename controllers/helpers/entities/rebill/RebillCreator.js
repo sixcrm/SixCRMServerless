@@ -246,9 +246,6 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     let session = this.parameters.get('session');
     let day = this.parameters.get('day');
 
-
-    //du.info(session, normalized_product_schedules, normalized_products); process.exit();
-
     /*
     if(day < 0){
       //In other words, these product schedules may already be in the session?

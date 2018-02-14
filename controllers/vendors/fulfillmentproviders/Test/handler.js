@@ -282,8 +282,6 @@ module.exports = class TestController extends FulfillmentProviderController {
       url: uri
     };
 
-    //du.info(request_options); process.exit();
-
     return new Promise((resolve, reject) => {
 
       request(request_options, (error, response, body) => {

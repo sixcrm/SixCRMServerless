@@ -183,18 +183,10 @@ describe('Transaction Round Trip Test',() => {
 
               tu.assertSuccessfulResponse(response.body, 'graph');
 
-              //assert.property(response.body.response, "processor");
-
-              //var processor_response = response.body.response.processor;
-
-              //assert.isObject(processor_response);
-              //assert.property(processor_response, "message");
-              //assert.equal(processor_response.message, "SUCCESS");
-              //assert.property(processor_response, 'result');
-              //assert.property(processor_response.result, 'response');
-              //assert.equal(processor_response.result.response, '1');
-
-              var upsell_product_schedules = ['8d1e896f-c50d-4a6b-8c84-d5661c16a046'];
+              var upsell_product_schedules = [{
+                product_schedule: '8d1e896f-c50d-4a6b-8c84-d5661c16a046',
+                quantity: 1
+              }];
 
               var upsell_create = {
                 "session": session_id,
@@ -219,22 +211,6 @@ describe('Transaction Round Trip Test',() => {
 							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 							.end((err, response) => {
                 du.debug('Upsell Result: ', response.body);
-                /*
-                assert.property(response.body, "success");
-                assert.equal(response.body.success, true);
-                assert.property(response.body, "response");
-                assert.property(response.body.response, "processor");
-
-                var processor_response = response.body.response.processor;
-
-                assert.isObject(processor_response);
-                assert.property(processor_response, "message");
-                assert.equal(processor_response.message, "SUCCESS");
-                assert.property(processor_response, 'result');
-                assert.property(processor_response.result, 'response');
-                assert.equal(processor_response.result.response, '1');
-                */
-
                 du.output(appropriate_spacing+'Confirming Order');
                 du.debug('Confirmation params: ', 'session_id='+session_id);
 
@@ -250,15 +226,7 @@ describe('Transaction Round Trip Test',() => {
 								.end((err, response) => {
 
                   du.debug('Confirm Order results', response.body);
-                  /*
-                  assert.property(response.body, "success");
-                  assert.equal(response.body.success, true);
-                  assert.property(response.body, "response");
-                  assert.property(response.body.response, "session");
-                  assert.property(response.body.response, "customer");
-                  assert.property(response.body.response, "transactions");
-                  assert.property(response.body.response, "transaction_products");
-                  */
+
                   done();
 
                 }, done);

@@ -28,8 +28,6 @@ class loadBalancerController extends entityController {
 
         let productschedules = data_acquisition_promises[0];
 
-        //du.warning(data_acquisition_promises);  process.exit();
-
         if(_.has(productschedules, 'productschedules') && arrayutilities.nonEmpty(productschedules.productschedules)){
           arrayutilities.map(productschedules.productschedules, (productschedule) => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Product Schedule', object: productschedule}));

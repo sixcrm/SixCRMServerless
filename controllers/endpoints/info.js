@@ -101,7 +101,7 @@ class InfoController extends transactionEndpointController{
         });
 
         return Promise.all(hydrated_product_schedules_promises).then(hydrated_product_schedules_promises => {
-          //du.info(hydrated_product_schedules_promises); process.exit();
+
           this.parameters.set('productschedules', hydrated_product_schedules_promises);
         })
 

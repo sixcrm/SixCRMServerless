@@ -551,8 +551,6 @@ describe('createOrder', function () {
 
       event.session = session.id;
 
-      //du.info(event);  process.exit();
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
         get: ({id}) => {
           return Promise.resolve(session)
