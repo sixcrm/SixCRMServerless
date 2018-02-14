@@ -36,23 +36,24 @@ module.exports.graphObj = new GraphQLObjectType({
         },
         product_schedules: {
             type: new GraphQLList(productScheduleType.graphObj),
-            description:
-        'The product schedules associated with the rebill',
+            description:'The product schedules associated with the rebill',
             resolve: rebill => rebillController.listProductSchedules(rebill),
         },
         transactions: {
-	          type: new GraphQLList(transactionType.graphObj),
-            description: 'The transactions associated with the rebill',
-            resolve: rebill => rebillController.listTransactions(rebill).then(response => response.transactions),
+          type: new GraphQLList(transactionType.graphObj),
+          description: 'The transactions associated with the rebill',
+          resolve: (rebill) => {
+            return rebillController.listTransactions(rebill).then(response => response.transactions);
+          }
         },
         shippingreceipts: {
-            type: new GraphQLList(shippingReceiptType.graphObj),
-            description: 'The shipping receipts associated with the rebill',
-            resolve: (rebill) => {
-                const rebillHelperController = new RebillHelperController();
+          type: new GraphQLList(shippingReceiptType.graphObj),
+          description: 'The shipping receipts associated with the rebill',
+          resolve: (rebill) => {
+            const rebillHelperController = new RebillHelperController();
 
-                return rebillHelperController.getShippingReceipts({rebill: rebill});
-            }
+            return rebillHelperController.getShippingReceipts({rebill: rebill});
+          }
         },
         created_at: {
             type: new GraphQLNonNull(GraphQLString),

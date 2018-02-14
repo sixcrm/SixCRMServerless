@@ -476,6 +476,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
     .then(() => this.getShippingReceiptIDs())
     .then(() => this.acquireShippingReceipts())
     .then(() => {
+
       let shipping_receipts = this.parameters.get('shippingreceipts', null, false);
 
       if(_.isNull(shipping_receipts)){
