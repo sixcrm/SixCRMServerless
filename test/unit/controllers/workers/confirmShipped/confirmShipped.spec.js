@@ -51,20 +51,9 @@ function getValidShippingReceipts(){
 
 }
 
-function getValidTransactionProducts(){
+function getValidTransactionProducts(ids, expanded){
 
-  return [
-    {
-      product: '80852032-1e28-4d87-80e7-b8e733017390',
-      amount: 34.99,
-      shipping_receipt: uuidV4()
-    },
-    {
-      product: '4b3ced1d-eb47-4ef5-955d-33762e5f98e5',
-      amount: 34.99,
-      shipping_receipt: uuidV4()
-    }
-  ];
+  return MockEntities.getValidTransactionProducts(ids, expanded);
 
 }
 
@@ -83,7 +72,7 @@ function getValidTransactions(){
 
 }
 
-xdescribe('controllers/workers/confirmShipped', () => {
+describe('controllers/workers/confirmShipped', () => {
 
   before(() => {
     mockery.enable({
@@ -152,7 +141,11 @@ xdescribe('controllers/workers/confirmShipped', () => {
     it('successfully acquires transaction products', () => {
 
       let transactions = getValidTransactions();
-      let transaction_products = getValidTransactionProducts();
+      let transaction_products = getValidTransactionProducts(null, true);
+
+      transaction_products.forEach(transaction_product => {
+        transaction_product.shipping_receipt = uuidV4()
+      });
 
       let mock_transaction_helper_controller = class {
         constructor(){
@@ -185,7 +178,11 @@ xdescribe('controllers/workers/confirmShipped', () => {
 
     it('successfully acquires shipping receipts', () => {
 
-      let transaction_products = getValidTransactionProducts();
+      let transaction_products = getValidTransactionProducts(null, true);
+
+      transaction_products.forEach(transaction_product => {
+          transaction_product.shipping_receipt = uuidV4()
+      });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
         get:({id}) => {
