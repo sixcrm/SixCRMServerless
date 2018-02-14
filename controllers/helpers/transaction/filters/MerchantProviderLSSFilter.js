@@ -134,7 +134,7 @@ class MerchantProvidersLSSFilter {
 
     du.debug('Get Merchant Provider Hypothetical Base Distribution');
 
-    additional_amount = (_.isUndefined(additional_amount) || _isNull(additional_amount))?0:numberutilities.toNumber(additional_amount);
+    additional_amount = (_.isUndefined(additional_amount) || _.isNull(additional_amount))?0:numberutilities.toNumber(additional_amount);
 
     let amount = this.parameters.get('amount');
     let loadbalancer = this.parameters.get('loadbalancer');
