@@ -133,7 +133,6 @@ class AcquireTokenController extends transactionEndpointController {
 
       if(!_.has(this, 'affiliateHelperController')){
         const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
-
         this.affiliateHelperController = new AffiliateHelperController();
       }
 
