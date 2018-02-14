@@ -6,6 +6,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLList = require('graphql').GraphQLList;
+const GraphQLInt = require('graphql').GraphQLInt;
 
 //Technical Debt:  All of these types frequently have the same fields (id, account, active, created_at, updated_at).  This would be a excellent usage of fragments...
 
@@ -114,6 +115,7 @@ let eventFunnelType =  require('./analytics/eventFunnelType');
 let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
 let listBINsType =  require('./analytics/listBINsType');
+let binType = require('./bin/BINType');
 
 /* Reports */
 let transactionSummaryReportType = require('./analytics/transaction_summary_report/transactionSummaryReportType');
@@ -685,18 +687,33 @@ module.exports.graphObj = new GraphQLObjectType({
               return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderSummaries');
 
             }
-        },
-        listbins: {
-            type: listBINsType.graphObj,
+				},
+				listbins: {
+						type: listBINsType.graphObj,
+						args: {
+								binfilter: { type: analyticsBINFilterInputType.graphObj },
+								cache: {type: cacheInputType.graphObj},
+								pagination: {type: analyticsPaginationInputType.graphObj}
+						},
+						resolve: function(root, args){
+							const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+							return analyticsController.executeAnalyticsFunction(args, 'getBINList');
+					}
+				},
+        bin: {
+            type: binType.graphObj,
             args: {
-                binfilter: { type: analyticsBINFilterInputType.graphObj },
-                cache: {type: cacheInputType.graphObj},
-                pagination: {type: analyticsPaginationInputType.graphObj}
+							binnumber: {
+								description: 'binnumber of the creditcard',
+								type: new GraphQLNonNull(GraphQLInt)
+						}
             },
             resolve: function(root, args){
-              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-              return analyticsController.executeAnalyticsFunction(args, 'getBINList');
+							const binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
+
+              return binController.getCreditCardProperties({binnumber: args.binnumber});
             }
 				},
         transactionsummary: {

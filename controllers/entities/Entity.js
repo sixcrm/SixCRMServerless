@@ -42,7 +42,8 @@ module.exports = class entityController extends entityUtilitiesController {
           'usersetting', //userbound
           'usersigningstring', //userbound
           'role', //global, available across accounts
-          'account' //self-referntial, implicit
+					'account', //self-referntial, implicit
+					'bin' //not a cruddy endpoint
         ];
 
         this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
@@ -368,6 +369,8 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Get');
 
+			du.warning(this.descriptive_name);
+
       return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
@@ -376,6 +379,8 @@ module.exports = class entityController extends entityUtilitiesController {
           key_condition_expression: this.primary_key+' = :primary_keyv',
           expression_attribute_values: {':primary_keyv': this.getID(id)}
         };
+
+				du.warning(query_parameters);
 
         query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
