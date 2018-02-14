@@ -52,7 +52,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       this.loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
       this.creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
       this.analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
+			this.binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js')
     }
 
     buildMerchantProviderGroups(){
@@ -324,17 +324,15 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
 			let creditcard = this.parameters.get('creditcard');
 
-			let selected_creditcard = this.parameters.get('selected_creditcard', ['bin']);
-
-			return this.binController.getCreditCardProperties({ binnumber: parseInt(selected_creditcard.bin) }).then((properties) => {
+			return this.binController.getCreditCardProperties({ binnumber: parseInt(creditcard.bin) }).then((properties) => {
 
 				if (_.isNull(properties)) {
 					eu.throwError('not_found', 'Unable to identify credit card properties.');
 				}
 
-				selected_creditcard.properties = properties;
+				creditcard.properties = properties;
 
-				this.parameters.set('selected_creditcard', selected_creditcard);
+				this.parameters.set('creditcard', creditcard);
 
 				return properties;
 
