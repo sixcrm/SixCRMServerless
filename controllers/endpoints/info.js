@@ -95,11 +95,13 @@ class InfoController extends transactionEndpointController{
         let hydrated_product_schedules_promises = arrayutilities.map(product_schedules_result.productschedules, product_schedule => {
 
           return this.productScheduleController.getProducts(product_schedule).then(products_result => {
+            du.info(products_result);
             return productScheduleHelper.marryProductsToSchedule({product_schedule: product_schedule, products: products_result.products});
           });
         });
 
         return Promise.all(hydrated_product_schedules_promises).then(hydrated_product_schedules_promises => {
+          du.info(hydrated_product_schedules_promises); process.exit();
           this.parameters.set('productschedules', hydrated_product_schedules_promises);
         })
 

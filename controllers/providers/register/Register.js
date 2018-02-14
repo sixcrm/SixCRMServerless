@@ -5,18 +5,20 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 
 const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
 const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
 
-module.exports = class Register extends PermissionedController {
+const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
+
+module.exports = class Register extends RegisterUtilities {
 
   constructor(){
 
@@ -69,6 +71,7 @@ module.exports = class Register extends PermissionedController {
       'productschedules':global.SixCRM.routes.path('model', 'workers/processBilling/productschedules.json'),
       'parentsession': global.SixCRM.routes.path('model', 'entities/session.json'),
       'creditcards': global.SixCRM.routes.path('model', 'workers/processBilling/creditcards.json'),
+      'selectedcreditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json'),
       'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json'),
       'merchantprovider':global.SixCRM.routes.path('model', 'entities/merchantprovider.json')
     };
@@ -80,6 +83,9 @@ module.exports = class Register extends PermissionedController {
       refund: 'refund',
       reverse: 'reverse'
     }
+
+    this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+    this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
   }
 
@@ -96,25 +102,6 @@ module.exports = class Register extends PermissionedController {
     .then(() => this.executeRefund())
     .then(() => this.issueReceipt())
     .then(() => this.acquireRefundTransactionSubProperties())
-    .then(() => this.pushTransactionsRecordToRedshift())
-    .then(() => this.transformResponse());
-
-  }
-
-  processTransaction({rebill}){
-
-    du.debug('Process Transaction');
-
-    return this.can({action: 'process', object: 'register', fatal: true})
-    .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
-    .then(() => this.setDependencies('process'))
-    .then(() => this.acquireRebillProperties())
-    .then(() => this.validateRebillForProcessing())
-    .then(() => this.acquireRebillSubProperties())
-    .then(() => this.calculateAmount())
-    .then(() => this.executeProcess())
-    .then(() => this.executePostProcess())
-    .then(() => this.issueReceipt())
     .then(() => this.pushTransactionsRecordToRedshift())
     .then(() => this.transformResponse());
 
@@ -139,19 +126,17 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  hydrateTransaction(){
+  processTransaction({rebill}){
 
-    du.debug('Hydrate Transaction');
+    du.debug('Process Transaction');
 
-    let transaction = this.parameters.get('transaction');
-
-    return this.transactionController.get({id: transaction, fatal: true}).then(transaction => {
-
-      this.parameters.set('associatedtransaction', transaction);
-
-      return transaction;
-
-    })
+    return this.can({action: 'process', object: 'register', fatal: true})
+    .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
+    .then(() => this.acquireRebillProperties())
+    .then(() => this.validateRebillForProcessing())
+    .then(() => this.acquireRebillSubProperties())
+    .then(() => this.executeProcesses())
+    .then(() => this.transformResponse());
 
   }
 
@@ -296,7 +281,10 @@ module.exports = class Register extends PermissionedController {
     const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
     let registerReceiptController = new RegisterReceiptController();
 
-    return registerReceiptController.issueReceipt({argumentation: this.parameters.getAll()}).then(receipt_transaction => {
+    //fix!
+    let argumentation_object = {};
+
+    return registerReceiptController.issueReceipt().then(receipt_transaction => {
       this.parameters.set('receipttransaction', receipt_transaction);
     });
 
@@ -304,9 +292,10 @@ module.exports = class Register extends PermissionedController {
 
   pushTransactionsRecordToRedshift(){
 
+    /*
     du.debug('Push Transactions Record');
 
-    let transaction_redshift_obj = this.generateTransactionObject();
+    let transaction_redshift_obj = this.generateTransactionObject({});
     let product_schedules_redshift_obj = this.generateProductScheduleObjects();
 
     let promises = arrayutilities.map(product_schedules_redshift_obj, (schedule) => {
@@ -316,35 +305,33 @@ module.exports = class Register extends PermissionedController {
     promises.push(kinesisfirehoseutilities.putRecord('transactions', transaction_redshift_obj));
 
     return Promise.all(promises).then(() => true);
+    */
+
   }
 
   transformResponse(){
 
     du.debug('Transform Response');
 
-    let receipttransaction = this.parameters.get('receipttransaction', null, false);
-    let processor_response = this.parameters.get('processorresponse');
+    let transaction_receipts = this.parameters.get('transactionreceipts');
+    let processor_responses = this.parameters.get('processorresponses');
+    let creditcard = this.parameters.get('selectedcreditcard');
     let response_category = this.getProcessorResponseCategory();
 
-    let merge_object = {};
-
-    if(_.has(processor_response, 'creditcard')){
-
-      merge_object = {creditcard: processor_response.creditcard};
-      delete processor_response.creditcard;
-
+    let response_prototype = {
+      transactions: transaction_receipts,
+      processor_responses: processor_responses,
+      response_type: response_category,
+      creditcard: creditcard
     }
 
-    let response_prototype = objectutilities.merge(
-      {
-        transaction: receipttransaction,
-        processor_response: processor_response,
-        response_type: response_category
-      },
-      merge_object
-    );
+    let register_response = new RegisterResponse({
+      transactions: transaction_receipts,
+      processor_responses: processor_responses,
+      response_type: response_category,
+      creditcard: creditcard
+    });
 
-    let register_response = new RegisterResponse(response_prototype);
 
     return Promise.resolve(register_response);
 
@@ -354,72 +341,190 @@ module.exports = class Register extends PermissionedController {
 
     du.debug('Get Processor Response Category');
 
-    let processor_response_code = this.getProcessorResponseCode();
+    let processor_responses = this.parameters.get('processorresponses');
 
-    objectutilities.hasRecursive(this, 'processor_response_map.'+processor_response_code, true);
+    let successful = arrayutilities.find(processor_responses, processor_response => {
+      return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.success);
+    });
 
-    return this.processor_response_map[processor_response_code];
+    if(successful){
+      return this.processor_response_map.success;
+    }
+
+    let error = arrayutilities.find(processor_responses, processor_response => {
+      return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.error);
+    });
+
+    if(error){
+      return this.processor_response_map.error;
+    }
+
+    return this.processor_response_map.declined;
 
   }
 
-  getProcessorResponseCode(){
+  issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider}){
 
-    du.debug('Get Processor Response');
+    du.debug('Issue Product Group Receipt');
 
-    return this.parameters.get('processorresponse').code;
+    const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
+    let registerReceiptController = new RegisterReceiptController();
+
+    let rebill = this.parameters.get('rebill');
+    let transaction_products = this.getTransactionProductsFromMerchantProviderGroup({merchant_provider: merchant_provider});
+
+    let argumentation_object = {
+      rebill: rebill,
+      amount: amount,
+      transactiontype: transaction_type,
+      processorresponse: processor_result,
+      merchant_provider: merchant_provider,
+      transaction_products: transaction_products
+    };
+
+    return registerReceiptController.issueReceipt(argumentation_object);
 
   }
 
-  executeProcess(){
+  getTransactionProductsFromMerchantProviderGroup({merchant_provider}){
+
+    du.debug('getTransactionProductsFromMerchantProviderGroup');
+
+    let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+
+    let return_object = [];
+
+    if(_.has(merchant_provider_groups, merchant_provider)){
+
+      du.warning(merchant_provider_groups[merchant_provider]);
+      arrayutilities.map(merchant_provider_groups[merchant_provider], merchant_provider_group => {
+
+        arrayutilities.map(merchant_provider_group, product_group => {
+          return_object.push(product_group);
+        });
+      });
+
+    }
+
+    return return_object;
+
+  }
+
+  executeProcesses(){
+
+    du.debug('Execute Processes');
+
+    let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+
+    let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
+
+      let amount = this.calculateAmountFromProductGroups(merchant_provider_groups[merchant_provider]);
+
+      return this.executeProcess({merchant_provider: merchant_provider, amount: amount});
+
+    });
+
+    return Promise.all(process_promises).then(results => {
+
+      return true;
+
+    });
+
+  }
+
+  executeProcess({merchant_provider: merchant_provider, amount: amount}){
 
     du.debug('Execute Process');
 
     let customer = this.parameters.get('customer');
+    let creditcard = this.parameters.get('selectedcreditcard');
 
-    let productschedule = this.parameters.get('productschedule');
-    let amount = this.parameters.get('amount');
-    let merchant_provider = this.parameters.get('merchantprovider', null, false);
+    return this.processMerchantProviderGroup({
+      customer: customer,
+      creditcard: creditcard,
+      merchant_provider: merchant_provider,
+      amount: amount
+    }).then((processor_result) => {
 
-    let argument_object = {customer: customer, productschedule: productschedule, amount: amount};
+      return this.issueProductGroupReceipt({
+        amount: amount,
+        processor_result: processor_result,
+        transaction_type: 'sale',
+        merchant_provider: merchant_provider
+      }).then((transaction_receipt) => {
 
-    if(!_.isNull(merchant_provider)){
-      argument_object.merchantprovider = merchant_provider;
-    }
+        this.parameters.push('transactionreceipts', transaction_receipt);
+
+        return transaction_receipt;
+
+      }).then(transaction_receipt => {
+
+        this.pushTransactionsRecordToRedshift({
+          processor_result: processor_result,
+          transaction_receipt: transaction_receipt,
+          merchant_provider: merchant_provider,
+          amount: amount
+        });
+
+        return true;
+
+      });
+
+    });
+
+  }
+
+  processMerchantProviderGroup({customer, creditcard, merchant_provider, amount}){
 
     const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let processController = new ProcessController();
 
-    return processController.process(argument_object).then(result => {
+    return processController.process(arguments[0]).then((result) => {
 
-      this.parameters.set('processorresponse', {
+      return {
         code: result.getCode(),
         message: result.getMessage(),
         result: result.getResult(),
         merchant_provider: result.merchant_provider,
         creditcard: result.creditcard
-      });
+      };
 
-      return true;
+    }).then((result) => {
+
+      this.parameters.push('processorresponses', result);
+
+      return result;
 
     });
 
   }
 
-  executePostProcess(){
+  calculateAmountFromProductGroups(product_groups){
 
-    du.debug('Execute Post Process');
+    du.debug('Calculate Amount From Product Groups');
 
-    this.validateProcessorResponse();
+    return arrayutilities.reduce(
+      product_groups,
+      (sum, product_group) => {
 
-    let processor_response = this.parameters.get('processorresponse');
+        let subtotal = arrayutilities.reduce(
+          product_group,
+          (subtotal, product) => {
 
-    return this.merchantProviderController.get({id: processor_response.merchant_provider}).then(merchant_provider => {
+            du.info(product);
+            let product_group_total = numberutilities.formatFloat((product.amount * product.quantity), 2);
 
-      this.parameters.set('merchantprovider', merchant_provider);
+            return (subtotal + product_group_total);
 
-      return true;
+          },
+          0.0
+        );
 
-    });
+        return (sum + numberutilities.formatFloat(subtotal, 2));
+
+      },
+      0.0
+    );
 
   }
 
@@ -432,242 +537,9 @@ module.exports = class Register extends PermissionedController {
 
   acquireRefundTransactionSubProperties() {
 
-    return Promise.resolve(this.setDependencies())
-      .then(() => this.acquireRebill())
-      .then(() => this.acquireRebillProperties())
-      .then(() => this.acquireRebillSubProperties())
-
-  }
-
-
-  acquireRebill(){
-
-    du.debug('Acquire Rebill');
-
-    const transaction = this.parameters.get('transaction');
-
-    return this.rebillController.get({id: transaction.rebill}).then((rebill) => {
-
-      this.parameters.set('rebill', rebill);
-
-      return true;
-
-    });
-
-  }
-
-  acquireRebillProperties(){
-
-    du.debug('Acquire Rebill Properties');
-
-    let rebill = this.parameters.get('rebill');
-
-    var promises = [];
-
-    promises.push(this.rebillController.listProductSchedules(rebill));
-    promises.push(this.rebillController.getParentSession(rebill));
-
-    return Promise.all(promises).then((promises) => {
-
-      this.parameters.set('productschedules', promises[0]);
-
-      //Technical Debt: Hotwired
-      this.parameters.set('productschedule', promises[0][0]);
-
-      this.parameters.set('parentsession', promises[1]);
-
-      return true;
-
-    });
-
-  }
-
-  validateRebillForProcessing(){
-
-    du.debug('Validate Rebill For Processing');
-
-    return this.validateRebillTimestamp()
-    .then(() => this.validateAttemptRecord())
-    .then(() => this.validateSession())
-    .catch((error) => {
-      du.error(error);
-      return Promise.reject(error);
-    });
-
-  }
-
-  validateSession(){
-
-    du.debug('Validate Session');
-
-    let parentsession = this.parameters.get('parentsession');
-
-    let rebillHelperController = new RebillHelperController();
-
-    let day_in_cycle = rebillHelperController.calculateDayInCycle(parentsession.created_at);
-
-    if(!_.isNumber(day_in_cycle) || day_in_cycle < 0){
-      eu.throwError('server', 'Invalid day in cycle returned for session.');
-    }
-
-    return Promise.resolve(true);
-
-  }
-
-  validateAttemptRecord(){
-
-    du.debug('Validate Attempt Record');
-
-    let rebill = this.parameters.get('rebill');
-
-    if(_.has(rebill, 'second_attempt')){
-
-      eu.throwError('server','The rebill has already been attempted three times.');
-
-    }
-
-    if(_.has(rebill, 'first_attempt')){
-
-      let time_difference = timestamp.getTimeDifference(rebill.first_attempt);
-
-      if(time_difference < (60 * 60 * 24)){
-
-        eu.throwError('server','Rebill\'s first attempt is too recent.');
-
-      }
-
-    }
-
-    return Promise.resolve(true);
-
-  }
-
-  validateRebillTimestamp(){
-
-    du.debug('Validate Rebill Timestamp');
-
-    let rebill = this.parameters.get('rebill');
-
-    let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
-
-    if(timestamp.getTimeDifference(bill_at_timestamp) < 0){
-      eu.throwError('server', 'Rebill is not eligible for processing at this time (rebill.bill_at: '+rebill.bill_at+')');
-    }
-
-    return Promise.resolve(true);
-
-  }
-
-  acquireRebillSubProperties(){
-
-    du.debug('Acquire Rebill Sub-Properties');
-
-    let promises = [
-      this.acquireProducts(),
-      this.acquireCustomer(),
-      this.acquireMerchantProvider()
-    ];
-
-    return Promise.all(promises)
-    .then(() => this.acquireCustomerCreditCards())
-    .then(() => { return true; });
-
-  }
-
-  acquireProducts(){
-
-    du.debug('Acquire Products');
-
-    let parentsession = this.parameters.get('parentsession');
-    let productschedules = this.parameters.get('productschedules');
-
-    let productScheduleHelperController = new ProductScheduleHelperController();
-    let rebillHelperController = new RebillHelperController();
-
-    let day_in_cycle = rebillHelperController.calculateDayInCycle(parentsession.created_at);
-    let transaction_products = productScheduleHelperController.getTransactionProducts({day: day_in_cycle, product_schedules: productschedules});
-
-    this.parameters.set('transactionproducts', transaction_products);
-
-    return Promise.resolve(true);
-
-  }
-
-  acquireCustomer(){
-
-    du.debug('Acquire Customer');
-
-    let parentsession  = this.parameters.get('parentsession');
-
-    return this.customerController.get({id: parentsession.customer}).then(customer => {
-
-      this.parameters.set('customer', customer);
-
-    });
-
-  }
-
-  acquireMerchantProvider(){
-
-    du.debug('Acquire Merchant Provider');
-
-    let rebill =  this.parameters.get('rebill');
-
-    if(_.has(rebill, 'merchant_provider')){
-
-      return this.rebillController.getMerchantProvider(rebill).then(merchant_provider => {
-
-        this.parameters.set('merchantprovider', merchant_provider);
-
-      });
-
-    }
-
-  }
-
-  acquireCustomerCreditCards(){
-
-    du.debug('Acquire Customer Creditcard');
-
-    let customer = this.parameters.get('customer');
-
-    return this.customerController.getCreditCards(customer).then(creditcards => {
-
-      this.parameters.set('creditcards', creditcards);
-
-      return Promise.resolve(true);
-
-    });
-
-  }
-
-  calculateAmount(){
-
-    du.debug('Calculate Amount');
-
-    let transactionproducts = this.parameters.get('transactionproducts');
-
-    let product_amounts = arrayutilities.map(transactionproducts, product => {
-      return parseFloat(product.amount);
-    })
-
-    let amount = mathutilities.sum(product_amounts);
-
-    this.parameters.set('amount', amount);
-
-    return Promise.resolve(true);
-
-  }
-
-  setDependencies(action){
-
-    du.debug('Set Dependencies');
-
-    this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
-    this.productScheduleController = global.SixCRM.routes.include('entities', 'ProductSchedule.js');
-    this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-
-    return true;
+    return this.acquireRebill()
+    .then(() => this.acquireRebillProperties())
+    .then(() => this.acquireRebillSubProperties());
 
   }
 
@@ -683,20 +555,30 @@ module.exports = class Register extends PermissionedController {
 
   }
 
-  generateTransactionObject(){
+  generateTransactionObject({transaction_receipt, processor_response, merchant_provider, amount}){
 
     du.debug('Generate Transaction Object');
 
+    let customer = this.parameters.get('customer');
+    let session = this.parameters.get('session');
+
+    transaction_receipt = (!_.isUndefined(transaction_receipt) && !_.isNull(transaction_receipt))?transaction_receipt:this.parameters.get('receipttransaction');
+    processor_response = (!_.isUndefined(processor_response) && !_.isNull(processor_response))?this.parameters.get('processorresponse'):processor_response;
+    merchant_provider = (!_.isUndefined(merchant_provider) && !_.isNull(merchant_provider))?this.parameters.get('merchantprovider'):merchant_provider;
+    amount = (!_.isUndefined(amount) && !_.isNull(amount))?this.parameters.get('amount'):amount;
+
+    let merchant_provider_id = (_.isObject(merchant_provider) && _.has(merchant_provider, 'id'))?merchant_provider.id:merchant_provider;
+
     let transaction_object = {
-      id: this.parameters.get('receipttransaction').id,
-      datetime: this.parameters.get('receipttransaction').created_at,
-      customer: this.parameters.get('customer').id,
-      creditcard: this.parameters.get('processorresponse').creditcard.id,
-      merchant_provider: this.parameters.get('merchantprovider').id,
-      campaign: this.parameters.get('parentsession').campaign,
-      amount: this.parameters.get('amount'),
-      processor_result: this.parameters.get('processorresponse').code,
-      account: this.parameters.get('receipttransaction').account,
+      id: transaction_receipt.id,
+      datetime: transaction_receipt.created_at,
+      customer: customer.id,
+      creditcard: processor_response.creditcard.id,
+      merchant_provider: merchant_provider_id,
+      campaign: session.campaign,
+      amount: amount,
+      processor_result: processor_response.code,
+      account: transaction_receipt.account,
       type: 'new',
       subtype: 'main'
     };
@@ -705,7 +587,7 @@ module.exports = class Register extends PermissionedController {
       this.affiliateHelperController = new AffiliateHelperController();
     }
 
-    return this.affiliateHelperController.transcribeAffiliates(this.parameters.get('parentsession'), transaction_object);
+    return this.affiliateHelperController.transcribeAffiliates(session, transaction_object);
 
   }
 

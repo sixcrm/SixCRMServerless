@@ -51,6 +51,40 @@ module.exports = class Parameters {
 
   }
 
+  push(key, value, valuekey){
+
+    du.debug('Push');
+
+    valuekey = (_.isNull(valuekey) || _.isUndefined(valuekey))?null:valuekey;
+
+    if(!_.isNull(valuekey)){
+      this.validate(valuekey, value);
+    }
+
+    if(_.has(this.store, key)){
+
+      if(_.isArray(this.store[key])){
+
+        this.store[key].push(value);
+
+        return true;
+
+      }
+
+      eu.throwError('server','"'+key+'" is not of type array.');
+
+    }else{
+
+      du.highlight('Exists');
+
+      this.store[key] = [value];
+
+    }
+
+    return true;
+
+  }
+
   set(key, value){
 
     du.debug('Set');

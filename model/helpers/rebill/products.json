@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+	"id":"/helpers/rebill/products.json",
+	"title": "Products",
+  "type":"array",
+  "items":{
+    "properties":{
+      "quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
+      "price":{"$ref":"../../definitions/currency.json"},
+      "product":{
+        "oneOf":[
+          {"$ref":"../../definitions/uuidv4.json"},
+          {"$ref":"../../entities/components/watermark/watermarkproduct.json"}
+        ]
+      }
+    }
+  }
+}

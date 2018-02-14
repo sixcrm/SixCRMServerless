@@ -16,17 +16,17 @@ module.exports = class RegisterRecieptGenerator {
     this.transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
 
     this.parameter_definitions = {
-      issue_receipt:{
+      issueReceipt:{
         required:{
           rebill:'rebill',
           amount:'amount',
           transactiontype:'transactiontype',
-          processorresponse:'processorresponse'
+          processorresponse:'processorresponse',
+          merchantprovider:'merchant_provider',
+          transactionproducts:'transaction_products'
         },
         optional:{
-          associatedtransaction: 'associatedtransaction',
-          merchantprovider:'merchantprovider',
-          transactionproducts:'transactionproducts'
+          associatedtransaction: 'associatedtransaction'
         }
       }
     };
@@ -34,10 +34,10 @@ module.exports = class RegisterRecieptGenerator {
     this.parameter_validation = {
       'rebill':global.SixCRM.routes.path('model','entities/rebill.json'),
       'amount':global.SixCRM.routes.path('model','definitions/currency.json'),
+      'merchantprovider':global.SixCRM.routes.path('model','definitions/uuidv4.json'),
       'transactiontype':global.SixCRM.routes.path('model','functional/register/transactiontype.json'),
       'processorresponse':global.SixCRM.routes.path('model','functional/register/processorresponse.json'),
       'associatedtransaction':global.SixCRM.routes.path('model','entities/transaction.json'),
-      'merchantprovider':global.SixCRM.routes.path('model','entities/merchantprovider.json'),
       'transactionproducts':global.SixCRM.routes.path('model','functional/register/transactionproducts.json'),
       'receipt_transaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
       'transactionprototype':global.SixCRM.routes.path('model', 'functional/register/transactionprototype.json'),
@@ -48,12 +48,12 @@ module.exports = class RegisterRecieptGenerator {
 
   }
 
-  issueReceipt({argumentation}){
+  issueReceipt(){
 
     du.debug('Issue Receipt');
 
     return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: argumentation, action: 'issue_receipt'}))
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'issueReceipt'}))
     .then(() => this.createTransactionPrototype())
     .then(() => this.transformTransactionPrototypeObject())
     .then(() => this.createTransaction())
@@ -97,7 +97,7 @@ module.exports = class RegisterRecieptGenerator {
       let transaction_products = this.parameters.get('transactionproducts');
 
       transaction_prototype = objectutilities.merge(transaction_prototype, {
-        merchant_provider: merchant_provider.id,
+        merchant_provider: merchant_provider,
         products: transaction_products
       });
 

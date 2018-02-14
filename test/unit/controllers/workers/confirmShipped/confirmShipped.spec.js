@@ -83,7 +83,7 @@ function getValidTransactions(){
 
 }
 
-describe('controllers/workers/confirmShipped', () => {
+xdescribe('controllers/workers/confirmShipped', () => {
 
   before(() => {
     mockery.enable({

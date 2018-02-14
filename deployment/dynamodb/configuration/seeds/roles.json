@@ -27,6 +27,7 @@
 			"customernote/*",
 			"emailtemplate/*",
 			"loadbalancer/*",
+			"loadbalancerassociation/*",
 			"merchantprovider/*",
 			"productschedule/*",
 			"product/*",

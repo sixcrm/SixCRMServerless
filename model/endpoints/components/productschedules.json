@@ -2,8 +2,19 @@
 	"$schema": "http://json-schema.org/schema#",
 	"id":"/endpoints/components/productschedules.json",
 	"title": "Product Schedules",
-	"type": "array",
-	"minItems": 1,
-	"items": {"$ref": "../../definitions/uuidv4.json"},
-	"uniqueItems": true
+	"type":"array",
+	"items":{
+		"type":"object",
+		"properties":{
+			"quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
+			"product_schedule":{
+				"anyOf":[
+					{"$ref":"../../definitions/uuidv4.json"},
+					{"$ref":"../../entities/components/watermark/watermarkproductschedule.json"}
+				]
+			}
+		},
+		"required":["quantity", "product_schedule"]
+	},
+	"minItems":1
 }

@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/endpoints/components/products.json",
+	"title": "Products",
+	"type":"array",
+	"items":{
+		"type":"object",
+		"properties":{
+			"quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
+			"price":{"$ref":"../../definitions/currency.json"},
+			"product":{
+				"anyOf":[
+					{"$ref":"../../definitions/uuidv4.json"},
+					{"$ref":"../../entities/components/watermark/watermarkproduct.json"}
+				]
+			}
+		},
+		"required":["quantity", "price", "product"]
+	},
+	"minItems":1
+}

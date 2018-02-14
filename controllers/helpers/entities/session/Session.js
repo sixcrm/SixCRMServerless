@@ -1,9 +1,11 @@
 'use strict'
+
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class SessionHelperController {
 
@@ -16,6 +18,30 @@ module.exports = class SessionHelperController {
     const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+
+  }
+
+  isComplete({session}){
+
+    du.debug('Is Complete');
+
+    if(session.completed == true){
+      return true;
+    }
+
+    return false;
+
+  }
+
+  isCurrent({session: session}){
+
+    du.debug('Is Current');
+
+    let session_length = global.SixCRM.configuration.site_config.jwt.transaction.expiration;
+
+    let expired = session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - session_length);
+
+    return !expired;
 
   }
 

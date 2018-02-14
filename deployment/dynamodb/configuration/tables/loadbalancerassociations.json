@@ -15,20 +15,25 @@
       {
         "AttributeName":"account",
         "AttributeType":"S"
-      },
-      {
-        "AttributeName":"loadbalancer",
-        "AttributeType":"S"
-      },
-      {
-        "AttributeName":"campaign",
-        "AttributeType":"S"
       }
     ],
     "GlobalSecondaryIndexes":[
-      {"IndexName":"account-index", "KeySchema":[{ "AttributeName":"account","KeyType":"HASH"}],"Projection":{"ProjectionType":"ALL"},"ProvisionedThroughput":{"ReadCapacityUnits":1,"WriteCapacityUnits":1}},
-      {"IndexName":"loadbalancer-index","KeySchema":[{"AttributeName":"loadbalancer","KeyType":"HASH"}],"Projection":{"ProjectionType":"ALL"},"ProvisionedThroughput":{"ReadCapacityUnits":1,"WriteCapacityUnits":1}},
-      {"IndexName":"campaign-index","KeySchema":[{"AttributeName":"campaign","KeyType":"HASH"}],"Projection":{"ProjectionType":"ALL"},"ProvisionedThroughput":{"ReadCapacityUnits":1,"WriteCapacityUnits":1}}
+      {
+        "IndexName":"account-index",
+        "KeySchema":[
+          {
+            "AttributeName":"account",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":1,
+          "WriteCapacityUnits":1
+        }
+      }
     ],
     "ProvisionedThroughput":{
       "ReadCapacityUnits":4,

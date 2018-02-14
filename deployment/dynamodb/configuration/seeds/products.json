@@ -130,5 +130,14 @@
 		"fulfillment_provider":"5d18d0fa-5812-4c37-b98c-7b1debdcb435",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id": "d745496e-b3c8-4d33-9cff-60541c1e88d5",
+		"name": "Shipping & Handling",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"ship":false,
+		"shipping_delay":0,
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
 	}
 ]

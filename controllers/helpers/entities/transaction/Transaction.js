@@ -4,6 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
 module.exports = class TransactionHelperController {
 
@@ -147,9 +148,9 @@ module.exports = class TransactionHelperController {
 
     let missed_transaction_products = arrayutilities.filter(updated_transaction_products, updated_transaction_product => {
 
-      let found_product = arrayutilities.find(transaction.products, (transaction_product, index) => {
+      let found_product = arrayutilities.find(transaction.products, (transaction_product_group, index) => {
 
-        if(transaction_product.product == updated_transaction_product.product && transaction_product.amount == updated_transaction_product.amount){
+        if(transaction_product_group.product.id == updated_transaction_product.product && transaction_product_group.amount == updated_transaction_product.amount){
 
           transaction.products[index].shipping_receipt = updated_transaction_product.shipping_receipt;
 
@@ -197,4 +198,13 @@ module.exports = class TransactionHelperController {
 
   }
 
+  getTransactionsAmount(transactions){
+
+    du.debug('Get Transactions Amount');
+
+    return arrayutilities.reduce(transactions, (sum, transaction) => {
+      return (sum + numberutilities.toNumber(transaction.amount));
+    }, 0.0);
+
+  }
 }

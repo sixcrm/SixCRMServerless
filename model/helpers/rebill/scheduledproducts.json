@@ -6,12 +6,19 @@
   "items": {
     "type":"object",
     "properties":{
-      "product":{"$ref": "../../definitions/uuidv4.json"},
-      "price":{"$ref": "../../definitions/currency.json"},
-      "start":{"$ref": "../../definitions/nonnegativeinteger.json"},
-      "end":{"$ref": "../../definitions/nonnegativeinteger.json"},
-      "period":{"$ref": "../../definitions/nonnegativeinteger.json"}
+      "quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
+      "schedule_element":{
+        "type":"object",
+        "properties":{
+          "product":{"$ref": "../../entities/components/watermark/watermarkproduct.json"},
+          "price":{"$ref": "../../definitions/currency.json"},
+          "start":{"$ref": "../../definitions/nonnegativeinteger.json"},
+          "end":{"$ref": "../../definitions/nonnegativeinteger.json"},
+          "period":{"$ref": "../../definitions/nonnegativeinteger.json"}
+        },
+        "required":["product", "price", "start", "period"]
+      }
     },
-    "required":["product", "price", "start", "period"]
+    "required":["quantity", "schedule_element"]
   }
 }

@@ -10,7 +10,6 @@
 			"type":"string",
 			"minLength":3
 		},
-		"loadbalancer":{"$ref": "../definitions/uuidv4.json"},
 		"schedule":{
 			"type":"array",
 			"items":{

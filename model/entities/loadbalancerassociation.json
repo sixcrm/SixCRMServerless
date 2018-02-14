@@ -6,15 +6,14 @@
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"loadbalancer":{"$ref": "../definitions/uuidv4.json"},
-		"campaign":{"$ref": "../definitions/uuidv4.json"},
 		"entity":{"$ref": "../definitions/uuidv4.json"},
 		"entity_type":{
-			"type":"string",
-			"enum":["product","product_schedule","campaign"]
+			"type":"string"
 		},
+		"loadbalancer":{"$ref": "../definitions/uuidv4.json"},
+		"campaign":{"$ref": "../definitions/uuidv4.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["account", "loadbalancer", "campaign", "entity", "entity_type", "created_at", "updated_at"]
+	"required":["account","entity","entity_type","loadbalancer","campaign","created_at","updated_at"]
 }

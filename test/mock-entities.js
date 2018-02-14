@@ -16,7 +16,9 @@ class MockEntities {
     return (!_.isUndefined(id) && !_.isNull(id)) ? id : uuidV4();
   }
 
-  static getValidSchedule(ids){
+  static getValidSchedule(ids, expanded){
+
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
 
     ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
 
@@ -31,7 +33,7 @@ class MockEntities {
       start = (this_start + period);
 
       return {
-        product: id,
+        product: this.getValidProduct(id, true),
         price:randomutilities.randomDouble(1.00, 100.00, 2),
         start:this_start,
         end:end,
@@ -42,9 +44,64 @@ class MockEntities {
 
   }
 
-  static getValidProductSchedule(id){
+  static getValidProductScheduleGroups(ids, expanded){
 
-    let schedule = this.getValidSchedule();
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+
+    let product_schedules = this.getValidProductSchedules(ids);
+
+    return arrayutilities.map(product_schedules, product_schedule => {
+      return {
+        quantity: randomutilities.randomInt(1,10),
+        product_schedule: (expanded)?product_schedule:product_schedule.id
+      }
+    });
+
+  }
+
+  static getValidTransactionProducts(ids, expanded){
+
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+
+    let products = this.getValidProducts(ids);
+
+    return arrayutilities.map(products, product => {
+      return {
+        quantity: randomutilities.randomInt(1,10),
+        product: (expanded)?product:product.id,
+        amount: randomutilities.randomDouble(1.00, 100.00)
+      }
+    });
+
+  }
+
+  static getValidProductSchedules(ids, expanded){
+
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+
+    return arrayutilities.map(ids, (id, index) => {
+      return this.getValidProductSchedule(id, expanded);
+    });
+
+  }
+
+  static getValidProducts(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+
+    return arrayutilities.map(ids, (id, index) => {
+      return this.getValidProduct(id);
+    });
+
+  }
+
+  static getValidProductSchedule(id, expanded){
+
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+
+    let schedule = this.getValidSchedule(null, expanded);
 
     return  {
       id: this.getValidId(id),
@@ -131,6 +188,20 @@ class MockEntities {
 
   }
 
+  static getValidMerchantProviderGroups(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4()]:ids;
+
+    let return_object = {};
+
+    arrayutilities.map(ids, id => {
+      return_object[id] = this.getValidTransactionProducts();
+    });
+
+    return return_object;
+
+  }
+
   static getValidMerchantProvider(id, processor){
 
     return {
@@ -206,12 +277,17 @@ class MockEntities {
 
   }
 
-  static getValidTransactionProduct(id){
+  static getValidTransactionProduct(id, extended){
+
+    extended = (_.isUndefined(extended) || _.isNull(extended))?false:extended;
+    let product = (extended)?this.getValidId(id):this.getValidProduct(id);
 
     return {
-      product: this.getValidId(id),
-      amount: randomutilities.randomDouble(1.0, 300.0, 2)
+      product: product,
+      amount: randomutilities.randomDouble(1.0, 300.0, 2),
+      quantity: 1
     };
+
   }
 
   static getValidCustomer(id){
@@ -247,26 +323,6 @@ class MockEntities {
 
   }
 
-  static getValidProducts(ids){
-
-    ids = (arrayutilities.isArray(ids) && arrayutilities.nonEmpty(ids))?ids:[];
-
-    if(!arrayutilities.nonEmpty(ids)){
-
-      let product_count = randomutilities.randomInt(1,5);
-
-      for(var i = 0; i < product_count; i++){
-
-        ids.push(uuidV4());
-
-      }
-
-    }
-
-    return arrayutilities.map(ids, id => this.getValidProduct(id));
-
-  }
-
   static getValidProduct(id){
 
     return {
@@ -277,6 +333,37 @@ class MockEntities {
       shipping_delay:randomutilities.randomInt(60,9999999),
       fulfillment_provider:uuidV4(),
       default_price:randomutilities.randomDouble(1.0, 300.0, 2),
+      attributes:{
+        images:[{
+          path:randomutilities.createURL(),
+          dimensions:{
+            width:randomutilities.randomInt(10,1000),
+            height:randomutilities.randomInt(10,1000)
+          },
+          format:'jpg',
+          name:randomutilities.createRandomString(randomutilities.randomInt(10, 40)),
+          description:randomutilities.createRandomString(randomutilities.randomInt(10, 300)),
+          default_image:randomutilities.randomBoolean()
+        }],
+        weight:{
+          unitofmeasurement: 'kilos',
+          units: 100
+        },
+        dimensions:{
+          height:{
+            unitofmeasurement: 'centimeters',
+            units: randomutilities.randomInt(1,100)
+          },
+          width:{
+            unitofmeasurement: 'centimeters',
+            units: randomutilities.randomInt(1,100)
+          },
+          length:{
+            unitofmeasurement: 'centimeters',
+            units: randomutilities.randomInt(1,100)
+          }
+        }
+      },
       account:this.getTestAccountID(),
       created_at:timestamp.getISO8601(),
       updated_at:timestamp.getISO8601()
@@ -358,7 +445,19 @@ class MockEntities {
 
   }
 
-  static getValidTransaction(id){
+  static getValidTransactions(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+
+    return arrayutilities.map(ids, (id, index) => {
+      return this.getValidTransaction(id);
+    });
+
+  }
+
+  static getValidTransaction(id, extended){
+
+    let products = this.getValidTransactionProducts();
 
     return {
       id: this.getValidId(id),
@@ -368,11 +467,7 @@ class MockEntities {
       rebill: uuidV4(),
       processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894419\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
       merchant_provider: uuidV4(),
-      products:[{
-        product:uuidV4(),
-        amount:14.99,
-        shipping_receipt: uuidV4()
-      }],
+      products:this.getValidTransactionProducts(null, true),
       type:"sale",
       result:"success",
       created_at:timestamp.getISO8601(),
@@ -389,6 +484,7 @@ class MockEntities {
       account: this.getTestAccountID(),
       parentsession: uuidV4(),
       product_schedules: [uuidV4()],
+      products: this.getValidTransactionProducts(null, true),
       amount: randomutilities.randomDouble(1, 200, 2),
       created_at:timestamp.getISO8601(),
       updated_at:timestamp.getISO8601()
@@ -396,14 +492,22 @@ class MockEntities {
 
   }
 
+  static getValidSessionAlias(){
+    return 'S'+randomutilities.createRandomString(9);
+  }
+
   static getValidSession(id){
+
+    let product_schedules = this.getValidProductSchedules();
 
     return {
       id: this.getValidId(id),
       account:this.getTestAccountID(),
+      alias: this.getValidSessionAlias(),
       customer: uuidV4(),
       campaign:uuidV4(),
-      product_schedules:[uuidV4(),uuidV4()],
+      product_schedules: arrayutilities.map(product_schedules, (product_schedule) => product_schedule.id),
+      watermark: this.getValidWatermark(product_schedules),
       completed: randomutilities.randomBoolean(),
       created_at:timestamp.getISO8601(),
       updated_at:timestamp.getISO8601(),
@@ -414,6 +518,56 @@ class MockEntities {
       subaffiliate_4:	uuidV4(),
       subaffiliate_5:	uuidV4(),
       cid:uuidV4()
+    };
+
+  }
+
+  static getValidWatermark(product_schedules, products){
+
+    let return_object = {};
+
+    if(arrayutilities.nonEmpty(product_schedules)){
+
+      return_object.product_schedules = arrayutilities.map(product_schedules, product_schedule => {
+        return this.getValidProductScheduleGroup(product_schedule);
+      });
+
+    }
+
+    if(arrayutilities.nonEmpty(products)){
+
+      return_object.products = arrayutilities.map(products, product => {
+        return this.getValidProductGroup(product);
+      });
+
+    }
+
+    return return_object;
+
+  }
+
+  static getValidProductScheduleGroup(product_schedule, quantity){
+
+    product_schedule = (_.isUndefined(product_schedule) || _.isNull(product_schedule))?this.getValidProductSchedule():product_schedule;
+    quantity = (_.isUndefined(quantity) || _.isNull(quantity))?randomutilities.randomInt(1,10):quantity;
+
+    return {
+      product_schedule: product_schedule,
+      quantity: quantity
+    };
+
+  }
+
+  static getValidProductGroup(product, quantity, price){
+
+    product = (_.isUndefined(product) || _.isNull(product))?this.getValidProduct():product;
+    price = (_.isUndefined(price) || _.isNull(price))?randomutilities.randomDouble(1.0,100.00):price;
+    quantity = (_.isUndefined(quantity) || _.isNull(quantity))?randomutilities.randomInt(1,10):quantity;
+
+    return {
+      product: product,
+      quantity: quantity,
+      price: price
     };
 
   }
@@ -453,6 +607,25 @@ class MockEntities {
     }
 
     return address;
+
+  }
+
+  static getValidCreditCardProperties(){
+
+      return {
+        binnumber: 411111,
+        brand: 'Visa',
+        bank: 'Some Bank',
+        type: 'Classic',
+        level: 'level',
+        country: 'US',
+        info: '',
+        country_iso: 'USA',
+        country2_iso: 'USA',
+        country3_iso: 'USA',
+        webpage: 'www.bankofamerica.com',
+        phone: '15032423612'
+      };
 
   }
 
@@ -552,19 +725,29 @@ class MockEntities {
     }
   }
 
-  static getValidLoadBalancer(id) {
+  static getValidMerchantProviderConfiguration(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(), uuidV4()]:ids;
+
+    return arrayutilities.map(ids, id => {
+      return {id: uuidV4(), distribution: randomutilities.randomDouble(0.0, 1.0)};
+    });
+
+  }
+
+  static getValidLoadBalancer(id, merchant_provider_configuration) {
+
+    merchant_provider_configuration = (_.isUndefined(merchant_provider_configuration) || _.isNull(merchant_provider_configuration))?this.getValidMerchantProviderConfiguration():merchant_provider_configuration;
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        name: randomutilities.createRandomName('full'),
-        merchantproviders: [{
-            id: uuidV4(),
-            distribution: 0.25
-        }],
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
-    }
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      name: randomutilities.createRandomName('full'),
+      merchantproviders: merchant_provider_configuration,
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
+    };
+
   }
 
   static getValidNotification(id) {
@@ -696,26 +879,18 @@ class MockEntities {
   static getValidCampaign(id) {
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        allow_prepaid: randomutilities.randomBoolean(),
-        show_prepaid: randomutilities.randomBoolean(),
-        name: randomutilities.createRandomName('full'),
-        productschedules: [
-            uuidV4()
-        ],
-        emailtemplates: [
-            uuidV4()
-        ],
-        affiliate_allow: [
-            uuidV4()
-        ],
-        affiliate_deny: [
-            uuidV4()
-        ],
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
-    }
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      allow_prepaid: randomutilities.randomBoolean(),
+      show_prepaid: randomutilities.randomBoolean(),
+      name: randomutilities.createRandomName('full'),
+      emailtemplates: [uuidV4()],
+      affiliate_allow: [uuidV4()],
+      affiliate_deny: [uuidV4()],
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
+    };
+
   }
 
   static getValidTracker(id) {
@@ -725,23 +900,20 @@ class MockEntities {
     let event_type = ["click", "lead", "main", "upsell", "confirm"];
 
     return {
-        id: this.getValidId(id),
-        affiliates: [
-            uuidV4()
-        ],
-        campaigns: [
-            uuidV4()
-        ],
-        account: this.getTestAccountID(),
-        type: randomutilities.selectRandomFromArray(tracker_types),
-        event_type: [
-            randomutilities.selectRandomFromArray(event_type)
-        ],
-        name: randomutilities.createRandomName('full'),
-        body: randomutilities.createRandomString(20),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
-    }
+      id: this.getValidId(id),
+      affiliates: [uuidV4()],
+      campaigns: [uuidV4()],
+      account: this.getTestAccountID(),
+      type: randomutilities.selectRandomFromArray(tracker_types),
+      event_type: [
+          randomutilities.selectRandomFromArray(event_type)
+      ],
+      name: randomutilities.createRandomName('full'),
+      body: randomutilities.createRandomString(20),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
+    };
+
   }
 
   static getValidSMTPProvider(id) {
@@ -749,32 +921,32 @@ class MockEntities {
     let random_hostname = randomutilities.createRandomString(5) + '.' + randomutilities.createDomainName();
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        name: randomutilities.createRandomName('full'),
-        hostname: random_hostname,
-        username: randomutilities.createRandomString(10),
-        password: randomutilities.createRandomString(10),
-        port:randomutilities.randomInt(100,999),
-        from_email: randomutilities.createRandomEmail(),
-        from_name: randomutilities.createRandomName('full'),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      name: randomutilities.createRandomName('full'),
+      hostname: random_hostname,
+      username: randomutilities.createRandomString(10),
+      password: randomutilities.createRandomString(10),
+      port:randomutilities.randomInt(100,999),
+      from_email: randomutilities.createRandomEmail(),
+      from_name: randomutilities.createRandomName('full'),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
   static getValidEmailTemplate(id) {
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        name: randomutilities.createRandomName('full'),
-        body: randomutilities.createRandomString(20),
-        subject: randomutilities.createRandomString(10),
-        type: randomutilities.createRandomString(10),
-        smtp_provider: uuidV4(),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      name: randomutilities.createRandomName('full'),
+      body: randomutilities.createRandomString(20),
+      subject: randomutilities.createRandomString(10),
+      type: randomutilities.createRandomString(10),
+      smtp_provider: uuidV4(),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 }

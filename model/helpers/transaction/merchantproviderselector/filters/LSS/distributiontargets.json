@@ -1,0 +1,7 @@
+{
+  "id": "/helpers/transaction/merchantproviderselector/filters/LSS/distributiontargets.json",
+  "title": "Distribution Targets",
+  "type":"array",
+  "items": {"$ref":"../../../../../definitions/float.json"},
+  "minItems":1
+}

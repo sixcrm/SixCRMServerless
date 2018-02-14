@@ -1,6 +1,7 @@
 'use strict'
 const _ = require('underscore');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
@@ -11,8 +12,8 @@ module.exports = class RegisterResponse extends Response {
     super();
 
     this.parameter_validation = {
-      'transaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
-      'processorresponse': global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
+      'transactions': global.SixCRM.routes.path('model', 'entities/components/transactions.json'),
+      'processorresponses': global.SixCRM.routes.path('model', 'functional/register/processorresponses.json'),
       'creditcard':global.SixCRM.routes.path('model', 'entities/creditcard.json')
     };
 
@@ -21,8 +22,8 @@ module.exports = class RegisterResponse extends Response {
         required:{},
         optional:{
           response_type:'response_type',
-          transaction:'transaction',
-          processorresponse:'processor_response',
+          transactions:'transactions',
+          processorresponses:'processor_responses',
           creditcard:'creditcard'
         }
       }
@@ -30,9 +31,8 @@ module.exports = class RegisterResponse extends Response {
 
     this.initialize();
 
-    if(objectutilities.nonEmpty(arguments)){
-      this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
-    }
+    this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
+
 
   }
 
@@ -48,27 +48,27 @@ module.exports = class RegisterResponse extends Response {
 
   }
 
-  setTransaction(transaction){
+  setTransactions(transactions){
 
-    this.parameters.set('transaction', transaction);
-
-  }
-
-  getTransaction(){
-
-    return this.parameters.get('transaction', null, false);
+    this.parameters.set('transaction', transactions);
 
   }
 
-  setProcessorResponse(processor_response){
+  getTransactions(){
 
-    this.parameters.set('processorresponse', processor_response);
+    return this.parameters.get('transactions', null, false);
 
   }
 
-  getProcessorResponse(){
+  setProcessorResponses(processor_responses){
 
-    return this.parameters.get('processorresponse', null, false);
+    this.parameters.set('processorresponses', processor_responses);
+
+  }
+
+  getProcessorResponses(){
+
+    return this.parameters.get('processorresponses', null, false);
 
   }
 

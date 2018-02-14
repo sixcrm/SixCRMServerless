@@ -55,12 +55,17 @@ module.exports = class TransactionUtilities {
       du.debug('Instantiate Parameters');
 
       let validation = {};
+      let definition = {};
 
       if(_.has(this, 'parameter_validation')){
         validation = this.parameter_validation;
       }
 
-      this.parameters = new Parameters({validation: validation});
+      if(_.has(this, 'parameter_definition')){
+        definition = this.parameter_definition;
+      }
+
+      this.parameters = new Parameters({validation: validation, definition: definition});
 
     }
 

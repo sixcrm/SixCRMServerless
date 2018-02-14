@@ -1,9 +1,9 @@
 {
-	"requestContext":{"authorizer":{"user":"4ee23a8f5c8661612075a89e72a56a3c6d00df90"}},
+	"requestContext":{"authorizer":{"user":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37693"}},
 	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts",
+	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2RldmVsb3BtZW50LWFwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNTE3OTM3OTA5LCJleHAiOjE1MTc5NDE1MDksInVzZXJfYWxpYXMiOiI2MGZjOGNjYzg1ZDhiN2U2ZWFhZTMzM2JiMjBkMmRiNTFhYTM3NjkzIn0.xXvVA63npL3hHM0uqxWiUxWPMr7xykKzDTyAU1bacTA",
 	"body":{
-		"productschedules": ["12529a17-ac32-4e46-b05b-83862843055d","8d1e896f-c50d-4a6b-8c84-d5661c16a046"],
-		"products": ["668ad918-0d09-4116-a6fe-0e7a9eda36f8","4d3419f6-526b-4a68-9050-fc3ffcb552b4"]
+		"productschedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
+		"products": []
 	}
 }

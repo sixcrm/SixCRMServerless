@@ -115,7 +115,7 @@ describe('lib/number-utilities', () => {
     describe('formatFloat', () => {
 
         it('returns float number with specified precision', () => {
-            expect(numberUtilities.formatFloat(1.0123, 2)).to.equal('1.01');
+            expect(numberUtilities.formatFloat(1.0123, 2)).to.equal(1.01);
         });
 
         it('throws error when appointed value is not an integer', () => {

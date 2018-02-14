@@ -4,11 +4,14 @@
 	"title": "Event",
 	"type":"object",
 	"properties": {
-		"session":{
-			"type":{"$ref": "../../definitions/uuidv4.json"}
-		},
-		"product_schedules":{"$ref": "../components/productschedules.json"},
-		"creditcard":{"$ref": "../components/creditcard.json"}
+		"session":{"$ref": "../../definitions/uuidv4.json"},
+		"creditcard":{"$ref": "../components/creditcard.json"},
+		"transaction_subtype":{"type":"string"},
+		"product_schedules":{"$ref":"../components/productschedules.json"},
+		"products":{"$ref":"../components/products.json"}
 	},
-	"required":["session", "product_schedules"]
+	"anyOf":[
+		{"required":["session", "product_schedules"]},
+		{"required":["session", "products"]}
+	]
 }
