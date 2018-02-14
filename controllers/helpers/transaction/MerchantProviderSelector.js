@@ -320,36 +320,25 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
     getCreditCardProperties(){
 
-      du.debug('Get Credit Card Properties');
+			du.debug('Get Credit Card Properties');
 
-      let creditcard = this.parameters.get('creditcard');
+			let creditcard = this.parameters.get('creditcard');
 
-      let analytics_parameters = {
-        binfilter: {
-          binnumber:[parseInt(creditcard.bin)]
-        }
-      };
+			let selected_creditcard = this.parameters.get('selected_creditcard', ['bin']);
 
-      return this.analyticsController.getBINList(analytics_parameters).then((properties) => {
+			return this.binController.getCreditCardProperties({ binnumber: parseInt(selected_creditcard.bin) }).then((properties) => {
 
-        if(_.isNull(properties)){
-          eu.throwError('not_found', 'Unable to identify credit card properties.');
-        }
+				if (_.isNull(properties)) {
+					eu.throwError('not_found', 'Unable to identify credit card properties.');
+				}
 
-        if(_.has(properties, 'bins') && arrayutilities.nonEmpty(properties.bins)){
+				selected_creditcard.properties = properties;
 
-          creditcard.properties = properties.bins[0];
+				this.parameters.set('selected_creditcard', selected_creditcard);
 
-          this.parameters.set('creditcard', creditcard);
+				return properties;
 
-          return true;
-
-        }
-
-        return false;
-
-      });
-
+			});
 
     }
 
