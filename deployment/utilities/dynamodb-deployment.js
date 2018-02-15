@@ -282,6 +282,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
       du.debug('Seed Tables');
 
       permissionutilities.disableACLs();
+      permissionutilities.setPermissions('*',['*/*'],[]);
 
       return this.initializeControllers().then(() => {
 
