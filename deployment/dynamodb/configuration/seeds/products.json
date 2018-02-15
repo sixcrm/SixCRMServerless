@@ -51,6 +51,7 @@
 		"sku":"1234",
 		"ship":true,
 		"shipping_delay":3600,
+		"default_price":34.99,
 		"fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"

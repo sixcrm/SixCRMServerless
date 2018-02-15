@@ -1,366 +1,509 @@
-var request = require('supertest');
-var chai = require('chai');
-
-chai.use(require('chai-json-schema'));
-var assert = require('chai').assert
-var fs = require('fs');
-var yaml = require('js-yaml');
+'use strict'
+const _ = require('underscore');
+const chai = require('chai');
+const expect = chai.expect;
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 
-try {
-    var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+process.env.stage+'.yml', 'utf8'));
-} catch (e) {
-    du.warning(e);
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+
+function createSignature(){
+
+  let request_time = new Date().getTime();
+  let secret_key = config.access_keys.super_user.secret_key;
+  let access_key = config.access_keys.super_user.access_key;
+  let signature = signatureutilities.createSignature(secret_key, request_time);
+
+  return access_key+':'+request_time+':'+signature;
+
 }
 
-var endpoint = config.endpoint;
-var appropriate_spacing = '        ';
+function createAffiliates(){
 
-describe('Transaction Round Trip Test',() => {
-  describe('Confirms a sales funnel purchase with partial and multiple upsells.', () => {
-    it('Returns a confirmed sale', (done) => {
+  let affiliates = null;
 
-      let request_time = new Date().getTime();
-      let secret_key = config.access_keys.super_user.secret_key;
-      let access_key = config.access_keys.super_user.access_key;
-      let account = config.account;
-      var campaign_id = '70a6689a-5814-438b-b9fd-dd484d0812f9';
+  arrayutilities.map(['affiliate', 'subaffiliate1', 'subaffiliate2', 'subaffiliate3', 'subaffiliate4', 'subaffiliate5', 'cid'], (field) => {
+    if(random.randomBoolean()){
+      if(_.isNull(affiliates)){
+        affiliates = {};
+      }
+      affiliates[field] = random.createRandomString(20);
+    }
+  });
 
-      let signature = signatureutilities.createSignature(secret_key, request_time);
-      let authorization_string = access_key+':'+request_time+':'+signature;
-      let this_request = request(endpoint);
+  return affiliates;
 
-      du.highlight('Request Time: ', request_time);
-      du.highlight('Signature: ', signature);
-      du.highlight('Authorization String: ', authorization_string);
-      du.output(appropriate_spacing+'Acquiring Token');
+}
 
-      let affiliate_id = random.createRandomString(10);
-      let subaffiliate_1_id = random.createRandomString(10);
-      let subaffiliate_2_id = random.createRandomString(10);
-      let subaffiliate_3_id = random.createRandomString(10);
-      let subaffiliate_4_id = random.createRandomString(10);
-      let subaffiliate_5_id = random.createRandomString(10);
-      let cid = random.createRandomString(10);
+function getValidAcquireTokenPostBody(campaign){
 
-      var post_body = {
-          "campaign":campaign_id,
-          "affiliates":{
-            "affiliate":affiliate_id,
-            "subaffiliate_1":subaffiliate_1_id,
-            "subaffiliate_2":subaffiliate_2_id,
-            "subaffiliate_3":subaffiliate_3_id,
-            "subaffiliate_4":subaffiliate_4_id,
-            "subaffiliate_5":subaffiliate_5_id,
-            "cid":cid
-          }
-      };
+  let affiliates = createAffiliates();
 
-      du.debug('Post data', post_body);
-      du.warning('token/acquire/'+account, authorization_string, post_body)
-    	this_request.post('token/acquire/'+account)
-      .send(post_body)
-			.set('Content-Type', 'application/json')
-			.set('Authorization', authorization_string)
-			.expect(200)
-			.expect('Content-Type', 'application/json')
-			.expect('Access-Control-Allow-Origin','*')
-			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-			.end((err, response) => {
-        du.debug(response.body);
-        tu.assertSuccessfulResponse(response.body, 'graph');
+  let return_object = {
+    campaign:(_.has(campaign, 'id'))?campaign.id:campaign
+  };
 
-        var jwt = response.body.response;
+  if(!_.isNull(affiliates)){
+    return_object.affiliates = affiliates;
+  }
 
-        du.debug('Acquired JWT:', jwt);
+  return return_object;
 
-        var post_body = {
-          "campaign":campaign_id,
-          "affiliates":{
-            "affiliate":affiliate_id,
-            "subaffiliate_1":subaffiliate_1_id,
-            "subaffiliate_2":subaffiliate_2_id,
-            "subaffiliate_3":subaffiliate_3_id,
-            "subaffiliate_4":subaffiliate_4_id,
-            "subaffiliate_5":subaffiliate_5_id
-          },
-            "customer":{
-            "firstname":"Rama",
-            "lastname":"Damunaste",
-            "email":"rama@damunaste.com",
-            "phone":"1234567890",
-            "billing":{
-              "line1":"10 Downing St.",
-              "city":"Detroit",
-              "state":"MI",
-              "zip":"12345",
-              "country":"US"
-            },
-            "address":{
-              "line1":"334 Lombard St.",
-              "line2":"Apartment 2",
-              "city":"Portland",
-              "state":"OR",
-              "zip":"97203",
-              "country":"US"
-            }
-          }
-        };
+}
 
-        du.debug('Post data', post_body);
+function confirmOrder(token, session){
 
-        du.output(appropriate_spacing+'Creating Lead');
+  du.output('Confirm Order');
 
-        du.debug('lead/create/'+account);
+  let account = config.account;
 
-        this_request.post('lead/create/'+account)
-					.send(post_body)
-					.set('Content-Type', 'application/json')
-					.set('Authorization', jwt)
-					.expect(200)
-					.expect('Content-Type', 'application/json')
-					.expect('Access-Control-Allow-Origin','*')
-					.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-					.end((err, response) => {
-            du.debug('Create Lead Response', response.body);
-            tu.assertSuccessfulResponse(response.body, 'graph');
-            assert.property(response.body.response, "id");
-            assert.property(response.body.response, "customer");
-            assert.equal(response.body.response.campaign, campaign_id, 'Campaign');
-            assert.property(response.body.response, "affiliate");
-            assert.property(response.body.response, "subaffiliate_1");
-            assert.property(response.body.response, "subaffiliate_2");
-            assert.property(response.body.response, "subaffiliate_3");
-            assert.property(response.body.response, "subaffiliate_4");
-            assert.property(response.body.response, "subaffiliate_5");
+  let querystring = httputilities.createQueryString({session: session});
 
-            var session_id = response.body.response.id;
-					  var product_schedules = [{
-							"product_schedule": "12529a17-ac32-4e46-b05b-83862843055d",
-							"quantity":2
-						}];
+  let argument_object = {
+    //Technical Debt:  This is a hack - http-utilities.js should be adding the querystring from the qs parameter
+    url: config.endpoint+'order/confirm/'+account+'?'+querystring,
+    headers:{
+      Authorization: token
+    }
+  };
 
-					  var order_create = {
-              "session":session_id,
-              "product_schedules":product_schedules,
-              "creditcard":{
-                "number":"4111111111111111",
-                "expiration":"1025",
-                "ccv":"999",
-                "name":"Rama Damunaste",
-                "address":{
-                  "line1":"10 Skid Rw.",
-                  "line2":"Suite 100",
-                  "city":"Portland",
-                  "state":"OR",
-                  "zip":"97213",
-                  "country":"US"
-                }
-              },
-              "transaction_subtype":"main"
-            };
+  return httputilities.getJSON(argument_object)
+  .then((result) => {
+    du.debug(result.body);
+    expect(result.response.statusCode).to.equal(200);
+    expect(result.response.statusMessage).to.equal('OK');
+    expect(result.body).to.have.property('success');
+    expect(result.body).to.have.property('code');
+    expect(result.body).to.have.property('response');
+    expect(result.body.success).to.equal(true);
+    expect(result.body.code).to.equal(200);
 
-            du.debug('Order Create JSON', order_create);
 
-					  du.output(appropriate_spacing+'Creating Order');
-            this_request.post('order/create/'+account)
-						.send(order_create)
-						.set('Content-Type', 'application/json')
-						.set('Authorization', jwt)
-						.expect(200)
-						.expect('Content-Type', 'application/json')
-						.expect('Access-Control-Allow-Origin','*')
-						.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-						.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-						.end((err, response) => {
-              du.debug('Create Order Response:', response.body);
+    let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json'));
 
-              tu.assertSuccessfulResponse(response.body, 'graph');
+    expect(validated).to.equal(true);
+    return result.body;
+  });
 
-              var upsell_product_schedules = [{
-                product_schedule: '8d1e896f-c50d-4a6b-8c84-d5661c16a046',
-                quantity: 1
-              }];
+}
 
-              var upsell_create = {
-                "session": session_id,
-                "product_schedules": upsell_product_schedules,
-                "transaction_subtype":"upsell1"
-              };
+function createUpsell(token, session, sale_object){
 
-              du.debug('Upsell Post Data:', upsell_create);
+  du.output('Create Upsell');
 
-              du.output(appropriate_spacing+'Creating Another Order');
+  let account = config.account;
+  let post_body = createOrderBody(session, sale_object);
 
-              du.debug('order/create/'+account);
+  delete post_body.creditcard;
+  post_body.transaction_subtype = 'upsell1';
 
-              this_request.post('order/create/'+account)
-							.send(upsell_create)
-							.set('Content-Type', 'application/json')
-							.set('Authorization', jwt)
-							.expect(200)
-							.expect('Content-Type', 'application/json')
-							.expect('Access-Control-Allow-Origin','*')
-							.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-							.end((err, response) => {
-                du.debug('Upsell Result: ', response.body);
-                du.output(appropriate_spacing+'Confirming Order');
-                du.debug('Confirmation params: ', 'session_id='+session_id);
+  let argument_object = {
+    url: config.endpoint+'order/create/'+account,
+    body: post_body,
+    headers:{
+      Authorization: token
+    }
+  };
 
-                this_request.get('order/confirm/'+account)
-								.query('session='+session_id)
-								.set('Content-Type', 'application/json')
-								.set('Authorization', jwt)
-								.expect(200)
-								.expect('Content-Type', 'application/json')
-								.expect('Access-Control-Allow-Origin','*')
-								.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-								.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-								.end((err, response) => {
+  return httputilities.postJSON(argument_object)
+  .then((result) => {
+    du.debug(result.body);
+    expect(result.response.statusCode).to.equal(200);
+    expect(result.response.statusMessage).to.equal('OK');
+    expect(result.body).to.have.property('success');
+    expect(result.body).to.have.property('code');
+    expect(result.body).to.have.property('response');
+    expect(result.body.success).to.equal(true);
+    expect(result.body.code).to.equal(200);
 
-                  du.debug('Confirm Order results', response.body);
+    let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
 
-                  done();
+    expect(validated).to.equal(true);
 
-                }, done);
-
-              }, done);
-
-            }, done);
-
-          }, done);
-
-        }, done);
-
-      });
+    return result.body;
 
   });
-  describe('Tests failure ceses.', () => {
-    it('Returns an error when invalid campaign id is sent', (done) => {
 
-      let request_time = new Date().getTime();
-      let secret_key = config.access_keys.super_user.secret_key;
-      let access_key = config.access_keys.super_user.access_key;
-      let account = config.account;
-      var campaign_id = 'not-a-uuid';
+}
 
-      let signature = signatureutilities.createSignature(secret_key, request_time);
-      let authorization_string = access_key+':'+request_time+':'+signature;
-      let this_request = request(endpoint);
+function createOrder(token, session, sale_object){
 
-      du.highlight('Request Time: ', request_time);
-      du.highlight('Signature: ', signature);
-      du.highlight('Authorization String: ', authorization_string);
-      du.output(appropriate_spacing+'Acquiring Token');
+  du.output('Create Order');
 
-      let affiliate_id = random.createRandomString(10);
-      let subaffiliate_1_id = random.createRandomString(10);
-      let subaffiliate_2_id = random.createRandomString(10);
-      let subaffiliate_3_id = random.createRandomString(10);
-      let subaffiliate_4_id = random.createRandomString(10);
-      let subaffiliate_5_id = random.createRandomString(10);
-      let cid = random.createRandomString(10);
+  let account = config.account;
+  let post_body = createOrderBody(session, sale_object);
 
-      var post_body = {
-          "campaign":campaign_id,
-          "affiliates":{
-              "affiliate":affiliate_id,
-              "subaffiliate_1":subaffiliate_1_id,
-              "subaffiliate_2":subaffiliate_2_id,
-              "subaffiliate_3":subaffiliate_3_id,
-              "subaffiliate_4":subaffiliate_4_id,
-              "subaffiliate_5":subaffiliate_5_id,
-              "cid":cid
-          }
+  let argument_object = {
+    url: config.endpoint+'order/create/'+account,
+    body: post_body,
+    headers:{
+      Authorization: token
+    }
+  };
+
+  return httputilities.postJSON(argument_object)
+  .then((result) => {
+    du.debug(result.body);
+    expect(result.response.statusCode).to.equal(200);
+    expect(result.response.statusMessage).to.equal('OK');
+    expect(result.body).to.have.property('success');
+    expect(result.body).to.have.property('code');
+    expect(result.body).to.have.property('response');
+    expect(result.body.success).to.equal(true);
+    expect(result.body.code).to.equal(200);
+
+    let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
+
+    expect(validated).to.equal(true);
+
+    return result.body;
+  });
+
+}
+
+function createLead(token, campaign){
+
+  du.output('Create Lead');
+  let account = config.account;
+  let post_body = createLeadBody(campaign);
+
+  let argument_object = {
+    url: config.endpoint+'lead/create/'+account,
+    body: post_body,
+    headers:{
+      Authorization: token
+    }
+  };
+
+  return httputilities.postJSON(argument_object)
+  .then((result) => {
+    du.debug(result.body);
+    expect(result.response.statusCode).to.equal(200);
+    expect(result.response.statusMessage).to.equal('OK');
+    expect(result.body).to.have.property('success');
+    expect(result.body).to.have.property('code');
+    expect(result.body).to.have.property('response');
+    expect(result.body.success).to.equal(true);
+    expect(result.body.code).to.equal(200);
+    let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createLead/response.json'))
+
+    expect(validated).to.equal(true);
+    return result.body.response.id;
+  });
+
+}
+
+function acquireToken(campaign){
+
+  du.output('Acquire Token');
+
+  let account = config.account;
+  let authorization_string = createSignature();
+  var post_body = getValidAcquireTokenPostBody(campaign);
+
+  let argument_object = {
+    url: config.endpoint+'token/acquire/'+account,
+    body: post_body,
+    headers:{
+      Authorization: authorization_string
+    }
+  };
+
+  return httputilities.postJSON(argument_object)
+  .then((result) => {
+    du.debug(result.body);
+    expect(result.response.statusCode).to.equal(200);
+    expect(result.response.statusMessage).to.equal('OK');
+    expect(result.body).to.have.property('success');
+    expect(result.body).to.have.property('code');
+    expect(result.body).to.have.property('response');
+    expect(result.body.success).to.equal(true);
+    expect(result.body.code).to.equal(200);
+    expect(_.isString(result.body.response)).to.equal(true);
+    let authorization_token = result.body.response;
+
+    return authorization_token;
+  });
+
+}
+
+function createCustomer(){
+
+  let customer = MockEntities.getValidCustomer();
+
+  delete customer.id;
+  delete customer.account;
+  delete customer.created_at;
+  delete customer.updated_at;
+  delete customer.creditcards;
+  customer.billing = customer.address;
+
+  return customer;
+
+}
+
+function createCreditCard(){
+
+  let creditcard = MockEntities.getValidTransactionCreditCard();
+
+  creditcard.number = "4111111111111111";
+
+  return creditcard;
+
+}
+
+function createLeadBody(campaign){
+
+  let return_object = {
+    campaign:(_.has(campaign, 'id'))?campaign.id:campaign,
+    customer: createCustomer()
+  };
+
+  let affiliates = createAffiliates();
+
+  if(!_.isNull(affiliates)){ return_object.affiliates = affiliates; }
+
+  return return_object;
+
+}
+
+function createOrderBody(session, sale_object){
+
+  let return_object = objectutilities.clone(sale_object);
+
+  return_object.session = session;
+  return_object.creditcard = createCreditCard();
+  return_object.transaction_subtype = 'main';
+
+  return return_object;
+
+}
+
+let config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
+let campaign = '70a6689a-5814-438b-b9fd-dd484d0812f9';
+
+describe('Transaction Endpoints Round Trip Test',() => {
+  describe('Straight Sale', () => {
+    it('successfully executes', () => {
+
+      let sale_object = {
+        products:[{
+          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          quantity:2
+        }]
       };
 
-      du.debug('Post data', post_body);
-      du.warning('token/acquire/'+account, authorization_string, post_body)
-    	this_request.post('token/acquire/'+account)
-      .send(post_body)
-			.set('Content-Type', 'application/json')
-			.set('Authorization', authorization_string)
-			.expect(200)
-			.expect('Content-Type', 'application/json')
-			.expect('Access-Control-Allow-Origin','*')
-			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-			.end((err, response) => {
-        du.debug(response.body);
+      return acquireToken(campaign)
+      .then((token) => {
 
-        tu.assertUnsuccessfulResponse(response.body, 'graph');
-
-        done();
-        }, done);
+        return createLead(token, campaign)
+        .then((session) => {
+          return createOrder(token, session, sale_object)
+          .then(() => confirmOrder(token, session));
+        });
 
       });
-    it('Returns an error when wrong campaign id is sent', (done) => {
 
-      let request_time = new Date().getTime();
-      let secret_key = config.access_keys.super_user.secret_key;
-      let access_key = config.access_keys.super_user.access_key;
-      let account = config.account;
-      var campaign_id = '9e43883f-7dcc-4d7a-8767-9d688c9401b8'; // wrong id, we dont have such campaign
+    });
 
-      let signature = signatureutilities.createSignature(secret_key, request_time);
-      let authorization_string = access_key+':'+request_time+':'+signature;
-      let this_request = request(endpoint);
+  });
 
-      du.highlight('Request Time: ', request_time);
-      du.highlight('Signature: ', signature);
-      du.highlight('Authorization String: ', authorization_string);
-      du.output(appropriate_spacing+'Acquiring Token');
+  describe('Straight Sale with Upsell', () => {
+    it('successfully executes', () => {
 
-      let affiliate_id = random.createRandomString(10);
-      let subaffiliate_1_id = random.createRandomString(10);
-      let subaffiliate_2_id = random.createRandomString(10);
-      let subaffiliate_3_id = random.createRandomString(10);
-      let subaffiliate_4_id = random.createRandomString(10);
-      let subaffiliate_5_id = random.createRandomString(10);
-      let cid = random.createRandomString(10);
-
-      var post_body = {
-          "campaign":campaign_id,
-          "affiliates":{
-              "affiliate":affiliate_id,
-              "subaffiliate_1":subaffiliate_1_id,
-              "subaffiliate_2":subaffiliate_2_id,
-              "subaffiliate_3":subaffiliate_3_id,
-              "subaffiliate_4":subaffiliate_4_id,
-              "subaffiliate_5":subaffiliate_5_id,
-              "cid":cid
-          }
+      let sale_object = {
+        products:[{
+          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          quantity:2
+        }]
       };
 
-      du.debug('Post data', post_body);
-      du.warning('token/acquire/'+account, authorization_string, post_body)
-    	this_request.post('token/acquire/'+account)
-      .send(post_body)
-			.set('Content-Type', 'application/json')
-			.set('Authorization', authorization_string)
-			.expect(200)
-			.expect('Content-Type', 'application/json')
-			.expect('Access-Control-Allow-Origin','*')
-			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-			.end((err, response) => {
-        du.debug(response.body);
+      let upsale_sale_object = {
+        products:[{
+          product: "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
+          quantity:1
+        }]
+      };
 
-        tu.assertUnsuccessfulResponse(response.body, 'graph');
+      return acquireToken(campaign)
+      .then((token) => {
 
-        assert.equal(response.body.message, '[400] Invalid Campaign ID: ' + campaign_id);
-
-        done();
-        }, done);
+        return createLead(token, campaign)
+        .then((session) => {
+          return createOrder(token, session, sale_object)
+          .then(() => createUpsell(token, session, upsale_sale_object))
+          .then(() => confirmOrder(token, session));
+        });
 
       });
+
+    });
+
+  });
+
+  describe('Product Schedule Sale', () => {
+    it('successfully executes', () => {
+
+      let sale_object = {
+        product_schedules:[{
+          product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+          quantity:2
+        }]
+      };
+
+      return acquireToken(campaign)
+      .then((token) => {
+
+        return createLead(token, campaign)
+        .then((session) => {
+          return createOrder(token, session, sale_object)
+          .then(() => confirmOrder(token, session));
+        });
+
+      });
+
+    });
+
+  });
+
+  describe('Mixed Sale', () => {
+    it('successfully executes', () => {
+
+      let sale_object = {
+        products:[{
+          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          quantity:2
+        }],
+        product_schedules:[{
+          product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+          quantity:2
+        }]
+      };
+
+      return acquireToken(campaign)
+      .then((token) => {
+
+        return createLead(token, campaign)
+        .then((session) => {
+          return createOrder(token, session, sale_object)
+          .then(() => confirmOrder(token, session));
+        });
+
+      });
+
+    });
+
+  });
+
+  describe('Dynamically Priced Products', () => {
+    it('successfully executes', () => {
+
+      let sale_object = {
+        products:[{
+          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          quantity:2,
+          price: 12.99
+        }]
+      };
+
+      return acquireToken(campaign)
+      .then((token) => {
+
+        return createLead(token, campaign)
+        .then((session) => {
+          return createOrder(token, session, sale_object)
+          .then(() => confirmOrder(token, session));
+        });
+
+      });
+
+    });
+
+  });
+
+  describe('Dynamic Product Schedule', () => {
+    it('successfully executes', () => {
+
+      let sale_object = {
+        product_schedules:[{
+          product_schedule: {
+            schedule:[
+              {
+                product: {
+                  id: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+                  name: "Dynamic Watermark Product"
+                },
+                start: 0,
+                period: 30,
+                price: 12.49
+              }
+            ]
+          },
+          quantity:1
+        }]
+      };
+
+      return acquireToken(campaign)
+      .then((token) => {
+
+        return createLead(token, campaign)
+        .then((session) => {
+          return createOrder(token, session, sale_object)
+          .then(() => confirmOrder(token, session));
+        });
+
+      });
+
+    });
+
+  });
+
+  describe('Dynamic Product Schedule', () => {
+    it('successfully executes', () => {
+
+      let sale_object = {
+        product_schedules:[{
+          product_schedule: {
+            schedule:[
+              {
+                product: {
+                  id: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+                  name: "Dynamic Watermark Product"
+                },
+                start: 0,
+                period: 30,
+                price: 12.49
+              }
+            ]
+          },
+          quantity:1
+        }],
+        products:[{
+          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          quantity:2,
+          price: 12.99
+        }]
+      };
+
+      return acquireToken(campaign)
+      .then((token) => {
+
+        return createLead(token, campaign)
+        .then((session) => {
+          return createOrder(token, session, sale_object)
+          .then(() => confirmOrder(token, session));
+        });
+
+      });
+
+    });
 
   });
 
