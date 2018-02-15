@@ -412,6 +412,7 @@ workflows:
       - functional_tests:
           requires:
             - build
+            - unit_tests
           filters:
             branches:
               only:
