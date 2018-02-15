@@ -10,5 +10,8 @@
 		"CreateBucketConfiguration": {
 			"LocationConstraint": "us-west-1"
 		}
-  }
+	},
+	{
+    "Bucket": "data-pipeline"
+	}
 ]
