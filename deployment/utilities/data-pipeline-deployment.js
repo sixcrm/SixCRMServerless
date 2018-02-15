@@ -18,11 +18,26 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	assurePipeline() {
+	execute() {
 
-		du.debug('Execute Data Pipeline Deployment');
+		du.debug('Execute Deploy Data Pipeline');
 
-		return this.assureSeeds();
+		return this.assureSeeds()
+		.then(() => this.assurePipeline());
+
+
+	}
+
+	assurePipeline(){
+
+		du.debug('Assure Pipeline');
+
+		return this.datapipelineutilities.getPipelineDefinition({pipeline_id: 'df-02690311TQ0QH0UYR4A9'})
+
+
+	}
+
+	buildPipelineParams(){
 
 	}
 
@@ -35,15 +50,15 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 			Key: `seeds/${seed_file_name}`
 		}
 
-		du.warning(parameters);
-
+		//Does the seed file already exist?
 		return this.s3utilities.objectExists(parameters).then(result => {
 
 			if (result) {
-
+				//Yes, return true
 				return result;
 
 			} else {
+				//No, Add seed file to s3 bucket
 
 				let filepath = './deployment/datapipeline/configuration/seeds';
 
@@ -51,16 +66,14 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 					parameters.body = file_data;
 
-					return this.s3utilities.putObject({Bucket: this.data_pipeline_bucket, Key: `seeds/${seed_file_name}`, Body: file_data}).then(result => {
+					return this.s3utilities.putObject({ Bucket: this.data_pipeline_bucket, Key: `seeds/${seed_file_name}`, Body: file_data }).then(result => {
 
 						du.warning(result);
 						return result;
 
 					});
-				})
 
-
-
+				});
 
 			}
 
@@ -68,37 +81,36 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 	}
 
-
 	assureSeeds() {
 
 		du.debug('Assure Seeds');
-
+		let seed_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 'datapipeline/configuration/seeds'));
 		let bucket = 'data-pipeline';
-		this.data_pipeline_bucket = this.s3deployment.createEnvironmentSpecificBucketName(bucket);
 		let additional_params = { Prefix: 'seeds' }
 
-
+		//assure enviornment specific data pipeline bucket (IE: sixcrm-development-etc)
+		this.data_pipeline_bucket = this.s3deployment.createEnvironmentSpecificBucketName(bucket);
 
 		//Technical Debt: could use some better validation thatj ust verifiying if the seeds folder has items
 		return this.s3utilities.assureBucket({ Bucket: this.data_pipeline_bucket }) //Does the bucket exist?
 			.then(() => this.s3utilities.listObjects(this.data_pipeline_bucket, null, additional_params)
 				.then(result => {
 
-					du.warning(result);
+				//Do the correct number of seeds exist?
+					if (result === seed_files.length) {
 
-					//Techincal Debt: should be zero, listobjects is returning a random object
-					if (result >= 1) { //Does the bucket have seeds?
-
+						//Yes, continue
 						return true;
 
 					} else {
 
-						let seed_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 'datapipeline/configuration/seeds'));
-
+						//No, populate assure seed array
 						let seed_promises = [];
 
 						seed_files.forEach(seed_file => {
+
 							seed_promises.push(this.assureSeedFile(seed_file));
+
 						});
 
 						return Promise.all(seed_promises).then(() => {
