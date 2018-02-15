@@ -1,7 +1,7 @@
 [{
     "bill_at": "2017-04-06T18:40:41.405Z",
     "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-    "state": "shipped_error",
+    "state": "delivered",
     "processing": true,
     "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
     "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",

@@ -21,10 +21,12 @@ describe('shippedToDelivered', () => {
         if (fileutilities.fileExists(test_path + '/test.json')) {
             let config = require(test_path + '/test.json');
             let test = { seeds: {}, expectations: {} };
+
             test.description = config.description;
             test.path = test_path;
             test.lambda_filter = config.lambda_filter;
             test.order = config.order || Number.MAX_SAFE_INTEGER;
+            test.only = config.only;
 
 
             if (fileutilities.fileExists(test_path + '/seeds')) {
@@ -45,13 +47,18 @@ describe('shippedToDelivered', () => {
                 }
             }
 
-            tests.push(test);
+            if (!config.skip) {
+                tests.push(test);
+            }
         } else {
             console.log('Ignoring ' + test_path);
         }
 
     });
     tests.sort((a, b) => a.order - b.order);
+    if (arrayutilities.filter(tests, test => test.only).length > 0 ) {
+        tests = arrayutilities.filter(tests, test => test.only);
+    }
 
     before((done) => {
         process.env.require_local = true;
@@ -93,9 +100,11 @@ describe('shippedToDelivered', () => {
         permissionutilities.disableACLs();
 
         let promises = [];
+
         test.seeds.dynamodb.forEach(seed => {
             let table_name = seed.replace('.json', '');
             let seed_file_path = test.path + '/seeds/dynamodb/' + seed;
+
             promises.push(DynamoDbDeployment.executeSeedViaController(
                 { Table: {
                     TableName: table_name
@@ -115,6 +124,7 @@ describe('shippedToDelivered', () => {
         }
 
         let promises = [];
+
         test.seeds.sqs.forEach(seed => {
             let queue_name = seed.replace('.json', '');
             let seed_file_path = test.path + '/seeds/sqs/' + seed;

@@ -4,5 +4,6 @@
   "lambda_filter": ["shippedtodelivered"],
   "env": {
     "archivefilter": "all"
-  }
+  },
+  "only": false
 }
