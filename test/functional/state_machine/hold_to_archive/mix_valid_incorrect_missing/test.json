@@ -4,5 +4,7 @@
   "lambda_filter": ["holdtoarchive"],
   "env": {
     "archivefilter": "noship"
-  }
+  },
+  "only": false,
+  "skip": true
 }

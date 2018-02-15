@@ -32,7 +32,7 @@
     "parentsession": "7b556e82-5a4c-4199-b8bc-0d86b3d8b47b",
     "product_schedules": ["300848c1-8b83-4b8d-aff9-529ba6459d0f"],
     "amount": 9.99,
-    "state": "hold_error",
+    "state": "archived",
     "processing": true
 }, {
     "bill_at": "2017-04-06T18:40:41.405Z",
