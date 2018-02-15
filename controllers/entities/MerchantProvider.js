@@ -14,6 +14,8 @@ class merchantProviderController extends entityController {
 
       super('merchantprovider');
 
+      this.search_fields = ['name'];
+
     }
 
     associatedEntitiesCheck({id}){

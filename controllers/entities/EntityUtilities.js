@@ -26,7 +26,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       super();
 
-      this.searchFields = [];
+      this.search_fields = [];
 
       const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
 
@@ -399,10 +399,10 @@ module.exports = class entityUtilitiesController extends PermissionedController 
       }
       */
 
-      if(objectutilities.hasRecursive(search, 'name') && this.searchFields && this.searchFields.length > 0){
+      if(objectutilities.hasRecursive(search, 'name') && search.name && arrayutilities.isArray(this.search_fields) && arrayutilities.nonEmpty(this.search_fields)){
         let filterExpression = '';
 
-        this.searchFields.forEach(field => {
+        this.search_fields.forEach(field => {
           filterExpression += (filterExpression ? ' OR ' : '') + `contains(#search_${field}, :${field}_v)`;
           query_parameters = this.appendExpressionAttributeNames(query_parameters, `#search_${field}`, field);
           query_parameters = this.appendExpressionAttributeValues(query_parameters, `:${field}_v`, search.name);

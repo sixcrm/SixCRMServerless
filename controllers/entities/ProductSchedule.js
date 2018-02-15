@@ -16,6 +16,8 @@ class productScheduleController extends entityController {
 
       this.productScheduleHelper = new ProductScheduleHelper();
 
+      this.search_fields = ['name'];
+
     }
 
     associatedEntitiesCheck({id}){

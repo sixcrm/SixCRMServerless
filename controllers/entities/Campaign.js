@@ -14,6 +14,8 @@ class campaignController extends entityController {
 
       super('campaign');
 
+      this.search_fields = ['name'];
+
     }
 
     associatedEntitiesCheck({id}){

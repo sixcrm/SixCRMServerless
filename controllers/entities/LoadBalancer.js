@@ -12,6 +12,8 @@ class loadBalancerController extends entityController {
 
       super('loadbalancer');
 
+      this.search_fields = ['name'];
+
     }
 
     associatedEntitiesCheck({id}){

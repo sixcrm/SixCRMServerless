@@ -10,6 +10,8 @@ class ShippingReceiptController extends entityController {
 
     constructor(){
         super('shippingreceipt');
+
+        this.search_fields = ['status'];
     }
 
     //Technical Debt:  What is this?  This belongs in a helper me thinks...

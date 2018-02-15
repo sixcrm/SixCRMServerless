@@ -21,6 +21,8 @@ class rebillController extends entityController {
 
       this.rebillHelperController = new RebillHelperController();
 
+      this.search_fields = ['state'];
+
     }
 
     //Technical Debt: finish!

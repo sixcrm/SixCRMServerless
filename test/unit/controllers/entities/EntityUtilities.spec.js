@@ -1953,6 +1953,80 @@ describe('controllers/EntityUtilities.js', () => {
             expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({});
         });
 
+        it('does not append search conditions with "name" if search field is not an array', () => {
+
+            let params = {
+                query_parameters: {},
+                search: {name: 'some_name'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.search_fields = 'test';
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({});
+        });
+
+        it('does not append search conditions with "name" if search field is an empty array', () => {
+
+            let params = {
+                query_parameters: {},
+                search: {name: 'some_name'}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.search_fields = 'test';
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({});
+        });
+
+        it('does not append search conditions with "name" if search name value is undefined', () => {
+
+            let params = {
+                query_parameters: {},
+                search: {name: ''}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.search_fields = ['something'];
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({});
+        });
+
+        it('does not append search conditions with "name" if search name is undefined', () => {
+
+            let params = {
+                query_parameters: {},
+                search: {}
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.search_fields = ['something'];
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({});
+        });
+
+        it('does not append search conditions with "name" if search is undefined', () => {
+
+            let params = {
+                query_parameters: {},
+            };
+
+            const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
+            let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.search_fields = ['something'];
+
+            expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({});
+        });
+
         it('appends search conditions with "name" if search field is defined', () => {
 
             let params = {
@@ -1963,7 +2037,7 @@ describe('controllers/EntityUtilities.js', () => {
             const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
             let entityUtilitiesController = new EUC();
 
-            entityUtilitiesController.searchFields = ['name'];
+            entityUtilitiesController.search_fields = ['name'];
 
             expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({
                 expression_attribute_names: {
@@ -1986,7 +2060,7 @@ describe('controllers/EntityUtilities.js', () => {
             const EUC = global.SixCRM.routes.include('controllers', 'entities/EntityUtilities.js');
             let entityUtilitiesController = new EUC();
 
-            entityUtilitiesController.searchFields = ['name', 'other'];
+            entityUtilitiesController.search_fields = ['name', 'other'];
 
             expect(entityUtilitiesController.appendSearchConditions(params)).to.deep.equal({
                 expression_attribute_names: {

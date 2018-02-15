@@ -27,6 +27,8 @@ class sessionController extends entityController {
             'cid'
         ];
 
+        this.search_fields = ['alias'];
+
     }
 
     //Technical Debt: finish!

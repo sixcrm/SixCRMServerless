@@ -11,6 +11,8 @@ class transactionController extends entityController {
 
     constructor(){
         super('transaction');
+
+        this.search_fields = ['alias'];
     }
 
     //Technical Debt:  Finish

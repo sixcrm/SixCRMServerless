@@ -13,6 +13,8 @@ class customerController extends entityController {
 
         super('customer');
 
+        this.search_fields = ['firstname', 'lastname'];
+
     }
 
     associatedEntitiesCheck({id}){

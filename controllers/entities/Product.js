@@ -12,7 +12,8 @@ class ProductController extends entityController {
 
       super('product');
 
-      this.searchFields = ['name'];
+      this.search_fields = ['name'];
+
     }
 
     associatedEntitiesCheck({id}){

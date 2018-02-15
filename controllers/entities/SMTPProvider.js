@@ -13,6 +13,8 @@ class SMTPProviderController extends entityController {
 
         super('smtpprovider');
 
+        this.search_fields = ['name'];
+
     }
 
     associatedEntitiesCheck({id}){

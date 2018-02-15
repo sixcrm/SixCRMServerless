@@ -13,6 +13,8 @@ class affiliateController extends entityController {
 
         super('affiliate');
 
+        this.search_fields = ['name', 'affiliate_id'];
+
     }
 
     associatedEntitiesCheck({id}){

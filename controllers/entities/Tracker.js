@@ -15,6 +15,8 @@ class trackerController extends entityController {
 
       super('tracker');
 
+      this.search_fields = ['name'];
+
     }
 
     listByCampaignAndAffiliate({campaign, affiliate, type, pagination}){
