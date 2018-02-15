@@ -1,0 +1,19 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/entities/merchantprovidersummary.json",
+	"title": "Merchant Provider Summary",
+	"type": "object",
+	"description": "A merchant provider summary",
+	"properties": {
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+		"merchant_provider":{"$ref": "../definitions/uuidv4.json"},
+		"day":{"$ref": "../definitions/iso8601.json"},
+		"count":{"$ref": "../definitions/nonnegativeinteger.json"},
+		"type":{"$ref": "../definitions/sixcrmtransactiontype.json"},
+		"total":{"$ref": "../definitions/currency.json"},
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
+	},
+	"required":["id", "account", "merchant_provider", "day", "count", "total", "type", "created_at", "updated_at"]
+}

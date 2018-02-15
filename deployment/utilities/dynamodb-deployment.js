@@ -362,6 +362,12 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       du.debug('Get Entity Name');
 
+      if(table_name.match(/^.*ies$/)){
+
+        return table_name.replace(/ies$/, 'y');
+
+      }
+
       return table_name.replace(/s$/, '');
 
     }

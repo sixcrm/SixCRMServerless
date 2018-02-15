@@ -827,7 +827,9 @@ module.exports = class entityUtilitiesController extends PermissionedController 
         pagination: this.buildPaginationObject(data)
       };
 
-      resolve_object[this.descriptive_name+'s'] = data.Items;
+      let name = stringutilities.pluralize(this.descriptive_name);
+
+      resolve_object[name] = data.Items;
 
       if(_.isFunction(secondary_function)){
         resolve_object = secondary_function(resolve_object);
@@ -933,13 +935,13 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     setNames(name){
 
-        du.deep('Set Names');
+      du.deep('Set Names');
 
-        this.descriptive_name = name;
+      this.descriptive_name = name;
 
-        this.setEnvironmentTableName(name);
+      this.setEnvironmentTableName(name);
 
-        this.setTableName(name);
+      this.setTableName(name);
 
     }
 
@@ -980,17 +982,20 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     buildTableKey(name){
 
-        du.deep('Build Table Key');
+      du.deep('Build Table Key');
 
-        return name+'s_table';
+      name = stringutilities.pluralize(name);
+
+      return name+'_table';
 
     }
 
+
     buildTableName(name){
 
-        du.deep('Build Table Name');
+      du.deep('Build Table Name');
 
-        return name+'s';
+      return stringutilities.pluralize(name);
 
     }
 

@@ -1,0 +1,13 @@
+[
+	{
+		"id":"3fabf4e8-4db0-41f3-bf4e-63b76ecedd62",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"merchant_provider":"6c40761d-8919-4ad6-884d-6a46a776cfb9",
+		"day":"2017-04-06T18:40:41.405Z",
+		"count":1,
+		"type":"new",
+		"total":12.99,
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	}
+]
