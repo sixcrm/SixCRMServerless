@@ -338,4 +338,36 @@ describe('controllers/Rebill.js', () => {
 
         });
     });
+
+    describe('getPendingRebills', () => {
+
+        it('builds correct query when listing pending rebills', () => {
+            let rebill = getValidRebill();
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters, index) => {
+                    expect(table).to.equal('rebills');
+                    expect(parameters).to.have.property('expression_attribute_names');
+                    expect(parameters).to.have.property('filter_expression');
+                    expect(parameters).to.have.property('expression_attribute_values');
+                    expect(parameters.filter_expression).to.equal('#processing <> :processingv');
+                    expect(parameters.expression_attribute_values[':processingv']).to.equal('true');
+                    expect(parameters.expression_attribute_names['#processing']).to.equal('processing');
+
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [rebill]
+                    });
+                }
+            });
+
+            const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+
+            return rebillController.getPendingRebills({pagination: {}, fatal: false, search: {}});
+        });
+    });
 });

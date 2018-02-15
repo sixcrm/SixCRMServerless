@@ -144,6 +144,22 @@ class rebillController extends entityController {
 
     }
 
+    getPendingRebills({pagination, fatal, search}){
+
+        let query_parameters = {
+            filter_expression: '#processing <> :processingv',
+            expression_attribute_values: {
+                ':processingv': 'true'
+            },
+            expression_attribute_names: {
+                '#processing': 'processing'
+            }
+        };
+
+        return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal, search: search});
+
+    }
+
     getRebillsBilledAfter(after){
 
       const query_parameters = {

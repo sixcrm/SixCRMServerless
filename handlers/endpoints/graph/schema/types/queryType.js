@@ -1105,6 +1105,18 @@ module.exports.graphObj = new GraphQLObjectType({
       	       return rebillController.listByAccount({pagination: rebill.pagination, fatal:list_fatal, search: rebill.search});
             }
         },
+        rebillpendinglist: {
+            type: rebillListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: function(root, rebill){
+                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+
+                return rebillController.getPendingRebills({pagination: rebill.pagination, fatal:list_fatal, search: rebill.search});
+            }
+        },
         shippingreceiptlist: {
             type: shippingReceiptListType.graphObj,
             args: {
