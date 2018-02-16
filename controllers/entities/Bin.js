@@ -15,7 +15,12 @@ class binController extends entityController {
 		//Technical Debt: this could use some validation
 		this.primary_key = 'binnumber';
 
-		return this.get({ id: binnumber });
+		return this.get({ id: binnumber })
+			.then(data => {
+
+				du.warning(data);
+				return data;
+		});
 
 	}
 
