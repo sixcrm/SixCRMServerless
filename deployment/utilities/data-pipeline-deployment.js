@@ -15,7 +15,7 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 		this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 		this.s3deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-deployment.js');
 		this.datapipelineutilities = global.SixCRM.routes.include('lib', 'data-pipeline-utilities.js');
-
+		this.unique_id = `sixcrm-${process.env.stage}-seed-dynamodb`;
 	}
 
 	execute() {
@@ -23,21 +23,51 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 		du.debug('Execute Deploy Data Pipeline');
 
 		return this.assureSeeds()
-		.then(() => this.assurePipeline());
+			.then(() => this.assurePipeline());
 
 
 	}
 
-	assurePipeline(){
+	assurePipeline() {
 
 		du.debug('Assure Pipeline');
 
-		return this.datapipelineutilities.getPipelineDefinition({pipeline_id: 'df-02690311TQ0QH0UYR4A9'})
+		return new Promise((resolve) => {
+			du.info(`${this.pipeline_id} pipeline not found creating.`);
 
+
+			let create_parameters = {
+				name: 'Seed Dynamo Pipeline', /* required */
+				uniqueId: `${this.unique_id}`, /* required */
+				description: 'Seeds Dynamo Table'
+			};
+
+
+			return this.datapipelineutilities.createPipeline({ parameters: create_parameters })
+				.then(result => this.buildPipelineDefinitionParams({pipeline_id: result.pipelineId}))
+				.then(definition => this.datapipelineutilities.validatePipelineDefinition({parameters: definition}))
+				.then(definition => this.datapipelineutilities.putPipelineDefinition({parameters: definition}))
+				.then(result => {
+
+					du.warning(result);
+
+				});
+		});
 
 	}
 
-	buildPipelineParams(){
+	buildPipelineDefinitionParams({pipeline_id}) {
+
+		let definition_path = global.SixCRM.routes.path('deployment', `datapipeline/configuration/definitions/${process.env.stage}/definition.json`);
+		let definition_parameters = {};
+		let pipeline_defintion = JSON.parse(fileutilities.getFileContentsSync(definition_path));
+
+		pipeline_defintion.pipelineId = pipeline_id;
+
+		return Promise.resolve(pipeline_defintion)
+	
+
+
 
 	}
 
@@ -96,7 +126,7 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 			.then(() => this.s3utilities.listObjects(this.data_pipeline_bucket, null, additional_params)
 				.then(result => {
 
-				//Do the correct number of seeds exist?
+					//Do the correct number of seeds exist?
 					if (result === seed_files.length) {
 
 						//Yes, continue
