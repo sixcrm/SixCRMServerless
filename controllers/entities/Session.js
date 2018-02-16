@@ -559,14 +559,25 @@ class sessionController extends entityController {
 
 		}
 
+		//Technical Debt: This is kind of messy
 		cancelSession({entity}){
 
 			du.debug('Cancel Session');
 
-			du.warning('canceled', entity);
 			return this.executeAssociatedEntityFunction('sessionController', 'get', {id: entity.id}).then(session => {
 
-				du.warning(session);
+
+				if(!session){
+
+					return null;
+
+				}
+
+				delete entity.id;
+				entity.canceled_at = timestamp.getISO8601();
+				session.canceled = entity;
+
+				return this.update({entity: session});
 
 			});
 

@@ -1133,25 +1133,8 @@ module.exports.graphObj = new GraphQLObjectType({
 					resolve: (value, session) => {
 						const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 
-						return sessionController.cancelSession({entity:session.session}).then(data =>{
+						return sessionController.cancelSession({entity:session.session});
 
-							console.log(data);
-
-							let fakesession = {
-								id: 'fakeid',
-								completed: true,
-								created_at: 'fake',
-								updated_at: 'fake',
-								canceled: {
-									canceled: 'true',
-									canceled_by: 'super.user@test.com',
-									canceled_at: 'fake datetime',
-								}
-							}
-
-							return Promise.resolve(fakesession);
-
-						});
 					}
 				},
         createshippingreceipt:{
