@@ -23,7 +23,8 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 		du.debug('Execute Deploy Data Pipeline');
 
 		return this.assureSeeds()
-			.then(() => this.assurePipeline());
+			.then(() => this.assurePipeline())
+			.catch(error => eu.throwError('server', error));
 
 
 	}
@@ -33,7 +34,6 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 		du.debug('Assure Pipeline');
 
 		return new Promise((resolve) => {
-			du.info(`${this.pipeline_id} pipeline not found creating.`);
 
 
 			let create_parameters = {
@@ -47,20 +47,24 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 				.then(result => this.buildPipelineDefinitionParams({pipeline_id: result.pipelineId}))
 				.then(definition => this.datapipelineutilities.validatePipelineDefinition({parameters: definition}))
 				.then(definition => this.datapipelineutilities.putPipelineDefinition({parameters: definition}))
-				.then(definition => this.datapipelineutilities.activatePipeline({parameters: {pipelineId: definition.pipelineId}}));
+				.then(definition => this.datapipelineutilities.activatePipeline({parameters: {pipelineId: definition.pipelineId}}))
+				.catch(error => eu.throwError('server', error.message));
 		});
 
 	}
 
 	buildPipelineDefinitionParams({pipeline_id}) {
 
+		du.debug('Build Pipeline Definition Parameters')
+
 		let definition_path = global.SixCRM.routes.path('deployment', `datapipeline/configuration/definitions/${process.env.stage}/definition.json`);
-		let definition_parameters = {};
-		let pipeline_defintion = JSON.parse(fileutilities.getFileContentsSync(definition_path));
+		let pipeline_definition = JSON.parse(fileutilities.getFileContentsSync(definition_path));
 
-		pipeline_defintion.pipelineId = pipeline_id;
+		pipeline_definition.pipelineId = pipeline_id;
 
-		return Promise.resolve(pipeline_defintion)
+		du.warning(pipeline_definition);
+
+		return Promise.resolve(pipeline_definition)
 
 	}
 

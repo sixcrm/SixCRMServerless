@@ -283,7 +283,25 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
       return this.iamutilities.deleteRole(delete_parameters);
 
-    }
+		}
+
+		deployInstanceProfiles(){
+
+			du.debug('Deploy Instance Profile');
+
+			let parameters = {
+				InstanceProfileName : 'DataPipelineDefaultResourceRole'
+			}
+
+			return this.iamutilities.createInstanceProfile(parameters)
+				.then(() => {
+
+					parameters.RoleName = 'DataPipelineDefaultResourceRole'
+
+					return this.iamutilities.addRoleToInstanceProfile(parameters);
+				});
+
+		}
 
 }
 
