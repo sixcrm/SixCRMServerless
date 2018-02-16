@@ -2,9 +2,7 @@
 
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 const _ = require('underscore');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
 module.exports = function(results, parameters){
 

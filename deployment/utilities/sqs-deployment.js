@@ -61,7 +61,7 @@ class SQSDeployment extends AWSDeploymentUtilities{
 
           let deadletter_queue_definition = this.createDeadLetterQueueDefinition(queue_definition);
 
-          return () => this.createQueue(deadletter_queue_definition).then((result) => {
+          return () => this.createQueue(deadletter_queue_definition).then(() => {
 
             queue_definition = this.addQueueRedrivePolicy(queue_definition);
 

@@ -1,6 +1,4 @@
 'use strict';
-const _ = require('underscore');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class ShippingStatusController {
@@ -33,7 +31,7 @@ module.exports = class ShippingStatusController {
 
     }
 
-    isDelivered({shipping_receipt}){
+    isDelivered(){
 
       du.debug('Is Delivered');
 
@@ -46,7 +44,7 @@ module.exports = class ShippingStatusController {
 
     }
 
-    getStatus({shipping_receipt}){
+    getStatus(){
 
       du.debug('Get Status');
 

@@ -1,12 +1,6 @@
 'use strict';
-var _ =  require('underscore');
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
 module.exports = class InfoController extends ShipmentUtilities {
@@ -35,7 +29,7 @@ module.exports = class InfoController extends ShipmentUtilities {
 
   }
 
-  execute({shipping_receipt}){
+  execute(){
 
     du.debug('Execute');
 

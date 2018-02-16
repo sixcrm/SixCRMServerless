@@ -6,7 +6,6 @@ const js2xmlparser = require("js2xmlparser2");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 
@@ -16,7 +15,7 @@ const FulfillmentProviderController = global.SixCRM.routes.include('controllers'
 
 module.exports = class ThreePLController extends FulfillmentProviderController {
 
-  constructor({fulfillment_provider}){
+  constructor(){
 
     super(arguments[0]);
 
@@ -66,7 +65,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
   }
 
-  fulfill({customer, products}){
+  fulfill(){
 
     du.debug('Fulfill');
 

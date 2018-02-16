@@ -48,7 +48,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
               let parameters = objectutilities.additiveFilter(['DeliveryStreamName'], stream_configuration);
 
-              return this.deleteStreamAndWait(parameters).then(response => {
+              return this.deleteStreamAndWait(parameters).then(() => {
 
                 du.highlight('Stream "'+stream_name+'" destroyed.');
 
@@ -102,7 +102,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
               return this.parseStreamConfiguration(stream_configuration).then((stream_configuration) => {
 
-                return this.createStreamAndWait(stream_configuration).then(response => {
+                return this.createStreamAndWait(stream_configuration).then(() => {
 
                   du.highlight('Stream "'+stream_name+'" created.');
 

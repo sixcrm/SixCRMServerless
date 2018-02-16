@@ -313,7 +313,7 @@ class mockSQSUtilities extends AWSUtilities {
 
       du.debug('Create Queue', params);
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
 
         du.warning(params.QueueName);
 
@@ -345,7 +345,7 @@ class mockSQSUtilities extends AWSUtilities {
 
       du.debug('Set Queue Attrbutes', params);
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
 
         this.sqs.setQueueAttributes(params, (error, data) => resolve(this.AWSCallback(error, data)));
 

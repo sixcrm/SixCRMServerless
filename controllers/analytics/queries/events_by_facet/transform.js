@@ -7,7 +7,7 @@ module.exports = function(results, parameters){
 
     du.debug('Transformation Function');
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
         du.debug(results);
 
@@ -20,8 +20,6 @@ module.exports = function(results, parameters){
             results.forEach((result) => {
 
                 count_sum = parseInt(result.all_events_count);
-
-                let facet_name = result[parameters.facet];
 
                 let total = Math.max(parseInt(result.all_events_count), 1);
 

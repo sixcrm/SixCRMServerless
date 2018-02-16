@@ -47,7 +47,7 @@ describe('lib/smtp-utilities', () => {
   it('should add default information to connection parameters', () => {
 
     mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: (options) => {}
+      connect: () => {}
     });
 
     let connection_options = createValidConnectionObject();
@@ -68,7 +68,7 @@ describe('lib/smtp-utilities', () => {
   it('should validate a good connection object', () => {
 
     mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: (options) => {}
+      connect: () => {}
     });
 
     let connection_options = createValidConnectionObject();
@@ -91,7 +91,7 @@ describe('lib/smtp-utilities', () => {
   it('should fail to validate a connection object (missing hostname)', () => {
 
     mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: (options) => {}
+      connect: () => {}
     });
 
     let connection_options = createValidConnectionObject();
@@ -112,7 +112,7 @@ describe('lib/smtp-utilities', () => {
   it('should fail to validate a connection object (missing username)', () => {
 
     mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: (options) => {}
+      connect: () => {}
     });
 
     let connection_options = createValidConnectionObject();
@@ -133,7 +133,7 @@ describe('lib/smtp-utilities', () => {
   it('should fail to validate a connection object (missing password)', () => {
 
     mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: (options) => {}
+      connect: () => {}
     });
 
     let connection_options = createValidConnectionObject();
@@ -155,7 +155,7 @@ describe('lib/smtp-utilities', () => {
   it('should fail to validate a connection object (missing password)', () => {
 
     mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: (options) => {}
+      connect: () => {}
     });
 
     let connection_options = createValidConnectionObject();
@@ -329,7 +329,6 @@ describe('lib/smtp-utilities', () => {
       connect: () => {}
     });
 
-    let email_object = createValidEmailObject();
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
@@ -347,7 +346,6 @@ describe('lib/smtp-utilities', () => {
       connect: () => {}
     });
 
-    let email_object = createValidEmailObject();
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');

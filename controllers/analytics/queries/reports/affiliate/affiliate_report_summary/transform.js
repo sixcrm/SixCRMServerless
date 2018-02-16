@@ -1,9 +1,8 @@
 'use strict';
-let _ = require('underscore');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = function(results, parameters){
+module.exports = function(results){
 
     du.debug('Transformation Function');
 

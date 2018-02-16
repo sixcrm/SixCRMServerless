@@ -1,7 +1,6 @@
 'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
 
 let ProviderInterfaceType = require('./providerType');

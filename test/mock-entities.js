@@ -1,10 +1,8 @@
 'use strict';
 const _ = require('underscore');
-const jsf = require('json-schema-faker');
 const uuidV4 = require('uuid/v4');
 const creditcardgenerator = require('creditcard-generator');
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -33,8 +31,9 @@ class MockEntities {
   static getValidId(id) {
     return (!_.isUndefined(id) && !_.isNull(id)) ? id : uuidV4();
   }
-
+/* eslint-disable */
   static getValidSchedule(ids, expanded){
+/* eslint-enable */
 
     expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
 
@@ -42,7 +41,7 @@ class MockEntities {
 
     let start = 0;
 
-    return arrayutilities.map(ids, (id, index) => {
+    return arrayutilities.map(ids, (id) => {
 
       let this_start = start;
       let period = randomutilities.randomInt(1, 60);
@@ -99,7 +98,7 @@ class MockEntities {
 
     ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
 
-    return arrayutilities.map(ids, (id, index) => {
+    return arrayutilities.map(ids, (id) => {
       return this.getValidProductSchedule(id, expanded);
     });
 
@@ -109,7 +108,7 @@ class MockEntities {
 
     ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
 
-    return arrayutilities.map(ids, (id, index) => {
+    return arrayutilities.map(ids, (id) => {
       return this.getValidProduct(id);
     });
 
@@ -467,15 +466,13 @@ class MockEntities {
 
     ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
 
-    return arrayutilities.map(ids, (id, index) => {
+    return arrayutilities.map(ids, (id) => {
       return this.getValidTransaction(id);
     });
 
   }
 
-  static getValidTransaction(id, extended){
-
-    let products = this.getValidTransactionProducts();
+  static getValidTransaction(id){
 
     return {
       id: this.getValidId(id),
@@ -742,6 +739,7 @@ class MockEntities {
         updated_at: timestamp.getISO8601()
     }
   }
+	/* eslint-disable */
 
   static getValidMerchantProviderConfiguration(ids){
 
@@ -750,6 +748,7 @@ class MockEntities {
     return arrayutilities.map(ids, id => {
       return {id: uuidV4(), distribution: randomutilities.randomDouble(0.0, 1.0)};
     });
+		/* eslint-enable */
 
   }
 

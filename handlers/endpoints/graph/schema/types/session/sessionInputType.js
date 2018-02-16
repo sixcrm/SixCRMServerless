@@ -6,6 +6,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 let watermarkInputType = require('./watermark/watermarkInputType');
+let sesssionCancelInputType = require('./sessionCancelInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({
     name: 'SessionInputType',
@@ -20,7 +21,8 @@ module.exports.graphObj = new GraphQLInputObjectType({
       subaffiliate_2:			{ type: GraphQLString },
       subaffiliate_3:			{ type: GraphQLString },
       subaffiliate_4:			{ type: GraphQLString },
-      subaffiliate_5:			{ type: GraphQLString },
+			subaffiliate_5:			{ type: GraphQLString },
+			canceled: { type: sesssionCancelInputType.graphObj},
       cid:			{ type: GraphQLString },
       product_schedules:	{
         type: new GraphQLList(GraphQLString)

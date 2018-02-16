@@ -3,20 +3,10 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
-const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
-
-const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 
 module.exports = class RebillHelper extends RebillHelperUtilities {
@@ -101,7 +91,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
   }
 
-  updateRebillProcessing({rebill, processing}){
+  updateRebillProcessing(){
 
     du.debug('Mark Rebill Processing');
 
@@ -165,7 +155,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
   }
 
-  updateRebillState({rebill, new_state, previous_state, error_message}){
+  updateRebillState(){
 
     du.debug('Updating Rebill State');
 
@@ -421,7 +411,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
   }
 
-  addRebillToQueue({rebill, queue_name}){
+  addRebillToQueue(){
 
     du.debug('Add Rebill To Queue');
 
@@ -465,7 +455,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
   }
 
-  getShippingReceipts({rebill}){
+  getShippingReceipts(){
 
     du.debug('Get Shipping Receipts');
 

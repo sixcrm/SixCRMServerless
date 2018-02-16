@@ -2,17 +2,10 @@
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-
-const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
-const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
 
 module.exports = class RegisterUtilities extends PermissionedController {
 
@@ -21,6 +14,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
     super();
 
     const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+
     this.rebillHelperController = new RebillHelperController();
 
     //const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
@@ -151,6 +145,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
       //Note:  Merchant Provider is provided in the rebill so, we're hotwiring the SOB
       let merchant_provider_groups = {};
+
       merchant_provider_groups[rebill.merchant_provider] = rebill.products;
 
       this.parameters.set('merchantprovidergroups', merchant_provider_groups);

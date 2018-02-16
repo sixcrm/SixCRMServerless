@@ -67,7 +67,6 @@ let shippingReceiptInputType = require('./shippingreceipt/shippingReceiptInputTy
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 
 let inviteInputType = require('./user/inviteInputType');
-let transactionRefundInputType = require('./transaction/transactionRefundInputType');
 
 let transactionChargebackInputType = require('./transaction/transactionChargebackInputType');
 let transactionType = require('./transaction/transactionType');
@@ -90,8 +89,7 @@ let userSigningStringInputType = require('./usersigningstring/userSigningStringI
 
 let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
-
-let identifierInputType = require('./general/identifierInputType');
+let sessionCancelInputType = require('./session/sessionCancelInputType');
 
 //Register
 let refundType = require('./register/refund/refundType');
@@ -1125,7 +1123,20 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return sessionController.delete({id:id});
             }
-        },
+				},
+				cancelsession: {
+					type: sessionType.graphObj,
+					description: 'Sets session to canceled',
+					args: {
+						session: {type: sessionCancelInputType.graphObj}
+					},
+					resolve: (value, session) => {
+						const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+
+						return sessionController.cancelSession({entity:session.session});
+
+					}
+				},
         createshippingreceipt:{
             type: shippingReceiptType.graphObj,
             description: 'Adds a new shippingreceipt.',

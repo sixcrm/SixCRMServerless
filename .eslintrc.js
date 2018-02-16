@@ -20,7 +20,7 @@ module.exports = {
         "no-extra-semi": [ "off" ],
         "no-trailing-spaces": [ "warn" ],
         "no-mixed-spaces-and-tabs": "off",
-        "no-unused-vars": [ "warn" ],
+        "no-unused-vars": [ "error" ],
         "promise/always-return": "warn",
         "promise/catch-or-return": "warn",
         "promise/no-return-wrap": "warn",

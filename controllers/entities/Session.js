@@ -33,7 +33,7 @@ class sessionController extends entityController {
 
     //Technical Debt: finish!
     //Rebill
-    associatedEntitiesCheck({id}){
+    associatedEntitiesCheck(){
       return Promise.resolve([]);
     }
 
@@ -547,7 +547,41 @@ class sessionController extends entityController {
 
       return 'S'+alias;
 
-    }
+		}
+
+    getUser(session){
+
+      du.debug('Get User');
+
+      return this.executeAssociatedEntityFunction('userController', 'get', {id: session.canceled_by}).then(data => {
+				du.error('cancelled_by', data)
+				return data;
+			})
+
+		}
+
+		cancelSession({entity}){
+
+			du.debug('Cancel Session');
+
+			return this.executeAssociatedEntityFunction('sessionController', 'get', {id: entity.id}).then(session => {
+
+				if(!session){
+
+          return eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist.');
+
+				}
+
+				delete entity.id;
+				entity.canceled_at = timestamp.getISO8601();
+				session.canceled = entity;
+
+				return this.update({entity: session});
+
+			});
+
+
+		}
 
 }
 

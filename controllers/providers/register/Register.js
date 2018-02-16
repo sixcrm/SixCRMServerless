@@ -6,11 +6,6 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
-
-const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
@@ -89,7 +84,7 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  refundTransaction({transaction, amount}){
+  refundTransaction(){
 
     du.debug('Refund Transaction');
 
@@ -107,7 +102,7 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  reverseTransaction({transaction}){
+  reverseTransaction(){
 
     du.debug('Reverse Transaction');
 
@@ -126,7 +121,7 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  processTransaction({rebill}){
+  processTransaction(){
 
     du.debug('Process Transaction');
 
@@ -282,7 +277,7 @@ module.exports = class Register extends RegisterUtilities {
     let registerReceiptController = new RegisterReceiptController();
 
     //fix!
-    let argumentation_object = {};
+    // let argumentation_object = {};
 
     return registerReceiptController.issueReceipt().then(receipt_transaction => {
       this.parameters.set('receipttransaction', receipt_transaction);
@@ -317,13 +312,6 @@ module.exports = class Register extends RegisterUtilities {
     let processor_responses = this.parameters.get('processorresponses');
     let creditcard = this.parameters.get('selectedcreditcard');
     let response_category = this.getProcessorResponseCategory();
-
-    let response_prototype = {
-      transactions: transaction_receipts,
-      processor_responses: processor_responses,
-      response_type: response_category,
-      creditcard: creditcard
-    }
 
     let register_response = new RegisterResponse({
       transactions: transaction_receipts,
@@ -424,7 +412,7 @@ module.exports = class Register extends RegisterUtilities {
 
     });
 
-    return Promise.all(process_promises).then(results => {
+    return Promise.all(process_promises).then(() => {
 
       return true;
 
@@ -474,7 +462,7 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  processMerchantProviderGroup({customer, creditcard, merchant_provider, amount}){
+  processMerchantProviderGroup(){
 
     const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let processController = new ProcessController();

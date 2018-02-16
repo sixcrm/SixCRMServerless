@@ -1,7 +1,6 @@
 'use strict';
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLList = require('graphql').GraphQLList;
-const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const rebillType = require('../../../rebill/rebillType');
 const analyticsPaginationType = require('./../../paginationType');

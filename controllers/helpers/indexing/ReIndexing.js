@@ -1,10 +1,6 @@
 'use strict'
-const _ =  require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const dynamoutilities = global.SixCRM.routes.include('lib','dynamodb-utilities.js');
 const cloudsearchutilities = global.SixCRM.routes.include('lib','cloudsearch-utilities.js');
@@ -24,6 +20,7 @@ module.exports = class ReIndexingHelperController {
     du.debug('Reindexing');
 
       let indexing_entities = preIndexingHelperController.indexing_entities;
+
       du.output('Indexing entities: ' + indexing_entities);
 
       let entities_dynamodb = [];
@@ -62,6 +59,7 @@ module.exports = class ReIndexingHelperController {
           entities_dynamodb.map(d => {
               if (!(entities_index.map(i => i.id).includes(d.id))) {
                   let add = Object.assign({}, d.entity);
+
                   add.entity_type = d.entity_type;
                   missing_in_index.push(add);
 

@@ -334,7 +334,7 @@ describe('controllers/Session.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), {
-                listByAccount: ({query_parameters}) => {
+                listByAccount: () => {
                     return Promise.resolve(['a_product_schedule']);
                 }
             });
@@ -404,7 +404,7 @@ describe('controllers/Session.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters, index) => {
                     expect(table).to.equal('sessions');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -435,7 +435,7 @@ describe('controllers/Session.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('update', 'session');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters ) => {
                     expect(table).to.equal('sessions');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -465,7 +465,7 @@ describe('controllers/Session.js', () => {
             let session = getValidSession();
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: (session) => {
+                listBySession: () => {
                     return Promise.resolve('session without rebills');
                 }
             });
@@ -482,7 +482,7 @@ describe('controllers/Session.js', () => {
             let session = getValidSession();
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: (session) => {
+                listBySession: () => {
                     return Promise.resolve({rebills : []});
                 }
             });
@@ -505,7 +505,7 @@ describe('controllers/Session.js', () => {
             };
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: (session) => {
+                listBySession: () => {
                     return Promise.resolve(session_rebills);
                 }
             });
@@ -535,7 +535,7 @@ describe('controllers/Session.js', () => {
             };
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: (session) => {
+                listBySession: () => {
                     return Promise.resolve(session_rebills);
                 }
             });
@@ -565,7 +565,7 @@ describe('controllers/Session.js', () => {
             };
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: (session) => {
+                listBySession: () => {
                     return Promise.resolve(session_rebills);
                 }
             });
@@ -583,5 +583,28 @@ describe('controllers/Session.js', () => {
                 expect(result).to.deep.equal([transaction]);
             });
         });
-    });
+		});
+
+    describe('cancelSession', () => {
+
+			it('returns 404 if invalid id', () => {
+
+				let mock_cancel = {
+					id: 'mock id',
+					canceled: true,
+					canceled_by: 'test@user.com'
+				}
+
+				let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+
+				return sessionController.cancelSession({entity: mock_cancel}).catch((error) => {
+
+					expect(error.message).to.equal('[404] Unable to update session with ID: \"mock id\" -  record doesn\'t exist.');
+
+				});
+
+			});
+
+		});
+
 });

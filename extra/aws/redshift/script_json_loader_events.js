@@ -9,7 +9,7 @@ redshiftClient.connect(function(err){
         return console.error('error fetching client from pool', err);
     }
     redshiftClient.query("copy f_events from 's3://"+myBucket+"/"+myKey+"' credentials 'aws_iam_role=arn:aws:iam::068070110666:role/sixcrm_redshift_upload_role' json 'auto' timeformat 'YYYY-MM-DDTHH:MI:SS'"
-      , function(err, result){
+      , function(err){
           if(err) {
               return console.error('Error running load', err);
           }

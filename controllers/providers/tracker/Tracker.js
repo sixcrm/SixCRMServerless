@@ -1,12 +1,5 @@
 'use strict';
-var _ =  require('underscore');
-
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 const InfoController = global.SixCRM.routes.include('helpers', 'shippingcarriers/Info.js');
 const TrackerUtilities = global.SixCRM.routes.include('providers', 'tracker/TrackerUtilities.js');
@@ -19,7 +12,7 @@ module.exports = class TrackerController extends TrackerUtilities {
 
   }
 
-  info({shipping_receipt}){
+  info(){
 
     du.debug('info');
 

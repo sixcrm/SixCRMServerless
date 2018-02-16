@@ -1,9 +1,5 @@
 'use strict'
-const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class FulfillmentProviderHelperController {
 
@@ -29,7 +25,7 @@ module.exports = class FulfillmentProviderHelperController {
 
   }
 
-  validate({fulfillment_provider_id}){
+  validate(){
 
     du.debug('Validate');
 

@@ -1,11 +1,7 @@
 'use strict'
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 

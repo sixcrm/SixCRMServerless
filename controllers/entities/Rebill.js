@@ -1,14 +1,11 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
 
 //Technical Debt:  We shouldn't need the AWS utility classes here...
-const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
@@ -26,11 +23,11 @@ class rebillController extends entityController {
     }
 
     //Technical Debt: finish!
-    associatedEntitiesCheck({id}){
+    associatedEntitiesCheck(){
       return Promise.resolve([]);
     }
 
-    listBySession({session, pagination}){
+    listBySession({session}){
 
       du.debug('List By Session');
 

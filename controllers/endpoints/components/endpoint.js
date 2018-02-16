@@ -144,11 +144,8 @@ module.exports = class EndpointController {
 
     //mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
 
-    let valid = false;
-
     try{
       mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
-      valid = true;
     }catch(error){
       du.error(error);
       this.throwUnexpectedEventStructureError(event);

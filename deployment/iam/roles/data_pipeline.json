@@ -1,0 +1,24 @@
+[
+	{
+		"AssumeRolePolicyDocument": {
+			"Version": "2012-10-17",
+			"Statement": [
+				{
+					"Effect": "Allow",
+					"Principal": {
+						"Service": [
+							"datapipeline.amazonaws.com",
+							"elasticmapreduce.amazonaws.com"
+						]
+					},
+					"Action": "sts:AssumeRole"
+				}
+			]
+		},
+		"RoleName": "DataPipelineDefaultRole",
+		"Description": "The role used by SixCRM DynamoDB to deploy a data pipeline.",
+		"ManagedPolicies": [
+			"arn:aws:iam::aws:policy/service-role/AWSDataPipelineRole"
+		]
+	}
+]

@@ -14,7 +14,7 @@ class accountController extends entityController {
     }
 
     //Technical Debt: finish!
-    associatedEntitiesCheck({id}){
+    associatedEntitiesCheck(){
       return Promise.resolve([]);
     }
 
