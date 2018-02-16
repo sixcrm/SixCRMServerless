@@ -10,7 +10,7 @@
     "AttributeDefinitions":[
       {
         "AttributeName":"binnumber",
-        "AttributeType":"S"
+        "AttributeType":"N"
       }
 		],
     "ProvisionedThroughput":{

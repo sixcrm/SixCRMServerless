@@ -285,6 +285,7 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
 		}
 
+		//Technical Debt: need place intance profile settings into a config file
 		deployInstanceProfiles(){
 
 			du.debug('Deploy Instance Profile');
