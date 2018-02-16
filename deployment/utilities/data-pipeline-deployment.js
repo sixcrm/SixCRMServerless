@@ -47,11 +47,7 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 				.then(result => this.buildPipelineDefinitionParams({pipeline_id: result.pipelineId}))
 				.then(definition => this.datapipelineutilities.validatePipelineDefinition({parameters: definition}))
 				.then(definition => this.datapipelineutilities.putPipelineDefinition({parameters: definition}))
-				.then(result => {
-
-					du.warning(result);
-
-				});
+				.then(definition => this.datapipelineutilities.activatePipeline({parameters: {pipelineId: definition.pipelineId}}));
 		});
 
 	}
@@ -65,9 +61,6 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 		pipeline_defintion.pipelineId = pipeline_id;
 
 		return Promise.resolve(pipeline_defintion)
-	
-
-
 
 	}
 
