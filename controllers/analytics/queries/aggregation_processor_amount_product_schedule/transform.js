@@ -1,6 +1,5 @@
 'use strict';
 let _ = require('underscore');
-let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
@@ -10,7 +9,7 @@ module.exports = function(results, parameters){
 
     du.info(results);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
         let return_object = [];
 

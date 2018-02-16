@@ -1,11 +1,11 @@
 'use strict';
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = function(results, parameters){
+module.exports = function(results){
 
     du.debug('Transformation Function');
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
         let return_array = [];
 
