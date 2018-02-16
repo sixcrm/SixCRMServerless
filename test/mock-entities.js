@@ -12,6 +12,24 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
 
+  static getValidMerchantProviderSummary(id){
+
+    let a_iso8601 = timestamp.getISO8601();
+
+    return {
+      id:this.getValidId(id),
+  		account:this.getTestAccountID(),
+  	  merchant_provider:uuidV4(),
+  		day: a_iso8601,
+  		count:randomutilities.randomInt(1,100),
+  		type:randomutilities.selectRandomFromArray(['new','recurring']),
+  		total:randomutilities.randomDouble(1.0, 100.00),
+  		created_at: a_iso8601,
+  		updated_at: a_iso8601
+    };
+
+  }
+
   static getValidId(id) {
     return (!_.isUndefined(id) && !_.isNull(id)) ? id : uuidV4();
   }
