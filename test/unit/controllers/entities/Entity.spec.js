@@ -740,7 +740,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: null
+                    entities: null
                 });
             });
         });
@@ -771,7 +771,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{},{},{},{},{},{},{},{},{}]
+                    entities: [{},{},{},{},{},{},{},{},{},{}]
                 });
             });
         });
@@ -859,7 +859,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
-                expect(response.entitys).to.equal(null);
+                expect(response.entities).to.equal(null);
             });
         });
 
@@ -879,7 +879,7 @@ describe('controllers/Entity.js', () => {
             // when
             return entityController.queryBySecondaryIndex('field', 'index_value', 'index_name', 0, 10).then((response) => {
                 // then
-                expect(response.entitys).to.deep.equal([{}, {}]);
+                expect(response.entities).to.deep.equal([{}, {}]);
             });
         });
 
@@ -1231,7 +1231,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1254,7 +1254,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
                     expect(parameters.expression_attribute_names['#updated_at_after_k']).to.deep.equal('updated_at');
                     expect(parameters.limit).to.equal(params.pagination.limit);
@@ -1278,7 +1278,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1302,7 +1302,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
                     expect(parameters.expression_attribute_names['#updated_at_after_k']).to.deep.equal('updated_at');
                     expect(parameters.limit).to.equal(params.pagination.limit);
@@ -1325,7 +1325,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1351,7 +1351,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: null
+                    entities: null
                 });
             });
         });
@@ -1383,7 +1383,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1406,7 +1406,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
                     expect(parameters.expression_attribute_names['#updated_at_after_k']).to.deep.equal('updated_at');
                     expect(parameters.limit).to.equal(params.pagination.limit);
@@ -1430,7 +1430,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1456,7 +1456,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: null
+                    entities: null
                 });
             });
         });
@@ -1494,7 +1494,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1514,7 +1514,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(index).to.equal('account-index');
                     expect(parameters.any_data).to.equal(params.query_parameters.any_data);
                     expect(parameters.filter_expression).to.equal('a_filter');
@@ -1543,7 +1543,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1580,7 +1580,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1643,7 +1643,7 @@ describe('controllers/Entity.js', () => {
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
                     expect(index).to.equal(params.index);
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters.scan_index_forward).to.equal(false);
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -1663,7 +1663,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1709,7 +1709,7 @@ describe('controllers/Entity.js', () => {
                         has_next_page: 'false',
                         last_evaluated: ""
                     },
-                    entitys: [{},{}]
+                    entities: [{},{}]
                 });
             });
         });
@@ -1766,7 +1766,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 countRecords: (table, additional_parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(additional_parameters).to.have.property('filter_expression');
                     expect(additional_parameters).to.have.property('expression_attribute_values');
                     return Promise.resolve({ Count: 1});

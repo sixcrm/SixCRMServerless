@@ -148,7 +148,7 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -205,7 +205,7 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -235,7 +235,7 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -268,7 +268,7 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -381,7 +381,7 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
-                    expect(table).to.equal('entitys');
+                    expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');

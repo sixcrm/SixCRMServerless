@@ -34,7 +34,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
   describe('can', () => {
 
     beforeEach(() => {
-      permissionedController = new PermissionedController();
+      permissionedController = new PermissionedController('entity');
     });
 
     afterEach(() => {
@@ -113,7 +113,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
   describe('disableACLs/enableACLs', () => {
 
     beforeEach(() => {
-      permissionedController = new PermissionedController();
+      permissionedController = new PermissionedController('entity');
     });
 
     afterEach(() => {
@@ -146,7 +146,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
   describe('setGlobalUser/unsetGlobalUser', () => {
 
     beforeEach(() => {
-      permissionedController = new PermissionedController();
+      permissionedController = new PermissionedController('entity');
     });
 
     afterEach(() => {
