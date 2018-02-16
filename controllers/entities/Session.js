@@ -3,6 +3,7 @@ const _ = require('underscore');
 
 var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 var arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 var objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
@@ -559,17 +560,15 @@ class sessionController extends entityController {
 
 		}
 
-		//Technical Debt: This is kind of messy
 		cancelSession({entity}){
 
 			du.debug('Cancel Session');
 
 			return this.executeAssociatedEntityFunction('sessionController', 'get', {id: entity.id}).then(session => {
 
-
 				if(!session){
 
-					return null;
+          return eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist.');
 
 				}
 
