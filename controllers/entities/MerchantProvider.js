@@ -1,10 +1,8 @@
 'use strict';
-const _ = require('underscore');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -13,6 +11,8 @@ class merchantProviderController extends entityController {
     constructor(){
 
       super('merchantprovider');
+
+      this.search_fields = ['name'];
 
     }
 

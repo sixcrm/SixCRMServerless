@@ -1,7 +1,6 @@
 'use strict';
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
 module.exports.graphObj = new GraphQLObjectType({

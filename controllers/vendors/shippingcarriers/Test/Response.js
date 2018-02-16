@@ -1,20 +1,12 @@
 'use strict';
-const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const xmlutilities = global.SixCRM.routes.include('lib', 'xml-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const ShippingCarrierVendorResponse = global.SixCRM.routes.include('vendors', 'shippingcarriers/components/Response.js');
 
 module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 
-  constructor({vendor_response, action, additional_parameters}){
+  constructor(){
 
     super(arguments[0]);
 

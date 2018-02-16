@@ -11,7 +11,7 @@ const endpointController = global.SixCRM.routes.include('controllers', 'endpoint
 
 module.exports = class AuthenticatedController extends endpointController {
 
-    constructor(parameters){
+    constructor(){
 
       super();
 

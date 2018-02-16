@@ -50,8 +50,6 @@ module.exports = class createRebillsController extends workerController {
 
       du.debug('Acquire Session');
 
-      let message = this.parameters.get('message');
-
       return Promise.resolve()
       .then(() => this.parseMessageBody())
       .then(() => {

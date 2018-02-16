@@ -1,5 +1,4 @@
 'use strict';
-const _ = require("underscore");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -89,7 +88,7 @@ class ConfirmOrderController extends transactionEndpointController{
     .then(() => this.hydrateSessionProperties())
     .then(() => this.closeSession())
     .then(() => this.buildResponse())
-    .then(result_object => {
+    .then(() => {
 
       this.postProcessing();
 
@@ -209,7 +208,7 @@ class ConfirmOrderController extends transactionEndpointController{
       //this.handleNotifications();
     ];
 
-    return Promise.all(promises).then(promises => {
+    return Promise.all(promises).then(() => {
 
       return true;
 
@@ -217,13 +216,13 @@ class ConfirmOrderController extends transactionEndpointController{
 
   }
 
-  pushToRedshift(results){
+  pushToRedshift(){
 
     du.debug('Push To Redshift');
 
     let session = this.parameters.get('session');
 
-    return this.pushEventToRedshift({event_type:'confirm', session: session}).then((result) => {
+    return this.pushEventToRedshift({event_type:'confirm', session: session}).then(() => {
 
       return true;
 

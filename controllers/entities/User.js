@@ -18,6 +18,9 @@ class userController extends entityController {
 
     constructor(){
         super('user');
+
+        this.search_fields = ['name', 'firstname', 'lastname'];
+
     }
 
     //Technical Debt: finish!

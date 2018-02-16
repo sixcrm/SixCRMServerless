@@ -49,7 +49,7 @@ class AcquireTokenController extends transactionEndpointController {
       return this.preamble(event)
       .then(() => this.validateCampaign())
       .then(() => this.acquireToken())
-      .then((token) => {
+      .then(() => {
 
         this.postProcessing();
 
@@ -130,6 +130,12 @@ class AcquireTokenController extends transactionEndpointController {
       du.debug('Update Event Object With Affiliate Information');
 
       let event = this.parameters.get('event');
+
+      if(!_.has(this, 'affiliateHelperController')){
+        const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
+
+        this.affiliateHelperController = new AffiliateHelperController();
+      }
 
       return this.affiliateHelperController.handleAffiliateInformation(event)
       .then(updated_event => {

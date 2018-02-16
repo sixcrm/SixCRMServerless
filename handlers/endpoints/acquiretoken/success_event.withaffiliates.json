@@ -1,0 +1,18 @@
+{
+	"Authorization":"8SUJAY9BR17LN2QUJAMLQ6NDXZ8RTCQ7SS42RTAE:1515351836723:0a43d38a568335cb867ca65571394764fe924f9c",
+	"requestContext":{
+		"authorizer":{
+			"user":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37693"
+		}
+	},
+	"pathParameters":{
+		"account": "eefdeca6-41bc-4af9-a561-159acb449b5e"
+	},
+	"body": {
+		"campaign": "5c593d31-5001-4faf-8ea2-e8c1a1f85f04",
+		"affiliates":{
+			"affiliate":"anotherrandothing",
+			"subaffiliate1":"somethingelserando"
+		}
+	}
+}

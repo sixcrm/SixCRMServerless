@@ -1,7 +1,5 @@
 'use strict';
 const GraphQLUnionType = require('graphql').GraphQLUnionType;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLString = require('graphql').GraphQLString;
 
 let affiliateType = require('./affiliateType');
 let affiliateGroupType = require('./affiliateGroupType');

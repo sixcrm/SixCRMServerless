@@ -60,7 +60,7 @@ module.exports = class TransactionHelperController {
 
   }
 
-  markTransactionChargeback({transactionid, chargeback_status}){
+  markTransactionChargeback(){
 
     du.debug('Mark Transaction Chargeback');
 
@@ -122,7 +122,7 @@ module.exports = class TransactionHelperController {
 
   }
 
-  updateTransactionProducts({transaction_id, updated_transaction_products}){
+  updateTransactionProducts(){
 
     du.debug('Update Transaction Product');
 

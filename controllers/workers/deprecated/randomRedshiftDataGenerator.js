@@ -523,7 +523,7 @@ class RandomRedshiftData extends workerController {
 
     }
 
-    pushToS3(file_body){
+    pushToS3(){
 
         du.debug('Push to S3');
 
@@ -547,7 +547,7 @@ class RandomRedshiftData extends workerController {
             return Promise.all(promises);
 
         })
-    .then((promises) => {
+    .then(() => {
 
         du.output("Successfully uploaded data to S3");
 

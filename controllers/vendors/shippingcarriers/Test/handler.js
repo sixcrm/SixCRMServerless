@@ -1,10 +1,7 @@
 'use strict';
-var _ = require('underscore');
-var request = require('request');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const parseString = require('xml2js').parseString;
 const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 
 const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/components/ShippingCarrier.js');
@@ -36,7 +33,7 @@ module.exports = class TestController extends ShippingCarrierController {
 
     }
 
-    info({tracking_number}){
+    info(){
 
       du.debug('info');
 

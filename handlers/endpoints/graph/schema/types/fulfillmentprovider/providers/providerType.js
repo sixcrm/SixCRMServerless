@@ -1,6 +1,5 @@
 'use strict';
 let _ = require('underscore');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

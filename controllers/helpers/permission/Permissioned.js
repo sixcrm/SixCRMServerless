@@ -1,16 +1,8 @@
 'use strict'
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
-
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const cacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 module.exports = class PermissionedController {
 
@@ -20,7 +12,7 @@ module.exports = class PermissionedController {
 
   }
 
-  can({account, object, action, id, fatal}){
+  can({ object, action, fatal}){
 
     du.debug('Can');
 

@@ -13,6 +13,8 @@ class customerController extends entityController {
 
         super('customer');
 
+        this.search_fields = ['firstname', 'lastname'];
+
     }
 
     associatedEntitiesCheck({id}){
@@ -257,7 +259,7 @@ class customerController extends entityController {
 
     // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
     // we retrieve data in 2 steps (sessions first, then rebills for each session and combine the results).
-    listCustomerRebills({customer, pagination}) {
+    listCustomerRebills({customer}) {
 
       du.debug('List Customer Rebills');
 

@@ -1,14 +1,9 @@
 'use strict';
 var _ =  require('underscore');
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-
 const TrackerResponse = global.SixCRM.routes.include('providers', 'tracker/Response.js');
 
 module.exports = class TrackerUtilitiesController extends PermissionedController  {

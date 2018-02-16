@@ -3,9 +3,7 @@ const _ =  require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 module.exports = class PreIndexingHelperController {
 
@@ -104,7 +102,7 @@ module.exports = class PreIndexingHelperController {
     du.debug('execute');
 
     return this.validateEntityForIndexing()
-    .then(result => {
+    .then(() => {
       return this.abridgeEntity()
       .then(() => this.packageEntity())
       .then(() => this.pushToIndexingBucket());
@@ -166,7 +164,7 @@ module.exports = class PreIndexingHelperController {
     let packaged_abridged_entity = this.parameters.get('packagedabridgedentity');
 
     //Technical Debt:  Queue name should be configured...
-    return this.sqsutilities.sendMessage({message_body: packaged_abridged_entity, queue: 'search_indexing'}).then((response) => {
+    return this.sqsutilities.sendMessage({message_body: packaged_abridged_entity, queue: 'search_indexing'}).then(() => {
 
       du.debug('Message sent to the queue.');
 

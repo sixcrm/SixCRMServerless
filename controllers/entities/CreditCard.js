@@ -10,7 +10,9 @@ class creditCardController extends entityController {
 
     constructor(){
 
-				super('creditcard');
+      super('creditcard');
+
+      this.search_fields = ['name'];
 
     }
 

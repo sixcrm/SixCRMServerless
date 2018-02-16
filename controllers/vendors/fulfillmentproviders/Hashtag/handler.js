@@ -1,12 +1,10 @@
 'use strict';
-const _ = require('underscore');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const ThreePLController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/ThreePL/handler.js');
 
 module.exports = class HashtagController extends ThreePLController {
 
-  constructor({fulfillment_provider}){
+  constructor(){
 
     super(arguments[0]);
 

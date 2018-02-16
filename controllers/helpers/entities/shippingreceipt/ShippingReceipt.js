@@ -68,7 +68,7 @@ module.exports = class ShippingReceiptHelperController {
 
   }
 
-  updateShippingReceipt({shipping_receipt, detail, status, tracking_id, carrier}){
+  updateShippingReceipt(){
 
     du.debug('Update Shipping Receipt');
 
@@ -163,7 +163,7 @@ module.exports = class ShippingReceiptHelperController {
 
   }
 
-  confirmStati({shipping_receipt_ids, shipping_status}){
+  confirmStati(){
 
     du.debug('Confirm Stati');
 

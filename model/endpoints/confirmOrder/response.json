@@ -5,8 +5,8 @@
 	"properties": {
 		"session":{"$ref": "../../entities/session.json"},
     "customer":{"$ref": "../../entities/customer.json"},
-    "transactions":{"$ref": "../components/transactions.json"},
-    "transaction_products":{"$ref": "../components/transactionproducts.json"}
+    "transactions":{"$ref": "../../entities/components/transactions.json"},
+    "transaction_products":{"$ref": "../../entities/components/transactionproducts.json"}
 	},
 	"required":["session", "customer", "transactions", "transaction_products"]
 }

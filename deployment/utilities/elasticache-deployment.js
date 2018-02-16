@@ -194,7 +194,7 @@ module.exports = class ElasticacheDeployment {
 
   }
 
-  filterParameters(parameters, action, subaction){
+  filterParameters(parameters, action){
 
     du.debug('Filter Parameters');
 

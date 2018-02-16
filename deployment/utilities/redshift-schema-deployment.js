@@ -7,11 +7,9 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
-const redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 
 class RedshiftSchemaDeployment extends RedshiftDeployment {
@@ -292,7 +290,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       }
       return Promise.resolve(true);
     })
-    .then((result) => {
+    .then(() => {
       return 'Complete';
     });
 
@@ -304,7 +302,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     return this.seedBINDatabase()
     .then(() => this.seedDateDatabase())
-    .then((result) => {
+    .then(() => {
       return 'Complete';
     });
 
@@ -557,7 +555,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     return this.getTableFilenames(directory)
     .then((filenames) => this.getPurgeQueries(filenames))
     .then((queries) => this.executePurgeQueries(queries))
-    .then((result) => {
+    .then(() => {
 
       return 'Complete';
 

@@ -8,10 +8,13 @@ class accountController extends entityController {
 
     constructor(){
         super('account');
+
+        this.search_fields = ['name'];
+
     }
 
     //Technical Debt: finish!
-    associatedEntitiesCheck({id}){
+    associatedEntitiesCheck(){
       return Promise.resolve([]);
     }
 

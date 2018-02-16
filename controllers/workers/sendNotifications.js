@@ -4,8 +4,6 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
-const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities.js');
 
@@ -31,7 +29,7 @@ module.exports = class sendNotificationsController extends workerController {
     .then((message) => this.validateMessage(message))
     .then((message) => this.sendNotification(message))
     .then((results) => this.respond(results))
-    .catch((error) => {
+    .catch(() => {
       return this.messages.failure;
     });
 
@@ -84,7 +82,7 @@ module.exports = class sendNotificationsController extends workerController {
 
   }
 
-  respond(result){
+  respond(){
 
     du.debug('Respond');
 

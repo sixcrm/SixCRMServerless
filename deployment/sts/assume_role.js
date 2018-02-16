@@ -33,7 +33,7 @@ objectutilities.map(cli_parameters, key => {
 
 let awsdu = new AWSDeploymentUtilities();
 
-return awsdu.setRole(configuration.branch).then((result) => {
+return awsdu.setRole(configuration.branch).then(() => {
 
   du.highlight('Role Updated.');
   du.info(process.env);

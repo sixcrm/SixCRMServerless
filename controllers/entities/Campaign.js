@@ -2,9 +2,7 @@
 const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -13,6 +11,8 @@ class campaignController extends entityController {
     constructor(){
 
       super('campaign');
+
+      this.search_fields = ['name'];
 
     }
 
@@ -206,7 +206,7 @@ class campaignController extends entityController {
     //Technical Debt:  This seems VERY general in terms of parameterization
     //Technical Debt:  Replace with listBy()
     //Technical Debt:  Use a better query method instead of iterating over "listCampaignsByProductSchedule()"
-    listCampaignsByProduct({product, pagination, fatal}){
+    listCampaignsByProduct({product, pagination}){
 
       du.debug('Get Campaigns By Product');
 

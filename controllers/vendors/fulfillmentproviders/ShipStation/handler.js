@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const uuidV4 = require('uuid/v4');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -14,7 +13,7 @@ const FulfillmentProviderController = global.SixCRM.routes.include('vendors', 'f
 
 module.exports = class ShipStationController extends FulfillmentProviderController {
 
-  constructor({fulfillment_provider}){
+  constructor(){
 
     super(arguments[0]);
 
@@ -97,7 +96,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
   }
 
-  fulfill({customer, products}){
+  fulfill(){
 
     du.debug('Fulfill');
 
@@ -239,8 +238,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
     du.debug('Get List Orders Request Parameters');
 
-    let fulfillment_provider = this.parameters.get('fulfillmentprovider');
-
     let reference_number = this.parameters.get('referencenumber', null, false);
 
     let request_parameters = {
@@ -260,7 +257,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
     du.debug('Get CreateOrder Request Parameters');
 
-    let fulfillment_provider = this.parameters.get('fulfillmentprovider');
     let customer = this.parameters.get('customer');
     let products = this.parameters.get('products');
 
@@ -379,8 +375,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
     delete parameters.endpoint;
     delete parameters.path;
 
-    let querystring = httputilities.createQueryString(parameters);
-
     let options = {
       url: url,
       headers: {
@@ -434,8 +428,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
   createAuthorizationString(){
 
     du.debug('Create Authorization String');
-
-    let fulfillment_provider = this.parameters.get('fulfillmentprovider');
 
     let api_key = this.parameters.get('fulfillmentprovider').provider.api_key;
     let api_secret = this.parameters.get('fulfillmentprovider').provider.api_secret;

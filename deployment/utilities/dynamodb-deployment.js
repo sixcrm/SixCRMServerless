@@ -2,7 +2,6 @@
 const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -32,9 +31,9 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
         if(result == false){
 
-          return this.dynamodbutilities.createTable(table_definition.Table).then((result) => {
+          return this.dynamodbutilities.createTable(table_definition.Table).then(() => {
 
-            return this.dynamodbutilities.waitFor(table_definition.Table.TableName, 'tableExists').then((result) => {
+            return this.dynamodbutilities.waitFor(table_definition.Table.TableName, 'tableExists').then(() => {
 
               du.highlight('Successfully created table: '+table_definition.Table.TableName);
 
@@ -62,7 +61,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
         du.highlight('Table found: '+table_name);
         return results;
 
-      }).catch(error => {
+      }).catch(() => {
 
         du.highlight('Unable to find table '+table_name);
         return false;
@@ -154,7 +153,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
               });
 
-              return Promise.all(delete_promises).then(delete_promises => {
+              return Promise.all(delete_promises).then(() => {
 
                 du.output(delete_count+' records deleted.');
 
@@ -282,6 +281,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
       du.debug('Seed Tables');
 
       permissionutilities.disableACLs();
+      permissionutilities.setPermissions('*',['*/*'],[]);
 
       return this.initializeControllers().then(() => {
 
@@ -344,7 +344,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       let seed_promises = arrayutilities.map(seed_definitions, (seed_definition) => {
 
-        return controller.store({entity: seed_definition}).then((result) => {
+        return controller.store({entity: seed_definition}).then(() => {
           return true;
         }).catch(error => {
           du.warning(error);
@@ -415,7 +415,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
         if(objectutilities.isObject(result)){
 
-          return this.dynamodbutilities.deleteTable(table_definition.Table.TableName).then((result) => {
+          return this.dynamodbutilities.deleteTable(table_definition.Table.TableName).then(() => {
 
             return this.dynamodbutilities.waitFor(table_definition.Table.TableName, 'tableNotExists');
 

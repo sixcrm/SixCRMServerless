@@ -2,12 +2,10 @@
 const _ =  require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
 module.exports = class IndexingHelperController {
 

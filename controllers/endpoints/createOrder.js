@@ -3,7 +3,6 @@ const _ = require("underscore");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 //const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
@@ -473,7 +472,7 @@ class CreateOrderController extends transactionEndpointController{
 
     }else{
 
-      return this.rebllController.delete({id: this.parameters.get('rebill').id}).then(result => {
+      return this.rebllController.delete({id: this.parameters.get('rebill').id}).then(() => {
         return true;
       });
 

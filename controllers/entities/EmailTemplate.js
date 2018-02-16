@@ -10,6 +10,8 @@ class emailTemplateController extends entityController {
 
         super('emailtemplate');
 
+        this.search_fields = ['name'];
+
     }
 
     listBySMTPProvider({smtpprovider: smtpprovider, pagination: pagination}){

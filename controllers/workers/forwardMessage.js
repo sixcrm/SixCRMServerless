@@ -5,7 +5,6 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
 const RelayController = global.SixCRM.routes.include('controllers', 'workers/components/relay.js');
 
@@ -241,8 +240,6 @@ module.exports = class forwardMessageController extends RelayController {
 
       du.debug('Handle Delete');
 
-      let params = this.parameters.get('params');
-
       if(_.contains(['success', 'fail', 'error'], compound_worker_response_object.worker_response_object.getCode())){
 
         let messages = this.getCompoundWorkerResponseMessages(compound_worker_response_object);
@@ -282,7 +279,7 @@ module.exports = class forwardMessageController extends RelayController {
         });
       });
 
-      return Promise.all(message_delete_promises).then(message_delete_promises => {
+      return Promise.all(message_delete_promises).then(() => {
         return true;
       });
 

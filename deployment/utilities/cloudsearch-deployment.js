@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('underscore');
-const fs = require('fs');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');

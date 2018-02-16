@@ -29,6 +29,8 @@ module.exports = class fulfillmentProviderController {
 
       this.parameters.setParameters({argumentation: arguments[0], action: 'construct'});
 
+      this.search_fields = ['name'];
+
     }
 
     augmentParameters(){

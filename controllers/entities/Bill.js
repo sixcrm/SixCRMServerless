@@ -1,9 +1,7 @@
 'use strict';
-const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -15,7 +13,7 @@ class billController extends entityController {
 
   }
 
-  update({entity}){
+  update(){
 
     du.debug('Update');
 
@@ -28,7 +26,7 @@ class billController extends entityController {
 
   }
 
-  create({entity}){
+  create(){
 
     du.debug('Create');
 

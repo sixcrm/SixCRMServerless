@@ -1,8 +1,6 @@
 const request = require('supertest');
 const chai = require('chai');
-const assert = require('chai').assert
-const fs = require('fs');
-const yaml = require('js-yaml');
+const assert = require('chai').assert;
 const _ = require('underscore');
 
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');

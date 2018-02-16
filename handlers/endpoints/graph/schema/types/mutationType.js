@@ -67,7 +67,6 @@ let shippingReceiptInputType = require('./shippingreceipt/shippingReceiptInputTy
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 
 let inviteInputType = require('./user/inviteInputType');
-let transactionRefundInputType = require('./transaction/transactionRefundInputType');
 
 let transactionChargebackInputType = require('./transaction/transactionChargebackInputType');
 let transactionType = require('./transaction/transactionType');
@@ -91,8 +90,6 @@ let userSigningStringInputType = require('./usersigningstring/userSigningStringI
 let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
 let sessionCancelInputType = require('./session/sessionCancelInputType');
-
-let identifierInputType = require('./general/identifierInputType');
 
 //Register
 let refundType = require('./register/refund/refundType');

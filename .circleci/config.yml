@@ -76,15 +76,12 @@ jobs:
       - run:
           name: Deploy Local SQS
           command: SIX_VERBOSE=2 stage=local node ./deployment/sqs/deploy_queues.js
-      - run:
-          name: Seed Local Dynamo
-          command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_seeds.js
-      - run:
-          name: Execute State Machine Tests
-          command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine || echo "Optional"
+#      - run:
+#          name: Seed Local Dynamo
+#          command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_seeds.js
       - run:
           name: Execute State Machine Tests In Docker
-          command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine-docker || echo "Optional"
+          command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine-docker
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -415,6 +412,7 @@ workflows:
       - functional_tests:
           requires:
             - build
+            - unit_tests
           filters:
             branches:
               only:
@@ -424,7 +422,6 @@ workflows:
             - build
             - lint
             - unit_tests
-            - functional_tests
       - backup_datastore:
           requires:
             - pre_deploy
@@ -437,28 +434,24 @@ workflows:
             - pre_deploy
             - lint
             - unit_tests
-            - functional_tests
             - backup_datastore
       - deploy_security_groups:
           requires:
             - pre_deploy
             - lint
             - unit_tests
-            - functional_tests
             - backup_datastore
       - deploy_iam:
           requires:
             - pre_deploy
             - lint
             - unit_tests
-            - functional_tests
             - backup_datastore
       - deploy_s3:
           requires:
             - pre_deploy
             - lint
             - unit_tests
-            - functional_tests
             - backup_datastore
       - deploy_sqs:
           requires:

@@ -33,7 +33,7 @@ module.exports.graphObj = new GraphQLObjectType({
           description: 'The country'
         },
         info: {
-          type: new GraphQLNonNull(GraphQLString),
+          type:GraphQLString,
           description: 'The info'
         },
         country_iso: {

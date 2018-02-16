@@ -10,7 +10,7 @@ class roleController extends entityController {
     }
 
     //Technical Debt: finish!
-    associatedEntitiesCheck({id}){
+    associatedEntitiesCheck(){
       return Promise.resolve([]);
     }
 

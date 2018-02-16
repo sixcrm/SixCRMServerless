@@ -4,7 +4,7 @@ const luhn = require("luhn");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
@@ -183,7 +183,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    handleEmail(pass_through){
+    handleEmail(){
 
       du.debug('Handle Email');
 
@@ -194,7 +194,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    handleNotifications(pass_through){
+    handleNotifications(){
 
       du.debug('Handle Notifications');
 
@@ -249,7 +249,11 @@ module.exports = class transactionEndpointController extends authenticatedContro
         product_schedule: '' //what is this?
       };
 
-      return this.affiliateHelperController.transcribeAffiliates(event.affiliates, event_object);
+      if(_.has(event, 'affiliates') && objectutilities.isObject(event.affiliates)){
+        event_object = this.affiliateHelperController.transcribeAffiliates(event.affiliates, event_object);
+      }
+
+      return event_object;
 
     }
 

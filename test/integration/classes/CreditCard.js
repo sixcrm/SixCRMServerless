@@ -1,7 +1,6 @@
 'use strict'
 const uuidV4 = require('uuid/v4');
 
-const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 const IntegrationTest = global.SixCRM.routes.include('test', 'integration/classes/IntegrationTest');

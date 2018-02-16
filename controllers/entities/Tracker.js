@@ -2,7 +2,6 @@
 const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 //Technical Debt:  This should be a function of the Tracker Helper
 const postbackutilities = global.SixCRM.routes.include('lib', 'postback-utilities.js');
@@ -14,6 +13,8 @@ class trackerController extends entityController {
     constructor(){
 
       super('tracker');
+
+      this.search_fields = ['name'];
 
     }
 

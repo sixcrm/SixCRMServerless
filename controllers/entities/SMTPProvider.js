@@ -13,6 +13,8 @@ class SMTPProviderController extends entityController {
 
         super('smtpprovider');
 
+        this.search_fields = ['name'];
+
     }
 
     associatedEntitiesCheck({id}){
@@ -61,8 +63,6 @@ class SMTPProviderController extends entityController {
           body:  "This is a test of the SMTP provider ID :"+smtpprovider.id,
           recepient_emails:[email]
         };
-
-        let smtp_response = null;
 
         return smtp.send(send_object).then(smtp_response => {
 

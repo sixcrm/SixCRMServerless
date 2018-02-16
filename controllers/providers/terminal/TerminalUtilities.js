@@ -1,7 +1,6 @@
 'use strict';
 var _ =  require('underscore');
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -9,10 +8,6 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
-const TestController = global.SixCRM.routes.include('helpers', 'shipment/Test.js');
-
-const TerminalReceiptController = global.SixCRM.routes.include('providers', 'terminal/Receipt.js');
 const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
 
 module.exports = class TerminalUtilitiesController extends PermissionedController  {
@@ -112,7 +107,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
     let rebill = this.parameters.get('rebill');
 
-    return this.rebillController.get({id: rebill.id}).then(result => {
+    return this.rebillController.get({id: rebill.id}).then(() => {
       this.parameters.set('rebill', rebill);
       return true;
     });
@@ -165,7 +160,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
       let transaction_products = this.transactionHelperController.getTransactionProducts([transaction]);
 
-      return arrayutilities.map(transaction_products, (transaction_product, index) => {
+      return arrayutilities.map(transaction_products, (transaction_product) => {
         let augmented_transaction_product = objectutilities.clone(transaction_product);
 
         augmented_transaction_product.transaction = transaction;

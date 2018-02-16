@@ -1,7 +1,6 @@
 'use strict';
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -10,6 +9,8 @@ class ShippingReceiptController extends entityController {
 
     constructor(){
         super('shippingreceipt');
+
+        this.search_fields = ['status'];
     }
 
     //Technical Debt:  What is this?  This belongs in a helper me thinks...

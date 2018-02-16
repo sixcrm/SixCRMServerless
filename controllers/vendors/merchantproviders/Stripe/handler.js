@@ -1,13 +1,9 @@
 'use strict';
 const _ = require('underscore');
 const stripe = require('stripe');
-const request = require('request');
-const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
 
@@ -90,7 +86,7 @@ class StripeController extends MerchantProvider {
 
     }
 
-    refund(request_parameters){
+    refund(){
 
       du.debug('Refund');
 
@@ -107,7 +103,7 @@ class StripeController extends MerchantProvider {
 
     }
 
-    reverse(request_parameters){
+    reverse(){
 
       du.debug('Reverse');
 
