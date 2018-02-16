@@ -3,7 +3,6 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
@@ -94,7 +93,7 @@ module.exports = class ShipmentUtilities {
     });
 
     //Technical Debt:  This needs to occur serially
-    return Promise.all(update_promises).then(update_promises => {
+    return Promise.all(update_promises).then(() => {
       //Note:  update_promises is a array of transactions
       return true;
     });
@@ -256,7 +255,7 @@ module.exports = class ShipmentUtilities {
     let products = this.parameters.get('products');
     let augmented_transaction_products =  this.parameters.get('augmentedtransactionproducts');
 
-    let hydrated_augmented_transaction_products = arrayutilities.map(augmented_transaction_products, (augmented_transaction_product, index) => {
+    let hydrated_augmented_transaction_products = arrayutilities.map(augmented_transaction_products, (augmented_transaction_product) => {
 
       let hydrated_product = arrayutilities.find(products, (product) => {
         return (product.id == augmented_transaction_product.product.id);

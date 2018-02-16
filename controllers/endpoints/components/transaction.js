@@ -4,7 +4,6 @@ const luhn = require("luhn");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -184,7 +183,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    handleEmail(pass_through){
+    handleEmail(){
 
       du.debug('Handle Email');
 
@@ -195,7 +194,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    handleNotifications(pass_through){
+    handleNotifications(){
 
       du.debug('Handle Notifications');
 

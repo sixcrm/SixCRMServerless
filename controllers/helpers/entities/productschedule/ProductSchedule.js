@@ -2,16 +2,8 @@
 const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
-const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class ProductScheduleHelper {
 
@@ -117,7 +109,7 @@ module.exports = class ProductScheduleHelper {
       return (a.start - b.start);
     })
 
-    let next_schedule_element = arrayutilities.find(product_schedule.schedule, (schedule_element, index) => {
+    let next_schedule_element = arrayutilities.find(product_schedule.schedule, (schedule_element) => {
 
       if(_.has(schedule_element, 'end') && this.calculateNextBillingInSchedule({schedule_element: schedule_element, day: day}) > parseInt(schedule_element.end)){
         return false;
@@ -139,7 +131,7 @@ module.exports = class ProductScheduleHelper {
   }
 
   //Tested
-  getNextScheduleElementStartDayNumber({product_schedule, day}){
+  getNextScheduleElementStartDayNumber({day}){
 
     du.debug('Get Next Period Day');
 

@@ -1,5 +1,4 @@
 'use strict';
-let _ = require('underscore');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 

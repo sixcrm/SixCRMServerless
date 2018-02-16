@@ -98,7 +98,7 @@ class CreateLeadController extends transactionEndpointController{
         this.setCampaign()
       ];
 
-      return Promise.all(promises).then(result => {
+      return Promise.all(promises).then(() => {
         return true;
       });
 
@@ -210,7 +210,7 @@ class CreateLeadController extends transactionEndpointController{
         this.handleLeadNotifications()
       ]
 
-      return Promise.all(promises).then(promises => {
+      return Promise.all(promises).then(() => {
         return true;
       });
 
@@ -222,7 +222,7 @@ class CreateLeadController extends transactionEndpointController{
 
       let session = this.parameters.get('session');
 
-      return this.handleNotifications(session).then(result => {
+      return this.handleNotifications(session).then(() => {
 
         return true;
 
@@ -236,7 +236,7 @@ class CreateLeadController extends transactionEndpointController{
 
       let session = this.parameters.get('session');
 
-      return this.sendEmails('lead', session).then(result => {
+      return this.sendEmails('lead', session).then(() => {
         return true;
       });
 

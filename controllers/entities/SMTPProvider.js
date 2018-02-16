@@ -64,8 +64,6 @@ class SMTPProviderController extends entityController {
           recepient_emails:[email]
         };
 
-        let smtp_response = null;
-
         return smtp.send(send_object).then(smtp_response => {
 
           return {

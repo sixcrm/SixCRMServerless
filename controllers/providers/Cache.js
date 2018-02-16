@@ -2,7 +2,6 @@
 const _ = require('underscore');
 const crypto = require('crypto');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 

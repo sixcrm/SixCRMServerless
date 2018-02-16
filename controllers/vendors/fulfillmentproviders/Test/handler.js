@@ -3,8 +3,6 @@ const _ = require('underscore');
 const request = require('request');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
@@ -13,7 +11,7 @@ const FulfillmentProviderController = global.SixCRM.routes.include('controllers'
 
 module.exports = class TestController extends FulfillmentProviderController {
 
-  constructor({fulfillment_provider}){
+  constructor(){
 
     super(arguments[0]);
 
@@ -61,7 +59,7 @@ module.exports = class TestController extends FulfillmentProviderController {
 
   }
 
-  fulfill({customer, products}){
+  fulfill(){
 
     du.debug('Fulfill');
 

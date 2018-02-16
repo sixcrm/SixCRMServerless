@@ -3,7 +3,6 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLInt = require('graphql').GraphQLInt;
-const GraphQLString = require('graphql').GraphQLString;
 
 let transactionalProductType = require('./transactionalProductType');
 

@@ -2,7 +2,6 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLFloat = require('graphql').GraphQLFloat;
-const GraphQLString = require('graphql').GraphQLString;
 
 let merchantProviderType = require('./merchantProviderType');
 

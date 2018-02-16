@@ -1,12 +1,7 @@
 'use strict';
-var _ =  require('underscore');
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
 module.exports = class FulfillController extends ShipmentUtilities {
@@ -35,7 +30,7 @@ module.exports = class FulfillController extends ShipmentUtilities {
 
   }
 
-  execute({fulfillment_provider_id, augmented_transaction_products}){
+  execute(){
 
     du.debug('Fulfill');
 
@@ -77,7 +72,7 @@ module.exports = class FulfillController extends ShipmentUtilities {
       this.acquireCustomer()
     ];
 
-    return Promise.all(promises).then(promises => {
+    return Promise.all(promises).then(() => {
 
       return true;
 

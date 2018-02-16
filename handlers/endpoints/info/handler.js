@@ -1,8 +1,6 @@
 'use strict';
 require('../../../SixCRM.js');
 
-const _ = require('underscore');
-
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
 let infoController = global.SixCRM.routes.include('controllers', 'endpoints/info.js');
 

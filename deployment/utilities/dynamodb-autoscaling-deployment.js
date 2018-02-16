@@ -1,5 +1,4 @@
 'use strict'
-const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -8,7 +7,6 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
@@ -263,7 +261,7 @@ class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
         return this.autoscalingutilities.registerScalableTarget(scalable_target_configuration);
       });
 
-      return Promise.all(scalable_target_configuration_promises).then(results => {
+      return Promise.all(scalable_target_configuration_promises).then(() => {
         du.highlight('Successfully set scalable targets for table');
         return true;
       });
@@ -303,7 +301,7 @@ class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
         return this.autoscalingutilities.putScalingPolicy(scaling_policy_configuration);
       });
 
-      return Promise.all(scaling_policy_configuration_promises).then(results => {
+      return Promise.all(scaling_policy_configuration_promises).then(() => {
         du.highlight('Successfully put scaling policies for table');
         return true;
       });
@@ -393,7 +391,7 @@ class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
         du.highlight('Table found: '+table_name);
         return results;
 
-      }).catch(error => {
+      }).catch(() => {
 
         du.highlight('Unable to find table '+table_name);
         return false;

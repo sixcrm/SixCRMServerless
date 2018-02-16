@@ -200,13 +200,13 @@ class forwardMessagesController extends workerController {
 
                                     if(_.has(process.env, "destination_queue")){
 
-                                        sqs.sendMessage({message_body: response.forward, queue: process.env.destination_queue}, (error, data) => {
+                                        sqs.sendMessage({message_body: response.forward, queue: process.env.destination_queue}, (error) => {
 
                                             if(_.isError(error)){
                                                 reject(error);
                                             }
 
-                                            this.deleteMessages(messages).then((deleted) => {
+                                            this.deleteMessages(messages).then(() => {
 
                                                 return resolve(controller_instance.messages.success);
 
@@ -221,7 +221,7 @@ class forwardMessagesController extends workerController {
 
                                     }else{
 
-                                        this.deleteMessages(messages).then((deleted) => {
+                                        this.deleteMessages(messages).then(() => {
 
                                             return resolve(controller_instance.messages.success);
 
@@ -239,11 +239,11 @@ class forwardMessagesController extends workerController {
 
                                         if(_.has(response, "failed")){
 
-                                            sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error, data) => {
+                                            sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error) => {
 
                                                 if(_.isError(error)){ return reject(error); }
 
-                                                this.deleteMessages(messages).then((deleted) => {
+                                                this.deleteMessages(messages).then(() => {
 
                                                     return resolve(controller_instance.messages.failforward);
 

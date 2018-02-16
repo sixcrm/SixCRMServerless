@@ -3,14 +3,11 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-
-const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 
 module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
@@ -74,7 +71,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
   */
 
   //Technical Debt:  Test this!
-  createRebill({session, day, product_schedules, products}){
+  createRebill(){
 
     du.debug('Create Rebill');
 
@@ -150,7 +147,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
       this.normalizeProducts()
     ];
 
-    return Promise.all(promises).then(result => {
+    return Promise.all(promises).then(() => {
       return true;
     });
 
@@ -241,10 +238,10 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
     du.debug('Validate Arguments');
 
-    let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false, null);
-    let normalized_products = this.parameters.get('normalizedproducts', false, null);
-    let session = this.parameters.get('session');
-    let day = this.parameters.get('day');
+    // let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false, null);
+    // let normalized_products = this.parameters.get('normalizedproducts', false, null);
+    // let session = this.parameters.get('session');
+    // let day = this.parameters.get('day');
 
     /*
     if(day < 0){
@@ -455,7 +452,6 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     let normalized_product_schedules = this.parameters.get('normalizedproductschedules', null, false);
 
     let product_schedules = null;
-    let watermark_product_schedules = null;
 
     if(!_.isNull(normalized_product_schedules)){
 

@@ -1,8 +1,5 @@
 'use strict'
 
-const fs = require('fs');
-const yaml = require('js-yaml');
-
 require('../../SixCRM.js');
 
 const SmsNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/sms-notification-provider');

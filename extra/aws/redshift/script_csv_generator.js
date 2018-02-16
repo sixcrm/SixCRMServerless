@@ -1,9 +1,6 @@
 var AWS = require('aws-sdk');
-var pg = require('pg');
 
 var s3 = new AWS.S3();
-var red = new AWS.Redshift();
-var redshiftClient = require('./redshift.js');
 
 var myBucket = 'sixcrm-redshift-staging';
 var myKey = 'test_json_gen.json';
@@ -64,13 +61,13 @@ function generateJson() {
 
 
 var putObjectPromise  = function loadBucket() {
-    s3.createBucket({Bucket: myBucket}, function(err, data) {
+    s3.createBucket({Bucket: myBucket}, function(err) {
         if (err) {
             console.log(err);
         } else {
             let params = {Bucket: myBucket, Key: myKey, Body: generateJson()};
 
-            return s3.putObject(params, function(err, data){
+            return s3.putObject(params, function(err){
                 if (err) {
                     console.log(err)
                 } else {

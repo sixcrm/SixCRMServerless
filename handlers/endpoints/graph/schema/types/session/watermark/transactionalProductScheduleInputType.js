@@ -1,7 +1,6 @@
 'use strict';
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 const GraphQLList = require('graphql').GraphQLList;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
 let transactionalScheduleInputType = require('./transactionalScheduleInputType');

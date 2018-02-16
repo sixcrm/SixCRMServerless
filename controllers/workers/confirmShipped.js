@@ -1,7 +1,6 @@
 'use strict';
 const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
@@ -223,7 +222,7 @@ module.exports = class confirmShippedController extends workerController {
 
         });
 
-        return Promise.all(update_promises).then(results => {
+        return Promise.all(update_promises).then(() => {
           return true;
         });
 

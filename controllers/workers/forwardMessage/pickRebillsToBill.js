@@ -1,7 +1,6 @@
 'use strict';
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const forwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');

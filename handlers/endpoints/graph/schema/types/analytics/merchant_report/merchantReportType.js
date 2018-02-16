@@ -1,7 +1,6 @@
 'use strict';
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const GraphQLJSON = require('graphql-type-json');
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
 const merchantReportRowType = require('./merchantReportRowType');

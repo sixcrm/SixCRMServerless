@@ -2,8 +2,6 @@
 const _ = require('underscore');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const ResponseController = global.SixCRM.routes.include('providers', 'Response.js');
 
 module.exports = class ShippingCarrierResponse extends ResponseController {

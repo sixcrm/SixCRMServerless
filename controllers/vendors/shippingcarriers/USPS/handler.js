@@ -1,5 +1,4 @@
 'use strict';
-var _ = require('underscore');
 var request = require('request');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -49,7 +48,7 @@ module.exports = class USPSController extends ShippingCarrierController {
 
   }
 
-  info({tracking_number}){
+  info(){
 
     du.debug('info');
 
@@ -127,7 +126,7 @@ module.exports = class USPSController extends ShippingCarrierController {
 
     return new Promise((resolve) => {
 
-      request(request_uri, (error, response, body) => {
+      request(request_uri, (error, response) => {
 
         if(error){
           eu.throw(error);

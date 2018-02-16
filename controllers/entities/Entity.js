@@ -4,7 +4,6 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
@@ -76,9 +75,10 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //Technical Debt:  Deprecate!
-    //NOTE: Expensive (and incomplete)
+		//NOTE: Expensive (and incomplete)
+		/* eslint-disable */
     listBySecondaryIndex({field, index_value, index_name, pagination, fatal}) {
-
+		/* eslint-enable */
       du.debug('List By Secondary Index');
 
       return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
@@ -233,9 +233,9 @@ module.exports = class entityController extends entityUtilitiesController {
       .catch((error) => this.handleErrors(error, fatal));
 
     }
-
+		/* eslint-disable */
     getListByAccount({ids, query_parameters, account, pagination, reverse_order, fatal, search}){
-
+		/* eslint-enable */
       du.debug('Get List By Account');
 
       ids = (_.isUndefined(ids))?[]:ids;
@@ -252,9 +252,9 @@ module.exports = class entityController extends entityUtilitiesController {
       return this.listByAccount(argumentation);
 
     }
-
+		/* eslint-disable */
     getListByUser({ids, query_parameters, account, pagination, reverse_order, fatal, search}){
-
+		/* eslint-enable */
       du.debug('Get List By User');
 
       ids = (_.isUndefined(ids))?[]:ids;
@@ -546,7 +546,7 @@ module.exports = class entityController extends entityUtilitiesController {
         }
       })
       .then(() => this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null))
-      .then((result) => {
+      .then(() => {
 
         this.removeFromSearchIndex(id, this.descriptive_name);
 

@@ -6,7 +6,6 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const xmlutilities = global.SixCRM.routes.include('lib', 'xml-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -15,7 +14,7 @@ const FulfillmentProviderVendorResponse = global.SixCRM.routes.include('vendors'
 
 module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse {
 
-  constructor({vendor_response, action, additional_parameters}){
+  constructor(){
 
     super(arguments[0]);
 
@@ -32,8 +31,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
       info:'translateInfo',
       fulfill:'translateFulfill'
     };
-
-    let translation_method = translation_methods[action];
 
     return this[translation_methods[action]](response);
 

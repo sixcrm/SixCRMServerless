@@ -1,12 +1,9 @@
 'use strict';
-var _ =  require('underscore');
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 const FulfillmentController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
 const TestController = global.SixCRM.routes.include('helpers', 'shipment/Test.js');
@@ -14,7 +11,6 @@ const InfoController = global.SixCRM.routes.include('helpers', 'shipment/Info.js
 
 const TerminalUtilities = global.SixCRM.routes.include('providers', 'terminal/TerminalUtilities.js');
 const TerminalReceiptController = global.SixCRM.routes.include('providers', 'terminal/Receipt.js');
-const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
 
 module.exports = class TerminalController extends TerminalUtilities  {
 
@@ -24,7 +20,7 @@ module.exports = class TerminalController extends TerminalUtilities  {
 
   }
 
-  fulfill({rebill}){
+  fulfill(){
 
     du.debug('Fulfill');
 
@@ -146,7 +142,7 @@ module.exports = class TerminalController extends TerminalUtilities  {
 
   }
 
-  info({shipping_receipt}){
+  info(){
 
     du.debug('info');
 
@@ -194,7 +190,7 @@ module.exports = class TerminalController extends TerminalUtilities  {
 
   }
 
-  test({fulfillment_provider_id}){
+  test(){
 
     du.debug('Test');
 

@@ -1,7 +1,6 @@
 'use strict'
 const uuidV4 = require('uuid/v4');
 const _ = require('underscore');
-const fs = require('fs');
 
 require('../SixCRM.js');
 

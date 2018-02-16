@@ -1,10 +1,8 @@
 'use strict';
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
@@ -147,7 +145,7 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
       create_parameters.AssumeRolePolicyDocument = parserutilities.parse(create_parameters.AssumeRolePolicyDocument, {aws_account_id: global.SixCRM.configuration.site_config.aws.account});
 
-      return this.iamutilities.createRole(create_parameters).then((result) => {
+      return this.iamutilities.createRole(create_parameters).then(() => {
 
         return timestamp.delay(3000)().then(() => this.addPoliciesAndPermissions(role_definition));
 

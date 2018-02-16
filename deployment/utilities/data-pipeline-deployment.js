@@ -1,9 +1,8 @@
 'use strict';
-const _ = require('underscore');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 class DataPipelineDeployment extends AWSDeploymentUtilities {
@@ -33,9 +32,6 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 		du.debug('Assure Pipeline');
 
-		return new Promise((resolve) => {
-
-
 			let create_parameters = {
 				name: 'Seed Dynamo Pipeline', /* required */
 				uniqueId: `${this.unique_id}`, /* required */
@@ -49,7 +45,6 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 				.then(definition => this.datapipelineutilities.putPipelineDefinition({parameters: definition}))
 				.then(definition => this.datapipelineutilities.activatePipeline({parameters: {pipelineId: definition.pipelineId}}))
 				.catch(error => eu.throwError('server', error.message));
-		});
 
 	}
 

@@ -11,6 +11,6 @@ return s3utilities.getObject(bucket_name, 'last_commit.txt')
         process.stdout.write(last_commit);
         process.exit();
     })
-    .catch((error) => {
+    .catch(() => {
         process.exit();
     });

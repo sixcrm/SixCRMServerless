@@ -2,7 +2,6 @@
 const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
@@ -59,7 +58,7 @@ class InfoController extends transactionEndpointController{
       promises.push(this.acquireProducts());
       promises.push(this.acquireProductSchedules());
 
-      return Promise.all(promises).then(results => {
+      return Promise.all(promises).then(() => {
         return true;
       });
 

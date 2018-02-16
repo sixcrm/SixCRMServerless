@@ -219,7 +219,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getEnvironmentFields(array){
+  getEnvironmentFields(){
     //use promise all
   }
 
@@ -313,7 +313,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getConfiguration(source, field, use_cache){
+  getConfiguration(source, field){
 
     du.debug('Get Configuration');
 
@@ -353,7 +353,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getLocalEnvironmentConfiguration(field){
+  getLocalEnvironmentConfiguration(){
 
     du.debug('Get Local Environent Configuration');
 
@@ -440,7 +440,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       return result;
 
-    }).catch((error) => {
+    }).catch(() => {
 
       this.propagateCache('localcache', field, null);
 
@@ -514,7 +514,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
             Body: '{}'
           };
 
-          return this.s3utilities.putObject(parameters).then((result) => {
+          return this.s3utilities.putObject(parameters).then(() => {
 
             return this.getS3EnvironmentConfiguration(field);
 
@@ -655,11 +655,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       //return this.propagateCache('localcache', key, value);
 
-      return this.redisutilities.set(redis_key, value).then((result) => {
+      return this.redisutilities.set(redis_key, value).then(() => {
 
         return this.propagateCache('localcache', key, value);
 
-      }).catch((error) => {
+      }).catch(() => {
 
         return this.propagateCache('localcache', key, value);
 
@@ -703,7 +703,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         du.debug({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}, process.env);
 
-        return this.s3utilities.putObject({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}).then((result) => {
+        return this.s3utilities.putObject({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}).then(() => {
 
           return this.propagateCache('redis', key, value);
 

@@ -1,5 +1,5 @@
 'use strict';
-let _ = require('underscore');
+
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = function(results){

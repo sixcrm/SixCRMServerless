@@ -1,9 +1,6 @@
 'use strict';
-const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLInt = require('graphql').GraphQLInt;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
 
 const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');

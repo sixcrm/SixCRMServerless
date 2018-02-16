@@ -5,7 +5,6 @@ const _ = require('underscore');
 require('../../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const modelvalidatorutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');

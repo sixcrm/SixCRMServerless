@@ -8,7 +8,6 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
 
 const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting.js');
 
 let userACLType = require('../useracl/userACLType');
 let accessKeyType = require('../accesskey/accessKeyType');

@@ -1,8 +1,6 @@
 'use strict';
-const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
@@ -60,7 +58,7 @@ class TrackingController extends transactionEndpointController{
         this.acquireCampaign()
       ];
 
-      return Promise.all(promises).then(promises => {
+      return Promise.all(promises).then(() => {
         return true;
       });
 

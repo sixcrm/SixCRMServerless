@@ -16,7 +16,7 @@ class transactionController extends entityController {
     }
 
     //Technical Debt:  Finish
-    associatedEntitiesCheck({id}){
+    associatedEntitiesCheck(){
       return Promise.resolve([]);
       /*
       if(id == '3e0fda0a-a64b-4752-bed8-152a98285be7'){
@@ -43,7 +43,7 @@ class transactionController extends entityController {
     }
 
     //Technical Debt:  This is pretty complicated.
-    listByProductID({id, pagination}){
+    listByProductID(){
 
       du.debug('List By Product ID');
 
@@ -350,7 +350,7 @@ class transactionController extends entityController {
     // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
     // we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
     //Technical Debt:  Please refactor.
-    listByCustomer({customer, pagination, fatal}){
+    listByCustomer({customer, pagination}){
 
         du.debug('List Transactions By Customer');
 

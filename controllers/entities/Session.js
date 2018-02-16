@@ -3,7 +3,6 @@ const _ = require('underscore');
 
 var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-var eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 var arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 var objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
@@ -33,7 +32,7 @@ class sessionController extends entityController {
 
     //Technical Debt: finish!
     //Rebill
-    associatedEntitiesCheck({id}){
+    associatedEntitiesCheck(){
       return Promise.resolve([]);
     }
 

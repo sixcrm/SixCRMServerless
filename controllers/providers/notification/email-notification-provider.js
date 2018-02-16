@@ -1,5 +1,4 @@
 'use strict';
-const _ = require('underscore');
 
 //Technical Debt:  This needs to be a helper.
 //Technical Debt:  Use SMTP

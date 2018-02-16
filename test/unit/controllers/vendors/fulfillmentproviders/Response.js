@@ -1,15 +1,8 @@
 'use strict'
-const _ = require('underscore');
 const chai = require("chai");
-const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
-const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 describe('vendors/fulfillmentproviders/Response.js', () =>{
 
@@ -25,7 +18,10 @@ describe('vendors/fulfillmentproviders/Response.js', () =>{
       const FulfillmentResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Response.js');
 
       try{
-        let fulfillmentResponse = new FulfillmentResponse();
+				/* eslint-disable */
+				let fulfillmentResponse = new FulfillmentResponse();
+				/* eslint-enable */
+
       }catch(error){
         expect(error.message).to.be.defined;
       }

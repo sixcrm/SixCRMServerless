@@ -3,13 +3,11 @@ const uuidV4 = require('uuid/v4');
 
 require('../SixCRM.js');
 
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
 
 setEnvironmentVariables();
 
-const kinesisfirehoseutilities = require('../lib/kinesis-firehose-utilities');
 
 function setEnvironmentVariables(){
 
@@ -17,6 +15,7 @@ function setEnvironmentVariables(){
     process.env.aws_region = 'us-east-1';
 
 }
+/* eslint-disable */
 
 function weightedRand(spec) {
   var i, sum=0, r=random.randomInt();
@@ -26,6 +25,8 @@ function weightedRand(spec) {
     if (r <= sum) return i;
   }
 }
+/* eslint-enable */
+
 
 
 function createRandomRebillQueueRecord(){
@@ -41,6 +42,7 @@ function createRandomRebillQueueRecord(){
     let spoofed_record_list = [];
 
     spoofed_record_list.push(spoofed_record_seed);
+/* eslint-disable */
 
     let  queue_steps = {
             bill :  { hold:0.85, fail_bill:0.15 },
@@ -55,6 +57,7 @@ function createRandomRebillQueueRecord(){
             fail_delivered :  { recover:0.85, exit:0.15 },
             recover : {hold:0.85, exit:0.15 }
           };
+/* eslint-enable */
 
 
     while(spoofed_record_list[spoofed_record_list.length-1].current_queuename != 'exit'){

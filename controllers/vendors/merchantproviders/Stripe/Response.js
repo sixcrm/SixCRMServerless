@@ -1,19 +1,13 @@
 'use strict';
 const _ = require('underscore');
-const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
 module.exports = class StripeResponse extends MerchantProviderResponse {
 
-  constructor({vendor_response, action, additional_parameters}){
+  constructor(){
 
     super(arguments[0]);
 
