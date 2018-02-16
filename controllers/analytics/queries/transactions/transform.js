@@ -7,7 +7,7 @@ module.exports = function(results, parameters){
 
     du.debug('Transformation Function');
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
         let result_array = [];
 

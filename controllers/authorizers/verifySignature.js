@@ -6,7 +6,6 @@ var signature = global.SixCRM.routes.include('lib', 'signature.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
 class verifySignatureController {
@@ -116,7 +115,7 @@ class verifySignatureController {
 
     }
 
-    populateAuthorityUser(token_object){
+    populateAuthorityUser(){
 
       du.debug('Populate Authority User');
 

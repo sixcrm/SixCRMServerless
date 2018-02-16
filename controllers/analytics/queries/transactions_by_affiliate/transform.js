@@ -3,11 +3,11 @@ let _ = require('underscore');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
-module.exports = function(results, parameters){
+module.exports = function(results){
 
     du.debug('Transformation Function');
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
         let affiliates = [];
 

@@ -238,7 +238,12 @@ class IAMDeployment extends AWSDeploymentUtilities {
           let role_definitions = this.acquireRoleFile(role_file_name);
 
           let deploy_role_promises = arrayutilities.map(role_definitions, (role_definition) => {
-            return this.destroyRole(role_definition);
+
+						//Technical Debt: this can be way cleaner, can remove role from instance profile then delete
+						if(!role_definition.RoleName === 'DataPipelineDefaultResourceRole'){
+							return this.destroyRole(role_definition);
+						}
+
           });
 
           return Promise.all(deploy_role_promises);
