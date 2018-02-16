@@ -1,5 +1,5 @@
 'use strict';
-let _ = require('underscore');
+
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -10,7 +10,7 @@ module.exports = function(results, parameters){
 
     du.info(results);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
       let result_array = arrayutilities.map(results, (result) => {
         return {
