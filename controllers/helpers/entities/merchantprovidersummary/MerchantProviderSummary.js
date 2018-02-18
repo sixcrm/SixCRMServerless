@@ -3,6 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class MerchantProviderSummaryHelperController {
@@ -16,6 +17,12 @@ module.exports = class MerchantProviderSummaryHelperController {
           day:'day',
           type:'type',
           total:'total'
+        },
+        optional:{}
+      },
+      getMerchantProviderSummaries:{
+        required:{
+          merchantproviders: 'merchant_providers'
         },
         optional:{}
       }
@@ -43,7 +50,7 @@ module.exports = class MerchantProviderSummaryHelperController {
     du.debug('Increment Merchant Provider Summary');
 
     return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'incrementMerchantProvider'}))
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'incrementMerchantProviderSummary'}))
     .then(() => this.validateDay())
     .then(() => this.getMerchantProviderSummary())
     .then(() => this.incrementSummary());
@@ -64,19 +71,26 @@ module.exports = class MerchantProviderSummaryHelperController {
 
   }
 
-  getMerchantProviderSummary({merchant_provider, day, type}){
+  getMerchantProviderSummary(){
 
     du.debug('Get Merchant Provider Summary');
+
+    let day = this.parameters.get('day');
+    let type = this.parameters.get('type');
+    let merchant_provider = this.parameters.get('merchantproviderid');
 
     let start = timestamp.startOfDay(day);
     let end = timestamp.endOfDay(day);
 
     return this.merchantProviderSummaryController.listByMerchantProviderAndDateRange({merchant_providers:[merchant_provider], start:start, end:end, type: type})
-    .then((result) => this.merchantProviderSummaryController.getResult(result))
+    .then((result) => this.merchantProviderSummaryController.getResult(result, 'merchantprovidersummaries'))
     .then(result => {
 
-      if(!_.isNull(result)){
-        this.parameters.set('merchantprovidersummary', result);
+      if(!_.isNull(result) && arrayutilities.nonEmpty(result)){
+        if(result.length != 1){
+          eu.throwError('server', 'Unexpected Dynamo response.');
+        }
+        this.parameters.set('merchantprovidersummary', result.pop());
         return true;
       }
 
@@ -97,7 +111,7 @@ module.exports = class MerchantProviderSummaryHelperController {
 
     return {
       merchant_provider: merchant_provider,
-      day: day,
+      day: timestamp.startOfDay(day),
       total: 0.0,
       count: 0,
       type: type
@@ -112,7 +126,7 @@ module.exports = class MerchantProviderSummaryHelperController {
     let merchant_provider_summary = this.parameters.get('merchantprovidersummary');
     let total = this.parameters.get('total');
 
-    merchant_provider_summary.total = merchant_provider_summary.total + numberutilities.formatFloat(total);
+    merchant_provider_summary.total = numberutilities.formatFloat((numberutilities.formatFloat(merchant_provider_summary.total) + numberutilities.formatFloat(total, 2)), 2);
     merchant_provider_summary.count = merchant_provider_summary.count + 1;
 
     return this.merchantProviderSummaryController.update({entity: merchant_provider_summary}).then(result => {
@@ -121,6 +135,120 @@ module.exports = class MerchantProviderSummaryHelperController {
     });
 
   }
+
+  getMerchantProviderSummaries(){
+
+    du.debug('Get Merchant Provider Summaries');
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'getMerchantProviderSummaries'}))
+    .then(() => this.acquireMerchantProviderSummaries())
+    .then(() => this.formatResponse());
+
+  }
+
+  acquireMerchantProviderSummaries(){
+
+    du.debug('Acquire Merchant Provider Summaries');
+
+    let merchant_providers = this.parameters.get('merchantproviders');
+    let start = timestamp.startOfMonth();
+
+    return this.merchantProviderSummaryController.listByMerchantProviderAndDateRange({merchant_providers: merchant_providers,start: start})
+    .then((result) => this.merchantProviderSummaryController.getResult(result, 'merchantprovidersummaries'))
+    .then(result => {
+      this.parameters.set('merchantprovidersummaries', result);
+      return true;
+    });
+
+  }
+
+  formatResponse(){
+
+    du.debug('Format Response');
+
+    let merchant_providers = this.parameters.get('merchantproviders');
+    let merchant_provider_summaries = this.parameters.get('merchantprovidersummaries', null, false);
+
+    let return_object = {};
+
+    return_object.merchant_providers = arrayutilities.map(merchant_providers, merchant_provider => {
+
+      let merchant_provider_specific_merchant_provider_summaries = arrayutilities.filter(merchant_provider_summaries, merchant_provider_summary => {
+        return merchant_provider_summary.merchant_provider == merchant_provider;
+      });
+
+      return {
+        merchant_provider: {
+          id: merchant_provider
+        },
+        summary: {
+          today: this.aggregateTodaysSummaries(merchant_provider_specific_merchant_provider_summaries),
+          thisweek: this.aggregateThisWeeksSummaries(merchant_provider_specific_merchant_provider_summaries),
+          thismonth: this.aggregateThisMonthsSummaries(merchant_provider_specific_merchant_provider_summaries)
+        }
+      }
+
+    });
+
+    return return_object;
+
+  }
+
+  aggregateThisMonthsSummaries(merchant_provider_summaries){
+
+    du.debug('Aggregate This Months Summaries');
+
+    return this.aggregateAfter(merchant_provider_summaries, 'this_month');
+
+  }
+
+  aggregateThisWeeksSummaries(merchant_provider_summaries){
+
+    du.debug('Aggregate This Weeks Summaries');
+
+    return this.aggregateAfter(merchant_provider_summaries, 'this_week');
+
+  }
+
+  aggregateTodaysSummaries(merchant_provider_summaries){
+
+    du.debug('Aggregate Todays Summaries');
+
+    return this.aggregateAfter(merchant_provider_summaries, 'today');
+
+  }
+
+  aggregateAfter(merchant_provider_summaries, start_indicator){
+
+    du.debug('Aggregate After');
+
+    let starts = {
+      'today': timestamp.startOfDay(),
+      'this_week': timestamp.startOfWeek(),
+      'this_month':timestamp.startOfMonth()
+    };
+
+    let start = starts[start_indicator];
+    let summary_object = {
+      count: 0,
+      amount: 0
+    };
+
+    return arrayutilities.reduce(
+      merchant_provider_summaries,
+      (current, merchant_provider_summary) => {
+        if(merchant_provider_summary.day >= start){
+          current.count += parseInt(merchant_provider_summary.count);
+          current.amount += numberutilities.formatFloat(merchant_provider_summary.total, 2);
+        }
+        return current;
+      },
+      summary_object
+    );
+
+  }
+
 
 
 }

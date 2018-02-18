@@ -402,6 +402,7 @@ class CreateOrderController extends transactionEndpointController{
     du.debug('Post Processing');
 
     let promises = [
+      this.incrementMerchantProviderSummary(),
       this.updateSessionWithWatermark(),
       this.pushEventsRecord(),
       this.addRebillToStateMachine()
@@ -412,6 +413,33 @@ class CreateOrderController extends transactionEndpointController{
       return true;
 
     });
+
+  }
+
+  incrementMerchantProviderSummary(){
+
+    du.debug('Increment Merchant Provider Summary');
+
+    let transactions = this.parameters.get('transactions');
+
+    if(_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)){ return false; }
+
+    const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+
+    return arrayutilities.serial(transactions, (current, transaction) => {
+
+      if(transaction.type != 'sale' || transaction.result != 'success'){ return false; }
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+        merchant_provider: transaction.merchant_provider,
+        day: transaction.created_at,
+        total: transaction.amount,
+        type: 'new'
+      });
+
+    }, null);
 
   }
 

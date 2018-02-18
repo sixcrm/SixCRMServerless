@@ -9,7 +9,7 @@
 	},
 	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2RldmVsb3BtZW50LWFwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNTE3NzE4ODA5LCJleHAiOjE1MTc3MjI0MDksInVzZXJfYWxpYXMiOiI2MGZjOGNjYzg1ZDhiN2U2ZWFhZTMzM2JiMjBkMmRiNTFhYTM3NjkzIn0.55k5yQNf-5nsUDwFiG8I57Z40KKXiLWXdNG9Wijf5IU",
 	"body":{
-		"session":"6c5aef99-3fd0-4e9a-b734-a7609b7f624a",
+		"session":"668ad918-0d09-4116-a6fe-0e8a9eda36f7",
 		"product_schedules":[{
 			"quantity":2,
 			"product_schedule":"12529a17-ac32-4e46-b05b-83862843055d"

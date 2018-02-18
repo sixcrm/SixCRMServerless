@@ -1,9 +1,9 @@
 'use strict';
 const _ = require('underscore');
-const request = require('request');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 
 const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
 
@@ -274,33 +274,13 @@ module.exports = class TestController extends FulfillmentProviderController {
     let uri = this.parameters.get('endpoint')+this.parameters.get('method');
 
     var request_options = {
-      method: 'post',
       body: parameters_object,
-      json: true,
       url: uri
     };
 
-    return new Promise((resolve, reject) => {
-
-      request(request_options, (error, response, body) => {
-
-        let response_object = {
-          error: error,
-          response: response,
-          body: body
-        };
-
-        this.parameters.set('vendorresponse', response_object);
-
-        if(_.isError(error)){
-          du.error(error);
-          reject(response_object);
-        }
-
-        resolve(response_object);
-
-      });
-
+    return httputilities.postJSON(request_options).then(result => {
+      this.parameters.set('vendorresponse', result);
+      return result;
     });
 
   }

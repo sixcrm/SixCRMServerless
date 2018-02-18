@@ -2,6 +2,7 @@
 const _ = require("underscore");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
@@ -36,8 +37,10 @@ module.exports = class recoverBillingController extends workerController {
     return this.preamble(message)
     .then(() => this.process())
     .then(() => this.markRebill())
+    .then(() => this.postProcessing())
     .then(() => this.respond())
     .catch((error) => {
+      du.error(error);
       return super.respond('error', error.message);
     })
 
@@ -55,11 +58,39 @@ module.exports = class recoverBillingController extends workerController {
 
     return registerController.processTransaction({rebill: rebill}).then(response => {
 
-      this.parameters.set('registerresponsecode', response.getCode());
+      this.parameters.set('registerresponse', response);
 
       return Promise.resolve(true);
 
     });
+
+  }
+
+  postProcessing(){
+
+    du.debug('Post Processing');
+
+    let register_response = this.parameters.get('registerresponse');
+    let transactions = register_response.parameters.get('transactions', null, false);
+
+    if(_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)){ return false; }
+
+    const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+
+    return arrayutilities.serial(transactions, (current, transaction) => {
+
+      if(transaction.type != 'sale' || transaction.result != 'success'){ return false; }
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+        merchant_provider: transaction.merchant_provider,
+        day: transaction.created_at,
+        total: transaction.amount,
+        type: 'recurring'
+      });
+
+    }, Promise.resolve());
 
   }
 
@@ -68,7 +99,7 @@ module.exports = class recoverBillingController extends workerController {
     du.debug('Mark Rebill');
 
     let rebill = this.parameters.get('rebill');
-    let register_response_code = this.parameters.get('registerresponsecode');
+    let register_response_code = this.parameters.get('registerresponse').getCode();
 
     if(register_response_code == 'fail'){
 
@@ -98,7 +129,7 @@ module.exports = class recoverBillingController extends workerController {
 
     du.debug('Respond');
 
-    let register_response_code = this.parameters.get('registerresponsecode');
+    let register_response_code = this.parameters.get('registerresponse').getCode();
 
     return super.respond(register_response_code);
 

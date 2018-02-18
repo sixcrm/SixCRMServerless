@@ -4,36 +4,51 @@ const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-function getValidReferenceNumber(){
+function getValidResponse(){
 
-  return uuidV4();
+  return {
+    error: null,
+    response:{
+      statusCode: 200,
+      statusMessage: 'OK',
+      body:{
+        success: true,
+        code: 200,
+        response:{
+         reference_number: '03c94bdd-bb88-4d55-a900-ca5665c04c12',
+         tracking_number: 'CYKCDDSAR5KRA3WH4WE8',
+         carrier: 'USPS'
+        }
+      }
+    },
+    body:{
+      success: true,
+      code: 200,
+      response:{
+        reference_number: '03c94bdd-bb88-4d55-a900-ca5665c04c12',
+        tracking_number: 'CYKCDDSAR5KRA3WH4WE8',
+        carrier: 'USPS'
+      }
+    }
+  };
 
 }
 
 function getValidFulfillmentProvider(){
-
   return MockEntities.getValidFulfillmentProvider();
-
 }
 
 function getValidCustomer(){
-
   return MockEntities.getValidCustomer();
-
 }
 
 function getValidProducts(product_ids){
-
-  let products = [];
 
   if(_.isUndefined(product_ids)){
     product_ids = [uuidV4(), uuidV4()];
@@ -46,9 +61,7 @@ function getValidProducts(product_ids){
 }
 
 function getValidShippingReceipt(){
-
   return MockEntities.getValidShippingReceipt();
-
 }
 
 describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
@@ -126,9 +139,16 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
     it('successfully executes a test request', () => {
 
       let fulfillment_provider = getValidFulfillmentProvider();
+      let response_object = getValidResponse();
 
       fulfillment_provider.provider.name = 'Test';
       let shipping_receipt = getValidShippingReceipt();
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        postJSON:() => {
+          return Promise.resolve(response_object);
+        }
+      });
 
       /*
       let three_pl_response = getValidThreePLResponse('FindOrders');
@@ -162,15 +182,13 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
       let customer = getValidCustomer();
       let products = getValidProducts();
       let fulfillment_provider = getValidFulfillmentProvider();
+      let response_object = getValidResponse();
 
-      /*
-      let three_pl_response = getValidThreePLResponse('CreateOrders');
-      mockery.registerMock('request', {
-        post: (request_options, callback) => {
-         callback(null, three_pl_response);
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        postJSON:() => {
+          return Promise.resolve(response_object);
         }
       });
-      */
 
       const TestController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Test/handler.js');
       let testController = new TestController({fulfillment_provider: fulfillment_provider});

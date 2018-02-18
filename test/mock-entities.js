@@ -10,6 +10,30 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
 
+  static arrayOfIds(){
+
+    let arraycount = randomutilities.randomInt(1, 10);
+
+    let return_array = [];
+
+    for(let i = 0; i< arraycount; i++){
+      return_array.push(uuidV4());
+    }
+
+    return return_array;
+
+  }
+
+  static getValidMerchantProviderSummaries(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?this.arrayOfIds():ids;
+
+    return arrayutilities.map(ids, id => {
+      return this.getValidMerchantProviderSummary(id);
+    });
+
+  }
+
   static getValidMerchantProviderSummary(id){
 
     let a_iso8601 = timestamp.getISO8601();

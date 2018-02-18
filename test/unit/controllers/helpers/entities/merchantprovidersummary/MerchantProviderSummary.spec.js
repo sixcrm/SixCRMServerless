@@ -1,28 +1,20 @@
 'use strict'
-
-const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
-const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+
+function getValidMerchantProvider(){
+  return MockEntities.getValidMerchantProvider();
+}
 
 function getValidMerchantProviderSummary(){
-
   return MockEntities.getValidMerchantProviderSummary();
-
 }
 
 describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json', () => {
@@ -112,6 +104,84 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
           return true;
         });
       },null);
+
+    });
+
+  });
+
+  describe('validateDay', () => {
+
+    it('returns true', () => {
+
+      let day = timestamp.getISO8601();
+
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      merchantProviderSummaryHelperController.parameters.set('day', day);
+
+      expect(merchantProviderSummaryHelperController.validateDay()).to.equal(true);
+
+    });
+
+    it('returns an error', () => {
+
+      let day = timestamp.yesterday();
+
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      merchantProviderSummaryHelperController.parameters.set('day', day);
+
+      try{
+        expect(merchantProviderSummaryHelperController.validateDay())
+      }catch(error){
+        expect(error.message).to.equal('[500] You may not increment a merchant provider summary for a day other than today.');
+      }
+
+    });
+
+  });
+
+  describe('incrementMerchantProviderSummary', () => {
+
+    it('successfully increments', () => {
+
+      let merchant_provider = getValidMerchantProvider();
+      let merchant_provider_summary = getValidMerchantProviderSummary();
+      let day = timestamp.getISO8601();
+      let type = 'new';
+      let total = 44.99;
+
+      merchant_provider_summary.merchant_provider = merchant_provider.id;
+      merchant_provider_summary.day = day;
+      merchant_provider_summary.type = type;
+      merchant_provider_summary.count = 32;
+      merchant_provider_summary.total = 3213.87;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        },
+        create:() => {
+          return Promise.resolve(merchant_provider_summary);
+        },
+        listByMerchantProviderAndDateRange:() => {
+          return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
+        },
+        getResult:() => {
+          return merchant_provider_summary;
+        }
+      });
+
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({merchant_provider: merchant_provider.id, day:day, type:type, total:total}).then(result => {
+        expect(merchantProviderSummaryHelperController.parameters.store['merchantprovidersummary'].count).to.equal(33);
+        expect(merchantProviderSummaryHelperController.parameters.store['merchantprovidersummary'].total).to.equal(3258.86);
+        expect(result).to.equal(true);
+      });
 
     });
 

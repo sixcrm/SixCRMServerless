@@ -47,7 +47,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       this.loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
       this.loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
       this.creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-      this.analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 			this.binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js')
     }
 
@@ -208,15 +207,12 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       let merchant_provider_ids = arrayutilities.map(merchant_providers, merchant_provider => merchant_provider.id);
 
-      let parameters = {
-        analyticsfilter:{
-          merchantprovider: merchant_provider_ids
-        }
-      };
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
-      return this.analyticsController.getMerchantProviderSummaries(parameters).then(results => {
+      return merchantProviderSummaryHelperController.getMerchantProviderSummaries({merchant_providers: merchant_provider_ids}).then(results => {
 
-        this.parameters.set('smp.merchantprovidersummaries', results.merchantproviders);
+        this.parameters.set('smp.merchantprovidersummaries', results.merchant_providers);
 
         return true;
 
@@ -235,7 +231,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
         arrayutilities.filter(merchant_providers, (merchant_provider, index) => {
 
-          if(merchant_provider.id == summary.merchantprovider.id){
+          if(merchant_provider.id == summary.merchant_provider.id){
             merchant_providers[index].summary = summary;
           }
 

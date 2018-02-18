@@ -1,16 +1,11 @@
 'use strict'
 
-const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -20,10 +15,6 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidCustomer(){
   return MockEntities.getValidCustomer();
-}
-
-function getLocalEvent(){
-  return JSON.stringify(getValidEvent());
 }
 
 function getValidEvent(){
@@ -122,10 +113,6 @@ function getValidCreditCardPrototype(){
 
 }
 
-function getValidProductScheduleIDs(){
-  return arrayutilities.map(getValidProductSchedules(), product_schedule => { return product_schedule.id; });
-}
-
 function getValidProductSchedules(){
   return MockEntities.getValidProductSchedules();
 }
@@ -136,19 +123,6 @@ function getValidProductSchedule(id, expanded){
 
 function getValidSession(){
   return MockEntities.getValidSession();
-}
-
-function getValidSessionPrototype(){
-
-  let session = MockEntities.getValidSession();
-
-  delete session.id;
-  delete session.account;
-  delete session.product_schedules;
-  delete session.created_at;
-  delete session.updated_at;
-  return session;
-
 }
 
 function getValidCustomerPrototype(){
@@ -194,10 +168,6 @@ function getValidRebill(){
 }
 
 function getValidTransactions(){
-  return MockEntities.getValidTransactions();
-}
-
-function getValidTransaction(){
   return MockEntities.getValidTransactions();
 }
 
@@ -283,10 +253,10 @@ describe('checkout', function () {
       let customer = getValidCustomer();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: (email) => {
+        getCustomerByEmail: () => {
           return Promise.resolve(null);
         },
-        create:({entity}) => {
+        create:() => {
           return Promise.resolve(customer);
         }
       });
@@ -299,7 +269,7 @@ describe('checkout', function () {
           cloned_event.affiliates = affiliates;
           return Promise.resolve(cloned_event);
         }
-        transcribeAffiliates(source_object, destination_object){
+        transcribeAffiliates(){
           return {};
         }
       }
@@ -307,13 +277,13 @@ describe('checkout', function () {
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve({});
         }
       });
@@ -329,7 +299,7 @@ describe('checkout', function () {
 
       let mock_email_helper = class {
         constructor(){}
-        sendEmail(a_event, info){
+        sendEmail(){
           return Promise.resolve(true);
         }
       }
@@ -337,13 +307,13 @@ describe('checkout', function () {
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
-        createNotificationsForAccount: (parameters) => {
+        createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:(parameters) => {
+        assureSession:() => {
           return Promise.resolve(session);
         }
       });
@@ -386,13 +356,13 @@ describe('checkout', function () {
       let response_type = 'success';
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
-        getHydrated({id}){
+        getHydrated(){
           return Promise.resolve(product_schedule);
         }
         getNextScheduleElementStartDayNumber(){
           return 0;
         }
-        getScheduleElementOnDayInSchedule({product_schedule, day}){
+        getScheduleElementOnDayInSchedule({product_schedule}){
           return product_schedule[0];
         }
       });
@@ -401,7 +371,7 @@ describe('checkout', function () {
         update:({entity}) => {
           return Promise.resolve(entity);
         },
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session)
         }
       });
@@ -419,17 +389,17 @@ describe('checkout', function () {
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(campaign)
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        addCreditCard: (a_customer, a_creditcard) => {
+        addCreditCard: () => {
           customer.creditcards.push(creditcard.id);
           return Promise.resolve(customer);
         },
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(customer);
         }
       });
@@ -451,11 +421,11 @@ describe('checkout', function () {
           return randomutilities.randomDouble(1.00, 100.00);
         }
 
-        addRebillToQueue({rebill, queue_name}){
+        addRebillToQueue(){
           return Promise.resolve(true);
         }
 
-        updateRebillState({rebill, state}){
+        updateRebillState(){
           return Promise.resolve(true);
         }
 
@@ -463,13 +433,9 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
 
-      let mock_register = class {
-
-        constructor(){
-
-        }
-
-        processTransaction({rebill: rebill}){
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
+        constructor(){}
+        processTransaction(){
           const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
           let register_response = new RegisterResponse({
             transactions: transactions,
@@ -480,14 +446,30 @@ describe('checkout', function () {
 
           return Promise.resolve(register_response);
         }
-
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), mock_register);
+      });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+        listByMerchantProviderAndDateRange:() =>{
+          return Promise.resolve({merchantprovidersummaries: []});
+        },
+        getResult:() => {
+          return [];
+        },
+        create:({entity}) => {
+          entity.id = uuidV4();
+          entity.created_at = timestamp.getISO8601();
+          entity.updated_at = entity.created_at;
+          entity.account = global.account;
+          return Promise.resolve(entity);
+        },
+        update:({entity}) => {
+          return Promise.resolve(entity);
         }
       });
 
@@ -519,46 +501,44 @@ describe('checkout', function () {
       let customer = getValidCustomer();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session)
         },
-        isEmail: (user_string) => {
+        isEmail: () => {
           return true;
         },
-        getUserStrict: (user_string) => {
+        getUserStrict: () => {
           return Promise.resolve({});
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve({});
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session);
         },
-        getCustomer:(session) => {
+        getCustomer:() => {
           return Promise.resolve(customer);
         },
-        listTransactions:(session) => {
+        listTransactions:() => {
           return Promise.resolve(transactions);
         },
-        closeSession:(session) => {
+        closeSession:() => {
           return Promise.resolve(true);
         }
       });
 
-      let mock_transaction_helper_controller = class {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), class {
         constructor(){}
-        getTransactionProducts(transactions){
+        getTransactionProducts(){
           return products;
         }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
+      });
 
       let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 
@@ -635,46 +615,46 @@ describe('checkout', function () {
       let product_schedules = getValidProductSchedules(null, true);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
-        getHydrated({id}){
+        getHydrated(){
           return Promise.resolve(product_schedules);
         }
         getNextScheduleElementStartDayNumber(){
             return 0;
         }
-        getScheduleElementOnDayInSchedule({product_schedule, day}){
+        getScheduleElementOnDayInSchedule({product_schedule}){
             return product_schedule[0];
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session)
         },
-        isEmail: (user_string) => {
+        isEmail: () => {
           return true;
         },
-        getUserStrict: (user_string) => {
+        getUserStrict: () => {
           return Promise.resolve({});
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        addCreditCard: (a_customer, a_creditcard) => {
+        addCreditCard: () => {
           customer.creditcards.push(creditcard.id);
           return Promise.resolve(customer);
         },
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(customer);
         },
-        getCustomerByEmail: (email) => {
+        getCustomerByEmail: () => {
           return Promise.resolve(null);
         },
-        create:({entity}) => {
+        create:() => {
           return Promise.resolve(customer);
         }
       });
 
-      let affiliates_helper_mock = class {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){}
         handleAffiliateInformation(a_event){
           let cloned_event = objectutilities.clone(a_event);
@@ -682,66 +662,60 @@ describe('checkout', function () {
           cloned_event.affiliates = affiliates;
           return Promise.resolve(cloned_event);
         }
-        transcribeAffiliates(source_object, destination_object){
+        transcribeAffiliates(){
           return {};
         }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
+      });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve({});
         }
       });
 
-      let mock_tracker_helper_controller = class {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), class {
         constructor(){ }
         handleTracking(id, info){
           return Promise.resolve(info);
         }
-      }
+      });
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), mock_tracker_helper_controller);
-
-      let mock_email_helper = class {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), class {
         constructor(){}
-        sendEmail(a_event, info){
+        sendEmail(){
           return Promise.resolve(true);
         }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
+      });
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
-        createNotificationsForAccount: (parameters) => {
+        createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:(parameters) => {
+        assureSession:() => {
           return Promise.resolve(session);
         },
         update:({entity}) => {
           return Promise.resolve(entity);
         },
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session)
         },
-        getCustomer:(session) => {
+        getCustomer:() => {
           return Promise.resolve(customer);
         },
-        listTransactions:(session) => {
+        listTransactions:() => {
           return Promise.resolve(transactions);
         },
-        closeSession:(session) => {
+        closeSession:() => {
           return Promise.resolve(true);
         }
       });
@@ -755,7 +729,7 @@ describe('checkout', function () {
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
           constructor(){}
           createRebill(){
-              return Promise.resolve(rebill);
+            return Promise.resolve(rebill);
           }
       });
 
@@ -770,13 +744,9 @@ describe('checkout', function () {
         }
       });
 
-      let mock_register = class {
-
-        constructor(){
-
-        }
-
-        processTransaction({rebill: rebill}){
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
+        constructor(){}
+        processTransaction(){
           const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
           let register_response = new RegisterResponse({
             transactions: transactions,
@@ -787,39 +757,47 @@ describe('checkout', function () {
 
           return Promise.resolve(register_response);
         }
+      });
 
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), mock_register);
-
-      let mock_rebill_helper = class {
-
-        constructor(){
-
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+        listByMerchantProviderAndDateRange:() =>{
+          return Promise.resolve({merchantprovidersummaries: []});
+        },
+        getResult:() => {
+          return [];
+        },
+        create:({entity}) => {
+          entity.id = uuidV4();
+          entity.created_at = timestamp.getISO8601();
+          entity.updated_at = entity.created_at;
+          entity.account = global.account;
+          return Promise.resolve(entity);
+        },
+        update:({entity}) => {
+          return Promise.resolve(entity);
         }
+      });
 
-        createRebill({session, product_schedules, day}){
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
+        constructor(){}
+        createRebill({session, product_schedules}){
           rebill.product_schedules = product_schedules;
           rebill.parentsession = session.id
           return Promise.resolve(rebill);
         }
-
-        addRebillToQueue({rebill, queue_name}){
+        addRebillToQueue(){
           return Promise.resolve(true);
         }
-
-        updateRebillState({rebill, state}){
+        updateRebillState(){
           return Promise.resolve(true);
         }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper);
+      });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 
-      return checkoutController.execute(event).then(result => {
+      return checkoutController.execute(event).then(()=> {
         expect(checkoutController.parameters.store['confirmation']).to.be.defined;
       });
 

@@ -1,6 +1,10 @@
-let Timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-let chai = require('chai');
-let expect = chai.expect;
+'use strict'
+
+const chai = require('chai');
+const expect = chai.expect;
+const moment = require('moment');
+
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const frozenNow = 1487768599196;  // '2017-02-22T13:03:19.196Z';
 const frozenNowAsISO8601 = '2017-02-22T13:03:19.196Z';
@@ -9,6 +13,61 @@ const frozenNowInSeconds = 1487768599;
 const oneDayInMiliseconds = 86400000;
 
 describe('lib/timestamp', () => {
+
+  describe('toISO8601', () => {
+
+    it('returns matching strings', () => {
+
+      let now = timestamp.getISO8601();
+
+      expect(now).to.equal(moment(now).toISOString());
+
+    });
+
+  });
+
+  describe('startOfDay', () => {
+
+    it('returns the start of the day', () => {
+
+      expect(timestamp.startOfDay(frozenNowAsISO8601)).to.equal('2017-02-22T08:00:00.000Z');
+
+    });
+
+  });
+
+  describe('endOfDay', () => {
+
+    it('returns the start of the day', () => {
+
+      expect(timestamp.endOfDay(frozenNowAsISO8601)).to.equal('2017-02-23T07:59:59.999Z');
+
+    });
+
+  });
+
+  describe('isToday', () => {
+
+    xit('returns true', () => {
+
+      let today = timestamp.getISO8601();
+
+      console.log(timestamp.isToday(today));
+
+      expect(timestamp.isToday(today)).to.equal(true);
+
+    });
+
+    it('returns false', () => {
+
+      let yesterday  = timestamp.yesterday();
+
+      expect(timestamp.isToday(yesterday, 10)).to.equal(false);
+
+    });
+
+  });
+
     describe('timestamp', () => {
 
         it('should create timestamp in seconds', () => {
@@ -16,7 +75,7 @@ describe('lib/timestamp', () => {
             givenTimeIsFrozen();
 
             // when
-            let timestampInSeconds = Timestamp.createTimestampSeconds();
+            let timestampInSeconds = timestamp.createTimestampSeconds();
 
             // then
             expect(timestampInSeconds).to.equal(frozenNowInSeconds);
@@ -27,7 +86,7 @@ describe('lib/timestamp', () => {
             givenTimeIsFrozen();
 
             // when
-            let timestampInMilliseconds = Timestamp.createTimestampMilliseconds();
+            let timestampInMilliseconds = timestamp.createTimestampMilliseconds();
 
             // then
             expect(timestampInMilliseconds).to.equal(frozenNow);
@@ -38,7 +97,7 @@ describe('lib/timestamp', () => {
             givenTimeIsFrozen();
 
             // when
-            let createdDate = Timestamp.createDate();
+            let createdDate = timestamp.createDate();
 
             // then
             expect(createdDate).to.equal(frozenNowAsISOString);
@@ -49,7 +108,7 @@ describe('lib/timestamp', () => {
             givenTimeIsFrozen();
 
             // when
-            let dateFromSeconds = Timestamp.secondsToDate(frozenNowInSeconds);
+            let dateFromSeconds = timestamp.secondsToDate(frozenNowInSeconds);
 
             // then
             expect(dateFromSeconds).to.equal(frozenNowAsISOString);
@@ -61,7 +120,7 @@ describe('lib/timestamp', () => {
             let expectedDifferenceInSeconds = 10;
 
             // when
-            let differenceInSeconds = Timestamp.getTimeDifference(frozenNowInSeconds - expectedDifferenceInSeconds);
+            let differenceInSeconds = timestamp.getTimeDifference(frozenNowInSeconds - expectedDifferenceInSeconds);
 
             // then
             expect(differenceInSeconds).to.equal(expectedDifferenceInSeconds);
@@ -72,7 +131,7 @@ describe('lib/timestamp', () => {
             givenTimeIsFrozen();
 
             // when
-            let this_hour = Timestamp.getThisHourInISO8601();
+            let this_hour = timestamp.getThisHourInISO8601();
 
             // then
             expect(this_hour).to.equal('2017-02-22T13:00:00.000Z');
@@ -84,7 +143,7 @@ describe('lib/timestamp', () => {
             givenTimeIsFrozen();
 
             // when
-            let last_hour = Timestamp.getLastHourInISO8601();
+            let last_hour = timestamp.getLastHourInISO8601();
 
             // then
             expect(last_hour).to.equal('2017-02-22T12:00:00.000Z');
@@ -96,32 +155,32 @@ describe('lib/timestamp', () => {
 
             let yearFromFrozenDate = frozenDate.getFullYear();
 
-            expect(Timestamp.getFormat('YYYY')).to.equal(yearFromFrozenDate.toString());
+            expect(timestamp.getFormat('YYYY')).to.equal(yearFromFrozenDate.toString());
         });
 
         it('returns false when appointed value is not according to ISO8601', () => {
             let invalidDate = 'a12bc3';
 
-            expect(Timestamp.isISO8601(invalidDate)).to.be.false;
+            expect(timestamp.isISO8601(invalidDate)).to.be.false;
         });
 
         it('returns date converted to ISO8601', () => {
             // given
             givenTimeIsFrozen();
 
-            expect(Timestamp.convertToISO8601(frozenNow)).to.equal(frozenNowAsISO8601);
+            expect(timestamp.convertToISO8601(frozenNow)).to.equal(frozenNowAsISO8601);
         });
 
         it('returns date as ISO8601', () => {
 
-            expect(Timestamp.castToISO8601(frozenNowAsISO8601)).to.equal(frozenNowAsISO8601);
+            expect(timestamp.castToISO8601(frozenNowAsISO8601)).to.equal(frozenNowAsISO8601);
         });
 
         it('returns date converted to ISO8601 from appointed string', () => {
 
             let convertedDate = '2017-02-22T13:03:19.000Z';
 
-            expect(Timestamp.castToISO8601(frozenNowAsISOString)).to.equal(convertedDate);
+            expect(timestamp.castToISO8601(frozenNowAsISOString)).to.equal(convertedDate);
         });
 
         it('returns validation error when date type is invalid', () => {
@@ -129,7 +188,7 @@ describe('lib/timestamp', () => {
             let invalidDate = -1;
 
             try {
-                Timestamp.castToISO8601(invalidDate);
+                timestamp.castToISO8601(invalidDate);
             }catch(error){
                 expect(error.message).to.equal('[500] Unrecognized date type: ' + invalidDate);
             }
@@ -138,10 +197,11 @@ describe('lib/timestamp', () => {
         it('returns error when specified time is not an natural integer', () => {
 
             try {
-                Timestamp.delay(-1);
+              timestamp.delay(-1);
             }catch(error){
-                expect(error.message).to.equal('[500] Timestamp.delay assumes time is an natural integer.');
+              expect(error.message).to.equal('[500] Timestamp.delay assumes time is an natural integer.');
             }
+
         });
 
         it('should calculate difference between two dates in milliseconds', () => {
@@ -150,7 +210,7 @@ describe('lib/timestamp', () => {
 
             let end = frozenNow;
 
-            expect(Timestamp.differenceInMiliseconds(start, end)).to.equal(1);
+            expect(timestamp.differenceInMiliseconds(start, end)).to.equal(1);
         });
 
         it('should calculate difference between two ISO8601 dates in milliseconds', () => {
@@ -159,7 +219,7 @@ describe('lib/timestamp', () => {
 
             let end = frozenNowAsISO8601;
 
-            expect(Timestamp.differenceInMiliseconds(start, end)).to.equal(3600000);
+            expect(timestamp.differenceInMiliseconds(start, end)).to.equal(3600000);
         });
 
         function givenTimeIsFrozen() {
@@ -171,41 +231,41 @@ describe('lib/timestamp', () => {
 
     describe('should calculate day difference', () => {
         it('for today', () => {
-            expect(Timestamp.getDaysDifference(nowInMilliseconds())).to.equal(0);
+            expect(timestamp.getDaysDifference(nowInMilliseconds())).to.equal(0);
         });
 
         it('for tomorrow', () => {
-            expect(Timestamp.getDaysDifference(nowInMilliseconds() + oneDayInMiliseconds)).to.equal(-1);
+            expect(timestamp.getDaysDifference(nowInMilliseconds() + oneDayInMiliseconds)).to.equal(-1);
         });
 
         it('for yesterday', () => {
-            expect(Timestamp.getDaysDifference(nowInMilliseconds() - oneDayInMiliseconds)).to.equal(1);
+            expect(timestamp.getDaysDifference(nowInMilliseconds() - oneDayInMiliseconds)).to.equal(1);
         });
 
         function nowInMilliseconds() {
-            return Timestamp.createTimestampMilliseconds();
+            return timestamp.createTimestampMilliseconds();
         }
     });
 
     describe('should calculate seconds difference', () => {
         it('for now', () => {
-            expect(Timestamp.getSecondsDifference(nowInMilliseconds())).to.equal(0);
+            expect(timestamp.getSecondsDifference(nowInMilliseconds())).to.equal(0);
         });
 
         it('for 5 seconds', () => {
-            expect(Timestamp.getSecondsDifference(nowInMilliseconds() - 5000)).to.equal(5);
+            expect(timestamp.getSecondsDifference(nowInMilliseconds() - 5000)).to.equal(5);
         });
 
         it('for minus 5 seconds', () => {
-            expect(Timestamp.getSecondsDifference(nowInMilliseconds() + 5000)).to.equal(5);
+            expect(timestamp.getSecondsDifference(nowInMilliseconds() + 5000)).to.equal(5);
         });
 
         it('for one minute', () => {
-            expect(Timestamp.getSecondsDifference(nowInMilliseconds() + 60000)).to.equal(60);
+            expect(timestamp.getSecondsDifference(nowInMilliseconds() + 60000)).to.equal(60);
         });
 
         function nowInMilliseconds() {
-            return Timestamp.createTimestampMilliseconds();
+            return timestamp.createTimestampMilliseconds();
         }
     });
 });
