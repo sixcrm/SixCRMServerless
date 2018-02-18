@@ -40,6 +40,9 @@ let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProvider
 let loadBalancerType = require('./loadbalancer/loadBalancerType');
 let loadBalancerListType = require('./loadbalancer/loadBalancerListType');
 
+let loadBalancerAssociationType = require('./loadbalancerassociation/loadBalancerAssociationType');
+let loadBalancerAssociationListType = require('./loadbalancerassociation/loadBalancerAssociationListType');
+
 let merchantProviderType = require('./merchantprovider/merchantProviderType');
 let merchantProviderListType = require('./merchantprovider/merchantProviderListType');
 
@@ -1260,15 +1263,27 @@ module.exports.graphObj = new GraphQLObjectType({
             }
         },
         loadbalancerlist: {
-            type: loadBalancerListType.graphObj,
+          type: loadBalancerListType.graphObj,
+          args: {
+            pagination: {type: paginationInputType.graphObj},
+            search: {type: entitySearchInputType.graphObj}
+          },
+          resolve: function(root, loadbalancer){
+            const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+
+            return loadBalancerController.listByAccount({pagination: loadbalancer.pagination, fatal:list_fatal, search: loadbalancer.search});
+          }
+        },
+        loadbalancerassociationlist: {
+            type: loadBalancerAssociationListType.graphObj,
             args: {
               pagination: {type: paginationInputType.graphObj},
               search: {type: entitySearchInputType.graphObj}
             },
-            resolve: function(root, loadbalancer){
-                const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+            resolve: function(root, loadbalancerassociation){
+              const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
 
-      	       return loadBalancerController.listByAccount({pagination: loadbalancer.pagination, fatal:list_fatal, search: loadbalancer.search});
+              return loadBalancerAssociationController.listByAccount({pagination: loadbalancerassociation.pagination, fatal:list_fatal, search: loadbalancerassociation.search});
             }
         },
         productschedulelist: {
@@ -1377,6 +1392,20 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return loadBalancerController.get({id: loadbalancer.id, fatal: get_fatal});
             }
+        },
+        loadbalancerassociation: {
+          type: loadBalancerAssociationType.graphObj,
+          args: {
+            id: {
+              description: 'id of the loadbalancer association',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: function(root, loadbalancerassociation){
+            const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+
+            return loadBalancerAssociationController.get({id: loadbalancerassociation.id, fatal: get_fatal});
+          }
         },
         creditcard: {
             type: creditCardType.graphObj,

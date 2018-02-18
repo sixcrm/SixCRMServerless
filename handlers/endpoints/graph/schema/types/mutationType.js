@@ -39,6 +39,9 @@ let deleteOutputType = require('./general/deleteOutputType');
 let loadBalancerInputType = require('./loadbalancer/loadBalancerInputType');
 let loadBalancerType = require('./loadbalancer/loadBalancerType');
 
+let loadBalancerAssociationInputType = require('./loadbalancerassociation/loadBalancerAssociationInputType');
+let loadBalancerAssociationType = require('./loadbalancerassociation/loadBalancerAssociationType');
+
 let merchantProviderInputType = require('./merchantprovider/merchantProviderInputType');
 let merchantProviderType = require('./merchantprovider/merchantProviderType');
 
@@ -903,6 +906,52 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return loadBalancerController.delete({id:id});
             }
+        },
+        createloadbalancerassociation:{
+          type: loadBalancerAssociationType.graphObj,
+          description: 'Adds a new loadbalancer association.',
+          args: {
+            loadbalancerassociation: {
+              type: loadBalancerAssociationInputType.graphObj
+            }
+          },
+          resolve: (value, loadbalancerassociation) => {
+            const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+
+            return loadBalancerAssociationController.create({
+              entity: loadbalancerassociation.loadbalancerassociation
+            });
+          }
+        },
+        updateloadbalancerassociation:{
+          type: loadBalancerAssociationType.graphObj,
+          description: 'Updates a loadbalancer association.',
+          args: {
+            loadbalancerassociation: {
+              type:loadBalancerAssociationInputType.graphObj
+            }
+          },
+          resolve: (value, loadbalancerassociation) => {
+            const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+
+            return loadBalancerAssociationController.update({entity:loadbalancerassociation.loadbalancerassociation});
+          }
+        },
+        deleteloadbalancerassociation:{
+          type: deleteOutputType.graphObj,
+          description: 'Deletes a loadbalancer association.',
+          args: {
+            id: {
+              description: 'id of the loadbalancer association',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: (value, loadbalancerassociation) => {
+            let id = loadbalancerassociation.id;
+            const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+
+            return loadBalancerAssociationController.delete({id:id});
+          }
         },
         createproductschedule:{
             type:productScheduleType.graphObj,

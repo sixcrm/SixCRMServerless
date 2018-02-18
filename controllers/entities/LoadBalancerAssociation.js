@@ -12,6 +12,30 @@ class loadBalancerAssociationController extends entityController {
 
   }
 
+  getLoadBalancer(loadbalancerassociation){
+
+    du.debug('Get LoadBalancer');
+
+    return this.executeAssociatedEntityFunction(
+      'loadbalancerController',
+      'get',
+      {id: loadbalancerassociation.loadbalancer}
+    );
+
+  }
+
+  getCampaign(loadbalancerassociation){
+
+    du.debug('Get Campaign');
+
+    return this.executeAssociatedEntityFunction(
+      'campaignController',
+      'get',
+      {id: loadbalancerassociation.campaign}
+    );
+
+  }
+
   //Technical Debt:  This seems hacky
   listByEntitiesAndCampaign({entities, campaign}){
 
