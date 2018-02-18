@@ -17,7 +17,7 @@ class loadBalancerAssociationController extends entityController {
     du.debug('Get LoadBalancer');
 
     return this.executeAssociatedEntityFunction(
-      'loadbalancerController',
+      'loadBalancerController',
       'get',
       {id: loadbalancerassociation.loadbalancer}
     );
