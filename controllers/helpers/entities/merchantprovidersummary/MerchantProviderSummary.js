@@ -157,7 +157,7 @@ module.exports = class MerchantProviderSummaryHelperController {
     return this.merchantProviderSummaryController.listByMerchantProviderAndDateRange({merchant_providers: merchant_providers,start: start})
     .then((result) => this.merchantProviderSummaryController.getResult(result, 'merchantprovidersummaries'))
     .then(result => {
-      this.parameters.set('merchantprovidersummaries', result);
+      this.parameters.set('merchantprovidersummaries', result || []);
       return true;
     });
 
