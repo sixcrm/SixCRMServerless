@@ -136,7 +136,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
     let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
     let product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-      return augmented_transaction_product.product;
+      return augmented_transaction_product.product.id;
     });
 
     product_ids = arrayutilities.unique(product_ids);

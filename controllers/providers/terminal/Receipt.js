@@ -189,7 +189,7 @@ module.exports = class TerminalRecieptGenerator {
 
     return arrayutilities.map(augmented_transaction_products, transaction_product => {
       return {
-        product: transaction_product.product,
+        product: transaction_product.product.id,
         shipping_receipt: shipping_receipt.id,
         amount: transaction_product.amount
       }

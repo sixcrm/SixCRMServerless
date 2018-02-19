@@ -84,7 +84,8 @@ module.exports = class TerminalController extends TerminalUtilities  {
 
       let prototype = objectutilities.transcribe(
         {
-          product:'product.id',
+          product:'product',
+          quantity:'quantity',
           amount:'amount',
           transaction:'transaction'
         },
