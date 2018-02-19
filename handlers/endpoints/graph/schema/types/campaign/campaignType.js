@@ -8,6 +8,7 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
 let affiliateAllowDenyType = require('../affiliate/affiliateAllowDenyType');
 let productScheduleType = require('../productschedule/productScheduleType');
+let loadbalancerAssociationType = require('../loadbalancerassociation/loadBalancerAssociationType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'campaign',
@@ -63,6 +64,16 @@ module.exports.graphObj = new GraphQLObjectType({
           var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
           return campaignController.getAffiliateAllowDenyList(campaign.affiliate_deny);
+        }
+      },
+      loadbalancer_associations: {
+        type: new GraphQLList(loadbalancerAssociationType.graphObj),
+        description: 'The load balancer association list on this campaign.',
+        resolve: (campaign) => {
+          const loadbalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+
+          return loadbalancerAssociationController.listByEntitiesAndCampaign({entities: [campaign.id], campaign: campaign})
+            .then((result) => result.loadbalancerassociations);
         }
       },
       created_at: {
