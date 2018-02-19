@@ -6,11 +6,11 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 
-function getValidLoadBalancer() {
-  return MockEntities.getValidLoadBalancer();
+function getValidMerchantProviderGroup() {
+  return MockEntities.getValidMerchantProviderGroup();
 }
 
-describe('controllers/LoadBalancer.js', () => {
+describe('controllers/MerchantProviderGroup.js', () => {
 
     before(() => {
         mockery.enable({
@@ -27,47 +27,47 @@ describe('controllers/LoadBalancer.js', () => {
 
     describe('listByMerchantProviderID', () => {
 
-        it('lists load balancer by merchant provider', () => {
+        it('lists merchant provider group by merchant provider', () => {
 
-            let load_balancer = getValidLoadBalancer();
+            let merchant_provider_group = getValidMerchantProviderGroup();
 
-            let merchant_provider = {id: load_balancer.merchantproviders[0].id};
+            let merchant_provider = {id: merchant_provider_group.merchantproviders[0].id};
 
-            PermissionTestGenerators.givenUserWithAllowed('read', 'loadbalancer');
+            PermissionTestGenerators.givenUserWithAllowed('read', 'merchantprovidergroup');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('account-index');
-                    expect(table).to.equal('loadbalancers');
+                    expect(table).to.equal('merchantprovidergroups');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     return Promise.resolve({
                         Count: 1,
-                        Items: [load_balancer]
+                        Items: [merchant_provider_group]
                     });
                 }
             });
 
-            let loadBalancerController = global.SixCRM.routes.include('controllers','entities/LoadBalancer.js');
+            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
 
-            return loadBalancerController.listByMerchantProviderID(merchant_provider).then((result) => {
-                expect(result).to.deep.equal([load_balancer]);
+            return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
+                expect(result).to.deep.equal([merchant_provider_group]);
             });
         });
 
-        it('returns an empty array when there are no loadbalancers with corresponding merchant provider id', () => {
+        it('returns an empty array when there are no merchantprovidergroups with corresponding merchant provider id', () => {
 
-            let load_balancer = getValidLoadBalancer();
+            let merchant_provider_group = getValidMerchantProviderGroup();
 
-            let merchant_provider = {id: load_balancer.merchantproviders[0].id};
+            let merchant_provider = {id: merchant_provider_group.merchantproviders[0].id};
 
-            PermissionTestGenerators.givenUserWithAllowed('read', 'loadbalancer');
+            PermissionTestGenerators.givenUserWithAllowed('read', 'merchantprovidergroup');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('account-index');
-                    expect(table).to.equal('loadbalancers');
+                    expect(table).to.equal('merchantprovidergroups');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -78,100 +78,100 @@ describe('controllers/LoadBalancer.js', () => {
                 }
             });
 
-            let loadBalancerController = global.SixCRM.routes.include('controllers','entities/LoadBalancer.js');
+            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
 
-            return loadBalancerController.listByMerchantProviderID(merchant_provider).then((result) => {
+            return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([]);
             });
         });
 
         it('returns an empty array when there aren\'t any merchant providers', () => {
 
-            let load_balancer = getValidLoadBalancer();
+            let merchant_provider_group = getValidMerchantProviderGroup();
 
-            let merchant_provider = {id: load_balancer.merchantproviders[0].id};
+            let merchant_provider = {id: merchant_provider_group.merchantproviders[0].id};
 
-            delete load_balancer.merchantproviders;
+            delete merchant_provider_group.merchantproviders;
 
-            PermissionTestGenerators.givenUserWithAllowed('read', 'loadbalancer');
+            PermissionTestGenerators.givenUserWithAllowed('read', 'merchantprovidergroup');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('account-index');
-                    expect(table).to.equal('loadbalancers');
+                    expect(table).to.equal('merchantprovidergroups');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     return Promise.resolve({
                         Count: 1,
-                        Items: [load_balancer]
+                        Items: [merchant_provider_group]
                     });
                 }
             });
 
-            let loadBalancerController = global.SixCRM.routes.include('controllers','entities/LoadBalancer.js');
+            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
 
-            return loadBalancerController.listByMerchantProviderID(merchant_provider).then((result) => {
+            return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([]);
             });
         });
 
         it('returns an empty array when merchant providers don\'t have any data', () => {
 
-            let load_balancer = getValidLoadBalancer();
+            let merchant_provider_group = getValidMerchantProviderGroup();
 
-            let merchant_provider = {id: load_balancer.merchantproviders[0].id};
+            let merchant_provider = {id: merchant_provider_group.merchantproviders[0].id};
 
-            load_balancer.merchantproviders = [];
+            merchant_provider_group.merchantproviders = [];
 
-            PermissionTestGenerators.givenUserWithAllowed('read', 'loadbalancer');
+            PermissionTestGenerators.givenUserWithAllowed('read', 'merchantprovidergroup');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('account-index');
-                    expect(table).to.equal('loadbalancers');
+                    expect(table).to.equal('merchantprovidergroups');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     return Promise.resolve({
                         Count: 1,
-                        Items: [load_balancer]
+                        Items: [merchant_provider_group]
                     });
                 }
             });
 
-            let loadBalancerController = global.SixCRM.routes.include('controllers','entities/LoadBalancer.js');
+            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
 
-            return loadBalancerController.listByMerchantProviderID(merchant_provider).then((result) => {
+            return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([]);
             });
         });
 
         it('returns an empty array when merchant provider with specified id does not exist', () => {
 
-            let load_balancer = getValidLoadBalancer();
+            let merchant_provider_group = getValidMerchantProviderGroup();
 
             let merchant_provider = {id: 'dummy_id'};
 
-            PermissionTestGenerators.givenUserWithAllowed('read', 'loadbalancer');
+            PermissionTestGenerators.givenUserWithAllowed('read', 'merchantprovidergroup');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('account-index');
-                    expect(table).to.equal('loadbalancers');
+                    expect(table).to.equal('merchantprovidergroups');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     return Promise.resolve({
                         Count: 1,
-                        Items: [load_balancer]
+                        Items: [merchant_provider_group]
                     });
                 }
             });
 
-            let loadBalancerController = global.SixCRM.routes.include('controllers','entities/LoadBalancer.js');
+            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
 
-            return loadBalancerController.listByMerchantProviderID(merchant_provider).then((result) => {
+            return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([]);
             });
         });
@@ -181,13 +181,13 @@ describe('controllers/LoadBalancer.js', () => {
 
       it('successfully retrieves merchant provider configurations', () => {
 
-        let loadbalancer = getValidLoadBalancer();
+        let merchantprovidergroup = getValidMerchantProviderGroup();
 
-        let loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+        let merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
-        let merchant_provider_configurations = loadBalancerController.getMerchantProviderConfigurations(loadbalancer);
+        let merchant_provider_configurations = merchantProviderGroupController.getMerchantProviderConfigurations(merchantprovidergroup);
 
-        expect(merchant_provider_configurations).to.deep.equal(arrayutilities.map(loadbalancer.merchantproviders, merchant_provider_configuration => {
+        expect(merchant_provider_configurations).to.deep.equal(arrayutilities.map(merchantprovidergroup.merchantproviders, merchant_provider_configuration => {
           return {
             merchantprovider: merchant_provider_configuration.id,
             distribution: merchant_provider_configuration.distribution
@@ -212,9 +212,9 @@ describe('controllers/LoadBalancer.js', () => {
                 }
             });
 
-            let loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+            let merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
-            return loadBalancerController.getMerchantProviderConfiguration(merchant_provider_configuration).then((result) => {
+            return merchantProviderGroupController.getMerchantProviderConfiguration(merchant_provider_configuration).then((result) => {
                 expect(result).to.deep.equal('a_merchant_provider');
             });
         })

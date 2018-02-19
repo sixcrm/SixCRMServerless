@@ -4,38 +4,38 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
 let campaignType = require('../campaign/campaignType');
-let loadbalancerType = require('../loadbalancer/loadBalancerType');
+let merchantprovidergroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 
-const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'LoadbalancerAssociation',
-    description: 'A loadbalancer association.',
+    name: 'MerchantProviderGroupAssociation',
+    description: 'A merchantprovidergroup association.',
     fields: () => ({
   	    id: {
           type: GraphQLString,
-          description: 'The id of the loadbalancer association.',
+          description: 'The id of the merchantprovidergroup association.',
         },
         entity:{
           type: new GraphQLNonNull(GraphQLString),
-          description: 'The entity associated with the loadbalancer and the campaign.'
+          description: 'The entity associated with the merchantprovidergroup and the campaign.'
         },
         entity_type:{
           type: new GraphQLNonNull(GraphQLString),
           description: 'The associated entity\'s type.'
         },
-    		loadbalancer:{
-          type: new GraphQLNonNull(loadbalancerType.graphObj),
-          description: 'The loadbalancer.',
-          resolve: (loadbalancerassociation) => {
-            return loadBalancerAssociationController.getLoadBalancer(loadbalancerassociation);
+    		merchantprovidergroup:{
+          type: new GraphQLNonNull(merchantprovidergroupType.graphObj),
+          description: 'The merchantprovidergroup.',
+          resolve: (merchantprovidergroupassociation) => {
+            return merchantProviderGroupAssociationController.getMerchantProviderGroup(merchantprovidergroupassociation);
           }
         },
     		campaign:{
           type: new GraphQLNonNull(campaignType.graphObj),
           description: 'The campaign.',
-          resolve: (loadbalancerassociation) => {
-            return loadBalancerAssociationController.getCampaign(loadbalancerassociation);
+          resolve: (merchantprovidergroupassociation) => {
+            return merchantProviderGroupAssociationController.getCampaign(merchantprovidergroupassociation);
           }
         },
         created_at: {

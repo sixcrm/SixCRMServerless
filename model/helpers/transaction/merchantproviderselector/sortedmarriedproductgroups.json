@@ -11,9 +11,9 @@
           "product":{"$ref":"../../../entities/components/watermark/watermarkproduct.json"},
           "amount":{"$ref":"../../../definitions/currency.json"},
           "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
-          "loadbalancerassociation":{"$ref":"../../../entities/loadbalancerassociation.json"}
+          "merchantprovidergroupassociation":{"$ref":"../../../entities/merchantprovidergroupassociation.json"}
         },
-        "required":["product", "amount", "quantity","loadbalancerassociation"]
+        "required":["product", "amount", "quantity","merchantprovidergroupassociation"]
       },
       "minItems":1
     }

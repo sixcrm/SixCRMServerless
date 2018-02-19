@@ -4,15 +4,15 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 
 let paginationType = require('../pagination/paginationType');
-let loadBalancerType = require('./loadBalancerType');
+let merchantProviderGroupAssociationType = require('./merchantProviderGroupAssociationType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'LoadBalancers',
-    description: 'Load Balancers',
+    name: 'MerchantProviderGroupAssociations',
+    description: 'Merchant Provider Group Associations',
     fields: () => ({
-        loadbalancers: {
-            type: new GraphQLList(loadBalancerType.graphObj),
-            description: 'The Load Balancers',
+        merchantprovidergroupassociations: {
+            type: new GraphQLList(merchantProviderGroupAssociationType.graphObj),
+            description: 'The Merchant Provider Groups',
         },
         pagination: {
             type: new GraphQLNonNull(paginationType.graphObj),

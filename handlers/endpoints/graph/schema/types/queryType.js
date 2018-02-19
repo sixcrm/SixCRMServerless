@@ -37,11 +37,11 @@ let emailTemplateType = require('./emailtemplate/emailTemplateType');
 let fulfillmentProviderListType = require('./fulfillmentprovider/fulfillmentProviderListType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
 
-let loadBalancerType = require('./loadbalancer/loadBalancerType');
-let loadBalancerListType = require('./loadbalancer/loadBalancerListType');
+let merchantProviderGroupType = require('./merchantprovidergroup/merchantProviderGroupType');
+let merchantProviderGroupListType = require('./merchantprovidergroup/merchantProviderGroupListType');
 
-let loadBalancerAssociationType = require('./loadbalancerassociation/loadBalancerAssociationType');
-let loadBalancerAssociationListType = require('./loadbalancerassociation/loadBalancerAssociationListType');
+let merchantProviderGroupAssociationType = require('./merchantprovidergroupassociation/merchantProviderGroupAssociationType');
+let merchantProviderGroupAssociationListType = require('./merchantprovidergroupassociation/merchantProviderGroupAssociationListType');
 
 let merchantProviderType = require('./merchantprovider/merchantProviderType');
 let merchantProviderListType = require('./merchantprovider/merchantProviderListType');
@@ -1262,28 +1262,28 @@ module.exports.graphObj = new GraphQLObjectType({
                 return customerNoteController.listByAccount({pagination: customernote.pagination, fatal:list_fatal, search: customernote.search});
             }
         },
-        loadbalancerlist: {
-          type: loadBalancerListType.graphObj,
+        merchantprovidergrouplist: {
+          type: merchantProviderGroupListType.graphObj,
           args: {
             pagination: {type: paginationInputType.graphObj},
             search: {type: entitySearchInputType.graphObj}
           },
-          resolve: function(root, loadbalancer){
-            const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+          resolve: function(root, merchantprovidergroup){
+            const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
-            return loadBalancerController.listByAccount({pagination: loadbalancer.pagination, fatal:list_fatal, search: loadbalancer.search});
+            return merchantProviderGroupController.listByAccount({pagination: merchantprovidergroup.pagination, fatal:list_fatal, search: merchantprovidergroup.search});
           }
         },
-        loadbalancerassociationlist: {
-            type: loadBalancerAssociationListType.graphObj,
+        merchantprovidergroupassociationlist: {
+            type: merchantProviderGroupAssociationListType.graphObj,
             args: {
               pagination: {type: paginationInputType.graphObj},
               search: {type: entitySearchInputType.graphObj}
             },
-            resolve: function(root, loadbalancerassociation){
-              const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+            resolve: function(root, merchantprovidergroupassociation){
+              const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
-              return loadBalancerAssociationController.listByAccount({pagination: loadbalancerassociation.pagination, fatal:list_fatal, search: loadbalancerassociation.search});
+              return merchantProviderGroupAssociationController.listByAccount({pagination: merchantprovidergroupassociation.pagination, fatal:list_fatal, search: merchantprovidergroupassociation.search});
             }
         },
         productschedulelist: {
@@ -1379,32 +1379,32 @@ module.exports.graphObj = new GraphQLObjectType({
                 return fulfillmentProviderController.get({id: fulfillmentprovider.id, fatal: get_fatal});
             }
         },
-        loadbalancer: {
-            type: loadBalancerType.graphObj,
+        merchantprovidergroup: {
+            type: merchantProviderGroupType.graphObj,
             args: {
                 id: {
-                    description: 'id of the loadbalancer',
+                    description: 'id of the merchantprovidergroup',
                     type: new GraphQLNonNull(GraphQLString)
                 }
             },
-            resolve: function(root, loadbalancer){
-                const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+            resolve: function(root, merchantprovidergroup){
+                const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
-                return loadBalancerController.get({id: loadbalancer.id, fatal: get_fatal});
+                return merchantProviderGroupController.get({id: merchantprovidergroup.id, fatal: get_fatal});
             }
         },
-        loadbalancerassociation: {
-          type: loadBalancerAssociationType.graphObj,
+        merchantprovidergroupassociation: {
+          type: merchantProviderGroupAssociationType.graphObj,
           args: {
             id: {
-              description: 'id of the loadbalancer association',
+              description: 'id of the merchantprovidergroup association',
               type: new GraphQLNonNull(GraphQLString)
             }
           },
-          resolve: function(root, loadbalancerassociation){
-            const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+          resolve: function(root, merchantprovidergroupassociation){
+            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
-            return loadBalancerAssociationController.get({id: loadbalancerassociation.id, fatal: get_fatal});
+            return merchantProviderGroupAssociationController.get({id: merchantprovidergroupassociation.id, fatal: get_fatal});
           }
         },
         creditcard: {

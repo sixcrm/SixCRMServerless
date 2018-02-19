@@ -148,7 +148,7 @@ class MockEntities {
       id: this.getValidId(id),
       name: randomutilities.createRandomString(20),
       account: this.getTestAccountID(),
-      loadbalancer: uuidV4(),
+      merchantprovidergroup: uuidV4(),
       schedule: schedule,
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
@@ -776,7 +776,7 @@ class MockEntities {
 
   }
 
-  static getValidLoadBalancer(id, merchant_provider_configuration) {
+  static getValidMerchantProviderGroup(id, merchant_provider_configuration) {
 
     merchant_provider_configuration = (_.isUndefined(merchant_provider_configuration) || _.isNull(merchant_provider_configuration))?this.getValidMerchantProviderConfiguration():merchant_provider_configuration;
 

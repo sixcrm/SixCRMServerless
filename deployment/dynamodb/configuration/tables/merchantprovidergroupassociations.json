@@ -1,6 +1,6 @@
 {
   "Table":{
-    "TableName":"loadbalancers",
+    "TableName":"merchantprovidergroupassociations",
     "KeySchema":[
       {
         "AttributeName":"id",

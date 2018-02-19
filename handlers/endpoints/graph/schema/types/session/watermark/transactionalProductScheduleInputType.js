@@ -21,9 +21,9 @@ module.exports.graphObj = new GraphQLInputObjectType({
     	  type: new GraphQLList(transactionalScheduleInputType.graphObj),
         description:'The schedules associated with the product schedule'
       },
-      loadbalancer:{
+      merchantprovidergroup:{
         type: GraphQLString,
-        description: 'The load balancer associated with the product schedule.'
+        description: 'The merchant provider group associated with the product schedule.'
       }
     }),
     interfaces: []

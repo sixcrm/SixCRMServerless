@@ -4,7 +4,7 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLString = require('graphql').GraphQLString;
 
 let transactionalScheduleType = require('./transactionalScheduleType');
-let loadBalancerType = require('./../../loadbalancer/loadBalancerType');
+let merchantProviderGroupType = require('./../../merchantprovidergroup/merchantProviderGroupType');
 //let watermarkProductSchedule = require('./watermarkProductScheduleType');
 
 module.exports.graphObj = new GraphQLObjectType({
@@ -19,13 +19,13 @@ module.exports.graphObj = new GraphQLObjectType({
     	  type: new GraphQLList(transactionalScheduleType.graphObj),
         description:'The schedules associated with the product schedule'
       },
-      loadbalancer:{
-        type: loadBalancerType.graphObj,
-        description: 'The load balancer associated with the product schedule.',
+      merchantprovidergroup:{
+        type: merchantProviderGroupType.graphObj,
+        description: 'The merchant provider group associated with the product schedule.',
         resolve: (productschedule) => {
           var productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule');
 
-          return productScheduleController.getLoadBalancer(productschedule);
+          return productScheduleController.getMerchantProviderGroup(productschedule);
         }
       }
     }),

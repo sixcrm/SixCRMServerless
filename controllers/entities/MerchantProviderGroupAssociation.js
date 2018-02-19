@@ -4,34 +4,34 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class loadBalancerAssociationController extends entityController {
+class merchantProviderGroupAssociationController extends entityController {
 
   constructor(){
 
-    super('loadbalancerassociation');
+    super('merchantprovidergroupassociation');
 
   }
 
-  getLoadBalancer(loadbalancerassociation){
+  getMerchantProviderGroup(merchantprovidergroupassociation){
 
-    du.debug('Get LoadBalancer');
+    du.debug('Get MerchantProviderGroup');
 
     return this.executeAssociatedEntityFunction(
-      'loadBalancerController',
+      'merchantProviderGroupController',
       'get',
-      {id: loadbalancerassociation.loadbalancer}
+      {id: merchantprovidergroupassociation.merchantprovidergroup}
     );
 
   }
 
-  getCampaign(loadbalancerassociation){
+  getCampaign(merchantprovidergroupassociation){
 
     du.debug('Get Campaign');
 
     return this.executeAssociatedEntityFunction(
       'campaignController',
       'get',
-      {id: loadbalancerassociation.campaign}
+      {id: merchantprovidergroupassociation.campaign}
     );
 
   }
@@ -39,7 +39,7 @@ class loadBalancerAssociationController extends entityController {
   //Technical Debt:  This seems hacky
   listByEntitiesAndCampaign({entities, campaign}){
 
-    du.debug('List Load Balancers By Entity and Campaign');
+    du.debug('List Merchant Provider Groups By Entity and Campaign');
 
     let query_parameters = this.createINQueryParameters({field:'entity', list_array: entities});
 
@@ -53,7 +53,7 @@ class loadBalancerAssociationController extends entityController {
 
   listByCampaign({campaign}){
 
-    du.debug('List Load Balancers By Campaign');
+    du.debug('List Merchant Provider Groups By Campaign');
 
     let query_parameters = {
       filter_expression:'#campaign = :campaignv',
@@ -67,4 +67,4 @@ class loadBalancerAssociationController extends entityController {
 
 }
 
-module.exports = new loadBalancerAssociationController();
+module.exports = new merchantProviderGroupAssociationController();

@@ -3,8 +3,8 @@ let chai = require('chai');
 let expect = chai.expect;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-function getValidLoadBalancer() {
-    return MockEntities.getValidLoadBalancer()
+function getValidMerchantProviderGroup() {
+    return MockEntities.getValidMerchantProviderGroup()
 }
 
 describe('controllers/MerchantProvider.js', () => {
@@ -31,12 +31,12 @@ describe('controllers/MerchantProvider.js', () => {
 
             let a_merchant_provider_id = 'dummy_id';
 
-            let loadbalancer = getValidLoadBalancer();
+            let merchantprovidergroup = getValidMerchantProviderGroup();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/LoadBalancer.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), {
                 listByMerchantProviderID: ({id}) => {
                     expect(id).to.equal(a_merchant_provider_id);
-                    return Promise.resolve([loadbalancer]);
+                    return Promise.resolve([merchantprovidergroup]);
                 }
             });
 
@@ -45,9 +45,9 @@ describe('controllers/MerchantProvider.js', () => {
             return merchantProviderController.associatedEntitiesCheck({id : a_merchant_provider_id}).then((result) => {
                 expect(result).to.deep.equal([{
                     entity: {
-                        id: loadbalancer.id
+                        id: merchantprovidergroup.id
                     },
-                    name: "Load Balancer"
+                    name: "Merchant Provider Group"
                 }]);
             });
         });
@@ -56,14 +56,14 @@ describe('controllers/MerchantProvider.js', () => {
 
             let a_merchant_provider_id = 'dummy_id';
 
-            let loadbalancer = getValidLoadBalancer();
+            let merchantprovidergroup = getValidMerchantProviderGroup();
 
-            delete loadbalancer.id;
+            delete merchantprovidergroup.id;
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/LoadBalancer.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), {
                 listByMerchantProviderID: ({id}) => {
                     expect(id).to.equal(a_merchant_provider_id);
-                    return Promise.resolve([loadbalancer]);
+                    return Promise.resolve([merchantprovidergroup]);
                 }
             });
 

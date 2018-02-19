@@ -6,24 +6,24 @@ const GraphQLString = require('graphql').GraphQLString;
 
 let merchantProviderConfigurationType = require('../merchantprovider/merchantProviderConfigurationType');
 
-const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'loadbalancer',
-    description: 'A loadbalancer.',
+    name: 'merchantprovidergroup',
+    description: 'A merchantprovidergroup.',
     fields: () => ({
   	    id: {
           type: GraphQLString,
-          description: 'The id of the loadbalancer.',
+          description: 'The id of the merchantprovidergroup.',
         },
         name: {
             type: GraphQLString,
-            description: 'The name of the loadbalancer.',
+            description: 'The name of the merchantprovidergroup.',
         },
         merchantproviderconfigurations: {
             type: new GraphQLList(merchantProviderConfigurationType.graphObj),
-            description: 'The configured merchant providers associated with the load balancer',
-            resolve: loadbalancer => loadBalancerController.getMerchantProviderConfigurations(loadbalancer)
+            description: 'The configured merchant providers associated with the merchant provider group',
+            resolve: merchantprovidergroup => merchantProviderGroupController.getMerchantProviderConfigurations(merchantprovidergroup)
         },
         created_at: {
 	  type: new GraphQLNonNull(GraphQLString),

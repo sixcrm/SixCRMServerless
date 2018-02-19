@@ -9,8 +9,8 @@ let merchantProviderProcessorType = require('./elements/processorType');
 let merchantProviderProcessingType = require('./elements/processingType');
 let merchantProviderCustomerServiceType = require('./elements/customerServiceType');
 let gatewayType = require('./gateways/gatewayType');
-const loadBalancerType = require('./../loadbalancer/loadBalancerType');
-const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+const merchantProviderGroupType = require('./../merchantprovidergroup/merchantProviderGroupType');
+const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'merchantprovider',
@@ -60,11 +60,11 @@ module.exports.graphObj = new GraphQLObjectType({
         type: new GraphQLNonNull(GraphQLString),
         description: 'ISO8601 datetime when the entity was updated.',
       },
-      loadbalancers: {
-        type: new GraphQLList(loadBalancerType.graphObj),
-        description: 'Associated Load Balancers',
+      merchantprovidergroups: {
+        type: new GraphQLList(merchantProviderGroupType.graphObj),
+        description: 'Associated Merchant Provider Groups',
         resolve: (merchantprovider) => {
-          return loadBalancerController.listByMerchantProviderID({id: merchantprovider.id});
+          return merchantProviderGroupController.listByMerchantProviderID({id: merchantprovider.id});
         }
       }
     }),

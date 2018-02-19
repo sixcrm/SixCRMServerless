@@ -59,7 +59,7 @@ class TestUtils {
         // process.env.user_acls_table = 'localuseracls';
         // process.env.user_settings_table = 'localuser_settings';
         // process.env.user_signing_strings_table = 'localuser_signing_strings';
-        // process.env.loadbalancers_table = 'localloadbalancers';
+        // process.env.merchantprovidergroups_table = 'localmerchantprovidergroups';
         // process.env.product_schedules_table = 'localproduct_schedules';
         // process.env.affiliates_table = 'localaffiliates';
         // process.env.campaigns_table = 'localcampaigns';

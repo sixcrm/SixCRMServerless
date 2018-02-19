@@ -6,11 +6,11 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class loadBalancerController extends entityController {
+class merchantProviderGroupController extends entityController {
 
     constructor(){
 
-      super('loadbalancer');
+      super('merchantprovidergroup');
 
       this.search_fields = ['name'];
 
@@ -23,7 +23,7 @@ class loadBalancerController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('productScheduleController', 'listByLoadBalancer', {loadbalancer:id})
+        this.executeAssociatedEntityFunction('productScheduleController', 'listByMerchantProviderGroup', {merchantprovidergroup:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -47,21 +47,21 @@ class loadBalancerController extends entityController {
 
       du.debug('List By Merchant Provider ID');
 
-      return this.listByAccount({}).then(loadbalancers => {
+      return this.listByAccount({}).then(merchantprovidergroups => {
 
         let return_array = [];
 
-        if(_.has(loadbalancers, 'loadbalancers') && arrayutilities.nonEmpty(loadbalancers.loadbalancers)){
+        if(_.has(merchantprovidergroups, 'merchantprovidergroups') && arrayutilities.nonEmpty(merchantprovidergroups.merchantprovidergroups)){
 
-          arrayutilities.map(loadbalancers.loadbalancers, (loadbalancer) => {
+          arrayutilities.map(merchantprovidergroups.merchantprovidergroups, (merchantprovidergroup) => {
 
-            if(_.has(loadbalancer, 'merchantproviders') && arrayutilities.nonEmpty(loadbalancer.merchantproviders)){
+            if(_.has(merchantprovidergroup, 'merchantproviders') && arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
 
-              arrayutilities.find(loadbalancer.merchantproviders, (merchant_provider_configuration) => {
+              arrayutilities.find(merchantprovidergroup.merchantproviders, (merchant_provider_configuration) => {
 
                 if(_.has(merchant_provider_configuration, 'id') && merchant_provider_configuration.id == id){
 
-                  return_array.push(loadbalancer);
+                  return_array.push(merchantprovidergroup);
                   return true;
 
                 }
@@ -83,11 +83,11 @@ class loadBalancerController extends entityController {
     }
 
     //Note:  Used in Graph schema
-    getMerchantProviderConfigurations(loadbalancer){
+    getMerchantProviderConfigurations(merchantprovidergroup){
 
         du.debug('Get Merchant Provider Configurations');
 
-        return arrayutilities.map(loadbalancer.merchantproviders, (merchantproviderconfiguration) => {
+        return arrayutilities.map(merchantprovidergroup.merchantproviders, (merchantproviderconfiguration) => {
 
             return {
                 "distribution": merchantproviderconfiguration.distribution,
@@ -107,13 +107,13 @@ class loadBalancerController extends entityController {
 
     }
 
-    getMerchantProviders(loadbalancer){
+    getMerchantProviders(merchantprovidergroup){
 
       du.debug('Get Merchant Providers');
 
-      if(arrayutilities.nonEmpty(loadbalancer.merchantproviders)){
+      if(arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
 
-        let promises = arrayutilities.map(loadbalancer.merchantproviders, (merchant_provider) => {
+        let promises = arrayutilities.map(merchantprovidergroup.merchantproviders, (merchant_provider) => {
 
           //Technical Debt:  This is likely broken.
           return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: merchant_provider});
@@ -131,24 +131,24 @@ class loadBalancerController extends entityController {
     }
 
     //Note: Necessary because of the meta-object
-    getLoadBalancerHydrated(id){
+    getMerchantProviderGroupHydrated(id){
 
-      du.debug('Get Loadbalancer Hydrated');
+      du.debug('Get Merchantprovidergroup Hydrated');
 
-      return this.get({id: id}).then((loadbalancer) => {
+      return this.get({id: id}).then((merchantprovidergroup) => {
 
-        return this.getMerchantProviders(loadbalancer).then((merchant_providers) =>{
+        return this.getMerchantProviders(merchantprovidergroup).then((merchant_providers) =>{
 
           //Note: This marries the merchant provider to the meta object.
-          for(var i = 0; i < loadbalancer.merchantproviders.length; i++){
+          for(var i = 0; i < merchantprovidergroup.merchantproviders.length; i++){
 
             for(var j = 0; j < merchant_providers.length; j++){
 
-              if(loadbalancer.merchantproviders[i].id == merchant_providers[j].id){
+              if(merchantprovidergroup.merchantproviders[i].id == merchant_providers[j].id){
 
-                var distribution = loadbalancer.merchantproviders[i].distribution;
+                var distribution = merchantprovidergroup.merchantproviders[i].distribution;
 
-                loadbalancer.merchantproviders[i] = {merchantprovider: merchant_providers[j], distribution: distribution};
+                merchantprovidergroup.merchantproviders[i] = {merchantprovider: merchant_providers[j], distribution: distribution};
 
               }
 
@@ -156,7 +156,7 @@ class loadBalancerController extends entityController {
 
           }
 
-          return loadbalancer;
+          return merchantprovidergroup;
 
         });
 
@@ -166,4 +166,4 @@ class loadBalancerController extends entityController {
 
 }
 
-module.exports = new loadBalancerController();
+module.exports = new merchantProviderGroupController();

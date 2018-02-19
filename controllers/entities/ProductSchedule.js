@@ -106,13 +106,13 @@ class productScheduleController extends entityController {
 
     }
 
-    getLoadBalancer(product_schedule){
+    getMerchantProviderGroup(product_schedule){
 
-      du.debug('Get Load Balancer');
+      du.debug('Get Merchant Provider Group');
 
-      if(!_.has(product_schedule, 'loadbalancer')){ return Promise.resolve(null); }
+      if(!_.has(product_schedule, 'merchantprovidergroup')){ return Promise.resolve(null); }
 
-      return this.executeAssociatedEntityFunction('loadBalancerController', 'get', {id: product_schedule.loadbalancer});
+      return this.executeAssociatedEntityFunction('merchantProviderGroupController', 'get', {id: product_schedule.merchantprovidergroup});
 
     }
 
@@ -192,17 +192,17 @@ class productScheduleController extends entityController {
 
     }
 
-    listByLoadBalancer({loadbalancer, pagination}){
+    listByMerchantProviderGroup({merchantprovidergroup, pagination}){
 
-      du.debug('List By Load Balancer');
+      du.debug('List By Merchant Provider Group');
 
       let query_parameters = {
-        filter_expression: '#f1 = :loadbalancer_id',
+        filter_expression: '#f1 = :merchantprovidergroup_id',
         expression_attribute_values: {
-          ':loadbalancer_id':this.getID(loadbalancer)
+          ':merchantprovidergroup_id':this.getID(merchantprovidergroup)
         },
         expression_attribute_names: {
-          '#f1':'loadbalancer'
+          '#f1':'merchantprovidergroup'
         }
       };
 

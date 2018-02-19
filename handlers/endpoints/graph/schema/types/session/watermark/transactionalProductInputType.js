@@ -40,9 +40,9 @@ module.exports.graphObj = new GraphQLInputObjectType({
         type: GraphQLFloat,
         description: 'A default price for product.',
       },
-      loadbalancer:{
+      merchantprovidergroup:{
         type: GraphQLString,
-        description: 'The load balancer associated with the product schedule.'
+        description: 'The merchant provider group associated with the product schedule.'
       },
       fulfillment_provider: {
         type: GraphQLString,

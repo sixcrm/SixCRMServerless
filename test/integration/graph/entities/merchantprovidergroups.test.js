@@ -11,26 +11,26 @@ chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
 
-var entity = 'Load Balancers';
+var entity = 'Merchant Provider Groups';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getLoadBalancers.json')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getMerchantProviderGroups.json')
 },
 {
     name: "view",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getLoadBalancer.json')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getMerchantProviderGroup.json')
 },
 {
     name: "create",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createLoadBalancer.json')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/create/createMerchantProviderGroup.json')
 },
 {
     name: "update",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateLoadBalancer.json')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateMerchantProviderGroup.json')
 },
 {
     name: "delete",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteLoadBalancer.json')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteMerchantProviderGroup.json')
 }];
 
 let this_request = request(endpoint);

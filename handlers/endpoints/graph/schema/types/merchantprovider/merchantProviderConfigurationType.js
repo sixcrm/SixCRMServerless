@@ -5,7 +5,7 @@ const GraphQLFloat = require('graphql').GraphQLFloat;
 
 let merchantProviderType = require('./merchantProviderType');
 
-const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'merchantproviderconfiguration',
@@ -17,8 +17,8 @@ module.exports.graphObj = new GraphQLObjectType({
      },
         merchantprovider: {
             type: merchantProviderType.graphObj,
-            description: 'The merchant provider instance associated with the load balancer',
-            resolve: merchantproviderconfiguration => loadBalancerController.getMerchantProviderConfiguration(merchantproviderconfiguration)
+            description: 'The merchant provider instance associated with the merchant provider group',
+            resolve: merchantproviderconfiguration => merchantProviderGroupController.getMerchantProviderConfiguration(merchantproviderconfiguration)
         }
     }),
     interfaces: []

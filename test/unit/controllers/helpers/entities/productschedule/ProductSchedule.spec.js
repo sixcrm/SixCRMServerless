@@ -22,7 +22,7 @@ function getValidProductSchedules(){
       id:uuidV4(),
       name:"Product Schedule 1",
       account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      loadbalancer:uuidV4(),
+      merchantprovidergroup:uuidV4(),
       schedule:[
         {
           product:uuidV4(),

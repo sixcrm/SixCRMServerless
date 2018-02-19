@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/loadbalancer.json",
-	"title": "Load Balancer",
+	"id":"/merchantprovidergroup.json",
+	"title": "Merchant Provider Group",
 	"type": "object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
