@@ -738,7 +738,7 @@ describe('controllers/providers/Register.js', () => {
       rebill.merchant_provider = merchant_provider.id;
       let merchant_provider_groups = getValidMerchantProviderGroups([merchant_provider.id]);
 
-      merchant_provider_groups[merchant_provider.id] = [rebill.products];
+      merchant_provider_groups[merchant_provider.id] = rebill.products;
 
       let customer = getValidCustomer();
       let creditcard = getValidCreditCard();
