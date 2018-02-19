@@ -5,6 +5,8 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
@@ -63,7 +65,7 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		}
 
 		let subscription_promises = arrayutilities.map(subscription_files, (subscription_file) => {
-			return () => this.createSubscription(subscription_file);
+			return () => this.createSubscriptions(subscription_file);
 		});
 
 		return arrayutilities.reduce(subscription_promises, (current, subscription_promise) => {
@@ -74,18 +76,19 @@ class SNSDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	createSubscription(subscription_file){
+	createSubscriptions(subscription_file){
 
-		du.debug('Create Subscription');
+		du.debug('Create Subscriptions');
 
 		let subscription_file_contents = global.SixCRM.routes.include('deployment', 'sns/configuration/subscriptions/'+subscription_file);
 		subscription_file_contents = this.parseTokensIntoSubscriptionParameters(subscription_file_contents);
 
-		du.info(subscription_file_contents);
-		process.exit();
-		return this.snsutilities.subscribe(subscription_file_contents).then(result => {
-			du.debug(result);
-		});
+		return arrayutilities.reduce(subscription_file_contents.Subscriptions, (current, subscription) => {
+			return this.snsutilities.subscribe(subscription).then((result) => {
+				du.debug(result);
+				return true;
+			});
+		}, Promise.resolve());
 
 	}
 
@@ -94,13 +97,19 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		du.debug('Parse Tokens Into Subscription Parameters');
 
 		let data = {
-			region: global.SixCRM.configuration.site_config.aws.region
-			account: global.SixCRM.configuration.site_config.aws.account
-			topic_name: subscription_file_contents.Name,
-		 	stage: global.SixCRM.configuration.stage
+			region: global.SixCRM.configuration.site_config.aws.region,
+			account: global.SixCRM.configuration.site_config.aws.account,
+		 	stage: global.SixCRM.configuration.stage,
+			topic_name: subscription_file_contents.Name
 		};
 
-		return parserutilities.parse(subscription_file_contents, data)
+		arrayutilities.map(subscription_file_contents.Subscriptions, (subscription, index) => {
+			objectutilities.map(subscription, key => {
+			 	subscription_file_contents.Subscriptions[index][key] = parserutilities.parse(subscription[key], data);
+			});
+		});
+
+		return subscription_file_contents;
 
 	}
 
