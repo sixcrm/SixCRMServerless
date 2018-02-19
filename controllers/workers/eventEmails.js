@@ -2,12 +2,10 @@
 
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
-class IntegrationTestGenerator extends workerController {
+class EventEmailsController extends workerController {
 
   constructor(){
-
     super();
-
   }
 
   execute(){
@@ -16,4 +14,4 @@ class IntegrationTestGenerator extends workerController {
 
 }
 
-module.exports = new IntegrationTestGenerator();
+module.exports = new EventEmailsController();
