@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/emailtemplate",
+	"id":"/entities/emailtemplate.json",
 	"title": "Email Template",
 	"type": "object",
 	"properties": {
