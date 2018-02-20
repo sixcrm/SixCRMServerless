@@ -74,6 +74,9 @@ let inviteInputType = require('./user/inviteInputType');
 let transactionChargebackInputType = require('./transaction/transactionChargebackInputType');
 let transactionType = require('./transaction/transactionType');
 
+let entityACLInputType = require('./entityacl/entityACLInputType');
+let entityACLType = require('./entityacl/entityACLType');
+
 let userACLInputType = require('./useracl/userACLInputType');
 let userACLTermsAndConditionsInputType = require('./useracl/userACLTermsAndConditionsInputType');
 let userACLType = require('./useracl/userACLType');
@@ -345,6 +348,46 @@ module.exports.graphObj = new GraphQLObjectType({
                 const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
                 return userACLController.delete({id: id});
+            }
+        },
+        createentityacl:{
+            type: entityACLType.graphObj,
+            description: 'Adds a new entity acl.',
+            args: {
+                entityacl: { type: entityACLInputType.graphObj }
+            },
+            resolve: (value, entityacl) => {
+                const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+
+                return entityACLController.create({entity: entityacl.entityacl});
+            }
+        },
+        updateentityacl:{
+            type: entityACLType.graphObj,
+            description: 'Updates an entity acl.',
+            args: {
+                entityacl: { type: entityACLInputType.graphObj }
+            },
+            resolve: (value, entityacl) => {
+                const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+
+                return entityACLController.update({entity: entityacl.entityacl});
+            }
+        },
+        deleteentityacl:{
+            type: deleteOutputType.graphObj,
+            description: 'Deletes an entity acl.',
+            args: {
+                entity: {
+				  description: 'id of the entityacl',
+				  type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, entityacl) => {
+                const entity = entityacl.entity;
+                const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+
+                return entityACLController.delete({id: entity});
             }
         },
         createproduct:{
