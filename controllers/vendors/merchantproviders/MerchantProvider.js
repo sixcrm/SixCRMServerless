@@ -106,7 +106,7 @@ module.exports = class MerchantProvider {
             reject(response.error);
           }
 
-          resolve({response: response.response, body: response.body});
+          return resolve({response: response.response, body: response.body});
 
         });
 

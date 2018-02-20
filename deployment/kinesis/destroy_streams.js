@@ -6,7 +6,7 @@ const KinesisDeployment = global.SixCRM.routes.include('deployment', 'utilities/
 let kinesisDeployment = new KinesisDeployment();
 
 return kinesisDeployment.destroyStreams().then((result) => {
-  du.highlight(result);
+  return du.highlight(result);
 }).catch(error => {
   du.error(error);
   du.warning(error.message);

@@ -95,7 +95,7 @@ class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
 
         });
 
-        this.parameters.set('tablenames', table_names);
+        return this.parameters.set('tablenames', table_names);
 
       });
 
@@ -224,7 +224,7 @@ class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
       .then(() => this.setTableScalingPolicies())
       .catch((error) => { du.error(error); })
       .then(() => {
-        this.parameters.unset('autoscalingconfiguration');
+        return this.parameters.unset('autoscalingconfiguration');
       });
 
     }

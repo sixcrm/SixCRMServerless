@@ -73,7 +73,7 @@ class InfoController extends transactionEndpointController{
       if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
 
       return this.productController.getListByAccount({ids: event.products}).then(result => {
-        this.parameters.set('products', result.products);
+        return this.parameters.set('products', result.products);
       });
 
     }
@@ -101,7 +101,8 @@ class InfoController extends transactionEndpointController{
 
         return Promise.all(hydrated_product_schedules_promises).then(hydrated_product_schedules_promises => {
 
-          this.parameters.set('productschedules', hydrated_product_schedules_promises);
+          return this.parameters.set('productschedules', hydrated_product_schedules_promises);
+
         })
 
       });

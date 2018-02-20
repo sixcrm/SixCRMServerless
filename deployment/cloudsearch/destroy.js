@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const cloudsearchDeployment = global.SixCRM.routes.include('deployment', 'utilities/cloudsearch-deployment.js');
 
 return cloudsearchDeployment.destroy().then((result) => {
-  du.highlight(result);
+  return du.highlight(result);
 }).catch(error => {
   du.error(error);
   du.warning(error.message);

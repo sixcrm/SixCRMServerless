@@ -19,7 +19,7 @@ class notificationReadController extends entityController {
 
       return this.getOrCreateNotificationRead().then(notification_read => {
 
-        this.touch({entity: notification_read});
+        return this.touch({entity: notification_read});
 
       });
 

@@ -128,6 +128,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
           return true;
         }
         eu.throwError('server', 'Session does not have product schedules.');
+        return false;
       });
 
     }else{

@@ -211,7 +211,7 @@ class userController extends entityController {
                   global.user.termsandconditions_outdated = true;
                 }
 
-                return Promise.resolve();
+                return true;
               })
               .then(() => termsAndConditionsController.getLatestTermsAndConditions('owner'))
               .then(owner_terms_and_conditions => {
@@ -228,7 +228,7 @@ class userController extends entityController {
 
                 global.user.acl = acls;
 
-                return Promise.resolve();
+                return true;
               })
               .then(() => {
                 this.disableACLs();

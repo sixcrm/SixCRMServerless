@@ -53,6 +53,7 @@ let notification_object = {
 
 NotificationProvider.createNotificationForAccountAndUser(notification_object).then(() => {
     du.output('Attempted to insert and send a notification', notification_object);
+    return true;
 }).catch((error) => {
     du.error('Error while inserting or sending.', error);
 });

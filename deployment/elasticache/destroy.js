@@ -8,7 +8,7 @@ let stage = process.argv[2] || 'development';
 let elasticacheDeployment = new ElasticacheDeployment(stage);
 
 return elasticacheDeployment.destroy().then((result) => {
-  du.highlight(result);
+  return du.highlight(result);
 }).catch(error => {
   du.error(error);
   du.warning(error.message);

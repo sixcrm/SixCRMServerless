@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 var AWS = require('aws-sdk');
 
 var s3 = new AWS.S3();
@@ -7,7 +8,7 @@ var myKey = 'test_json_gen.json';
 
 if (typeof Promise === 'undefined') {
     AWS.config.setPromisesDependency(require('bluebird'));
-    console.log("Console");
+    console.log("Native Promises not found. Using Bluebird instead.");
 }
 
 function createGuid()

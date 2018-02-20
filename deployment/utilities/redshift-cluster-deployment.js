@@ -232,9 +232,11 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
 
             parameters.VpcSecurityGroupIds.push(security_group.GroupId);
 
+            return true;
+
           }else{
 
-            eu.throwError('server', 'Security group does not exist: '+security_group_name);
+            return eu.throwError('server', 'Security group does not exist: '+security_group_name);
 
           }
 

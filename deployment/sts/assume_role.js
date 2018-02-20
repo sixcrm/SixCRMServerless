@@ -38,6 +38,8 @@ return awsdu.setRole(configuration.branch).then(() => {
   du.highlight('Role Updated.');
   du.info(process.env);
 
+  return true;
+
 }).catch(error => {
 
   du.error(error);

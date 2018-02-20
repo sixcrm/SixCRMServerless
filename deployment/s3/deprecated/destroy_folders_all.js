@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use strict';
 require('../../SixCRM.js');
 
@@ -25,18 +26,18 @@ bucket_list.map(bucket => {
     if (key !== 'bucket')
       Object.keys(s3Deployment.getConfig().buckets[bucket][key]).forEach((folder) => {
         bucket_parameters.Key = s3Deployment.getConfig().buckets[bucket][key][folder];
-        s3Deployment.folderExists(bucket_parameters).then(exists => {
+        return s3Deployment.folderExists(bucket_parameters).then(exists => {
           if (exists) {
             du.warning('Folder exists, deleting files and folder');
             return s3Deployment.listObjects(bucket_parameters).then(files => {
-              files.filter(folder => folder.Key.match(bucket_parameters.Key)).reverse().forEach((file) => {
+              return files.filter(folder => folder.Key.match(bucket_parameters.Key)).reverse().forEach((file) => {
                 let folder_parameters = {
                   Bucket: bucket_parameters.Bucket,
                   Key: file.Key
                 };
 
                 return s3Deployment.deleteFolderAndWait(folder_parameters).then(response => {
-                  du.output(response);
+                  return du.output(response);
                 });
               });
             });
@@ -44,9 +45,10 @@ bucket_list.map(bucket => {
           } else {
             du.warning('Folder does not exists, Aborting.');
             console.log('Folder does not exists, Aborting.');
+            return false;
           }
         }).then(() => {
-          du.highlight('Complete')
+          return du.highlight('Complete')
         });
       })
   });

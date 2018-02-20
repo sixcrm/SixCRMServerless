@@ -225,7 +225,7 @@ class CreateOrderController extends transactionEndpointController{
 
       return this.creditCardController.assureCreditCard(event.creditcard)
       .then(creditcard => {
-        this.parameters.set('creditcard', creditcard);
+        return this.parameters.set('creditcard', creditcard);
       })
       .then(() => this.addCreditCardToCustomer());
 

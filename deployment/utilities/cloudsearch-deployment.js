@@ -172,6 +172,7 @@ class CloudsearchDeployment{
 
           }
         }
+        return false;
 
       });
 
@@ -256,6 +257,8 @@ class CloudsearchDeployment{
           });
 
         }
+
+        return false;
 
       });
 

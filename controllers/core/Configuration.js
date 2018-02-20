@@ -624,7 +624,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
       }
 
       eu.throwError('server', 'Unable to propagate to local cache');
-
+      return true;
     });
 
   }

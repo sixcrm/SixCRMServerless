@@ -35,7 +35,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
             return this.dynamodbutilities.waitFor(table_definition.Table.TableName, 'tableExists').then(() => {
 
-              du.highlight('Successfully created table: '+table_definition.Table.TableName);
+              return du.highlight('Successfully created table: '+table_definition.Table.TableName);
 
             });
 
@@ -164,6 +164,8 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
             }else{
 
               du.output('Table is empty.');
+
+              return true;
 
             }
 
@@ -386,6 +388,8 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
           this.controllers.push(global.SixCRM.routes.include('entities', filename));
 
         });
+
+        return true;
 
       });
 

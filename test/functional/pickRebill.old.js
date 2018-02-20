@@ -19,10 +19,10 @@ describe('Pick Rebill', function () {
     });
 
     beforeEach((done) => {
-        Promise.all([
+        return Promise.all([
             SqSTestUtils.purgeAllQueues(),
-            ModelGenerator.randomEntityWithId('rebill').then(rebill => { randomRebill = rebill })
-        ]).then(() => { done() });
+            ModelGenerator.randomEntityWithId('rebill').then(rebill => { randomRebill = rebill; return true; })
+        ]).then(() => { return done() });
     });
 
     afterEach(() => {
@@ -45,6 +45,7 @@ describe('Pick Rebill', function () {
             expect(response).to.be.true;
             return SqSTestUtils.messageCountInQueue('bill').then((count) => {
                 expect(count).to.equal(0);
+                return true;
             });
         });
     });
@@ -72,6 +73,7 @@ describe('Pick Rebill', function () {
             expect(rebill.processing).to.be.equal('true');
             return SqSTestUtils.messageCountInQueue('bill').then((count) => {
                 expect(count).to.equal(1);
+                return true;
             });
         });
     });

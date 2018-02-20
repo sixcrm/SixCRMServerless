@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const dynamoDBAutoscalingDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-autoscaling-deployment.js');
 
 dynamoDBAutoscalingDeployment.autoscaleTables().then((result) => {
-  du.highlight(result);
+  return du.highlight(result);
 }).catch(error => {
   du.error(error);
   du.warning(error.message);

@@ -40,7 +40,7 @@ module.exports = class ReIndexingHelperController {
                       entity: c
                   });
               });
-
+              return true;
           }));
 
       });
@@ -52,6 +52,7 @@ module.exports = class ReIndexingHelperController {
           search.hits.hit.map((s) => {
               entities_index.push(s);
           })
+          return true;
       }).then(() => {
           let index_details = {};
           let db_details = {};
@@ -109,6 +110,7 @@ module.exports = class ReIndexingHelperController {
 
       }).then(() => {
           du.output('Finished');
+          return true;
       });
 
 

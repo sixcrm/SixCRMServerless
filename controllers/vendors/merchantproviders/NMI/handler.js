@@ -96,6 +96,7 @@ class NMIController extends MerchantProvider {
         };
 
         this.parameters.set('vendorresponse', response_object);
+        return true;
       })
       .then(() => this.respond({}));
 
@@ -117,6 +118,7 @@ class NMIController extends MerchantProvider {
         };
 
         this.parameters.set('vendorresponse', response_object);
+        return true;
       })
       .then(() => this.respond({}));
 
@@ -140,6 +142,7 @@ class NMIController extends MerchantProvider {
         };
 
         this.parameters.set('vendorresponse', response_object);
+        return true;
       })
       .then(() => this.respond({}));
 
@@ -161,6 +164,7 @@ class NMIController extends MerchantProvider {
         };
 
         this.parameters.set('vendorresponse', response_object);
+        return true;
       })
       .then(() => this.respond({}));
 

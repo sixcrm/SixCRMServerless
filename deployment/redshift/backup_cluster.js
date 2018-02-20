@@ -34,6 +34,7 @@ objectutilities.map(cli_parameters, key => {
 return redshiftClusterDeployment.backupCluster(configuration).then((result) => {
   du.highlight(result);
   du.output('Cluster Backup Initiated.');
+  return true;
 }).catch(error => {
   du.error(error);
   du.warning(error.message);

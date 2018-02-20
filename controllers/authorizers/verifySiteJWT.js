@@ -120,9 +120,10 @@ class verifySiteJWTController {
         this.userSigningStringController.enableACLs();
 
         if(arrayutilities.nonEmpty(usersigningstrings)){
-          this.parameters.set('user_signing_strings', usersigningstrings);
+          return this.parameters.set('user_signing_strings', usersigningstrings);
         }
 
+        return true;
       });
 
     }

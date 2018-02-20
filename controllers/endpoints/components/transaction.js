@@ -58,7 +58,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
       return this.preprocessing(event)
   		.then((event) => this.acquireRequestProperties(event))
       .then((event_body) => {
-        this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
+        return this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
       });
 
     }

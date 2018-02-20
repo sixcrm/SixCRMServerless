@@ -29,29 +29,26 @@ module.exports = class RelayController {
       this.setPermissions();
     }
 
-    invokeAdditionalLambdas(){
+    invokeAdditionalLambdas() {
 
       du.debug('Invoke Additional Lambdas');
 
       let params = this.parameters.get('params');
       let messages = this.parameters.get('messages');
 
-      if(arrayutilities.nonEmpty(messages) && messages.length >= this.message_limit){
+      if (arrayutilities.nonEmpty(messages) && messages.length >= this.message_limit) {
 
         du.warning('Invoking additional lambda');
 
-       this.lambdautilities.invokeFunction({
+        return this.lambdautilities.invokeFunction({
           function_name: this.lambdautilities.buildLambdaName(params.name),
           payload: JSON.stringify({}),
           invocation_type: 'Event' //Asynchronous execution
         }).then(() => {
-
           return true;
-
         });
 
       }
-
       return Promise.resolve(true);
 
     }

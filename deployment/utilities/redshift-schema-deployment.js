@@ -142,6 +142,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     let query_promises = arrayutilities.map(query_filepaths, (filepath) => {
       return () => this.getQueryFromPath(filepath, versioned).then((query) => {
         queries.push(query);
+        return true;
       });
     });
 
@@ -160,6 +161,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     let query_promises = arrayutilities.map(query_filepaths, (filepath) => {
       return () => this.getScriptQueryFromPath(filepath).then((query) => {
         queries.push(query);
+        return true;
       });
     });
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 var redshiftClient = require('./redshift.js');
 
 redshiftClient.connect(function(err){

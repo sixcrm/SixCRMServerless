@@ -232,7 +232,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     return this.customerController.get({id: parentsession.customer}).then(customer => {
 
-      this.parameters.set('customer', customer);
+      return this.parameters.set('customer', customer);
 
     });
 
@@ -246,9 +246,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     return this.customerController.getCreditCards(customer).then(creditcards => {
 
-      this.parameters.set('creditcards', creditcards);
-
-      return Promise.resolve(true);
+      return this.parameters.set('creditcards', creditcards);
 
     });
 

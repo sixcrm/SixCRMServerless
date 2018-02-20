@@ -277,7 +277,7 @@ class mockSQSUtilities extends AWSUtilities {
 
         }
 
-        this.queueExists(queue_name).then(queue_exists => {
+        return this.queueExists(queue_name).then(queue_exists => {
 
           if(queue_exists){
 
@@ -285,13 +285,13 @@ class mockSQSUtilities extends AWSUtilities {
 
             let queue_url = this.getQueueURL(parameters);
 
-            var params = {QueueUrl: queue_url};
+            let params = {QueueUrl: queue_url};
 
-            this.sqs.purgeQueue(params, (error, data) => {
+            return this.sqs.purgeQueue(params, (error, data) => {
 
               du.highlight(queue_name+' queue purged');
 
-              resolve(this.AWSCallback(error, data))
+              return resolve(this.AWSCallback(error, data))
 
             });
 
@@ -317,7 +317,7 @@ class mockSQSUtilities extends AWSUtilities {
 
         du.warning(params.QueueName);
 
-        this.queueExists(params.QueueName).then(queue_exists => {
+        return this.queueExists(params.QueueName).then(queue_exists => {
 
           if(queue_exists){
 
@@ -329,7 +329,7 @@ class mockSQSUtilities extends AWSUtilities {
 
             du.highlight('Queue not found, creating', params);
 
-            this.sqs.createQueue(params, (error, data) => {
+            return this.sqs.createQueue(params, (error, data) => {
               return resolve(this.AWSCallback(error, data));
             });
 

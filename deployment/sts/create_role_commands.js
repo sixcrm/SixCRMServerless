@@ -50,7 +50,7 @@ function transformToBash(role_json){
 return awsdu.getRoleCredentials(configuration.branch).then((result) => {
 
   du.debug(result);
-  fileutilities.writeFile(configuration.output, transformToBash(result));
+  return fileutilities.writeFile(configuration.output, transformToBash(result));
 
 }).catch(error => {
 

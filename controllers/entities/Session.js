@@ -519,6 +519,8 @@ class sessionController extends entityController {
 
           }
 
+          return [];
+
         }).then((session_rebill_transaction_products) => {
 
           //du.highlight('Session Rebill Transaction Products', session_rebill_transaction_products);

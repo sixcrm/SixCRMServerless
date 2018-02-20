@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 
 SQSDeployment.purgeQueues().then(result => {
-  du.highlight(result);
+  return du.highlight(result);
 }).catch((error) => {
   du.error(error);
   du.warning(error.message);

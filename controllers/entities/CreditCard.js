@@ -66,6 +66,8 @@ class creditCardController extends entityController {
 
         }
 
+        return true;
+
       });
 
     }

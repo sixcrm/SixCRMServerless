@@ -16,7 +16,7 @@ module.exports = {
         "linebreak-style": [ "error", "unix" ],
         "newline-after-var": ["warn", "always"],
         //"newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }],
-        "no-console": [ "warn" ],
+        "no-console": [ "error" ],
         "no-extra-semi": [ "off" ],
         "no-trailing-spaces": [ "warn" ],
         "no-mixed-spaces-and-tabs": "off",

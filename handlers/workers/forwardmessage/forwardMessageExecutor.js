@@ -6,6 +6,7 @@ module.exports = (forwardMessageController, event, callback) => {
   return forwardMessageController.execute().then(() => {
 
     new LambdaResponse().issueResponse(200, {}, callback);
+    return true;
 
   }).catch((error) =>{
 

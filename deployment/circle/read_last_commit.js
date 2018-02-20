@@ -9,7 +9,7 @@ return s3utilities.getObject(bucket_name, 'last_commit.txt')
         let last_commit = data.Body.toString();
 
         process.stdout.write(last_commit);
-        process.exit();
+        return process.exit();
     })
     .catch(() => {
         process.exit();

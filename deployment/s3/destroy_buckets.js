@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const S3Deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-deployment.js');
 
 S3Deployment.destroyBuckets().then(result => {
-  du.highlight(result);
+  return du.highlight(result);
 }).catch((error) => {
   du.error(error);
   du.warning(error.message);

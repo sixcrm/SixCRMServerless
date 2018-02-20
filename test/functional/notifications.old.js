@@ -6,7 +6,7 @@ let aNotification;
 
 describe('notificationController', function () {
     before((done) => {
-        ModelGenerator.randomEntityWithId('notification').then((notification) => {
+        return ModelGenerator.randomEntityWithId('notification').then((notification) => {
             aNotification = notification;
 
             TestUtils.setGlobalUser({account: notification.account, user: notification.user});
@@ -14,7 +14,7 @@ describe('notificationController', function () {
 
             // we need to initialize controller _after_ the variables has been set, that's why it's not on top of the file
             notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
-            done();
+            return done();
         });
 
     });
@@ -37,7 +37,7 @@ describe('notificationController', function () {
         }).then((notification) => {
             // we should be able to get it by id
             expect(notification).not.to.be.null;
-            done();
+            return done();
         }).catch((error) => {
             done(error);
         });
@@ -55,7 +55,7 @@ describe('notificationController', function () {
         }).then((response) => {
             // then we should see count of 1
             expect(response.count).to.equal(1);
-            done();
+            return done();
         }).catch((error) => {
             done(error);
         });
@@ -98,7 +98,7 @@ describe('notificationController', function () {
 
             // then we should see count of 0
             expect(response.count).to.equal(0);
-            done();
+            return done();
 
         }).catch((error) => {
 

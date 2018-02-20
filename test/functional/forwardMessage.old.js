@@ -10,8 +10,8 @@ describe('Functional test for message workers', function () {
         process.env.require_local = true;
         TestUtils.setGlobalUser();
         TestUtils.setEnvironmentVariables();
-        SqSTestUtils.purgeAllQueues().then(() => {
-            done();
+        return SqSTestUtils.purgeAllQueues().then(() => {
+            return done();
         });
     });
 
@@ -25,6 +25,7 @@ describe('Functional test for message workers', function () {
                 expect(response).to.equal(forwardingFunction.messages.successnomessages);
                 return SqSTestUtils.messageCountInQueue('rebill').then((count) => {
                     expect(count).to.equal(0);
+                    return true;
                 });
             });
         });
@@ -36,6 +37,7 @@ describe('Functional test for message workers', function () {
                     expect(response).to.equal(forwardingFunction.messages.success);
                     return SqSTestUtils.messageCountInQueue('rebill').then(count => {
                         expect(count).to.equal(0);
+                        return true;
                     });
                 });
             });
@@ -53,6 +55,7 @@ describe('Functional test for message workers', function () {
                 expect(response).to.equal(forwardingFunction.messages.successnomessages);
                 return SqSTestUtils.messageCountInQueue('hold').then((count) => {
                     expect(count).to.equal(0);
+                    return true;
                 });
             });
         });
@@ -72,6 +75,7 @@ describe('Functional test for message workers', function () {
                         expect(count).to.equal(1);
                         return SqSTestUtils.messageCountInQueue('hold').then((count) => {
                             expect(count).to.equal(0);
+                            return true;
                         });
                     });
                 });
@@ -87,16 +91,17 @@ describe('Functional test for message workers', function () {
         it('should say "no message" when no message is in input queue', function () {
             return forwardingFunction.execute().then((response) => {
                 expect(response).to.equal(forwardingFunction.messages.successnomessages);
+                return true;
             });
         });
 
 
         // Technical Debt: don't skip this test. Fix the 'cannot read property' in USPS.js
         xit('should say "no action" when there is a message', function (done) {
-            givenAnyMessageInShippedQueue().then(() => {
-                forwardingFunction.execute().then((response) => {
+            return givenAnyMessageInShippedQueue().then(() => {
+                return forwardingFunction.execute().then((response) => {
                     expect(response).to.equal(forwardingFunction.messages.success);
-                    done();
+                    return done();
                 }).catch(error => {
                     done(error);
                 });
@@ -112,6 +117,7 @@ describe('Functional test for message workers', function () {
         it('should say "no message" when no message is in input queue', function () {
             return forwardingFunction.execute().then((response) => {
                 expect(response).to.equal(forwardingFunction.messages.successnomessages);
+                return true;
             });
         });
 
@@ -122,6 +128,7 @@ describe('Functional test for message workers', function () {
                     expect(response).to.equal(forwardingFunction.messages.success);
                     return SqSTestUtils.messageCountInQueue('delivered').then(count => {
                         expect(count).to.equal(0);
+                        return true;
                     });
                 });
             });

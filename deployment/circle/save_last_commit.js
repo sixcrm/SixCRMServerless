@@ -21,7 +21,7 @@ return s3utilities.assureBucket({Bucket: bucket_name})
     })
     .then(() => {
         du.output('Successfully uploaded last commit (' + last_commit + ') to S3');
-        process.exit();
+        return process.exit();
     })
     .catch((error) => {
         du.error(error);

@@ -148,7 +148,7 @@ module.exports = class Register extends RegisterUtilities {
 
       associated_transactions = (arrayutilities.nonEmpty(associated_transactions))?associated_transactions:[];
 
-      this.parameters.set('associated_transactions', associated_transactions);
+      return this.parameters.set('associated_transactions', associated_transactions);
 
     });
 
@@ -280,7 +280,7 @@ module.exports = class Register extends RegisterUtilities {
     // let argumentation_object = {};
 
     return registerReceiptController.issueReceipt().then(receipt_transaction => {
-      this.parameters.set('receipttransaction', receipt_transaction);
+      return this.parameters.set('receipttransaction', receipt_transaction);
     });
 
   }

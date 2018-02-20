@@ -407,6 +407,7 @@ module.exports = class entityController extends entityUtilitiesController {
         entity = this.assignAccount(entity);
         entity = this.setCreatedAt(entity);
 
+        return true;
       })
       .then(() => this.validate(entity))
       .then(() => this.exists({entity: entity}))
@@ -414,8 +415,10 @@ module.exports = class entityController extends entityUtilitiesController {
 
         if(exists !== false){
           eu.throwError('bad_request','A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"');
+          return false;
         }
 
+        return true;
       })
       .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
       .then(() => {
@@ -456,6 +459,8 @@ module.exports = class entityController extends entityUtilitiesController {
         entity = this.assignAccount(entity);
         entity = this.persistCreatedUpdated(entity, existing_entity);
         entity = this.setUpdatedAt(entity);
+
+        return true;
       })
       .then(() => this.validate(entity))
       .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
@@ -543,7 +548,9 @@ module.exports = class entityController extends entityUtilitiesController {
       .then((exists) => {
         if(!exists){
           eu.throwError('not_found','Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.');
+          return false;
         }
+        return true;
       })
       .then(() => this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null))
       .then(() => {

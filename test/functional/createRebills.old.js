@@ -7,8 +7,8 @@ describe('createRebills', function () {
     before((done) => {
         TestUtils.setGlobalUser();
         TestUtils.setEnvironmentVariables();
-        SqSTestUtils.purgeAllQueues().then(() => {
-            done();
+        return SqSTestUtils.purgeAllQueues().then(() => {
+            return done();
         });
     });
 
@@ -19,6 +19,7 @@ describe('createRebills', function () {
 
             return fn.execute(session).then((response) => {
                 expect(response).to.equal(fn.messages.successnoaction);
+                return true;
             });
 
         });

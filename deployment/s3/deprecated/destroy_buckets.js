@@ -19,15 +19,15 @@ bucket_list.map(bucket => {
 
   Object.keys(s3Deployment.getConfig().buckets[bucket]).forEach((key) => {
     if (key=='bucket')
-        s3Deployment.bucketExists(bucket_parameters).then(exists => {
+        return s3Deployment.bucketExists(bucket_parameters).then(exists => {
             if (exists) {
                 du.warning('Bucket exists, destroying');
                 return s3Deployment.deleteBucketAndWait(bucket_parameters).then(response => {
-                  du.output(response);
+                  return du.output(response);
                 });
             } else {
-                du.output('Bucket does not exist, Aborting.');
+                return du.output('Bucket does not exist, Aborting.');
             }
-        }).then(() => { du.highlight('Complete')})
+        }).then(() => { return du.highlight('Complete')} )
   });
 });

@@ -8,6 +8,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 var workerController = global.SixCRM.routes.include('controllers', 'workers/worker.js');
 
 /*
+* TODO: Refactor this class, a lot of unstopped executions - not returning after resolve() / reject().
 *
 * This class is complicated.
 * The most important thing to note about this class is the following:
@@ -67,7 +68,7 @@ class forwardMessagesController extends workerController {
 
         return new Promise((resolve, reject) => {
 
-            var parsed_lambda_response;
+            let parsed_lambda_response;
 
             if(_.isString(lambda_response)){
                 try{
@@ -133,9 +134,10 @@ class forwardMessagesController extends workerController {
 
     }
 
+    // TODO: Refactoring needed. Too many branching without clear "Main scenario" of the function.
     forwardMessages(){
 
-        var controller_instance = this;
+        let controller_instance = this;
 
         return new Promise((resolve, reject) => {
 
@@ -160,50 +162,51 @@ class forwardMessagesController extends workerController {
 
                     du.debug('Invoke parameters:  ', invoke_parameters);
 
-                    lambda.invokeFunction(invoke_parameters).then((workerdata) => {
+                    return lambda.invokeFunction(invoke_parameters).then((workerdata) => {
 
                         du.debug('Workerdata:', workerdata);
 
-                        if(workerdata.StatusCode !== 200){
+                        if (workerdata.StatusCode !== 200){
 
                             return reject(eu.getError('server','Non-200 Status Code returned from Lambda invocation.'));
 
                         }
 
-                        controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
+                        return controller_instance.parseSQSMessage(workerdata.Payload).then((response) => {
 
-                            if(!_.has(response, 'statusCode')){
+                            if (!_.has(response, 'statusCode')) {
 
                                 let error_message = ' Worker data object has unrecognized structure.';
 
                                 if(_.has(response, 'body')){
                                     error_message += response.body;
                                 }
-                                reject(eu.getError('server',error_message));
+                                return reject(eu.getError('server',error_message));
 
                             }
 
-                            if( response.statusCode !== 200){
+                            if (response.statusCode !== 200) {
 
                                 let error_message = 'Non-200 Status Code returned in workerdata object: ';
 
                                 if(_.has(response, 'body')){
                                     error_message += response.body;
                                 }
-                                reject(eu.getError('server', error_message));
+                                return reject(eu.getError('server', error_message));
 
                             }
 
-                            controller_instance.parseLambdaResponse(response.body).then((response) => {
+                            // TODO: may be brake this code cascade into promises chain?
+                            return controller_instance.parseLambdaResponse(response.body).then((response) => {
 
-                                if(_.has(response, "forward")){
+                                if (_.has(response, "forward")) {
 
                                     if(_.has(process.env, "destination_queue")){
 
-                                        sqs.sendMessage({message_body: response.forward, queue: process.env.destination_queue}, (error) => {
+                                        return sqs.sendMessage({message_body: response.forward, queue: process.env.destination_queue}, (error) => {
 
                                             if(_.isError(error)){
-                                                reject(error);
+                                                return reject(error);
                                             }
 
                                             this.deleteMessages(messages).then(() => {
@@ -219,9 +222,9 @@ class forwardMessagesController extends workerController {
 
                                         });
 
-                                    }else{
+                                    } else {
 
-                                        this.deleteMessages(messages).then(() => {
+                                        return this.deleteMessages(messages).then(() => {
 
                                             return resolve(controller_instance.messages.success);
 
@@ -233,17 +236,21 @@ class forwardMessagesController extends workerController {
 
                                     }
 
-                                }else{
+                                } else {
 
                                     if(_.has(process.env, 'failure_queue')){
 
                                         if(_.has(response, "failed")){
 
-                                            sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error) => {
+                                            return sqs.sendMessage({message_body: response.failed, queue: process.env.failure_queue}, (error) => {
 
-                                                if(_.isError(error)){ return reject(error); }
+                                                if(_.isError(error)){
 
-                                                this.deleteMessages(messages).then(() => {
+                                                    return reject(error);
+
+                                                }
+
+                                                return this.deleteMessages(messages).then(() => {
 
                                                     return resolve(controller_instance.messages.failforward);
 
@@ -255,13 +262,13 @@ class forwardMessagesController extends workerController {
 
                                             });
 
-                                        }else{
+                                        } else {
 
                                             return resolve(controller_instance.messages.successnoaction);
 
                                         }
 
-                                    }else{
+                                    } else {
 
                                         return resolve(controller_instance.messages.successnoaction);
 
@@ -279,9 +286,9 @@ class forwardMessagesController extends workerController {
 
                     });
 
-                }else{
+                } else {
 
-                    resolve(this.messages.successnomessages);
+                    return resolve(this.messages.successnomessages);
 
                 }
 

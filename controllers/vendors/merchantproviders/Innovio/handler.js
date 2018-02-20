@@ -122,6 +122,7 @@ class InnovioController extends MerchantProvider {
       .then(() => this.issueRequest())
       .then(() => {
         du.info(this.parameters.get('vendorresponse'));
+        return true;
       })
       .then(() => this.respond({}));
 

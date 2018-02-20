@@ -40,8 +40,7 @@ class notificationController extends entityController {
 
         }
 
-        eu.throwError('server', 'Response data is missing the "Count" field.');
-
+        return eu.throwError('server', 'Response data is missing the "Count" field.');
       });
 
     }

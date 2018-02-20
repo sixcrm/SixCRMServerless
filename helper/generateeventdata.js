@@ -15,6 +15,7 @@ return dataGenerator.execute().then(() => {
 
     du.highlight('Process Complete');
 
+    return true;
 }).catch((error) => {
     throw error;
 });
