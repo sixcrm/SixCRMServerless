@@ -13,23 +13,23 @@ module.exports = class MerchantProviderTest extends IntegrationTest {
 
   }
 
-  executeLoadBalancerBlockTest(){
+  executeMerchantProviderGroupBlockTest(){
 
-    du.output('Execute Load Balancer Block Test');
+    du.output('Execute Merchant Provider Group Block Test');
 
     let merchantprovider_id = uuidV4();
-    let loadbalancer_id = uuidV4();
+    let merchantprovidergroup_id = uuidV4();
 
     du.info('Merchant Provider ID: '+merchantprovider_id);
-    du.info('Load Balancer ID: '+loadbalancer_id);
+    du.info('Merchant Provider Group ID: '+merchantprovidergroup_id);
 
     return this.createMerchantProvider(merchantprovider_id)
-    .then(() => this.createLoadBalancer(loadbalancer_id, merchantprovider_id))
+    .then(() => this.createMerchantProviderGroup(merchantprovidergroup_id, merchantprovider_id))
     .then(() => this.deleteMerchantProvider(merchantprovider_id, 403))
     .then(response => {
       return response;
     })
-    .then(() => this.deleteLoadBalancer(loadbalancer_id))
+    .then(() => this.deleteMerchantProviderGroup(merchantprovidergroup_id))
     .then(() => this.deleteMerchantProvider(merchantprovider_id));
 
   }
@@ -64,13 +64,13 @@ module.exports = class MerchantProviderTest extends IntegrationTest {
 
   }
 
-  createLoadBalancer(loadbalancer_id, merchantprovider_id){
+  createMerchantProviderGroup(merchantprovidergroup_id, merchantprovider_id){
 
-    du.output('Create Load Balancer');
+    du.output('Create Merchant Provider Group');
 
-    let loadbalancer_create_query = `mutation { createloadbalancer ( loadbalancer: {id: "`+loadbalancer_id+`", name: "Simple load balancer", merchantproviders: [{id:"`+merchantprovider_id+`", distribution:1.0 } ] } ) { id } }`;
+    let merchantprovidergroup_create_query = `mutation { createmerchantprovidergroup ( merchantprovidergroup: {id: "`+merchantprovidergroup_id+`", name: "Simple merchant provider group", merchantproviders: [{id:"`+merchantprovider_id+`", distribution:1.0 } ] } ) { id } }`;
 
-    return this.executeQuery(loadbalancer_create_query);
+    return this.executeQuery(merchantprovidergroup_create_query);
 
   }
 
@@ -78,9 +78,9 @@ module.exports = class MerchantProviderTest extends IntegrationTest {
 
     du.output('Create Transaction');
 
-    let loadbalancer_create_query = `mutation { createtransaction ( transaction: { id: "`+transaction_id+`", rebill: "55c103b4-670a-439e-98d4-5a2834bb5fc3", amount:30000.00, processor_response:"Test", merchant_provider: "`+merchantprovider_id+`", products: [{amount:"4.99", product: "616cc994-9480-4640-b26c-03810a679fe3"}]} ) { id } }`;
+    let merchantprovidergroup_create_query = `mutation { createtransaction ( transaction: { id: "`+transaction_id+`", rebill: "55c103b4-670a-439e-98d4-5a2834bb5fc3", amount:30000.00, processor_response:"Test", merchant_provider: "`+merchantprovider_id+`", products: [{amount:"4.99", product: "616cc994-9480-4640-b26c-03810a679fe3"}]} ) { id } }`;
 
-    return this.executeQuery(loadbalancer_create_query);
+    return this.executeQuery(merchantprovidergroup_create_query);
 
   }
 
@@ -94,11 +94,11 @@ module.exports = class MerchantProviderTest extends IntegrationTest {
 
   }
 
-  deleteLoadBalancer(id, code){
+  deleteMerchantProviderGroup(id, code){
 
-    du.output('Delete Load Balancer');
+    du.output('Delete Merchant Provider Group');
 
-    let delete_query = `mutation { deleteloadbalancer (id: "`+id+`" ) { id } }`;
+    let delete_query = `mutation { deletemerchantprovidergroup (id: "`+id+`" ) { id } }`;
 
     return this.executeQuery(delete_query, code);
 

@@ -20,7 +20,7 @@ var entities = [
 	{camel:'Customers',lower:'customer'},
 	{camel:'EmailTemplates',lower:'emailtemplate'},
 	{camel:'FulfillmentProviders',lower:'fulfillmentprovider'},
-	{camel:'LoadBalancers',lower:'loadbalancer'},
+	{camel:'MerchantProviderGroups',lower:'merchantprovidergroup'},
 	{camel:'MerchantProviders',lower:'merchantprovider'},
 	{camel:'Notifications',lower:'notification'},
 	{camel:'ProductSchedules',lower:'productschedule'},

@@ -384,10 +384,9 @@ module.exports = class Register extends RegisterUtilities {
 
     if(_.has(merchant_provider_groups, merchant_provider)){
 
-      du.warning(merchant_provider_groups[merchant_provider]);
       arrayutilities.map(merchant_provider_groups[merchant_provider], merchant_provider_group => {
 
-        arrayutilities.map([merchant_provider_group], product_group => {
+        arrayutilities.map(merchant_provider_group, product_group => {
           return_object.push(product_group);
         });
       });
@@ -406,7 +405,7 @@ module.exports = class Register extends RegisterUtilities {
 
     let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
 
-      let amount = this.calculateAmountFromProductGroups([merchant_provider_groups[merchant_provider]]);
+      let amount = this.calculateAmountFromProductGroups(merchant_provider_groups[merchant_provider]);
 
       return this.executeProcess({merchant_provider: merchant_provider, amount: amount});
 

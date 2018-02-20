@@ -8,7 +8,7 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
 let affiliateAllowDenyType = require('../affiliate/affiliateAllowDenyType');
 let productScheduleType = require('../productschedule/productScheduleType');
-let loadbalancerAssociationType = require('../loadbalancerassociation/loadBalancerAssociationType');
+let merchantprovidergroupAssociationType = require('../merchantprovidergroupassociation/merchantProviderGroupAssociationType');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'campaign',
@@ -66,14 +66,14 @@ module.exports.graphObj = new GraphQLObjectType({
           return campaignController.getAffiliateAllowDenyList(campaign.affiliate_deny);
         }
       },
-      loadbalancer_associations: {
-        type: new GraphQLList(loadbalancerAssociationType.graphObj),
-        description: 'The load balancer association list on this campaign.',
+      merchantprovidergroup_associations: {
+        type: new GraphQLList(merchantprovidergroupAssociationType.graphObj),
+        description: 'The merchant provider group association list on this campaign.',
         resolve: (campaign) => {
-          const loadbalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+          const merchantprovidergroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
-          return loadbalancerAssociationController.listByEntitiesAndCampaign({entities: [campaign.id], campaign: campaign})
-            .then((result) => result.loadbalancerassociations);
+          return merchantprovidergroupAssociationController.listByEntitiesAndCampaign({entities: [campaign.id], campaign: campaign})
+            .then((result) => result.merchantprovidergroupassociations);
         }
       },
       created_at: {

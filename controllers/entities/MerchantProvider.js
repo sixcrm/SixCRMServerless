@@ -23,18 +23,18 @@ class merchantProviderController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('loadBalancerController', 'listByMerchantProviderID', {id:id}),
+        this.executeAssociatedEntityFunction('merchantProviderGroupController', 'listByMerchantProviderID', {id:id}),
         //this.executeAssociatedEntityFunction('transactionController', 'listByMerchantProviderID', {id:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
-        let loadbalancers = data_acquisition_promises[0];
+        let merchantprovidergroups = data_acquisition_promises[0];
         //let transactions = data_acquisition_promises[1];
 
-        if(arrayutilities.nonEmpty(loadbalancers)){
-          arrayutilities.map(loadbalancers, (loadbalancer) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Load Balancer', object: loadbalancer}));
+        if(arrayutilities.nonEmpty(merchantprovidergroups)){
+          arrayutilities.map(merchantprovidergroups, (merchantprovidergroup) => {
+            return_array.push(this.createAssociatedEntitiesObject({name:'Merchant Provider Group', object: merchantprovidergroup}));
           });
         }
 

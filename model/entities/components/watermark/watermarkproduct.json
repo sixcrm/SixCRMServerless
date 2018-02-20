@@ -19,7 +19,7 @@
 			"type":"boolean"
 		},
 		"shipping_delay":{"$ref": "../../../definitions/nonnegativeinteger.json"},
-    "loadbalancer":{"$ref": "../../../definitions/uuidv4.json"},
+    "merchantprovidergroup":{"$ref": "../../../definitions/uuidv4.json"},
 		"fulfillment_provider":{"$ref": "../../../definitions/uuidv4.json"},
 		"default_price":{"$ref": "../../../definitions/currency.json"},
 		"attributes":{"$ref": "../productattributes.json"},

@@ -4,7 +4,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLString = require('graphql').GraphQLString;
 
-let loadBalancerType = require('../../loadbalancer/loadBalancerType');
+let merchantProviderGroupType = require('../../merchantprovidergroup/merchantProviderGroupType');
 let fulfillmentProviderType = require('../../fulfillmentprovider/fulfillmentProviderType');
 let productAttributesType = require('../../product/components/attributesType');
 
@@ -42,10 +42,10 @@ module.exports.graphObj = new GraphQLObjectType({
         type: GraphQLFloat,
         description: 'A default price for product.',
       },
-      loadbalancer:{
-        type: loadBalancerType.graphObj,
-        description: 'The load balancer associated with the product schedule.',
-        resolve: (product) => productController.getLoadBalancer(product)
+      merchantprovidergroup:{
+        type: merchantProviderGroupType.graphObj,
+        description: 'The merchant provider group associated with the product schedule.',
+        resolve: (product) => productController.getMerchantProviderGroup(product)
       },
       fulfillment_provider: {
         type: fulfillmentProviderType.graphObj,

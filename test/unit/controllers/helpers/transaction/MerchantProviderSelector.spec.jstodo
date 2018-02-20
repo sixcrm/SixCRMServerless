@@ -110,7 +110,7 @@ function getValidCreditCardProperties(){
 
 }
 
-function getValidLoadBalancer(){
+function getValidMerchantProviderGroup(){
 
   let merchant_provider_configuration = [
     {
@@ -123,7 +123,7 @@ function getValidLoadBalancer(){
     }
   ];
 
-  return MockEntities.getValidLoadBalancer(null, merchant_provider_configuration);
+  return MockEntities.getValidMerchantProviderGroup(null, merchant_provider_configuration);
 
 }
 
@@ -162,7 +162,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
    xit('filters the merchantprovider list', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -178,8 +178,8 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      loadbalancer.monthly_sum = 4000.00;
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      merchantprovidergroup.monthly_sum = 4000.00;
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', 40.00);
       ph.parameters.set('selected_creditcard',creditcard);
@@ -194,7 +194,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('selects a merchantprovider', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -210,13 +210,13 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       let product_schedule = {};
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
-        getLoadBalancer: (product_schedule) => {
-          return Promise.resolve(loadbalancer);
+        getMerchantProviderGroup: (product_schedule) => {
+          return Promise.resolve(merchantprovidergroup);
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'LoadBalancer.js'), {
-        getMerchantProviders: (loadbalancer) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderGroup.js'), {
+        getMerchantProviders: (merchantprovidergroup) => {
           return Promise.resolve(merchantproviders);
         },
         disableACLs: () => {},
@@ -248,7 +248,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('filters the first merchant provider the merchantprovider list due to disabled status', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -258,13 +258,13 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
       merchantproviders[0].enabled = false;
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       creditcard.properties = creditcard_properties;
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('selected_creditcard', creditcard);
@@ -279,7 +279,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('filters the first merchant provider the merchantprovider list due to invalid accepted_payment_methods', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -289,13 +289,13 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
       merchantproviders[0].accepted_payment_methods = ['American Express'];
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       creditcard.properties = creditcard_properties;
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('selected_creditcard', creditcard);
@@ -310,7 +310,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('filters the first merchant provider the merchantprovider list due to CAP restrictions', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -320,13 +320,13 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
       merchantproviders[0].summary.summary.thismonth.amount = 52000.00;
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       creditcard.properties = creditcard_properties;
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('selected_creditcard', creditcard);
@@ -341,7 +341,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('filters the first merchant provider the merchantprovider list due to daily count restrictions', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -351,13 +351,13 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
       merchantproviders[0].summary.summary.today.count = 30;
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       creditcard.properties = creditcard_properties;
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('selected_creditcard', creditcard);
@@ -372,7 +372,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('filters the first merchant provider the merchantprovider list due to weekly count restrictions', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -382,13 +382,13 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
       merchantproviders[0].summary.summary.thisweek.count = 120;
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       creditcard.properties = creditcard_properties;
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('selected_creditcard', creditcard);
@@ -403,7 +403,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('filters the first merchant provider the merchantprovider list due to monthly count restrictions', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -413,13 +413,13 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
       merchantproviders[0].summary.summary.thismonth.count = 628;
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       creditcard.properties = creditcard_properties;
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('selected_creditcard', creditcard);
@@ -434,7 +434,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('filters the merchant provider list by LSS', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let creditcard = getValidCreditCard();
       let creditcard_properties = getValidCreditCardProperties();
       let merchantproviders = getValidMerchantProviders();
@@ -443,13 +443,13 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       merchantproviders[0].summary = merchantprovider_summaries[0];
       merchantproviders[1].summary = merchantprovider_summaries[1];
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       creditcard.properties = creditcard_properties;
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('selected_creditcard', creditcard);
@@ -890,12 +890,12 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
     });
 
-  xit('retrieves the loadbalancer', () => {
+  xit('retrieves the merchantprovidergroup', () => {
 
-      let lb_1 = getValidLoadBalancer();
+      let lb_1 = getValidMerchantProviderGroup();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
-          getLoadBalancer: (product_schedule) => {
+          getMerchantProviderGroup: (product_schedule) => {
               return Promise.resolve(lb_1);
           }
       });
@@ -911,14 +911,14 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       let cc_1 = getValidCreditCard();
 
       parameters.customer.creditcards = [cc_1];
-      parameters.productschedule.loadbalancer = lb_1;
+      parameters.productschedule.merchantprovidergroup = lb_1;
 
       ph.setParameters(parameters);
 
-      return ph.getLoadBalancer().then(loadbalancer => {
+      return ph.getMerchantProviderGroup().then(merchantprovidergroup => {
 
-        expect(loadbalancer).to.deep.equal(lb_1);
-        expect(ph.parameters.get('selected_loadbalancer')).to.deep.equal(lb_1);
+        expect(merchantprovidergroup).to.deep.equal(lb_1);
+        expect(ph.parameters.get('selected_merchantprovidergroup')).to.deep.equal(lb_1);
 
       });
 
@@ -927,10 +927,10 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
   xit('retrieves merchant providers', () => {
 
       let merchantproviders = getValidMerchantProviders();
-      let lb_1 = getValidLoadBalancer();
+      let lb_1 = getValidMerchantProviderGroup();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'LoadBalancer.js'), {
-        getMerchantProviders:(loadbalancer) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderGroup.js'), {
+        getMerchantProviders:(merchantprovidergroup) => {
             ph.parameters.set('merchantproviders', merchantproviders);
             return Promise.resolve(merchantproviders);
         },
@@ -940,7 +940,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', lb_1);
+      ph.parameters.set('selected_merchantprovidergroup', lb_1);
 
       return ph.getMerchantProviders().then(result => {
 
@@ -1192,9 +1192,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
     });
 
-  xit('retrieves the load balancer sum', () => {
+  xit('retrieves the merchant provider group sum', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let merchantproviders = getValidMerchantProviders();
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
 
@@ -1210,9 +1210,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       let ph = new processHelperController();
 
       ph.parameters.set('merchantproviders',merchantproviders);
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
 
-      return ph.calculateLoadBalancerSum().then(result => {
+      return ph.calculateMerchantProviderGroupSum().then(result => {
 
         expect(result).to.equal(sum);
 
@@ -1220,9 +1220,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
     });
 
-  xit('fails to retrieve the load balancer sum due to missing selected_loadbalancer property', () => {
+  xit('fails to retrieve the merchant provider group sum due to missing selected_merchantprovidergroup property', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let merchantproviders = getValidMerchantProviders();
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
 
@@ -1240,34 +1240,34 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       ph.parameters.set('merchantproviders', merchantproviders);
 
       try{
-        ph.calculateLoadBalancerSum();
+        ph.calculateMerchantProviderGroupSum();
       }catch(error){
-          expect(error.message).to.equal('[500] "selected_loadbalancer" property is not set.');
+          expect(error.message).to.equal('[500] "selected_merchantprovidergroup" property is not set.');
       }
 
     });
 
   xit('should get a merchant provider target distribution', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
 
       let merchantproviders = getValidMerchantProviders();
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
 
       return ph.getMerchantProviderTargetDistribution(merchantproviders[1]).then((target_distribution) => {
-        expect(target_distribution).to.equal(loadbalancer.merchantproviders[0].distribution);
+        expect(target_distribution).to.equal(merchantprovidergroup.merchantproviders[0].distribution);
       });
 
     });
 
   xit('should get a merchant provider actual distribution', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
 
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       let merchantproviders = getValidMerchantProviders();
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
@@ -1277,7 +1277,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('amount', 100.00);
 
       let expected_percentage = (mathutilities.safePercentage(3000, (4000+100), 8))/100;
@@ -1290,9 +1290,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('should get a merchant provider actual distribution with additional amount', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
 
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       let merchantproviders = getValidMerchantProviders();
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
@@ -1302,7 +1302,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('amount', 100.00);
 
       let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
@@ -1315,9 +1315,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('fails to get merchant provider actual distribution due to missing amount property', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
 
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
 
       let merchantproviders = getValidMerchantProviders();
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
@@ -1327,7 +1327,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
 
       let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
 
@@ -1357,9 +1357,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('fails to get a merchant provider actual distribution because additional amount is incorrectly typed', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
 
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
       let amount = getValidAmount();
       let merchantproviders = getValidMerchantProviders();
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
@@ -1369,7 +1369,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer', loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup', merchantprovidergroup);
       ph.parameters.set('amount', amount);
 
       let expected_percentage = (mathutilities.safePercentage((3000 + 100), (4000+100), 8))/100;
@@ -1384,9 +1384,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('fails to select a merchant provider by Least Sum of Squares goal analysis because amount is not set', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
 
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
       let amount = getValidAmount();
       let merchantproviders = getValidMerchantProviders();
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
@@ -1396,7 +1396,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer',loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup',merchantprovidergroup);
       ph.parameters.set('merchantproviders',merchantproviders);
 
       try{
@@ -1409,9 +1409,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('selects a merchant provider by Least Sum of Squares goal analysis', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
 
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
       let amount = getValidAmount();
 
       let merchantproviders = getValidMerchantProviders();
@@ -1422,7 +1422,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer',loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup',merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('target_distribution_array',[0.75, 0.25]);
@@ -1438,9 +1438,9 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
   xit('selects a different merchant provider by Least Sum of Squares goal analysis', () => {
 
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
 
-      loadbalancer.monthly_sum = 4000.00;
+      merchantprovidergroup.monthly_sum = 4000.00;
       let amount = getValidAmount();
 
       let merchantproviders = getValidMerchantProviders();
@@ -1451,7 +1451,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
 
       let ph = new processHelperController();
 
-      ph.parameters.set('selected_loadbalancer',loadbalancer);
+      ph.parameters.set('selected_merchantprovidergroup',merchantprovidergroup);
       ph.parameters.set('merchantproviders', merchantproviders);
       ph.parameters.set('amount', amount);
       ph.parameters.set('target_distribution_array',[0.75, 0.25]);
@@ -1494,7 +1494,7 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       let productschedule = getValidProductSchedule();
 
       let creditcards = [creditcard];
-      let loadbalancer = getValidLoadBalancer();
+      let merchantprovidergroup = getValidMerchantProviderGroup();
       let merchantproviders = getValidMerchantProviders();
       let merchantprovider_summaries = getValidMerchantProviderSummaries();
       let amount = getValidAmount();
@@ -1536,8 +1536,8 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
-        getLoadBalancer: (product_schedule) => {
-          return Promise.resolve(loadbalancer);
+        getMerchantProviderGroup: (product_schedule) => {
+          return Promise.resolve(merchantprovidergroup);
         },
         getID:(object) => {
           return object;
@@ -1560,8 +1560,8 @@ describe('helpers/transaction/MerchantProviderSelector.spec.js', () => {
         enableACLs: () => {},
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'LoadBalancer.js'), {
-        getMerchantProviders: (loadbalancer) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderGroup.js'), {
+        getMerchantProviders: (merchantprovidergroup) => {
           return Promise.resolve(merchantproviders);
         },
         disableACLs: () => {},

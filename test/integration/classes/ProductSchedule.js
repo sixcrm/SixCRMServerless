@@ -59,7 +59,7 @@ module.exports = class ProductScheduleTest extends IntegrationTest {
 
     du.output('Create Product Schedule');
 
-    let productschedule_create_query = `mutation { createproductschedule ( productschedule: { id: "`+productschedule_id+`", name:"Testing Name", loadbalancer:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3", schedule: [ {product:"668ad918-0d09-4116-a6fe-0e7a9eda36f8",start:0,end:30,price:49.00,period:30}]}) { id } }`;
+    let productschedule_create_query = `mutation { createproductschedule ( productschedule: { id: "`+productschedule_id+`", name:"Testing Name", merchantprovidergroup:"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3", schedule: [ {product:"668ad918-0d09-4116-a6fe-0e7a9eda36f8",start:0,end:30,price:49.00,period:30}]}) { id } }`;
 
     return this.executeQuery(productschedule_create_query);
 

@@ -68,13 +68,13 @@ class ProductController extends entityController {
 
     }
 
-    getLoadBalancer(product){
+    getMerchantProviderGroup(product){
 
-      du.debug('Get Load Balancer');
+      du.debug('Get Merchant Provider Group');
 
-      if(!_.has(product, 'loadbalancer')){ return Promise.resolve(null); }
+      if(!_.has(product, 'merchantprovidergroup')){ return Promise.resolve(null); }
 
-      return this.executeAssociatedEntityFunction('loadBalancerController', 'get', {id: product.loadbalancer});
+      return this.executeAssociatedEntityFunction('merchantProviderGroupController', 'get', {id: product.merchantprovidergroup});
 
     }
 

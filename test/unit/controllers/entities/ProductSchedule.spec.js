@@ -189,37 +189,37 @@ describe('controllers/ProductSchedule.js', () => {
         });
     });
 
-    describe('getLoadBalancer', () => {
+    describe('getMerchantProviderGroup', () => {
 
-        it('successfully retrieves loadbalancer', () => {
+        it('successfully retrieves merchantprovidergroup', () => {
 
             let product_schedule = getValidProductSchedule();
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/LoadBalancer.js'), {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProviderGroup.js'), {
                 get: ({id}) => {
-                    expect(id).to.equal(product_schedule.loadbalancer);
-                    return Promise.resolve('a_loadbalancer');
+                    expect(id).to.equal(product_schedule.merchantprovidergroup);
+                    return Promise.resolve('a_merchantprovidergroup');
                 }
             });
 
             let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
 
-            return productScheduleController.getLoadBalancer(product_schedule).then((result) => {
-                expect(result).to.equal('a_loadbalancer');
+            return productScheduleController.getMerchantProviderGroup(product_schedule).then((result) => {
+                expect(result).to.equal('a_merchantprovidergroup');
             });
         });
 
-        it('returns null when product schedule does not have a loadbalancer', () => {
+        it('returns null when product schedule does not have a merchantprovidergroup', () => {
 
             let product_schedule = getValidProductSchedule();
 
-            delete product_schedule.loadbalancer;
+            delete product_schedule.merchantprovidergroup;
 
             let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
 
-            return productScheduleController.getLoadBalancer(product_schedule).then((result) => {
+            return productScheduleController.getMerchantProviderGroup(product_schedule).then((result) => {
                 expect(result).to.equal(null);
             });
         });
@@ -315,14 +315,14 @@ describe('controllers/ProductSchedule.js', () => {
         });
     });
 
-    describe('listByLoadBalancer', () => {
+    describe('listByMerchantProviderGroup', () => {
 
-        it('successfully lists product schedules by load balancer', () => {
+        it('successfully lists product schedules by merchant provider group', () => {
 
             let product_schedule = getValidProductSchedule();
 
             let params = {
-                loadbalancer: {
+                merchantprovidergroup: {
                     id: 'dummy_id'
                 },
                 pagination: 0
@@ -337,14 +337,14 @@ describe('controllers/ProductSchedule.js', () => {
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('expression_attribute_values');
-                    expect(parameters.expression_attribute_values[':loadbalancer_id']).to.equal(params.loadbalancer.id);
+                    expect(parameters.expression_attribute_values[':merchantprovidergroup_id']).to.equal(params.merchantprovidergroup.id);
                     return Promise.resolve([product_schedule]);
                 }
             });
 
             let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
 
-            return productScheduleController.listByLoadBalancer(params).then((result) => {
+            return productScheduleController.listByMerchantProviderGroup(params).then((result) => {
                 expect(result).to.deep.equal([product_schedule]);
             });
         });

@@ -36,11 +36,11 @@ let fulfillmentProviderValidationType = require('./fulfillmentprovider/fulfillme
 
 let deleteOutputType = require('./general/deleteOutputType');
 
-let loadBalancerInputType = require('./loadbalancer/loadBalancerInputType');
-let loadBalancerType = require('./loadbalancer/loadBalancerType');
+let merchantProviderGroupInputType = require('./merchantprovidergroup/merchantProviderGroupInputType');
+let merchantProviderGroupType = require('./merchantprovidergroup/merchantProviderGroupType');
 
-let loadBalancerAssociationInputType = require('./loadbalancerassociation/loadBalancerAssociationInputType');
-let loadBalancerAssociationType = require('./loadbalancerassociation/loadBalancerAssociationType');
+let merchantProviderGroupAssociationInputType = require('./merchantprovidergroupassociation/merchantProviderGroupAssociationInputType');
+let merchantProviderGroupAssociationType = require('./merchantprovidergroupassociation/merchantProviderGroupAssociationType');
 
 let merchantProviderInputType = require('./merchantprovider/merchantProviderInputType');
 let merchantProviderType = require('./merchantprovider/merchantProviderType');
@@ -867,90 +867,90 @@ module.exports.graphObj = new GraphQLObjectType({
                 return customerNoteController.delete({id:id});
             }
         },
-        createloadbalancer:{
-            type: loadBalancerType.graphObj,
-            description: 'Adds a new loadbalancer.',
+        createmerchantprovidergroup:{
+            type: merchantProviderGroupType.graphObj,
+            description: 'Adds a new merchantprovidergroup.',
             args: {
-                loadbalancer: { type:loadBalancerInputType.graphObj }
+                merchantprovidergroup: { type:merchantProviderGroupInputType.graphObj }
             },
-            resolve: (value, loadbalancer) => {
-                const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+            resolve: (value, merchantprovidergroup) => {
+                const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
-                return loadBalancerController.create({entity: loadbalancer.loadbalancer});
+                return merchantProviderGroupController.create({entity: merchantprovidergroup.merchantprovidergroup});
             }
         },
-        updateloadbalancer:{
-            type: loadBalancerType.graphObj,
-            description: 'Updates a loadbalancer.',
+        updatemerchantprovidergroup:{
+            type: merchantProviderGroupType.graphObj,
+            description: 'Updates a merchantprovidergroup.',
             args: {
-                loadbalancer: { type:loadBalancerInputType.graphObj }
+                merchantprovidergroup: { type:merchantProviderGroupInputType.graphObj }
             },
-            resolve: (value, loadbalancer) => {
-                const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+            resolve: (value, merchantprovidergroup) => {
+                const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
-                return loadBalancerController.update({entity:loadbalancer.loadbalancer});
+                return merchantProviderGroupController.update({entity:merchantprovidergroup.merchantprovidergroup});
             }
         },
-        deleteloadbalancer:{
+        deletemerchantprovidergroup:{
             type: deleteOutputType.graphObj,
-            description: 'Deletes a loadbalancer.',
+            description: 'Deletes a merchantprovidergroup.',
             args: {
                 id: {
-				  description: 'id of the loadbalancer',
+				  description: 'id of the merchantprovidergroup',
 				  type: new GraphQLNonNull(GraphQLString)
                 }
             },
-            resolve: (value, loadbalancer) => {
-                var id = loadbalancer.id;
-                const loadBalancerController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancer.js');
+            resolve: (value, merchantprovidergroup) => {
+                var id = merchantprovidergroup.id;
+                const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
-                return loadBalancerController.delete({id:id});
+                return merchantProviderGroupController.delete({id:id});
             }
         },
-        createloadbalancerassociation:{
-          type: loadBalancerAssociationType.graphObj,
-          description: 'Adds a new loadbalancer association.',
+        createmerchantprovidergroupassociation:{
+          type: merchantProviderGroupAssociationType.graphObj,
+          description: 'Adds a new merchantprovidergroup association.',
           args: {
-            loadbalancerassociation: {
-              type: loadBalancerAssociationInputType.graphObj
+            merchantprovidergroupassociation: {
+              type: merchantProviderGroupAssociationInputType.graphObj
             }
           },
-          resolve: (value, loadbalancerassociation) => {
-            const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+          resolve: (value, merchantprovidergroupassociation) => {
+            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
-            return loadBalancerAssociationController.create({
-              entity: loadbalancerassociation.loadbalancerassociation
+            return merchantProviderGroupAssociationController.create({
+              entity: merchantprovidergroupassociation.merchantprovidergroupassociation
             });
           }
         },
-        updateloadbalancerassociation:{
-          type: loadBalancerAssociationType.graphObj,
-          description: 'Updates a loadbalancer association.',
+        updatemerchantprovidergroupassociation:{
+          type: merchantProviderGroupAssociationType.graphObj,
+          description: 'Updates a merchantprovidergroup association.',
           args: {
-            loadbalancerassociation: {
-              type:loadBalancerAssociationInputType.graphObj
+            merchantprovidergroupassociation: {
+              type:merchantProviderGroupAssociationInputType.graphObj
             }
           },
-          resolve: (value, loadbalancerassociation) => {
-            const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+          resolve: (value, merchantprovidergroupassociation) => {
+            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
-            return loadBalancerAssociationController.update({entity:loadbalancerassociation.loadbalancerassociation});
+            return merchantProviderGroupAssociationController.update({entity:merchantprovidergroupassociation.merchantprovidergroupassociation});
           }
         },
-        deleteloadbalancerassociation:{
+        deletemerchantprovidergroupassociation:{
           type: deleteOutputType.graphObj,
-          description: 'Deletes a loadbalancer association.',
+          description: 'Deletes a merchantprovidergroup association.',
           args: {
             id: {
-              description: 'id of the loadbalancer association',
+              description: 'id of the merchantprovidergroup association',
               type: new GraphQLNonNull(GraphQLString)
             }
           },
-          resolve: (value, loadbalancerassociation) => {
-            let id = loadbalancerassociation.id;
-            const loadBalancerAssociationController = global.SixCRM.routes.include('controllers', 'entities/LoadBalancerAssociation.js');
+          resolve: (value, merchantprovidergroupassociation) => {
+            let id = merchantprovidergroupassociation.id;
+            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
-            return loadBalancerAssociationController.delete({id:id});
+            return merchantProviderGroupAssociationController.delete({id:id});
           }
         },
         createproductschedule:{

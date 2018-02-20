@@ -198,21 +198,20 @@ functions:
 
 # Workers
 #These do not use the forwardMessage controller because thier datasources are not SQS
-  integrationtestgenerator:
-    handler: handlers/workers/integrationtestgenerator/handler.integrationtestgenerator
-    events:
-      - schedule:
-          rate: rate(5 minutes)
-          enabled: true
-    environment:
-      observations: 1
 
-  reindex:
-    handler: handlers/workers/reindex/handler.reindex
-    events:
-      - schedule:
-          rate: rate(60 minutes)
-          enabled: true
+#  notifications:
+#    handler: handlers/workers/notifications/handler.notifications
+#  eventhooks:
+#    handler: handlers/workers/eventhooks/handler.eventhooks
+  emails:
+    handler: handlers/workers/emails/handler.emails
+#
+#  reindex:
+#    handler: handlers/workers/reindex/handler.reindex
+#    events:
+#      - schedule:
+#          rate: rate(60 minutes)
+#          enabled: true
 
   #sesnotifications:
   #  handler: handlers/workers/sesnotifications/handler.sesnotifications

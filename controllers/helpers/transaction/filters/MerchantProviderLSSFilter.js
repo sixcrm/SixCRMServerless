@@ -14,7 +14,7 @@ class MerchantProvidersLSSFilter {
   constructor(){
 
     this.parameter_validation = {
-      'loadbalancer':global.SixCRM.routes.path('model','entities/loadbalancer.json'),
+      'merchantprovidergroup':global.SixCRM.routes.path('model','entities/merchantprovidergroup.json'),
       'merchantproviders':global.SixCRM.routes.path('model','entities/components/merchantproviders.json'),
       'amount':global.SixCRM.routes.path('model','definitions/currency.json'),
       'distributiontargets':global.SixCRM.routes.path('model','helpers/transaction/merchantproviderselector/filters/LSS/distributiontargets.json'),
@@ -25,7 +25,7 @@ class MerchantProvidersLSSFilter {
       filter:{
         required:{
           merchantproviders:'merchant_providers',
-          loadbalancer: 'loadbalancer',
+          merchantprovidergroup: 'merchantprovidergroup',
           amount: 'amount'
         },
         optional:{}
@@ -88,22 +88,22 @@ class MerchantProvidersLSSFilter {
 
     du.debug('Get Merchant Provider Target Distribution');
 
-    let loadbalancer = this.parameters.get('loadbalancer');
+    let merchantprovidergroup = this.parameters.get('merchantprovidergroup');
 
     //Technical Debt:  Upgrade the JSON Schemas
-    if(!arrayutilities.nonEmpty(loadbalancer.merchantproviders)){
-      eu.throwError('server','Process.getMerchantProviderTarget assumes that the selected_loadbalancer.merchantproviders an array and has length greater than 0');
+    if(!arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
+      eu.throwError('server','Process.getMerchantProviderTarget assumes that the selected_merchantprovidergroup.merchantproviders an array and has length greater than 0');
     }
 
-    let loadbalancer_mp = arrayutilities.find(loadbalancer.merchantproviders, (lb_mp) => {
+    let merchantprovidergroup_mp = arrayutilities.find(merchantprovidergroup.merchantproviders, (lb_mp) => {
       return (lb_mp.id == merchant_provider.id);
     });
 
-    if(!_.has(loadbalancer_mp, 'id') || !_.has(loadbalancer_mp, 'distribution')){
+    if(!_.has(merchantprovidergroup_mp, 'id') || !_.has(merchantprovidergroup_mp, 'distribution')){
       eu.throwError('server','Process.getMerchantProviderTarget is unable to determine the merchant_provider');
     }
 
-    return Promise.resolve(loadbalancer_mp.distribution);
+    return Promise.resolve(merchantprovidergroup_mp.distribution);
 
   }
 
@@ -135,11 +135,11 @@ class MerchantProvidersLSSFilter {
     additional_amount = (_.isUndefined(additional_amount) || _.isNull(additional_amount))?0:numberutilities.toNumber(additional_amount);
 
     let amount = this.parameters.get('amount');
-    let loadbalancer = this.parameters.get('loadbalancer');
+    let merchantprovidergroup = this.parameters.get('merchantprovidergroup');
 
     //Technical Debt:  Upgrade the JSON Schemas
-    if(!objectutilities.hasRecursive(loadbalancer, 'summary.month.sum')){
-      eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that selected_loadbalancer.monthly_sum is set');
+    if(!objectutilities.hasRecursive(merchantprovidergroup, 'summary.month.sum')){
+      eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that selected_merchantprovidergroup.monthly_sum is set');
     }
 
     //Technical Debt:  Upgrade the JSON Schemas
@@ -148,7 +148,7 @@ class MerchantProvidersLSSFilter {
     }
 
     let numerator = (numberutilities.toNumber(merchant_provider.summary.summary.thismonth.amount) + additional_amount);
-    let denominator = (numberutilities.toNumber(loadbalancer.summary.month.sum) + amount);
+    let denominator = (numberutilities.toNumber(merchantprovidergroup.summary.month.sum) + amount);
     let percentage = mathutilities.safePercentage(numerator, denominator, 8);
 
     return (percentage / 100);

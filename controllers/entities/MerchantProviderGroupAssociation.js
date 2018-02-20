@@ -1,0 +1,70 @@
+'use strict';
+
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+
+var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+
+class merchantProviderGroupAssociationController extends entityController {
+
+  constructor(){
+
+    super('merchantprovidergroupassociation');
+
+  }
+
+  getMerchantProviderGroup(merchantprovidergroupassociation){
+
+    du.debug('Get MerchantProviderGroup');
+
+    return this.executeAssociatedEntityFunction(
+      'merchantProviderGroupController',
+      'get',
+      {id: merchantprovidergroupassociation.merchantprovidergroup}
+    );
+
+  }
+
+  getCampaign(merchantprovidergroupassociation){
+
+    du.debug('Get Campaign');
+
+    return this.executeAssociatedEntityFunction(
+      'campaignController',
+      'get',
+      {id: merchantprovidergroupassociation.campaign}
+    );
+
+  }
+
+  //Technical Debt:  This seems hacky
+  listByEntitiesAndCampaign({entities, campaign}){
+
+    du.debug('List Merchant Provider Groups By Entity and Campaign');
+
+    let query_parameters = this.createINQueryParameters({field:'entity', list_array: entities});
+
+    query_parameters.filter_expression += ' AND #campaign = :campaignv';
+    query_parameters.expression_attribute_names = {'#campaign': 'campaign'};
+    query_parameters.expression_attribute_values[':campaignv'] = this.getID(campaign);
+
+    return this.listByAccount({query_parameters: query_parameters});
+
+  }
+
+  listByCampaign({campaign}){
+
+    du.debug('List Merchant Provider Groups By Campaign');
+
+    let query_parameters = {
+      filter_expression:'#campaign = :campaignv',
+      expression_attribute_names: {'#campaign': 'campaign'},
+      expression_attribute_values: {':campaignv': this.getID(campaign)}
+    };
+
+    return this.listByAccount({query_parameters: query_parameters});
+
+  }
+
+}
+
+module.exports = new merchantProviderGroupAssociationController();
