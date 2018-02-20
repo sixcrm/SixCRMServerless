@@ -7,8 +7,6 @@ const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
-
-
 describe('controllers/workers/eventEmails', () => {
 
   before(() => {
