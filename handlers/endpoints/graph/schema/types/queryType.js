@@ -1286,6 +1286,19 @@ module.exports.graphObj = new GraphQLObjectType({
               return merchantProviderGroupAssociationController.listByAccount({pagination: merchantprovidergroupassociation.pagination, fatal:list_fatal, search: merchantprovidergroupassociation.search});
             }
         },
+        merchantprovidergroupassociationbyentitylist: {
+          type: merchantProviderGroupAssociationListType.graphObj,
+          args: {
+            entity: {type: new GraphQLNonNull(GraphQLString)},
+            pagination: {type: paginationInputType.graphObj},
+            search: {type: entitySearchInputType.graphObj}
+          },
+          resolve: function(root, merchantprovidergroupassociation){
+            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+
+            return merchantProviderGroupAssociationController.listByEntity({entity: merchantprovidergroupassociation.entity, pagination: merchantprovidergroupassociation.pagination, fatal:list_fatal, search: merchantprovidergroupassociation.search});
+          }
+        },
         productschedulelist: {
             type: productScheduleListType.graphObj,
             args: {
