@@ -1,0 +1,61 @@
+{
+  "id":"/workers/eventEmails/snsrecord.json",
+  "name":"SNS Record",
+  "type":"object",
+  "properties":{
+    "EventSource": {
+      "type":"string",
+      "enum":["aws:sns"]
+    },
+    "EventVersion":{
+      "type":"string"
+    },
+    "EventSubscriptionArn": {
+      "type":"string"
+    },
+    "Sns":{
+      "type":"object",
+      "properties":{
+        "Type": {
+          "type":"string",
+          "enum":["Notification"]
+        },
+        "MessageId": {
+          "type":"string"
+        },
+        "TopicArn": {
+          "type":"string"
+        },
+        "Subject": {
+          "anyOf":[
+            {"type":"null"},
+            {"type":"string"}
+          ]
+        },
+        "Message": {
+          "type":"string"
+        },
+        "Timestamp": {
+          "type":"string"
+        },
+        "SignatureVersion": {
+          "type":"string"
+        },
+        "Signature": {
+          "type":"string"
+        },
+        "SigningCertUrl": {
+          "type":"string"
+        },
+        "UnsubscribeUrl": {
+          "type":"string"
+        },
+        "MessageAttributes": {
+          "type":"object"
+        }
+      },
+      "required":["Type","MessageId","TopicArn","Subject","Message","Timestamp","SignatureVersion","Signature","SigningCertUrl","UnsubscribeUrl","MessageAttributes"]
+    }
+  },
+  "required":["EventSource","EventVersion","EventSubscriptionArn","Sns"]
+}

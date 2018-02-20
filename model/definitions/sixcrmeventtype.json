@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/sixcrmeventtype.json",
+  "title": "SixCRM Event Type",
+  "type":"string",
+  "enum":["test"]
+}

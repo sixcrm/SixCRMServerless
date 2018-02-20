@@ -10,6 +10,44 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
 
+  static getValidSNSMessage(message){
+
+    let default_message = {
+      event_type:"test",
+      account:this.getTestAccountID(),
+      user:"system@sixcrm.com",
+      context:{
+        test:"this is a test"
+      }
+    };
+
+    message = (!_.isUndefined(message) && !_.isNull(message))?message:default_message;
+
+    return {
+      Records:[
+        {
+          EventSource: 'aws:sns',
+          EventVersion: '1.0',
+          EventSubscriptionArn: 'arn:aws:sns:us-east-1:068070110666:events:97b9686e-e835-4243-b453-1f80b39cb3bd',
+          Sns:{
+            Type: 'Notification',
+            MessageId: '71890333-00d2-5e4f-b9df-5036a0f6243a',
+            TopicArn: 'arn:aws:sns:us-east-1:068070110666:events',
+            Subject: null,
+            Message: JSON.stringify(message),
+            Timestamp: '2018-02-20T04:02:44.700Z',
+            SignatureVersion: '1',
+            Signature: 'IYaZ94s2hsjBXJ8E9eiXqLgXHXC/wqSQq2mTAAKeOY1kWXgr+28bC8t8oxEe2RZifk5cfN840vVEJFpc+fme6p4GyRZcIz99QrRkGAF6EwDxUyojl4FSvZEeX4BWJtMEQY0z0ORadMKoR5+T/gQ9m++k4DnfW9BeZvLK90ogA3fhN6mqFOUv/tKSkt3a9s4J173wikjr4qQwl9njzmJ5/rTqIu3Nezw0PhbZwg6N9d/L80+KN/a3yQ+4gaD/yrAFYddUwt4ZZ7hObh6XtPZufexWlVjxoy21FSqYvtUxPoIKLF/5sui67OFFL7a/YfL93luBDKY8EDUbQORS6r7XmQ==',
+            SigningCertUrl: 'https://sns.us-east-1.amazonaws.com/SimpleNotificationService-433026a4050d206028891664da859041.pem',
+            UnsubscribeUrl: 'https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:068070110666:events:97b9686e-e835-4243-b453-1f80b39cb3bd',
+            MessageAttributes: {}
+          }
+        }
+      ]
+    };
+
+  }
+
   static arrayOfIds(){
 
     let arraycount = randomutilities.randomInt(1, 10);
