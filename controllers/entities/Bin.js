@@ -6,6 +6,7 @@ class binController extends entityController {
 
 	constructor() {
 		super('bin');
+        this.primary_key = 'binnumber';
 	}
 
 	getCreditCardProperties({ binnumber }) {
