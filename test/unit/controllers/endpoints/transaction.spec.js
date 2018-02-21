@@ -22,24 +22,26 @@ describe('controllers/endpoints/transaction', () => {
 
     describe('initialize', () => {
 
-        it('successfully initialize the transaction class without callback function', () => {
-            const TransactionController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+      it('successfully initialize the transaction class without callback function', () => {
+        const TransactionController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
-            let transactionController = new TransactionController();
+        let transactionController = new TransactionController();
 
-            expect(transactionController.initialize()).to.be.true;
-        });
+        expect(transactionController.initialize()).to.be.true;
+      });
 
-        it('successfully initialize the transaction class with callback function', () => {
+      it('successfully initialize the transaction class with callback function', () => {
 
-            let a_function = () => {return 'result from function'}; //any function
+        let a_function = () => {return 'result from function'}; //any function
 
-            const TransactionController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+        const TransactionController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
-            let transactionController = new TransactionController();
+        let transactionController = new TransactionController();
 
-            expect(transactionController.initialize(a_function)).to.equal('result from function');
-        });
+        expect(transactionController.initialize(a_function)).to.equal('result from function');
+
+      });
+
     });
 
     describe('validateInput', () => {
