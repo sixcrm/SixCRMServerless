@@ -1,0 +1,9 @@
+{
+  "description": "One rebill with shipping product remains in hold and one rebill goes to bill, hold and then is archived",
+  "order": 20,
+  "lambda_filter": ["pickrebillstobill", "billtohold", "holdtoarchive"],
+  "env": {
+    "archivefilter": "noship"
+  },
+  "only": true
+}
