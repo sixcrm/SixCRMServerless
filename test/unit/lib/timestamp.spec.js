@@ -30,7 +30,7 @@ describe('lib/timestamp', () => {
 
     it('returns the start of the day', () => {
 
-      expect(timestamp.startOfDay(frozenNowAsISO8601)).to.equal('2017-02-22T08:00:00.000Z');
+      expect(timestamp.startOfDay(frozenNowAsISO8601)).to.equal('2017-02-22T00:00:00.000Z');
 
     });
 
@@ -40,7 +40,7 @@ describe('lib/timestamp', () => {
 
     it('returns the start of the day', () => {
 
-      expect(timestamp.endOfDay(frozenNowAsISO8601)).to.equal('2017-02-23T07:59:59.999Z');
+      expect(timestamp.endOfDay(frozenNowAsISO8601)).to.equal('2017-02-22T23:59:59.999Z');
 
     });
 

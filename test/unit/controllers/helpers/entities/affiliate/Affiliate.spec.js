@@ -49,7 +49,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
         affiliateHelperController.validateAssuredAffiliates();
       }catch(error){
         //Technical Debt:  This needs to be handled
-        expect(error.message).to.equal('Cannot match against \'undefined\' or \'null\'.')
+        expect(error.message).to.include('Cannot destructure property')
       }
 
     });
@@ -95,7 +95,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
       try{
         affiliateHelperController.assureAffiliatesArrayTransform();
       }catch(error){
-        expect(error.message).to.equal('Cannot match against \'undefined\' or \'null\'.');
+        expect(error.message).to.include('Cannot destructure property');
       }
 
     });
