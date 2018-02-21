@@ -6,11 +6,8 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -28,17 +25,6 @@ function getValidEventPrototype(){
     campaign: uuidV4(),
     product_schedule: '',
   }, getValidAffiliates());
-
-}
-
-function getValidUpdatedEvent(){
-
-  let updated_event = objectutilities.clone(getValidEventBody());
-
-  updated_event = objectutilities.merge(updated_event, getValidAffiliates());
-  delete updated_event.affiliates;
-
-  return updated_event;
 
 }
 
@@ -123,64 +109,6 @@ function getValidCampaign(id){
 
 }
 
-function getValidProductScheduleIDs(){
-
-  return arrayutilities.map(getValidProductSchedules(), product_schedule => { return product_schedule.id; });
-
-}
-
-function getValidProductSchedules(){
-
-  return [
-    getValidProductSchedule(),
-    getValidProductSchedule()
-  ];
-
-}
-
-function getValidProductSchedule(id){
-
-  return MockEntities.getValidProductSchedule(id);
-
-}
-
-function getValidSession(id){
-
-  return MockEntities.getValidSession(id);
-
-}
-
-function getValidSessionPrototype(){
-
-  let session = objectutilities.clone(getValidSession());
-
-  delete session.id;
-  delete session.account;
-  delete session.product_schedules;
-  delete session.created_at;
-  delete session.updated_at;
-  return session;
-
-}
-
-function getValidCustomerPrototype(){
-
-  return {
-		email:"rama@damunaste.org",
-		firstname:"Rama",
-		lastname:"Damunaste",
-		phone:"1234567890",
-		address:{
-			"line1":"10 Downing St.",
-			"city":"London",
-			"state":"OR",
-			"zip":"97213",
-			"country":"US"
-		}
-	};
-
-}
-
 function getValidAffiliates(){
   return {
     affiliate: uuidV4(),
@@ -238,12 +166,11 @@ describe('acquireToken', () => {
       let event = getValidEventBody();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
 
-      du.info(mockery);
       let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
 
       acquireTokenController.parameters.set('event', event);
@@ -260,7 +187,7 @@ describe('acquireToken', () => {
         let event = getValidEventBody();
 
         mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-          get:({id}) => {
+          get:() => {
             return Promise.resolve(null);
           }
         });
@@ -296,7 +223,7 @@ describe('acquireToken', () => {
       let jwt = getValidJWT();
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'jwt-utilities'), {
-        getJWT: (user_object, type) => {
+        getJWT: () => {
           return jwt;
         }
       });
@@ -313,7 +240,7 @@ describe('acquireToken', () => {
 
   });
 
-  describe('updateEventObjectWithAffiliateInformation', () => {
+  describe('handleAffiliateInformation', () => {
 
     before(() => {
       mockery.enable({
@@ -335,102 +262,19 @@ describe('acquireToken', () => {
 
       almost_updated_event.affiliates = getValidAffiliates();
 
-      let affiliates_helper_mock = class {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){}
-        handleAffiliateInformation(event){
-          return Promise.resolve(almost_updated_event);
+        handleAffiliateInformation(){
+          return Promise.resolve(true);
         }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
+      });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
 
       acquireTokenController.parameters.set('event', event);
-      return acquireTokenController.updateEventObjectWithAffiliateInformation().then(result => {
-        expect(result).to.equal(true);
-        expect(acquireTokenController.parameters.store['updatedevent']).to.deep.equal(almost_updated_event);
-      });
-
-    });
-
-  });
-
-  describe('createEventPrototype', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    it('successfully creates a event prototype', () => {
-
-      //Technical Debt:  This needs refactoring
-      let event = getValidEventBody();
-      let affiliates = getValidAffiliates();
-      let updated_event = getValidUpdatedEvent();
-      let event_prototype = getValidEventPrototype();
-
-      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
-
-      let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
-
-      acquireTokenController.createEventObject = () => { return event_prototype; }
-      acquireTokenController.parameters.set('updatedevent', updated_event);
-
-      return acquireTokenController.createEventPrototype().then(result => {
-        expect(result).to.equal(true);
-        expect(acquireTokenController.parameters.store['redshifteventobject']).to.deep.equal(event_prototype);
-      });
-
-    });
-
-  });
-
-  describe('pushToRedshift', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    it('successfully pushes the event prototype to redshift', () => {
-
-      //Technical Debt:  Needs Refactoring
-
-      let redshifteventobject = getValidEventPrototype();
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
-          return Promise.resolve({});
-        }
-      });
-
-      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
-
-      let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
-
-      acquireTokenController.parameters.set('redshifteventobject', redshifteventobject);
-
-      return acquireTokenController.pushToRedshift().then(result => {
+      return acquireTokenController.handleAffiliateInformation().then(result => {
         expect(result).to.equal(true);
       });
 
@@ -463,11 +307,11 @@ describe('acquireToken', () => {
 
       delete updated_event.affiliates
 
-      let affiliates_helper_mock = class {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){
           this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
         }
-        handleAffiliateInformation(a_event){
+        handleAffiliateInformation(){
           return Promise.resolve(almost_updated_event);
         }
         transcribeAffiliates(source_object, destination_object){
@@ -479,26 +323,25 @@ describe('acquireToken', () => {
           });
           return objectutilities.transcribe(affiliate_mapping_object, source_object, destination_object, false);
         }
-      }
+      });
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
-          return Promise.resolve({});
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+        constructor(){}
+        pushEvent(){
+          return Promise.resolve('some-sns-message-id');
         }
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
-      //acquireTokenController.createEventObject = () => { return redshifteventobject; }
 
       acquireTokenController.parameters.set('event', event);
 
-      return acquireTokenController.postProcessing().then(result => {
-        expect(result).to.equal(true);
-      });
+      let result = acquireTokenController.postProcessing();
+
+      expect(result).to.equal(true);
+
 
     });
   });
@@ -531,34 +374,34 @@ describe('acquireToken', () => {
       delete updated_event.affiliates
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'jwt-utilities'), {
-        getJWT: (user_object, type) => {
+        getJWT: () => {
           return jwt;
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve({})
         },
-        isEmail: (user_string) => {
+        isEmail: () => {
           return true;
         },
-        getUserStrict: (user_string) => {
+        getUserStrict: () => {
           return Promise.resolve({});
         }
       });
 
-      let affiliates_helper_mock = class {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){
           this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
         }
-        handleAffiliateInformation(a_event){
+        handleAffiliateInformation(){
           return Promise.resolve(almost_updated_event);
         }
         transcribeAffiliates(source_object, destination_object){
@@ -570,13 +413,12 @@ describe('acquireToken', () => {
           });
           return objectutilities.transcribe(affiliate_mapping_object, source_object, destination_object, false);
         }
-      }
+      });
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
-          return Promise.resolve({});
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+        constructor(){}
+        pushEvent(){
+          return Promise.resolve('some-sns-message-id');
         }
       });
 
