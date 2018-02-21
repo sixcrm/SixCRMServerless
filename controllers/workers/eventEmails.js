@@ -18,14 +18,14 @@ class EventEmailsController {
     this.parameter_definition = {
       execute:{
         required: {
-          event: 'event'
+          records: 'Records'
         },
         optional:{}
       }
     };
 
     this.parameter_validation = {
-      'event': global.SixCRM.routes.path('model', 'workers/eventEmails/event.json'),
+      'records': global.SixCRM.routes.path('model', 'workers/eventEmails/records.json'),
       'message':global.SixCRM.routes.path('model','workers/eventEmails/message.json'),
       'record':global.SixCRM.routes.path('model','workers/eventEmails/snsrecord.json'),
       'campaign':global.SixCRM.routes.path('model','entities/campaign.json'),
@@ -40,9 +40,22 @@ class EventEmailsController {
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
     this.emailTemplatesController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 
+    this.setPermissions();
+
+  }
+
+  setPermissions(){
+
+    du.debug('Set Permissions');
+
+    this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
+    this.permissionutilities.setPermissions('*',['*/*'],[])
+
   }
 
   execute(){
+
+    du.info(arguments[0]);
 
     return Promise.resolve()
     .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
@@ -54,9 +67,9 @@ class EventEmailsController {
 
     du.debug('Handle Events');
 
-    let event = this.parameters.get('event');
+    let records = this.parameters.get('records');
 
-    let event_promises = arrayutilities.map(event.Records, record => {
+    let event_promises = arrayutilities.map(records, record => {
       return () => this.handleEventRecord(record);
     });
 
@@ -286,7 +299,7 @@ class EventEmailsController {
 
     let customerEmailer = new CustomerMailerHelper({smtp_provider: paired_smtp_provider});
 
-    return customerEmailer.sendEmail(options)
+    return customerEmailer.sendEmail({send_options: options})
 
   }
 

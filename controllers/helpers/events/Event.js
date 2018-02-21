@@ -1,6 +1,8 @@
 'use strict'
+const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 
 module.exports = class EventHelperController {
@@ -27,9 +29,19 @@ module.exports = class EventHelperController {
 
     du.debug('Create Publish Parameters');
 
+    let user_email = null;
+
+    if(objectutilities.hasRecursive(global, 'user.id') && _.isString(global.user.id)){
+      user_email = global.user.id;
+    }
+
+    if(_.isNull(user_email) && _.has(global, 'user') && _.isString(global.user)){
+      user_email = global.user;
+    }
+
     return {
       Message: JSON.stringify({
-        user: global.user,
+        user: user_email,
         account: global.account,
         event_type: event_type,
         context: context
