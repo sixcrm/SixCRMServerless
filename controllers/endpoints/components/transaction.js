@@ -1,16 +1,10 @@
 'use strict';
 const _ = require("underscore");
-const luhn = require("luhn");
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-const notificationProvider = global.SixCRM.routes.include('providers', 'notification/notification-provider');
 
 const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
 
@@ -20,21 +14,17 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       super(parameters);
 
-      const TrackerHelperController = global.SixCRM.routes.include('helpers','entities/tracker/Tracker.js');
-
-      this.trackerHelperController = new TrackerHelperController();
-
       const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
 
       this.affiliateHelperController = new AffiliateHelperController();
 
-      const UserEmailHelperController = global.SixCRM.routes.include('controllers', 'helpers/user/Email.js');
-
-      this.userEmailHelperController = new UserEmailHelperController();
-
       const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 
       this.eventHelperController = new EventHelperController();
+
+      const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+
+      this.creditCardHelperController = new CreditCardHelperController();
 
     }
 
@@ -63,18 +53,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
   		.then((event) => this.acquireRequestProperties(event))
       .then((event_body) => {
         return this.parameters.setParameters({argumentation:{event: event_body}, action: 'execute'});
-      });
-
-    }
-
-    handleTracking(info){
-
-      du.debug('Handle Tracking');
-
-      return this.trackerHelperController.handleTracking(info.session.id, info).then(() => {
-
-        return info;
-
       });
 
     }
@@ -115,42 +93,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    issueNotifications(parameters){
-
-        du.debug('Issue Notifications');
-
-        parameters.account = global.account;
-
-        return notificationProvider.createNotificationsForAccount(parameters);
-
-    }
-
-    pushEventToRedshift({event_type, session, product_schedules}){
-
-      du.debug('Push Event to Redshift');
-
-      let event_object = {
-        session: session.id,
-        type : event_type,
-        datetime: session.created_at,
-        account: session.account,
-        campaign: session.campaign
-      };
-
-      if(!_.isUndefined(product_schedules)){
-        event_object.product_schedules = product_schedules;
-      }
-
-      event_object = this.affiliateHelperController.transcribeAffiliates(session, event_object);
-
-      return this.pushRecordToRedshift('events', event_object).then(() => {
-
-          return session;
-
-      });
-
-    }
-
     //Deprecated!
     getTransactionSubType(){
 
@@ -172,74 +114,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
         }
 
         eu.throwError('server', 'Unrecognized Transaction Subtype');
-
-    }
-
-    pushRecordToRedshift(table, object){
-
-      return kinesisfirehoseutilities.putRecord(table, object).then((result) => {
-
-        du.output('Kinesis Firehose Result', result);
-
-        return result;
-
-      });
-
-    }
-
-    handleEmail(){
-
-      du.debug('Handle Email');
-
-      return Promise.resolve(true);
-
-      //Technical Debt: Disabled
-      //return Promise.resolve(pass_through);
-
-    }
-
-    handleNotifications(){
-
-      du.debug('Handle Notifications');
-
-      return Promise.resolve(true);
-
-      //Technical Debt: Disabled
-      //return this.issueNotifications(this.notification_parameters).then(() => pass_through);
-
-    }
-
-    validateCreditCard(params){
-
-      if(!luhn.validate(params.creditcard.number)){
-
-        return Promise.reject('Invalid Credit Card number.');
-
-      }
-
-      return Promise.resolve(params);
-
-    }
-
-    //Technical Debt:  This needs to be in a helper...
-    createEventObject(event, event_type){
-
-      du.debug('Create Event Object');
-
-      let event_object = {
-        session: '',
-        type : event_type,
-        datetime: timestamp.getISO8601(),
-        account: global.account,
-        campaign: event.campaign,
-        product_schedule: '' //what is this?
-      };
-
-      if(_.has(event, 'affiliates') && objectutilities.isObject(event.affiliates)){
-        event_object = this.affiliateHelperController.transcribeAffiliates(event.affiliates, event_object);
-      }
-
-      return event_object;
 
     }
 
@@ -266,4 +140,29 @@ module.exports = class transactionEndpointController extends authenticatedContro
       return this.affiliateHelperController.transcribeAffiliates(info.session, transaction_object);
 
     }
+
+    postProcessing(event_type){
+
+      du.debug('Post Processing');
+
+      if(_.isUndefined(event_type) || _.isNull(event_type)){
+        if(_.has(this, 'event_type')){
+          event_type = this.event_type;
+        }
+      }
+
+      this.pushEvent(event_type);
+
+      return true;
+
+    }
+
+    pushEvent(event_type){
+
+      du.debug('Push Event');
+
+      this.eventHelperController.pushEvent({event_type: event_type, context:this.parameters.store});
+
+    }
+
 };

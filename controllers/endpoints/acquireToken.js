@@ -38,6 +38,8 @@ class AcquireTokenController extends transactionEndpointController {
         'redshifteventobject':global.SixCRM.routes.path('model', 'kinesisfirehose/events.json')
       };
 
+      this.event_type = 'click';
+
       this.initialize();
 
     }
@@ -102,18 +104,11 @@ class AcquireTokenController extends transactionEndpointController {
 
       du.debug('Post Processing');
 
-      this.pushEvent();
       this.handleAffiliateInformation();
 
+      this.pushEvent();
+
       return true;
-
-    }
-
-    pushEvent(){
-
-      du.debug('Push Event');
-
-      this.eventHelperController.pushEvent({event_type: 'click', context: this.parameters.store});
 
     }
 

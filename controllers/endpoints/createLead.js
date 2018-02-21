@@ -58,6 +58,8 @@ class CreateLeadController extends transactionEndpointController{
       this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
       this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
+      this.event_type = 'lead';
+
       this.initialize();
 
     }
@@ -203,67 +205,9 @@ class CreateLeadController extends transactionEndpointController{
 
       du.debug('Post Processing');
 
-      let promises = [
-        this.pushEvent(),
-        this.handleLeadTracking(),
-        this.pushToRedshift(),
-        this.handleLeadNotifications()
-      ]
+      this.pushEvent()
 
-      return Promise.all(promises).then(() => {
-        return true;
-      });
-
-    }
-
-    pushEvent(){
-
-      du.debug('Push Event');
-
-      this.eventHelperController.pushEvent({event_type:'lead', context:this.parameters.store});
-
-    }
-
-    handleLeadNotifications(){
-
-      du.debug('Handle Lead Notifications');
-
-      let session = this.parameters.get('session');
-
-      return this.handleNotifications(session).then(() => {
-
-        return true;
-
-      });
-
-    }
-
-    handleLeadTracking(){
-
-      du.debug('Handle Lead Tracking');
-
-      let session = this.parameters.get('session');
-      let event = this.parameters.get('event');
-
-      return this.handleTracking({session: session}, event).then(() => {
-
-        return true;
-
-      });
-
-    }
-
-    pushToRedshift(){
-
-      du.debug('Push To Redshift');
-
-      let session = this.parameters.get('session');
-
-      return this.pushEventToRedshift({event_type: 'lead', session: session}).then(() => {
-
-        return true;
-
-      });
+      return true;
 
     }
 

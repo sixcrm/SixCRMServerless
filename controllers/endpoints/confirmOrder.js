@@ -65,6 +65,7 @@ class ConfirmOrderController extends transactionEndpointController{
 
     this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
+    this.event_type = 'confirm';
 
     this.initialize();
 
@@ -203,38 +204,9 @@ class ConfirmOrderController extends transactionEndpointController{
 
     du.debug('Post Processing');
 
-    let promises = [
-      this.pushEvent(),
-      this.pushToRedshift()
-    ];
+    this.pushEvent();
 
-    return Promise.all(promises).then(() => {
-
-      return true;
-
-    });
-
-  }
-
-  pushEvent(){
-
-    du.debug('Push Event');
-
-    this.eventHelperController.pushEvent({event_type: 'confirm', context: this.parameters.store});
-
-  }
-
-  pushToRedshift(){
-
-    du.debug('Push To Redshift');
-
-    let session = this.parameters.get('session');
-
-    return this.pushEventToRedshift({event_type:'confirm', session: session}).then(() => {
-
-      return true;
-
-    });
+    return true;
 
   }
 

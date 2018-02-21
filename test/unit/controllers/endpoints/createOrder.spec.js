@@ -81,10 +81,6 @@ function getValidTransactionProducts(ids, extended){
   return MockEntities.getValidTransactionProducts(ids, extended);
 }
 
-function getValidProducts(ids){
-  return MockEntities.getValidProducts(ids);
-}
-
 function getValidSession(id){
   return MockEntities.getValidSession(id);
 }
@@ -983,9 +979,9 @@ describe('createOrder', function () {
       createOrderController.parameters.set('transactions', transactions);
       createOrderController.parameters.set('result', 'success');
 
-      return createOrderController.postProcessing().then(result => {
-        expect(result).to.equal(true);
-      });
+      let result = createOrderController.postProcessing();
+
+      expect(result).to.equal(true);
 
     });
 
@@ -1032,54 +1028,6 @@ describe('createOrder', function () {
       createOrderController.parameters.set('rebill', rebill);
 
       return createOrderController.addRebillToQueue().then(result => {
-        expect(result).to.equal(true);
-      });
-
-    });
-
-  });
-
-  describe('pushEventsRecord', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
-    it('successfully pushes a event record', () => {
-
-      let session = getValidSession();
-      let product_schedules = getValidProductScheduleGroups();
-      let products = getValidProducts();
-      let rebill = getValidRebill();
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
-          return Promise.resolve(true);
-        }
-      });
-
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-
-      createOrderController.parameters.set('session', session);
-      createOrderController.parameters.set('productschedules', product_schedules);
-      createOrderController.parameters.set('products', products);
-      createOrderController.parameters.set('rebill', rebill);
-
-      return createOrderController.pushEventsRecord().then(result => {
         expect(result).to.equal(true);
       });
 
