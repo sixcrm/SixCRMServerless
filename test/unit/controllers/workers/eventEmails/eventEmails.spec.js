@@ -68,7 +68,6 @@ describe('controllers/workers/eventEmails', () => {
 
       let sns_message = MockEntities.getValidSNSMessage(message);
 
-
       mockery.registerMock(global.SixCRM.routes.path('entities','Campaign.js'), {
         get:() =>{
           return Promise.resolve(campaign);
