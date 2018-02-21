@@ -1,7 +1,7 @@
 # Sub affiliates overview
 
 20.10.2017 A.Zelen -- Existed before
-31.01.2018 A.Zelen -- Added product schedule filtering via f_product_schedules
+31.01.2018 A.Zelen -- Added product schedule filtering via f_transactions /*f_product_schedules*/
 
 * Part of the `Sub Affiliate Report Overview`
 

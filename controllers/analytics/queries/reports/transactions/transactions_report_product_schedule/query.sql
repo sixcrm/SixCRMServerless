@@ -10,7 +10,7 @@ SELECT
   ft.type,
   null as cycle,
   null as recycle
-FROM f_product_schedules ft
+FROM f_transactions /*f_product_schedules*/ ft
 WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

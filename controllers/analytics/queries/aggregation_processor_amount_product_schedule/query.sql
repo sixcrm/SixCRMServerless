@@ -8,7 +8,7 @@ FROM
     SELECT
       *
     FROM
-      f_product_schedules
+      f_transactions /*f_product_schedules*/
     WHERE 1=1
       {{filter}}
       AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

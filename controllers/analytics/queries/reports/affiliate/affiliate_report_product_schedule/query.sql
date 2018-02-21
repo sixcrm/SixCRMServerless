@@ -63,7 +63,7 @@ RIGHT OUTER JOIN
                 END) decline_count,
           affiliate,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
-   FROM f_product_schedules
+   FROM f_transactions /*f_product_schedules*/
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
