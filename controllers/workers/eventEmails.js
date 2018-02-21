@@ -40,6 +40,17 @@ class EventEmailsController {
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
     this.emailTemplatesController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 
+    this.setPermissions();
+
+  }
+
+  setPermissions(){
+
+    du.debug('Set Permissions');
+
+    this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
+    this.permissionutilities.setPermissions('*',['*/*'],[])
+
   }
 
   execute(){
@@ -288,7 +299,7 @@ class EventEmailsController {
 
     let customerEmailer = new CustomerMailerHelper({smtp_provider: paired_smtp_provider});
 
-    return customerEmailer.sendEmail(options)
+    return customerEmailer.sendEmail({send_options: options})
 
   }
 

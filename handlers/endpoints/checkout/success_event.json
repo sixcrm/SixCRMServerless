@@ -23,9 +23,9 @@
 			"cid":"dingdong"
 		},
 		"customer":{
-			"firstname": "Rama",
-			"lastname": "Damunaste",
-			"email": "rama@damunaste.com",
+			"firstname": "Timothy",
+			"lastname": "Dalbey",
+			"email": "tmdalbey@gmail.com",
 			"phone": "1234567890",
 			"billing": {
 				"line1": "10 Downing St.",
