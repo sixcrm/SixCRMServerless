@@ -204,8 +204,8 @@ class ConfirmOrderController extends transactionEndpointController{
     du.debug('Post Processing');
 
     let promises = [
+      this.pushEvent(),
       this.pushToRedshift()
-      //this.handleNotifications();
     ];
 
     return Promise.all(promises).then(() => {
@@ -213,6 +213,14 @@ class ConfirmOrderController extends transactionEndpointController{
       return true;
 
     });
+
+  }
+
+  pushEvent(){
+
+    du.debug('Push Event');
+
+    this.eventHelperController.pushEvent({event_type: 'confirm', context: this.parameters.store});
 
   }
 

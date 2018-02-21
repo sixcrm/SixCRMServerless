@@ -1,0 +1,21 @@
+{
+	"Table": {
+		"TableName": "bins",
+		"KeySchema": [
+			{
+				"AttributeName": "binnumber",
+				"KeyType": "HASH"
+			}
+		],
+		"AttributeDefinitions": [
+			{
+				"AttributeName": "binnumber",
+				"AttributeType": "N"
+			}
+		],
+		"ProvisionedThroughput": {
+			"ReadCapacityUnits": 1,
+			"WriteCapacityUnits": 1
+		}
+	}
+}

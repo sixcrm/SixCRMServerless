@@ -1,17 +1,11 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id":"/smtp_send_object",
+  "id":"/general/smtp_send_object.json",
   "title": "SMTP Send Object",
   "type": "object",
   "properties": {
-    "sender_email": {
-      "type":"string",
-      "format":"email"
-    },
-    "sender_name": {
-      "type":"string",
-      "minLength":2
-    },
+    "sender_email": {"$ref":"../definitions/email.json"},
+    "sender_name": {"$ref":"../definitions/name.json"},
     "subject": {
       "type":"string",
       "minLength":2
@@ -22,15 +16,9 @@
     },
     "recepient_emails":{
       "type":"array",
-      "items": {
-        "type":"string",
-        "format":"email"
-      }
+      "items": {"$ref":"../definitions/email.json"}
     },
-    "recepient_name": {
-      "type":"string",
-      "minLength":2
-    }
+    "recepient_name": {"$ref":"../definitions/name.json"}
   },
   "required":["sender_email", "subject", "body","recepient_emails"]
 }

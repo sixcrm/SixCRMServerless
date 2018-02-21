@@ -1,18 +1,12 @@
 'use strict'
 
-const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
@@ -101,18 +95,6 @@ function getValidEventBody(){
 function getValidCampaign(){
 
   return MockEntities.getValidCampaign();
-
-}
-
-function getValidProductScheduleIDs(){
-
-  return arrayutilities.map(getValidProductSchedules(), product_schedule => { return product_schedule.id; });
-
-}
-
-function getValidProductSchedules(){
-
-  return MockEntities.getValidProductSchedules();
 
 }
 
@@ -210,22 +192,22 @@ describe('createLead', function () {
       let session = getValidSession();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session)
         },
-        isEmail: (user_string) => {
+        isEmail: () => {
           return true;
         },
-        getUserStrict: (user_string) => {
+        getUserStrict: () => {
           return Promise.resolve({});
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: (email) => {
+        getCustomerByEmail: () => {
           return Promise.resolve(null);
         },
-        create:({entity}) => {
+        create:() => {
           return Promise.resolve(customer);
         }
       });
@@ -238,7 +220,7 @@ describe('createLead', function () {
           cloned_event.affiliates = affiliates;
           return Promise.resolve(cloned_event);
         }
-        transcribeAffiliates(source_object, destination_object){
+        transcribeAffiliates(){
           return {};
         }
       }
@@ -246,13 +228,13 @@ describe('createLead', function () {
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve({});
         }
       });
@@ -266,23 +248,14 @@ describe('createLead', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), mock_tracker_helper_controller);
 
-      let mock_email_helper = class {
-        constructor(){}
-        sendEmail(a_event, info){
-          return Promise.resolve(true);
-        }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
-
       mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
-        createNotificationsForAccount: (parameters) => {
+        createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:(parameters) => {
+        assureSession:() => {
           return Promise.resolve(session);
         }
       });
@@ -306,22 +279,22 @@ describe('createLead', function () {
       let session = getValidSession();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session)
         },
-        isEmail: (user_string) => {
+        isEmail: () => {
           return true;
         },
-        getUserStrict: (user_string) => {
+        getUserStrict: () => {
           return Promise.resolve({});
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: (email) => {
+        getCustomerByEmail: () => {
           return Promise.resolve(null);
         },
-        create:({entity}) => {
+        create:() => {
           return Promise.resolve(customer);
         }
       });
@@ -334,7 +307,7 @@ describe('createLead', function () {
           cloned_event.affiliates = affiliates;
           return Promise.resolve(cloned_event);
         }
-        transcribeAffiliates(source_object, destination_object){
+        transcribeAffiliates(){
           return {};
         }
       }
@@ -342,13 +315,13 @@ describe('createLead', function () {
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve({});
         }
       });
@@ -362,23 +335,14 @@ describe('createLead', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), mock_tracker_helper_controller);
 
-      let mock_email_helper = class {
-        constructor(){}
-        sendEmail(a_event, info){
-          return Promise.resolve(true);
-        }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
-
       mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
-        createNotificationsForAccount: (parameters) => {
+        createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:(parameters) => {
+        assureSession:() => {
           return Promise.resolve(session);
         }
       });
@@ -416,7 +380,7 @@ describe('createLead', function () {
       let customer = getValidCustomer();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: (email) => {
+        getCustomerByEmail: () => {
           return Promise.resolve(customer);
         }
       });
@@ -439,10 +403,10 @@ describe('createLead', function () {
       let customer = getValidCustomer();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: (email) => {
+        getCustomerByEmail: () => {
           return Promise.resolve(null);
         },
-        create:({entity}) => {
+        create:() => {
           return Promise.resolve(customer);
         }
       });
@@ -555,7 +519,7 @@ describe('createLead', function () {
       event.campaign = campaign.id;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
@@ -597,10 +561,10 @@ describe('createLead', function () {
       let campaign = getValidCampaign();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: (email) => {
+        getCustomerByEmail: () => {
           return Promise.resolve(null);
         },
-        create:({entity}) => {
+        create:() => {
           return Promise.resolve(customer);
         }
       });
@@ -618,7 +582,7 @@ describe('createLead', function () {
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
@@ -722,7 +686,7 @@ describe('createLead', function () {
       let session = getValidSession();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:(parameters) => {
+        assureSession:() => {
           return Promise.resolve(session);
         }
       });
@@ -761,19 +725,10 @@ describe('createLead', function () {
       let event = getValidEventBody();
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
-        createNotificationsForAccount: (parameters) => {
+        createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }
       });
-
-      let mock_email_helper = class {
-        constructor(){}
-        sendEmail(event, info){
-          return Promise.resolve(true);
-        }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'tracker-utilities.js'), {
         handleTracking:(id, info) => {
@@ -782,7 +737,7 @@ describe('createLead', function () {
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve({});
         }
       });
@@ -829,7 +784,7 @@ describe('createLead', function () {
       let session = getValidSession();
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
-        createNotificationsForAccount: (parameters) => {
+        createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }
       });
@@ -846,7 +801,7 @@ describe('createLead', function () {
 
   });
 
-  describe('handleEmails', () => {
+  xdescribe('handleEmails', () => {
 
     before(() => {
       mockery.enable({
@@ -864,15 +819,6 @@ describe('createLead', function () {
     it('successfully handles emails', () => {
 
       let session = getValidSession();
-
-      let mock_email_helper = class {
-        constructor(){}
-        sendEmail(event, info){
-          return Promise.resolve(true);
-        }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
 
       let createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 
@@ -954,7 +900,7 @@ describe('createLead', function () {
       let session = getValidSession();
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve({});
         }
       });
@@ -995,10 +941,10 @@ describe('createLead', function () {
       let session = getValidSession();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: (email) => {
+        getCustomerByEmail: () => {
           return Promise.resolve(null);
         },
-        create:({entity}) => {
+        create:() => {
           return Promise.resolve(customer);
         }
       });
@@ -1011,7 +957,7 @@ describe('createLead', function () {
           cloned_event.affiliates = affiliates;
           return Promise.resolve(cloned_event);
         }
-        transcribeAffiliates(source_object, destination_object){
+        transcribeAffiliates(){
           return {};
         }
       }
@@ -1019,13 +965,13 @@ describe('createLead', function () {
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(campaign);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           return Promise.resolve({});
         }
       });
@@ -1039,23 +985,14 @@ describe('createLead', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), mock_tracker_helper_controller);
 
-      let mock_email_helper = class {
-        constructor(){}
-        sendEmail(a_event, info){
-          return Promise.resolve(true);
-        }
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
-
       mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
-        createNotificationsForAccount: (parameters) => {
+        createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:(parameters) => {
+        assureSession:() => {
           return Promise.resolve(session);
         }
       });

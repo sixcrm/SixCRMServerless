@@ -75,9 +75,9 @@ describe('controllers/helpers/resources/accountimages/AccountImages.js', () => {
 
       return fileutilities.getFileContents('test/resources/kermit.jpg', null).then(image_data => {
 
-        let base64_data = hashutilities.toSHA1(image_data);
+        let base64_data = new Buffer(image_data, 'binary').toString('base64'); //hashutilities.toSHA1(image_data);
 
-        expect(accountImagesHelperController.createImageFilename(base64_data, image_data)).to.equal('1224fadd85a33345d841ed6a61e6c8731e494cfb.jpg');
+        expect(accountImagesHelperController.createImageFilename(base64_data, image_data)).to.equal('8e5a5670f6b583c63490fc962634e1e9f9645c43.jpg'); // 1224fadd85a33345d841ed6a61e6c8731e494cfb
 
       });
 

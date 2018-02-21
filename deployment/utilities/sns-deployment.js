@@ -37,7 +37,7 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		return arrayutilities.reduce(topic_promises, (current, topic_promise) => {
 			return topic_promise();
 		}).then(() => {
-			du.output('Complete');
+			return du.output('Complete');
 		});
 
 	}
@@ -49,7 +49,7 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		let topic_file_contents = global.SixCRM.routes.include('deployment', 'sns/configuration/topics/'+topic_file);
 
 		return this.snsutilities.createTopic(topic_file_contents).then(result => {
-			du.debug(result);
+			return du.debug(result);
 		});
 
 	}
@@ -71,7 +71,7 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		return arrayutilities.reduce(subscription_promises, (current, subscription_promise) => {
 			return subscription_promise();
 		}).then(() => {
-			du.output('Complete');
+			return du.output('Complete');
 		});
 
 	}
@@ -81,6 +81,7 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		du.debug('Create Subscriptions');
 
 		let subscription_file_contents = global.SixCRM.routes.include('deployment', 'sns/configuration/subscriptions/'+subscription_file);
+
 		subscription_file_contents = this.parseTokensIntoSubscriptionParameters(subscription_file_contents);
 
 		return arrayutilities.reduce(subscription_file_contents.Subscriptions, (current, subscription) => {
