@@ -207,7 +207,6 @@ class CreateLeadController extends transactionEndpointController{
         this.pushEvent(),
         this.handleLeadTracking(),
         this.pushToRedshift(),
-        this.handleEmails(),
         this.handleLeadNotifications()
       ]
 
@@ -235,18 +234,6 @@ class CreateLeadController extends transactionEndpointController{
 
         return true;
 
-      });
-
-    }
-
-    handleEmails(){
-
-      du.debug('Handle Emails');
-
-      let session = this.parameters.get('session');
-
-      return this.sendEmails('lead', session).then(() => {
-        return true;
       });
 
     }

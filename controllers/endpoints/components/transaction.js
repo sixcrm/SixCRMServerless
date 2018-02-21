@@ -221,24 +221,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    sendEmails(event, info){
-
-      du.debug('Send Email');
-
-      return this.userEmailHelperController.sendEmail(event, info).then(() => {
-
-        return Promise.resolve(info);
-
-      }).catch((error) => {
-
-        du.error(error);
-
-        return Promise.resolve(info);
-
-      });
-
-    }
-
     //Technical Debt:  This needs to be in a helper...
     createEventObject(event, event_type){
 

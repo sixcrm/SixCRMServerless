@@ -47,12 +47,6 @@ describe('helpers/transaction/CustomerMailer.spec.js', () => {
 
         let smtp_provider = MockEntities.getValidSMTPProvider();
 
-        smtp_provider.hostname = 'email-smtp.us-east-1.amazonaws.com';
-        smtp_provider.username = 'AKIAJ5M2M5XJH7SX7PPA';
-        smtp_provider.password = 'AppgYu3q95vP/X7C1AISfqMNmQ7fxAS6mXlYt9p7dvE5';
-        delete smtp_provider.port;
-
-
         let email_options = {
           sender_email:'system@sixcrm.com',
           sender_name: 'SixCRM.com',
@@ -61,6 +55,13 @@ describe('helpers/transaction/CustomerMailer.spec.js', () => {
           recepient_emails: ['tmdalbey@gmail.com'],
           recepient_name: 'Timothy Dalbey'
         }
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), class {
+          constructor(){}
+          send(){
+            return Promise.resolve('some-long-string-or-something');
+          }
+        });
 
         const CustomerMailerHelperController = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
         let customerMailerHelperController = new CustomerMailerHelperController({smtp_provider: smtp_provider});
