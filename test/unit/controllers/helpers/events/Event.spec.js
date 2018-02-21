@@ -66,7 +66,7 @@ describe('helpers/events/Event.spec.js', () => {
       };
 
       let expected_response = {
-        user: global.user,
+        user: global.user.id,
         account: global.account,
         event_type: input_object.event_type,
         context: input_object.context

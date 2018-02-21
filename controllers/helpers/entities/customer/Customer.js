@@ -1,4 +1,6 @@
 'use strict'
+const _ = require('underscore');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class CustomerHelperController {
@@ -56,6 +58,28 @@ module.exports = class CustomerHelperController {
       });
 
     });
+
+  }
+
+  getFullName(customer){
+
+    du.debug('Get Full Name');
+
+    let fullname = [];
+
+    if(_.has(customer, 'firstname')){
+      fullname.push(customer.firstname);
+    }
+
+    if(_.has(customer, 'lastname')){
+      fullname.push(customer.lastname);
+    }
+
+    if(fullname.length > 0){
+      return arrayutilities.compress(fullname, ' ', '');
+    }
+
+    return '';
 
   }
 

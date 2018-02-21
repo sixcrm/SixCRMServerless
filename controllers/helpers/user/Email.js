@@ -7,6 +7,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 //Technical Debt:  Deprecated:  Use SystemMailer
 const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/SMTP.js');
+const CustomerHelperController = global.SixCRM.routes.include('helpers','entities/customer/Customer.js');
 
 module.exports = class userEmailHelperController {
 
@@ -15,6 +16,7 @@ module.exports = class userEmailHelperController {
         this.campaignController = global.SixCRM.routes.include('entities','Campaign.js');
         this.emailTemplateController = global.SixCRM.routes.include('entities','EmailTemplate.js');
         this.customerController = global.SixCRM.routes.include('entities','Customer.js');
+        this.customerHelperController = new CustomerHelperController();
 
     }
 
@@ -90,7 +92,7 @@ module.exports = class userEmailHelperController {
                                 subject: parsed_subject,
                                 body: parsed_body,
                                 recepient_emails: [recepient.email],
-                                recepient_name: this.customerController.getFullName(recepient)
+                                recepient_name: this.customerHelperController.getFullName(recepient)
                             };
 
                             return SMTPProviderInstance.send(send_object);

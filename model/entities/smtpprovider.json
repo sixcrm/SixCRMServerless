@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/smtpprovider",
+	"id":"/entities/smtpprovider.json",
 	"title": "SMTP Provider",
 	"type": "object",
 	"description": "An SMTP provider",
@@ -26,6 +26,8 @@
 			"minLength":3
 		},
 		"port":{"$ref": "../definitions/nonnegativeinteger.json"},
+		"from_email":{"$ref":"../definitions/email.json"},
+		"from_name":{"$ref":"../definitions/name.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},

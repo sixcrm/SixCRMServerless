@@ -13,8 +13,8 @@ class MockEntities {
   static getValidSNSMessage(message){
 
     let default_message = {
-      event_type:"test",
-      account:this.getTestAccountID(),
+      event_type: this.getValidEventType(),
+      account: this.getTestAccountID(),
       user:"system@sixcrm.com",
       context:{
         test:"this is a test"
@@ -1014,6 +1014,16 @@ class MockEntities {
     }
   }
 
+  static getValidEmailTemplates(ids){
+
+    ids = (!_.isUndefined(ids) && !_.isNull(ids))?ids:this.arrayOfIds();
+
+    return arrayutilities.map(ids, id => {
+      return this.getValidEmailTemplate(id);
+    });
+
+  }
+
   static getValidEmailTemplate(id) {
 
     return {
@@ -1022,12 +1032,21 @@ class MockEntities {
       name: randomutilities.createRandomName('full'),
       body: randomutilities.createRandomString(20),
       subject: randomutilities.createRandomString(10),
-      type: randomutilities.createRandomString(10),
+      type: this.getValidEventType(),
       smtp_provider: uuidV4(),
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
     }
   }
+
+  static getValidEventType(){
+
+    let event_list = global.SixCRM.routes.include('model', 'definitions/sixcrmeventtype.json').enum;
+
+    return randomutilities.selectRandomFromArray(event_list);
+
+  }
+
 }
 
 module.exports = MockEntities;

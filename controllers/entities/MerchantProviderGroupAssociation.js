@@ -51,6 +51,20 @@ class merchantProviderGroupAssociationController extends entityController {
 
   }
 
+  listByEntity({entity, pagination, fatal, search}){
+
+    du.debug('List Merchant Provider Groups By Entity');
+
+    let query_parameters = {
+      filter_expression:'#entity = :entityv',
+      expression_attribute_names: {'#entity': 'entity'},
+      expression_attribute_values: {':entityv': this.getID(entity)}
+    };
+
+    return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal, search: search});
+
+  }
+
   listByCampaign({campaign}){
 
     du.debug('List Merchant Provider Groups By Campaign');
