@@ -204,6 +204,7 @@ class CreateLeadController extends transactionEndpointController{
       du.debug('Post Processing');
 
       let promises = [
+        this.pushEvent(),
         this.handleLeadTracking(),
         this.pushToRedshift(),
         this.handleEmails(),
@@ -213,6 +214,14 @@ class CreateLeadController extends transactionEndpointController{
       return Promise.all(promises).then(() => {
         return true;
       });
+
+    }
+
+    pushEvent(){
+
+      du.debug('Push Event');
+
+      this.eventHelperController.pushEvent({event_type:'lead', context:this.parameters.store});
 
     }
 

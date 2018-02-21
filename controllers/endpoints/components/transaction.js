@@ -32,6 +32,10 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       this.userEmailHelperController = new UserEmailHelperController();
 
+      const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+
+      this.eventHelperController = new EventHelperController();
+
     }
 
     initialize(callback){
