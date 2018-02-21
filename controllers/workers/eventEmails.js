@@ -18,14 +18,14 @@ class EventEmailsController {
     this.parameter_definition = {
       execute:{
         required: {
-          event: 'event'
+          records: 'Records'
         },
         optional:{}
       }
     };
 
     this.parameter_validation = {
-      'event': global.SixCRM.routes.path('model', 'workers/eventEmails/event.json'),
+      'records': global.SixCRM.routes.path('model', 'workers/eventEmails/records.json'),
       'message':global.SixCRM.routes.path('model','workers/eventEmails/message.json'),
       'record':global.SixCRM.routes.path('model','workers/eventEmails/snsrecord.json'),
       'campaign':global.SixCRM.routes.path('model','entities/campaign.json'),
@@ -44,6 +44,8 @@ class EventEmailsController {
 
   execute(){
 
+    du.info(arguments[0]);
+
     return Promise.resolve()
     .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
     .then(() => this.handleEvents())
@@ -54,9 +56,9 @@ class EventEmailsController {
 
     du.debug('Handle Events');
 
-    let event = this.parameters.get('event');
+    let records = this.parameters.get('records');
 
-    let event_promises = arrayutilities.map(event.Records, record => {
+    let event_promises = arrayutilities.map(records, record => {
       return () => this.handleEventRecord(record);
     });
 

@@ -66,7 +66,7 @@ describe('controllers/workers/eventEmails', () => {
         }
       };
 
-      let event = MockEntities.getValidSNSMessage(message);
+      let sns_message = MockEntities.getValidSNSMessage(message);
 
 
       mockery.registerMock(global.SixCRM.routes.path('entities','Campaign.js'), {
@@ -107,7 +107,7 @@ describe('controllers/workers/eventEmails', () => {
 
       let eventEmailsController = global.SixCRM.routes.include('controllers', 'workers/eventEmails.js');
 
-      return eventEmailsController.execute({event: event}).then(result => {
+      return eventEmailsController.execute(sns_message).then(result => {
         expect(result).to.equal(true);
       });
     });
