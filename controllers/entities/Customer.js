@@ -59,34 +59,6 @@ class customerController extends entityController {
 
     }
 
-    getFullName(customer){
-
-        du.debug('Get Full Name');
-
-        let fullname = [];
-
-        if(_.has(customer, 'firstname')){
-
-            fullname.push(customer.firstname);
-
-        }
-
-        if(_.has(customer, 'lastname')){
-
-            fullname.push(customer.lastname);
-
-        }
-
-        if(fullname.length > 0){
-
-            return arrayutilities.compress(fullname, ' ', '');
-
-        }
-
-        return '';
-
-    }
-
     getAddress(customer){
 
       du.debug('Get Address');

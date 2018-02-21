@@ -1,28 +1,38 @@
 'use strict';
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
+const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-module.exports = class CustomerMailerHelper{
+module.exports = class CustomerMailerHelper {
 
   constructor(){
 
-    this.parameter_definitions = {
-      'constructor':{
+    this.parameter_definition = {
+      instantiate:{
         required:{
           smtpprovider:'smtp_provider'
+        },
+        optional:{}
+      },
+      sendEmail:{
+        required:{
+          sendoptions: 'send_options'
         },
         optional:{}
       }
     };
 
     this.parameter_validation = {
-      'smtpprovider':global.SixCRM.routes.path('model', 'entities/smtpprovider.json')
+      'smtpprovider':global.SixCRM.routes.path('model', 'entities/smtpprovider.json'),
+      'sendoptions':global.SixCRM.routes.path('model', 'general/smtp_send_object.json'),
+      'processedsendoptions':global.SixCRM.routes.path('model', 'general/smtp_send_object.json')
     };
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definitions: this.parameter_defintion});
-    this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
+    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+    this.parameters.setParameters({argumentation: arguments[0], action: 'instantiate'});
 
     this.instantiate();
 
@@ -32,15 +42,96 @@ module.exports = class CustomerMailerHelper{
 
     du.debug('Instantiate');
 
-    //instantiate
+    let instantiation_options = this.createInstantiationOptions();
+
+    this.smtputilities = new SMTPUtilities(instantiation_options);
+
+    return true;
+
   }
 
-  sendEmail(email_options){
+  createInstantiationOptions(){
 
-    du.info(email_options);
+    du.debug('Create Instantiation Options');
+
+    let smtp_provider = this.parameters.get('smtpprovider');
+
+    let options = objectutilities.transcribe(
+      {
+        hostname: 'hostname',
+        username: 'username',
+        password: 'password',
+      },
+      smtp_provider,
+      {},
+      true
+    );
+
+    options = objectutilities.transcribe(
+      {
+        port: 'port'
+      },
+      smtp_provider,
+      options,
+      false
+    );
+
+    return options;
+
+  }
+
+  sendEmail(){
+
     du.debug('Send Email');
 
-    //send
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'sendEmail'}))
+    .then(() => this.createSendOptions())
+    .then(() => this.executeSend());
+
+  }
+
+  createSendOptions(){
+
+    du.debug('Create Send Options');
+
+    let send_email_options = this.parameters.get('sendoptions');
+
+    let options = objectutilities.transcribe(
+      {
+        sender_email:'sender_email',
+        sender_name:'sender_name',
+        subject: 'subject',
+        body: 'body',
+        recepient_emails: 'recepient_emails'
+      },
+      send_email_options,
+      {},
+      true
+    );
+
+    options = objectutilities.transcribe(
+      {
+        recepient_name: 'recepient_name'
+      },
+      send_email_options,
+      options,
+      false
+    );
+
+    this.parameters.set('processedsendoptions', options);
+
+    return true;
+
+  }
+
+  executeSend(){
+
+    du.debug('Execute Send');
+
+    let processed_send_options = this.parameters.get('processedsendoptions');
+
+    return this.smtputilities.send(processed_send_options);
 
   }
 

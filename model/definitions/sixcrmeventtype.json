@@ -3,5 +3,5 @@
   "id": "/definitions/sixcrmeventtype.json",
   "title": "SixCRM Event Type",
   "type":"string",
-  "enum":["test"]
+  "enum":["test", "click", "lead", "order", "confirm"]
 }

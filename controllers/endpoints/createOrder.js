@@ -402,6 +402,7 @@ class CreateOrderController extends transactionEndpointController{
     du.debug('Post Processing');
 
     let promises = [
+      this.pushEvent(),
       this.incrementMerchantProviderSummary(),
       this.updateSessionWithWatermark(),
       this.pushEventsRecord(),
@@ -413,6 +414,14 @@ class CreateOrderController extends transactionEndpointController{
       return true;
 
     });
+
+  }
+
+  pushEvent(){
+
+    du.debug('Push Event');
+
+    this.eventHelperController.pushEvent({event_type:'order', context: this.parameters.store});
 
   }
 
