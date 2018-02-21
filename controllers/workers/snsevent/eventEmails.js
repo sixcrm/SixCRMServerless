@@ -10,7 +10,6 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
 const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
 
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
 
 class EventEmailsController extends SNSEventController {
