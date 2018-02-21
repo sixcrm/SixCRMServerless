@@ -6,7 +6,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class entityACLController extends entityController {
-
     constructor() {
         super('entityacl');
         this.primary_key = 'entity';
@@ -22,7 +21,6 @@ class entityACLController extends entityController {
             return acl;
         });
     }
-
 }
 
 module.exports = new entityACLController();

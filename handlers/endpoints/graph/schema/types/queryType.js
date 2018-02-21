@@ -1597,7 +1597,7 @@ module.exports.graphObj = new GraphQLObjectType({
             	if(_.has(entityacl, 'entity')){
                     const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
 
-                    return entityACLController.get({id: entityacl.id, fatal: get_fatal});
+                    return entityACLController.get({id: entityacl.entity, fatal: get_fatal});
                 } else {
                     return null;
                 }
