@@ -2,12 +2,12 @@
 require('../../../SixCRM.js');
 
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const eventEmailsController = global.SixCRM.routes.include('controllers', 'workers/eventEmails.js');
+const redshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
-module.exports.emails = (event, context, callback) => {
+module.exports.redshiftevents = (event, context, callback) => {
 
-  eventEmailsController.execute(event).then((result) => {
+  redshiftEventsController.execute(event).then((result) => {
 
     new LambdaResponse().issueResponse(200, {
         message: result

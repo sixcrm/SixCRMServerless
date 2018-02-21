@@ -9,82 +9,30 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 
 const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
 const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-class EventEmailsController {
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
+
+class EventEmailsController extends SNSEventController {
 
   constructor(){
 
-    this.parameter_definition = {
-      execute:{
-        required: {
-          records: 'Records'
-        },
-        optional:{}
-      }
-    };
+    super();
+
+    this.parameter_definition = {};
 
     this.parameter_validation = {
-      'records': global.SixCRM.routes.path('model', 'workers/eventEmails/records.json'),
-      'message':global.SixCRM.routes.path('model','workers/eventEmails/message.json'),
-      'record':global.SixCRM.routes.path('model','workers/eventEmails/snsrecord.json'),
       'campaign':global.SixCRM.routes.path('model','entities/campaign.json'),
       'customer':global.SixCRM.routes.path('model','entities/customer.json'),
       'smtpproviders':global.SixCRM.routes.path('model','entities/components/smtpproviders.json'),
       'emailtemplates':global.SixCRM.routes.path('model','entities/components/emailtemplates.json')
     };
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
-
     this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
     this.emailTemplatesController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 
-    this.setPermissions();
-
-  }
-
-  setPermissions(){
-
-    du.debug('Set Permissions');
-
-    this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
-    this.permissionutilities.setPermissions('*',['*/*'],[])
-
-  }
-
-  execute(){
-
-    du.info(arguments[0]);
-
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
-    .then(() => this.handleEvents())
-
-  }
-
-  handleEvents(){
-
-    du.debug('Handle Events');
-
-    let records = this.parameters.get('records');
-
-    let event_promises = arrayutilities.map(records, record => {
-      return () => this.handleEventRecord(record);
-    });
-
-    //Technical Debt:  This would be great if it did all this stuff asyncronously down the road
-    return arrayutilities.reduce(
-      event_promises,
-      (current, event_promise) => {
-        return event_promise().then(() => {
-          return true;
-        })
-      },
-      Promise.resolve(true)
-    ).then(() => {
-      return true;
-    });
+    this.augmentParameters();
 
   }
 
@@ -97,27 +45,6 @@ class EventEmailsController {
     .then(() => this.getMessage())
     .then(() => this.triggerEmails())
     .then(() => this.cleanUp());
-
-  }
-
-  getMessage(){
-
-    du.debug('Get Message');
-
-    let record = this.parameters.get('record');
-
-    let message = record.Sns.Message;
-
-    try{
-      message = JSON.parse(message);
-    }catch(error){
-      du.error(error);
-      eu.throwError(error);
-    }
-
-    this.parameters.set('message', message);
-
-    return true;
 
   }
 
@@ -372,21 +299,6 @@ class EventEmailsController {
     });
 
     return objectutilities.merge(parse_object, optional_properties);
-
-  }
-
-  cleanUp(){
-
-    du.debug('Clean Up');
-
-    this.parameters.unset('record');
-    this.parameters.unset('message');
-    this.parameters.unset('campaign');
-    this.parameters.unset('customer');
-    this.parameters.unset('smtpproviders');
-    this.parameters.unset('emailtemplates');
-
-    return true;
 
   }
 

@@ -1,17 +1,11 @@
 'use strict'
 
-const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
-const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
@@ -46,10 +40,13 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
     it('fails when no arguments are provided', () => {
 
       try{
-        affiliateHelperController.validateAssuredAffiliates();
+
+        affiliateHelperController.validateAssuredAffiliates({});
+
       }catch(error){
+        du.error(error);
         //Technical Debt:  This needs to be handled
-        expect(error.message).to.include('Cannot destructure property')
+        expect(error.message).to.include('[500] validateAssuredAffiliates assumes affiliate_ids input.')
       }
 
     });
@@ -93,9 +90,9 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
       let affiliateHelperController = new AffiliateHelperController();
 
       try{
-        affiliateHelperController.assureAffiliatesArrayTransform();
+        affiliateHelperController.assureAffiliatesArrayTransform({});
       }catch(error){
-        expect(error.message).to.include('Cannot destructure property');
+        expect(error.message).to.include('[500] assureAffiliatesArrayTransform assumes affiliate_ids input');
       }
 
     });
@@ -124,7 +121,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
       PermissionTestGenerators.givenUserWithAllowed('create', 'affiliate');
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-          queryRecords: (table, parameters, index) => {
+          queryRecords: () => {
               return Promise.resolve([]);
           },
           saveRecord: (table, entity) => {
@@ -136,10 +133,10 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
         constructor(){
 
         }
-        addToSearchIndex(entity){
+        addToSearchIndex(){
           return Promise.resolve(true);
         }
-        removeFromSearchIndex(entity){
+        removeFromSearchIndex(){
           return Promise.resolve(true);
         }
       }

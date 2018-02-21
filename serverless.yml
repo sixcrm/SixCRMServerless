@@ -199,12 +199,16 @@ functions:
 # Workers
 #These do not use the forwardMessage controller because thier datasources are not SQS
 
+# tracking:
+#   handler: handlers/workers/sns/tracking/handler.customeremail
 #  notifications:
 #    handler: handlers/workers/notifications/handler.notifications
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
-  emails:
-    handler: handlers/workers/emails/handler.emails
+  customeremail:
+    handler: handlers/workers/sns/customeremail/handler.customeremail
+  redshiftevents:
+    handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
 #
 #  reindex:
 #    handler: handlers/workers/reindex/handler.reindex
