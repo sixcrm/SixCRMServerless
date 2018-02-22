@@ -16,9 +16,6 @@
     "provider": {
       "required": ["name", "runtime", "stage", "region", "profile", "environment"]
     },
-    "site_config": {
-      "pattern": ".+\/site.yml"
-    },
     "functions": {
       "patternProperties": {
 
@@ -28,5 +25,5 @@
     }
 
   },
-  "required": ["service", "package", "provider", "plugins", "site_config", "functions", "resources"]
+  "required": ["service", "package", "provider", "plugins", "functions", "resources"]
 }

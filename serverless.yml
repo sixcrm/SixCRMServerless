@@ -12,9 +12,6 @@ package:
   include:
     - serverless.yml
 
-# frameworkVersion: "=X.X.X"
-
-#Technical Debt:  This is gross...
 provider:
   name: aws
   runtime: nodejs6.10
@@ -24,24 +21,13 @@ provider:
   profile: six
   environment:
     stage: ${opt:stage, self:provider.stage}
+    #Technical Debt:  Are these necessary here?
     aws_region: ${opt:region, self:provider.region}
     aws_account: ${file(./config/${opt:stage}/site.yml):aws.account}
-    dynamo_endpoint: ${file(./config/${opt:stage}/site.yml):dynamodb.endpoint}
-    search_indexing_queue: 'search_indexing'
-    #Technical Debt:  update to "send_notifications"
-    send_notifications_queue: 'send_notification'
-    rebill_queue: 'rebill'
-    bill_queue: 'bill'
-    hold_queue: 'hold'
-    bill_failed_queue: 'bill_failed'
-    redshift_random_data_interval: ${file(./config/${opt:stage}/site.yml):redshift.randomdata.interval}
 
 plugins:
   - serverless-dynamodb-local
   - serverless-prune-plugin
-
-#is this necessary here?
-site_config: ${file(./config/${opt:stage}/site.yml)}
 
 functions:
 
@@ -67,7 +53,7 @@ functions:
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
 
 ########################
-# Backend Graph Endpoint renders entity data to the website
+# Graph Endpoint
 ########################
 
   graph:
@@ -196,19 +182,20 @@ functions:
           rate: rate(10 minutes)
           enabled: true
 
-# Workers
-#These do not use the forwardMessage controller because thier datasources are not SQS
-
-# tracking:
-#   handler: handlers/workers/sns/tracking/handler.customeremail
+########################
+# SNS Workers
+########################
+customeremail:
+  handler: handlers/workers/sns/customeremail/handler.customeremail
+redshiftevents:
+  handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
+tracking:
+  handler: handlers/workers/sns/tracking/handler.tracking
 #  notifications:
 #    handler: handlers/workers/notifications/handler.notifications
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
-  customeremail:
-    handler: handlers/workers/sns/customeremail/handler.customeremail
-  redshiftevents:
-    handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
+
 #
 #  reindex:
 #    handler: handlers/workers/reindex/handler.reindex
