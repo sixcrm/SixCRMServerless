@@ -1,4 +1,0 @@
-{
-  "description": "Billable rebill picked from dynamo, goes to bill, then to hold, pending, shipped, delivered and then is archived and updated",
-  "order": 10
-}
