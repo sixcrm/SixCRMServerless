@@ -52,6 +52,9 @@ module.exports = class Response {
       fail:{
         code: 'fail'
       },
+      noaction:{
+        code: 'noaction'
+      },
       error: {
         code: 'error'
       }

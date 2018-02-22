@@ -3,5 +3,5 @@
   "id":"/responsetype.json",
 	"type": "string",
 	"description": "The response type",
-	"enum":["success","fail","error"]
+	"enum":["success","fail","error","noaction"]
 }
