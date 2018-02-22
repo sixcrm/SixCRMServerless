@@ -573,6 +573,19 @@ class MockEntities {
     return 'S'+randomutilities.createRandomString(9);
   }
 
+  static getValidAffiliates(){
+
+    return {
+      affiliate: randomutilities.createRandomString(randomutilities.randomInt(5,40)),
+      subaffiliate_1:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
+      subaffiliate_2:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
+      subaffiliate_3:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
+      subaffiliate_4:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
+      subaffiliate_5:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
+    };
+
+  }
+
   static getValidSession(id){
 
     let product_schedules = this.getValidProductSchedules();
