@@ -185,24 +185,24 @@ functions:
 ########################
 # SNS Workers
 ########################
-customeremail:
-  handler: handlers/workers/sns/customeremail/handler.customeremail
-redshiftevents:
-  handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
-tracking:
-  handler: handlers/workers/sns/tracking/handler.tracking
+  customeremail:
+    handler: handlers/workers/sns/customeremail/handler.customeremail
+  redshiftevents:
+    handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
+  trackingevents:
+    handler: handlers/workers/sns/tracking/handler.tracking
 #  notifications:
 #    handler: handlers/workers/notifications/handler.notifications
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
-#
-#  reindex:
-#    handler: handlers/workers/reindex/handler.reindex
-#    events:
-#      - schedule:
-#          rate: rate(60 minutes)
-#          enabled: true
+
+  reindex:
+    handler: handlers/workers/reindex/handler.reindex
+    events:
+      - schedule:
+        rate: rate(60 minutes)
+        enabled: true
 
   #sesnotifications:
   #  handler: handlers/workers/sesnotifications/handler.sesnotifications
@@ -210,17 +210,6 @@ tracking:
   #    - sns:
   #        topicName: SESNotifications
   #        displayName: SES Notifications
-
-  #Technical Debt:  This seems broken
-  #slackalarm:
-  #  handler: handlers/workers/slackalarm/exports.handler
-  #  events:
-  #    - sns:
-  #        topicName: SlackAlarm
-  #        displayName: Slack Alarm
-  #  environment:
-  #    slackChannel: ${file(./config/${opt:stage}/site.yml):slack.channel}
-  #    kmsEncryptedHookUrl: ${file(./config/${opt:stage}/site.yml):slack.kms_encrypted_hook_url}
 
 
 ########################

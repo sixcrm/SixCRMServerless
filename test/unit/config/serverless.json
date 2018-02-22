@@ -9,7 +9,6 @@
         }
       },
       "required": ["handler"]
-
     }
   },
   "properties": {
@@ -18,12 +17,9 @@
     },
     "functions": {
       "patternProperties": {
-
         ".+": { "$ref": "#/definitions/lambda" }
-
       }
     }
-
   },
   "required": ["service", "package", "provider", "plugins", "functions", "resources"]
 }
