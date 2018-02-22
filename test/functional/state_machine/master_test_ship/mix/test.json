@@ -1,0 +1,8 @@
+{
+  "description": "Master test - ship scenario\n\tRebill goes to archive\n\tRebill with no ship products remains in hold\n\tRebill in processing is ignored\n\tRebill in future is ignored\n\tMissing rebill goes to bill error\n\tIncorrect rebill goes to bill error",
+  "order": 10,
+  "env": {
+    "archivefilter": "all"
+  },
+  "lambda_filter": ["pickrebillstobill", "billtohold", "holdtopending", "pendingtoshipped", "shippedtodelivered", "deliveredtoarchive"]
+}

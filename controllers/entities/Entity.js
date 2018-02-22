@@ -414,7 +414,7 @@ module.exports = class entityController extends entityUtilitiesController {
       .then((exists) => {
 
         if(exists !== false){
-          eu.throwError('bad_request','A '+this.descriptive_name+' already exists with ID: "'+entity.id+'"');
+          eu.throwError('bad_request','A '+this.descriptive_name+' already exists with '+this.primary_key+': "'+entity[this.primary_key]+'"');
           return false;
         }
 
@@ -547,7 +547,7 @@ module.exports = class entityController extends entityUtilitiesController {
       .then(() => this.exists({entity: delete_parameters}))
       .then((exists) => {
         if(!exists){
-          eu.throwError('not_found','Unable to delete '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist or multiples returned.');
+          eu.throwError('not_found','Unable to delete '+this.descriptive_name+' with '+this.primary_key+': "'+id+'" -  record doesn\'t exist or multiples returned.');
           return false;
         }
         return true;

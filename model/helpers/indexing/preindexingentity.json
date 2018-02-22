@@ -8,5 +8,5 @@
     "entity_type":{"type":"string", "minLength":1},
     "id":{"$ref":"../../definitions/sixcrmidentifier.json"}
   },
-  "required":["id","index_action","entity_type"]
+  "required":["index_action","entity_type"]
 }

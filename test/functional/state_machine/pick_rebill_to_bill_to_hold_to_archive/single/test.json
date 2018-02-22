@@ -1,8 +1,0 @@
-{
-  "description": "Billable rebill is picked from dynamo, then goes to bill, then to hold and then is archived and updated",
-  "order": 10,
-  "lambda_filter": ["pickrebillstobill", "billtohold", "holdtoarchive"],
-  "env": {
-    "archivefilter": "noship"
-  }
-}

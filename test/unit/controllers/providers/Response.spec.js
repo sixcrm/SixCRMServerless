@@ -93,6 +93,9 @@ describe('controllers/providers/Response.js', () => {
         fail:{
           code: 'fail'
         },
+        noaction:{
+          code: 'noaction'
+        },
         error: {
           code: 'error'
         }
